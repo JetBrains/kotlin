@@ -334,7 +334,7 @@ import org.w3c.xhr.*
     open val childElementCount: Int
         get() = noImpl
     fun exitFullscreen(): Unit = noImpl
-    @nativeGetter fun get(name: String): dynamic = noImpl
+    operator @nativeGetter fun get(name: String): dynamic = noImpl
     fun getElementsByName(elementName: String): NodeList = noImpl
     fun getItems(typeNames: String = ""): NodeList = noImpl
     fun open(type: String = "text/html", replace: String = ""): Document = noImpl
@@ -704,8 +704,8 @@ import org.w3c.xhr.*
     fun focus(): Unit = noImpl
     fun blur(): Unit = noImpl
     fun open(url: String = "about:blank", target: String = "_blank", features: String = "", replace: Boolean = false): Window = noImpl
-    @nativeGetter fun get(index: Int): Window? = noImpl
-    @nativeGetter fun get(name: String): dynamic = noImpl
+    operator @nativeGetter fun get(index: Int): Window? = noImpl
+    operator @nativeGetter fun get(name: String): dynamic = noImpl
     fun alert(): Unit = noImpl
     fun alert(message: String): Unit = noImpl
     fun confirm(message: String = ""): Boolean = noImpl
@@ -854,12 +854,12 @@ import org.w3c.xhr.*
 @native public interface HTMLAllCollection : HTMLCollection {
     fun item(name: String): UnionElementOrHTMLCollection? = noImpl
 //    override fun namedItem(name: String): UnionElementOrHTMLCollection? = noImpl
-//    @nativeGetter override fun get(name: String): UnionElementOrHTMLCollection? = noImpl
+//    operator @nativeGetter override fun get(name: String): UnionElementOrHTMLCollection? = noImpl
 }
 
 @native public interface HTMLFormControlsCollection : HTMLCollection {
 //    override fun namedItem(name: String): UnionElementOrRadioNodeList? = noImpl
-//    @nativeGetter override fun get(name: String): UnionElementOrRadioNodeList? = noImpl
+//    operator @nativeGetter override fun get(name: String): UnionElementOrRadioNodeList? = noImpl
 }
 
 @native public interface RadioNodeList : NodeList, UnionElementOrRadioNodeList {
@@ -875,7 +875,7 @@ import org.w3c.xhr.*
     var selectedIndex: Int
         get() = noImpl
         set(value) = noImpl
-    @nativeSetter fun set(index: Int, option: HTMLOptionElement?): Unit = noImpl
+    operator @nativeSetter fun set(index: Int, option: HTMLOptionElement?): Unit = noImpl
     fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: dynamic = null): Unit = noImpl
     fun remove(index: Int): Unit = noImpl
 }
@@ -884,7 +884,7 @@ import org.w3c.xhr.*
     val names: Array<String>
         get() = noImpl
 //    override fun namedItem(name: String): PropertyNodeList? = noImpl
-//    @nativeGetter override fun get(name: String): PropertyNodeList? = noImpl
+//    operator @nativeGetter override fun get(name: String): PropertyNodeList? = noImpl
 }
 
 @native public interface PropertyNodeList : NodeList {
@@ -892,13 +892,13 @@ import org.w3c.xhr.*
 }
 
 @native public interface DOMStringMap {
-    @nativeGetter fun get(name: String): String? = noImpl
-    @nativeSetter fun set(name: String, value: String): Unit = noImpl
+    operator @nativeGetter fun get(name: String): String? = noImpl
+    operator @nativeSetter fun set(name: String, value: String): Unit = noImpl
 }
 
 @native public interface DOMElementMap {
-    @nativeGetter fun get(name: String): Element? = noImpl
-    @nativeSetter fun set(name: String, value: Element): Unit = noImpl
+    operator @nativeGetter fun get(name: String): Element? = noImpl
+    operator @nativeSetter fun set(name: String, value: Element): Unit = noImpl
 }
 
 @native public open class XMLDocument : Document() {
@@ -1869,7 +1869,7 @@ import org.w3c.xhr.*
     var onremovetrack: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    @nativeGetter fun get(index: Int): AudioTrack? = noImpl
+    operator @nativeGetter fun get(index: Int): AudioTrack? = noImpl
     fun getTrackById(id: String): AudioTrack? = noImpl
 }
 
@@ -1901,7 +1901,7 @@ import org.w3c.xhr.*
     var onremovetrack: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    @nativeGetter fun get(index: Int): VideoTrack? = noImpl
+    operator @nativeGetter fun get(index: Int): VideoTrack? = noImpl
     fun getTrackById(id: String): VideoTrack? = noImpl
 }
 
@@ -2008,7 +2008,7 @@ import org.w3c.xhr.*
     var onremovetrack: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    @nativeGetter fun get(index: Int): TextTrack? = noImpl
+    operator @nativeGetter fun get(index: Int): TextTrack? = noImpl
     fun getTrackById(id: String): TextTrack? = noImpl
 }
 
@@ -2040,7 +2040,7 @@ import org.w3c.xhr.*
 @native public interface TextTrackCueList {
     val length: Int
         get() = noImpl
-    @nativeGetter fun get(index: Int): TextTrackCue? = noImpl
+    operator @nativeGetter fun get(index: Int): TextTrackCue? = noImpl
     fun getCueById(id: String): TextTrackCue? = noImpl
 }
 
@@ -2393,8 +2393,8 @@ public inline fun TrackEventInit(track: UnionAudioTrackOrTextTrackOrVideoTrack?,
         get() = noImpl
     val length: Int
         get() = noImpl
-    @nativeGetter fun get(index: Int): Element? = noImpl
-    @nativeGetter fun get(name: String): UnionElementOrRadioNodeList? = noImpl
+    operator @nativeGetter fun get(index: Int): Element? = noImpl
+    operator @nativeGetter fun get(name: String): UnionElementOrRadioNodeList? = noImpl
     fun submit(): Unit = noImpl
     fun reset(): Unit = noImpl
     fun checkValidity(): Boolean = noImpl
@@ -2661,11 +2661,11 @@ public inline fun TrackEventInit(track: UnionAudioTrackOrTextTrackOrVideoTrack?,
     val labels: NodeList
         get() = noImpl
     fun item(index: Int): Element? = noImpl
-    @nativeGetter fun get(index: Int): Element? = noImpl
+    operator @nativeGetter fun get(index: Int): Element? = noImpl
     fun namedItem(name: String): HTMLOptionElement? = noImpl
     fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: dynamic = null): Unit = noImpl
     fun remove(index: Int): Unit = noImpl
-    @nativeSetter fun set(index: Int, option: HTMLOptionElement?): Unit = noImpl
+    operator @nativeSetter fun set(index: Int, option: HTMLOptionElement?): Unit = noImpl
     fun checkValidity(): Boolean = noImpl
     fun reportValidity(): Boolean = noImpl
     fun setCustomValidity(error: String): Unit = noImpl
@@ -3389,7 +3389,7 @@ public inline fun HitRegionOptions(path: Path2D? = null, fillRule: String = "non
 @native public interface DataTransferItemList {
     val length: Int
         get() = noImpl
-    @nativeGetter fun get(index: Int): DataTransferItem? = noImpl
+    operator @nativeGetter fun get(index: Int): DataTransferItem? = noImpl
     fun add(data: String, type: String): DataTransferItem? = noImpl
     fun add(data: File): DataTransferItem? = noImpl
     fun remove(index: Int): Unit = noImpl
@@ -3704,18 +3704,18 @@ public inline fun ErrorEventInit(message: String, filename: String, lineno: Int,
         get() = noImpl
     fun refresh(reload: Boolean = false): Unit = noImpl
     fun item(index: Int): Plugin? = noImpl
-    @nativeGetter fun get(index: Int): Plugin? = noImpl
+    operator @nativeGetter fun get(index: Int): Plugin? = noImpl
     fun namedItem(name: String): Plugin? = noImpl
-    @nativeGetter fun get(name: String): Plugin? = noImpl
+    operator @nativeGetter fun get(name: String): Plugin? = noImpl
 }
 
 @native public interface MimeTypeArray {
     val length: Int
         get() = noImpl
     fun item(index: Int): MimeType? = noImpl
-    @nativeGetter fun get(index: Int): MimeType? = noImpl
+    operator @nativeGetter fun get(index: Int): MimeType? = noImpl
     fun namedItem(name: String): MimeType? = noImpl
-    @nativeGetter fun get(name: String): MimeType? = noImpl
+    operator @nativeGetter fun get(name: String): MimeType? = noImpl
 }
 
 @native public interface Plugin {
@@ -3728,9 +3728,9 @@ public inline fun ErrorEventInit(message: String, filename: String, lineno: Int,
     val length: Int
         get() = noImpl
     fun item(index: Int): MimeType? = noImpl
-    @nativeGetter fun get(index: Int): MimeType? = noImpl
+    operator @nativeGetter fun get(index: Int): MimeType? = noImpl
     fun namedItem(name: String): MimeType? = noImpl
-    @nativeGetter fun get(name: String): MimeType? = noImpl
+    operator @nativeGetter fun get(name: String): MimeType? = noImpl
 }
 
 @native public interface MimeType {
@@ -4057,9 +4057,9 @@ public inline fun CloseEventInit(wasClean: Boolean, code: Short, reason: String,
         get() = noImpl
     fun key(index: Int): String? = noImpl
     fun getItem(key: String): String? = noImpl
-    @nativeGetter fun get(key: String): String? = noImpl
+    operator @nativeGetter fun get(key: String): String? = noImpl
     fun setItem(key: String, value: String): Unit = noImpl
-    @nativeSetter fun set(key: String, value: String): Unit = noImpl
+    operator @nativeSetter fun set(key: String, value: String): Unit = noImpl
     fun removeItem(key: String): Unit = noImpl
     fun clear(): Unit = noImpl
 }
@@ -4380,16 +4380,16 @@ public inline fun CustomEventInit(detail: Any? = null, bubbles: Boolean = false,
     val length: Int
         get() = noImpl
     fun item(index: Int): Node? = noImpl
-    @nativeGetter fun get(index: Int): Node? = noImpl
+    operator @nativeGetter fun get(index: Int): Node? = noImpl
 }
 
 @native public interface HTMLCollection : UnionElementOrHTMLCollection {
     val length: Int
         get() = noImpl
     fun item(index: Int): Element? = noImpl
-    @nativeGetter fun get(index: Int): Element? = noImpl
+    operator @nativeGetter fun get(index: Int): Element? = noImpl
     fun namedItem(name: String): Element? = noImpl
-    @nativeGetter fun get(name: String): Element? = noImpl
+    operator @nativeGetter fun get(name: String): Element? = noImpl
 }
 
 @native public open class MutationObserver(callback: (Array<MutationRecord>, MutationObserver) -> Unit) {
@@ -4551,9 +4551,9 @@ public inline fun MutationObserverInit(childList: Boolean = false, attributes: B
     val length: Int
         get() = noImpl
     fun item(index: Int): Attr? = noImpl
-    @nativeGetter fun get(index: Int): Attr? = noImpl
+    operator @nativeGetter fun get(index: Int): Attr? = noImpl
     fun getNamedItem(name: String): Attr? = noImpl
-    @nativeGetter fun get(name: String): Attr? = noImpl
+    operator @nativeGetter fun get(name: String): Attr? = noImpl
     fun getNamedItemNS(namespace: String?, localName: String): Attr? = noImpl
     fun setNamedItem(attr: Attr): Attr? = noImpl
     fun setNamedItemNS(attr: Attr): Attr? = noImpl
@@ -4733,7 +4733,7 @@ public inline fun MutationObserverInit(childList: Boolean = false, attributes: B
     val length: Int
         get() = noImpl
     fun item(index: Int): String? = noImpl
-    @nativeGetter fun get(index: Int): String? = noImpl
+    operator @nativeGetter fun get(index: Int): String? = noImpl
     fun contains(token: String): Boolean = noImpl
     fun add(vararg tokens: String): Unit = noImpl
     fun remove(vararg tokens: String): Unit = noImpl
