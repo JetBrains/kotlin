@@ -529,8 +529,11 @@ public class FunctionCodegen {
             );
             if (!bridgesToGenerate.isEmpty()) {
                 PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
+                boolean isSpecialBridge =
+                        BuiltinsPropertiesUtilKt.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) != null;
+
                 for (Bridge<Method> bridge : bridgesToGenerate) {
-                    generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo(), false, false);
+                    generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo(), isSpecialBridge, false);
                 }
             }
         }

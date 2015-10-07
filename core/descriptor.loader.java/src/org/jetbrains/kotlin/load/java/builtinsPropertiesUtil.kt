@@ -126,3 +126,20 @@ private fun CallableMemberDescriptor.firstOverridden(
 
 val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
     get () = this in BUILTIN_METHODS_ERASED_VALUE_PARAMETERS_SHORT_NAMES
+
+enum class SpecialSignatureInfo(val signature: String?) {
+    ONE_COLLECTION_PARAMETER("(Ljava/util/Collection<+Ljava/lang/Object;>;)Z"),
+    GENERIC_PARAMETER(null)
+}
+
+val CallableMemberDescriptor.specialSignatureInfo: SpecialSignatureInfo?
+    get() {
+        val builtinFqName = firstOverridden { it is FunctionDescriptor && it.hasErasedValueParametersInJava }?.fqNameOrNull()
+                            ?: return null
+
+        return when (builtinFqName) {
+            in BUILTIN_METHODS_ERASED_COLLECTION_PARAMETER_FQ_NAMES -> SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
+            in BUILTIN_METHODS_GENERIC_PARAMETERS_FQ_NAMES          -> SpecialSignatureInfo.GENERIC_PARAMETER
+            else -> error("Unexpected kind of special builtin: $builtinFqName")
+        }
+    }

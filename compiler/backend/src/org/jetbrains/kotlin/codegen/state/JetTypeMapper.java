@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.BuiltinsPropertiesUtilKt;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.SpecialSignatureInfo;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
@@ -941,7 +942,19 @@ public class JetTypeMapper {
             sw.writeReturnTypeEnd();
         }
 
-        return sw.makeJvmMethodSignature(mapFunctionName(f));
+        JvmMethodSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f));
+
+
+        if (kind != OwnerKind.DEFAULT_IMPLS) {
+            SpecialSignatureInfo specialSignatureInfo = BuiltinsPropertiesUtilKt.getSpecialSignatureInfo(f);
+
+            if (specialSignatureInfo != null) {
+                return new JvmMethodSignature(
+                        signature.getAsmMethod(), specialSignatureInfo.getSignature(), signature.getValueParameters());
+            }
+        }
+
+        return signature;
     }
 
     @NotNull
