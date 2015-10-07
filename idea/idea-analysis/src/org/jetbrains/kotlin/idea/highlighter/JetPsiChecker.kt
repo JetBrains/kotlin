@@ -149,9 +149,8 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                     for (textRange in textRanges) {
                         val annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic))
 
-                        when (factory) {
-                            Errors.DEPRECATED_SYMBOL,
-                            Errors.DEPRECATED_SYMBOL_WITH_MESSAGE -> annotation.setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES)
+                        if (factory == Errors.DEPRECATION) {
+                            annotation.textAttributes = CodeInsightColors.DEPRECATED_ATTRIBUTES
                         }
 
                         setUpAnnotation(diagnostic, annotation, if (factory in Errors.UNUSED_ELEMENT_DIAGNOSTICS)

@@ -7,5 +7,5 @@ class Data {
 }
 
 fun use() {
-    val (<!DEPRECATED_SYMBOL_WITH_MESSAGE!>x<!>, y) = Data()
+    val (<!DEPRECATION!>x<!>, y) = Data()
 }

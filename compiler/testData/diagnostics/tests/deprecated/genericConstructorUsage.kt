@@ -5,4 +5,4 @@ open class C<T>() {
     constructor(p: Int) : this(){}
 }
 
-class D : <!DEPRECATED_SYMBOL_WITH_MESSAGE!>C<String><!>(1)
+class D : <!DEPRECATION!>C<String><!>(1)

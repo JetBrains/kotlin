@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 private fun PsiElement.getJavaDescriptorResolver(): JavaDescriptorResolver? {
     if (!ProjectRootsUtil.isInProjectOrLibraryClassFile(this)) return null
 
-    @Suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
+    @Suppress("DEPRECATION")
     return KotlinCacheService.getInstance(project).getProjectService(JvmPlatform, this.getModuleInfo(), javaClass<JavaDescriptorResolver>())
 }
 

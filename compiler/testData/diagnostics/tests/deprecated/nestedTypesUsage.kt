@@ -12,7 +12,7 @@ class TopLevel {
 }
 
 fun useNested() {
-    val <!UNUSED_VARIABLE!>d<!> = TopLevel.<!DEPRECATED_SYMBOL_WITH_MESSAGE!>Nested<!>.use()
-    TopLevel.<!DEPRECATED_SYMBOL_WITH_MESSAGE!>Nested<!>.Nested2()
-    TopLevel.<!DEPRECATED_SYMBOL_WITH_MESSAGE!>Nested<!>.<!UNRESOLVED_REFERENCE!>CompanionNested2<!>()
+    val <!UNUSED_VARIABLE!>d<!> = TopLevel.<!DEPRECATION!>Nested<!>.use()
+    TopLevel.<!DEPRECATION!>Nested<!>.Nested2()
+    TopLevel.<!DEPRECATION!>Nested<!>.<!UNRESOLVED_REFERENCE!>CompanionNested2<!>()
 }

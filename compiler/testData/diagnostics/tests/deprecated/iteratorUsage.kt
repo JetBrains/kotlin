@@ -19,6 +19,6 @@ class Iter2 {
 }
 
 fun use() {
-    for (x in <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Iter()<!>) {}
-    for (x in <!DEPRECATED_SYMBOL_WITH_MESSAGE, DEPRECATED_SYMBOL_WITH_MESSAGE!>Iter2()<!>) {}
+    for (x in <!DEPRECATION!>Iter()<!>) {}
+    for (x in <!DEPRECATION, DEPRECATION!>Iter2()<!>) {}
 }

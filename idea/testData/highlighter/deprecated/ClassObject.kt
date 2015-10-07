@@ -1,13 +1,13 @@
 fun test() {
-   <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'companion object of MyClass' is deprecated. Use A instead">MyClass</warning>.<warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'companion object of MyClass' is deprecated. Use A instead">test</warning>
+   <warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">MyClass</warning>.<warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">test</warning>
    MyClass()
    val a: MyClass? = null
    val b: MyTrait? = null
-   <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'companion object of MyTrait' is deprecated. Use A instead">MyTrait</warning>.<warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'companion object of MyTrait' is deprecated. Use A instead">test</warning>
-   MyTrait.<warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'companion object of MyTrait' is deprecated. Use A instead">Companion</warning>
-   <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'companion object of MyTrait' is deprecated. Use A instead">MyTrait</warning>
-   MyClass.<warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'companion object of MyClass' is deprecated. Use A instead">Companion</warning>
-   MyClass.<warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'companion object of MyClass' is deprecated. Use A instead">Companion</warning>.<warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'companion object of MyClass' is deprecated. Use A instead">test</warning>
+   <warning descr="[DEPRECATION] 'companion object of MyTrait' is deprecated. Use A instead">MyTrait</warning>.<warning descr="[DEPRECATION] 'companion object of MyTrait' is deprecated. Use A instead">test</warning>
+   MyTrait.<warning descr="[DEPRECATION] 'companion object of MyTrait' is deprecated. Use A instead">Companion</warning>
+   <warning descr="[DEPRECATION] 'companion object of MyTrait' is deprecated. Use A instead">MyTrait</warning>
+   MyClass.<warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">Companion</warning>
+   MyClass.<warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">Companion</warning>.<warning descr="[DEPRECATION] 'companion object of MyClass' is deprecated. Use A instead">test</warning>
 
    a == b
 }

@@ -100,7 +100,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
             else
                 null) ?: return null
 
-            val descriptor = Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.cast(deprecatedDiagnostic).a
+            val descriptor = Errors.DEPRECATION.cast(deprecatedDiagnostic).a
             val replacement = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(descriptor, nameExpression.project) ?: return null
             return Data(nameExpression, replacement, descriptor)
         }

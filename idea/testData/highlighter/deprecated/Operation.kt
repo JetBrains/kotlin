@@ -19,19 +19,19 @@ fun test() {
     val x1 = MyClass()
     val x2 = MyClass()
 
-    x1 <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'minus(MyClass): Unit' is deprecated. Use A instead">-</warning> x2
-    x1 <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'div(MyClass): Unit' is deprecated. Use A instead">/</warning> x2
-    x1 <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'times(MyClass): Unit' is deprecated. Use A instead">*</warning> x2
+    x1 <warning descr="[DEPRECATION] 'minus(MyClass): Unit' is deprecated. Use A instead">-</warning> x2
+    x1 <warning descr="[DEPRECATION] 'div(MyClass): Unit' is deprecated. Use A instead">/</warning> x2
+    x1 <warning descr="[DEPRECATION] 'times(MyClass): Unit' is deprecated. Use A instead">*</warning> x2
 
-    <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'not(): Unit' is deprecated. Use A instead">!</warning>x1
-    <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'plus(): Unit' is deprecated. Use A instead">+</warning>x1
+    <warning descr="[DEPRECATION] 'not(): Unit' is deprecated. Use A instead">!</warning>x1
+    <warning descr="[DEPRECATION] 'plus(): Unit' is deprecated. Use A instead">+</warning>x1
 
-    x1 <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'contains(MyClass): Boolean' is deprecated. Use A instead">in</warning> x2
-    x1 <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'contains(MyClass): Boolean' is deprecated. Use A instead">!in</warning> x2
+    x1 <warning descr="[DEPRECATION] 'contains(MyClass): Boolean' is deprecated. Use A instead">in</warning> x2
+    x1 <warning descr="[DEPRECATION] 'contains(MyClass): Boolean' is deprecated. Use A instead">!in</warning> x2
 
-    x1 <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'plusAssign(MyClass): Unit' is deprecated. Use A instead">+=</warning> x2
+    x1 <warning descr="[DEPRECATION] 'plusAssign(MyClass): Unit' is deprecated. Use A instead">+=</warning> x2
 
-    x1<warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'rangeTo(MyClass): IntRange' is deprecated. Use A instead">..</warning>x2
+    x1<warning descr="[DEPRECATION] 'rangeTo(MyClass): IntRange' is deprecated. Use A instead">..</warning>x2
 }
 
 // NO_CHECK_INFOS

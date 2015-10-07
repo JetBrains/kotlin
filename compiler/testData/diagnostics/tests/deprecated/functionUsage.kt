@@ -22,28 +22,28 @@ object InvocableHolder {
 
 fun invoker() {
     val invocable = Invocable()
-    <!DEPRECATED_SYMBOL_WITH_MESSAGE!>invocable<!>()
-    InvocableHolder.<!DEPRECATED_SYMBOL_WITH_MESSAGE!>invocable<!>()
+    <!DEPRECATION!>invocable<!>()
+    InvocableHolder.<!DEPRECATION!>invocable<!>()
 }
 
 fun block() {
-    <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
-    <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>(2)
+    <!DEPRECATION!>Obsolete<!>()
+    <!DEPRECATION!>Obsolete<!>(2)
 }
 
-fun expression() = <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
+fun expression() = <!DEPRECATION!>Obsolete<!>()
 
-fun reflection() = ::<!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>
-fun reflection2() = UsefulClass::<!DEPRECATED_SYMBOL_WITH_MESSAGE!>member<!>
+fun reflection() = ::<!DEPRECATION!>Obsolete<!>
+fun reflection2() = UsefulClass::<!DEPRECATION!>member<!>
 
 class Initializer {
-    val x = <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
+    val x = <!DEPRECATION!>Obsolete<!>()
 }
 
 @Deprecated("does nothing good")
 fun Any.doNothing() = this.toString()  // "this" should not be marked as deprecated despite it referes to deprecated function
 
 class Delegation {
-    val x by <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
-    var y by <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
+    val x by <!DEPRECATION!>Obsolete<!>()
+    var y by <!DEPRECATION!>Obsolete<!>()
 }

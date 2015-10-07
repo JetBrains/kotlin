@@ -10,33 +10,33 @@ open class Obsolete2 @Deprecated("Constructor") constructor() {
 
 interface Generic<T>
 
-open class Derived() : <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
+open class Derived() : <!DEPRECATION!>Obsolete<!>()
 
 class Derived2() : Derived()
 
-class TypeParam : Generic<<!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>>
+class TypeParam : Generic<<!DEPRECATION!>Obsolete<!>>
 
-object Object : <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
+object Object : <!DEPRECATION!>Obsolete<!>()
 
 class Properties {
-    val x : <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!> = <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
-    var y : <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!> = <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
+    val x : <!DEPRECATION!>Obsolete<!> = <!DEPRECATION!>Obsolete<!>()
+    var y : <!DEPRECATION!>Obsolete<!> = <!DEPRECATION!>Obsolete<!>()
 
-    var n : <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>
-        get() = <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
+    var n : <!DEPRECATION!>Obsolete<!>
+        get() = <!DEPRECATION!>Obsolete<!>()
         set(value) {}
 }
 
-fun param(param: <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>) { param.use() }
+fun param(param: <!DEPRECATION!>Obsolete<!>) { param.use() }
 
-fun funcParamReceiver(param: <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>.()->Unit) { <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>().param() }
-fun funcParamParam(param: (<!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>)->Unit) { param(<!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()) }
-fun funcParamRetVal(param: ()-><!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>) { param() }
+fun funcParamReceiver(param: <!DEPRECATION!>Obsolete<!>.()->Unit) { <!DEPRECATION!>Obsolete<!>().param() }
+fun funcParamParam(param: (<!DEPRECATION!>Obsolete<!>)->Unit) { param(<!DEPRECATION!>Obsolete<!>()) }
+fun funcParamRetVal(param: ()-><!DEPRECATION!>Obsolete<!>) { param() }
 
-fun <T: <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>> constraint() {}
+fun <T: <!DEPRECATION!>Obsolete<!>> constraint() {}
 
-fun <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>.receiver() {}
+fun <!DEPRECATION!>Obsolete<!>.receiver() {}
 
-fun retVal(): <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!> = <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
+fun retVal(): <!DEPRECATION!>Obsolete<!> = <!DEPRECATION!>Obsolete<!>()
 
-fun nullableRetVal(): <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>? = null
+fun nullableRetVal(): <!DEPRECATION!>Obsolete<!>? = null

@@ -15,8 +15,8 @@ class PropertyHolder {
     @Deprecated("text")
     var name = "String"
 
-    val valDelegate <!DEPRECATED_SYMBOL_WITH_MESSAGE!>by<!> Delegate()
-    var varDelegate <!DEPRECATED_SYMBOL_WITH_MESSAGE, DEPRECATED_SYMBOL_WITH_MESSAGE!>by<!> Delegate()
+    val valDelegate <!DEPRECATION!>by<!> Delegate()
+    var varDelegate <!DEPRECATION, DEPRECATION!>by<!> Delegate()
 
     public val test1: String = ""
         @Deprecated("val-getter") get
@@ -35,24 +35,24 @@ class PropertyHolder {
 }
 
 fun PropertyHolder.extFunction() {
-    <!DEPRECATED_SYMBOL_WITH_MESSAGE!>test2<!> = "ext"
-    <!DEPRECATED_SYMBOL_WITH_MESSAGE!>test1<!>
+    <!DEPRECATION!>test2<!> = "ext"
+    <!DEPRECATION!>test1<!>
 }
 
 fun fn() {
-    PropertyHolder().<!DEPRECATED_SYMBOL_WITH_MESSAGE!>test1<!>
-    PropertyHolder().<!DEPRECATED_SYMBOL_WITH_MESSAGE!>test2<!>
-    PropertyHolder().<!DEPRECATED_SYMBOL_WITH_MESSAGE!>test2<!> = ""
+    PropertyHolder().<!DEPRECATION!>test1<!>
+    PropertyHolder().<!DEPRECATION!>test2<!>
+    PropertyHolder().<!DEPRECATION!>test2<!> = ""
 
-    PropertyHolder().<!DEPRECATED_SYMBOL_WITH_MESSAGE!>test3<!>
+    PropertyHolder().<!DEPRECATION!>test3<!>
     PropertyHolder().test3 = ""
 
     PropertyHolder().test4
-    PropertyHolder().<!DEPRECATED_SYMBOL_WITH_MESSAGE!>test4<!> = ""
+    PropertyHolder().<!DEPRECATION!>test4<!> = ""
 
-    val <!UNUSED_VARIABLE!>a<!> = PropertyHolder().<!DEPRECATED_SYMBOL_WITH_MESSAGE!>x<!>
-    val <!UNUSED_VARIABLE!>b<!> = PropertyHolder().<!DEPRECATED_SYMBOL_WITH_MESSAGE!>name<!>
-    PropertyHolder().<!DEPRECATED_SYMBOL_WITH_MESSAGE!>name<!> = "value"
+    val <!UNUSED_VARIABLE!>a<!> = PropertyHolder().<!DEPRECATION!>x<!>
+    val <!UNUSED_VARIABLE!>b<!> = PropertyHolder().<!DEPRECATION!>name<!>
+    PropertyHolder().<!DEPRECATION!>name<!> = "value"
 
     val <!UNUSED_VARIABLE!>d<!> = PropertyHolder().valDelegate
     PropertyHolder().varDelegate = 1
@@ -60,5 +60,5 @@ fun fn() {
 
 fun literals() {
     PropertyHolder::test1
-    PropertyHolder::<!DEPRECATED_SYMBOL_WITH_MESSAGE!>name<!>
+    PropertyHolder::<!DEPRECATION!>name<!>
 }
