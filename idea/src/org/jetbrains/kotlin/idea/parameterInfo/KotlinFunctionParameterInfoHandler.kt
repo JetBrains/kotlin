@@ -353,7 +353,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
 
         val highlightParameterIndex = argumentToParameter(currentArgument)?.index
 
-        if (!(argumentsBeforeCurrent + currentArgument).all { argumentToParameter(it) != null }) { // some of arguments before the current one are not mapped to any of the parameters
+        if (!(argumentsBeforeCurrent + currentArgument).all { argumentToParameter(it) != null }) { // some of arguments before the current one (or the current one) are not mapped to any of the parameters
             return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey = true)
         }
 
