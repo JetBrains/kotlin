@@ -18,89 +18,69 @@ package org.jetbrains.kotlin.rmi.kotlinr
 
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.ScopeKind
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.rmi.*
+import org.jetbrains.kotlin.rmi.CompilerCallbackServicesFacade
+import org.jetbrains.kotlin.rmi.LoopbackNetworkInterface
+import org.jetbrains.kotlin.rmi.SOCKET_ANY_FREE_PORT
 import java.rmi.server.UnicastRemoteObject
 
-public class RemoteIncrementalCompilationComponentsServer(val base: IncrementalCompilationComponents, val port: Int = SOCKET_ANY_FREE_PORT) : RemoteIncrementalCompilationComponents {
+
+public class CompilerCallbackServicesFacadeServer(
+        val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
+        val compilationCancelledStatus: CompilationCanceledStatus? = null,
+        port: Int = SOCKET_ANY_FREE_PORT
+) : CompilerCallbackServicesFacade {
 
     init {
         UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
-    }
-
-    private val cacheServers = hashMapOf<TargetId, RemoteIncrementalCacheServer>()
-    private val lookupTrackerServer by lazy { RemoteLookupTrackerServer(base.getLookupTracker()) }
-
-    override fun getIncrementalCache(target: TargetId): RemoteIncrementalCache =
-            cacheServers.get(target) ?: {
-                val newServer = RemoteIncrementalCacheServer(base.getIncrementalCache(target), port)
-                cacheServers.put(target, newServer)
-                newServer
-            }()
-
-    override fun getLookupTracker(): RemoteLookupTracker = lookupTrackerServer
-}
-
-
-public class RemoteIncrementalCacheServer(val cache: IncrementalCache, port: Int = SOCKET_ANY_FREE_PORT) : RemoteIncrementalCache {
-
-    init {
-        UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
-    }
-
-    override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
-
-    override fun getObsoleteMultifileClassFacades(): Collection<String> = cache.getObsoleteMultifileClasses()
-
-    override fun getMultifileFacadeParts(internalName: String): Collection<String>? = cache.getStableMultifileFacadeParts(internalName)
-
-    override fun getMultifileFacade(partInternalName: String): String? = cache.getMultifileFacade(partInternalName)
-
-    override fun getPackagePartData(fqName: String): JvmPackagePartProto? = cache.getPackagePartData(fqName)
-
-    override fun getModuleMappingData(): ByteArray? = cache.getModuleMappingData()
-
-    override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
-        cache.registerInline(fromPath, jvmSignature, toPath)
-    }
-
-    override fun getClassFilePath(internalClassName: String): String = cache.getClassFilePath(internalClassName)
-
-    override fun close() {
-        cache.close()
     }
 
     public fun disconnect() {
         UnicastRemoteObject.unexportObject(this, true)
     }
-}
 
-public class RemoteLookupTrackerServer(val base: LookupTracker, port: Int = SOCKET_ANY_FREE_PORT) : RemoteLookupTracker {
+    override fun hasIncrementalCaches(): Boolean = incrementalCompilationComponents != null
 
-    init {
-        UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
+    override fun hasLookupTracker(): Boolean = incrementalCompilationComponents != null
+
+    override fun hasCompilationCanceledStatus(): Boolean = compilationCancelledStatus != null
+
+    // TODO: consider replacing NPE with other reporting, although NPE here means most probably incorrect usage
+
+    override fun incrementalCache_getObsoletePackageParts(target: TargetId): Collection<String> = incrementalCompilationComponents!!.getIncrementalCache(target).getObsoletePackageParts()
+
+    override fun incrementalCache_getObsoleteMultifileClassFacades(target: TargetId): Collection<String> = incrementalCompilationComponents!!.getIncrementalCache(target).getObsoleteMultifileClasses()
+
+    override fun incrementalCache_getMultifileFacadeParts(target: TargetId, internalName: String): Collection<String>? = incrementalCompilationComponents!!.getIncrementalCache(target).getStableMultifileFacadeParts(internalName)
+
+    override fun incrementalCache_getMultifileFacade(target: TargetId, partInternalName: String): String? = incrementalCompilationComponents!!.getIncrementalCache(target).getMultifileFacade(partInternalName)
+
+    override fun incrementalCache_getPackagePartData(target: TargetId, fqName: String): JvmPackagePartProto? = incrementalCompilationComponents!!.getIncrementalCache(target).getPackagePartData(fqName)
+
+    override fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray? = incrementalCompilationComponents!!.getIncrementalCache(target).getModuleMappingData()
+
+    override fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String) {
+        incrementalCompilationComponents!!.getIncrementalCache(target).registerInline(fromPath, jvmSignature, toPath)
     }
 
-    override fun record(lookupContainingFile: String, lookupLine: Int?, lookupColumn: Int?, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        base.record(lookupContainingFile, lookupLine, lookupColumn, scopeFqName, scopeKind, name)
+    override fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String = incrementalCompilationComponents!!.getIncrementalCache(target).getClassFilePath(internalClassName)
+
+    override fun incrementalCache_close(target: TargetId) {
+        incrementalCompilationComponents!!.getIncrementalCache(target).close()
     }
 
-    private val _isDoNothing: Boolean = base == LookupTracker.DO_NOTHING
-    override fun isDoNothing(): Boolean = _isDoNothing
-}
-
-
-public class RemoteCompilationCanceledStatusServer(val base: CompilationCanceledStatus, port: Int = SOCKET_ANY_FREE_PORT) : RemoteCompilationCanceledStatus {
-
-    init {
-        UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
+    override fun lookupTracker_record(lookupContainingFile: String, lookupLine: Int?, lookupColumn: Int?, scopeFqName: String, scopeKind: ScopeKind, name: String) {
+        incrementalCompilationComponents!!.getLookupTracker().record(lookupContainingFile, lookupLine, lookupColumn, scopeFqName, scopeKind, name)
     }
 
-    override fun checkCanceled() {
-        base.checkCanceled()
+    private val lookupTracker_isDoNothing: Boolean = incrementalCompilationComponents != null && incrementalCompilationComponents.getLookupTracker() == LookupTracker.DO_NOTHING
+
+    override fun lookupTracker_isDoNothing(): Boolean = lookupTracker_isDoNothing
+
+    override fun compilationCanceledStatus_checkCanceled() {
+        compilationCancelledStatus!!.checkCanceled()
     }
 }

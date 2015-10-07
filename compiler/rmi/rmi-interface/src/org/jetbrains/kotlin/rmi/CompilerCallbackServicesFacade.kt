@@ -19,42 +19,59 @@ package org.jetbrains.kotlin.rmi
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
-import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
 
-public interface RemoteIncrementalCache : Remote {
-    @Throws(RemoteException::class)
-    public fun getObsoletePackageParts(): Collection<String>
+
+/**
+ * common facade for compiler services exposed from client process (e.g. JPS) to the compiler running on daemon
+ * the reason for having common facade is attempt to reduce number of connections between client and daemon
+ * Note: non-standard naming convention used to denote combining several entities in one facade - prefix <entityName>_ is used for every function belonging to the entity
+ */
+public interface CompilerCallbackServicesFacade : Remote {
 
     @Throws(RemoteException::class)
-    public fun getObsoleteMultifileClassFacades(): Collection<String>
+    public fun hasIncrementalCaches(): Boolean
 
     @Throws(RemoteException::class)
-    public fun getMultifileFacade(partInternalName: String): String?
+    public fun hasLookupTracker(): Boolean
 
     @Throws(RemoteException::class)
-    public fun getPackagePartData(fqName: String): JvmPackagePartProto?
+    public fun hasCompilationCanceledStatus(): Boolean
+
+    // ----------------------------------------------------
+    // IncrementalCache
+    @Throws(RemoteException::class)
+    public fun incrementalCache_getObsoletePackageParts(target: TargetId): Collection<String>
 
     @Throws(RemoteException::class)
-    public fun getModuleMappingData(): ByteArray?
+    public fun incrementalCache_getObsoleteMultifileClassFacades(target: TargetId): Collection<String>
 
     @Throws(RemoteException::class)
-    public fun registerInline(fromPath: String, jvmSignature: String, toPath: String)
+    public fun incrementalCache_getMultifileFacade(target: TargetId, partInternalName: String): String?
 
     @Throws(RemoteException::class)
-    fun getClassFilePath(internalClassName: String): String
+    public fun incrementalCache_getPackagePartData(target: TargetId, fqName: String): JvmPackagePartProto?
 
     @Throws(RemoteException::class)
-    public fun close()
+    public fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray?
 
     @Throws(RemoteException::class)
-    public fun getMultifileFacadeParts(internalName: String): Collection<String>?
-}
+    public fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String)
 
-public interface RemoteLookupTracker : Remote {
     @Throws(RemoteException::class)
-    fun record(
+    fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String
+
+    @Throws(RemoteException::class)
+    public fun incrementalCache_close(target: TargetId)
+
+    @Throws(RemoteException::class)
+    public fun incrementalCache_getMultifileFacadeParts(target: TargetId, internalName: String): Collection<String>?
+
+    // ----------------------------------------------------
+    // LookupTracker
+    @Throws(RemoteException::class)
+    fun lookupTracker_record(
             lookupContainingFile: String,
             lookupLine: Int?,
             lookupColumn: Int?,
@@ -62,25 +79,13 @@ public interface RemoteLookupTracker : Remote {
             scopeKind: ScopeKind,
             name: String
     )
+    
     @Throws(RemoteException::class)
-    fun isDoNothing(): Boolean
+    fun lookupTracker_isDoNothing(): Boolean
+    
+    // ----------------------------------------------------
+    // CompilationCanceledStatus
+    @Throws(RemoteException::class)
+    fun compilationCanceledStatus_checkCanceled(): Unit
 }
-
-public interface RemoteIncrementalCompilationComponents : Remote {
-    @Throws(RemoteException::class)
-    public fun getIncrementalCache(target: TargetId): RemoteIncrementalCache
-
-    @Throws(RemoteException::class)
-    public fun getLookupTracker(): RemoteLookupTracker
-}
-
-public interface RemoteCompilationCanceledStatus : Remote {
-    @Throws(RemoteException::class)
-    fun checkCanceled(): Unit
-}
-
-public data class RemoteCompilationServices(
-        public val incrementalCompilationComponents: RemoteIncrementalCompilationComponents? = null,
-        public val compilationCanceledStatus: RemoteCompilationCanceledStatus? = null
-) : Serializable
 

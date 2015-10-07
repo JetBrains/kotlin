@@ -59,7 +59,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
     }
 
     override fun remoteCompile(args: Array<out String>,
-                               services: RemoteCompilationServices,
+                               servicesFacade: CompilerCallbackServicesFacade,
                                compilerOutputStream: RemoteOutputStream,
                                outputFormat: CompileService.OutputFormat,
                                serviceOutputStream: RemoteOutputStream
@@ -67,12 +67,12 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             doCompile(args, compilerOutputStream, serviceOutputStream) { printStream, profiler ->
                 when (outputFormat) {
                     CompileService.OutputFormat.PLAIN -> compiler.exec(printStream, *args)
-                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(services, profiler), *args)
+                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(servicesFacade, profiler), *args)
                 }
             }
 
     override fun remoteIncrementalCompile(args: Array<out String>,
-                                          services: RemoteCompilationServices,
+                                          servicesFacade: CompilerCallbackServicesFacade,
                                           compilerOutputStream: RemoteOutputStream,
                                           compilerOutputFormat: CompileService.OutputFormat,
                                           serviceOutputStream: RemoteOutputStream
@@ -80,7 +80,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             doCompile(args, compilerOutputStream, serviceOutputStream) { printStream, profiler ->
                 when (compilerOutputFormat) {
                     CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
-                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(services, profiler), *args)
+                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(servicesFacade, profiler), *args)
                 }
             }
 
@@ -134,10 +134,14 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
                 }
             }
 
-    private fun createCompileServices(services: RemoteCompilationServices, rpcProfiler: Profiler): Services {
+    private fun createCompileServices(facade: CompilerCallbackServicesFacade, rpcProfiler: Profiler): Services {
         val builder = Services.Builder()
-        services.incrementalCompilationComponents?.let { builder.register(IncrementalCompilationComponents::class.java, RemoteIncrementalCompilationComponentsClient(it, rpcProfiler)) }
-        services.compilationCanceledStatus?.let { builder.register(CompilationCanceledStatus::class.java, RemoteCompilationCanceledStatusClient(it, rpcProfiler)) }
+        if (facade.hasIncrementalCaches() || facade.hasLookupTracker()) {
+            builder.register(IncrementalCompilationComponents::class.java, RemoteIncrementalCompilationComponentsClient(facade, rpcProfiler))
+        }
+        if (facade.hasCompilationCanceledStatus()) {
+            builder.register(CompilationCanceledStatus::class.java, RemoteCompilationCanceledStatusClient(facade, rpcProfiler))
+        }
         return builder.build()
     }
 
