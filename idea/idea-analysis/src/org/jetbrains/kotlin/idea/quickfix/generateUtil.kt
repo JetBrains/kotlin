@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.utils.ifEmpty
 
 public fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement) {
     val project = element.project
@@ -146,32 +147,20 @@ public fun <T : JetDeclaration> generateMembers(
         classOrObject: JetClassOrObject,
         generators: Collection<() -> T>
 ): List<T> {
-    val insertedMembers = SmartList<T>()
-    return runWriteAction<List<T>> {
-        if (generators.isEmpty()) return@runWriteAction emptyList()
+    generators.ifEmpty { return emptyList() }
 
+    return runWriteAction<List<T>> {
         val body = classOrObject.getOrCreateBody()
 
         var afterAnchor = findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList()
-
-        var firstGenerated: PsiElement? = null
-
-        for (generator in generators) {
-            val member = generator()
+        val insertedMembers = generators.mapTo(SmartList<T>()) {
             @Suppress("UNCHECKED_CAST")
-            val added = body.addAfter(member, afterAnchor) as T
-
-            if (firstGenerated == null) {
-                firstGenerated = added
-            }
-
-            afterAnchor = added
-            insertedMembers.add(added)
+            (body.addAfter(it(), afterAnchor) as T).apply { afterAnchor = this }
         }
 
         ShortenReferences.DEFAULT.process(insertedMembers)
 
-        moveCaretIntoGeneratedElement(editor, firstGenerated!!)
+        moveCaretIntoGeneratedElement(editor, insertedMembers.first())
 
         insertedMembers
     }
