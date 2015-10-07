@@ -10,4 +10,6 @@ class A(val prop: Int, arg: Int) {
 }
 
 // EXIST: abc, topLevel, prop, another, foo
-// ABSENT: arg, local
+// ABSENT: { itemText: "arg" }
+// EXIST: { itemText: "arg =" }
+// ABSENT: local
