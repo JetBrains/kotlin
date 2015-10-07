@@ -336,6 +336,8 @@ public class CallResolver {
         assert !context.call.getExplicitReceiver().exists() :
                 "Constructor can't be invoked with explicit receiver: " + context.call.getCallElement().getText();
 
+        context.trace.record(BindingContext.LEXICAL_SCOPE, context.call.getCallElement(), context.scope);
+
         JetReferenceExpression functionReference = expression.getConstructorReferenceExpression();
         JetTypeReference typeReference = expression.getTypeReference();
         if (functionReference == null || typeReference == null) {
