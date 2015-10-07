@@ -320,7 +320,9 @@ public class ReferenceVariantsHelper(
         val type = context.getType(receiver)
         if (type != null && TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)) {
             val evaluator = receiver.getContainingFile().getCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR)
-            return evaluator?.invoke(receiver)
+            val runtimeType = evaluator?.invoke(receiver)
+            if (runtimeType == type) return null
+            return runtimeType
         }
         return type
     }
