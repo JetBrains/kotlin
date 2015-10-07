@@ -2,7 +2,11 @@ package
 
 public fun test(): kotlin.Unit
 public infix fun Example.toExt(/*0*/ other: Example): Pair<Example, Example>
+public infix fun Example.toExtDefaultValues(/*0*/ other: Example? = ..., /*1*/ blah: kotlin.Int = ...): Pair<Example, Example?>
 public fun Example.toExtNonInfix(/*0*/ other: Example): Pair<Example, Example>
+public fun Example.toExtNonInfixDefaultValues(/*0*/ other: Example? = ..., /*1*/ blah: kotlin.Int = ...): Pair<Example, Example?>
+public fun Example.toExtNonInfixWithExtraParams(/*0*/ other: Example, /*1*/ blah: kotlin.Int = ...): Pair<Example, Example>
+public infix fun Example.toExtWithExtraParams(/*0*/ other: Example, /*1*/ blah: kotlin.Int = ...): Pair<Example, Example>
 public fun Example.withLambda(/*0*/ f: () -> kotlin.Unit): Pair<Example, () -> kotlin.Unit>
 
 public final class Example {
