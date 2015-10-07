@@ -19,25 +19,28 @@ package org.jetbrains.kotlin.rmi.service
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.rmi.CompileService
+import org.jetbrains.kotlin.rmi.DummyProfiler
+import org.jetbrains.kotlin.rmi.Profiler
 
-public class RemoteIncrementalCacheClient(val cache: CompileService.RemoteIncrementalCache): IncrementalCache {
-    override fun getObsoleteMultifileClasses(): Collection<String> = cache.getObsoleteMultifileClassFacades()
+public class RemoteIncrementalCacheClient(val cache: CompileService.RemoteIncrementalCache, val profiler: Profiler = DummyProfiler()): IncrementalCache {
 
-    override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? = cache.getMultifileFacadeParts(facadeInternalName)
+    override fun getObsoletePackageParts(): Collection<String> = profiler.withMeasure(this) { cache.getObsoletePackageParts() }
 
-    override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
+    override fun getObsoleteMultifileClasses(): Collection<String> = profiler.withMeasure(this) { cache.getObsoleteMultifileClassFacades() }
 
-    override fun getMultifileFacade(partInternalName: String): String? = cache.getMultifileFacade(partInternalName)
+    override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? = profiler.withMeasure(this) { cache.getMultifileFacadeParts(facadeInternalName) }
 
-    override fun getPackagePartData(fqName: String): JvmPackagePartProto? = cache.getPackagePartData(fqName)
+    override fun getPackagePartData(fqName: String): JvmPackagePartProto? = profiler.withMeasure(this) { cache.getPackagePartData(fqName) }
 
-    override fun getModuleMappingData(): ByteArray? = cache.getModuleMappingData()
+    override fun getMultifileFacade(partInternalName: String): String? = profiler.withMeasure(this) { cache.getMultifileFacade(partInternalName) }
+
+    override fun getModuleMappingData(): ByteArray? = profiler.withMeasure(this) { cache.getModuleMappingData() }
 
     override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
-        cache.registerInline(fromPath, jvmSignature, toPath)
+        profiler.withMeasure(this) { cache.registerInline(fromPath, jvmSignature, toPath) }
     }
 
-    override fun getClassFilePath(internalClassName: String): String = cache.getClassFilePath(internalClassName)
+    override fun getClassFilePath(internalClassName: String): String = profiler.withMeasure(this) { cache.getClassFilePath(internalClassName) }
 
-    override fun close(): Unit = cache.close()
+    override fun close(): Unit = profiler.withMeasure(this) { cache.close() }
 }

@@ -123,15 +123,13 @@ public object KotlinCompilerClient {
     }
 
 
-    // TODO: remove jvmStatic after all use sites will switch to kotlin
-    @JvmStatic
-    public fun incrementalCompile(compiler: CompileService, args: Array<out String>, services: CompilationServices, compilerOut: OutputStream, daemonOut: OutputStream): Int {
+    public fun incrementalCompile(compiler: CompileService, args: Array<out String>, services: CompilationServices, compilerOut: OutputStream, daemonOut: OutputStream, profiler: Profiler = DummyProfiler()): Int {
 
         val compilerOutStreamServer = RemoteOutputStreamServer(compilerOut)
         val daemonOutStreamServer = RemoteOutputStreamServer(daemonOut)
         val cacheServers = hashMapOf<TargetId, RemoteIncrementalCacheServer>()
         try {
-            return compiler.remoteIncrementalCompile(args, makeRemoteServices(services), compilerOutStreamServer, CompileService.OutputFormat.XML, daemonOutStreamServer)
+            return profiler.withMeasure(this) { compiler.remoteIncrementalCompile(args, makeRemoteServices(services), compilerOutStreamServer, CompileService.OutputFormat.XML, daemonOutStreamServer) }
         }
         finally {
             cacheServers.forEach { it.getValue().disconnect() }

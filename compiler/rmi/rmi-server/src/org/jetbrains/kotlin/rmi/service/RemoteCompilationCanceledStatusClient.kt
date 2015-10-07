@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.CompileService
+import org.jetbrains.kotlin.rmi.DummyProfiler
+import org.jetbrains.kotlin.rmi.Profiler
 
 
-class RemoteCompilationCanceledStatusClient(val proxy: CompileService.RemoteCompilationCanceledStatus): CompilationCanceledStatus {
+class RemoteCompilationCanceledStatusClient(val proxy: CompileService.RemoteCompilationCanceledStatus, val profiler: Profiler = DummyProfiler()): CompilationCanceledStatus {
     override fun checkCanceled() {
-        proxy.checkCanceled()
+        profiler.withMeasure(this) { proxy.checkCanceled() }
     }
 }
