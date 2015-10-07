@@ -118,7 +118,12 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             if (elementToReportOn == null) return // TODO: it'd be better to report this error without any element at all
 
             val data = ConflictingJvmDeclarationsData(classInternalName, classOrigin, rawSignature, origins)
-            diagnostics.report(ErrorsJvm.ACCIDENTAL_OVERRIDE.on(elementToReportOn, data))
+            if (memberElement != null) {
+                diagnostics.report(ErrorsJvm.ACCIDENTAL_OVERRIDE.on(elementToReportOn, data))
+            }
+            else {
+                diagnostics.report(ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS.on(elementToReportOn, data))
+            }
         }
     }
 

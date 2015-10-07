@@ -77,18 +77,6 @@ public class BridgeTestGenerated extends AbstractBridgeTest {
         doTest(fileName);
     }
 
-    @TestMetadata("fakeGenericContravariantOverride1.kt")
-    public void testFakeGenericContravariantOverride1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeGenericContravariantOverride1.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("fakeGenericContravariantOverride2.kt")
-    public void testFakeGenericContravariantOverride2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeGenericContravariantOverride2.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("fakeGenericCovariantOverride.kt")
     public void testFakeGenericCovariantOverride() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeGenericCovariantOverride.kt");
@@ -101,21 +89,9 @@ public class BridgeTestGenerated extends AbstractBridgeTest {
         doTest(fileName);
     }
 
-    @TestMetadata("fakeOverrideOfPropertySetterInTraitImpl.kt")
-    public void testFakeOverrideOfPropertySetterInTraitImpl() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeOverrideOfPropertySetterInTraitImpl.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("fakeOverrideOfTraitImpl.kt")
     public void testFakeOverrideOfTraitImpl() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeOverrideOfTraitImpl.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("fakeOverrideWithImplementationInTrait.kt")
-    public void testFakeOverrideWithImplementationInTrait() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeOverrideWithImplementationInTrait.kt");
         doTest(fileName);
     }
 

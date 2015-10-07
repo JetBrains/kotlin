@@ -21,9 +21,9 @@ open class MyClass() : MyTrait, MyAbstractClass() {
 
 class MyChildClass() : MyClass() {}
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass<!> : MyTrait, MyAbstractClass() {}
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass<!> : MyTrait, MyAbstractClass() {}
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass2<!>() : MyTrait, MyAbstractClass() {
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass2<!>() : MyTrait, MyAbstractClass() {
     override fun foo() {}
     override val pr : Unit = Unit
     override val prr : Unit = Unit
@@ -35,7 +35,7 @@ class MyChildClass() : MyClass() {}
     override val prr : Unit = Unit
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass4<!>() : MyTrait, MyAbstractClass() {
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass4<!>() : MyTrait, MyAbstractClass() {
     <!VIRTUAL_MEMBER_HIDDEN!>fun foo()<!> {}
     <!VIRTUAL_MEMBER_HIDDEN, MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val pr : Unit<!>
     <!NOTHING_TO_OVERRIDE!>override<!> fun other() {}

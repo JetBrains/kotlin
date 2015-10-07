@@ -8,7 +8,7 @@ interface B {
     fun foo() = 2
 }
 
-open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C<!> : A, B {}
+open <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class C<!> : A, B {}
 
 interface E {
     fun foo(): Int

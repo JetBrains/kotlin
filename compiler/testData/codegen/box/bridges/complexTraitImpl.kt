@@ -9,7 +9,9 @@ interface B {
     fun foo(): ArrayList<String> = ArrayList(Arrays.asList("B"))
 }
 
-open class C : A(), B
+open class C : A(), B {
+    override fun foo(): ArrayList<String> = super<B>.foo()
+}
 
 interface D {
     fun foo(): Collection<String>

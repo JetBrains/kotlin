@@ -10,4 +10,4 @@ interface KotlinTrait {
     public fun foo(someOtherName: Int) {}
 }
 
-class BothTraitsSubclass : JavaInterface, KotlinTrait
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class BothTraitsSubclass<!> : JavaInterface, KotlinTrait

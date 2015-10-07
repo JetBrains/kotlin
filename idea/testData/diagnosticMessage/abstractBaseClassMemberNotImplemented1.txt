@@ -1,0 +1,2 @@
+<!-- abstractBaseClassMemberNotImplemented1 -->
+Class 'E' must be declared abstract or implement abstract base class member public abstract fun f(): T4 defined in D

@@ -22,7 +22,7 @@ abstract class C {
     }
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object D<!> : C() {
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object D<!> : C() {
     <!INCOMPATIBLE_MODIFIERS!>override<!> <!INCOMPATIBLE_MODIFIERS!>const<!> val x: Int = 9
 
     const val inObject = 10
