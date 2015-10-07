@@ -190,6 +190,12 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PrivateConstructor.kt")
+        public void testPrivateConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/PrivateConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/Simple.kt");
