@@ -7,7 +7,7 @@ fun main(args: Array<String>) {
 
 class MyFile: File("")
 
-// EXIST: absoluteFile, getAbsoluteFile
+// EXIST: absoluteFile
 // NOTHING_ELSE
 
 // RUNTIME_TYPE: MyFile
