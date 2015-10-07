@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.*
+import java.io.BufferedOutputStream
 import java.io.PrintStream
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
@@ -130,12 +131,18 @@ class CompileServiceImpl(
     private fun doCompile(args: Array<out String>, compilerMessagesStreamProxy: RemoteOutputStream, serviceOutputStreamProxy: RemoteOutputStream, body: (PrintStream, Profiler) -> ExitCode): Int =
             ifAlive {
                 val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
-                val compilerMessagesStream = PrintStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler))
-                val serviceOutputStream = PrintStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler))
-                checkedCompile(args, serviceOutputStream, rpcProfiler) {
-                    val res = body( compilerMessagesStream, rpcProfiler).code
-                    _lastUsedSeconds = nowSeconds()
-                    res
+                val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), 4096))
+                val serviceOutputStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler), 4096))
+                try {
+                    checkedCompile(args, serviceOutputStream, rpcProfiler) {
+                        val res = body(compilerMessagesStream, rpcProfiler).code
+                        _lastUsedSeconds = nowSeconds()
+                        res
+                    }
+                }
+                finally {
+                    serviceOutputStream.flush()
+                    compilerMessagesStream.flush()
                 }
             }
 
