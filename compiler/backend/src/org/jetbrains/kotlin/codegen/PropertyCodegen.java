@@ -331,6 +331,10 @@ public class PropertyCodegen {
             modifiers |= ACC_PRIVATE;
         }
 
+        if (propertyDescriptor.getVisibility() == Visibilities.INTERNAL) {
+            modifiers |= ACC_SYNTHETIC;
+        }
+
         if (AsmUtil.isPropertyWithBackingFieldCopyInOuterClass(propertyDescriptor)) {
             ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
             parentBodyCodegen.addCompanionObjectPropertyToCopy(propertyDescriptor, defaultValue);

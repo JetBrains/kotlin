@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
 
-public class FileBasedPackageMemberDeclarationProvider internal constructor(
+public class FileBasedPackageMemberDeclarationProvider(
         storageManager: StorageManager,
         private val fqName: FqName,
         private val factory: FileBasedDeclarationProviderFactory,

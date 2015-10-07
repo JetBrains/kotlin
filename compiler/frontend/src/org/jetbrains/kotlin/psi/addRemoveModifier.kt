@@ -33,7 +33,7 @@ private fun createModifierList(text: String, owner: JetModifierListOwner): JetMo
     return owner.addBefore(newModifierList, anchor) as JetModifierList
 }
 
-internal fun addModifier(owner: JetModifierListOwner, modifier: JetModifierKeywordToken) {
+fun addModifier(owner: JetModifierListOwner, modifier: JetModifierKeywordToken) {
     val modifierList = owner.modifierList
     if (modifierList == null) {
         createModifierList(modifier.value, owner)
@@ -43,7 +43,7 @@ internal fun addModifier(owner: JetModifierListOwner, modifier: JetModifierKeywo
     }
 }
 
-internal fun addAnnotationEntry(owner: JetModifierListOwner, annotationEntry: JetAnnotationEntry): JetAnnotationEntry {
+fun addAnnotationEntry(owner: JetModifierListOwner, annotationEntry: JetAnnotationEntry): JetAnnotationEntry {
     val modifierList = owner.modifierList
     return if (modifierList == null) {
         createModifierList(annotationEntry.text, owner).annotationEntries.first()
@@ -90,7 +90,7 @@ internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKey
     }
 }
 
-internal fun removeModifier(owner: JetModifierListOwner, modifier: JetModifierKeywordToken) {
+fun removeModifier(owner: JetModifierListOwner, modifier: JetModifierKeywordToken) {
     owner.getModifierList()?.let {
         it.getModifier(modifier)?.delete()
         if (it.firstChild == null) {
