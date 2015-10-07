@@ -69,7 +69,7 @@ fun Type.dynamicIfUnknownType(allTypes: Set<String>, standardTypes: Set<Type> = 
 
 private fun Type.dynamicIfAnyType(): Type = if (this is AnyType && this.nullable) DynamicType else this
 
-private fun mapType(repository: Repository, type: Type): Type = when (type) {
+internal fun mapType(repository: Repository, type: Type): Type = when (type) {
     is SimpleType -> {
         val typeName = type.type
         when {
@@ -101,7 +101,7 @@ private fun mapTypedef(repository: Repository, type: SimpleType): Type {
     val typedef = repository.typeDefs[type.type]!!
 
     return when {
-        typedef.types is UnionType && typedef.types.memberTypes.size() == 1 -> mapType(repository, typedef.types.memberTypes.single().withNullability(type.nullable))
+        typedef.types is UnionType && typedef.types.memberTypes.size == 1 -> mapType(repository, typedef.types.memberTypes.single().withNullability(type.nullable))
         typedef.types is UnionType -> SimpleType(typedef.name, type.nullable)
         else -> mapType(repository, typedef.types.withNullability(type.nullable))
     }
@@ -109,7 +109,7 @@ private fun mapTypedef(repository: Repository, type: SimpleType): Type {
 
 private fun GenerateFunction?.allTypes() = if (this != null) sequenceOf(returnType) + arguments.asSequence().map { it.type } else emptySequence()
 
-private fun collectUnionTypes(allTypes: Map<String, GenerateTraitOrClass>) =
+internal fun collectUnionTypes(allTypes: Map<String, GenerateTraitOrClass>) =
         allTypes.values().asSequence()
                 .flatMap {
                     it.secondaryConstructors.asSequence().flatMap { it.constructor.allTypes() } +
@@ -129,4 +129,4 @@ private fun guessPackage(types : List<String>, allTypes: Map<String, GenerateTra
         .filterNotNull()
         .filter { it.isNotEmpty() }
         .distinct()
-        .minBy { it.split('.').size() } ?: ""
+        .minBy { it.split('.').size } ?: ""
