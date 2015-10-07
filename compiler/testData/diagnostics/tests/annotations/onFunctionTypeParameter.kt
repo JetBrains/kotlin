@@ -12,7 +12,7 @@ fun inParamNested(fn1: (fn2: (<!UNSUPPORTED!>@Ann<!> n: Int)->Unit)->Unit) {}
 
 fun inReturn(): (<!UNSUPPORTED!>@Ann<!> x: Int)->Unit = {}
 
-class A : (<!UNSUPPORTED!>@Ann<!> x: Int)->Unit {
+class A : (<!UNSUPPORTED!>@Ann<!> Int)->Unit {
     override fun invoke(p1: Int) {
         var lambda: (<!UNSUPPORTED!>@Ann<!> x: Int)->Unit = {}
     }

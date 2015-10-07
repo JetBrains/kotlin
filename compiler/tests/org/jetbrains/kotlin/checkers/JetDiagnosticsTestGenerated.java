@@ -331,6 +331,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NamedFunctionTypeParameterInSupertype.kt")
+        public void testNamedFunctionTypeParameterInSupertype() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/NamedFunctionTypeParameterInSupertype.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Nullability.kt")
         public void testNullability() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Nullability.kt");
