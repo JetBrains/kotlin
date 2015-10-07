@@ -18,11 +18,11 @@ fun box() : String {
     b[0] = 1
     assertEquals(1, b[0])
 
-    val x = 1 : Int?
+    val x: Int? = 1
     assertEquals(1, x!!.hashCode())
 
-    val y = 1000 : Int?
-    val z = 1000 : Int?
+    val y: Int? = 1000
+    val z: Int? = 1000
     val res = y.identityEquals(z)
 
     val c1: Any = if (1 == 1) 0 else "abc"

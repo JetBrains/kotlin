@@ -282,7 +282,7 @@ class ArraysTest {
         expect(0) { arrayOf("cat", "dog", "bird").indexOf("cat") }
         expect(1) { arrayOf("cat", "dog", "bird").indexOf("dog") }
         expect(2) { arrayOf("cat", "dog", "bird").indexOf("bird") }
-        expect(0) { arrayOf(null, "dog", null).indexOf(null : String?)}
+        expect(0) { arrayOf(null, "dog", null).indexOf(null as String?)}
 
         expect(-1) { arrayOf("cat", "dog", "bird").indexOfFirst { it.contains("p") } }
         expect(0) { arrayOf("cat", "dog", "bird").indexOfFirst { it.startsWith('c') } }
@@ -299,7 +299,7 @@ class ArraysTest {
         expect(-1) { arrayOf("cat", "dog", "bird").lastIndexOf("mouse") }
         expect(0) { arrayOf("cat", "dog", "bird").lastIndexOf("cat") }
         expect(1) { arrayOf("cat", "dog", "bird").lastIndexOf("dog") }
-        expect(2) { arrayOf(null, "dog", null).lastIndexOf(null : String?)}
+        expect(2) { arrayOf(null, "dog", null).lastIndexOf(null as String?)}
         expect(3) { arrayOf("cat", "dog", "bird", "dog").lastIndexOf("dog") }
 
         expect(-1) { arrayOf("cat", "dog", "bird").indexOfLast { it.contains("p") } }

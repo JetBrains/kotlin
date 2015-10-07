@@ -1203,7 +1203,7 @@ public class JetControlFlowProcessor {
 
             IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
             JetExpression left = expression.getLeft();
-            if (operationType == JetTokens.COLON || operationType == JetTokens.AS_KEYWORD || operationType == JetTokens.AS_SAFE) {
+            if (operationType == JetTokens.AS_KEYWORD || operationType == JetTokens.AS_SAFE) {
                 generateInstructions(left);
                 if (getBoundOrUnreachableValue(left) != null) {
                     createNonSyntheticValue(expression, MagicKind.CAST, left);

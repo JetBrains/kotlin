@@ -93,7 +93,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             assert subjectType != null;
             if (TypeUtils.isNullableType(subjectType) && !WhenChecker.containsNullCase(expression, context.trace)) {
                 ExpressionTypingContext subjectContext = context.replaceExpectedType(TypeUtils.makeNotNullable(subjectType));
-                components.dataFlowAnalyzer.checkPossibleCast(subjectType, JetPsiUtil.safeDeparenthesize(subjectExpression, false), subjectContext);
+                components.dataFlowAnalyzer.checkPossibleCast(subjectType, JetPsiUtil.safeDeparenthesize(subjectExpression), subjectContext);
             }
             context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         }

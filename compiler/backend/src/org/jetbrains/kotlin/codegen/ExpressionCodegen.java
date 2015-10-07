@@ -1578,7 +1578,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         for (Iterator<JetExpression> iterator = statements.iterator(); iterator.hasNext(); ) {
             JetExpression possiblyLabeledStatement = iterator.next();
 
-            JetElement statement = JetPsiUtil.safeDeparenthesize(possiblyLabeledStatement, true);
+            JetElement statement = JetPsiUtil.safeDeparenthesize(possiblyLabeledStatement);
 
             if (statement instanceof JetNamedDeclaration) {
                 JetNamedDeclaration declaration = (JetNamedDeclaration) statement;
@@ -3693,9 +3693,6 @@ The "returned" value of try expression with no finally is either the last expres
     public StackValue visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression, StackValue receiver) {
         JetExpression left = expression.getLeft();
         final IElementType opToken = expression.getOperationReference().getReferencedNameElementType();
-        if (opToken == JetTokens.COLON) {
-            return gen(left);
-        }
 
         final JetType rightType = bindingContext.get(TYPE, expression.getRight());
         assert rightType != null;

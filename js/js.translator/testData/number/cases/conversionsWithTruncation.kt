@@ -14,8 +14,8 @@ fun box(): String {
     assertEquals(65, 321.toByte())
     assertEquals(-56, 200.toByte())
 
-    assertEquals(65, (321: Short).toByte())
-    assertEquals(-56, (200: Short).toByte())
+    assertEquals(65, (321.toShort()).toByte())
+    assertEquals(-56, (200.toShort()).toByte())
 
     assertEquals(-1, 65535.0.toShort())
     assertEquals(-1, 65535.0f.toShort())

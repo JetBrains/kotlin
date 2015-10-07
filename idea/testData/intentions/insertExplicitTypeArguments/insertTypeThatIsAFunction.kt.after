@@ -1,6 +1,6 @@
 // IS_APPLICABLE: true
 fun foo() {
-    bar<(Int) -> Int>({ 2 * it }: (Int) -> Int)
+    bar<(Int) -> Int>({ 2 * it } as (Int) -> Int)
 }
 
 fun bar<T>(t: T): Int = 1

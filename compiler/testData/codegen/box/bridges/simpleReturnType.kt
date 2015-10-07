@@ -8,9 +8,10 @@ class Z : A<Int>(17) {
 
 fun box(): String {
     val z = Z()
+    val a: A<Int> = z
     return when {
-        z.foo()            != 239 -> "Fail #1"
-        (z : A<Int>).foo() != 239 -> "Fail #2"
+        z.foo() != 239 -> "Fail #1"
+        a.foo() != 239 -> "Fail #2"
         else -> "OK"
     }
 }

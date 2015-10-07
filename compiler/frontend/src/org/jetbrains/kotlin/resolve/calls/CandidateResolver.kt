@@ -365,7 +365,7 @@ public class CandidateResolver(
             expectedType: JetType,
             actualType: JetType,
             context: ResolutionContext<*>): JetType? {
-        val receiverToCast = ExpressionReceiver(JetPsiUtil.safeDeparenthesize(expression, false), actualType)
+        val receiverToCast = ExpressionReceiver(JetPsiUtil.safeDeparenthesize(expression), actualType)
         val variants = smartCastManager.getSmartCastVariantsExcludingReceiver(context, receiverToCast)
         for (possibleType in variants) {
             if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, expectedType)) {

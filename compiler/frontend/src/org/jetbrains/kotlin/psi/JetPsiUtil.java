@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
@@ -72,54 +71,14 @@ public class JetPsiUtil {
 
     @NotNull
     public static JetExpression safeDeparenthesize(@NotNull JetExpression expression) {
-        return safeDeparenthesize(expression, true);
-    }
-
-    @NotNull
-    public static JetExpression safeDeparenthesize(@NotNull JetExpression expression, boolean deparenthesizeBinaryExpressionWithTypeRHS) {
-        JetExpression deparenthesized = deparenthesize(expression, deparenthesizeBinaryExpressionWithTypeRHS);
+        JetExpression deparenthesized = deparenthesize(expression);
         return deparenthesized != null ? deparenthesized : expression;
     }
 
     @Nullable
-    public static JetExpression deparenthesize(@Nullable JetExpression expression) {
-        return deparenthesize(expression, /* deparenthesizeBinaryExpressionWithTypeRHS = */ true);
-    }
-
-    @Nullable
-    public static JetExpression deparenthesize(
-            @Nullable JetExpression expression,
-            boolean deparenthesizeBinaryExpressionWithTypeRHS
-    ) {
-        return deparenthesizeWithResolutionStrategy(
-                expression, deparenthesizeBinaryExpressionWithTypeRHS, /* deparenthesizeRecursively = */  null);
-    }
-
-    @Nullable
-    public static JetExpression deparenthesizeOnce(
-            @Nullable JetExpression expression,
-            boolean deparenthesizeBinaryExpressionWithTypeRHS
-    ) {
-        return deparenthesizeOnce(expression, deparenthesizeBinaryExpressionWithTypeRHS, null);
-    }
-
-    @Nullable
-    public static JetExpression deparenthesizeWithResolutionStrategy(
-            @Nullable JetExpression expression,
-            @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
-    ) {
-        return deparenthesizeWithResolutionStrategy(expression, true, typeResolutionStrategy);
-    }
-
-    @Nullable
-    private static JetExpression deparenthesizeWithResolutionStrategy(
-            @Nullable JetExpression expression,
-            boolean deparenthesizeBinaryExpressionWithTypeRHS,
-            @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
-    ) {
+    public static JetExpression deparenthesize(@Nullable JetExpression expression ) {
         while (true) {
-            JetExpression baseExpression =
-                    deparenthesizeOnce(expression, deparenthesizeBinaryExpressionWithTypeRHS, typeResolutionStrategy);
+            JetExpression baseExpression = deparenthesizeOnce(expression);
 
             if (baseExpression == expression) return baseExpression;
             expression = baseExpression;
@@ -127,24 +86,10 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    private static JetExpression deparenthesizeOnce(
-            @Nullable JetExpression expression,
-            boolean deparenthesizeBinaryExpressionWithTypeRHS,
-            @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
+    public static JetExpression deparenthesizeOnce(
+            @Nullable JetExpression expression
     ) {
-        if (deparenthesizeBinaryExpressionWithTypeRHS && expression instanceof JetBinaryExpressionWithTypeRHS) {
-            JetBinaryExpressionWithTypeRHS binaryExpression = (JetBinaryExpressionWithTypeRHS) expression;
-            JetSimpleNameExpression operationSign = binaryExpression.getOperationReference();
-            if (JetTokens.COLON.equals(operationSign.getReferencedNameElementType())) {
-                JetTypeReference typeReference = binaryExpression.getRight();
-                if (typeResolutionStrategy != null && typeReference != null) {
-                    typeResolutionStrategy.apply(typeReference);
-                }
-                return binaryExpression.getLeft();
-            }
-            return expression;
-        }
-        else if (expression instanceof JetAnnotatedExpression) {
+        if (expression instanceof JetAnnotatedExpression) {
             return ((JetAnnotatedExpression) expression).getBaseExpression();
         }
         else if (expression instanceof JetLabeledExpression) {
@@ -893,7 +838,7 @@ public class JetPsiUtil {
             @Nullable JetExpression expression,
             @NotNull StatementFilter statementFilter
     ) {
-        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(expression, false);
+        JetExpression deparenthesizedExpression = deparenthesize(expression);
         if (deparenthesizedExpression instanceof JetBlockExpression) {
             JetBlockExpression blockExpression = (JetBlockExpression) deparenthesizedExpression;
             // todo

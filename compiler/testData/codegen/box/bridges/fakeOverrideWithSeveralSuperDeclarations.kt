@@ -17,9 +17,14 @@ class F5 : F3, D4()
 fun box(): String {
     val z = F5()
     var result = z.foo()
-    result += (z : D4).foo()
-    result += (z : F3).foo() as Int
-    result += (z : D2).foo() as Int
-    result += (z : D1).foo() as Int
+    val d4: D4 = z
+    val f3: F3 = z
+    val d2: D2 = z
+    val d1: D1 = z
+
+    result += d4.foo()
+    result += f3.foo() as Int
+    result += d2.foo() as Int
+    result += d1.foo() as Int
     return if (result == 5 * 42) "OK" else "Fail: $result"
 }

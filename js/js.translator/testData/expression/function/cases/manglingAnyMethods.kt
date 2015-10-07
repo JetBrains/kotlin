@@ -37,7 +37,7 @@ private class PrivateClass {
 val CALEE_NAME = RegExp("""((?:equals|hashCode|toString)[^(]*)""")
 
 fun <T> Function0<T>.extractNames(): Array<String> {
-    val names = CALEE_NAME.exec(this.toString(): String)
+    val names = CALEE_NAME.exec(this.toString())
 
     if (names == null || names.size() != 2) {
         throw Exception("Cannot extract function name, $names for actual = \"$this\"")

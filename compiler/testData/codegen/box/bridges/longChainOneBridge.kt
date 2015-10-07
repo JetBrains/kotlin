@@ -17,12 +17,16 @@ class Z : D() {
 
 fun box(): String {
     val z = Z()
+    val d: D = z
+    val c: C = z
+    val b: B<String> = z
+    val a: A<String> = z
     return when {
-        z.foo("")               != "Z" -> "Fail #1"
-        (z : D).foo("")         != "Z" -> "Fail #2"
-        (z : C).foo("")         != "Z" -> "Fail #3"
-        (z : B<String>).foo("") != "Z" -> "Fail #4"
-        (z : A<String>).foo("") != "Z" -> "Fail #5"
+        z.foo("") != "Z" -> "Fail #1"
+        d.foo("") != "Z" -> "Fail #2"
+        c.foo("") != "Z" -> "Fail #3"
+        b.foo("") != "Z" -> "Fail #4"
+        a.foo("") != "Z" -> "Fail #5"
         else -> "OK"
     }
 }

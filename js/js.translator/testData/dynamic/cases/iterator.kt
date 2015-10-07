@@ -3,7 +3,7 @@ package foo
 fun testFor(expected: Int, d: dynamic, case: String) {
     var actual = 0
     for (v in d) {
-        actual += v: Int
+        actual += v as Int
     }
     assertEquals(expected, actual, "testFor on $case")
 }
@@ -12,7 +12,7 @@ fun testIterator(expected: Int, d: dynamic, case: String) {
     var actual = 0
     val it = d.iterator()
     while (it.hasNext()) {
-        actual += it.next(): Int
+        actual += it.next() as Int
     }
     assertEquals(expected, actual, "testIterator on $case")
 }

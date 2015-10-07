@@ -16,7 +16,9 @@ class C : B {
 fun box(): String {
     val c = C()
     var r = c.foo().iterator().next()
-    r += (c : B).foo().iterator().next()
-    r += (c : A).foo().iterator().next()
+    val b: B = c
+    val a: A = c
+    r += b.foo().iterator().next()
+    r += a.foo().iterator().next()
     return if (r == "CCC") "OK" else "Fail: $r"
 }

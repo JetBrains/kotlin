@@ -1,21 +1,21 @@
 val receiver = { Int.(<!SYNTAX!><!>) <!SYNTAX!>-><!> }
 val receiverWithParameter = { Int.<!ILLEGAL_SELECTOR!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>)<!> <!SYNTAX!>-><!> }
 
-val receiverAndReturnType = { Int.(<!SYNTAX!><!>): Int <!SYNTAX!>->  5<!> }
-val receiverAndReturnTypeWithParameter = { Int.<!ILLEGAL_SELECTOR!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>: Int <!SYNTAX!>->  5<!> }
+val receiverAndReturnType = { Int.(<!SYNTAX!><!>)<!SYNTAX!>: Int ->  5<!> }
+val receiverAndReturnTypeWithParameter = { Int.(<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!><!SYNTAX!><!SYNTAX!><!>: Int): Int ->  5<!> }
 
-val returnType = { (<!SYNTAX!><!>): Int <!SYNTAX!>-> 5<!> }
-val returnTypeWithParameter = { (<!UNRESOLVED_REFERENCE!>b<!>: Int)<!DEPRECATED_STATIC_ASSERT!>: Int<!> <!SYNTAX!>-> 5<!> }
+val returnType = { (<!SYNTAX!><!>)<!SYNTAX!>: Int -> 5<!> }
+val returnTypeWithParameter = { (<!UNRESOLVED_REFERENCE!>b<!><!SYNTAX!><!SYNTAX!><!>: Int): Int -> 5<!> }
 
 val receiverWithFunctionType = { ((Int)<!SYNTAX!><!> <!SYNTAX!>-> Int).() -><!> }
 
-val parenthesizedParameters = { (<!UNRESOLVED_REFERENCE!>a<!>: Int) <!SYNTAX!>-><!> }
+val parenthesizedParameters = { (<!UNRESOLVED_REFERENCE!>a<!><!SYNTAX!><!SYNTAX!><!>: Int) -><!> }
 val parenthesizedParameters2 = { (<!UNRESOLVED_REFERENCE!>b<!>) <!SYNTAX!>-><!> }
 
 val none = { -> }
 
 
-val parameterWithFunctionType = { <!UNRESOLVED_REFERENCE!>a<!>: ((Int) -> Int) -> <!SYNTAX!><!>} // todo fix parser
+val parameterWithFunctionType = { <!UNRESOLVED_REFERENCE!>a<!><!SYNTAX!>: ((Int) -> Int) -><!> } // todo fix parser
 
 val newSyntax = { a: Int -> }
 val newSyntax1 = { <!CANNOT_INFER_PARAMETER_TYPE!>a<!>, <!CANNOT_INFER_PARAMETER_TYPE!>b<!> -> }

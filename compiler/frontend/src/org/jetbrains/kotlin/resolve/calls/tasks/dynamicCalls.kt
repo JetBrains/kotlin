@@ -186,7 +186,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
             val varargElementType: JetType?
             var hasSpreadOperator = false
 
-            val argExpression = JetPsiUtil.deparenthesize(arg.getArgumentExpression(), false)
+            val argExpression = JetPsiUtil.deparenthesize(arg.getArgumentExpression())
 
             when {
                 argExpression is JetFunctionLiteralExpression -> {

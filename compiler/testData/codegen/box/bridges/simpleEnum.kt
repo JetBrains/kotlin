@@ -11,10 +11,10 @@ enum class Z(val name: String) : A<String> {
 
 fun box(): String {
     return when {
-        Z.Z1.foo("")               != "Z1" -> "Fail #1"
-        Z.Z2.foo("")               != "Z2" -> "Fail #2"
-        (Z.Z1 : A<String>).foo("") != "Z1" -> "Fail #3"
-        (Z.Z2 : A<String>).foo("") != "Z2" -> "Fail #4"
+        Z.Z1.foo("")                != "Z1" -> "Fail #1"
+        Z.Z2.foo("")                != "Z2" -> "Fail #2"
+        (Z.Z1 as A<String>).foo("") != "Z1" -> "Fail #3"
+        (Z.Z2 as A<String>).foo("") != "Z2" -> "Fail #4"
         else -> "OK"
     }
 }

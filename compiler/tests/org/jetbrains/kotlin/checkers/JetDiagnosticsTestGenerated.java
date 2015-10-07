@@ -4578,12 +4578,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("ArrayAccessAssignment.kt")
-            public void testArrayAccessAssignment() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deparenthesize/ArrayAccessAssignment.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("checkDeparenthesizedType.kt")
             public void testCheckDeparenthesizedType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deparenthesize/checkDeparenthesizedType.kt");

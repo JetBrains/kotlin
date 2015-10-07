@@ -211,7 +211,7 @@ public class DataFlowAnalyzer {
             hasError.set(false);
         }
 
-        JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
+        JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck);
         recordExpectedType(c.trace, expression, c.expectedType);
 
         if (expressionType == null) return null;

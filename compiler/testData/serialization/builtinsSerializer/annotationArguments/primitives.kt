@@ -22,16 +22,3 @@ annotation class Primitives(
         boolean = true
 )
 class C
-
-@Primitives(
-        byte = 7: Byte,
-        char = '%': Char,
-        short = 239: Short,
-        int = 239017: Int,
-        long = 123456789123456789L: Long,
-        float = 2.72f: Float,
-        double = -3.14: Double,
-        boolean = true: Boolean
-)
-class D
-

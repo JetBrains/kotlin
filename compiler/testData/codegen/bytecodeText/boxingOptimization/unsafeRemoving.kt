@@ -13,11 +13,11 @@ fun foo() {
     val b = arrayOfNulls<Int>(4)
     b[100] = 5
 
-    val x = 6 : Int?
+    val x: Int? = 6
     val hc = x!!.hashCode()
 
-    val y = 7 : Int?
-    val z = 8 : Int?
+    val y: Int? = 7
+    val z: Int? = 8
     val res = y.identityEquals(z)
 
     val c1: Any = if (1 == 1) 0 else "abc"

@@ -148,7 +148,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         },
 
-        COLON_AS(COLON, AS_KEYWORD, AS_SAFE) {
+        AS(AS_KEYWORD, AS_SAFE) {
             @Override
             public JetNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
                 parser.myJetParsing.parseTypeRef();

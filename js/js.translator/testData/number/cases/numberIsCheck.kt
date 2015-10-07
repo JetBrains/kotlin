@@ -36,8 +36,8 @@ fun box(): String {
     assertEquals(false, anyX is Number, "anyX is Number")
 
     testNum(100)
-    testNum(100: Short)
-    testNum(100: Byte)
+    testNum(100.toShort())
+    testNum(100.toByte())
     testNum(100.0)
     testNum(100.0f)
 

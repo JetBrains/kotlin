@@ -87,7 +87,7 @@ public class LabelResolver {
 
     @NotNull
     private JetExpression getExpressionUnderLabel(@NotNull JetExpression labeledExpression) {
-        JetExpression expression = JetPsiUtil.safeDeparenthesize(labeledExpression, true);
+        JetExpression expression = JetPsiUtil.safeDeparenthesize(labeledExpression);
         if (expression instanceof JetFunctionLiteralExpression) {
             return ((JetFunctionLiteralExpression) expression).getFunctionLiteral();
         }

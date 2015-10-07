@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +50,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPac
 import java.util.Collection;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.psi.JetPsiUtil.deparenthesizeWithResolutionStrategy;
+import static org.jetbrains.kotlin.psi.JetPsiUtil.deparenthesize;
 import static org.jetbrains.kotlin.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE_REASSIGNMENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
@@ -246,7 +245,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetType leftType = leftInfo.getType();
 
         JetExpression right = expression.getRight();
-        JetExpression left = leftOperand == null ? null : JetPsiUtil.deparenthesize(leftOperand);
+        JetExpression left = leftOperand == null ? null : deparenthesize(leftOperand);
         if (right == null || left == null) {
             temporary.commit();
             return leftInfo.clearType();
@@ -341,13 +340,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                     scope, ((JetAnnotatedExpression) leftOperand).getAnnotationEntries(), context.trace
             );
         }
-        JetExpression left = deparenthesizeWithResolutionStrategy(leftOperand, new Function<JetTypeReference, Void>() {
-            @Override
-            public Void apply(JetTypeReference reference) {
-                components.typeResolver.resolveType(context.scope, reference, context.trace, true);
-                return null;
-            }
-        });
+        JetExpression left = deparenthesize(leftOperand);
         JetExpression right = expression.getRight();
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;

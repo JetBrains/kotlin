@@ -13,11 +13,14 @@ class Z : C<Double>() {
 
 fun box(): String {
     val z = Z()
+    val c: C<Double> = z
+    val b: B<String, Double> = z
+    val a: A<String, Int, Double> = z
     return when {
-        z.foo("", 0, 0.0)                            != "Z" -> "Fail #1"
-        (z : C<Double>).foo("", 0, 0.0)              != "Z" -> "Fail #2"
-        (z : B<String, Double>).foo("", 0, 0.0)      != "Z" -> "Fail #3"
-        (z : A<String, Int, Double>).foo("", 0, 0.0) != "Z" -> "Fail #4"
+        z.foo("", 0, 0.0) != "Z" -> "Fail #1"
+        c.foo("", 0, 0.0) != "Z" -> "Fail #2"
+        b.foo("", 0, 0.0) != "Z" -> "Fail #3"
+        a.foo("", 0, 0.0) != "Z" -> "Fail #4"
         else -> "OK"
     }
 }

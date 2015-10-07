@@ -12,13 +12,17 @@ enum class Z(val name: String) : B {
 
 
 fun box(): String {
+    val z1b: B = Z.Z1
+    val z2b: B = Z.Z2
+    val z1a: A<String> = Z.Z1
+    val z2a: A<String> = Z.Z2
     return when {
-        Z.Z1.foo("")               != "Z1" -> "Fail #1"
-        Z.Z2.foo("")               != "Z2" -> "Fail #2"
-        (Z.Z1 : B).foo("")         != "Z1" -> "Fail #3"
-        (Z.Z2 : B).foo("")         != "Z2" -> "Fail #4"
-        (Z.Z1 : A<String>).foo("") != "Z1" -> "Fail #5"
-        (Z.Z2 : A<String>).foo("") != "Z2" -> "Fail #6"
+        Z.Z1.foo("") != "Z1" -> "Fail #1"
+        Z.Z2.foo("") != "Z2" -> "Fail #2"
+        z1b.foo("")  != "Z1" -> "Fail #3"
+        z2b.foo("")  != "Z2" -> "Fail #4"
+        z1a.foo("")  != "Z1" -> "Fail #5"
+        z2a.foo("")  != "Z2" -> "Fail #6"
         else -> "OK"
     }
 }

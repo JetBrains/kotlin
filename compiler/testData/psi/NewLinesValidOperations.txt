@@ -46,18 +46,6 @@ JetFile: NewLinesValidOperations.kt
           PsiElement(IDENTIFIER)('str')
         PsiWhiteSpace('\n\n        ')
         OPERATION_REFERENCE
-          PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('String')
-      PsiWhiteSpace('\n\n    ')
-      BINARY_WITH_TYPE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('str')
-        PsiWhiteSpace('\n\n        ')
-        OPERATION_REFERENCE
           PsiElement(as)('as')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE

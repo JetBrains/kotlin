@@ -95,7 +95,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         VIRTUAL_MEMBER_HIDDEN.registerFactory(AddModifierFix.createFactory(OVERRIDE_KEYWORD))
 
         USELESS_CAST.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory("Remove cast"))
-        DEPRECATED_STATIC_ASSERT.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory("Remove static type assertion"))
 
         val changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory()
         WRONG_SETTER_PARAMETER_TYPE.registerFactory(changeAccessorTypeFactory)

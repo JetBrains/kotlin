@@ -167,7 +167,6 @@ public class KotlinCompletionContributor : CompletionContributor() {
         val inIncompleteSignature = blockChild.siblings(forward = false, withItself = false).all {
             when (it) {
                 is PsiWhiteSpace, is PsiComment -> true
-                is JetBinaryExpressionWithTypeRHS -> it.getOperationReference().getReferencedNameElementType() == JetTokens.COLON
                 else -> false
             }
         }

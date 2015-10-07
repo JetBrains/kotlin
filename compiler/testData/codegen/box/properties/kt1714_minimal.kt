@@ -7,6 +7,7 @@ class AImpl : A {
 }
 
 public fun box() : String {
-    (AImpl() : A).v
+    val a: A = AImpl()
+    a.v
     return "OK"
 }

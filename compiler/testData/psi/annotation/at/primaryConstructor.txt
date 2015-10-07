@@ -153,48 +153,6 @@ JetFile: primaryConstructor.kt
   CLASS
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('A5')
-    PsiWhiteSpace(' ')
-    PRIMARY_CONSTRUCTOR
-      MODIFIER_LIST
-        PsiElement(private)('private')
-        PsiWhiteSpace(' ')
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann4')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              BINARY_WITH_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('x')
-                OPERATION_REFERENCE
-                  PsiElement(COLON)(':')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Int')
-            PsiElement(RPAR)(')')
-    PsiErrorElement:Expecting 'constructor' keyword
-      <empty list>
-    PsiWhiteSpace(' ')
-    PsiElement(COLON)(':')
-    PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_SUPER_CLASS
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('B')
-  PsiWhiteSpace('\n')
-  CLASS
-    PsiElement(class)('class')
-    PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A6')
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR

@@ -13,5 +13,6 @@ class D : A<String> by C()
 fun box(): String {
     val d = D()
     if (d.id("") != "") return "Fail"
-    return (d : A<String>).id("OK")
+    val a: A<String> = d
+    return a.id("OK")
 }

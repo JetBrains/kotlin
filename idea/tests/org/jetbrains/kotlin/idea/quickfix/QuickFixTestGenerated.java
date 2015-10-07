@@ -3941,12 +3941,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/expressions"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
-        @TestMetadata("removeStaticTypeAssertion.kt")
-        public void testRemoveStaticTypeAssertion() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/removeStaticTypeAssertion.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("removeUselessCast.kt")
         public void testRemoveUselessCast() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/removeUselessCast.kt");
@@ -5684,12 +5678,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("call.kt")
             public void testCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/suppress/forStatement/call.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("colon.kt")
-            public void testColon() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/suppress/forStatement/colon.kt");
                 doTest(fileName);
             }
 

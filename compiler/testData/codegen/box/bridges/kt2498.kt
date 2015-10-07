@@ -13,7 +13,9 @@ fun box(): String {
     val myStringList = StringList()
     myStringList.add("first element")
     if (myStringList.get(0) != "StringList.get()") return "Fail #1"
-    if ((myStringList: BaseStringList).get(0) != "StringList.get()") return "Fail #2"
-    if ((myStringList: ArrayList<String>).get(0) != "StringList.get()") return "Fail #3"
+    val b: BaseStringList = myStringList
+    val a: ArrayList<String> = myStringList
+    if (b.get(0) != "StringList.get()") return "Fail #2"
+    if (a.get(0) != "StringList.get()") return "Fail #3"
     return "OK"
 }

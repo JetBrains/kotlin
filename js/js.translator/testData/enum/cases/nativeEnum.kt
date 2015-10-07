@@ -13,7 +13,7 @@ enum class JsEnum {
 fun box(): String {
     assertEquals(1, JsEnum.Foo)
     assertEquals("BAR", JsEnum.Bar)
-    assertEquals("OK", (JsEnum.Baz: dynamic).ok)
+    assertEquals("OK", JsEnum.Baz.asDynamic().ok)
 
     return "OK"
 }

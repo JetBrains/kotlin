@@ -2,7 +2,7 @@
 
 fun foo() {
     var v = Box<String?>()
-    ++(v: Box<String?<caret>?>)
+    ++(v as Box<String?<caret>?>)
 }
 
 class Box<T> {

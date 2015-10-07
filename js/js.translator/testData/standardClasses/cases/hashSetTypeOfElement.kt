@@ -14,11 +14,11 @@ fun box(): String {
     assertEquals("number", typeof (intSet.iterator().next()), "intSet")
 
     val shortSet = HashSet<Short>()
-    shortSet.add(1: Short)
+    shortSet.add(1.toShort())
     assertEquals("number", typeof (shortSet.iterator().next()), "shortSet")
 
     val byteSet = HashSet<Byte>()
-    byteSet.add(1: Byte)
+    byteSet.add(1.toByte())
     assertEquals("number", typeof (byteSet.iterator().next()), "byteSet")
 
     val doubleSet = HashSet<Double>()

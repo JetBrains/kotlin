@@ -10,8 +10,8 @@ class B() {
 
 fun box(): Boolean {
     var c: Int = 0
-    var a = A() : Any?
-    var b = null : Any?
+    var a: Any? = A()
+    var b: Any? = null
     when(a) {
         null -> c = 10;
         is B -> c = 10000

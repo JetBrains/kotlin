@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
-import java.util.ArrayList
+import java.util.*
 
 public class CallCompleter(
         private val argumentTypeResolver: ArgumentTypeResolver,
@@ -297,7 +297,7 @@ public class CallCompleter(
         if ((!ErrorUtils.containsErrorType(recordedType) && recordedType == updatedType) || updatedType == null) return updatedType
 
         fun deparenthesizeOrGetSelector(expression: JetExpression?): JetExpression? {
-            val deparenthesized = JetPsiUtil.deparenthesizeOnce(expression, /* deparenthesizeBinaryExpressionWithTypeRHS = */ false)
+            val deparenthesized = JetPsiUtil.deparenthesizeOnce(expression)
             if (deparenthesized != expression) return deparenthesized
 
             if (expression is JetQualifiedExpression) return expression.getSelectorExpression()

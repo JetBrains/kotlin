@@ -13,13 +13,18 @@ fun box(): String {
     val o = object : B() {
         override fun foo(t: String) = "o"
     }
+    val zb: B = Z
+    val ob: B = o
+    val za: A<String> = Z
+    val oa: A<String> = o
+
     return when {
-        Z.foo("")               != "Z" -> "Fail #1"
-        o.foo("")               != "o" -> "Fail #2"
-        (Z : B).foo("")         != "Z" -> "Fail #3"
-        (o : B).foo("")         != "o" -> "Fail #4"
-        (Z : A<String>).foo("") != "Z" -> "Fail #5"
-        (o : A<String>).foo("") != "o" -> "Fail #6"
+        Z.foo("")  != "Z" -> "Fail #1"
+        o.foo("")  != "o" -> "Fail #2"
+        zb.foo("") != "Z" -> "Fail #3"
+        ob.foo("") != "o" -> "Fail #4"
+        za.foo("") != "Z" -> "Fail #5"
+        oa.foo("") != "o" -> "Fail #6"
         else -> "OK"
     }
 }
