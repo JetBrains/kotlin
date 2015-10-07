@@ -71,7 +71,7 @@ public inline fun FilePropertyBag(type: String = "", lastModified: Int): FilePro
     val length: Int
         get() = noImpl
     fun item(index: Int): File? = noImpl
-    @nativeGetter fun get(index: Int): File? = noImpl
+    operator @nativeGetter fun get(index: Int): File? = noImpl
 }
 
 @native public open class FileReader : EventTarget {

@@ -71,8 +71,8 @@ private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: 
     indent(commented, level)
 
     when (f.nativeGetterOrSetter) {
-        NativeGetterOrSetter.GETTER -> append("@nativeGetter ")
-        NativeGetterOrSetter.SETTER -> append("@nativeSetter ")
+        NativeGetterOrSetter.GETTER -> append("operator @nativeGetter ")
+        NativeGetterOrSetter.SETTER -> append("operator @nativeSetter ")
         NativeGetterOrSetter.NONE -> {}
     }
 
