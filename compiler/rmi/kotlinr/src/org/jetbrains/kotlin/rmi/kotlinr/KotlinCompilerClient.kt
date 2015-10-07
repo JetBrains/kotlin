@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.rmi.kotlinr
 
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.*
 import java.io.*
@@ -150,6 +149,7 @@ public object KotlinCompilerClient {
         }
     }
 
+    public val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
     data class ClientOptions(
             public var stop: Boolean = false
     ) : OptionsGroup {
@@ -157,30 +157,34 @@ public object KotlinCompilerClient {
             get() = listOf(BoolPropMapper(this, ClientOptions::stop))
     }
 
+    private fun configureClientOptions(opts: ClientOptions): ClientOptions {
+        System.getProperty(COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY)?.let {
+            val unrecognized = it.trimQuotes().split(",").filterExtractProps(opts.mappers, "")
+            if (unrecognized.any())
+                throw IllegalArgumentException(
+                        "Unrecognized client options passed via property $COMPILE_DAEMON_OPTIONS_PROPERTY: " + unrecognized.joinToString(" ") +
+                        "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() }))
+        }
+        return opts
+    }
+
+    private fun configureClientOptions(): ClientOptions = configureClientOptions(ClientOptions())
+
 
     @JvmStatic
     public fun main(vararg args: String) {
         val compilerId = CompilerId()
-        val daemonOptions = DaemonOptions()
-        val daemonLaunchingOptions = DaemonJVMOptions()
-        val clientOptions = ClientOptions()
+        val daemonOptions = configureDaemonOptions()
+        val daemonLaunchingOptions = configureDaemonJVMOptions(true)
+        val clientOptions = configureClientOptions()
         val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, daemonLaunchingOptions, clientOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
         if (!clientOptions.stop) {
             if (compilerId.compilerClasspath.none()) {
                 // attempt to find compiler to use
                 System.err.println("compiler wasn't explicitly specified, attempt to find appropriate jar")
-                System.getProperty("java.class.path")
-                        ?.split(File.pathSeparator)
-                        ?.map { File(it).parentFile }
-                        ?.distinct()
-                        ?.map {
-                            it?.walk()
-                                    ?.firstOrNull { it.name.equals(COMPILER_JAR_NAME, ignoreCase = true) }
-                        }
-                        ?.filterNotNull()
-                        ?.firstOrNull()
-                        ?.let { compilerId.compilerClasspath = listOf(it.absolutePath) }
+                detectCompilerClasspath()
+                        ?.let { compilerId.compilerClasspath = it }
             }
             if (compilerId.compilerClasspath.none())
                 throw IllegalArgumentException("Cannot find compiler jar")
@@ -203,6 +207,10 @@ public object KotlinCompilerClient {
                 println("Shutdown the daemon")
                 daemon.shutdown()
                 println("Daemon shut down successfully")
+            }
+            filteredArgs.none() -> {
+                // so far used only in tests
+                println("Warning: empty arguments list, only daemon check is performed: checkCompilerId() returns ${checkCompilerId(daemon, compilerId)}")
             }
             else -> {
                 println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
@@ -227,6 +235,19 @@ public object KotlinCompilerClient {
             }
         }
     }
+
+    public fun detectCompilerClasspath(): List<String>? =
+            System.getProperty("java.class.path")
+            ?.split(File.pathSeparator)
+            ?.map { File(it).parentFile }
+            ?.distinct()
+            ?.map {
+                it?.walk()
+                        ?.firstOrNull { it.name.equals(COMPILER_JAR_NAME, ignoreCase = true) }
+            }
+            ?.filterNotNull()
+            ?.firstOrNull()
+            ?.let { listOf(it.absolutePath) }
 
     // --- Implementation ---------------------------------------
 
@@ -335,7 +356,7 @@ public object KotlinCompilerClient {
             } ?: DAEMON_DEFAULT_STARTUP_TIMEOUT_MS
             if (daemonOptions.runFilesPath.isNotEmpty()) {
                 val succeeded = isEchoRead.tryAcquire(daemonStartupTimeout, TimeUnit.MILLISECONDS)
-                if (!daemon.isAlive())
+                if (!isProcessAlive(daemon))
                     throw Exception("Daemon terminated unexpectedly")
                 if (!succeeded)
                     throw Exception("Unable to get response from daemon in $daemonStartupTimeout ms")
@@ -413,11 +434,12 @@ public data class DaemonReportMessage(public val category: DaemonReportCategory,
 public class DaemonReportingTargets(public val out: PrintStream? = null, public val messages: MutableCollection<DaemonReportMessage>? = null)
 
 
-internal fun Process.isAlive() =
+internal fun isProcessAlive(process: Process) =
         try {
-            this.exitValue()
+            process.exitValue()
             false
         }
         catch (e: IllegalThreadStateException) {
             true
         }
+
