@@ -35,7 +35,7 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
                 ReifiedTypeParameterAnnotationChecker(),
                 NativeFunChecker(),
                 OverloadsAnnotationChecker(),
-                PublicFieldAnnotationChecker(),
+                JvmFieldApplicabilityChecker(),
                 TypeParameterBoundIsNotArrayChecker()
         ),
 

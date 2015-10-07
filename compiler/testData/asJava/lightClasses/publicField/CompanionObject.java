@@ -1,5 +1,5 @@
 public final class C {
-    @kotlin.jvm.publicField
+    @kotlin.jvm.JvmField
     public static final java.lang.String foo = "A";
     public static final C.Companion Companion;
 

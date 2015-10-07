@@ -17,8 +17,13 @@
 package org.jetbrains.kotlin.resolve.jvm.annotations
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 
 public fun DeclarationDescriptor.hasJvmOverloadsAnnotation(): Boolean {
     return getAnnotations().findAnnotation(FqName("kotlin.jvm.JvmOverloads")) != null
+}
+
+public fun DeclarationDescriptor.findJvmFieldAnnotation(): AnnotationDescriptor? {
+    return annotations.findAnnotation(FqName("kotlin.jvm.JvmField"))
 }

@@ -37,10 +37,6 @@ public fun DeclarationDescriptor.hasPlatformStaticAnnotation(): Boolean {
            getAnnotations().findAnnotation(FqName("kotlin.jvm.JvmStatic")) != null
 }
 
-public fun DeclarationDescriptor.findPublicFieldAnnotation(): AnnotationDescriptor? {
-    return getAnnotations().findAnnotation(FqName("kotlin.jvm.publicField"))
-}
-
 public fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean {
     val jvmSyntheticName = FqName("kotlin.jvm.JvmSynthetic")
     return annotations.findAnnotation(jvmSyntheticName) != null ||

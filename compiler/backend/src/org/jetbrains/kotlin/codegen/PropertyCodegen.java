@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -61,6 +60,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterfaceCompanionObject;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.findJvmFieldAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -303,7 +303,7 @@ public class PropertyCodegen {
 
         ClassBuilder builder = v;
 
-        boolean hasPublicFieldAnnotation = AnnotationsPackage.findPublicFieldAnnotation(propertyDescriptor) != null;
+        boolean hasJvmFieldAnnotation = findJvmFieldAnnotation(propertyDescriptor) != null;
 
         FieldOwnerContext backingFieldContext = context;
         boolean takeVisibilityFromDescriptor = propertyDescriptor.isLateInit() || propertyDescriptor.isConst();
@@ -313,7 +313,7 @@ public class PropertyCodegen {
             if (takeVisibilityFromDescriptor) {
                 modifiers |= getVisibilityAccessFlag(propertyDescriptor);
             }
-            else if (hasPublicFieldAnnotation && !isDelegate) {
+            else if (hasJvmFieldAnnotation && !isDelegate) {
                 modifiers |= ACC_PUBLIC;
             }
             else {
@@ -330,7 +330,7 @@ public class PropertyCodegen {
         else if (takeVisibilityFromDescriptor) {
             modifiers |= getVisibilityAccessFlag(propertyDescriptor);
         }
-        else if (!isDelegate && hasPublicFieldAnnotation) {
+        else if (!isDelegate && hasJvmFieldAnnotation) {
             modifiers |= ACC_PUBLIC;
         }
         else if (kind != OwnerKind.PACKAGE || isDelegate) {

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.annotations.findPublicFieldAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
@@ -155,27 +154,6 @@ public class OverloadsAnnotationChecker: DeclarationChecker {
         }
         else if (descriptor.getValueParameters().none { it.declaresDefaultValue() }) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.on(declaration))
-        }
-    }
-}
-
-public class PublicFieldAnnotationChecker: DeclarationChecker {
-    override fun check(
-            declaration: JetDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
-        val annotation = descriptor.findPublicFieldAnnotation() ?: return
-
-        fun report() {
-            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
-            diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_PUBLIC_FIELD.on(annotationEntry))
-        }
-
-        if (descriptor is PropertyDescriptor
-            && !bindingContext.get<PropertyDescriptor, Boolean>(BindingContext.BACKING_FIELD_REQUIRED, descriptor)!!) {
-            report()
         }
     }
 }
