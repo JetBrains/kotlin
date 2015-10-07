@@ -14,14 +14,14 @@ public interface Comparator<T> {
 @library
 public abstract class AbstractCollection<E>() : MutableCollection<E> {
     override fun isEmpty(): Boolean = noImpl
-    override fun contains(o: Any?): Boolean = noImpl
+    override fun contains(o: E): Boolean = noImpl
     override fun iterator(): MutableIterator<E> = noImpl
 
     override fun add(e: E): Boolean = noImpl
     override fun remove(o: Any?): Boolean = noImpl
 
     override fun addAll(c: Collection<E>): Boolean = noImpl
-    override fun containsAll(c: Collection<Any?>): Boolean = noImpl
+    override fun containsAll(c: Collection<E>): Boolean = noImpl
     override fun removeAll(c: Collection<Any?>): Boolean = noImpl
     override fun retainAll(c: Collection<Any?>): Boolean = noImpl
 

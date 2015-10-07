@@ -222,8 +222,8 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
     override val groups: MatchGroupCollection = object : MatchGroupCollection {
         override val size: Int get() = matchResult.groupCount() + 1
         override fun isEmpty(): Boolean = false
-        override fun contains(o: Any?): Boolean = o is MatchGroup? && this.any({ it == o })
-        override fun containsAll(c: Collection<Any?>): Boolean = c.all({contains(it)})
+        override fun contains(o: MatchGroup?): Boolean = this.any({ it == o })
+        override fun containsAll(c: Collection<MatchGroup?>): Boolean = c.all({contains(it)})
 
         override fun iterator(): Iterator<MatchGroup?> = indices.asSequence().map { this[it] }.iterator()
         override fun get(index: Int): MatchGroup? {

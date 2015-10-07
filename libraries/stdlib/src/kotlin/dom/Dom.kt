@@ -232,7 +232,6 @@ private class ElementListAsList(private val nodeList: NodeList) : AbstractList<E
     }
 
     override val size: Int get() = nodeList.length
-
 }
 
 /** Returns an [Iterator] over the next siblings of this node */

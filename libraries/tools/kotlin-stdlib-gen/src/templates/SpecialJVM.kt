@@ -230,7 +230,7 @@ fun specialJVM(): List<GenericFunction> {
             return object : AbstractList<T>(), RandomAccess {
                 override val size: Int get() = this@asList.size()
                 override fun isEmpty(): Boolean = this@asList.isEmpty()
-                override fun contains(o: Any?): Boolean = this@asList.contains(o as T)
+                override fun contains(o: T): Boolean = this@asList.contains(o)
                 override fun iterator(): MutableIterator<T> = this@asList.iterator() as MutableIterator<T>
                 override fun get(index: Int): T = this@asList[index]
                 override fun indexOf(o: Any?): Int = this@asList.indexOf(o as T)

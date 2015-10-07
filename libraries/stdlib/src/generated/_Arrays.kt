@@ -10176,7 +10176,7 @@ public fun BooleanArray.asList(): List<Boolean> {
     return object : AbstractList<Boolean>(), RandomAccess {
         override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Boolean)
+        override fun contains(o: Boolean): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Boolean> = this@asList.iterator() as MutableIterator<Boolean>
         override fun get(index: Int): Boolean = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Boolean)
@@ -10192,7 +10192,7 @@ public fun ByteArray.asList(): List<Byte> {
     return object : AbstractList<Byte>(), RandomAccess {
         override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Byte)
+        override fun contains(o: Byte): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Byte> = this@asList.iterator() as MutableIterator<Byte>
         override fun get(index: Int): Byte = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Byte)
@@ -10208,7 +10208,7 @@ public fun CharArray.asList(): List<Char> {
     return object : AbstractList<Char>(), RandomAccess {
         override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Char)
+        override fun contains(o: Char): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Char> = this@asList.iterator() as MutableIterator<Char>
         override fun get(index: Int): Char = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Char)
@@ -10224,7 +10224,7 @@ public fun DoubleArray.asList(): List<Double> {
     return object : AbstractList<Double>(), RandomAccess {
         override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Double)
+        override fun contains(o: Double): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Double> = this@asList.iterator() as MutableIterator<Double>
         override fun get(index: Int): Double = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Double)
@@ -10240,7 +10240,7 @@ public fun FloatArray.asList(): List<Float> {
     return object : AbstractList<Float>(), RandomAccess {
         override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Float)
+        override fun contains(o: Float): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Float> = this@asList.iterator() as MutableIterator<Float>
         override fun get(index: Int): Float = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Float)
@@ -10256,7 +10256,7 @@ public fun IntArray.asList(): List<Int> {
     return object : AbstractList<Int>(), RandomAccess {
         override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Int)
+        override fun contains(o: Int): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Int> = this@asList.iterator() as MutableIterator<Int>
         override fun get(index: Int): Int = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Int)
@@ -10272,7 +10272,7 @@ public fun LongArray.asList(): List<Long> {
     return object : AbstractList<Long>(), RandomAccess {
         override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Long)
+        override fun contains(o: Long): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Long> = this@asList.iterator() as MutableIterator<Long>
         override fun get(index: Int): Long = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Long)
@@ -10288,7 +10288,7 @@ public fun ShortArray.asList(): List<Short> {
     return object : AbstractList<Short>(), RandomAccess {
         override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Short)
+        override fun contains(o: Short): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Short> = this@asList.iterator() as MutableIterator<Short>
         override fun get(index: Int): Short = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Short)
