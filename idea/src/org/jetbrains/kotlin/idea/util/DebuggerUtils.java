@@ -25,7 +25,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Pair;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -97,7 +97,7 @@ public class DebuggerUtils {
 
         if (isPackageClassName(className)) {
             for (JetFile file : filesWithExactName) {
-                boolean hasTopLevelMembers = KotlinPackage.any(file.getDeclarations(), new Function1<JetDeclaration, Boolean>() {
+                boolean hasTopLevelMembers = CollectionsKt.any(file.getDeclarations(), new Function1<JetDeclaration, Boolean>() {
                     @Override
                     public Boolean invoke(JetDeclaration declaration) {
                         return !(declaration instanceof JetClassOrObject);
