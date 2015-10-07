@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
+import org.jetbrains.kotlin.fileClasses.getFileClassInternalName
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
@@ -50,10 +52,8 @@ import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -80,7 +80,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
                     val javaClassName = JvmClassName.byInternalName(defaultInternalName(location))
                     val project = myDebugProcess.project
 
-                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), javaClassName, javaSourceFileName, 0)
+                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), javaClassName, javaSourceFileName)
                     if (defaultPsiFile != null) {
                         return SourcePosition.createFromLine(defaultPsiFile, 0)
                     }
@@ -178,7 +178,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         val project = myDebugProcess.project
 
-        return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName, location.lineNumber() - 1)
+        return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName)
     }
 
     private fun defaultInternalName(location: Location): String {
@@ -375,19 +375,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
                 }
             }
 
-            if (isInLibrary) {
-                val elementAtForLibraryFile =
-                        if (element is JetDeclaration) element
-                        else PsiTreeUtil.getParentOfType(element, JetDeclaration::class.java)
-
-                assert(elementAtForLibraryFile != null) {
-                    "Couldn't find element at breakpoint for library file " + file.name +
-                         (if (notPositionedElement == null) "" else ", notPositionedElement = " + notPositionedElement.getElementTextWithContext())
-                }
-                return PositionedElement(findPackagePartInternalNameForLibraryFile(elementAtForLibraryFile!!), elementAtForLibraryFile)
-            }
-
-            return PositionedElement(PackagePartClassUtils.getPackagePartInternalName(file), element)
+            return PositionedElement(NoResolveFileClassesProvider.getFileClassInternalName(file), element)
         }
 
         private val TYPES_TO_CALCULATE_CLASSNAME: Array<Class<out JetElement>> =
@@ -439,7 +427,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             return InlineUtil.isInlinedArgument(functionLiteral, context, false)
         }
 
-        private fun createKeyForTypeMapper(file: JetFile) = PackagePartClassUtils.getPackagePartInternalName(file)
+        private fun createKeyForTypeMapper(file: JetFile) = NoResolveFileClassesProvider.getFileClassInternalName(file)
     }
 
     private fun findInlinedCalls(element: PsiElement?, jetFile: PsiFile?): List<String> {
