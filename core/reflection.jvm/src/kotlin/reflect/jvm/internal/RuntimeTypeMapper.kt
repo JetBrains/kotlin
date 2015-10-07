@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Member
@@ -45,22 +46,17 @@ import kotlin.reflect.KotlinReflectionInternalError
 internal sealed class JvmFunctionSignature {
     abstract fun asString(): String
 
-    class KotlinFunction(
-            val proto: ProtoBuf.Function,
-            val signature: JvmProtoBuf.JvmMethodSignature,
-            val nameResolver: NameResolver
-    ) : JvmFunctionSignature() {
-        override fun asString(): String =
-                nameResolver.getString(signature.name) + nameResolver.getString(signature.desc)
+    class KotlinFunction(val signature: String) : JvmFunctionSignature() {
+        val methodName: String get() = signature.substringBefore('(')
+        val methodDesc: String get() = signature.substring(signature.indexOf('('))
+
+        override fun asString(): String = signature
     }
 
-    class KotlinConstructor(
-            val proto: ProtoBuf.Constructor,
-            val signature: JvmProtoBuf.JvmMethodSignature,
-            val nameResolver: NameResolver
-    ) : JvmFunctionSignature() {
-        override fun asString(): String =
-                nameResolver.getString(signature.name) + nameResolver.getString(signature.desc)
+    class KotlinConstructor(val signature: String) : JvmFunctionSignature() {
+        val constructorDesc: String get() = signature.substring(signature.indexOf('('))
+
+        override fun asString(): String = signature
     }
 
     class JavaMethod(val method: Method) : JvmFunctionSignature() {
@@ -132,19 +128,24 @@ internal object RuntimeTypeMapper {
 
         when (function) {
             is DeserializedCallableMemberDescriptor -> {
-                val proto = function.proto
-                if (proto is ProtoBuf.Function && proto.hasExtension(JvmProtoBuf.methodSignature)) {
-                    val signature = proto.getExtension(JvmProtoBuf.methodSignature)
-                    return JvmFunctionSignature.KotlinFunction(proto, signature, function.nameResolver)
+                mapIntrinsicFunctionSignature(function)?.let {
+                    return it
                 }
-                if (proto is ProtoBuf.Constructor && proto.hasExtension(JvmProtoBuf.constructorSignature)) {
-                    val signature = proto.getExtension(JvmProtoBuf.constructorSignature)
-                    return JvmFunctionSignature.KotlinConstructor(proto, signature, function.nameResolver)
+
+                val proto = function.proto
+                if (proto is ProtoBuf.Function) {
+                    JvmProtoBufUtil.getJvmMethodSignature(proto, function.nameResolver)?.let { signature ->
+                        return JvmFunctionSignature.KotlinFunction(signature)
+                    }
+                }
+                if (proto is ProtoBuf.Constructor) {
+                    JvmProtoBufUtil.getJvmConstructorSignature(proto, function.nameResolver)?.let { signature ->
+                        return JvmFunctionSignature.KotlinConstructor(signature)
+                    }
                 }
                 // If it's a deserialized function but has no JVM signature, it must be from built-ins
-                return mapIntrinsicFunctionSignature(function) ?:
-                       throw KotlinReflectionInternalError("Reflection on built-in Kotlin types is not yet fully supported. " +
-                                                           "No metadata found for $function")
+                throw KotlinReflectionInternalError("Reflection on built-in Kotlin types is not yet fully supported. " +
+                        "No metadata found for $function")
             }
             is JavaMethodDescriptor -> {
                 val method = ((function.source as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member ?:

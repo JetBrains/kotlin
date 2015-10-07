@@ -25,11 +25,13 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeCapabilities;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.serialization.AnnotationSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.SerializerExtension;
 import org.jetbrains.kotlin.serialization.StringTable;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -85,7 +87,10 @@ public class JvmSerializerExtension extends SerializerExtension {
     public void serializeConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull ProtoBuf.Constructor.Builder proto) {
         Method method = bindings.get(METHOD_FOR_FUNCTION, descriptor);
         if (method != null) {
-            proto.setExtension(JvmProtoBuf.constructorSignature, new SignatureSerializer().methodSignature(method));
+            JvmProtoBuf.JvmMethodSignature signature = new SignatureSerializer().methodSignature(descriptor, method);
+            if (signature != null) {
+                proto.setExtension(JvmProtoBuf.constructorSignature, signature);
+            }
         }
 
         saveImplClassName(descriptor, proto);
@@ -95,7 +100,10 @@ public class JvmSerializerExtension extends SerializerExtension {
     public void serializeFunction(@NotNull FunctionDescriptor descriptor, @NotNull ProtoBuf.Function.Builder proto) {
         Method method = bindings.get(METHOD_FOR_FUNCTION, descriptor);
         if (method != null) {
-            proto.setExtension(JvmProtoBuf.methodSignature, new SignatureSerializer().methodSignature(method));
+            JvmProtoBuf.JvmMethodSignature signature = new SignatureSerializer().methodSignature(descriptor, method);
+            if (signature != null) {
+                proto.setExtension(JvmProtoBuf.methodSignature, signature);
+            }
         }
 
         saveImplClassName(descriptor, proto);
@@ -129,9 +137,9 @@ public class JvmSerializerExtension extends SerializerExtension {
 
         JvmProtoBuf.JvmPropertySignature signature = signatureSerializer.propertySignature(
                 fieldName, fieldDesc, isStaticInOuter,
-                syntheticMethod != null ? signatureSerializer.methodSignature(syntheticMethod) : null,
-                getterMethod != null ? signatureSerializer.methodSignature(getterMethod) : null,
-                setterMethod != null ? signatureSerializer.methodSignature(setterMethod) : null
+                syntheticMethod != null ? signatureSerializer.methodSignature(null, syntheticMethod) : null,
+                getterMethod != null ? signatureSerializer.methodSignature(null, getterMethod) : null,
+                setterMethod != null ? signatureSerializer.methodSignature(null, setterMethod) : null
         );
 
         proto.setExtension(JvmProtoBuf.propertySignature, signature);
@@ -153,12 +161,67 @@ public class JvmSerializerExtension extends SerializerExtension {
     }
 
     private class SignatureSerializer {
-        @NotNull
-        public JvmProtoBuf.JvmMethodSignature methodSignature(@NotNull Method method) {
-            return JvmProtoBuf.JvmMethodSignature.newBuilder()
-                    .setName(stringTable.getStringIndex(method.getName()))
-                    .setDesc(stringTable.getStringIndex(method.getDescriptor()))
-                    .build();
+        @Nullable
+        public JvmProtoBuf.JvmMethodSignature methodSignature(@Nullable FunctionDescriptor descriptor, @NotNull Method method) {
+            JvmProtoBuf.JvmMethodSignature.Builder builder = JvmProtoBuf.JvmMethodSignature.newBuilder();
+            if (descriptor == null || !descriptor.getName().asString().equals(method.getName())) {
+                builder.setName(stringTable.getStringIndex(method.getName()));
+            }
+            if (descriptor == null || requiresSignature(descriptor, method.getDescriptor())) {
+                builder.setDesc(stringTable.getStringIndex(method.getDescriptor()));
+            }
+            return builder.hasName() || builder.hasDesc() ? builder.build() : null;
+        }
+
+        // We don't write those signatures which can be trivially reconstructed from already serialized data
+        // TODO: make JvmStringTable implement NameResolver and use JvmProtoBufUtil#getJvmMethodSignature instead
+        private boolean requiresSignature(@NotNull FunctionDescriptor descriptor, @NotNull String desc) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("(");
+            ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
+            if (receiverParameter != null) {
+                String receiverDesc = mapTypeDefault(receiverParameter.getValue().getType());
+                if (receiverDesc == null) return true;
+                sb.append(receiverDesc);
+            }
+
+            for (ValueParameterDescriptor valueParameter : descriptor.getValueParameters()) {
+                String paramDesc = mapTypeDefault(valueParameter.getType());
+                if (paramDesc == null) return true;
+                sb.append(paramDesc);
+            }
+
+            sb.append(")");
+
+            JetType returnType = descriptor.getReturnType();
+            String returnTypeDesc = returnType == null ? "V" : mapTypeDefault(returnType);
+            if (returnTypeDesc == null) return true;
+            sb.append(returnTypeDesc);
+
+            return !sb.toString().equals(desc);
+        }
+
+        @Nullable
+        private String mapTypeDefault(@NotNull JetType type) {
+            ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
+            if (!(classifier instanceof ClassDescriptor)) return null;
+            ClassId classId = classId((ClassDescriptor) classifier);
+            return classId == null ? null : JvmProtoBufUtil.mapClassIdDefault(classId);
+        }
+
+        @Nullable
+        private ClassId classId(@NotNull ClassDescriptor descriptor) {
+            DeclarationDescriptor container = descriptor.getContainingDeclaration();
+            if (container instanceof PackageFragmentDescriptor) {
+                return ClassId.topLevel(((PackageFragmentDescriptor) container).getFqName().child(descriptor.getName()));
+            }
+            else if (container instanceof ClassDescriptor) {
+                ClassId outerClassId = classId((ClassDescriptor) container);
+                return outerClassId == null ? null : outerClassId.createNestedClassId(descriptor.getName());
+            }
+            else {
+                return null;
+            }
         }
 
         @NotNull

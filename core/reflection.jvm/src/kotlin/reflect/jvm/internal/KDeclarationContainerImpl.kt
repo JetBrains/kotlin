@@ -156,79 +156,49 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             }
 
     // TODO: check resulting method's return type
-    fun findMethodBySignature(
-            signature: JvmProtoBuf.JvmMethodSignature,
-            nameResolver: NameResolver,
-            declared: Boolean
-    ): Method? {
-        val name = nameResolver.getString(signature.name)
+    fun findMethodBySignature(name: String, desc: String, declared: Boolean): Method? {
         if (name == "<init>") return null
-
-        val parameterTypes = loadParameterTypes(nameResolver, signature)
 
         // Method for a top level function should be the one from the package facade.
         // This is likely to change after the package part reform.
-        val owner = jClass
-
-        return owner.tryGetMethod(name, parameterTypes, declared)
+        return jClass.tryGetMethod(name, loadParameterTypes(desc), declared)
     }
 
-    fun findDefaultMethod(
-            signature: JvmProtoBuf.JvmMethodSignature,
-            nameResolver: NameResolver,
-            isMember: Boolean,
-            declared: Boolean
-    ): Method? {
-        val name = nameResolver.getString(signature.name)
+    fun findDefaultMethod(name: String, desc: String, isMember: Boolean, declared: Boolean): Method? {
         if (name == "<init>") return null
 
         val parameterTypes = arrayListOf<Class<*>>()
         if (isMember) {
             parameterTypes.add(jClass)
         }
-        addParametersAndMasks(parameterTypes, nameResolver, signature)
+        addParametersAndMasks(parameterTypes, desc)
 
         return jClass.tryGetMethod(name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes, declared)
     }
 
-    fun findConstructorBySignature(
-            signature: JvmProtoBuf.JvmMethodSignature,
-            nameResolver: NameResolver,
-            declared: Boolean
-    ): Constructor<*>? {
-        if (nameResolver.getString(signature.name) != "<init>") return null
-
-        return jClass.tryGetConstructor(loadParameterTypes(nameResolver, signature), declared)
+    fun findConstructorBySignature(desc: String, declared: Boolean): Constructor<*>? {
+        return jClass.tryGetConstructor(loadParameterTypes(desc), declared)
     }
 
-    fun findDefaultConstructor(
-            signature: JvmProtoBuf.JvmMethodSignature,
-            nameResolver: NameResolver,
-            declared: Boolean
-    ): Constructor<*>? {
-        if (nameResolver.getString(signature.name) != "<init>") return null
-
+    fun findDefaultConstructor(desc: String, declared: Boolean): Constructor<*>? {
         val parameterTypes = arrayListOf<Class<*>>()
-        addParametersAndMasks(parameterTypes, nameResolver, signature)
+        addParametersAndMasks(parameterTypes, desc)
         parameterTypes.add(DEFAULT_CONSTRUCTOR_MARKER)
 
         return jClass.tryGetConstructor(parameterTypes, declared)
     }
 
-    private fun addParametersAndMasks(
-            result: MutableList<Class<*>>, nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature
-    ) {
-        val valueParameters = loadParameterTypes(nameResolver, signature)
+    private fun addParametersAndMasks(result: MutableList<Class<*>>, desc: String) {
+        val valueParameters = loadParameterTypes(desc)
         result.addAll(valueParameters)
         repeat((valueParameters.size() + Integer.SIZE - 1) / Integer.SIZE) {
             result.add(Integer.TYPE)
         }
     }
 
-    private fun loadParameterTypes(nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature): List<Class<*>> {
+    private fun loadParameterTypes(desc: String): List<Class<*>> {
         val classLoader = jClass.safeClassLoader
         val result = arrayListOf<Class<*>>()
-        val desc = nameResolver.getString(signature.desc)
 
         var i = 1
         while (desc[i] != ')') {

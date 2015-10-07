@@ -62,10 +62,10 @@ message StringTableTypes {
 }
 
 message JvmMethodSignature {
-  required int32 name = 1 [(string_id_in_table) = true];
+  optional int32 name = 1 [(string_id_in_table) = true];
 
   // JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
-  required int32 desc = 2 [(string_id_in_table) = true];
+  optional int32 desc = 2 [(string_id_in_table) = true];
 }
 
 message JvmFieldSignature {
