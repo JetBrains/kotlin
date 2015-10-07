@@ -1272,6 +1272,10 @@ public object Unit {
     /*primary*/ private constructor Unit()
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class UnsafeVariance : kotlin.Annotation {
+    /*primary*/ public constructor UnsafeVariance()
+}
+
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() private final class crossinline : kotlin.Annotation {
     /*primary*/ public constructor crossinline()
 }

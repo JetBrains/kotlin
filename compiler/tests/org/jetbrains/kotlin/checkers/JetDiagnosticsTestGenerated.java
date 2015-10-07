@@ -6399,6 +6399,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("suppressVarianceConflict.kt")
+            public void testSuppressVarianceConflict() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/suppressVarianceConflict.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/generics/nullability")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

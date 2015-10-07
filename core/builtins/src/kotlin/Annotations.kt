@@ -120,6 +120,14 @@ public annotation class HiddenDeclaration
 private annotation class external
 
 /**
+ * Suppresses errors about variance conflict
+ */
+@Target(TYPE)
+@Retention(SOURCE)
+@MustBeDocumented
+public annotation class UnsafeVariance
+
+/**
  * Specifies that the corresponding type should be ignored during type inference.
  */
 @Target(TYPE)

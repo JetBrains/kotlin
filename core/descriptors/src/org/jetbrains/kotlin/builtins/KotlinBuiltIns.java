@@ -151,6 +151,7 @@ public abstract class KotlinBuiltIns {
         public final FqName retention = annotationName("Retention");
         public final FqName repeatable = annotationName("Repeatable");
         public final FqName mustBeDocumented = annotationName("MustBeDocumented");
+        public final FqName unsafeVariance = fqName("UnsafeVariance");
 
         public final FqName mutableList = fqName("MutableList");
         public final FqName mutableSet = fqName("MutableSet");
