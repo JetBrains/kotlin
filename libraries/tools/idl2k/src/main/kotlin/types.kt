@@ -6,7 +6,7 @@ interface Type {
     val nullable: Boolean
     fun render(): String
 
-    protected fun String.withSuffix(): String = if (nullable) "$this?" else this
+    fun String.withSuffix(): String = if (nullable) "$this?" else this
 }
 
 object UnitType : Type {
@@ -33,20 +33,23 @@ data class FunctionType(val parameterTypes : List<Attribute>, val returnType : T
 }
 
 val FunctionType.arity : Int
-    get() = parameterTypes.size()
+    get() = parameterTypes.size
 
-data class UnionType(val namespace: String, types: Collection<Type>, override val nullable: Boolean, val memberTypes: Set<Type> = LinkedHashSet(types.sortBy { it.toString() })) : Type {
+class UnionType(val namespace: String, types: Collection<Type>, override val nullable: Boolean, val memberTypes: Set<Type> = LinkedHashSet(types.sortedBy { it.toString() })) : Type {
     val name = "Union${this.memberTypes.map { it.render() }.joinToString("Or")}"
 
-    fun contains(type: Type) = type in memberTypes
+    operator fun contains(type: Type) = type in memberTypes
     override fun equals(other: Any?): Boolean = other is UnionType && memberTypes == other.memberTypes
     override fun hashCode(): Int = memberTypes.hashCode()
     override fun toString(): String = memberTypes.map { it.toString() }.join(", ", "Union<", ">")
 
     override fun render(): String = name.withSuffix()
+
+    fun copy(namespace: String = this.namespace, types: Collection<Type> = this.memberTypes, nullable: Boolean = this.nullable) =
+            UnionType(namespace, types, nullable)
 }
 
-fun UnionType.toSingleTypeIfPossible() = if (this.memberTypes.size() == 1) this.memberTypes.single().withNullability(nullable) else this
+fun UnionType.toSingleTypeIfPossible() = if (this.memberTypes.size == 1) this.memberTypes.single().withNullability(nullable) else this
 
 data class ArrayType(val memberType: Type, override val nullable: Boolean) : Type {
     override fun render(): String = "Array<${memberType.render()}>".withSuffix()

@@ -92,7 +92,7 @@ private fun List<GenerateAttribute>.hasNoVars() = none { it.isVar }
 
 private fun GenerateAttribute.isCommented(parent: String) = "$parent.$name" in commentOutDeclarations || "$parent.$name: ${type.render()}" in commentOutDeclarations
 private fun GenerateFunction.isCommented(parent: String) =
-        "$parent.$name" in commentOutDeclarations || "$parent.$name(${arguments.size()})" in commentOutDeclarations
+        "$parent.$name" in commentOutDeclarations || "$parent.$name(${arguments.size})" in commentOutDeclarations
 private fun GenerateAttribute.isRequiredFunctionArgument(owner: String, functionName: String) = "$owner.$functionName.$name" in requiredArguments
 private fun GenerateFunction.fixRequiredArguments(parent: String) = copy(arguments = arguments.map { arg -> arg.copy(initializer = if (arg.isRequiredFunctionArgument(parent, name)) null else arg.initializer) })
 

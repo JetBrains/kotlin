@@ -45,13 +45,13 @@ fun main(args: Array<String>) {
         val pkg = e.value.first().second
 
         File(dir, fileName).bufferedWriter().use { w ->
-            w.appendln("namespace ${pkg};")
+            w.appendln("namespace $pkg;")
             w.appendln()
             w.appendln()
 
             e.value.forEach { pair ->
                 val (url) = pair
-                println("Loading ${url}...")
+                println("Loading $url...")
 
                 w.appendln("// Downloaded from $url")
                 if (url.endsWith(".idl")) {
