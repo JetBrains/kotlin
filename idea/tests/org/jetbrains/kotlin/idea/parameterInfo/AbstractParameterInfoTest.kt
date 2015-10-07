@@ -23,10 +23,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -55,7 +54,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
 
         val context = ShowParameterInfoContext(editor, project, file, editor.caretModel.offset, -1)
 
-        val handlers = ShowParameterInfoHandler.getHandlers(project, JetLanguage.INSTANCE)!!
+        val handlers = ShowParameterInfoHandler.getHandlers(project, KotlinLanguage.INSTANCE)!!
         val handler = handlers.firstOrNull { it.findElementForParameterInfo(context) != null }
             ?: error("Could not find parameter info handler")
 
@@ -64,12 +63,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
 
         val textToType = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// TYPE:")
         if (textToType != null) {
-            project.executeWriteCommand("") {
-                val caretModel = myFixture.editor.caretModel
-                val offset = caretModel.offset
-                myFixture.getDocument(file).insertString(offset, textToType)
-                caretModel.moveToOffset(offset + textToType.length())
-            }
+            myFixture.type(textToType)
             PsiDocumentManager.getInstance(project).commitAllDocuments()
         }
 
