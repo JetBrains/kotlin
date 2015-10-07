@@ -390,9 +390,15 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     }
 
     open fun checkEquals(old: JvmProtoBuf.JvmFieldSignature, new: JvmProtoBuf.JvmFieldSignature): Boolean {
-        if (!checkStringEquals(old.name, new.name)) return false
+        if (old.hasName() != new.hasName()) return false
+        if (old.hasName()) {
+            if (!checkStringEquals(old.name, new.name)) return false
+        }
 
-        if (!checkStringEquals(old.desc, new.desc)) return false
+        if (old.hasDesc() != new.hasDesc()) return false
+        if (old.hasDesc()) {
+            if (!checkStringEquals(old.desc, new.desc)) return false
+        }
 
         if (old.hasIsStaticInOuter() != new.hasIsStaticInOuter()) return false
         if (old.hasIsStaticInOuter()) {
@@ -962,9 +968,13 @@ public fun ProtoBuf.Annotation.Argument.hashCode(stringIndexes: (Int) -> Int, fq
 public fun JvmProtoBuf.JvmFieldSignature.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
-    hashCode = 31 * hashCode + stringIndexes(name)
+    if (hasName()) {
+        hashCode = 31 * hashCode + stringIndexes(name)
+    }
 
-    hashCode = 31 * hashCode + stringIndexes(desc)
+    if (hasDesc()) {
+        hashCode = 31 * hashCode + stringIndexes(desc)
+    }
 
     if (hasIsStaticInOuter()) {
         hashCode = 31 * hashCode + isStaticInOuter.hashCode()

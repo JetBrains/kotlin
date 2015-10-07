@@ -240,17 +240,14 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     // TODO: check resulting field's type
     fun findFieldBySignature(
             proto: ProtoBuf.Property,
-            signature: JvmProtoBuf.JvmFieldSignature,
-            nameResolver: NameResolver
+            nameResolver: NameResolver,
+            name: String
     ): Field? {
-        val name = nameResolver.getString(signature.getName())
-
-        val owner =
-                implClassForCallable(nameResolver, proto) ?:
-                if (signature.getIsStaticInOuter()) {
-                    jClass.getEnclosingClass() ?: throw KotlinReflectionInternalError("Inconsistent metadata for field $name in $jClass")
-                }
-                else jClass
+        val owner = implClassForCallable(nameResolver, proto) ?:
+                if (proto.hasExtension(JvmProtoBuf.propertySignature) &&
+                        proto.getExtension(JvmProtoBuf.propertySignature).let { it.hasField() && it.field.getIsStaticInOuter() }) {
+                    jClass.enclosingClass ?: throw KotlinReflectionInternalError("Inconsistent metadata for field $name in $jClass")
+                } else jClass
 
         return try {
             owner.getDeclaredField(name)
