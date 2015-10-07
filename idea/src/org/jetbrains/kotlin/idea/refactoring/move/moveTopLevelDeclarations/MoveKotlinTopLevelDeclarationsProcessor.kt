@@ -61,11 +61,9 @@ import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.keysToMap
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
+import java.util.*
 
-interface Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetNamedDeclaration {
+interface Mover: (JetNamedDeclaration, JetFile) -> JetNamedDeclaration {
     object Default: Mover {
         override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile): JetNamedDeclaration {
             val newElement = targetFile.add(originalElement) as JetNamedDeclaration
