@@ -59,6 +59,8 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
     }
 
     private fun queueUpdateCheck() {
+        if (ApplicationManager.getApplication().isUnitTestMode) return
+
         ApplicationManager.getApplication().assertIsDispatchThread()
         if (!checkQueued) {
             checkQueued = true
