@@ -95,7 +95,7 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
     }
 
     override fun getAttributeDescriptors(): Array<AttributesDescriptor> {
-        fun String.to(key: TextAttributesKey) = AttributesDescriptor(this, key)
+        infix fun String.to(key: TextAttributesKey) = AttributesDescriptor(this, key)
         
         return arrayOf(OptionsBundle.message("options.java.attribute.descriptor.keyword") to JetHighlightingColors.KEYWORD, 
                        JetBundle.message("options.kotlin.attribute.descriptor.builtin.annotation") to JetHighlightingColors.BUILTIN_ANNOTATION, 

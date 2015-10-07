@@ -1,9 +1,9 @@
 // FILE: JavaSuperClass.java
 
 class JavaSuperClass {
-    void foo(int javaName) {}
+    public void foo(int javaName) {}
 
-    void multipleParameters(int first, long second, String third) {}
+    public void multipleParameters(int first, long second, String third) {}
 }
 
 // FILE: 1.kt

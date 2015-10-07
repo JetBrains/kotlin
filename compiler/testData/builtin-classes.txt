@@ -23,11 +23,11 @@ public final class Array</*0*/ reified T> : kotlin.Cloneable {
 
 public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
     /*primary*/ private constructor Boolean()
-    public final fun and(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+    public final infix fun and(/*0*/ other: kotlin.Boolean): kotlin.Boolean
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Boolean): kotlin.Int
     public final operator fun not(): kotlin.Boolean
-    public final fun or(/*0*/ other: kotlin.Boolean): kotlin.Boolean
-    public final fun xor(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+    public final infix fun or(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+    public final infix fun xor(/*0*/ other: kotlin.Boolean): kotlin.Boolean
 }
 
 public final class BooleanArray : kotlin.Cloneable {
@@ -594,7 +594,7 @@ public interface Function</*0*/ out R> {
 
 public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     /*primary*/ private constructor Int()
-    public final fun and(/*0*/ other: kotlin.Int): kotlin.Int
+    public final infix fun and(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
@@ -623,7 +623,7 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun or(/*0*/ other: kotlin.Int): kotlin.Int
+    public final infix fun or(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun plus(): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
@@ -637,8 +637,8 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.IntRange
-    public final fun shl(/*0*/ bits: kotlin.Int): kotlin.Int
-    public final fun shr(/*0*/ bits: kotlin.Int): kotlin.Int
+    public final infix fun shl(/*0*/ bits: kotlin.Int): kotlin.Int
+    public final infix fun shr(/*0*/ bits: kotlin.Int): kotlin.Int
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
@@ -652,8 +652,8 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
-    public final fun ushr(/*0*/ bits: kotlin.Int): kotlin.Int
-    public final fun xor(/*0*/ other: kotlin.Int): kotlin.Int
+    public final infix fun ushr(/*0*/ bits: kotlin.Int): kotlin.Int
+    public final infix fun xor(/*0*/ other: kotlin.Int): kotlin.Int
 
     public companion object Companion : kotlin.IntegerConstants<kotlin.Int> {
         /*primary*/ private constructor Companion()
@@ -770,7 +770,7 @@ public interface ListIterator</*0*/ out T> : kotlin.Iterator<T> {
 
 public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     /*primary*/ private constructor Long()
-    public final fun and(/*0*/ other: kotlin.Long): kotlin.Long
+    public final infix fun and(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
@@ -799,7 +799,7 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Long
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Long
-    public final fun or(/*0*/ other: kotlin.Long): kotlin.Long
+    public final infix fun or(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun plus(): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
@@ -813,8 +813,8 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.LongRange
-    public final fun shl(/*0*/ bits: kotlin.Int): kotlin.Long
-    public final fun shr(/*0*/ bits: kotlin.Int): kotlin.Long
+    public final infix fun shl(/*0*/ bits: kotlin.Int): kotlin.Long
+    public final infix fun shr(/*0*/ bits: kotlin.Int): kotlin.Long
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Long
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
@@ -828,8 +828,8 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
-    public final fun ushr(/*0*/ bits: kotlin.Int): kotlin.Long
-    public final fun xor(/*0*/ other: kotlin.Long): kotlin.Long
+    public final infix fun ushr(/*0*/ bits: kotlin.Int): kotlin.Long
+    public final infix fun xor(/*0*/ other: kotlin.Long): kotlin.Long
 
     public companion object Companion : kotlin.IntegerConstants<kotlin.Long> {
         /*primary*/ private constructor Companion()

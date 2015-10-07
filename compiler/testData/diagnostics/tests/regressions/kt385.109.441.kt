@@ -4,9 +4,9 @@
 
 import java.util.*
 
-fun <T> Iterator<T>.foreach(operation: (element: T) -> Unit)  : Unit { while(hasNext()) operation(next()) }
+infix fun <T> Iterator<T>.foreach(operation: (element: T) -> Unit)  : Unit { while(hasNext()) operation(next()) }
 
-fun <T> Iterator<T>.foreach(operation: (index: Int, element: T) -> Unit) : Unit {
+infix fun <T> Iterator<T>.foreach(operation: (index: Int, element: T) -> Unit) : Unit {
     var k = 0
     while(hasNext())
         operation(k++, next())

@@ -35,7 +35,7 @@ public data class Pair<out A, out B>(
  * This can be useful for creating [Map] literals with less noise, for example:
  * @sample test.collections.MapTest.createUsingTo
  */
-public fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
+public infix fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
 
 /**
  * Converts this pair into a list.

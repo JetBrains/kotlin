@@ -2234,14 +2234,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             fieldName = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty);
         }
         else {
-            Name name;
-            if (propertyDescriptor instanceof AccessorForPropertyDescriptor) {
-                name = ((AccessorForPropertyDescriptor) propertyDescriptor).getCalleeDescriptor().getName();
-            }
-            else {
-                name = propertyDescriptor.getName();
-            }
-            fieldName = JvmAbi.getDefaultFieldNameForProperty(name, isDelegatedProperty);
+            fieldName = JetTypeMapper.mapDefaultFieldName(propertyDescriptor, isDelegatedProperty);
         }
 
         return StackValue.property(propertyDescriptor, backingFieldOwner,

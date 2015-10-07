@@ -2,7 +2,7 @@ interface Allowed
 
 open class NotAllowed
 
-<!DEPRECATED_MODIFIER_PAIR!>abstract<!> <!DEPRECATED_MODIFIER_PAIR!>data<!> class Base(val x: Int)
+<!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class Base(val x: Int)
 
 class Derived: Base(42)
 

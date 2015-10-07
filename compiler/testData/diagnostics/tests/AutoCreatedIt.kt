@@ -19,14 +19,14 @@ fun bar(<!UNUSED_PARAMETER!>f<!> :  (Int, Int) -> Int) {}
 fun bar1(<!UNUSED_PARAMETER!>f<!> :  (Int) -> Int) {}
 fun bar2(<!UNUSED_PARAMETER!>f<!> :  () -> Int) {}
 
-fun String.to(<!UNUSED_PARAMETER!>dest<!> : String) {
+infix fun String.to(<!UNUSED_PARAMETER!>dest<!> : String) {
 
 }
 
-fun String.on(<!UNUSED_PARAMETER!>predicate<!> :  (s : URI) -> Boolean) : URI {
+infix fun String.on(<!UNUSED_PARAMETER!>predicate<!> :  (s : URI) -> Boolean) : URI {
     return URI(this)
 }
 
 class URI(val body : Any) {
-    fun to(<!UNUSED_PARAMETER!>dest<!> : String) {}
+    infix fun to(<!UNUSED_PARAMETER!>dest<!> : String) {}
 }

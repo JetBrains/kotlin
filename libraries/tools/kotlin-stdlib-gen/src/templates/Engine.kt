@@ -109,6 +109,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     val typeParams = ArrayList<String>()
     val returns = FamilyProperty<String>()
     val operator = FamilyProperty<Boolean>()
+    val infix = FamilyProperty<Boolean>()
     val body = object : FamilyProperty<String>() {
         override fun onKeySet(key: Family) = include(key)
     }
@@ -374,6 +375,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         builder.append("public ")
         if (inline[f] == true)
             builder.append("inline ")
+        if (infix[f] == true)
+            builder.append("infix ")
         if (operator[f] == true)
             builder.append("operator ")
 

@@ -87,17 +87,20 @@ public class JetTypeMapper {
     private final ClassBuilderMode classBuilderMode;
     private final JvmFileClassesProvider fileClassesProvider;
     private final IncrementalCache incrementalCache;
+    private final String moduleName;
 
     public JetTypeMapper(
             @NotNull BindingContext bindingContext,
             @NotNull ClassBuilderMode classBuilderMode,
             @NotNull JvmFileClassesProvider fileClassesProvider,
-            @Nullable IncrementalCache incrementalCache
+            @Nullable IncrementalCache incrementalCache,
+            @NotNull String moduleName
     ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
         this.fileClassesProvider = fileClassesProvider;
         this.incrementalCache = incrementalCache;
+        this.moduleName = moduleName;
     }
 
     @NotNull
@@ -828,7 +831,7 @@ public class JetTypeMapper {
                                   ? JvmAbi.getterName(propertyName)
                                   : JvmAbi.setterName(propertyName);
 
-            return isAccessor ? "access$" + accessorName : accessorName;
+            return updateMemberNameIfInternal(isAccessor ? "access$" + accessorName : accessorName, descriptor);
         }
         else if (isFunctionLiteral(descriptor)) {
             PsiElement element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor);
@@ -848,8 +851,38 @@ public class JetTypeMapper {
             return OperatorConventions.INVOKE.asString();
         }
         else {
-            return descriptor.getName().asString();
+            return updateMemberNameIfInternal(descriptor.getName().asString(), descriptor);
         }
+    }
+
+    @NotNull
+    public static String mapDefaultFieldName(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegated) {
+        String name;
+        if (propertyDescriptor instanceof AccessorForPropertyDescriptor) {
+            name = ((AccessorForPropertyDescriptor) propertyDescriptor).getCalleeDescriptor().getName().asString();
+        }
+        else {
+            name = propertyDescriptor.getName().asString();
+        }
+        return isDelegated ? name + JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX : name;
+    }
+
+    @NotNull
+    private String updateMemberNameIfInternal(@NotNull String name, @NotNull  CallableMemberDescriptor descriptor) {
+        if (descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
+            //script properties should be public
+            return name;
+        }
+
+        if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+            return name;
+        }
+
+        if (!(descriptor instanceof ConstructorDescriptor) && descriptor.getVisibility() == Visibilities.INTERNAL) {
+            return name + "$" + JvmCodegenUtil.sanitizeAsJavaIdentifier(moduleName);
+        }
+
+        return name;
     }
 
     @NotNull

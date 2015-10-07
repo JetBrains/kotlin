@@ -62,11 +62,6 @@ public final class JvmAbi {
         return propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;
     }
 
-    @NotNull
-    public static String getDefaultFieldNameForProperty(@NotNull Name propertyName, boolean isDelegated) {
-        return isDelegated ? propertyName.asString() + DELEGATED_PROPERTY_NAME_SUFFIX : propertyName.asString();
-    }
-
     public static boolean isGetterName(@NotNull String name) {
         return name.startsWith(GET_PREFIX) || name.startsWith(IS_PREFIX);
     }

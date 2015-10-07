@@ -2926,18 +2926,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
-            @TestMetadata("OpenDataClass.kt")
-            public void testOpenDataClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/OpenDataClass.kt");
-                doTestCompiledKotlin(fileName);
-            }
-
-            @TestMetadata("OpenPropertyFinalComponent.kt")
-            public void testOpenPropertyFinalComponent() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/OpenPropertyFinalComponent.kt");
-                doTestCompiledKotlin(fileName);
-            }
-
             @TestMetadata("ParamNameSameToField.kt")
             public void testParamNameSameToField() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/ParamNameSameToField.kt");

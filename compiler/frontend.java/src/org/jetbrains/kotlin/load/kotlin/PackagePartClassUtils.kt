@@ -40,7 +40,7 @@ public object PackagePartClassUtils {
             else
                 capitalizeAsJavaClassName(sanitizeAsJavaIdentifier(str)) + PART_CLASS_NAME_SUFFIX
 
-    private @JvmStatic fun sanitizeAsJavaIdentifier(str: String): String =
+    public @JvmStatic fun sanitizeAsJavaIdentifier(str: String): String =
             str.replace("[^\\p{L}\\p{Digit}]".toRegex(), "_")
 
     private @JvmStatic fun capitalizeAsJavaClassName(str: String): String =

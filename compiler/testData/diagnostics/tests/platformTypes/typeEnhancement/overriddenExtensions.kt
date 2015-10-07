@@ -35,9 +35,9 @@ import org.jetbrains.annotations.*;
 // Just inherit enhanced types (annotations without conflicts)
 class B1 extends A {
     @Override
-    int foo(@NotNull String x, String y);
+    public int foo(@NotNull String x, String y);
     @Override
-    int bar(@Nullable String x, String y);
+    public int bar(@Nullable String x, String y);
 }
 
 // FILE: C.java

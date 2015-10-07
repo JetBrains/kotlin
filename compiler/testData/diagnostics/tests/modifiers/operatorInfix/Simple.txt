@@ -9,6 +9,7 @@ public operator fun Example.component2(): kotlin.String
 public operator fun Example.get(/*0*/ i: kotlin.Int): kotlin.String
 public operator fun Example.inc(): Example2
 public operator fun Example.invoke(): kotlin.String
+public infix fun Example.plus(/*0*/ o: Example): kotlin.String
 
 public open class Example {
     public constructor Example()
@@ -19,6 +20,7 @@ public open class Example {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final fun inc(): Example
     public final fun invoke(): kotlin.Int
+    public final fun plus(/*0*/ o: Example): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -31,5 +33,6 @@ public final class Example2 : Example {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun inc(): Example
     public final override /*1*/ /*fake_override*/ fun invoke(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun plus(/*0*/ o: Example): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

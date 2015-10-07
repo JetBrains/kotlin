@@ -26,11 +26,13 @@ import com.intellij.refactoring.memberPullUp.PullUpHelper
 import com.intellij.refactoring.util.DocCommentPolicy
 import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.refactoring.util.classMembers.MemberInfo
+import com.intellij.util.VisibilityUtil
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
 import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.core.refactoring.j2kText
+import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -142,6 +144,12 @@ public class JavaToKotlinPreconversionPullUpHelper(
 
         val targetClass = data.targetClass.unwrapped as? JetClass ?: return
         val convertedDeclaration = member.j2k() ?: return
+        if (member is PsiField || member is PsiMethod) {
+            val visibilityModifier = VisibilityUtil.getVisibilityModifier(member.modifierList)
+            if (visibilityModifier == PsiModifier.PROTECTED || visibilityModifier == PsiModifier.PACKAGE_LOCAL) {
+                convertedDeclaration.setVisibility(JetTokens.PUBLIC_KEYWORD)
+            }
+        }
         val newDeclaration = membersToDummyDeclarations[originalMember]?.replace(convertedDeclaration) as JetNamedDeclaration
         if (targetClass.isInterface()) {
             newDeclaration.removeModifier(JetTokens.ABSTRACT_KEYWORD)

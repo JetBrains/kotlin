@@ -7,5 +7,5 @@ fun foo() {
 
 //extract from library
 fun <K, V> hashMap(<warning>p</warning>: Pair<K, V>): MutableMap<K, V> {<error>}</error>
-fun <K, V> K.to(<warning>v</warning>: V): Pair<K, V> {<error>}</error>
+infix fun <K, V> K.to(<warning>v</warning>: V): Pair<K, V> {<error>}</error>
 class Pair<K, V> {}

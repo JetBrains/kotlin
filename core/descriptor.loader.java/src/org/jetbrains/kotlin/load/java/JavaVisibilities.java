@@ -52,7 +52,7 @@ public class JavaVisibilities {
         @NotNull
         @Override
         public Visibility normalize() {
-            return Visibilities.INTERNAL;
+            return Visibilities.PROTECTED;
         }
     };
 

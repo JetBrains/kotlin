@@ -3,6 +3,6 @@ package
 package a {
     public fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
     public fun foo(): kotlin.Unit
-    public fun </*0*/ T, /*1*/ R> kotlin.Array<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
-    public fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
+    public infix fun </*0*/ T, /*1*/ R> kotlin.Array<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
+    public infix fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
 }

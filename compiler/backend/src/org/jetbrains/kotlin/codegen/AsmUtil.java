@@ -212,7 +212,7 @@ public class AsmUtil {
             flags |= ACC_ABSTRACT;
         }
 
-        if (JetTypeMapper.isAccessor(functionDescriptor)) {
+        if (JetTypeMapper.isAccessor(functionDescriptor) || functionDescriptor.getVisibility() == Visibilities.INTERNAL) {
             flags |= ACC_SYNTHETIC;
         }
 

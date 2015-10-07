@@ -339,16 +339,18 @@ open public class FileMapping(val name: String, val path: String) {
 }
 
 //TODO comparable
-data open public class RangeMapping(val source: Int, val dest: Int, var range: Int = 1) {
+data public class RangeMapping(val source: Int, val dest: Int, var range: Int = 1) {
 
     var parent: FileMapping? = null;
 
-    open fun contains(destLine: Int): Boolean {
-        return dest <= destLine && destLine < dest + range
+    private val skip = source == -1 && dest == -1
+
+    fun contains(destLine: Int): Boolean {
+        return if (skip) true else dest <= destLine && destLine < dest + range
     }
 
-    open fun map(destLine: Int): Int {
-        return source + (destLine - dest)
+    fun map(destLine: Int): Int {
+        return if (skip) -1 else source + (destLine - dest)
     }
 
     object Comparator : java.util.Comparator<RangeMapping> {
@@ -365,13 +367,7 @@ data open public class RangeMapping(val source: Int, val dest: Int, var range: I
         }
     }
 
-    public object SKIP : RangeMapping(-1, -1, 1) {
-        override fun contains(destLine: Int): Boolean {
-            return true
-        }
-
-        override fun map(destLine: Int): Int {
-            return -1
-        }
+    companion object {
+        public val SKIP = RangeMapping(-1, -1, 1)
     }
 }

@@ -362,8 +362,10 @@ public class DefaultErrorMessages {
         MAP.put(UNDERSCORE_IS_DEPRECATED, "Names _, __, ___, ..., are deprecated");
 
         MAP.put(INAPPLICABLE_OPERATOR_MODIFIER, "'operator' modifier is inapplicable on this function");
+        MAP.put(INAPPLICABLE_INFIX_MODIFIER, "'infix' modifier is inapplicable on this function");
 
         MAP.put(OPERATOR_MODIFIER_REQUIRED, "'operator' modifier is required on ''{0}'' in ''{1}''", NAME, STRING);
+        MAP.put(INFIX_MODIFIER_REQUIRED, "'infix' modifier is required on ''{0}'' in ''{1}''", NAME, STRING);
 
         MAP.put(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
                 "Returns are not allowed for functions with expression body. Use block body in '{...}'");

@@ -20,7 +20,7 @@ fun <T> generic_invoker(gen :  (String) -> T) : T {
     return gen("")
 }
 
-fun <T> T.with(f :  T.() -> Unit) {
+infix fun <T> T.with(f :  T.() -> Unit) {
     f()
 }
 
