@@ -473,6 +473,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("SuperConstructorArgumentInClassHeader.kt")
+    public void testSuperConstructorArgumentInClassHeader() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SuperConstructorArgumentInClassHeader.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ThisConstructorArgument.kt")
     public void testThisConstructorArgument() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ThisConstructorArgument.kt");
