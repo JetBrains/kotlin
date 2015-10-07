@@ -59,14 +59,14 @@ public interface Collection<out E> : Iterable<E> {
     /**
      * Checks if the specified element is contained in this collection.
      */
-    public operator fun contains(o: Any?): Boolean
+    public operator fun contains(o: @UnsafeVariance E): Boolean
     override fun iterator(): Iterator<E>
 
     // Bulk Operations
     /**
      * Checks if all elements in the specified collection are contained in this collection.
      */
-    public fun containsAll(c: Collection<Any?>): Boolean
+    public fun containsAll(c: Collection<@UnsafeVariance E>): Boolean
 }
 
 /**
@@ -130,11 +130,11 @@ public interface List<out E> : Collection<E> {
     // Query Operations
     override val size: Int
     override fun isEmpty(): Boolean
-    override fun contains(o: Any?): Boolean
+    override fun contains(o: @UnsafeVariance E): Boolean
     override fun iterator(): Iterator<E>
 
     // Bulk Operations
-    override fun containsAll(c: Collection<Any?>): Boolean
+    override fun containsAll(c: Collection<@UnsafeVariance E>): Boolean
 
     // Positional Access Operations
     /**
@@ -234,11 +234,11 @@ public interface Set<out E> : Collection<E> {
     // Query Operations
     override val size: Int
     override fun isEmpty(): Boolean
-    override fun contains(o: Any?): Boolean
+    override fun contains(o: @UnsafeVariance E): Boolean
     override fun iterator(): Iterator<E>
 
     // Bulk Operations
-    override fun containsAll(c: Collection<Any?>): Boolean
+    override fun containsAll(c: Collection<@UnsafeVariance E>): Boolean
 }
 
 /**

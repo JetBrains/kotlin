@@ -274,8 +274,8 @@ public interface Cloneable {
 public interface Collection</*0*/ out E> : kotlin.Iterable<E> {
     public abstract val size: kotlin.Int
         public abstract fun <get-size>(): kotlin.Int
-    public abstract operator fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public abstract fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract operator fun contains(/*0*/ o: @kotlin.UnsafeVariance() E): kotlin.Boolean
+    public abstract fun containsAll(/*0*/ c: kotlin.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
     public abstract fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.Iterator<E>
 }
@@ -771,8 +771,8 @@ public interface Iterator</*0*/ out T> {
 public interface List</*0*/ out E> : kotlin.Collection<E> {
     public abstract override /*1*/ val size: kotlin.Int
         public abstract override /*1*/ fun <get-size>(): kotlin.Int
-    public abstract override /*1*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*1*/ fun contains(/*0*/ o: @kotlin.UnsafeVariance() E): kotlin.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
     public abstract operator fun get(/*0*/ index: kotlin.Int): E
     public abstract fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
@@ -951,8 +951,8 @@ public interface MutableCollection</*0*/ E> : kotlin.Collection<E>, kotlin.Mutab
     public abstract fun add(/*0*/ e: E): kotlin.Boolean
     public abstract fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
     public abstract fun clear(): kotlin.Unit
-    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: E): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*2*/ fun iterator(): kotlin.MutableIterator<E>
     public abstract fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
@@ -978,8 +978,8 @@ public interface MutableList</*0*/ E> : kotlin.List<E>, kotlin.MutableCollection
     public abstract override /*1*/ fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
     public abstract fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ fun clear(): kotlin.Unit
-    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: E): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): E
     public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
     public abstract override /*2*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
@@ -1035,8 +1035,8 @@ public interface MutableSet</*0*/ E> : kotlin.Set<E>, kotlin.MutableCollection<E
     public abstract override /*1*/ fun add(/*0*/ e: E): kotlin.Boolean
     public abstract override /*1*/ fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ fun clear(): kotlin.Unit
-    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: E): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*2*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*2*/ fun iterator(): kotlin.MutableIterator<E>
     public abstract override /*1*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
@@ -1106,8 +1106,8 @@ public interface Range</*0*/ T : kotlin.Comparable<T>> {
 public interface Set</*0*/ out E> : kotlin.Collection<E> {
     public abstract override /*1*/ val size: kotlin.Int
         public abstract override /*1*/ fun <get-size>(): kotlin.Int
-    public abstract override /*1*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*1*/ fun contains(/*0*/ o: @kotlin.UnsafeVariance() E): kotlin.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.Iterator<E>
 }
