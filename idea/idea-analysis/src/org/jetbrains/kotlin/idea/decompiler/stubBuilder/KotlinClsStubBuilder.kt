@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 public open class KotlinClsStubBuilder : ClsStubBuilder() {
@@ -77,18 +78,18 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
         return when {
             header.isCompatiblePackageFacadeKind() -> {
                 val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
-                val context = components.createContext(nameResolver, packageFqName)
+                val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
                 createPackageFacadeStub(packageProto, packageFqName, context)
             }
             header.isCompatibleClassKind() -> {
                 if (header.isLocalClass) return null
                 val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(annotationData, strings)
-                val context = components.createContext(nameResolver, packageFqName)
+                val context = components.createContext(nameResolver, packageFqName, TypeTable(classProto.typeTable))
                 createTopLevelClassStub(classId, classProto, context)
             }
             header.isCompatibleFileFacadeKind() -> {
                 val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
-                val context = components.createContext(nameResolver, packageFqName)
+                val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
                 createFileFacadeStub(packageProto, classId.asSingleFqName(), context)
             }
             else -> throw IllegalStateException("Should have processed " + file.getPath() + " with header $header")

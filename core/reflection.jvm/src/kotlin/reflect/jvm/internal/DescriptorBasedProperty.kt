@@ -47,7 +47,7 @@ internal abstract class DescriptorBasedProperty<out R> protected constructor(
         val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)
         when (jvmSignature) {
             is KotlinProperty -> {
-                JvmProtoBufUtil.getJvmFieldSignature(jvmSignature.proto, jvmSignature.nameResolver)?.let {
+                JvmProtoBufUtil.getJvmFieldSignature(jvmSignature.proto, jvmSignature.nameResolver, jvmSignature.typeTable)?.let {
                     container.findFieldBySignature(jvmSignature.proto, jvmSignature.nameResolver, it.name)
                 }
             }

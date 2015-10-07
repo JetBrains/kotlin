@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.deserialization.supertypes
 
 fun createClassStub(parent: StubElement<out PsiElement>, classProto: ProtoBuf.Class, classId: ClassId, context: ClsStubBuilderContext) {
     ClassClsStubBuilder(parent, classProto, classId, context).build()
@@ -48,11 +50,11 @@ private class ClassClsStubBuilder(
         private val classId: ClassId,
         private val outerContext: ClsStubBuilderContext
 ) {
-    private val c = outerContext.child(classProto.getTypeParameterList(), classId.getShortClassName())
+    private val c = outerContext.child(classProto.typeParameterList, classId.shortClassName, TypeTable(classProto.typeTable))
     private val typeStubBuilder = TypeClsStubBuilder(c)
-    private val classKind = Flags.CLASS_KIND[classProto.getFlags()]
+    private val classKind = Flags.CLASS_KIND[classProto.flags]
     private val supertypeIds = run {
-        val supertypeIds = classProto.supertypeList.map { c.nameResolver.getClassId(it.className) }
+        val supertypeIds = classProto.supertypes(c.typeTable).map { c.nameResolver.getClassId(it.className) }
         //empty supertype list if single supertype is Any
         if (supertypeIds.singleOrNull()?.let { KotlinBuiltIns.isAny(it.asSingleFqName().toUnsafe()) } ?: false) {
             listOf()
@@ -133,7 +135,7 @@ private class ClassClsStubBuilder(
 
         val primaryConstructorProto = classProto.constructorList.find { !Flags.IS_SECONDARY.get(it.flags) } ?: return
 
-        createConstructorStub(classOrObjectStub, primaryConstructorProto, c, ProtoContainer(classProto, null, c.nameResolver))
+        createConstructorStub(classOrObjectStub, primaryConstructorProto, c, ProtoContainer(classProto, null, c.nameResolver, c.typeTable))
     }
 
     private fun createDelegationSpecifierList() {
@@ -143,7 +145,7 @@ private class ClassClsStubBuilder(
         val delegationSpecifierListStub =
                 KotlinPlaceHolderStubImpl<JetDelegationSpecifierList>(classOrObjectStub, JetStubElementTypes.DELEGATION_SPECIFIER_LIST)
 
-        classProto.getSupertypeList().forEach { type ->
+        classProto.supertypes(c.typeTable).forEach { type ->
             val superClassStub = KotlinPlaceHolderStubImpl<JetDelegatorToSuperClass>(
                     delegationSpecifierListStub, JetStubElementTypes.DELEGATOR_SUPER_CLASS
             )
@@ -186,7 +188,7 @@ private class ClassClsStubBuilder(
     }
 
     private fun createCallableMemberStubs(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
-        val container = ProtoContainer(classProto, null, c.nameResolver)
+        val container = ProtoContainer(classProto, null, c.nameResolver, c.typeTable)
 
         for (secondaryConstructorProto in classProto.constructorList) {
             if (Flags.IS_SECONDARY.get(secondaryConstructorProto.flags)) {
@@ -216,6 +218,6 @@ private class ClassClsStubBuilder(
     private fun createNestedClassStub(classBody: StubElement<out PsiElement>, nestedClassId: ClassId) {
         val classDataWithSource = c.components.classDataFinder.findClassData(nestedClassId)!!
         val (nameResolver, classProto) = classDataWithSource.classData
-        createClassStub(classBody, classProto, nestedClassId, c.child(nameResolver))
+        createClassStub(classBody, classProto, nestedClassId, c.child(nameResolver, TypeTable(classProto.typeTable)))
     }
 }

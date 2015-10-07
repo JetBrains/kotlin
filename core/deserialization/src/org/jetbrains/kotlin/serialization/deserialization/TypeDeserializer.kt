@@ -42,7 +42,7 @@ public class TypeDeserializer(
         else {
             val result = LinkedHashMap<Int, TypeParameterDescriptor>()
             for ((index, proto) in typeParameterProtos.withIndex()) {
-                result[proto.getId()] = DeserializedTypeParameterDescriptor(c, proto, index)
+                result[proto.id] = DeserializedTypeParameterDescriptor(c, proto, index)
             }
             result
         }
@@ -51,18 +51,16 @@ public class TypeDeserializer(
     val ownTypeParameters: List<TypeParameterDescriptor>
             get() = typeParameterDescriptors().values().toReadOnlyList()
 
+    // TODO: don't load identical types from TypeTable more than once
     fun type(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): JetType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
-            val id = c.nameResolver.getString(proto.getFlexibleTypeCapabilitiesId())
-            val capabilities = c.components.flexibleTypeCapabilitiesDeserializer.capabilitiesById(id)
-
-            if (capabilities == null) {
-                return ErrorUtils.createErrorType("${DeserializedType(c, proto)}: Capabilities not found for id $id")
-            }
+            val id = c.nameResolver.getString(proto.flexibleTypeCapabilitiesId)
+            val capabilities = c.components.flexibleTypeCapabilitiesDeserializer.capabilitiesById(id) ?:
+                    return ErrorUtils.createErrorType("${DeserializedType(c, proto)}: Capabilities not found for id $id")
 
             return DelegatingFlexibleType.create(
                     DeserializedType(c, proto),
-                    DeserializedType(c, proto.getFlexibleUpperBound()),
+                    DeserializedType(c, proto.flexibleUpperBound(c.typeTable)!!),
                     capabilities
             )
         }
@@ -95,7 +93,7 @@ public class TypeDeserializer(
 
     private fun computeClassDescriptor(fqNameIndex: Int): ClassDescriptor? {
         val id = c.nameResolver.getClassId(fqNameIndex)
-        if (id.isLocal()) {
+        if (id.isLocal) {
             // Local classes can't be found in scopes
             return c.components.localClassResolver.resolveLocalClass(id)
         }
@@ -103,12 +101,18 @@ public class TypeDeserializer(
     }
 
     fun typeArgument(parameter: TypeParameterDescriptor?, typeArgumentProto: ProtoBuf.Type.Argument): TypeProjection {
-        return if (typeArgumentProto.getProjection() == ProtoBuf.Type.Argument.Projection.STAR)
-            if (parameter == null)
-                TypeBasedStarProjectionImpl(c.components.moduleDescriptor.builtIns.getNullableAnyType())
+        if (typeArgumentProto.projection == ProtoBuf.Type.Argument.Projection.STAR) {
+            return if (parameter == null)
+                TypeBasedStarProjectionImpl(c.components.moduleDescriptor.builtIns.nullableAnyType)
             else
                 StarProjectionImpl(parameter)
-        else TypeProjectionImpl(Deserialization.variance(typeArgumentProto.getProjection()), type(typeArgumentProto.getType()))
+        }
+
+        val variance = Deserialization.variance(typeArgumentProto.projection)
+        val type = typeArgumentProto.type(c.typeTable) ?:
+                return TypeProjectionImpl(ErrorUtils.createErrorType("No type recorded"))
+
+        return TypeProjectionImpl(variance, type(type))
     }
 
     override fun toString() = debugName + (if (parent == null) "" else ". Child of ${parent.debugName}")

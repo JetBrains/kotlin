@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.Deserialization
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
-import org.jetbrains.kotlin.serialization.deserialization.DeserializedType
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.upperIfFlexible
@@ -58,7 +55,7 @@ public class DeserializedClassDescriptor(
     private val isCompanion = kindFromProto == ProtoBuf.Class.Kind.COMPANION_OBJECT
     private val isInner = Flags.IS_INNER.get(classProto.getFlags())
 
-    val c = outerContext.childContext(this, classProto.getTypeParameterList(), nameResolver)
+    val c = outerContext.childContext(this, classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable))
 
     private val classId = nameResolver.getClassId(classProto.getFqName())
 
@@ -138,7 +135,7 @@ public class DeserializedClassDescriptor(
         val result = ArrayList<JetType>(classProto.supertypeCount)
         val unresolved = ArrayList<DeserializedType>(0)
 
-        for (supertypeProto in classProto.supertypeList) {
+        for (supertypeProto in classProto.supertypes(c.typeTable)) {
             val supertype = c.typeDeserializer.type(supertypeProto)
             if (supertype.isError) {
                 unresolved.add(supertype.upperIfFlexible() as? DeserializedType ?: error("Not a deserialized type: $supertype"))

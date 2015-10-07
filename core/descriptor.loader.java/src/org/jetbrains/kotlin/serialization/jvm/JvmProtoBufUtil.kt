@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.io.ByteArrayInputStream
 
 public object JvmProtoBufUtil {
@@ -60,7 +61,11 @@ public object JvmProtoBufUtil {
     }
 
     // returns JVM signature in the format: "equals(Ljava/lang/Object;)Z"
-    fun getJvmMethodSignature(proto: ProtoBuf.FunctionOrBuilder, nameResolver: NameResolver): String? {
+    fun getJvmMethodSignature(
+            proto: ProtoBuf.Function,
+            nameResolver: NameResolver,
+            typeTable: TypeTable
+    ): String? {
         val signature =
                 if (proto.hasExtension(JvmProtoBuf.methodSignature)) proto.getExtension(JvmProtoBuf.methodSignature) else null
         val name = if (signature != null && signature.hasName()) signature.name else proto.name
@@ -68,18 +73,21 @@ public object JvmProtoBufUtil {
             nameResolver.getString(signature.desc)
         }
         else {
-            val parameterTypes =
-                    (if (proto.hasReceiverType()) listOf(proto.receiverType) else listOf()) + proto.valueParameterList.map { it.type }
+            val parameterTypes = proto.receiverType(typeTable).singletonOrEmptyList() + proto.valueParameterList.map { it.type(typeTable) }
 
             val parametersDesc = parameterTypes.map { mapTypeDefault(it, nameResolver) ?: return null }
-            val returnTypeDesc = mapTypeDefault(proto.returnType, nameResolver) ?: return null
+            val returnTypeDesc = mapTypeDefault(proto.returnType(typeTable), nameResolver) ?: return null
 
             parametersDesc.joinToString(separator = "", prefix = "(", postfix = ")") + returnTypeDesc
         }
         return nameResolver.getString(name) + desc
     }
 
-    fun getJvmConstructorSignature(proto: ProtoBuf.ConstructorOrBuilder, nameResolver: NameResolver): String? {
+    fun getJvmConstructorSignature(
+            proto: ProtoBuf.Constructor,
+            nameResolver: NameResolver,
+            typeTable: TypeTable
+    ): String? {
         val signature =
                 if (proto.hasExtension(JvmProtoBuf.constructorSignature)) proto.getExtension(JvmProtoBuf.constructorSignature) else null
         val desc = if (signature != null && signature.hasDesc()) {
@@ -87,13 +95,17 @@ public object JvmProtoBufUtil {
         }
         else {
             proto.valueParameterList.map {
-                mapTypeDefault(it.type, nameResolver) ?: return null
+                mapTypeDefault(it.type(typeTable), nameResolver) ?: return null
             }.joinToString(separator = "", prefix = "(", postfix = ")V")
         }
         return "<init>" + desc
     }
 
-    fun getJvmFieldSignature(proto: ProtoBuf.Property, nameResolver: NameResolver): PropertySignature? {
+    fun getJvmFieldSignature(
+            proto: ProtoBuf.Property,
+            nameResolver: NameResolver,
+            typeTable: TypeTable
+    ): PropertySignature? {
         val signature =
                 if (proto.hasExtension(JvmProtoBuf.propertySignature)) proto.getExtension(JvmProtoBuf.propertySignature) else return null
         val field =
@@ -102,7 +114,7 @@ public object JvmProtoBufUtil {
         val name = if (field != null && field.hasName()) field.name else proto.name
         val desc =
                 if (field != null && field.hasDesc()) nameResolver.getString(field.desc)
-                else mapTypeDefault(proto.returnType, nameResolver) ?: return null
+                else mapTypeDefault(proto.returnType(typeTable), nameResolver) ?: return null
 
         return PropertySignature(nameResolver.getString(name), desc)
     }

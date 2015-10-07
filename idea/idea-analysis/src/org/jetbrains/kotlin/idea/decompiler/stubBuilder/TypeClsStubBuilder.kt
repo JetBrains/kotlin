@@ -35,6 +35,9 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.type
+import org.jetbrains.kotlin.serialization.deserialization.upperBounds
+import org.jetbrains.kotlin.serialization.deserialization.varargElementType
 import org.jetbrains.kotlin.types.DynamicTypeCapabilities
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
@@ -98,12 +101,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
         val typeArgumentsListStub = KotlinPlaceHolderStubImpl<JetTypeArgumentList>(typeStub, JetStubElementTypes.TYPE_ARGUMENT_LIST)
         typeArgumentProtoList.forEach { typeArgumentProto ->
-            val projectionKind = typeArgumentProto.getProjection().toProjectionKind()
+            val projectionKind = typeArgumentProto.projection.toProjectionKind()
             val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal())
             if (projectionKind != JetProjectionKind.STAR) {
-                val modifierKeywordToken = projectionKind.getToken() as? JetModifierKeywordToken
+                val modifierKeywordToken = projectionKind.token as? JetModifierKeywordToken
                 createModifierListStub(typeProjection, modifierKeywordToken.singletonOrEmptyList())
-                createTypeReferenceStub(typeProjection, typeArgumentProto.getType())
+                createTypeReferenceStub(typeProjection, typeArgumentProto.type(c.typeTable)!!)
             }
         }
     }
@@ -116,12 +119,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun createFunctionTypeStub(parent: StubElement<out PsiElement>, type: Type, isExtensionFunctionType: Boolean) {
-        val typeArgumentList = type.getArgumentList()
+        val typeArgumentList = type.argumentList
         val functionType = KotlinPlaceHolderStubImpl<JetFunctionType>(parent, JetStubElementTypes.FUNCTION_TYPE)
         if (isExtensionFunctionType) {
             val functionTypeReceiverStub
                     = KotlinPlaceHolderStubImpl<JetFunctionTypeReceiver>(functionType, JetStubElementTypes.FUNCTION_TYPE_RECEIVER)
-            val receiverTypeProto = typeArgumentList.first().getType()
+            val receiverTypeProto = typeArgumentList.first().type(c.typeTable)!!
             createTypeReferenceStub(functionTypeReceiverStub, receiverTypeProto)
         }
 
@@ -129,11 +132,13 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val typeArgumentsWithoutReceiverAndReturnType
                 = typeArgumentList.subList(if (isExtensionFunctionType) 1 else 0, typeArgumentList.size() - 1)
         typeArgumentsWithoutReceiverAndReturnType.forEach { argument ->
-            val parameter = KotlinParameterStubImpl(parameterList, fqName = null, name = null, isMutable = false, hasValOrVar = false, hasDefaultValue = false)
-            createTypeReferenceStub(parameter, argument.getType())
+            val parameter = KotlinParameterStubImpl(
+                    parameterList, fqName = null, name = null, isMutable = false, hasValOrVar = false, hasDefaultValue = false
+            )
+            createTypeReferenceStub(parameter, argument.type(c.typeTable)!!)
         }
 
-        val returnType = typeArgumentList.last().getType()
+        val returnType = typeArgumentList.last().type(c.typeTable)!!
         createTypeReferenceStub(functionType, returnType)
     }
 
@@ -154,8 +159,10 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                     hasValOrVar = false,
                     isMutable = false
             )
-            val isVararg = valueParameterProto.hasVarargElementType()
-            val modifierList = if (isVararg) createModifierListStub(parameterStub, listOf(JetTokens.VARARG_KEYWORD)) else null
+            val varargElementType = valueParameterProto.varargElementType(c.typeTable)
+            val typeProto = varargElementType ?: valueParameterProto.type(c.typeTable)
+            val modifierList =
+                    if (varargElementType != null) createModifierListStub(parameterStub, listOf(JetTokens.VARARG_KEYWORD)) else null
             val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
                     container, callableProto, callableProto.annotatedCallableKind, index, valueParameterProto
             )
@@ -163,7 +170,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierList(parameterStub))
             }
 
-            val typeProto = if (isVararg) valueParameterProto.varargElementType else valueParameterProto.type
             createTypeReferenceStub(parameterStub, typeProto)
         }
     }
@@ -185,21 +191,21 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val typeParameterListStub = KotlinPlaceHolderStubImpl<JetTypeParameterList>(parent, JetStubElementTypes.TYPE_PARAMETER_LIST)
         val protosForTypeConstraintList = arrayListOf<Pair<Name, Type>>()
         for (proto in typeParameterProtoList) {
-            val name = c.nameResolver.getName(proto.getName())
+            val name = c.nameResolver.getName(proto.name)
             val typeParameterStub = KotlinTypeParameterStubImpl(
                     typeParameterListStub,
                     name = name.ref(),
-                    isInVariance = proto.getVariance() == Variance.IN,
-                    isOutVariance = proto.getVariance() == Variance.OUT
+                    isInVariance = proto.variance == Variance.IN,
+                    isOutVariance = proto.variance == Variance.OUT
             )
             createTypeParameterModifierListStub(typeParameterStub, proto)
-            val upperBoundProtos = proto.getUpperBoundList()
+            val upperBoundProtos = proto.upperBounds(c.typeTable)
             if (upperBoundProtos.isNotEmpty()) {
                 val upperBound = upperBoundProtos.first()
                 if (!upperBound.isDefaultUpperBound()) {
                     createTypeReferenceStub(typeParameterStub, upperBound)
                 }
-                protosForTypeConstraintList addAll upperBoundProtos.drop(1).map { Pair(name, it) }
+                protosForTypeConstraintList.addAll(upperBoundProtos.drop(1).map { Pair(name, it) })
             }
         }
         return protosForTypeConstraintList

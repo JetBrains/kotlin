@@ -30,11 +30,13 @@ import org.jetbrains.kotlin.serialization.Flags;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.Deserialization;
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable;
 
 public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescriptorImpl implements DeserializedCallableMemberDescriptor {
 
     private final ProtoBuf.Function proto;
     private final NameResolver nameResolver;
+    private final TypeTable typeTable;
 
     private DeserializedSimpleFunctionDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -43,11 +45,13 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
             @NotNull Name name,
             @NotNull Kind kind,
             @NotNull ProtoBuf.Function proto,
-            @NotNull NameResolver nameResolver
+            @NotNull NameResolver nameResolver,
+            @NotNull TypeTable typeTable
     ) {
         super(containingDeclaration, original, annotations, name, kind, SourceElement.NO_SOURCE);
         this.proto = proto;
         this.nameResolver = nameResolver;
+        this.typeTable = typeTable;
     }
 
     @NotNull
@@ -64,7 +68,8 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
                 getName(),
                 kind,
                 proto,
-                nameResolver
+                nameResolver,
+                typeTable
         );
     }
 
@@ -87,11 +92,18 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
     }
 
     @NotNull
+    @Override
+    public TypeTable getTypeTable() {
+        return typeTable;
+    }
+
+    @NotNull
     public static DeserializedSimpleFunctionDescriptor create(
             @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
             @NotNull ProtoBuf.Function proto,
             @NotNull NameResolver nameResolver,
-            @NotNull Annotations annotations
+            @NotNull TypeTable typeTable
     ) {
         return new DeserializedSimpleFunctionDescriptor(
                 containingDeclaration,
@@ -100,7 +112,8 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
                 nameResolver.getName(proto.getName()),
                 Deserialization.memberKind(Flags.MEMBER_KIND.get(proto.getFlags())),
                 proto,
-                nameResolver
+                nameResolver,
+                typeTable
         );
     }
 }

@@ -16,19 +16,22 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.ProtoBuf
 
-public data class ProtoContainer(
-        val classProto: ProtoBuf.Class?,
-        val packageFqName: FqName?,
-        val nameResolver: NameResolver,
-        val typeTable: TypeTable
-) {
-    init {
-        assert((classProto != null) xor (packageFqName != null))
+class TypeTable(typeTable: ProtoBuf.TypeTable) {
+    val types: List<ProtoBuf.Type> = run {
+        val originalTypes = typeTable.typeList
+        if (typeTable.hasFirstNullable()) {
+            val firstNullable = typeTable.firstNullable
+            typeTable.typeList.mapIndexed { i, type ->
+                if (i >= firstNullable) {
+                    type.toBuilder().setNullable(true).build()
+                }
+                else type
+            }
+        }
+        else originalTypes
     }
 
-    fun getFqName(): FqName =
-            packageFqName ?: nameResolver.getClassId(classProto!!.getFqName()).asSingleFqName()
+    operator fun get(index: Int) = types[index]
 }

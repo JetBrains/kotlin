@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.serialization.ProtoBuf.Modality
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.receiverType
+import org.jetbrains.kotlin.serialization.deserialization.returnType
 
 fun createCallableStubs(
         parentStub: StubElement<out PsiElement>,
@@ -118,10 +120,10 @@ private class FunctionClsStubBuilder(
         private val functionProto: ProtoBuf.Function
 ) : CallableClsStubBuilder(parent, outerContext, protoContainer, functionProto.typeParameterList) {
     override val receiverType: ProtoBuf.Type?
-        get() = if (functionProto.hasReceiverType()) functionProto.receiverType else null
+        get() = functionProto.receiverType(c.typeTable)
 
     override val returnType: ProtoBuf.Type?
-        get() = if (functionProto.hasReturnType()) functionProto.returnType else null
+        get() = functionProto.returnType(c.typeTable)
 
     override fun createValueParameterList() {
         typeStubBuilder.createValueParameterListStub(callableStub, functionProto, functionProto.valueParameterList, protoContainer)
@@ -165,10 +167,10 @@ private class PropertyClsStubBuilder(
     private val isVar = Flags.IS_VAR.get(propertyProto.flags)
 
     override val receiverType: ProtoBuf.Type?
-        get() = if (propertyProto.hasReceiverType()) propertyProto.receiverType else null
+        get() = propertyProto.receiverType(c.typeTable)
 
     override val returnType: ProtoBuf.Type?
-        get() = if (propertyProto.hasReturnType()) propertyProto.returnType else null
+        get() = propertyProto.returnType(c.typeTable)
 
     override fun createValueParameterList() {
     }

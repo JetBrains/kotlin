@@ -21,13 +21,12 @@ import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.deserialization.Deserialization;
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext;
-import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer;
+import org.jetbrains.kotlin.serialization.deserialization.*;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
@@ -35,6 +34,7 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getB
 public class DeserializedTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor {
     private final ProtoBuf.TypeParameter proto;
     private final TypeDeserializer typeDeserializer;
+    private final TypeTable typeTable;
 
     public DeserializedTypeParameterDescriptor(@NotNull DeserializationContext c, @NotNull ProtoBuf.TypeParameter proto, int index) {
         super(c.getStorageManager(),
@@ -46,16 +46,18 @@ public class DeserializedTypeParameterDescriptor extends AbstractLazyTypeParamet
               SourceElement.NO_SOURCE);
         this.proto = proto;
         this.typeDeserializer = c.getTypeDeserializer();
+        this.typeTable = c.getTypeTable();
     }
 
     @NotNull
     @Override
     protected Set<JetType> resolveUpperBounds() {
-        if (proto.getUpperBoundCount() == 0) {
+        List<ProtoBuf.Type> upperBounds = ProtoTypeTableUtilKt.upperBounds(proto, typeTable);
+        if (upperBounds.isEmpty()) {
             return Collections.singleton(getBuiltIns(this).getDefaultBound());
         }
-        Set<JetType> result = new LinkedHashSet<JetType>(proto.getUpperBoundCount());
-        for (ProtoBuf.Type upperBound : proto.getUpperBoundList()) {
+        Set<JetType> result = new LinkedHashSet<JetType>(upperBounds.size());
+        for (ProtoBuf.Type upperBound : upperBounds) {
             result.add(typeDeserializer.type(upperBound, Annotations.Companion.getEMPTY()));
         }
         return result;

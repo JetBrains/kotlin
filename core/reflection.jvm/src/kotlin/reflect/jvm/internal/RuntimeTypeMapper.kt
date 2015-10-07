@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
@@ -100,7 +101,8 @@ internal sealed class JvmPropertySignature {
             val descriptor: PropertyDescriptor,
             val proto: ProtoBuf.Property,
             val signature: JvmProtoBuf.JvmPropertySignature,
-            val nameResolver: NameResolver
+            val nameResolver: NameResolver,
+            val typeTable: TypeTable
     ) : JvmPropertySignature() {
         private val string: String
 
@@ -110,7 +112,7 @@ internal sealed class JvmPropertySignature {
             }
             else {
                 val (name, desc) =
-                        JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver) ?:
+                        JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable) ?:
                                 throw KotlinReflectionInternalError("No field signature for property: $descriptor")
 
                 val moduleSuffix =
@@ -154,12 +156,12 @@ internal object RuntimeTypeMapper {
 
                 val proto = function.proto
                 if (proto is ProtoBuf.Function) {
-                    JvmProtoBufUtil.getJvmMethodSignature(proto, function.nameResolver)?.let { signature ->
+                    JvmProtoBufUtil.getJvmMethodSignature(proto, function.nameResolver, function.typeTable)?.let { signature ->
                         return JvmFunctionSignature.KotlinFunction(signature)
                     }
                 }
                 if (proto is ProtoBuf.Constructor) {
-                    JvmProtoBufUtil.getJvmConstructorSignature(proto, function.nameResolver)?.let { signature ->
+                    JvmProtoBufUtil.getJvmConstructorSignature(proto, function.nameResolver, function.typeTable)?.let { signature ->
                         return JvmFunctionSignature.KotlinConstructor(signature)
                     }
                 }
@@ -191,7 +193,7 @@ internal object RuntimeTypeMapper {
                 throw KotlinReflectionInternalError("No metadata found for $property")
             }
             return JvmPropertySignature.KotlinProperty(
-                    property, proto, proto.getExtension(JvmProtoBuf.propertySignature), property.nameResolver
+                    property, proto, proto.getExtension(JvmProtoBuf.propertySignature), property.nameResolver, property.typeTable
             )
         }
         else if (property is JavaPropertyDescriptor) {

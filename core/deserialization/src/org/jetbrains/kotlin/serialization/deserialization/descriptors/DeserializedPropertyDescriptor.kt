@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 
 class DeserializedPropertyDescriptor(
         containingDeclaration: DeclarationDescriptor,
@@ -33,10 +34,11 @@ class DeserializedPropertyDescriptor(
         isVar: Boolean,
         name: Name,
         kind: Kind,
+        lateInit: Boolean,
+        isConst: Boolean,
         override val proto: ProtoBuf.Property,
         override val nameResolver: NameResolver,
-        lateInit: Boolean,
-        isConst: Boolean
+        override val typeTable: TypeTable
 ) : DeserializedCallableMemberDescriptor,
     PropertyDescriptorImpl(containingDeclaration, original, annotations,
                            modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE, lateInit, isConst) {
@@ -49,6 +51,8 @@ class DeserializedPropertyDescriptor(
             kind: Kind
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
-                newOwner, original, annotations, newModality, newVisibility, isVar, name, kind, proto, nameResolver, isLateInit, isConst)
+                newOwner, original, annotations, newModality, newVisibility, isVar, name, kind, isLateInit, isConst,
+                proto, nameResolver, typeTable
+        )
     }
 }

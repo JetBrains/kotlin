@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -38,7 +39,10 @@ public open class DeserializedPackageMemberScope(
         nameResolver: NameResolver,
         components: DeserializationComponents,
         classNames: () -> Collection<Name>
-) : DeserializedMemberScope(components.createContext(packageDescriptor, nameResolver), proto.functionList, proto.propertyList) {
+) : DeserializedMemberScope(
+        components.createContext(packageDescriptor, nameResolver, TypeTable(proto.typeTable)),
+        proto.functionList, proto.propertyList
+) {
     private val packageFqName = packageDescriptor.fqName
 
     internal val classNames by c.storageManager.createLazyValue { classNames().toSet() }

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.serialization.deserialization.receiverType
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
@@ -38,11 +39,11 @@ public abstract class DeserializedMemberScope protected constructor(
 
     private val functionProtos =
             c.storageManager.createLazyValue {
-                groupByKey(filteredFunctionProtos(functionList), { it.name }) { it.hasReceiverType() }
+                groupByKey(filteredFunctionProtos(functionList), { it.name }) { it.receiverType(c.typeTable) != null }
             }
     private val propertyProtos =
             c.storageManager.createLazyValue {
-                groupByKey(filteredPropertyProtos(propertyList), { it.name }) { it.hasReceiverType() }
+                groupByKey(filteredPropertyProtos(propertyList), { it.name }) { it.receiverType(c.typeTable) != null }
             }
 
     private val functions =

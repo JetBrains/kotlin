@@ -92,8 +92,8 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             proto as ProtoBuf.Property
 
             val nameResolver = container.nameResolver
-            val syntheticFunctionSignature = getPropertySignature(proto, nameResolver, synthetic = true)
-            val fieldSignature = getPropertySignature(proto, nameResolver, field = true)
+            val syntheticFunctionSignature = getPropertySignature(proto, nameResolver, container.typeTable, synthetic = true)
+            val fieldSignature = getPropertySignature(proto, nameResolver, container.typeTable, field = true)
 
             val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
                 findClassAndLoadMemberAnnotations(container, proto, sig)
@@ -106,7 +106,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             return loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
         }
 
-        val signature = getCallableSignature(proto, container.nameResolver, kind) ?: return emptyList()
+        val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind) ?: return emptyList()
         return transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, signature))
     }
 
@@ -138,7 +138,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             parameterIndex: Int,
             proto: ProtoBuf.ValueParameter
     ): List<A> {
-        val methodSignature = getCallableSignature(message, container.nameResolver, kind)
+        val methodSignature = getCallableSignature(message, container.nameResolver, container.typeTable, kind)
         if (methodSignature != null) {
             val index = if (proto.hasExtension(index)) proto.getExtension(index) else parameterIndex
             val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
@@ -153,7 +153,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             message: MessageLite,
             kind: AnnotatedCallableKind
     ): List<A> {
-        val methodSignature = getCallableSignature(message, container.nameResolver, kind)
+        val methodSignature = getCallableSignature(message, container.nameResolver, container.typeTable, kind)
         if (methodSignature != null) {
             val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, 0)
             return findClassAndLoadMemberAnnotations(container, message, paramSignature)
@@ -168,7 +168,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
     override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Property, expectedType: JetType): C? {
         val nameResolver = container.nameResolver
-        val signature = getCallableSignature(proto, nameResolver, AnnotatedCallableKind.PROPERTY) ?: return null
+        val signature = getCallableSignature(proto, nameResolver, container.typeTable, AnnotatedCallableKind.PROPERTY) ?: return null
 
         val kotlinClass = findClassWithAnnotationsAndInitializers(
                 container, getImplClassName(proto, nameResolver), isStaticFieldInOuter(proto)
@@ -279,6 +279,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     private fun getPropertySignature(
             proto: ProtoBuf.Property,
             nameResolver: NameResolver,
+            typeTable: TypeTable,
             field: Boolean = false,
             synthetic: Boolean = false
     ): MemberSignature? {
@@ -287,7 +288,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
                 else return null
 
         if (field) {
-            val (name, desc) = JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver) ?: return null
+            val (name, desc) = JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable) ?: return null
             return MemberSignature.fromFieldNameAndDesc(name, desc)
         }
         else if (synthetic && signature.hasSyntheticMethod()) {
@@ -297,20 +298,25 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         return null
     }
 
-    private fun getCallableSignature(proto: MessageLite, nameResolver: NameResolver, kind: AnnotatedCallableKind): MemberSignature? {
+    private fun getCallableSignature(
+            proto: MessageLite,
+            nameResolver: NameResolver,
+            typeTable: TypeTable,
+            kind: AnnotatedCallableKind
+    ): MemberSignature? {
         return when {
             proto is ProtoBuf.Constructor -> {
-                MemberSignature.fromMethodNameAndDesc(JvmProtoBufUtil.getJvmConstructorSignature(proto, nameResolver) ?: return null)
+                MemberSignature.fromMethodNameAndDesc(JvmProtoBufUtil.getJvmConstructorSignature(proto, nameResolver, typeTable) ?: return null)
             }
             proto is ProtoBuf.Function -> {
-                MemberSignature.fromMethodNameAndDesc(JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver) ?: return null)
+                MemberSignature.fromMethodNameAndDesc(JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver, typeTable) ?: return null)
             }
             proto is ProtoBuf.Property && proto.hasExtension(propertySignature) -> {
                 val signature = proto.getExtension(propertySignature)
                 when (kind) {
                     AnnotatedCallableKind.PROPERTY_GETTER -> MemberSignature.fromMethod(nameResolver, signature.getter)
                     AnnotatedCallableKind.PROPERTY_SETTER -> MemberSignature.fromMethod(nameResolver, signature.setter)
-                    AnnotatedCallableKind.PROPERTY -> getPropertySignature(proto, nameResolver, true, true)
+                    AnnotatedCallableKind.PROPERTY -> getPropertySignature(proto, nameResolver, typeTable, true, true)
                     else -> null
                 }
             }
