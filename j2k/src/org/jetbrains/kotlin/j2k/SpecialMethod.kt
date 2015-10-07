@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import com.intellij.psi.CommonClassNames.JAVA_LANG_STRING
+import com.intellij.psi.impl.PsiExpressionEvaluator
 import org.jetbrains.kotlin.j2k.ast.*
 
 enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String, val parameterCount: Int?) {
@@ -115,17 +116,18 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression?  {
             val patternArgument = codeConverter.convertToRegex(arguments[0])
             val limitArgument = codeConverter.convertExpression(arguments[1])
-            val splitArguments =
-                if (limitArgument is PrefixExpression && limitArgument.op == "-" && limitArgument.expression.let { it is LiteralExpression && it.literalText == "1" })
-                    listOf(patternArgument)
-                else if (limitArgument is LiteralExpression && limitArgument.literalText.all { it.isDigit() }) {
-                    if (limitArgument.literalText.toInt() == 0) {
+            val evaluator = PsiExpressionEvaluator()
+            val limit = evaluator.computeConstantExpression(arguments[1], /* throwExceptionOnOverflow = */ false) as? Int
+            val splitArguments = when {
+                    limit == null ->  // not a constant
+                        listOf(patternArgument, MethodCallExpression.buildNotNull(limitArgument, "coerceAtLeast", listOf(LiteralExpression("0").assignNoPrototype()), emptyList()).assignNoPrototype())
+                    limit < 0 ->      // negative, same behavior as split(regex) in kotlin
+                        listOf(patternArgument)
+                    limit == 0 ->     // zero, same replacement as for split without limit
                         return STRING_SPLIT.convertCall(qualifier, arrayOf(arguments[0]), typeArgumentsConverted, codeConverter)
-                    }
-                    listOf(patternArgument, limitArgument)
-                }
-                else
-                    listOf(patternArgument, MethodCallExpression.buildNotNull(limitArgument, "coerceAtLeast", listOf(LiteralExpression("0").assignNoPrototype()), emptyList()).assignNoPrototype())
+                    else ->           // positive, same behavior as split(regex, limit) in kotlin
+                        listOf(patternArgument, limitArgument)
+            }
 
             val splitCall = MethodCallExpression.buildNotNull(codeConverter.convertExpression(qualifier), "split", splitArguments, emptyList()).assignNoPrototype()
             return MethodCallExpression.buildNotNull(splitCall, "toTypedArray", emptyList(), emptyList())
