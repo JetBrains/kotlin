@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
-import org.jetbrains.kotlin.idea.core.comparePossiblyOverridingDescriptors
+import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
@@ -1031,7 +1031,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
             if (diagnostics.any { it.getFactory() in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS }
                 || (currentDescriptor != null
                     && !ErrorUtils.isError(currentDescriptor)
-                    && !comparePossiblyOverridingDescriptors(extractionData.project, currentDescriptor, resolveResult.descriptor))) {
+                    && !compareDescriptors(extractionData.project, currentDescriptor, resolveResult.descriptor))) {
                 conflicts.putValue(
                         resolveResult.originalRefExpr,
                         getDeclarationMessage(resolveResult.declaration, "0.will.no.longer.be.accessible.after.extraction")

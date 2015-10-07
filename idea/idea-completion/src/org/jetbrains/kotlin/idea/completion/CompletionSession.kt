@@ -266,7 +266,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         val restrictedKindFilter = descriptorKindFilter!!.restrictedToKinds(DescriptorKindFilter.FUNCTIONS_MASK or DescriptorKindFilter.VARIABLES_MASK) // optimization
         val descriptors = referenceVariantsHelper.getReferenceVariants(nameExpression!!, restrictedKindFilter, descriptorNameFilter, useRuntimeReceiverType = true)
         return descriptors.filter { descriptor ->
-            referenceVariants.filter { it.name == descriptor.name }.none { comparePossiblyOverridingDescriptors(project, it, descriptor) }
+            referenceVariants.none { compareDescriptors(project, it, descriptor) }
         }
     }
 
