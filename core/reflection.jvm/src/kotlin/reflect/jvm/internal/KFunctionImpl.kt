@@ -51,8 +51,8 @@ internal open class KFunctionImpl protected constructor(
     override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
-            is KotlinConstructor -> container.findConstructorBySignature(jvmSignature.signature, jvmSignature.nameResolver, isDeclared())
-            is KotlinFunction -> container.findMethodBySignature(jvmSignature.signature, jvmSignature.nameResolver, isDeclared())
+            is KotlinConstructor -> container.findConstructorBySignature(jvmSignature.constructorDesc, isDeclared())
+            is KotlinFunction -> container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc, isDeclared())
             is JavaMethod -> jvmSignature.method
             is JavaConstructor -> jvmSignature.constructor
             is BuiltInFunction -> jvmSignature.getMember(container)
@@ -76,11 +76,11 @@ internal open class KFunctionImpl protected constructor(
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinFunction -> {
-                container.findDefaultMethod(jvmSignature.signature, jvmSignature.nameResolver,
+                container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc,
                                             !Modifier.isStatic(caller.member.modifiers), isDeclared())
             }
             is KotlinConstructor -> {
-                container.findDefaultConstructor(jvmSignature.signature, jvmSignature.nameResolver, isDeclared())
+                container.findDefaultConstructor(jvmSignature.constructorDesc, isDeclared())
             }
             else -> {
                 // Java methods, Java constructors and built-ins don't have $default methods

@@ -24,7 +24,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.*
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodImplClassName
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertyImplClassName
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
 import java.util.*
@@ -297,11 +301,11 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
     private fun getCallableSignature(proto: MessageLite, nameResolver: NameResolver, kind: AnnotatedCallableKind): MemberSignature? {
         return when {
-            proto is ProtoBuf.Constructor && proto.hasExtension(constructorSignature) -> {
-                MemberSignature.fromMethod(nameResolver, proto.getExtension(constructorSignature))
+            proto is ProtoBuf.Constructor -> {
+                MemberSignature.fromMethodNameAndDesc(JvmProtoBufUtil.getJvmConstructorSignature(proto, nameResolver) ?: return null)
             }
-            proto is ProtoBuf.Function && proto.hasExtension(methodSignature) -> {
-                MemberSignature.fromMethod(nameResolver, proto.getExtension(methodSignature))
+            proto is ProtoBuf.Function -> {
+                MemberSignature.fromMethodNameAndDesc(JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver) ?: return null)
             }
             proto is ProtoBuf.Property && proto.hasExtension(propertySignature) -> {
                 val signature = proto.getExtension(propertySignature)

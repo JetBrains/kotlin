@@ -330,9 +330,15 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     }
 
     open fun checkEquals(old: JvmProtoBuf.JvmMethodSignature, new: JvmProtoBuf.JvmMethodSignature): Boolean {
-        if (!checkStringEquals(old.name, new.name)) return false
+        if (old.hasName() != new.hasName()) return false
+        if (old.hasName()) {
+            if (!checkStringEquals(old.name, new.name)) return false
+        }
 
-        if (!checkStringEquals(old.desc, new.desc)) return false
+        if (old.hasDesc() != new.hasDesc()) return false
+        if (old.hasDesc()) {
+            if (!checkStringEquals(old.desc, new.desc)) return false
+        }
 
         return true
     }
@@ -896,9 +902,13 @@ public fun ProtoBuf.ValueParameter.hashCode(stringIndexes: (Int) -> Int, fqNameI
 public fun JvmProtoBuf.JvmMethodSignature.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
-    hashCode = 31 * hashCode + stringIndexes(name)
+    if (hasName()) {
+        hashCode = 31 * hashCode + stringIndexes(name)
+    }
 
-    hashCode = 31 * hashCode + stringIndexes(desc)
+    if (hasDesc()) {
+        hashCode = 31 * hashCode + stringIndexes(desc)
+    }
 
     return hashCode
 }

@@ -1860,19 +1860,19 @@ public final class JvmProtoBuf {
   public interface JvmMethodSignatureOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
 
-    // required int32 name = 1;
+    // optional int32 name = 1;
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     boolean hasName();
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     int getName();
 
-    // required int32 desc = 2;
+    // optional int32 desc = 2;
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -1880,7 +1880,7 @@ public final class JvmProtoBuf {
      */
     boolean hasDesc();
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -1968,27 +1968,27 @@ public final class JvmProtoBuf {
     }
 
     private int bitField0_;
-    // required int32 name = 1;
+    // optional int32 name = 1;
     public static final int NAME_FIELD_NUMBER = 1;
     private int name_;
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     public int getName() {
       return name_;
     }
 
-    // required int32 desc = 2;
+    // optional int32 desc = 2;
     public static final int DESC_FIELD_NUMBER = 2;
     private int desc_;
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -1998,7 +1998,7 @@ public final class JvmProtoBuf {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -2017,14 +2017,6 @@ public final class JvmProtoBuf {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
 
-      if (!hasName()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasDesc()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -2196,14 +2188,6 @@ public final class JvmProtoBuf {
       }
 
       public final boolean isInitialized() {
-        if (!hasName()) {
-          
-          return false;
-        }
-        if (!hasDesc()) {
-          
-          return false;
-        }
         return true;
       }
 
@@ -2226,22 +2210,22 @@ public final class JvmProtoBuf {
       }
       private int bitField0_;
 
-      // required int32 name = 1;
+      // optional int32 name = 1;
       private int name_ ;
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public int getName() {
         return name_;
       }
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public Builder setName(int value) {
         bitField0_ |= 0x00000001;
@@ -2250,7 +2234,7 @@ public final class JvmProtoBuf {
         return this;
       }
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public Builder clearName() {
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -2259,10 +2243,10 @@ public final class JvmProtoBuf {
         return this;
       }
 
-      // required int32 desc = 2;
+      // optional int32 desc = 2;
       private int desc_ ;
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -2272,7 +2256,7 @@ public final class JvmProtoBuf {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -2282,7 +2266,7 @@ public final class JvmProtoBuf {
         return desc_;
       }
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -2295,7 +2279,7 @@ public final class JvmProtoBuf {
         return this;
       }
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -3164,24 +3148,6 @@ public final class JvmProtoBuf {
           return false;
         }
       }
-      if (hasSyntheticMethod()) {
-        if (!getSyntheticMethod().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      if (hasGetter()) {
-        if (!getGetter().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      if (hasSetter()) {
-        if (!getSetter().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -3387,24 +3353,6 @@ public final class JvmProtoBuf {
       public final boolean isInitialized() {
         if (hasField()) {
           if (!getField().isInitialized()) {
-            
-            return false;
-          }
-        }
-        if (hasSyntheticMethod()) {
-          if (!getSyntheticMethod().isInitialized()) {
-            
-            return false;
-          }
-        }
-        if (hasGetter()) {
-          if (!getGetter().isInitialized()) {
-            
-            return false;
-          }
-        }
-        if (hasSetter()) {
-          if (!getSetter().isInitialized()) {
             
             return false;
           }
