@@ -156,6 +156,9 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         catch (e: AbsentInformationException) {
             return null
         }
+        catch (e: InternalError) {
+            return null
+        }
 
 
         val referenceInternalName: String
