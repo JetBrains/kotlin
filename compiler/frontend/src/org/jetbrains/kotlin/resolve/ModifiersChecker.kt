@@ -100,10 +100,10 @@ public object ModifierCheckerCore {
     private val deprecatedParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
             // Deprecated in M14, forbidden in M15
             INTERNAL_KEYWORD  to EnumSet.of(INTERFACE),
-            PROTECTED_KEYWORD to EnumSet.of(INTERFACE),
+            PROTECTED_KEYWORD to EnumSet.of(INTERFACE, OBJECT),
             // Deprecated in M15
-            FINAL_KEYWORD     to EnumSet.of(INTERFACE),
-            PROTECTED_KEYWORD to EnumSet.of(OBJECT)
+            FINAL_KEYWORD     to EnumSet.of(INTERFACE)
+            //PROTECTED_KEYWORD to EnumSet.of(OBJECT)
     )
 
     // First modifier in pair should be also first in declaration
