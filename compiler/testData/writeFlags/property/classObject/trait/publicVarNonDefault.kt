@@ -13,4 +13,4 @@ interface Test {
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test$Companion, prop
-// FLAGS: ACC_PRIVATE
+// FLAGS: ACC_PRIVATE, ACC_STATIC

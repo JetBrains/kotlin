@@ -24,9 +24,8 @@ interface Test {
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test$Companion, prop$delegate
-// FLAGS: ACC_FINAL, ACC_PRIVATE
+// FLAGS: ACC_FINAL, ACC_PRIVATE, ACC_STATIC
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test, prop$delegate
-// FLAGS: ACC_FINAL, ACC_PRIVATE
 // ABSENT: TRUE

@@ -747,7 +747,9 @@ public class AsmUtil {
             return false;
         }
 
-        return isNonCompanionObject(propertyDescriptor.getContainingDeclaration()) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        return isNonCompanionObject(propertyDescriptor.getContainingDeclaration()) ||
+               isPropertyWithBackingFieldInOuterClass(propertyDescriptor) ||
+               isInterfaceCompanionObject(propertyDescriptor.getContainingDeclaration());
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
@@ -756,8 +758,14 @@ public class AsmUtil {
     }
 
     public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
+        return getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate, false);
+    }
+
+    public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate, boolean skipInterfaceCheck) {
         boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
-        if (isDelegate || isExtensionProperty) {
+        if (isDelegate ||
+            isExtensionProperty ||
+            (!skipInterfaceCheck && isInterfaceCompanionObject(propertyDescriptor.getContainingDeclaration()))) {
             return ACC_PRIVATE;
         }
         else {
@@ -783,7 +791,7 @@ public class AsmUtil {
                && !isExtensionProperty
                && isCompanionObject(propertyContainer) && isInterface(propertyContainer.getContainingDeclaration())
                && areBothAccessorDefault(propertyDescriptor)
-               && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
+               && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false, true) == ACC_PUBLIC;
     }
 
     public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {

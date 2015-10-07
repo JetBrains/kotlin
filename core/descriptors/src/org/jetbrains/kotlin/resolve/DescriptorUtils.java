@@ -305,6 +305,10 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isCompanionObject();
     }
 
+    public static boolean isInterfaceCompanionObject(@NotNull DeclarationDescriptor descriptor) {
+        return isCompanionObject(descriptor) && isKindOf(descriptor.getContainingDeclaration(), ClassKind.INTERFACE);
+    }
+
     public static boolean isObject(@NotNull DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.OBJECT);
     }
