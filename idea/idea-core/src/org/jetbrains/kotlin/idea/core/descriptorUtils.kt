@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
 fun DeclarationDescriptorWithVisibility.isVisible(
@@ -76,6 +77,10 @@ private fun compareDescriptorsText(project: Project, d1: DeclarationDescriptor?,
 
 public fun compareDescriptors(project: Project, currentDescriptor: DeclarationDescriptor?, originalDescriptor: DeclarationDescriptor?): Boolean {
     if (currentDescriptor?.name != originalDescriptor?.name) return false
+
+    if (originalDescriptor is SyntheticJavaPropertyDescriptor && currentDescriptor is SyntheticJavaPropertyDescriptor) {
+        return compareDescriptors(project, currentDescriptor.getMethod, originalDescriptor.getMethod)
+    }
 
     if (compareDescriptorsText(project, currentDescriptor, originalDescriptor)) return true
 
