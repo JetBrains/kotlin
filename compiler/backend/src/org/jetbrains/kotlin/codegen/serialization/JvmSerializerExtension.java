@@ -29,9 +29,6 @@ import org.jetbrains.kotlin.serialization.AnnotationSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.SerializerExtension;
 import org.jetbrains.kotlin.serialization.StringTable;
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -88,8 +85,7 @@ public class JvmSerializerExtension extends SerializerExtension {
     public void serializeConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull ProtoBuf.Constructor.Builder proto) {
         Method method = bindings.get(METHOD_FOR_FUNCTION, descriptor);
         if (method != null) {
-            JvmProtoBuf.JvmMethodSignature signature = new SignatureSerializer().methodSignature(method);
-            proto.setExtension(JvmProtoBuf.constructorSignature, signature);
+            proto.setExtension(JvmProtoBuf.constructorSignature, new SignatureSerializer().methodSignature(method));
         }
 
         saveImplClassName(descriptor, proto);
@@ -97,22 +93,9 @@ public class JvmSerializerExtension extends SerializerExtension {
 
     @Override
     public void serializeFunction(@NotNull FunctionDescriptor descriptor, @NotNull ProtoBuf.Function.Builder proto) {
-        SignatureSerializer signatureSerializer = new SignatureSerializer();
-
-        JvmProtoBuf.JvmMethodSignature signature;
-        if (descriptor instanceof DeserializedSimpleFunctionDescriptor) {
-            DeserializedSimpleFunctionDescriptor deserialized = (DeserializedSimpleFunctionDescriptor) descriptor;
-            signature = signatureSerializer.copyMethodSignature(
-                    deserialized.getProto().getExtension(JvmProtoBuf.methodSignature), deserialized.getNameResolver()
-            );
-        }
-        else {
-            Method method = bindings.get(METHOD_FOR_FUNCTION, descriptor);
-            signature = method != null ? signatureSerializer.methodSignature(method) : null;
-        }
-
-        if (signature != null) {
-            proto.setExtension(JvmProtoBuf.methodSignature, signature);
+        Method method = bindings.get(METHOD_FOR_FUNCTION, descriptor);
+        if (method != null) {
+            proto.setExtension(JvmProtoBuf.methodSignature, new SignatureSerializer().methodSignature(method));
         }
 
         saveImplClassName(descriptor, proto);
@@ -144,22 +127,12 @@ public class JvmSerializerExtension extends SerializerExtension {
 
         Method syntheticMethod = bindings.get(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor);
 
-        JvmProtoBuf.JvmPropertySignature signature;
-        if (descriptor instanceof DeserializedPropertyDescriptor) {
-            DeserializedPropertyDescriptor deserializedCallable = (DeserializedPropertyDescriptor) descriptor;
-            signature = signatureSerializer.copyPropertySignature(
-                    deserializedCallable.getProto().getExtension(JvmProtoBuf.propertySignature),
-                    deserializedCallable.getNameResolver()
-            );
-        }
-        else {
-            signature = signatureSerializer.propertySignature(
-                    fieldName, fieldDesc, isStaticInOuter,
-                    syntheticMethod != null ? signatureSerializer.methodSignature(syntheticMethod) : null,
-                    getterMethod != null ? signatureSerializer.methodSignature(getterMethod) : null,
-                    setterMethod != null ? signatureSerializer.methodSignature(setterMethod) : null
-            );
-        }
+        JvmProtoBuf.JvmPropertySignature signature = signatureSerializer.propertySignature(
+                fieldName, fieldDesc, isStaticInOuter,
+                syntheticMethod != null ? signatureSerializer.methodSignature(syntheticMethod) : null,
+                getterMethod != null ? signatureSerializer.methodSignature(getterMethod) : null,
+                setterMethod != null ? signatureSerializer.methodSignature(setterMethod) : null
+        );
 
         proto.setExtension(JvmProtoBuf.propertySignature, signature);
 
@@ -181,50 +154,11 @@ public class JvmSerializerExtension extends SerializerExtension {
 
     private class SignatureSerializer {
         @NotNull
-        public JvmProtoBuf.JvmMethodSignature copyMethodSignature(
-                @NotNull JvmProtoBuf.JvmMethodSignature signature,
-                @NotNull NameResolver nameResolver
-        ) {
-            return methodSignature(new Method(
-                    nameResolver.getString(signature.getName()),
-                    nameResolver.getString(signature.getDesc())
-            ));
-        }
-
-        @NotNull
         public JvmProtoBuf.JvmMethodSignature methodSignature(@NotNull Method method) {
             return JvmProtoBuf.JvmMethodSignature.newBuilder()
                     .setName(stringTable.getStringIndex(method.getName()))
                     .setDesc(stringTable.getStringIndex(method.getDescriptor()))
                     .build();
-        }
-
-        @NotNull
-        public JvmProtoBuf.JvmPropertySignature copyPropertySignature(
-                @NotNull JvmProtoBuf.JvmPropertySignature signature,
-                @NotNull NameResolver nameResolver
-        ) {
-            String fieldName;
-            String fieldDesc;
-            boolean isStaticInOuter;
-            if (signature.hasField()) {
-                JvmProtoBuf.JvmFieldSignature field = signature.getField();
-                fieldName = nameResolver.getString(field.getName());
-                fieldDesc = nameResolver.getString(field.getDesc());
-                isStaticInOuter = field.getIsStaticInOuter();
-            }
-            else {
-                fieldName = null;
-                fieldDesc = null;
-                isStaticInOuter = false;
-            }
-
-            return propertySignature(
-                    fieldName, fieldDesc, isStaticInOuter,
-                    signature.hasSyntheticMethod() ? copyMethodSignature(signature.getSyntheticMethod(), nameResolver) : null,
-                    signature.hasGetter() ? copyMethodSignature(signature.getGetter(), nameResolver) : null,
-                    signature.hasSetter() ? copyMethodSignature(signature.getSetter(), nameResolver) : null
-            );
         }
 
         @NotNull
