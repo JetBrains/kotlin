@@ -38,7 +38,7 @@ public interface CompileService : Remote {
     @Throws(RemoteException::class)
     public fun remoteCompile(
             args: Array<out String>,
-            services: RemoteCompilationServices,
+            servicesFacade: CompilerCallbackServicesFacade,
             compilerOutputStream: RemoteOutputStream,
             outputFormat: OutputFormat,
             serviceOutputStream: RemoteOutputStream
@@ -47,7 +47,7 @@ public interface CompileService : Remote {
     @Throws(RemoteException::class)
     public fun remoteIncrementalCompile(
             args: Array<out String>,
-            services: RemoteCompilationServices,
+            servicesFacade: CompilerCallbackServicesFacade,
             compilerOutputStream: RemoteOutputStream,
             compilerOutputFormat: OutputFormat,
             serviceOutputStream: RemoteOutputStream

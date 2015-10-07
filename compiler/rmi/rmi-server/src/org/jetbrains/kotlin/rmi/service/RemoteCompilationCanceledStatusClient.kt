@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.rmi.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.rmi.DummyProfiler
 import org.jetbrains.kotlin.rmi.Profiler
-import org.jetbrains.kotlin.rmi.RemoteCompilationCanceledStatus
 
 
-class RemoteCompilationCanceledStatusClient(val proxy: RemoteCompilationCanceledStatus, val profiler: Profiler = DummyProfiler()): CompilationCanceledStatus {
+class RemoteCompilationCanceledStatusClient(val facade: CompilerCallbackServicesFacade, val profiler: Profiler = DummyProfiler()): CompilationCanceledStatus {
     override fun checkCanceled() {
-        profiler.withMeasure(this) { proxy.checkCanceled() }
+        profiler.withMeasure(this) { facade.compilationCanceledStatus_checkCanceled() }
     }
 }

@@ -114,10 +114,12 @@ public object KotlinCompilerClient {
     public fun compile(compiler: CompileService, args: Array<out String>, out: OutputStream): Int {
 
         val outStrm = RemoteOutputStreamServer(out)
+        val servicesFacade = CompilerCallbackServicesFacadeServer()
         try {
-            return compiler.remoteCompile(args, makeRemoteServices(CompilationServices()), outStrm, CompileService.OutputFormat.PLAIN, outStrm)
+            return compiler.remoteCompile(args, servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm)
         }
         finally {
+            servicesFacade.disconnect()
             outStrm.disconnect()
         }
     }
@@ -127,23 +129,16 @@ public object KotlinCompilerClient {
 
         val compilerOutStreamServer = RemoteOutputStreamServer(compilerOut)
         val daemonOutStreamServer = RemoteOutputStreamServer(daemonOut)
-        val cacheServers = hashMapOf<TargetId, RemoteIncrementalCacheServer>()
+        val servicesFacade = CompilerCallbackServicesFacadeServer(incrementalCompilationComponents = services.incrementalCompilationComponents, compilationCancelledStatus = services.compilationCanceledStatus)
         try {
-            return profiler.withMeasure(this) { compiler.remoteIncrementalCompile(args, makeRemoteServices(services), compilerOutStreamServer, CompileService.OutputFormat.XML, daemonOutStreamServer) }
+            return profiler.withMeasure(this) { compiler.remoteIncrementalCompile(args, servicesFacade, compilerOutStreamServer, CompileService.OutputFormat.XML, daemonOutStreamServer) }
         }
         finally {
-            cacheServers.forEach { it.getValue().disconnect() }
+            servicesFacade.disconnect()
             compilerOutStreamServer.disconnect()
             daemonOutStreamServer.disconnect()
         }
     }
-
-
-    fun makeRemoteServices(services: CompilationServices): RemoteCompilationServices =
-        RemoteCompilationServices(
-                incrementalCompilationComponents = if (services.incrementalCompilationComponents == null) null else RemoteIncrementalCompilationComponentsServer(services.incrementalCompilationComponents),
-                compilationCanceledStatus = if (services.compilationCanceledStatus == null) null else RemoteCompilationCanceledStatusServer(services.compilationCanceledStatus)
-        )
 
     data class ClientOptions(
             public var stop: Boolean = false
@@ -202,11 +197,12 @@ public object KotlinCompilerClient {
             else -> {
                 println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
                 val outStrm = RemoteOutputStreamServer(System.out)
+                val servicesFacade = CompilerCallbackServicesFacadeServer()
                 try {
                     val memBefore = daemon.getUsedMemory() / 1024
                     val startTime = System.nanoTime()
 
-                    val res = daemon.remoteCompile(filteredArgs.toArrayList().toTypedArray(), makeRemoteServices(CompilationServices()), outStrm, CompileService.OutputFormat.PLAIN, outStrm)
+                    val res = daemon.remoteCompile(filteredArgs.toArrayList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm)
 
                     val endTime = System.nanoTime()
                     println("Compilation result code: $res")
@@ -215,6 +211,7 @@ public object KotlinCompilerClient {
                     println("Used memory $memAfter (${"%+d".format(memAfter - memBefore)} kb)")
                 }
                 finally {
+                    servicesFacade.disconnect()
                     outStrm.disconnect()
                 }
             }
