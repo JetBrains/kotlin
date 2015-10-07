@@ -359,6 +359,21 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class BuiltinFunctions extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInBuiltinFunctions() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("size.kt")
+        public void testSize() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/size.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/conditions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

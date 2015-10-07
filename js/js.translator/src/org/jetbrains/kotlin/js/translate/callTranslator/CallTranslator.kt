@@ -153,17 +153,17 @@ fun computeExplicitReceiversForInvoke(
     }
 }
 
-interface CallCase<I : CallInfo> {
+abstract class CallCase<I : CallInfo> {
 
-    protected fun I.unsupported(message: String = "") : Nothing = throw IllegalStateException("this case unsupported. $this")
+    protected open fun I.unsupported(message: String = "") : Nothing = throw IllegalStateException("this case unsupported. $this")
 
-    protected fun I.noReceivers(): JsExpression = unsupported()
+    protected open fun I.noReceivers(): JsExpression = unsupported()
 
-    protected fun I.dispatchReceiver(): JsExpression = unsupported()
+    protected open fun I.dispatchReceiver(): JsExpression = unsupported()
 
-    protected fun I.extensionReceiver(): JsExpression = unsupported()
+    protected open fun I.extensionReceiver(): JsExpression = unsupported()
 
-    protected fun I.bothReceivers(): JsExpression = unsupported()
+    protected open fun I.bothReceivers(): JsExpression = unsupported()
 
     final fun translate(callInfo: I): JsExpression {
         val result = if (callInfo.dispatchReceiver == null) {
@@ -182,9 +182,9 @@ interface CallCase<I : CallInfo> {
     }
 }
 
-interface FunctionCallCase : CallCase<FunctionCallInfo>
+abstract class FunctionCallCase : CallCase<FunctionCallInfo>()
 
-interface VariableAccessCase : CallCase<VariableAccessInfo>
+abstract class VariableAccessCase : CallCase<VariableAccessInfo>()
 
 interface DelegateIntrinsic<I : CallInfo> {
     fun I.canBeApply(): Boolean = true

@@ -8,4 +8,4 @@ fun main(args: Array<String>) {
     }
 }
 
-fun test<R>(callback: (R) -> Unit):Unit = callback(null!!)
+fun <R> test(callback: (R) -> Unit):Unit = callback(null!!)

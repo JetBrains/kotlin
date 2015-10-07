@@ -6,12 +6,12 @@ class A {
 }
 
 //inappropriate but participating in resolve functions
-fun foo<T>(a: T, <!UNUSED_PARAMETER!>b<!>: T, <!UNUSED_PARAMETER!>i<!>: Int) = a
+fun <T> foo(a: T, <!UNUSED_PARAMETER!>b<!>: T, <!UNUSED_PARAMETER!>i<!>: Int) = a
 fun foo(a: Any) = a
-fun foo<T>(a: T, <!UNUSED_PARAMETER!>b<!>: String) = a
-fun foo<T>(a: T, <!UNUSED_PARAMETER!>b<!>: T, <!UNUSED_PARAMETER!>s<!>: String) = a
+fun <T> foo(a: T, <!UNUSED_PARAMETER!>b<!>: String) = a
+fun <T> foo(a: T, <!UNUSED_PARAMETER!>b<!>: T, <!UNUSED_PARAMETER!>s<!>: String) = a
 //appropriate function
-fun foo<T>(a: T, <!UNUSED_PARAMETER!>b<!>: T) = a
+fun <T> foo(a: T, <!UNUSED_PARAMETER!>b<!>: T) = a
 
 fun test(a: A) {
     //the problem occurs if there are nested function invocations to resolve (resolve for them is repeated now)

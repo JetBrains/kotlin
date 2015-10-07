@@ -36,13 +36,13 @@ public class JetFileType extends LanguageFileType {
     };
 
     private JetFileType() {
-        super(JetLanguage.INSTANCE);
+        super(KotlinLanguage.INSTANCE);
     }
 
     @Override
     @NotNull
     public String getName() {
-        return JetLanguage.NAME;
+        return KotlinLanguage.NAME;
     }
 
     @Override

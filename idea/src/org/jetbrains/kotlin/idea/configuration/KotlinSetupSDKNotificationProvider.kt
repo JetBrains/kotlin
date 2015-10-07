@@ -34,7 +34,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
 // Code is very same to com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
@@ -58,7 +58,7 @@ public class KotlinSetupSDKNotificationProvider(
         }
 
         val psiFile = PsiManager.getInstance(myProject).findFile(file) ?: return null
-        if (psiFile.language !== JetLanguage.INSTANCE) {
+        if (psiFile.language !== KotlinLanguage.INSTANCE) {
             return null
         }
 

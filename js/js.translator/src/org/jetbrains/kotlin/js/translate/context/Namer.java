@@ -21,11 +21,10 @@ import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
@@ -42,7 +41,7 @@ import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggested
  * Encapsulates different types of constants and naming conventions.
  */
 public final class Namer {
-    public static final String KOTLIN_NAME = JetLanguage.NAME;
+    public static final String KOTLIN_NAME = KotlinLanguage.NAME;
     public static final String KOTLIN_LOWER_NAME = KOTLIN_NAME.toLowerCase();
     public static final JsNameRef KOTLIN_OBJECT_REF = new JsNameRef(KOTLIN_NAME);
     public static final JsNameRef KOTLIN_LONG_NAME_REF = new JsNameRef("Long", KOTLIN_OBJECT_REF);

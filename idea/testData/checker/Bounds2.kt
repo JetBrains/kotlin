@@ -8,6 +8,6 @@ fun test() {
     1.buzz<<error>Double</error>>()
 }
 
-fun foo<T : Any>() {}
-fun bar<T : Int?>() {}
+fun <T : Any> foo() {}
+fun <T : Int?> bar() {}
 fun <T : <warning>Int</warning>> Int.buzz() : Unit {}

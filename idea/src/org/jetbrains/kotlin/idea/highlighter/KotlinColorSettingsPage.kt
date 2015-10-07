@@ -24,7 +24,7 @@ import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.JetIcons
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 
 import javax.swing.*
 import java.lang.reflect.Field
@@ -151,5 +151,5 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
     }
 
     override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
-    override fun getDisplayName(): String = JetLanguage.NAME
+    override fun getDisplayName(): String = KotlinLanguage.NAME
 }

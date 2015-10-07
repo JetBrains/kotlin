@@ -3031,12 +3031,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("InternalAbstractTraitMembersOverridden.kt")
-        public void testInternalAbstractTraitMembersOverridden() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalAbstractTraitMembersOverridden.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("InternalClass.kt")
         public void testInternalClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalClass.kt");
@@ -3052,18 +3046,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @TestMetadata("InternalTopLevelMembers.kt")
         public void testInternalTopLevelMembers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalTopLevelMembers.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("InternalTraitMembers.kt")
-        public void testInternalTraitMembers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalTraitMembers.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("InternalTraitMembersInherited.kt")
-        public void testInternalTraitMembersInherited() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalTraitMembersInherited.kt");
             doTest(fileName);
         }
 

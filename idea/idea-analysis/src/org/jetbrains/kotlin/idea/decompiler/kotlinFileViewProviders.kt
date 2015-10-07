@@ -22,14 +22,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import kotlin.properties.Delegates
 
 public class JetClassFileViewProvider(
         manager: PsiManager,
         val file: VirtualFile,
         physical: Boolean,
-        val isInternal: Boolean) : SingleRootFileViewProvider(manager, file, physical, JetLanguage.INSTANCE) {
+        val isInternal: Boolean) : SingleRootFileViewProvider(manager, file, physical, KotlinLanguage.INSTANCE) {
 
     val jetClsFile by Delegates.blockingLazy(this) {
         //TODO: check index that file is library file, as in ClassFileViewProvider
@@ -51,7 +51,7 @@ public class KotlinJavascriptMetaFileViewProvider (
         manager: PsiManager,
         val file: VirtualFile,
         physical: Boolean,
-        val isInternal: Boolean) : SingleRootFileViewProvider(manager, file, physical, JetLanguage.INSTANCE) {
+        val isInternal: Boolean) : SingleRootFileViewProvider(manager, file, physical, KotlinLanguage.INSTANCE) {
 
     val jetJsMetaFile by Delegates.blockingLazy(this) {
         //TODO: check index that file is library file, as in ClassFileViewProvider

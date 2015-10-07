@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
@@ -489,7 +490,8 @@ public abstract class StackValue {
     ) {
         ReceiverValue callDispatchReceiver = resolvedCall.getDispatchReceiver();
         ReceiverValue callExtensionReceiver = resolvedCall.getExtensionReceiver();
-        if (callDispatchReceiver.exists() || callExtensionReceiver.exists() || isLocalFunCall(callableMethod)) {
+        if (callDispatchReceiver.exists() || callExtensionReceiver.exists()
+            || isLocalFunCall(callableMethod) || isCallToMemberObjectImportedByName(resolvedCall)) {
             CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
             ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
             ReceiverParameterDescriptor extensionReceiverParameter = descriptor.getExtensionReceiverParameter();
@@ -527,16 +529,22 @@ public abstract class StackValue {
                 return codegen.generateReceiverValue(receiverValue);
             }
             else if (isLocalFunCall(callableMethod) && !isExtension) {
-                CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-                StackValue value = codegen.findLocalOrCapturedValue(descriptor.getOriginal());
+                StackValue value = codegen.findLocalOrCapturedValue(resolvedCall.getResultingDescriptor().getOriginal());
                 assert value != null : "Local fun should be found in locals or in captured params: " + resolvedCall;
                 return value;
+            }
+            else if (isCallToMemberObjectImportedByName(resolvedCall)) {
+                return singleton(((ImportedFromObjectCallableDescriptor) resolvedCall.getResultingDescriptor()).getContainingObject(), codegen.typeMapper);
             }
         }
         else if (receiverValue.exists()) {
             return receiver;
         }
         return none();
+    }
+
+    private static boolean isCallToMemberObjectImportedByName(@NotNull ResolvedCall resolvedCall) {
+        return resolvedCall.getResultingDescriptor() instanceof ImportedFromObjectCallableDescriptor;
     }
 
     private static StackValue platformStaticCallIfPresent(@NotNull StackValue resultReceiver, @NotNull CallableDescriptor descriptor) {

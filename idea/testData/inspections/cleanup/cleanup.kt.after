@@ -63,3 +63,6 @@ class C {
 
     fun bar() = C::foo
 }
+
+fun <T> typed() {
+}

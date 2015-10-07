@@ -20,13 +20,13 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 
 public abstract class KDocElementImpl extends ASTWrapperPsiElement {
     @NotNull
     @Override
     public Language getLanguage() {
-        return JetLanguage.INSTANCE;
+        return KotlinLanguage.INSTANCE;
     }
 
     @Override

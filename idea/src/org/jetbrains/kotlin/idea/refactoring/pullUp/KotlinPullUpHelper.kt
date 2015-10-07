@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaField
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaMethod
@@ -249,7 +249,7 @@ class KotlinPullUpHelper(
                         factory.createClass("Dummy")
                 ) {
                     // Prevent processing by JavaPullUpHelper
-                    override fun getLanguage() = JetLanguage.INSTANCE
+                    override fun getLanguage() = KotlinLanguage.INSTANCE
                 }
                 javaData.movedMembers.add(dummyField)
             }

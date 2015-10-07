@@ -13,4 +13,4 @@ fun test(a: C, b: B) {
     checkSubtype<A>(x)
 }
 
-fun run<T>(f: () -> T): T { return f() }
+fun <T> run(f: () -> T): T { return f() }

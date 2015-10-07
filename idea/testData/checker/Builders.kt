@@ -14,7 +14,7 @@ import java.util.*
     val children = ArrayList<Element>()
     val attributes = HashMap<String, String>()
 
-    protected fun initTag<T : Element>(<warning>init</warning> :  T.() -> Unit) : T
+    protected fun <T : Element> initTag(<warning>init</warning> :  T.() -> Unit) : T
       {
       val tag = <error>T</error>.<error>create</error>()
       <error>tag</error>.<error>init</error>()

@@ -100,7 +100,7 @@ public interface Errors {
 
     // Imports
 
-    DiagnosticFactory1<JetSimpleNameExpression, ClassDescriptor> CANNOT_IMPORT_MEMBERS_FROM_SINGLETON = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetSimpleNameExpression, ClassDescriptor> CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, Name> CANNOT_BE_IMPORTED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetSimpleNameExpression> PACKAGE_CANNOT_BE_IMPORTED = DiagnosticFactory0.create(ERROR);
 
@@ -248,6 +248,8 @@ public interface Errors {
 
     DiagnosticFactory0<JetTypeParameter>
             VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY = DiagnosticFactory0.create(ERROR, VARIANCE_MODIFIER);
+
+    DiagnosticFactory0<JetTypeParameterList> DEPRECATED_TYPE_PARAMETER_SYNTAX = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> REIFIED_TYPE_PARAMETER_NO_INLINE = DiagnosticFactory0.create(ERROR);
 

@@ -1,7 +1,7 @@
 //KT-832 Provide better diagnostics when type inference fails for an expression that returns a function
 package a
 
-fun fooT2<T>() : (t : T) -> T {
+fun <T> fooT2() : (t : T) -> T {
     return {it}
 }
 

@@ -25,13 +25,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.kdoc.parser.KDocLinkParser;
 import org.jetbrains.kotlin.kdoc.parser.KDocParser;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl;
 
 public interface KDocTokens {
-    ILazyParseableElementType KDOC = new ILazyParseableElementType("KDoc", JetLanguage.INSTANCE) {
+    ILazyParseableElementType KDOC = new ILazyParseableElementType("KDoc", KotlinLanguage.INSTANCE) {
         @Override
         public ASTNode parseContents(ASTNode chameleon) {
             PsiElement parentElement = chameleon.getTreeParent().getPsi();
@@ -57,7 +57,7 @@ public interface KDocTokens {
     KDocToken TEXT                  = new KDocToken("KDOC_TEXT");
 
     KDocToken TAG_NAME              = new KDocToken("KDOC_TAG_NAME");
-    ILazyParseableElementType MARKDOWN_LINK = new ILazyParseableElementType("KDOC_MARKDOWN_LINK", JetLanguage.INSTANCE) {
+    ILazyParseableElementType MARKDOWN_LINK = new ILazyParseableElementType("KDOC_MARKDOWN_LINK", KotlinLanguage.INSTANCE) {
         @Override
         public ASTNode parseContents(ASTNode chameleon) {
             return KDocLinkParser.parseMarkdownLink(this, chameleon);

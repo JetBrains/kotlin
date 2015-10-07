@@ -22,7 +22,7 @@ import com.intellij.psi.impl.light.LightElement
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFileHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runWithElementsToShortenIsEmptyIgnored
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.getPackage
@@ -44,7 +44,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
     private class MoveContext(
             psiManager: PsiManager,
             val declarationMoveProcessor: MoveKotlinTopLevelDeclarationsProcessor
-    ): LightElement(psiManager, JetLanguage.INSTANCE) {
+    ): LightElement(psiManager, KotlinLanguage.INSTANCE) {
         override fun toString() = ""
     }
 

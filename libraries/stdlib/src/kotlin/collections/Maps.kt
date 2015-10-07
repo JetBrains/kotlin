@@ -11,7 +11,7 @@ private object EmptyMap : Map<Any, Nothing>, Serializable {
     override fun hashCode(): Int = 0
     override fun toString(): String = "{}"
 
-    override fun size(): Int = 0
+    override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
 
     override fun containsKey(key: Any?): Boolean = false

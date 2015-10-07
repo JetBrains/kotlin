@@ -7,7 +7,7 @@ fun test() {
     }
 }
 
-fun dynamic<T>(body: dynamic.() -> T): T {
+fun <T> dynamic(body: dynamic.() -> T): T {
     val topLevel = null
     return topLevel.body()
 }

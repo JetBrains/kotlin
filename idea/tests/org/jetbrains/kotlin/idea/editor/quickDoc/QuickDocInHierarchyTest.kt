@@ -28,7 +28,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.MapDataContext
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
@@ -46,7 +46,7 @@ public class QuickDocInHierarchyTest() : CodeInsightTestCase() {
 
         val hierarchyTreeStructure = TypeHierarchyTreeStructure(
                 getProject(),
-                LanguageTypeHierarchy.INSTANCE.forLanguage(JetLanguage.INSTANCE).getTarget(context) as PsiClass?,
+                LanguageTypeHierarchy.INSTANCE.forLanguage(KotlinLanguage.INSTANCE).getTarget(context) as PsiClass?,
                 HierarchyBrowserBaseEx.SCOPE_PROJECT
         )
         val hierarchyNodeDescriptor = hierarchyTreeStructure.getBaseDescriptor() as TypeHierarchyNodeDescriptor

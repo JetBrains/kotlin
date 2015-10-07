@@ -23,14 +23,14 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings;
 
 public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
     @NotNull
     @Override
     public Language getLanguage() {
-        return JetLanguage.INSTANCE;
+        return KotlinLanguage.INSTANCE;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
 
     @Override
     public String getLanguageName() {
-        return JetLanguage.NAME;
+        return KotlinLanguage.NAME;
     }
 
     @Override

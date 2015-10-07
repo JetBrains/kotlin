@@ -97,7 +97,7 @@ class LazyJavaClassDescriptor(
 
     private val functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
         c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this) { method ->
-            unsubstitutedMemberScope.resolveMethodToFunctionDescriptor(method, false)
+            unsubstitutedMemberScope.resolveMethodToFunctionDescriptor(method)
         }
     }
 

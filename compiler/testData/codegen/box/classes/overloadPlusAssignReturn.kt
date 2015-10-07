@@ -26,5 +26,5 @@ fun box(): String {
     val v3 = v1
     v2.add("bar")
     v1 += v2
-    return if (v1.contents.size() == 2 && v3.contents.size() == 1) "OK" else "fail"
+    return if (v1.contents.size == 2 && v3.contents.size == 1) "OK" else "fail"
 }

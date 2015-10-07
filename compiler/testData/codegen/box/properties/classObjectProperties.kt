@@ -5,7 +5,7 @@ class Test {
         public val prop1 : Int = 10
 
         public var  prop2 : Int = 11
-            protected set
+            private set
 
         public val prop3: Int = 12
             get() {

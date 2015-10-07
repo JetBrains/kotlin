@@ -3,7 +3,7 @@ interface Addable {
 }
 
 class C : Addable, List<String> {
-    override fun size(): Int = null!!
+    override val size: Int get() = null!!
     override fun isEmpty(): Boolean = null!!
     override fun contains(o: Any?): Boolean = null!!
     override fun iterator(): Iterator<String> = null!!

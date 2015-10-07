@@ -26,7 +26,7 @@ public abstract class AbstractCollection<E>() : MutableCollection<E> {
     override fun retainAll(c: Collection<Any?>): Boolean = noImpl
 
     override fun clear(): Unit = noImpl
-    abstract override fun size(): Int
+    abstract override val size: Int
 
     override fun hashCode(): Int = noImpl
     override fun equals(other: Any?): Boolean = noImpl
@@ -51,7 +51,7 @@ public abstract class AbstractList<E>() : AbstractCollection<E>(), MutableList<E
 
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = noImpl
 
-    override fun size(): Int = noImpl
+    override val size: Int get() = noImpl
 
     override fun equals(other: Any?): Boolean = noImpl
 
@@ -61,7 +61,7 @@ public abstract class AbstractList<E>() : AbstractCollection<E>(), MutableList<E
 @library
 public open class ArrayList<E>(capacity: Int = 0) : AbstractList<E>() {
     override fun get(index: Int): E = noImpl
-    override fun size(): Int = noImpl
+    override val size: Int get() = noImpl
 }
 
 @library
@@ -81,7 +81,7 @@ public open class LinkedList<E>() : AbstractList<E>() {
 public open class HashSet<E>(
         initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR
 ) : AbstractCollection<E>(), MutableSet<E> {
-    override fun size(): Int = noImpl
+    override val size: Int get() = noImpl
 }
 
 @library
@@ -90,19 +90,19 @@ public interface SortedSet<E> : Set<E> {
 
 @library
 public open class TreeSet<E>() : AbstractCollection<E>(), MutableSet<E>, SortedSet<E> {
-    override fun size(): Int = noImpl
+    override val size: Int get() = noImpl
 }
 
 @library
 public open class LinkedHashSet<E>(
         initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR
 ) : HashSet<E>(initialCapacity, loadFactor), MutableSet<E> {
-    override fun size(): Int = noImpl
+    override val size: Int get() = noImpl
 }
 
 @library
 public open class HashMap<K, V>(initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR) : MutableMap<K, V> {
-    override fun size(): Int = noImpl
+    override val size: Int get() = noImpl
     override fun isEmpty(): Boolean = noImpl
     @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     override fun get(key: Any?): V? = noImpl

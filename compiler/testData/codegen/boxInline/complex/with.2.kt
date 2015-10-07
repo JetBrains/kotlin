@@ -28,4 +28,4 @@ public fun Input.copyTo(output: Output, size: Int): Long {
 }
 
 
-public inline fun with2<T>(receiver : T, crossinline body :  T.() -> Unit) : Unit = {receiver.body()}()
+public inline fun <T> with2(receiver : T, crossinline body :  T.() -> Unit) : Unit = {receiver.body()}()

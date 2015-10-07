@@ -2,7 +2,7 @@
 
 package p
 
-fun run<T>(f: () -> T): T {
+fun <T> run(f: () -> T): T {
     return f()
 }
 

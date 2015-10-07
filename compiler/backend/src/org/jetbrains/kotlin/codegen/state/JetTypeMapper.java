@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
+import org.jetbrains.kotlin.load.java.BuiltinsPropertiesUtilKt;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
@@ -47,9 +48,7 @@ import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunctionLiteral;
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -712,9 +711,11 @@ public class JetTypeMapper {
                 }
             }
             else {
-                if (isStaticDeclaration(functionDescriptor) ||
-                    isStaticAccessor(functionDescriptor) ||
-                    AnnotationsPackage.isPlatformStaticInObjectOrClass(functionDescriptor)) {
+                boolean isStaticInvocation = (isStaticDeclaration(functionDescriptor) &&
+                                              !(functionDescriptor instanceof ImportedFromObjectCallableDescriptor)) ||
+                                             isStaticAccessor(functionDescriptor) ||
+                                             AnnotationsPackage.isPlatformStaticInObjectOrClass(functionDescriptor);
+                if (isStaticInvocation) {
                     invokeOpcode = INVOKESTATIC;
                 }
                 else if (isInterface) {
@@ -725,7 +726,13 @@ public class JetTypeMapper {
                     invokeOpcode = superCall || isPrivateFunInvocation ? INVOKESPECIAL : INVOKEVIRTUAL;
                 }
 
-                signature = mapSignature(functionDescriptor.getOriginal());
+                FunctionDescriptor overriddenSpecialBuiltinFunction =
+                        BuiltinsPropertiesUtilKt.<FunctionDescriptor>getBuiltinSpecialOverridden(functionDescriptor.getOriginal());
+                FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null
+                                                    ? overriddenSpecialBuiltinFunction.getOriginal()
+                                                    : functionDescriptor.getOriginal();
+
+                signature = mapSignature(functionToCall);
 
                 ClassDescriptor receiver = (currentIsInterface && !originalIsInterface) || currentOwner instanceof FunctionClassDescriptor
                                            ? declarationOwner
@@ -803,6 +810,9 @@ public class JetTypeMapper {
             if (platformName != null) return platformName;
         }
 
+        String nameForSpecialFunction = BuiltinsPropertiesUtilKt.getJvmMethodNameIfSpecial(descriptor);
+        if (nameForSpecialFunction != null) return nameForSpecialFunction;
+
         if (descriptor instanceof PropertyAccessorDescriptor) {
             PropertyDescriptor property = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
             if (isAnnotationClass(property.getContainingDeclaration())) {
@@ -858,6 +868,10 @@ public class JetTypeMapper {
     @NotNull
     public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind,
             List<ValueParameterDescriptor> valueParameters) {
+        if (f instanceof FunctionImportedFromObject) {
+            return mapSignature(((FunctionImportedFromObject) f).getFunctionFromObject());
+        }
+
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
         if (f instanceof ConstructorDescriptor) {

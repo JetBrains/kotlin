@@ -8,5 +8,5 @@ public open class ModalityOfFakeOverrides : AbstractList<String>() {
         return ""
     }
 
-    override fun size(): Int = 0
+    override val size: Int get() = 0
 }

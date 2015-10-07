@@ -25,7 +25,7 @@ fun box(): String {
     foo
     42.foo
 
-    if (O.metadatas.size() != 1)
+    if (O.metadatas.size != 1)
         return "Too many different PropertyMetadata instances: ${O.metadatas}"
 
     val m = O.metadatas.iterator().next()

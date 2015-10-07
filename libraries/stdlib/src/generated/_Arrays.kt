@@ -6728,6 +6728,7 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(desti
 /**
  * Returns a list containing the results of applying the given [transform] function to each non-null element of the original collection.
  */
+@Deprecated("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().map {} instead.", ReplaceWith("filterNotNull().map(transform)"))
 public inline fun <T : Any, R> Array<out T?>.mapNotNull(transform: (T) -> R): List<R> {
     return mapNotNullTo(ArrayList<R>(), transform)
 }
@@ -6736,6 +6737,7 @@ public inline fun <T : Any, R> Array<out T?>.mapNotNull(transform: (T) -> R): Li
  * Appends transformed non-null elements of original collection using the given [transform] function
  * to the given [destination].
  */
+@Deprecated("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().mapTo(destination) {} instead.", ReplaceWith("filterNotNull().mapTo(destination, transform)"))
 public inline fun <T : Any, R, C : MutableCollection<in R>> Array<out T?>.mapNotNullTo(destination: C, transform: (T) -> R): C {
     for (element in this) {
         if (element != null) {
@@ -10443,7 +10445,7 @@ public fun <T> Array<out T>.asList(): List<T> {
 @kotlin.jvm.JvmVersion
 public fun BooleanArray.asList(): List<Boolean> {
     return object : AbstractList<Boolean>(), RandomAccess {
-        override fun size(): Int = this@asList.size()
+        override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Boolean)
         override fun iterator(): MutableIterator<Boolean> = this@asList.iterator() as MutableIterator<Boolean>
@@ -10459,7 +10461,7 @@ public fun BooleanArray.asList(): List<Boolean> {
 @kotlin.jvm.JvmVersion
 public fun ByteArray.asList(): List<Byte> {
     return object : AbstractList<Byte>(), RandomAccess {
-        override fun size(): Int = this@asList.size()
+        override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Byte)
         override fun iterator(): MutableIterator<Byte> = this@asList.iterator() as MutableIterator<Byte>
@@ -10475,7 +10477,7 @@ public fun ByteArray.asList(): List<Byte> {
 @kotlin.jvm.JvmVersion
 public fun CharArray.asList(): List<Char> {
     return object : AbstractList<Char>(), RandomAccess {
-        override fun size(): Int = this@asList.size()
+        override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Char)
         override fun iterator(): MutableIterator<Char> = this@asList.iterator() as MutableIterator<Char>
@@ -10491,7 +10493,7 @@ public fun CharArray.asList(): List<Char> {
 @kotlin.jvm.JvmVersion
 public fun DoubleArray.asList(): List<Double> {
     return object : AbstractList<Double>(), RandomAccess {
-        override fun size(): Int = this@asList.size()
+        override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Double)
         override fun iterator(): MutableIterator<Double> = this@asList.iterator() as MutableIterator<Double>
@@ -10507,7 +10509,7 @@ public fun DoubleArray.asList(): List<Double> {
 @kotlin.jvm.JvmVersion
 public fun FloatArray.asList(): List<Float> {
     return object : AbstractList<Float>(), RandomAccess {
-        override fun size(): Int = this@asList.size()
+        override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Float)
         override fun iterator(): MutableIterator<Float> = this@asList.iterator() as MutableIterator<Float>
@@ -10523,7 +10525,7 @@ public fun FloatArray.asList(): List<Float> {
 @kotlin.jvm.JvmVersion
 public fun IntArray.asList(): List<Int> {
     return object : AbstractList<Int>(), RandomAccess {
-        override fun size(): Int = this@asList.size()
+        override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Int)
         override fun iterator(): MutableIterator<Int> = this@asList.iterator() as MutableIterator<Int>
@@ -10539,7 +10541,7 @@ public fun IntArray.asList(): List<Int> {
 @kotlin.jvm.JvmVersion
 public fun LongArray.asList(): List<Long> {
     return object : AbstractList<Long>(), RandomAccess {
-        override fun size(): Int = this@asList.size()
+        override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Long)
         override fun iterator(): MutableIterator<Long> = this@asList.iterator() as MutableIterator<Long>
@@ -10555,7 +10557,7 @@ public fun LongArray.asList(): List<Long> {
 @kotlin.jvm.JvmVersion
 public fun ShortArray.asList(): List<Short> {
     return object : AbstractList<Short>(), RandomAccess {
-        override fun size(): Int = this@asList.size()
+        override val size: Int get() = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Short)
         override fun iterator(): MutableIterator<Short> = this@asList.iterator() as MutableIterator<Short>

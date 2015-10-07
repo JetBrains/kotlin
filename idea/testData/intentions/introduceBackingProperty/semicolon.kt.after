@@ -1,0 +1,8 @@
+class City(val name: String) {
+    private var _timeZone: Int = -3
+    var timeZone : Int
+        get() = _timeZone
+        set(value) {
+            _timeZone = value
+        };
+}

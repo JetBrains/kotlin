@@ -152,10 +152,6 @@ public class OverrideImplementTest : AbstractOverrideImplementTest() {
         doMultiOverrideDirectoryTest()
     }
 
-    public fun testInheritVisibilities() {
-        doMultiOverrideFileTest()
-    }
-
     public fun testImplementSamAdapters() {
         doImplementDirectoryTest()
     }

@@ -12,7 +12,7 @@ fun test() {
     val <!UNUSED_VARIABLE!>u<!> = 11.<!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>elemAndListWithReceiver<!>(4, list("7"))
 }
 
-fun list<T>(value: T) : ArrayList<T> {
+fun <T> list(value: T) : ArrayList<T> {
     val list = ArrayList<T>()
     list.add(value)
     return list

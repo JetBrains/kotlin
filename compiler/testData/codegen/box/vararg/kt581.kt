@@ -12,7 +12,7 @@ fun box() : String {
     for (i in vals.indices)
         for (j in i..vals.lastIndex())
              diffs.add(vals[i] - vals[j])
-    val size = diffs.size()
+    val size = diffs.size
 
     if (size != 8) return "Fail $size"
     return "OK"

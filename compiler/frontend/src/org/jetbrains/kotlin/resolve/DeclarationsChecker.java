@@ -489,6 +489,13 @@ public class DeclarationsChecker {
     }
 
     protected void checkFunction(JetNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
+        JetTypeParameterList typeParameterList = function.getTypeParameterList();
+        PsiElement nameIdentifier = function.getNameIdentifier();
+        if (typeParameterList != null && nameIdentifier != null &&
+            typeParameterList.getTextRange().getStartOffset() > nameIdentifier.getTextRange().getStartOffset()) {
+            trace.report(DEPRECATED_TYPE_PARAMETER_SYNTAX.on(typeParameterList));
+        }
+
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
         boolean hasAbstractModifier = function.hasModifier(JetTokens.ABSTRACT_KEYWORD);
         if (containingDescriptor instanceof ClassDescriptor) {

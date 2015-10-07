@@ -3148,6 +3148,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("stringMethods.java")
+        public void testStringMethods() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/stringMethods.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("systemOut.java")
         public void testSystemOut() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/systemOut.java");

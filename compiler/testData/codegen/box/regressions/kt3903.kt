@@ -1,6 +1,6 @@
 class Foo {
     fun bar(): String {
-        fun foo<T>(t:() -> T) : T = t()
+        fun <T> foo(t:() -> T) : T = t()
         foo { }
         return "OK"
     }

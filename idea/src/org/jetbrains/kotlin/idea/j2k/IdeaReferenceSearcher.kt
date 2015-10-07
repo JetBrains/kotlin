@@ -27,7 +27,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.psi.search.searches.ReferencesSearch
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import java.util.*
 
@@ -44,7 +44,7 @@ public object IdeaReferenceSearcher: ReferenceSearcher {
             fileTypes.add(JavaLanguage.INSTANCE.getAssociatedFileType()!!)
         }
         if (searchKotlin) {
-            fileTypes.add(JetLanguage.INSTANCE.getAssociatedFileType()!!)
+            fileTypes.add(KotlinLanguage.INSTANCE.getAssociatedFileType()!!)
         }
         val searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.getProject()), *fileTypes.toTypedArray())
         return ReferencesSearch.search(element, searchScope).findAll()

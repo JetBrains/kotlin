@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 
 import java.lang.reflect.Constructor;
 
@@ -28,7 +28,7 @@ public class KDocElementType extends IElementType {
     private final Constructor<? extends PsiElement> psiFactory;
 
     public KDocElementType(String debugName, @NotNull Class<? extends PsiElement> psiClass) {
-        super(debugName, JetLanguage.INSTANCE);
+        super(debugName, KotlinLanguage.INSTANCE);
         try {
             psiFactory = psiClass.getConstructor(ASTNode.class);
         } catch (NoSuchMethodException e) {

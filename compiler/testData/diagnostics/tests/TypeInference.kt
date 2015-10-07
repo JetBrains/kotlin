@@ -3,7 +3,7 @@ class C<T>() {
 }
 
 fun foo(<!UNUSED_PARAMETER!>c<!>: C<Int>) {}
-fun bar<T>() : C<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+fun <T> bar() : C<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun main(args : Array<String>) {
   val <!UNUSED_VARIABLE!>a<!> : C<Int> = C();

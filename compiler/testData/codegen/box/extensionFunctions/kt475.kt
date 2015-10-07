@@ -10,9 +10,9 @@ fun box() : String {
 }
 
 var <T> ArrayList<T>.length : Int
-    get() = size()
+    get() = size
     set(value: Int) = throw java.lang.Error()
 
 var <T> ArrayList<T>.last : T
-    get() = get(size()-1)!!
-    set(el : T) { set(size()-1, el) }
+    get() = get(size-1)!!
+    set(el : T) { set(size-1, el) }

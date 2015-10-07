@@ -1,7 +1,7 @@
 //!DIAGNOSTICS: -UNUSED_PARAMETER
 
-fun foo<T>(i: Int, t: T) {}
-fun foo<T>(s: String, t: T) {}
+fun <T> foo(i: Int, t: T) {}
+fun <T> foo(s: String, t: T) {}
 
 fun bar(i: Int) {}
 fun bar(s: String) {}

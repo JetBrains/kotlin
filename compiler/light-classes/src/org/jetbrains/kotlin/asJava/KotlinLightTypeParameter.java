@@ -22,7 +22,7 @@ import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.search.SearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.JetTypeParameter;
 import org.jetbrains.kotlin.psi.JetTypeParameterListOwner;
 
@@ -36,7 +36,7 @@ public class KotlinLightTypeParameter
             @NotNull PsiTypeParameterListOwner owner,
             int index,
             @NotNull String name) {
-        super(owner.getManager(), JetLanguage.INSTANCE);
+        super(owner.getManager(), KotlinLanguage.INSTANCE);
         this.owner = owner;
         this.index = index;
         this.name = name;
@@ -133,7 +133,7 @@ public class KotlinLightTypeParameter
     @NotNull
     @Override
     public Language getLanguage() {
-        return JetLanguage.INSTANCE;
+        return KotlinLanguage.INSTANCE;
     }
 
     @NotNull

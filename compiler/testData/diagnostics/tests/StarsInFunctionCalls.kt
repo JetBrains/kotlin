@@ -1,6 +1,6 @@
-fun getT<T>() {}
-fun getTT<A, B>() {}
-fun getTTT<A, B, C>(<!UNUSED_PARAMETER!>x<!> : Any) {}
+fun <T> getT() {}
+fun <A, B> getTT() {}
+fun <A, B, C> getTTT(<!UNUSED_PARAMETER!>x<!> : Any) {}
 fun foo(<!UNUSED_PARAMETER!>a<!> : Any?) {}
 
 public fun main() {

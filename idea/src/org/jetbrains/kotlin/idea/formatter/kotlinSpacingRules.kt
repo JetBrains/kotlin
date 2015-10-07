@@ -26,7 +26,7 @@ import com.intellij.psi.formatter.FormatterUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.JetNodeTypes.*
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -44,7 +44,7 @@ fun SpacingBuilder.afterInside(element: IElementType, tokenSet: TokenSet, spacin
 
 fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
     val jetSettings = settings.getCustomSettings(javaClass<JetCodeStyleSettings>())!!
-    val jetCommonSettings = settings.getCommonSettings(JetLanguage.INSTANCE)!!
+    val jetCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)!!
 
     return rules(settings) {
         val DECLARATIONS =
@@ -131,6 +131,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             betweenInside(VAR_KEYWORD, IDENTIFIER, PROPERTY).spaces(1)
             betweenInside(VAL_KEYWORD, TYPE_REFERENCE, PROPERTY).spaces(1)
             betweenInside(VAR_KEYWORD, TYPE_REFERENCE, PROPERTY).spaces(1)
+            betweenInside(TYPE_PARAMETER_LIST, IDENTIFIER, PROPERTY).spaces(1)
             betweenInside(TYPE_REFERENCE, DOT, PROPERTY).spacing(0, 0, 0, false, 0)
             betweenInside(DOT, IDENTIFIER, PROPERTY).spacing(0, 0, 0, false, 0)
 
@@ -140,6 +141,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             betweenInside(FUN_KEYWORD, IDENTIFIER, FUN).spaces(1)
             betweenInside(FUN_KEYWORD, TYPE_REFERENCE, FUN).spaces(1)
+            betweenInside(TYPE_PARAMETER_LIST, IDENTIFIER, FUN).spaces(1)
             betweenInside(FUN_KEYWORD, VALUE_PARAMETER_LIST, FUN).spacing(0, 0, 0, false, 0)
             betweenInside(TYPE_REFERENCE, DOT, FUN).spacing(0, 0, 0, false, 0)
             betweenInside(DOT, IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)

@@ -89,13 +89,18 @@ class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<JetProperty
         private fun createGetter(element: JetProperty) {
             val body = "get() = _${element.name}"
             val newGetter = JetPsiFactory(element).createProperty("val x $body").getter!!
-            element.add(newGetter)
+            element.addAccessor(newGetter)
         }
 
         private fun createSetter(element: JetProperty) {
             val body = "set(value) { _${element.name} = value }"
             val newSetter = JetPsiFactory(element).createProperty("val x $body").setter!!
-            element.add(newSetter)
+            element.addAccessor(newSetter)
+        }
+
+        private fun JetProperty.addAccessor(newAccessor: JetPropertyAccessor) {
+            val semicolon = getNode().findChildByType(JetTokens.SEMICOLON)
+            addBefore(newAccessor, semicolon?.psi)
         }
 
         private fun createBackingProperty(property: JetProperty) {

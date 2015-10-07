@@ -228,7 +228,7 @@ fun specialJVM(): List<GenericFunction> {
         body(ArraysOfPrimitives) {
             """
             return object : AbstractList<T>(), RandomAccess {
-                override fun size(): Int = this@asList.size()
+                override val size: Int get() = this@asList.size()
                 override fun isEmpty(): Boolean = this@asList.isEmpty()
                 override fun contains(o: Any?): Boolean = this@asList.contains(o as T)
                 override fun iterator(): MutableIterator<T> = this@asList.iterator() as MutableIterator<T>

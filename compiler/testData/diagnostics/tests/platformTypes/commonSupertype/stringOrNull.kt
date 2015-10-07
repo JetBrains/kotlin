@@ -12,7 +12,7 @@ import p.*
 
 fun <T : Any> T.foo() {}
 
-fun test<D>(b: Boolean) {
+fun <D> test(b: Boolean) {
     val str = if (b) Utils.str() else null
 
     str?.foo()

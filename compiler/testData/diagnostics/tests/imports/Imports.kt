@@ -5,12 +5,12 @@ import b.B        //class
 import b.foo      //function
 import b.ext      //extension function
 import b.value    //property
-import b.C.Companion.<!CANNOT_IMPORT_MEMBERS_FROM_SINGLETON!>bar<!>    //function from companion object
-import b.C.Companion.<!CANNOT_IMPORT_MEMBERS_FROM_SINGLETON!>cValue<!> //property from companion object
+import b.C.Companion.bar    //function from companion object
+import b.C.Companion.cValue //property from companion object
 import b.<!UNRESOLVED_REFERENCE!>constant<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>fff<!>     //function from val
 import b.<!UNRESOLVED_REFERENCE!>constant<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>dValue<!>  //property from val
 import b.constant
-import b.E.Companion.<!CANNOT_IMPORT_MEMBERS_FROM_SINGLETON!>f<!>      //val from companion object
+import b.E.Companion.f      //val from companion object
 import <!UNRESOLVED_REFERENCE!>smth<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>illegal<!>
 import b.C.<!UNRESOLVED_REFERENCE!>smth<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>illegal<!>
 import b.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>smth<!>
@@ -22,14 +22,14 @@ fun test(arg: B) {
     foo(value)
     arg.ext()
 
-    <!UNRESOLVED_REFERENCE!>bar<!>()
-    foo(<!UNRESOLVED_REFERENCE!>cValue<!>)
+    bar()
+    foo(cValue)
 
     <!UNRESOLVED_REFERENCE!>fff<!>(<!UNRESOLVED_REFERENCE!>dValue<!>)
 
     constant.fff(constant.dValue)
 
-    <!UNRESOLVED_REFERENCE!>f<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>f<!>()
+    f.f()
 }
 
 // FILE:b.kt
@@ -72,7 +72,7 @@ fun bar() {}
 //FILE:c.kt
 package c
 
-import c.<!CANNOT_IMPORT_MEMBERS_FROM_SINGLETON!>C<!>.*
+import c.<!CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON!>C<!>.*
 
 object C {
     fun f() {

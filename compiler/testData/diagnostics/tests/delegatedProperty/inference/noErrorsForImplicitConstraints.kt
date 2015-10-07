@@ -5,7 +5,7 @@ class A {
     var b5: String by <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>getMyProperty1<!>()
 }
 
-fun getMyProperty1<A, B>() = MyProperty1<A, B>()
+fun <A, B> getMyProperty1() = MyProperty1<A, B>()
 
 class MyProperty1<T, R> {
 
@@ -25,7 +25,7 @@ class B {
     var b5: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>getMyProperty2()<!>
 }
 
-fun getMyProperty2<A, B>() = MyProperty2<A, B>()
+fun <A, B> getMyProperty2() = MyProperty2<A, B>()
 
 class MyProperty2<T, R> {
 

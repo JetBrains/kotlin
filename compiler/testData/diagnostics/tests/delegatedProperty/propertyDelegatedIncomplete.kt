@@ -7,5 +7,5 @@ class Delegate {
         return 1
     }
 
-    fun propertyDelegated<T>(p: PropertyMetadata) {}
+    fun <T> propertyDelegated(p: PropertyMetadata) {}
 }

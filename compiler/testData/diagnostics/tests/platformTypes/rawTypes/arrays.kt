@@ -21,7 +21,7 @@ class Test {
 
 // FILE: main.kt
 
-fun arrayOf<T>(): Array<T> = null!!
+fun <T> arrayOf(): Array<T> = null!!
 
 fun main() {
     val raw = Test.rawAField

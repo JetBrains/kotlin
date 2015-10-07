@@ -22,7 +22,7 @@ import java.util.AbstractList
 import kotlin.platform.platformName
 
 private open class ReversedListReadOnly<T>(protected open val delegate: List<T>) : AbstractList<T>() {
-    override fun size(): Int = delegate.size()
+    override val size: Int get() = delegate.size()
     override fun get(index: Int): T = delegate[index.flipIndex()]
 
     protected fun Int.flipIndex(): Int = if (this in 0..size() - 1) size() - this - 1 else throw IndexOutOfBoundsException("index $this should be in range [${0..size() - 1}]")

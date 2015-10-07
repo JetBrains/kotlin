@@ -60,6 +60,9 @@ class CodeConverter(
     public fun convertExpressions(expressions: Array<PsiExpression>): List<Expression>
             = expressions.map { convertExpression(it) }
 
+    public fun convertExpressions(expressions: List<PsiExpression>): List<Expression>
+            = expressions.map { convertExpression(it) }
+
     public fun convertExpression(expression: PsiExpression?): Expression {
         if (expression == null) return Expression.Empty
 
