@@ -23,18 +23,16 @@ import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.java.JavaVisibilities
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.java.builtinSpecialOverridden
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
-import org.jetbrains.kotlin.load.java.isBuiltinSpecialPropertyName
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.child
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
+import org.jetbrains.kotlin.load.java.lazy.types.RawSubstitution
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -49,6 +47,8 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
 
 public class LazyJavaClassMemberScope(
@@ -105,12 +105,13 @@ public class LazyJavaClassMemberScope(
     }
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        val functionsFromSupertypes = getFunctionsFromSupertypes(name, getContainingDeclaration())
+        val functionsFromSupertypes = getFunctionsFromSupertypes(name)
+
         result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter))
     }
 
-    private fun getFunctionsFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
-          return descriptor.typeConstructor.supertypes.flatMap {
+    private fun getFunctionsFromSupertypes(name: Name): Set<SimpleFunctionDescriptor> {
+          return getContainingDeclaration().typeConstructor.supertypes.flatMap {
               it.memberScope.getFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { f -> f as SimpleFunctionDescriptor }
           }.toSet()
       }
@@ -191,6 +192,69 @@ public class LazyJavaClassMemberScope(
         )
 
         return LazyJavaScope.MethodSignatureData(effectiveSignature, propagated.getErrors() + effectiveSignature.getErrors())
+    }
+
+    override fun resolveMethodToFunctionDescriptor(method: JavaMethod): JavaMethodDescriptor {
+        val commonResult = super.resolveMethodToFunctionDescriptor(method)
+
+        if (commonResult.name.sameAsBuiltinMethodWithErasedValueParameters) {
+            val erasedCopy = createOverrideForErasedIfNeeded(commonResult)
+            if (erasedCopy != null) return erasedCopy
+        }
+
+        return commonResult
+    }
+
+    private fun createOverrideForErasedIfNeeded(
+            methodDescriptor: JavaMethodDescriptor
+    ): JavaMethodDescriptor? {
+
+        val overriddenCandidates =
+                getFunctionsFromSupertypes(methodDescriptor.name).map { it.overriddenBuiltinFunctionWithErasedValueParametersInJava }.filterNotNull()
+
+        if (overriddenCandidates.isEmpty()) return null
+
+        val overridden = firstOverriddenBuiltinFunctionWithErasedValueParameters(methodDescriptor, overriddenCandidates) ?: return null
+
+        return methodDescriptor
+                .enhance(
+                        methodDescriptor.extensionReceiverParameter?.type,
+                        overridden.valueParameters.map { it.type },
+                        methodDescriptor.returnType!!)
+                .copy(
+                        methodDescriptor.containingDeclaration,
+                        methodDescriptor.modality, methodDescriptor.visibility,
+                        CallableMemberDescriptor.Kind.SYNTHESIZED, false) as? JavaMethodDescriptor
+    }
+
+    private fun firstOverriddenBuiltinFunctionWithErasedValueParameters(
+            javaMethodDescriptor: JavaMethodDescriptor,
+            candidatesToOverride: Collection<FunctionDescriptor>
+    ): FunctionDescriptor? {
+        return candidatesToOverride.firstNotNullResult overrides@{
+            candidate ->
+            candidate.check { javaMethodDescriptor.doesOverrideBuiltinFunctionWithErasedValueParameters(candidate) }
+        }
+    }
+
+    private fun JavaMethodDescriptor.doesOverrideBuiltinFunctionWithErasedValueParameters(
+            builtinWithErasedParameters: FunctionDescriptor
+    ): Boolean {
+        if (this.valueParameters.size() != builtinWithErasedParameters.valueParameters.size()) return false
+        if (!this.typeParameters.isEmpty() || !builtinWithErasedParameters.typeParameters.isEmpty()) return false
+        if (this.extensionReceiverParameter != null || builtinWithErasedParameters.extensionReceiverParameter != null) return false
+
+        return this.valueParameters.indices.all {
+            index ->
+            val currentType = valueParameters[index].type
+            val overriddenCandidate = RawSubstitution.eraseType(
+                    builtinWithErasedParameters.original.valueParameters[index].type)
+            JetTypeChecker.DEFAULT.equalTypes(currentType, overriddenCandidate)
+        } && returnType.isSubtypeOf(builtinWithErasedParameters.returnType)
+    }
+
+    private fun JetType?.isSubtypeOf(other: JetType?): Boolean {
+        return JetTypeChecker.DEFAULT.isSubtypeOf(this ?: return false, other ?: return false)
     }
 
     private fun resolveConstructor(constructor: JavaConstructor): JavaConstructorDescriptor {
