@@ -184,6 +184,12 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             doTest(fileName);
         }
 
+        @TestMetadata("OtherConstructorFromSecondary.kt")
+        public void testOtherConstructorFromSecondary() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/OtherConstructorFromSecondary.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Println.kt")
         public void testPrintln() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/Println.kt");
@@ -253,6 +259,12 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         @TestMetadata("SuperConstructorCall.kt")
         public void testSuperConstructorCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/SuperConstructorCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SuperConstructorFromSecondary.kt")
+        public void testSuperConstructorFromSecondary() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/SuperConstructorFromSecondary.kt");
             doTest(fileName);
         }
 

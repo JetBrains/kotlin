@@ -143,15 +143,23 @@ public fun Call.resolveCandidates(
     val results = callResolver.resolveFunctionCall(callResolutionContext)
 
     var candidates = results.allCandidates!!
+
+    if (callElement is JetConstructorDelegationCall) { // for "this(...)" delegation call exclude caller from candidates
+        inDescriptor as ConstructorDescriptor
+        candidates = candidates.filter { it.resultingDescriptor.original != inDescriptor.original }
+    }
+
     if (filterOutWrongReceiver) {
         candidates = candidates.filter { it.status != ResolutionStatus.RECEIVER_TYPE_ERROR && it.status != ResolutionStatus.RECEIVER_PRESENCE_ERROR }
     }
+
     if (filterOutByVisibility) {
         candidates = candidates.filter {
             val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(it.dispatchReceiver, bindingContext)
             Visibilities.isVisible(thisReceiver, it.resultingDescriptor, inDescriptor)
         }
     }
+
     return candidates
 }
 

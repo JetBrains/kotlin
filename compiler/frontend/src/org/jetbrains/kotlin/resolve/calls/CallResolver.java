@@ -296,8 +296,15 @@ public class CallResolver {
                     context, expression.getReferencedNameAsName(), expression,
                     CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
         }
-        if (calleeExpression instanceof JetConstructorCalleeExpression) {
+        else if (calleeExpression instanceof JetConstructorCalleeExpression) {
             return resolveCallForConstructor(context, (JetConstructorCalleeExpression) calleeExpression);
+        }
+        else if (calleeExpression instanceof JetConstructorDelegationReferenceExpression) {
+            JetConstructorDelegationCall delegationCall = (JetConstructorDelegationCall) context.call.getCallElement();
+            DeclarationDescriptor container = context.scope.getOwnerDescriptor();
+            assert container instanceof ConstructorDescriptor : "Trying to resolve JetConstructorDelegationCall not in constructor. scope.ownerDescriptor = " + container;
+            return resolveConstructorDelegationCall(context, delegationCall, (JetConstructorDelegationReferenceExpression) calleeExpression,
+                                                    (ConstructorDescriptor) container);
         }
         else if (calleeExpression == null) {
             return checkArgumentTypesAndFail(context);
@@ -393,6 +400,8 @@ public class CallResolver {
             @NotNull JetConstructorDelegationReferenceExpression calleeExpression,
             @NotNull ConstructorDescriptor calleeConstructor
     ) {
+        context.trace.record(BindingContext.LEXICAL_SCOPE, call, context.scope);
+
         ClassDescriptor currentClassDescriptor = calleeConstructor.getContainingDeclaration();
 
         boolean isThisCall = calleeExpression.isThis();
