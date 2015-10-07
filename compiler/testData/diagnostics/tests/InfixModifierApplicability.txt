@@ -5,6 +5,7 @@ public infix fun w2(/*0*/ s: kotlin.String): kotlin.Unit
 public infix fun w5(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Unit
 public infix fun kotlin.String.o1(/*0*/ o: kotlin.String): kotlin.String
 public infix fun kotlin.String.o2(/*0*/ o: kotlin.String, /*1*/ o2: kotlin.String? = ...): kotlin.String
+public infix fun kotlin.String.o3(/*0*/ o: kotlin.String = ..., /*1*/ o2: kotlin.String? = ...): kotlin.String
 public infix fun </*0*/ A, /*1*/ B> A.to(/*0*/ that: B): Pair<A, B>
 public infix fun kotlin.String.w3(): kotlin.Unit
 public infix fun kotlin.String.w4(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Unit
