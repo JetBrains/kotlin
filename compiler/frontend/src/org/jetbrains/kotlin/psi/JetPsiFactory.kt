@@ -107,7 +107,7 @@ public class JetPsiFactory(private val project: Project) {
 
     //the pair contains the first and the last elements of a range
     public fun createWhitespaceAndArrow(): Pair<PsiElement, PsiElement> {
-        val functionType = createType("() -> Int").getTypeElement() as JetFunctionType
+        val functionType = createType("() -> Int").typeElement as JetFunctionType
         return Pair(functionType.findElementAt(2)!!, functionType.findElementAt(3)!!)
     }
 

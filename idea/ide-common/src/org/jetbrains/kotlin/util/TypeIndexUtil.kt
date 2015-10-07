@@ -59,7 +59,7 @@ private class CachedAliasImportData(val map: Multimap<String, String>, val fileM
 private val ALIAS_IMPORT_DATA_KEY = Key<CachedAliasImportData>("ALIAS_IMPORT_MAP_KEY")
 
 public fun JetTypeReference?.isProbablyNothing(): Boolean {
-    val userType = this?.getTypeElement() as? JetUserType ?: return false
+    val userType = this?.typeElement as? JetUserType ?: return false
     return userType.isProbablyNothing()
 }
 

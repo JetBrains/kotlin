@@ -304,7 +304,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
         val nameRef = position.getParent() as? JetNameReferenceExpression ?: return null
         val userType = nameRef.getParent() as? JetUserType ?: return null
         val typeRef = userType.getParent() as? JetTypeReference ?: return null
-        if (userType != typeRef.getTypeElement()) return null
+        if (userType != typeRef.typeElement) return null
         val parent = typeRef.getParent()
         return when (parent) {
             is JetNamedFunction -> parent.check { typeRef == it.receiverTypeReference }

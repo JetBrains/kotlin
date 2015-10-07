@@ -14,60 +14,41 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes.ANNOTATION;
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.psiUtil.collectAnnotationEntriesFromStubOrPsi
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
 /**
  * Type reference element.
- * Underlying token is {@link org.jetbrains.kotlin.JetNodeTypes#TYPE_REFERENCE}
+ * Underlying token is [org.jetbrains.kotlin.JetNodeTypes.TYPE_REFERENCE]
  */
-public class JetTypeReference extends JetElementImplStub<KotlinPlaceHolderStub<JetTypeReference>> implements JetAnnotated, JetAnnotationsContainer {
+class JetTypeReference : JetElementImplStub<KotlinPlaceHolderStub<JetTypeReference>>, JetAnnotated, JetAnnotationsContainer {
 
-    public JetTypeReference(@NotNull ASTNode node) {
-        super(node);
+    constructor(node: ASTNode) : super(node)
+
+    constructor(stub: KotlinPlaceHolderStub<JetTypeReference>) : super(stub, JetStubElementTypes.TYPE_REFERENCE)
+
+    override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R {
+        return visitor.visitTypeReference(this, data)
     }
 
-    public JetTypeReference(KotlinPlaceHolderStub<JetTypeReference> stub) {
-        super(stub, JetStubElementTypes.TYPE_REFERENCE);
+    val typeElement: JetTypeElement?
+        get() = JetStubbedPsiUtil.getStubOrPsiChild(this, JetStubElementTypes.TYPE_ELEMENT_TYPES, JetTypeElement.ARRAY_FACTORY)
+
+    override fun getAnnotations(): List<JetAnnotation> {
+        return getStubOrPsiChildrenAsList(JetStubElementTypes.ANNOTATION)
     }
 
-    @Override
-    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitTypeReference(this, data);
+    override fun getAnnotationEntries(): List<JetAnnotationEntry> {
+        return this.collectAnnotationEntriesFromStubOrPsi()
     }
 
-    @Nullable
-    public JetTypeElement getTypeElement() {
-        return JetStubbedPsiUtil.getStubOrPsiChild(this, JetStubElementTypes.TYPE_ELEMENT_TYPES, JetTypeElement.ARRAY_FACTORY);
-    }
-
-    @NotNull
-    @Override
-    public List<JetAnnotation> getAnnotations() {
-        return getStubOrPsiChildrenAsList(JetStubElementTypes.ANNOTATION);
-    }
-
-    @NotNull
-    @Override
-    public List<JetAnnotationEntry> getAnnotationEntries() {
-        return PsiUtilPackage.collectAnnotationEntriesFromStubOrPsi(this);
-    }
-
-    public boolean hasParentheses() {
-        return findChildByType(JetTokens.LPAR) != null && findChildByType(JetTokens.LPAR) != null;
+    fun hasParentheses(): Boolean {
+        return findChildByType<PsiElement>(JetTokens.LPAR) != null && findChildByType<PsiElement>(JetTokens.LPAR) != null
     }
 }

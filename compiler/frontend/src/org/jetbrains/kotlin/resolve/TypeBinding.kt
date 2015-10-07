@@ -42,7 +42,7 @@ interface TypeArgumentBinding<out P: PsiElement> {
 
 fun JetTypeReference.createTypeBinding(trace: BindingContext): TypeBinding<JetTypeElement>? {
     val jetType = trace[BindingContext.TYPE, this]
-    val psiElement = getTypeElement()
+    val psiElement = typeElement
     if (jetType == null || psiElement == null) {
         return null
     }
@@ -84,7 +84,7 @@ private class ExplicitTypeBinding(
         return psiTypeArguments.indices.map { index: Int ->
             // todo fix for List<*>
             val jetTypeReference = psiTypeArguments[index]
-            val jetTypeElement = jetTypeReference?.getTypeElement()
+            val jetTypeElement = jetTypeReference?.typeElement
             if (jetTypeElement == null) return@map null;
 
             if (isErrorBinding) {
