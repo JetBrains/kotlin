@@ -92,6 +92,7 @@ internal sealed class JvmPropertySignature {
     abstract fun asString(): String
 
     class KotlinProperty(
+            val descriptor: PropertyDescriptor,
             val proto: ProtoBuf.Property,
             val signature: JvmProtoBuf.JvmPropertySignature,
             val nameResolver: NameResolver
@@ -103,9 +104,10 @@ internal sealed class JvmPropertySignature {
                 string = nameResolver.getString(signature.getter.name) + nameResolver.getString(signature.getter.desc)
             }
             else {
-                string = JvmAbi.getterName(nameResolver.getString(signature.field.name)) +
-                         "()" +
-                         nameResolver.getString(signature.field.desc)
+                val (name, desc) =
+                        JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver) ?:
+                                throw KotlinReflectionInternalError("No field signature for property: $descriptor")
+                string = JvmAbi.getterName(name) + "()" + desc
             }
         }
 
@@ -170,7 +172,9 @@ internal object RuntimeTypeMapper {
             if (!proto.hasExtension(JvmProtoBuf.propertySignature)) {
                 throw KotlinReflectionInternalError("No metadata found for $property")
             }
-            return JvmPropertySignature.KotlinProperty(proto, proto.getExtension(JvmProtoBuf.propertySignature), property.nameResolver)
+            return JvmPropertySignature.KotlinProperty(
+                    property, proto, proto.getExtension(JvmProtoBuf.propertySignature), property.nameResolver
+            )
         }
         else if (property is JavaPropertyDescriptor) {
             val field = ((property.source as? JavaSourceElement)?.javaElement as? ReflectJavaField)?.member ?:

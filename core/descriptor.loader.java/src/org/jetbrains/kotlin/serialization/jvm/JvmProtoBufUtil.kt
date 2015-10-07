@@ -93,6 +93,22 @@ public object JvmProtoBufUtil {
         return "<init>" + desc
     }
 
+    fun getJvmFieldSignature(proto: ProtoBuf.Property, nameResolver: NameResolver): PropertySignature? {
+        val signature =
+                if (proto.hasExtension(JvmProtoBuf.propertySignature)) proto.getExtension(JvmProtoBuf.propertySignature) else return null
+        val field =
+                if (signature.hasField()) signature.field else null
+
+        val name = if (field != null && field.hasName()) field.name else proto.name
+        val desc =
+                if (field != null && field.hasDesc()) nameResolver.getString(field.desc)
+                else mapTypeDefault(proto.returnType, nameResolver) ?: return null
+
+        return PropertySignature(nameResolver.getString(name), desc)
+    }
+
+    data class PropertySignature(val name: String, val desc: String)
+
     private fun mapTypeDefault(type: ProtoBuf.Type, nameResolver: NameResolver): String? {
         return if (type.hasClassName()) mapClassIdDefault(nameResolver.getClassId(type.className)) else null
     }

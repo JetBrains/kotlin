@@ -69,10 +69,10 @@ message JvmMethodSignature {
 }
 
 message JvmFieldSignature {
-  required int32 name = 1 [(string_id_in_table) = true];
+  optional int32 name = 1 [(string_id_in_table) = true];
 
   // JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
-  required int32 desc = 2 [(string_id_in_table) = true];
+  optional int32 desc = 2 [(string_id_in_table) = true];
 
   // True iff this field is a backing field for a companion object and is really present as a static
   // field in the outer class, not as an instance field here

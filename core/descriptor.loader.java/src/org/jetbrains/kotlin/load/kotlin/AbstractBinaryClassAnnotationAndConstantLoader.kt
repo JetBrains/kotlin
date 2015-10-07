@@ -286,11 +286,9 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
                 if (proto.hasExtension(propertySignature)) proto.getExtension(propertySignature)
                 else return null
 
-        if (field && signature.hasField()) {
-            return MemberSignature.fromFieldNameAndDesc(
-                    nameResolver.getString(signature.field.name),
-                    nameResolver.getString(signature.field.desc)
-            )
+        if (field) {
+            val (name, desc) = JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver) ?: return null
+            return MemberSignature.fromFieldNameAndDesc(name, desc)
         }
         else if (synthetic && signature.hasSyntheticMethod()) {
             return MemberSignature.fromMethod(nameResolver, signature.syntheticMethod)
