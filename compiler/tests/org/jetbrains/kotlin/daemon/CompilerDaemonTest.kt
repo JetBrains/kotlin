@@ -38,7 +38,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true, checkId = true)
         TestCase.assertNotNull("failed to connect daemon", daemon)
         val strm = ByteArrayOutputStream()
-        val code = KotlinCompilerClient.compile(daemon!!, args, strm)
+        val code = KotlinCompilerClient.compile(daemon!!, CompileService.TargetPlatform.JVM, args, strm)
         return CompilerResults(code, strm.toString())
     }
 

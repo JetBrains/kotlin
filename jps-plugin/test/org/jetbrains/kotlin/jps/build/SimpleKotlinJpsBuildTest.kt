@@ -67,6 +67,7 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         rebuildAll()
     }
 
+    // TODO: add JS tests
     public fun testDaemon() {
         System.setProperty(COMPILE_DAEMON_ENABLED_PROPERTY,"")
         System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
