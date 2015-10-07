@@ -20,7 +20,7 @@ private fun bar() {
     xx = 30
 }
 
-fun makeA() = A()
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>makeA<!>() = A()
 
 private object PO {}
 
@@ -43,7 +43,7 @@ fun test() {
     <!INVISIBLE_SETTER(xx; private; file)!>xx<!> = 40
 }
 
-class B : <!INVISIBLE_REFERENCE(A; private; file), INVISIBLE_MEMBER(A; private; file)!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS!><!INVISIBLE_REFERENCE(A; private; file), INVISIBLE_MEMBER(A; private; file)!>A<!>()<!> {}
 
 class Q {
     class W {

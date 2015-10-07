@@ -63,7 +63,7 @@ public class JetExceptionFilter implements Filter {
         String internalName = fullyQualifiedName.replace('.', '/');
         JvmClassName jvmClassName = JvmClassName.byInternalName(internalName);
 
-        JetFile file = DebuggerUtils.findSourceFileForClass(project, searchScope, jvmClassName, fileName, lineNumber);
+        JetFile file = DebuggerUtils.findSourceFileForClass(project, searchScope, jvmClassName, fileName);
 
         if (file == null) return null;
         VirtualFile virtualFile = file.getVirtualFile();

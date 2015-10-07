@@ -22,11 +22,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.KotlinPackage;
 import kotlin.Pair;
 import kotlin.jvm.functions.Function1;
@@ -35,13 +33,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
-import org.jetbrains.kotlin.idea.debugger.DebuggerPackage;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -66,9 +61,8 @@ public class DebuggerUtils {
     public static JetFile findSourceFileForClass(
             @NotNull Project project,
             @NotNull GlobalSearchScope searchScope,
-            @NotNull final JvmClassName className,
-            @NotNull final String fileName,
-            final int lineNumber
+            @NotNull JvmClassName className,
+            @NotNull final String fileName
     ) {
         String extension = FileUtilRt.getExtension(fileName);
         if (!KOTLIN_EXTENSIONS.contains(extension)) return null;
@@ -113,64 +107,13 @@ public class DebuggerUtils {
             }
         }
 
-        if (isPackagePartClassName(className)) {
-            JetFile file = getFileForPackagePartPrefixedName(filesWithExactName, className.getInternalName());
-            if (file != null) {
-                return file;
-            }
-
-            boolean isInLibrary = KotlinPackage.all(filesWithExactName, new Function1<JetFile, Boolean>() {
-                @Override
-                public Boolean invoke(JetFile file) {
-                    return LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null;
-                }
-            });
-
-            if (isInLibrary) {
-                return KotlinPackage.singleOrNull(KotlinPackage.filter(filesWithExactName, new Function1<JetFile, Boolean>() {
-                    @Override
-                    public Boolean invoke(JetFile file) {
-                        Integer startLineOffset = CodeInsightUtils.getStartLineOffset(file, lineNumber);
-                        assert startLineOffset != null : "Cannot find start line offset for file " + file.getName() + ", line " +
-                                                         lineNumber;
-                        JetDeclaration elementAt = PsiTreeUtil.getParentOfType(file.findElementAt(startLineOffset), JetDeclaration.class);
-                        return elementAt != null &&
-                            className.getInternalName().equals(DebuggerPackage.findPackagePartInternalNameForLibraryFile(elementAt));
-                    }
-                }));
-            }
-
-            return null;
-        }
-
         return filesWithExactName.iterator().next();
-    }
-
-    private static boolean isPackagePartClassName(JvmClassName className) {
-        String packageName = PackageClassUtils.getPackageClassInternalName(className.getPackageFqName());
-
-        String internalName = className.getInternalName();
-        return !internalName.equals(packageName) && internalName.startsWith(packageName);
     }
 
     private static boolean isPackageClassName(JvmClassName className) {
         String packageName = PackageClassUtils.getPackageClassInternalName(className.getPackageFqName());
 
         return packageName.equals(className.getInternalName());
-    }
-
-    @Nullable
-    private static JetFile getFileForPackagePartPrefixedName(
-            @NotNull Collection<JetFile> allPackageFiles,
-            @NotNull String classInternalName
-    ) {
-        for (JetFile file : allPackageFiles) {
-            String packagePartInternalName = PackagePartClassUtils.getPackagePartInternalName(file);
-            if (classInternalName.startsWith(packagePartInternalName)) {
-                return file;
-            }
-        }
-        return null;
     }
 
     @NotNull

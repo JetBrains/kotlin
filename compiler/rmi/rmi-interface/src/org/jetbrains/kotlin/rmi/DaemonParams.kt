@@ -205,14 +205,18 @@ public data class DaemonOptions(
         public var runFilesPath: String = COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH,
         public var autoshutdownMemoryThreshold: Long = COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE,
         public var autoshutdownIdleSeconds: Int = COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S,
-        public var clientAliveFlagPath: String? = null
+        public var clientAliveFlagPath: String? = null,
+        public var verbose: Boolean = false,
+        public var reportPerf: Boolean = false
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
         get() = listOf(PropMapper(this, DaemonOptions::runFilesPath, fromString = { it.trimQuotes() }),
                        PropMapper(this, DaemonOptions::autoshutdownMemoryThreshold, fromString = { it.toLong() }, skipIf = { it == 0L }, mergeDelimiter = "="),
                        PropMapper(this, DaemonOptions::autoshutdownIdleSeconds, fromString = { it.toInt() }, skipIf = { it == 0 }, mergeDelimiter = "="),
-                       NullablePropMapper(this, DaemonOptions::clientAliveFlagPath, fromString = { it }, toString = { "${it?.trimQuotes()}" }, mergeDelimiter = "="))
+                       NullablePropMapper(this, DaemonOptions::clientAliveFlagPath, fromString = { it }, toString = { "${it?.trimQuotes()}" }, mergeDelimiter = "="),
+                       BoolPropMapper(this, DaemonOptions::verbose),
+                       BoolPropMapper(this, DaemonOptions::reportPerf))
 }
 
 
@@ -298,8 +302,6 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits
                   .filterExtractProps(opts.mappers, "-", opts.restMapper))
     }
 
-    System.getProperty(COMPILE_DAEMON_REPORT_PERF_PROPERTY)?.let { opts.jvmParams.add("D" + COMPILE_DAEMON_REPORT_PERF_PROPERTY) }
-    System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)?.let { opts.jvmParams.add("D" + COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) }
     System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"" ) }
     opts.jvmParams.addAll(additionalParams)
     return opts
@@ -324,6 +326,8 @@ public fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
             opts.clientAliveFlagPath = trimmed
         }
     }
+    System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)?.let { opts.verbose = true }
+    System.getProperty(COMPILE_DAEMON_REPORT_PERF_PROPERTY)?.let { opts.reportPerf = true }
     return opts
 }
 

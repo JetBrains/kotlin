@@ -6,8 +6,8 @@ public fun unresolvedParameter(): kotlin.Unit
 public fun viaFakeOverride(): kotlin.Unit
 public fun viaRealOverride(): kotlin.Unit
 
-public/*package*/ open class JavaSuperClass {
-    public/*package*/ constructor JavaSuperClass()
+public open class JavaSuperClass {
+    public constructor JavaSuperClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

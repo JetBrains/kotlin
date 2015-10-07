@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -53,6 +54,12 @@ public class JavaVisibilities {
         @Override
         public Visibility normalize() {
             return Visibilities.PROTECTED;
+        }
+
+        @NotNull
+        @Override
+        public EffectiveVisibility effectiveVisibility(@Nullable ClassDescriptor classDescriptor) {
+            return EffectiveVisibility.Companion.effectiveVisibility(Visibilities.PRIVATE, classDescriptor);
         }
     };
 

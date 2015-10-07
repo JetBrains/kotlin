@@ -10,6 +10,6 @@ class K : J<String>(), ML<String>
 
 import java.util.*;
 
-class J<T> extends ML<T> {
+public class J<T> extends ML<T> {
     public List<T> foo() { return null; }
 }

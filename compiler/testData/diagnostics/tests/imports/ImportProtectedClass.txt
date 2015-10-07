@@ -1,13 +1,13 @@
 package
 
 package p {
-    public fun bar(): p.Foo.Nested?
-    public fun foo(): p.Foo.Nested?
+    private fun bar(): p.Foo.Nested?
+    private fun foo(): p.Foo.Nested?
 
     public final class Bar : p.Foo {
         public constructor Bar()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun foo(): p.Foo.Nested?
+        protected final fun foo(): p.Foo.Nested?
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

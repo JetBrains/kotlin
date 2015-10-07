@@ -2,7 +2,7 @@ package
 
 package a {
 
-    public final class X : pack1.SomeClass.N {
+    private final class X : pack1.SomeClass.N {
         public constructor X()
         invisible_fake open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         invisible_fake open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,7 +1,7 @@
 package
 
-public/*package*/ open class J</*0*/ T : kotlin.Any!> : ML<T!> {
-    public/*package*/ constructor J</*0*/ T : kotlin.Any!>()
+public open class J</*0*/ T : kotlin.Any!> : ML<T!> {
+    public constructor J</*0*/ T : kotlin.Any!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(): kotlin.MutableList<T!>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

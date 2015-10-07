@@ -9,7 +9,7 @@ private open class A {
 
 private fun foo() {}
 
-fun makeA() = A()
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>makeA<!>() = A()
 
 private object PO {}
 
@@ -33,7 +33,7 @@ fun test() {
     val po = <!INVISIBLE_MEMBER(PO; private; file)!>PO<!>
 }
 
-class B : <!INVISIBLE_REFERENCE(A; private; file), INVISIBLE_MEMBER(A; private; file)!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS!><!INVISIBLE_REFERENCE(A; private; file), INVISIBLE_MEMBER(A; private; file)!>A<!>()<!> {}
 
 class Q {
     class W {

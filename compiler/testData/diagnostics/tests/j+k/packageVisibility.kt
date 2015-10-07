@@ -16,29 +16,29 @@ class MyJavaClass {
 //FILE:a.kt
 package a
 
-val mc = MyJavaClass()
+<!EXPOSED_PROPERTY_TYPE!>val mc = MyJavaClass()<!>
 val x = MyJavaClass.staticMethod()
 val y = MyJavaClass.NestedClass.staticMethodOfNested()
-val z = MyJavaClass.NestedClass()
+<!EXPOSED_PROPERTY_TYPE!>val z = MyJavaClass.NestedClass()<!>
 
 //FILE: b.kt
 package b
 
 import a.<!INVISIBLE_REFERENCE!>MyJavaClass<!>
 
-val mc1 = <!INVISIBLE_MEMBER!>MyJavaClass<!>()
+<!EXPOSED_PROPERTY_TYPE!>val mc1 = <!INVISIBLE_MEMBER!>MyJavaClass<!>()<!>
 
 val x = MyJavaClass.<!INVISIBLE_MEMBER!>staticMethod<!>()
 val y = MyJavaClass.NestedClass.<!INVISIBLE_MEMBER!>staticMethodOfNested<!>()
-val z = MyJavaClass.<!INVISIBLE_MEMBER!>NestedClass<!>()
+<!EXPOSED_PROPERTY_TYPE!>val z = MyJavaClass.<!INVISIBLE_MEMBER!>NestedClass<!>()<!>
 
 //FILE: c.kt
 package a.c
 
 import a.<!INVISIBLE_REFERENCE!>MyJavaClass<!>
 
-val mc1 = <!INVISIBLE_MEMBER!>MyJavaClass<!>()
+<!EXPOSED_PROPERTY_TYPE!>val mc1 = <!INVISIBLE_MEMBER!>MyJavaClass<!>()<!>
 
 val x = MyJavaClass.<!INVISIBLE_MEMBER!>staticMethod<!>()
 val y = MyJavaClass.NestedClass.<!INVISIBLE_MEMBER!>staticMethodOfNested<!>()
-val z = MyJavaClass.<!INVISIBLE_MEMBER!>NestedClass<!>()
+<!EXPOSED_PROPERTY_TYPE!>val z = MyJavaClass.<!INVISIBLE_MEMBER!>NestedClass<!>()<!>

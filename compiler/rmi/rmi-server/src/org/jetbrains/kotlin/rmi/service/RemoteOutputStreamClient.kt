@@ -16,19 +16,21 @@
 
 package org.jetbrains.kotlin.rmi.service
 
+import org.jetbrains.kotlin.rmi.DummyProfiler
+import org.jetbrains.kotlin.rmi.Profiler
 import org.jetbrains.kotlin.rmi.RemoteOutputStream
 import java.io.OutputStream
 
-class RemoteOutputStreamClient(val remote: RemoteOutputStream): OutputStream() {
+class RemoteOutputStreamClient(val remote: RemoteOutputStream, val profiler: Profiler = DummyProfiler()): OutputStream() {
     override fun write(data: ByteArray) {
-        remote.write(data, 0, data.size())
+        profiler.withMeasure(this) { remote.write(data, 0, data.size()) }
     }
 
     override fun write(data: ByteArray, offset: Int, length: Int) {
-        remote.write(data, offset, length)
+        profiler.withMeasure(this) { remote.write(data, offset, length) }
     }
 
     override fun write(byte: Int) {
-        remote.write(byte)
+        profiler.withMeasure(this) { remote.write(byte) }
     }
 }
