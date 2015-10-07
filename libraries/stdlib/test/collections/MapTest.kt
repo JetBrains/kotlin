@@ -160,7 +160,7 @@ class MapTest {
     }
 
     @test fun createWithSelector() {
-        val map = listOf("a", "bb", "ccc").toMap { it.length() }
+        val map = listOf("a", "bb", "ccc").toMapBy { it.length() }
         assertEquals(3, map.size())
         assertEquals("a", map.get(1))
         assertEquals("bb", map.get(2))
@@ -168,7 +168,7 @@ class MapTest {
     }
 
     @test fun createWithSelectorAndOverwrite() {
-        val map = listOf("aa", "bb", "ccc").toMap { it.length() }
+        val map = listOf("aa", "bb", "ccc").toMapBy { it.length() }
         assertEquals(2, map.size())
         assertEquals("bb", map.get(2))
         assertEquals("ccc", map.get(3))

@@ -95,6 +95,16 @@ fun snapshots(): List<GenericFunction> {
 
     templates add f("toMap(selector: (T) -> K)") {
         inline(true)
+        include(Strings)
+        typeParam("K")
+        returns("Map<K, T>")
+        deprecate("Use toMapBy instead.")
+        deprecateReplacement("toMapBy(selector)")
+        body("return ${deprecateReplacement.default}")
+    }
+
+    templates add f("toMapBy(selector: (T) -> K)") {
+        inline(true)
         typeParam("K")
         doc {
             """
