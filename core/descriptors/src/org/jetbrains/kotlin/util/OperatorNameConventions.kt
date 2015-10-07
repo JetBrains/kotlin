@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.Name
+import java.util.*
 import kotlin.text.Regex
 
 object OperatorNameConventions {
@@ -44,6 +45,9 @@ object OperatorNameConventions {
     val MINUS = Name.identifier("minus")
     val NOT = Name.identifier("not")
 
+    val UNARY_MINUS = Name.identifier("unaryMinus")
+    val UNARY_PLUS = Name.identifier("unaryPlus")
+
     val TIMES = Name.identifier("times")
     val DIV = Name.identifier("div")
     val MOD = Name.identifier("mod")
@@ -57,7 +61,8 @@ object OperatorNameConventions {
 
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
-    private val UNARY_OPERATION_NAMES = setOf(INC, DEC, PLUS, MINUS, NOT)
+    val UNARY_OPERATION_NAMES_WITH_DEPRECATED = Collections.unmodifiableSet(setOf(INC, DEC, UNARY_PLUS, PLUS, UNARY_MINUS, MINUS, NOT))
+    private val UNARY_OPERATION_NAMES = setOf(INC, DEC, UNARY_PLUS, UNARY_MINUS, NOT)
     private val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, RANGE_TO)
     private val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN)
 
@@ -76,6 +81,7 @@ object OperatorNameConventions {
             COMPARE_TO == name -> true
             UNARY_OPERATION_NAMES.any { it == name } && functionDescriptor.valueParameters.isEmpty() -> true
             BINARY_OPERATION_NAMES.any { it == name } && functionDescriptor.valueParameters.size() == 1 -> true
+            (PLUS == name) || (MINUS == name) -> true //temporary fix for deprecated unaryPlus()/unaryMinus()
             ASSIGNMENT_OPERATIONS.any { it == name } -> true
             name.asString().matches(COMPONENT_REGEX) -> true
             else -> false

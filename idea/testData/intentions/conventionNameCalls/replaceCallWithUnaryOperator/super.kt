@@ -1,11 +1,11 @@
 // IS_APPLICABLE: false
 
 open class Base {
-    open fun minus() = this
+    open fun unaryMinus() = this
 }
 
 class C : Base() {
-    override fun minus(): Base {
-        return super.<caret>minus()
+    override fun unaryMinus(): Base {
+        return super.<caret>unaryMinus()
     }
 }

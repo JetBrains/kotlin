@@ -1,8 +1,8 @@
 // INTENTION_TEXT: Replace with '-' operator
 fun test() {
     class Test {
-        fun minus(): Test = Test()
+        fun unaryMinus(): Test = Test()
     }
     val test = Test()
-    test.min<caret>us()
+    test.unaryMin<caret>us()
 }

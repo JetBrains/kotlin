@@ -310,6 +310,8 @@ public class DefaultErrorMessages {
         MAP.put(NO_GET_METHOD, "No get method providing array access");
         MAP.put(NO_SET_METHOD, "No set method providing array access");
 
+        MAP.put(DEPRECATED_UNARY_PLUS_MINUS, "Deprecated convention for ''{0}''. Rename to ''{1}''", NAME, STRING);
+
         MAP.put(INC_DEC_SHOULD_NOT_RETURN_UNIT, "Functions inc(), dec() shouldn't return Unit to be used by operators ++, --");
         MAP.put(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT, "Function ''{0}'' should return Unit to be used by corresponding operator ''{1}''",
                 NAME, ELEMENT_TEXT);

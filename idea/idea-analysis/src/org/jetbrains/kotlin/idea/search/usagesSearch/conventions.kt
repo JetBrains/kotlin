@@ -60,7 +60,7 @@ public fun Name.getOperationSymbolsToSearch(): Set<JetToken> {
 
     if (isComponentLike(this)) return setOf(JetTokens.LPAR)
 
-    val unaryOp = UNARY_OPERATION_NAMES.inverse()[this]
+    val unaryOp = UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED[this]
     if (unaryOp != null) return setOf(unaryOp)
 
     val binaryOp = BINARY_OPERATION_NAMES.inverse()[this]

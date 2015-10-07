@@ -1,7 +1,7 @@
 fun test() {
     class Test {
-        fun plus(): Test = Test()
+        fun unaryPlus(): Test = Test()
     }
     val test = Test()
-    +test.p<caret>lus()
+    +test.unaryP<caret>lus()
 }

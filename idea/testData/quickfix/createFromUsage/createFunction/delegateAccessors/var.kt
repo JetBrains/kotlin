@@ -1,4 +1,4 @@
-// "Create member function 'getValue', function 'set'" "true"
+// "Create member function 'getValue', function 'setValue'" "true"
 class F {
 
 }

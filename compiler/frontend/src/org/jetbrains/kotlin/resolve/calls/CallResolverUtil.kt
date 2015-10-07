@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
@@ -118,6 +120,13 @@ fun isConventionCall(call: Call): Boolean {
     if (callElement is JetArrayAccessExpression || callElement is JetMultiDeclarationEntry) return true
     val calleeExpression = call.calleeExpression as? JetOperationReferenceExpression ?: return false
     return calleeExpression.getNameForConventionalOperation() != null
+}
+
+fun getUnaryPlusOrMinusOperatorFunctionName(call: Call): Name? {
+    if (call.callElement !is JetPrefixExpression) return null
+    val calleeExpression = call.calleeExpression as? JetOperationReferenceExpression ?: return null
+    val name = calleeExpression.getNameForConventionalOperation(unaryOperations = true, binaryOperations = false)
+    return if (name == OperatorNameConventions.UNARY_PLUS || name == OperatorNameConventions.UNARY_MINUS) name else null
 }
 
 public fun isInvokeCallOnVariable(call: Call): Boolean {

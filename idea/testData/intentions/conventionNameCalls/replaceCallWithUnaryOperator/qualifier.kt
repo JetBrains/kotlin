@@ -1,9 +1,9 @@
 class C {
     companion object {
-        fun minus(): C = C()
+        fun unaryMinus(): C = C()
     }
 }
 
 fun foo() {
-    C.<caret>minus()
+    C.<caret>unaryMinus()
 }

@@ -518,6 +518,8 @@ public interface Errors {
     DiagnosticFactory0<JetArrayAccessExpression> NO_GET_METHOD = DiagnosticFactory0.create(ERROR, ARRAY_ACCESS);
     DiagnosticFactory0<JetArrayAccessExpression> NO_SET_METHOD = DiagnosticFactory0.create(ERROR, ARRAY_ACCESS);
 
+    DiagnosticFactory2<JetUnaryExpression, FunctionDescriptor, String> DEPRECATED_UNARY_PLUS_MINUS = DiagnosticFactory2.create(WARNING);
+
     DiagnosticFactory0<JetSimpleNameExpression> INC_DEC_SHOULD_NOT_RETURN_UNIT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<JetSimpleNameExpression, DeclarationDescriptor, JetSimpleNameExpression> ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT =
             DiagnosticFactory2.create(ERROR);

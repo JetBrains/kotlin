@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
 
     INSTANCE;
 
-    private static final NamePredicate UNARY_OPERATIONS = new NamePredicate(OperatorConventions.UNARY_OPERATION_NAMES.values());
+    private static final NamePredicate UNARY_OPERATIONS = new NamePredicate(OperatorNameConventions.UNARY_OPERATION_NAMES_WITH_DEPRECATED);
     @NotNull
     private static final DescriptorPredicate UNARY_OPERATION_FOR_PRIMITIVE_NUMBER =
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, UNARY_OPERATIONS);
@@ -192,7 +193,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
             jsOperator = JsUnaryOperator.BIT_NOT;
         }
         else {
-            JetToken jetToken = OperatorConventions.UNARY_OPERATION_NAMES.inverse().get(name);
+            JetToken jetToken = OperatorConventions.UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED.get(name);
             jsOperator = OperatorTable.getUnaryOperator(jetToken);
         }
 

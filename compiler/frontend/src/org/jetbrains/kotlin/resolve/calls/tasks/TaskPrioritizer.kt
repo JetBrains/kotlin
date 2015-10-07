@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getUnaryPlusOrMinusOperatorFunctionName
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public class TaskPrioritizer(
         private val storageManager: StorageManager,
@@ -76,6 +77,18 @@ public class TaskPrioritizer(
         }
         else {
             doComputeTasks(explicitReceiver, taskPrioritizerContext)
+
+            // Temporary fix for code migration (unaryPlus()/unaryMinus())
+            val unaryConventionName = getUnaryPlusOrMinusOperatorFunctionName(context.call)
+            if (unaryConventionName != null) {
+                val deprecatedName = if (name == OperatorNameConventions.UNARY_PLUS)
+                    OperatorNameConventions.PLUS
+                else
+                    OperatorNameConventions.MINUS
+
+                val additionalContext = TaskPrioritizerContext(deprecatedName, result, context, context.scope, callableDescriptorCollectors)
+                doComputeTasks(explicitReceiver, additionalContext)
+            }
         }
 
         return result.getTasks()

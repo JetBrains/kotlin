@@ -22,11 +22,11 @@ class A {
         return 1
     }
 
-    fun plus() {
+    fun unaryPlus() {
         <lineMarker descr="Recursive call">+</lineMarker>this
     }
 
-    fun minus() {
+    fun unaryMinus() {
         <lineMarker descr="Recursive call">-</lineMarker>this
     }
 

@@ -1,5 +1,5 @@
-public final fun plus(): dynamic
-public final fun minus(): dynamic
+public final fun unaryPlus(): dynamic
+public final fun unaryMinus(): dynamic
 public final fun not(): dynamic
 public final fun plus(/*0*/ p0: dynamic): dynamic
 public final fun plus(/*0*/ p0: dynamic): dynamic

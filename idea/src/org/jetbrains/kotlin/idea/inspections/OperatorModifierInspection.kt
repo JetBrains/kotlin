@@ -69,6 +69,7 @@ public class OperatorModifierInspection : AbstractKotlinInspection() {
         val arity = valueParameters.size()
         if (arity == 0 &&
             (name in OperatorConventions.UNARY_OPERATION_NAMES.values() ||
+             name == OperatorNameConventions.PLUS || name == OperatorNameConventions.MINUS || // temporary
              name == OperatorNameConventions.ITERATOR ||
              isComponentLike(name) ||
              name == OperatorNameConventions.NEXT ||

@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 public class JetOperationReferenceExpression(node: ASTNode) : JetSimpleNameExpressionImpl(node) {
     override fun getReferencedNameElement() = (findChildByType(JetExpressionParsing.ALL_OPERATIONS): PsiElement?) ?: this
 
-    fun getNameForConventionalOperation(): Name? {
+    fun getNameForConventionalOperation(unaryOperations: Boolean = true, binaryOperations: Boolean = true): Name? {
         val operator = (firstChild as? TreeElement)?.elementType as? JetToken ?: return null
-        return OperatorConventions.getNameForOperationSymbol(operator)
+        return OperatorConventions.getNameForOperationSymbol(operator, unaryOperations, binaryOperations)
     }
 
     fun isPredefinedOperator() = (firstChild as? TreeElement)?.elementType is JetSingleValueToken

@@ -143,7 +143,12 @@ private fun getCallNameFromPsi(element: JetElement): Name? {
                     if (element == operationReference) {
                         val node = operationReference.getReferencedNameElementType()
                         return if (node is JetToken) {
-                            OperatorConventions.getNameForOperationSymbol(node) ?: Name.identifierNoValidate(element.getText())
+                            val conventionName = if (elementParent is JetPrefixExpression)
+                                OperatorConventions.getNameForOperationSymbol(node, true,  false)
+                            else
+                                OperatorConventions.getNameForOperationSymbol(node)
+
+                            conventionName ?: Name.identifierNoValidate(element.getText())
                         }
                         else {
                             Name.identifierNoValidate(element.getText())

@@ -1,8 +1,8 @@
 // IS_APPLICABLE: false
 fun test() {
     class Test {
-        fun plus(a: Int): Test = Test()
+        fun unaryPlus(a: Int): Test = Test()
     }
     val test = Test()
-    test.pl<caret>us(a=1)
+    test.unaryPl<caret>us(a=1)
 }

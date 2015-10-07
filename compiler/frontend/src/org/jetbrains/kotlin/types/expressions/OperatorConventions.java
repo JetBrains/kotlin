@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +25,9 @@ import org.jetbrains.kotlin.lexer.JetSingleValueToken;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
+
+import java.util.Map;
+
 import static org.jetbrains.kotlin.util.OperatorNameConventions.*;
 
 public class OperatorConventions {
@@ -49,9 +53,19 @@ public class OperatorConventions {
     public static final ImmutableBiMap<JetSingleValueToken, Name> UNARY_OPERATION_NAMES = ImmutableBiMap.<JetSingleValueToken, Name>builder()
             .put(JetTokens.PLUSPLUS, INC)
             .put(JetTokens.MINUSMINUS, DEC)
-            .put(JetTokens.PLUS, PLUS)
-            .put(JetTokens.MINUS, MINUS)
+            .put(JetTokens.PLUS, UNARY_PLUS)
+            .put(JetTokens.MINUS, UNARY_MINUS)
             .put(JetTokens.EXCL, NOT)
+            .build();
+
+    public static final ImmutableMap<Name, JetSingleValueToken> UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED = ImmutableMap.<Name, JetSingleValueToken>builder()
+            .put(INC, JetTokens.PLUSPLUS)
+            .put(DEC, JetTokens.MINUSMINUS)
+            .put(UNARY_PLUS, JetTokens.PLUS)
+            .put(PLUS, JetTokens.PLUS)
+            .put(UNARY_MINUS, JetTokens.MINUS)
+            .put(MINUS, JetTokens.MINUS)
+            .put(NOT, JetTokens.EXCL)
             .build();
 
     public static final ImmutableBiMap<JetSingleValueToken, Name> BINARY_OPERATION_NAMES = ImmutableBiMap.<JetSingleValueToken, Name>builder()
@@ -111,10 +125,23 @@ public class OperatorConventions {
 
     @Nullable
     public static Name getNameForOperationSymbol(@NotNull JetToken token) {
-        Name name = UNARY_OPERATION_NAMES.get(token);
-        if (name != null) return name;
-        name = BINARY_OPERATION_NAMES.get(token);
-        if (name != null) return name;
+        return getNameForOperationSymbol(token, true, true);
+    }
+
+    @Nullable
+    public static Name getNameForOperationSymbol(@NotNull JetToken token, boolean unaryOperations, boolean binaryOperations) {
+        Name name;
+
+        if (binaryOperations) {
+            name = BINARY_OPERATION_NAMES.get(token);
+            if (name != null) return name;
+        }
+
+        if (unaryOperations) {
+            name = UNARY_OPERATION_NAMES.get(token);
+            if (name != null) return name;
+        }
+
         name = ASSIGNMENT_OPERATIONS.get(token);
         if (name != null) return name;
         if (COMPARISON_OPERATIONS.contains(token)) return COMPARE_TO;
