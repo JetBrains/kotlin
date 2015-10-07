@@ -27,7 +27,7 @@ public class ComparableRange<T: Comparable<T>> (
  * Creates a range from this [Comparable] value to the specified [that] value. This value
  * needs to be smaller than [that] value, otherwise the returned range will be empty.
  */
-public fun <T: Comparable<T>> T.rangeTo(that: T): ComparableRange<T> {
+public operator fun <T: Comparable<T>> T.rangeTo(that: T): ComparableRange<T> {
     return ComparableRange(this, that)
 }
 
