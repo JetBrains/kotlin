@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.*
 import java.io.PrintStream
-import java.lang.management.ManagementFactory
-import java.lang.management.ThreadMXBean
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
@@ -35,12 +33,13 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 
-fun nowSeconds() = System.nanoTime() / 1000000000L
+fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
 
 class CompileServiceImpl<Compiler: CLICompiler<*>>(
         val registry: Registry,
         val compiler: Compiler,
         val selfCompilerId: CompilerId,
+        val daemonOptions: DaemonOptions,
         port: Int
 ) : CompileService, UnicastRemoteObject() {
 
@@ -48,7 +47,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
 
     override fun getCompilerId(): CompilerId = ifAlive { selfCompilerId }
 
-    override fun getUsedMemory(): Long = ifAlive { usedMemory() }
+    override fun getUsedMemory(): Long = ifAlive { usedMemory(withGC = true) }
 
     override fun shutdown() {
         ifAliveExclusive {
@@ -65,10 +64,10 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
                                outputFormat: CompileService.OutputFormat,
                                serviceOutputStream: RemoteOutputStream
     ): Int =
-            doCompile(args, compilerOutputStream, serviceOutputStream) { printStream ->
+            doCompile(args, compilerOutputStream, serviceOutputStream) { printStream, profiler ->
                 when (outputFormat) {
                     CompileService.OutputFormat.PLAIN -> compiler.exec(printStream, *args)
-                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, Services.EMPTY, *args)
+                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(services, profiler), *args)
                 }
             }
 
@@ -78,10 +77,10 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
                                           compilerOutputFormat: CompileService.OutputFormat,
                                           serviceOutputStream: RemoteOutputStream
     ): Int =
-            doCompile(args, compilerOutputStream, serviceOutputStream) { printStream ->
+            doCompile(args, compilerOutputStream, serviceOutputStream) { printStream, profiler ->
                 when (compilerOutputFormat) {
                     CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
-                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(services), *args)
+                    CompileService.OutputFormat.XML -> compiler.execAndOutputXml(printStream, createCompileServices(services, profiler), *args)
                 }
             }
 
@@ -123,57 +122,58 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         alive = true
     }
 
-    private fun doCompile(args: Array<out String>, compilerMessagesStreamProxy: RemoteOutputStream, serviceOutputStreamProxy: RemoteOutputStream, body: (PrintStream) -> ExitCode): Int =
+    private fun doCompile(args: Array<out String>, compilerMessagesStreamProxy: RemoteOutputStream, serviceOutputStreamProxy: RemoteOutputStream, body: (PrintStream, Profiler) -> ExitCode): Int =
             ifAlive {
-                val compilerMessagesStream = PrintStream(RemoteOutputStreamClient(compilerMessagesStreamProxy))
-                val serviceOutputStream = PrintStream(RemoteOutputStreamClient(serviceOutputStreamProxy))
-                checkedCompile(args, serviceOutputStream) {
-                    val res = body( compilerMessagesStream).code
+                val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
+                val compilerMessagesStream = PrintStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler))
+                val serviceOutputStream = PrintStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler))
+                checkedCompile(args, serviceOutputStream, rpcProfiler) {
+                    val res = body( compilerMessagesStream, rpcProfiler).code
                     _lastUsedSeconds = nowSeconds()
                     res
                 }
             }
 
-    private fun createCompileServices(services: CompileService.RemoteCompilationServices): Services {
+    private fun createCompileServices(services: CompileService.RemoteCompilationServices, rpcProfiler: Profiler): Services {
         val builder = Services.Builder()
-        services.incrementalCompilationComponents?.let { builder.register(IncrementalCompilationComponents::class.java, RemoteIncrementalCompilationComponentsClient(it)) }
-        services.compilationCanceledStatus?.let { builder.register(CompilationCanceledStatus::class.java, RemoteCompilationCanceledStatusClient(it)) }
+        services.incrementalCompilationComponents?.let { builder.register(IncrementalCompilationComponents::class.java, RemoteIncrementalCompilationComponentsClient(it, rpcProfiler)) }
+        services.compilationCanceledStatus?.let { builder.register(CompilationCanceledStatus::class.java, RemoteCompilationCanceledStatusClient(it, rpcProfiler)) }
         return builder.build()
     }
 
 
-    fun usedMemory(): Long {
-        System.gc()
-        val rt = Runtime.getRuntime()
-        return (rt.totalMemory() - rt.freeMemory())
-    }
-
-    fun ThreadMXBean.threadCpuTime() = if (isCurrentThreadCpuTimeSupported) currentThreadCpuTime else 0L
-    fun ThreadMXBean.threadUserTime() = if (isCurrentThreadCpuTimeSupported) currentThreadUserTime else 0L
-
-    fun<R> checkedCompile(args: Array<out String>, serviceOut: PrintStream, body: () -> R): R {
+    fun<R> checkedCompile(args: Array<out String>, serviceOut: PrintStream, rpcProfiler: Profiler, body: () -> R): R {
         try {
             if (args.none())
                 throw IllegalArgumentException("Error: empty arguments list.")
             log.info("Starting compilation with args: " + args.joinToString(" "))
-            val threadMXBean: ThreadMXBean = ManagementFactory.getThreadMXBean()
-            val startMem = usedMemory() / 1024
-            val startTime = System.nanoTime()
-            val startThreadTime = threadMXBean.threadCpuTime()
-            val startThreadUserTime = threadMXBean.threadUserTime()
-            val res = body()
-            val endTime = System.nanoTime()
-            val endThreadTime = threadMXBean.threadCpuTime()
-            val endThreadUserTime = threadMXBean.threadUserTime()
-            val endMem = usedMemory() / 1024
+
+            val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
+
+            val res = profiler.withMeasure(null, body)
+
+            val endMem = if (daemonOptions.reportPerf) usedMemory(withGC = false) else 0L
+
             log.info("Done with result " + res.toString())
-            val elapsed = TimeUnit.NANOSECONDS.toMillis(endTime - startTime)
-            val elapsedThread = TimeUnit.NANOSECONDS.toMillis(endThreadTime - startThreadTime)
-            val elapsedThreadUser = TimeUnit.NANOSECONDS.toMillis(endThreadUserTime - startThreadUserTime)
-            log.info("Elapsed time: $elapsed ms (thread user: $elapsedThreadUser ms sys: ${elapsedThread - elapsedThreadUser} ms)")
-            log.info("Used memory: $endMem kb (${"%+d".format(endMem - startMem)} kb)")
-            System.getProperty(COMPILE_DAEMON_REPORT_PERF_PROPERTY)?.let {
-                serviceOut.println("PERF: Compile on daemon: $elapsed ms (thread user: $elapsedThreadUser ms sys: ${elapsedThread - elapsedThreadUser} ms); memory: $endMem kb (${"%+d".format(endMem - startMem)} kb)")
+
+            if (daemonOptions.reportPerf) {
+                fun Long.ms() = TimeUnit.NANOSECONDS.toMillis(this)
+                fun Long.kb() = this / 1024
+                val pc = profiler.getTotalCounters()
+                val rpc = rpcProfiler.getTotalCounters()
+
+                "PERF: Compile on daemon: ${pc.time.ms()} ms; thread: user ${pc.threadUserTime.ms()} ms, sys ${(pc.threadTime - pc.threadUserTime).ms()} ms; rpc: ${rpc.count} calls, ${rpc.time.ms()} ms, thread ${rpc.threadTime.ms()} ms; memory: ${endMem.kb()} kb (${"%+d".format(pc.memory.kb())} kb)".let {
+                    serviceOut.println(it)
+                    log.info(it)
+                }
+
+                // this will only be reported if if appropriate (e.g. ByClass) profiler is used
+                for ((obj, counters) in rpcProfiler.getCounters()) {
+                    "PERF: rpc by $obj: ${counters.count} calls, ${counters.time.ms()} ms, thread ${counters.threadTime.ms()} ms".let {
+                        serviceOut.println(it)
+                        log.info(it)
+                    }
+                }
             }
             return res
         }
@@ -200,5 +200,4 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         log.info(msg + " = " + res.toString())
         return res
     }
-
 }

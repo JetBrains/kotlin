@@ -16,10 +16,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.ArrayUtil
-import com.intellij.util.Function
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -34,16 +30,13 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.rmi.CompilerId
-import org.jetbrains.kotlin.rmi.configureDaemonJVMOptions
-import org.jetbrains.kotlin.rmi.configureDaemonOptions
-import org.jetbrains.kotlin.rmi.isDaemonEnabled
+import org.jetbrains.kotlin.rmi.*
 import org.jetbrains.kotlin.rmi.kotlinr.*
-import org.jetbrains.kotlin.utils.rethrow
 import java.io.*
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 public object KotlinCompilerRunner {
     private val K2JVM_COMPILER = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
@@ -150,14 +143,9 @@ public object KotlinCompilerRunner {
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
 
             for (msg in daemonReportMessages) {
-                if (msg.category === DaemonReportCategory.EXCEPTION && daemon == null) {
-                    messageCollector.report(CompilerMessageSeverity.INFO,
-                                            "Falling  back to compilation without daemon due to error: " + msg.message,
-                                            CompilerMessageLocation.NO_LOCATION)
-                }
-                else {
-                    messageCollector.report(CompilerMessageSeverity.INFO, msg.message, CompilerMessageLocation.NO_LOCATION)
-                }
+                messageCollector.report(CompilerMessageSeverity.INFO,
+                                        (if (msg.category == DaemonReportCategory.EXCEPTION && daemon == null)  "Falling  back to compilation without daemon due to error: " else "") + msg.message,
+                                        CompilerMessageLocation.NO_LOCATION)
             }
 
             if (daemon != null) {
@@ -168,11 +156,20 @@ public object KotlinCompilerRunner {
                         incrementalCompilationComponents = environment.services.get(IncrementalCompilationComponents::class.java),
                         compilationCanceledStatus = environment.services.get(CompilationCanceledStatus::class.java))
 
-                val res = KotlinCompilerClient.incrementalCompile(daemon, argsArray, services, compilerOut, daemonOut)
+                val profiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
+
+                val res = KotlinCompilerClient.incrementalCompile(daemon, argsArray, services, compilerOut, daemonOut, profiler)
 
                 processCompilerOutput(messageCollector, collector, compilerOut, res.toString())
                 BufferedReader(StringReader(daemonOut.toString())).forEachLine {
                     messageCollector.report(CompilerMessageSeverity.INFO, it, CompilerMessageLocation.NO_LOCATION)
+                }
+                if (daemonOptions.reportPerf) {
+                    fun Long.ms() = TimeUnit.NANOSECONDS.toMillis(this)
+                    val counters = profiler.getTotalCounters()
+                    messageCollector.report(CompilerMessageSeverity.INFO,
+                                            "PERF: Daemon call total ${counters.time.ms()} ms, thread ${counters.threadTime.ms()}",
+                                            CompilerMessageLocation.NO_LOCATION)
                 }
                 return true
             }

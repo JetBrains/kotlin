@@ -19,14 +19,19 @@ package org.jetbrains.kotlin.rmi.service
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.rmi.CompileService
+import org.jetbrains.kotlin.rmi.DummyProfiler
+import org.jetbrains.kotlin.rmi.Profiler
 
 
-class RemoteLookupTrackerClient(val proxy: CompileService.RemoteLookupTracker) : LookupTracker {
+class RemoteLookupTrackerClient(val proxy: CompileService.RemoteLookupTracker, val profiler: Profiler = DummyProfiler()) : LookupTracker {
 
-    private val isDoNothing = proxy.isDoNothing()
+    private val isDoNothing = profiler.withMeasure(this) { proxy.isDoNothing() }
 
     override fun record(lookupContainingFile: String, lookupLine: Int?, lookupColumn: Int?, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        if (!isDoNothing)
-            proxy.record(lookupContainingFile, lookupLine, lookupColumn, scopeFqName, scopeKind, name)
+        if (!isDoNothing) {
+            profiler.withMeasure(this) {
+                proxy.record(lookupContainingFile, lookupLine, lookupColumn, scopeFqName, scopeKind, name)
+            }
+        }
     }
 }

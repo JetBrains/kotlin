@@ -134,7 +134,7 @@ public object CompileDaemon {
             runFile.deleteOnExit()
 
             val compiler = K2JVMCompiler()
-            val compilerService = CompileServiceImpl(registry, compiler, compilerId, port)
+            val compilerService = CompileServiceImpl(registry, compiler, compilerId, daemonOptions, port)
 
             if (daemonOptions.runFilesPath.isNotEmpty())
                 println(daemonOptions.runFilesPath)

@@ -60,14 +60,15 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val flagFile = createTempFile(getTestName(true), ".alive")
         flagFile.deleteOnExit()
         val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
-                                          clientAliveFlagPath = flagFile.absolutePath)
+                                          clientAliveFlagPath = flagFile.absolutePath,
+                                          verbose = true,
+                                          reportPerf = true)
 
         KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
 
         val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
         val daemonJVMOptions = configureDaemonJVMOptions(false,
-                                                         "D$COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY",
                                                          "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.absolutePath}\"")
         var daemonShotDown = false
 
@@ -83,9 +84,9 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
             logFile.reader().useLines {
                 it.ifNotContainsSequence( LinePattern("Kotlin compiler daemon version"),
                                           LinePattern("Starting compilation with args: "),
-                                          LinePattern("Elapsed time: (\\d+) ms", { it.groups.get(1)?.value?.toLong()?.let { compileTime1 = it }; true } ),
+                                          LinePattern("Compile on daemon: (\\d+) ms", { it.groups.get(1)?.value?.toLong()?.let { compileTime1 = it }; true } ),
                                           LinePattern("Starting compilation with args: "),
-                                          LinePattern("Elapsed time: (\\d+) ms", { it.groups.get(1)?.value?.toLong()?.let { compileTime2 = it }; true } ),
+                                          LinePattern("Compile on daemon: (\\d+) ms", { it.groups.get(1)?.value?.toLong()?.let { compileTime2 = it }; true } ),
                                           LinePattern("Shutdown complete"))
                 { unmatchedPattern, lineNo ->
                     TestCase.fail("pattern not found in the input: " + unmatchedPattern.regex +
