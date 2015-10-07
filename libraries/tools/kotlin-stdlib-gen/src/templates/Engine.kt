@@ -65,6 +65,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     open class SpecializedProperty<TKey: Any, TValue : Any>() {
         private val values = HashMap<TKey?, TValue>()
 
+        val default: TValue? get() = values.get(null)
+
         operator fun get(key: TKey): TValue? = values.getOrElse(key, { values.getOrElse(null, { null }) })
 
         operator fun set(keys: Collection<TKey>, value: TValue) {

@@ -795,11 +795,9 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
     return map { it ?: throw IllegalArgumentException("null element found in $this.") }
 }
 
-/**
- * Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(sequence, transform)"))
 public fun <T, R, V> Sequence<T>.merge(sequence: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
-    return MergingSequence(this, sequence, transform)
+    return zip(sequence, transform)
 }
 
 /**
@@ -921,6 +919,13 @@ public operator fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
  */
 public fun <T, R> Sequence<T>.zip(sequence: Sequence<R>): Sequence<Pair<T, R>> {
     return MergingSequence(this, sequence) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
+ */
+public fun <T, R, V> Sequence<T>.zip(sequence: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
+    return MergingSequence(this, sequence, transform)
 }
 
 /**

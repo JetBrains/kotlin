@@ -134,9 +134,9 @@ class CollectionTest {
     }
 
     @test
-    fun merge() {
+    fun zipTransform() {
         expect(listOf("ab", "bc", "cd")) {
-            listOf("a", "b", "c").merge(listOf("b", "c", "d")) { a, b -> a + b }
+            listOf("a", "b", "c").zip(listOf("b", "c", "d")) { a, b -> a + b }
         }
     }
 

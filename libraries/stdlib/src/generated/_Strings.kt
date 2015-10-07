@@ -733,11 +733,17 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
  * Returns a list of pairs built from characters of both strings with same indexes. List has length of shortest collection.
  */
 public fun String.zip(other: String): List<Pair<Char, Char>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<Char, Char>>(length())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
+    return zip(other) { c1, c2 -> c1 to c2 }
+}
+
+/**
+ * Returns a list of values built from characters of both strings with same indexes using provided [transform]. List has length of shortest string.
+ */
+public inline fun <V> String.zip(other: String, transform: (Char, Char) -> V): List<V> {
+    val length = Math.min(this.length(), other.length())
+    val list = ArrayList<V>(length)
+    for (i in 0..length-1) {
+        list.add(transform(this[i], other[i]))
     }
     return list
 }

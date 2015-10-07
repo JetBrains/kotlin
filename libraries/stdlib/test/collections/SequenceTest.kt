@@ -120,9 +120,9 @@ public class SequenceTest {
         assertEquals("", sequenceOf(1).dropWhile { it < 200 }.joinToString(limit = 10))
     }
 
-    @test fun merge() {
+    @test fun zip() {
         expect(listOf("ab", "bc", "cd")) {
-            sequenceOf("a", "b", "c").merge(sequenceOf("b", "c", "d")) { a, b -> a + b }.toList()
+            sequenceOf("a", "b", "c").zip(sequenceOf("b", "c", "d")) { a, b -> a + b }.toList()
         }
     }
 
