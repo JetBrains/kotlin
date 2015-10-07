@@ -352,7 +352,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
                 val (bindingContext, moduleDescriptor, files) = jetFile.checkForErrors(true)
 
-                val generateClassFilter = object : GenerationState.GenerateClassFilter {
+                val generateClassFilter = object : GenerationState.GenerateClassFilter() {
                     override fun shouldGeneratePackagePart(file: JetFile) = file == jetFile
                     override fun shouldAnnotateClass(classOrObject: JetClassOrObject) = true
                     override fun shouldGenerateClass(classOrObject: JetClassOrObject) = classOrObject.getContainingJetFile() == jetFile

@@ -40,7 +40,7 @@ import java.util.*
 
 internal class DescriptorRendererImpl(
         val options: DescriptorRendererOptionsImpl
-) : DescriptorRenderer, DescriptorRendererOptions by options/* this gives access to options without qualifier */ {
+) : DescriptorRenderer(), DescriptorRendererOptions by options/* this gives access to options without qualifier */ {
 
     init {
         assert(options.isLocked)

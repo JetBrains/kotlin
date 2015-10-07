@@ -27,7 +27,7 @@ public object KotlinObject {
 
 public interface StaticFieldInClassObjectInTrait {
     companion object {
-        public val XX: String = "xx"
+        public const val XX: String = "xx"
     }
 }
 

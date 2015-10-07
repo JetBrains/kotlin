@@ -59,6 +59,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterfaceCompanionObject;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -315,7 +316,9 @@ public class PropertyCodegen {
             else if (hasPublicFieldAnnotation && !isDelegate) {
                 modifiers |= ACC_PUBLIC;
             }
-            else {
+            else if (isInterfaceCompanionObject(propertyDescriptor.getContainingDeclaration())) {
+                modifiers |= ACC_PRIVATE;
+            } else {
                 modifiers |= getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
             }
 

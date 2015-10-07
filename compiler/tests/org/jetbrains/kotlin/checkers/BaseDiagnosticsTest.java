@@ -72,8 +72,8 @@ public abstract class BaseDiagnosticsTest extends
     public static final String CHECK_TYPE_IMPORT = "import " + CHECK_TYPE_PACKAGE + ".*";
 
     public static final String EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE = "EXPLICIT_FLEXIBLE_TYPES";
-    public static final String EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString();
-    public static final String EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName().asString();
+    public static final String EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.Companion.getFLEXIBLE_TYPE_CLASSIFIER().getPackageFqName().asString();
+    public static final String EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.Companion.getFLEXIBLE_TYPE_CLASSIFIER().getRelativeClassName().asString();
     private static final String EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS
             = "\npackage " + EXPLICIT_FLEXIBLE_PACKAGE +
               "\npublic class " + EXPLICIT_FLEXIBLE_CLASS_NAME + "<L, U>";

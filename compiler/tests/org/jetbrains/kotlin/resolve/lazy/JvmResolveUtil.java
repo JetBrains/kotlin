@@ -37,7 +37,7 @@ public class JvmResolveUtil {
     public static String TEST_MODULE_NAME = "java-integration-test";
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull JetFile file) {
-        return analyzeOneFileWithJavaIntegrationAndCheckForErrors(file, PackagePartProvider.EMPTY);
+        return analyzeOneFileWithJavaIntegrationAndCheckForErrors(file, PackagePartProvider.Companion.getEMPTY());
     }
 
     @NotNull
@@ -63,7 +63,7 @@ public class JvmResolveUtil {
 
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file) {
-        return analyzeOneFileWithJavaIntegration(file, PackagePartProvider.EMPTY);
+        return analyzeOneFileWithJavaIntegration(file, PackagePartProvider.Companion.getEMPTY());
     }
 
     @NotNull
@@ -71,7 +71,7 @@ public class JvmResolveUtil {
             @NotNull Project project,
             @NotNull Collection<JetFile> files
     ) {
-        return analyzeFilesWithJavaIntegrationAndCheckForErrors(project, files, PackagePartProvider.EMPTY);
+        return analyzeFilesWithJavaIntegrationAndCheckForErrors(project, files, PackagePartProvider.Companion.getEMPTY());
     }
 
     @NotNull

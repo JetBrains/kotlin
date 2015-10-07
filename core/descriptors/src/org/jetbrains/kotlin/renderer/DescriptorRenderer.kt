@@ -26,36 +26,36 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
 
-public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
+public abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
     public fun withOptions(changeOptions: DescriptorRendererOptions.() -> Unit): DescriptorRenderer {
         val options = (this as DescriptorRendererImpl).options.copy()
         options.changeOptions()
         options.lock()
         return DescriptorRendererImpl(options)
     }
-    
-    public fun renderType(type: JetType): String
 
-    public fun renderTypeArguments(typeArguments: List<TypeProjection>): String
+    public abstract fun renderType(type: JetType): String
 
-    public fun renderTypeProjection(typeProjection: TypeProjection): String
+    public abstract fun renderTypeArguments(typeArguments: List<TypeProjection>): String
 
-    public fun renderTypeConstructor(typeConstructor: TypeConstructor): String
+    public abstract fun renderTypeProjection(typeProjection: TypeProjection): String
 
-    public fun renderClassifierName(klass: ClassifierDescriptor): String
+    public abstract fun renderTypeConstructor(typeConstructor: TypeConstructor): String
 
-    public fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget? = null): String
+    public abstract fun renderClassifierName(klass: ClassifierDescriptor): String
 
-    override fun render(declarationDescriptor: DeclarationDescriptor): String
+    public abstract fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget? = null): String
 
-    public fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean): String
+    override abstract fun render(declarationDescriptor: DeclarationDescriptor): String
+
+    public abstract fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean): String
 
     public fun renderFunctionParameters(functionDescriptor: FunctionDescriptor): String
             = renderValueParameters(functionDescriptor.valueParameters, functionDescriptor.hasSynthesizedParameterNames())
 
-    public fun renderName(name: Name): String
+    public abstract fun renderName(name: Name): String
 
-    public fun renderFqName(fqName: FqNameBase): String
+    public abstract fun renderFqName(fqName: FqNameBase): String
 
     public interface ValueParametersHandler {
         public fun appendBeforeValueParameters(parameterCount: Int, builder: StringBuilder)

@@ -758,14 +758,8 @@ public class AsmUtil {
     }
 
     public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
-        return getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate, false);
-    }
-
-    public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate, boolean skipInterfaceCheck) {
         boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
-        if (isDelegate ||
-            isExtensionProperty ||
-            (!skipInterfaceCheck && isInterfaceCompanionObject(propertyDescriptor.getContainingDeclaration()))) {
+        if (isDelegate || isExtensionProperty) {
             return ACC_PRIVATE;
         }
         else {
@@ -785,13 +779,10 @@ public class AsmUtil {
     }
 
     public static boolean isPropertyWithBackingFieldCopyInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
-        boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
         DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
-        return !propertyDescriptor.isVar()
-               && !isExtensionProperty
-               && isCompanionObject(propertyContainer) && isInterface(propertyContainer.getContainingDeclaration())
-               && areBothAccessorDefault(propertyDescriptor)
-               && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false, true) == ACC_PUBLIC;
+        return propertyDescriptor.isConst()
+               && isInterfaceCompanionObject(propertyContainer)
+               && propertyDescriptor.getVisibility() == Visibilities.PUBLIC;
     }
 
     public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {

@@ -6,7 +6,7 @@ interface Test {
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test, prop
-// FLAGS: ACC_STATIC, ACC_PUBLIC, ACC_FINAL
+// ABSENT: TRUE
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test$Companion, prop

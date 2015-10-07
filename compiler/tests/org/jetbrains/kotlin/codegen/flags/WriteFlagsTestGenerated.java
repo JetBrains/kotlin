@@ -779,6 +779,12 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("internalConstVal.kt")
+                public void testInternalConstVal() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/internalConstVal.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("internalVal.kt")
                 public void testInternalVal() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/internalVal.kt");
@@ -824,6 +830,12 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 @TestMetadata("protectedVarPrivateSet.kt")
                 public void testProtectedVarPrivateSet() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/protectedVarPrivateSet.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("publicConstVal.kt")
+                public void testPublicConstVal() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicConstVal.kt");
                     doTest(fileName);
                 }
 

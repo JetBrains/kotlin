@@ -8,6 +8,9 @@ public interface TraitClassObjectField {
         private final java.lang.String x = "";
         private final java.lang.String y = "";
 
+        /**
+         * @deprecated
+         */
         @org.jetbrains.annotations.Nullable
         public final java.lang.String getX() { /* compiled code */ }
 

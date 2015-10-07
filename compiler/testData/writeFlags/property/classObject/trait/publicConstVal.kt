@@ -1,13 +1,13 @@
 interface Test {
   companion object {
-    internal var prop: Int = 0;
+    public const val prop: Int = 0;
   }
 }
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test, prop
-// ABSENT: TRUE
+// FLAGS: ACC_STATIC, ACC_PUBLIC, ACC_FINAL
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test$Companion, prop
-// FLAGS: ACC_PRIVATE, ACC_STATIC, ACC_SYNTHETIC
+// FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_STATIC
