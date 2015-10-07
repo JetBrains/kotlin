@@ -26,13 +26,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import javax.swing.Icon
 
 class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
@@ -47,8 +45,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         if (declaration.nameIdentifier != element) return null
 
         // To prevent IDEA failing on red code
-        if (declaration.analyze(BodyResolveMode.PARTIAL)
-                .get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration) == null) return null
+        if (declaration.resolveToDescriptorIfAny() == null) return null
 
         val project = element.project
 
