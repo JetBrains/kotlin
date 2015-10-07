@@ -26,6 +26,11 @@ public interface CompileService : Remote {
         XML
     }
 
+    public enum class TargetPlatform : java.io.Serializable {
+        JVM,
+        JS
+    }
+
     @Throws(RemoteException::class)
     public fun getCompilerId(): CompilerId
 
@@ -37,15 +42,16 @@ public interface CompileService : Remote {
 
     @Throws(RemoteException::class)
     public fun remoteCompile(
+            targetPlatform: TargetPlatform,
             args: Array<out String>,
             servicesFacade: CompilerCallbackServicesFacade,
             compilerOutputStream: RemoteOutputStream,
-            outputFormat: OutputFormat,
-            serviceOutputStream: RemoteOutputStream
+            outputFormat: OutputFormat, serviceOutputStream: RemoteOutputStream
     ): Int
 
     @Throws(RemoteException::class)
     public fun remoteIncrementalCompile(
+            targetPlatform: TargetPlatform,
             args: Array<out String>,
             servicesFacade: CompilerCallbackServicesFacade,
             compilerOutputStream: RemoteOutputStream,

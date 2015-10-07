@@ -111,12 +111,12 @@ public object KotlinCompilerClient {
     }
 
 
-    public fun compile(compiler: CompileService, args: Array<out String>, out: OutputStream): Int {
+    public fun compile(compilerService: CompileService, targetPlatform: CompileService.TargetPlatform, args: Array<out String>, out: OutputStream): Int {
 
         val outStrm = RemoteOutputStreamServer(out)
         val servicesFacade = CompilerCallbackServicesFacadeServer()
         try {
-            return compiler.remoteCompile(args, servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm)
+            return compilerService.remoteCompile(targetPlatform, args, servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm)
         }
         finally {
             servicesFacade.disconnect()
@@ -125,13 +125,23 @@ public object KotlinCompilerClient {
     }
 
 
-    public fun incrementalCompile(compiler: CompileService, args: Array<out String>, services: CompilationServices, compilerOut: OutputStream, daemonOut: OutputStream, profiler: Profiler = DummyProfiler()): Int {
+    public fun incrementalCompile(compileService: CompileService,
+                                  targetPlatform: CompileService.TargetPlatform,
+                                  args: Array<out String>,
+                                  callbackServices: CompilationServices,
+                                  compilerOut: OutputStream,
+                                  daemonOut: OutputStream,
+                                  profiler: Profiler = DummyProfiler()
+    ): Int {
 
         val compilerOutStreamServer = RemoteOutputStreamServer(compilerOut)
         val daemonOutStreamServer = RemoteOutputStreamServer(daemonOut)
-        val servicesFacade = CompilerCallbackServicesFacadeServer(incrementalCompilationComponents = services.incrementalCompilationComponents, compilationCancelledStatus = services.compilationCanceledStatus)
+        val servicesFacade = CompilerCallbackServicesFacadeServer(incrementalCompilationComponents = callbackServices.incrementalCompilationComponents,
+                                                                  compilationCancelledStatus = callbackServices.compilationCanceledStatus)
         try {
-            return profiler.withMeasure(this) { compiler.remoteIncrementalCompile(args, servicesFacade, compilerOutStreamServer, CompileService.OutputFormat.XML, daemonOutStreamServer) }
+            return profiler.withMeasure(this) {
+                compileService.remoteIncrementalCompile(targetPlatform, args, servicesFacade, compilerOutStreamServer, CompileService.OutputFormat.XML, daemonOutStreamServer)
+            }
         }
         finally {
             servicesFacade.disconnect()
@@ -202,7 +212,7 @@ public object KotlinCompilerClient {
                     val memBefore = daemon.getUsedMemory() / 1024
                     val startTime = System.nanoTime()
 
-                    val res = daemon.remoteCompile(filteredArgs.toArrayList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm)
+                    val res = daemon.remoteCompile(CompileService.TargetPlatform.JVM, filteredArgs.toArrayList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm)
 
                     val endTime = System.nanoTime()
                     println("Compilation result code: $res")
