@@ -312,7 +312,7 @@ public fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
 
 /** Converts the collection of nodes to an XML String */
 public fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = false): String {
-    return nodes.map { it.toXmlString(xmlDeclaration) }.join()
+    return nodes.map { it.toXmlString(xmlDeclaration) }.joinToString()
 }
 
 // Syntax sugar

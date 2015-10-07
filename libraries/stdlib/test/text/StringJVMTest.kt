@@ -251,11 +251,11 @@ class StringJVMTest {
 
     @test fun join() {
         val data = "abcd".map { it.toString() }
-        val result = data.join("_", "(", ")")
+        val result = data.joinToString("_", "(", ")")
         assertEquals("(a_b_c_d)", result)
 
         val data2 = "verylongstring".map { it.toString() }
-        val result2 = data2.join("-", "[", "]", 11, "oops")
+        val result2 = data2.joinToString("-", "[", "]", 11, "oops")
         assertEquals("[v-e-r-y-l-o-n-g-s-t-r-oops]", result2)
     }
 

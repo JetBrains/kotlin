@@ -230,6 +230,7 @@ public fun String.substring(range: IntRange): String = substring(range.start, ra
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
+@Deprecated("Use joinToString instead.", ReplaceWith("joinToString(separator, prefix, postfix, limit, truncated)"))
 public fun Iterable<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     return joinToString(separator, prefix, postfix, limit, truncated)
 }
@@ -239,6 +240,7 @@ public fun Iterable<String>.join(separator: String = ", ", prefix: String = "", 
  * If the array could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
+@Deprecated("Use joinToString instead.", ReplaceWith("joinToString(separator, prefix, postfix, limit, truncated)"))
 public fun Array<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     return joinToString(separator, prefix, postfix, limit, truncated)
 }
@@ -248,6 +250,7 @@ public fun Array<String>.join(separator: String = ", ", prefix: String = "", pos
  * If the stream could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
+@Deprecated("Use joinToString instead.", ReplaceWith("joinToString(separator, prefix, postfix, limit, truncated)"))
 public fun Sequence<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     return joinToString(separator, prefix, postfix, limit, truncated)
 }

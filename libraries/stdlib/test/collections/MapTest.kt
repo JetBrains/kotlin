@@ -83,7 +83,7 @@ class MapTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
     }
 
     @test fun stream() {
@@ -101,7 +101,7 @@ class MapTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
     }
 
     @test fun iterateWithExtraction() {
@@ -113,7 +113,7 @@ class MapTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
     }
 
     @test fun contains() {

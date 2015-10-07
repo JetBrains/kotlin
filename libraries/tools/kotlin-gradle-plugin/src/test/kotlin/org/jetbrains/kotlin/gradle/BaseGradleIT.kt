@@ -139,7 +139,7 @@ abstract class BaseGradleIT {
             listOf("/bin/bash", "./gradlew") + tailParameters
     }
 
-    private fun String.normalize() = this.lineSequence().join(SYSTEM_LINE_SEPARATOR)
+    private fun String.normalize() = this.lineSequence().joinToString(SYSTEM_LINE_SEPARATOR)
 
     private fun isWindows(): Boolean {
         return System.getProperty("os.name")!!.contains("Windows")

@@ -278,7 +278,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
             }
         }
 
-        getLogger().debug("${getName()} set libraryFiles to ${args.libraryFiles.join(",")}")
+        getLogger().debug("${getName()} set libraryFiles to ${args.libraryFiles.joinToString(",")}")
         getLogger().debug("${getName()} set outputFile to ${args.outputFile}")
 
     }

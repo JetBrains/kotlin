@@ -384,7 +384,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
         val types = effectiveTypeParams()
         if (!types.isEmpty()) {
-            builder.append(types.join(separator = ", ", prefix = "<", postfix = "> ").renderType())
+            builder.append(types.joinToString(separator = ", ", prefix = "<", postfix = "> ").renderType())
         }
 
         val receiverType = (if (toNullableT) receiver.replace("T>", "T?>") else receiver).renderType()
