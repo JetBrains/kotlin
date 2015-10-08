@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.JetDeclaration
 
-public interface DeclarationChecker {
+public interface IdentifierChecker {
+    fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink)
+    fun checkDeclaration(declaration: JetDeclaration, diagnosticHolder: DiagnosticSink)
 
-    public fun check(
-            declaration: JetDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext);
-
+    object DEFAULT : IdentifierChecker {
+        override fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {}
+        override fun checkDeclaration(declaration: JetDeclaration, diagnosticHolder: DiagnosticSink) {}
+    }
 }

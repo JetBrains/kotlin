@@ -106,6 +106,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         )
 
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor)
+        components.identifierChecker.checkDeclaration(function, context.trace)
         if (!function.hasBody()) {
             context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
         }
@@ -140,6 +141,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
 
         val functionDescriptor = createFunctionLiteralDescriptor(expression, context)
+        expression.valueParameters.forEach { components.identifierChecker.checkDeclaration(it, context.trace) }
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 

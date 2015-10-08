@@ -91,6 +91,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("BacktickNames.kt")
+        public void testBacktickNames() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/BacktickNames.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Basic.kt")
         public void testBasic() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Basic.kt");

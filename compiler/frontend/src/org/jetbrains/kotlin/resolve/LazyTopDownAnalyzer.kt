@@ -47,9 +47,11 @@ public class LazyTopDownAnalyzer(
         private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
         private val fileScopeProvider: FileScopeProvider,
         private val declarationScopeProvider: DeclarationScopeProvider,
-        private val qualifiedExpressionResolver: QualifiedExpressionResolver
+        private val qualifiedExpressionResolver: QualifiedExpressionResolver,
+        private val identifierChecker: IdentifierChecker
 ) {
     public fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
+
         val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider)
 
         val topLevelFqNames = HashMultimap.create<FqName, JetElement>()
@@ -93,6 +95,7 @@ public class LazyTopDownAnalyzer(
                 }
 
                 override fun visitPackageDirective(directive: JetPackageDirective) {
+                    directive.packageNames.forEach { identifierChecker.checkIdentifier(it.getIdentifier(), trace) }
                     qualifiedExpressionResolver.resolvePackageHeader(directive, moduleDescriptor, trace)
                 }
 
