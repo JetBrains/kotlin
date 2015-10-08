@@ -246,7 +246,6 @@ public object KotlinCompilerRunner {
         with(settings) {
             module = moduleFile.absolutePath
             noStdlib = true
-            noJdkAnnotations = true
             noJdk = true
         }
     }

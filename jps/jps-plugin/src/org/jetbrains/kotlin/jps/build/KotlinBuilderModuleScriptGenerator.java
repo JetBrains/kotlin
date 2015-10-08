@@ -21,7 +21,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import kotlin.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -138,16 +137,6 @@ public class KotlinBuilderModuleScriptGenerator {
             }
         }
         return result;
-    }
-
-    @NotNull
-    private static JpsSdkType getSdkType(@NotNull JpsModule module) {
-        for (JpsDependencyElement dependency : module.getDependenciesList().getDependencies()) {
-            if (dependency instanceof JpsSdkDependency) {
-                return ((JpsSdkDependency) dependency).getSdkType();
-            }
-        }
-        return JpsJavaSdkType.INSTANCE;
     }
 
     private KotlinBuilderModuleScriptGenerator() {}
