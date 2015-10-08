@@ -6,10 +6,10 @@ import org.junit.Test as test
 class StringBuilderTest {
 
     @test fun stringBuild() {
-        val s = StringBuilder {
+        val s = buildString {
             append("a")
             append(true)
-        }.toString()
+        }
         assertEquals("atrue", s)
     }
 
@@ -21,8 +21,8 @@ class StringBuilderTest {
 
     @test fun append() {
         // this test is needed for JS implementation
-        assertEquals("em", StringBuilder {
+        assertEquals("em", buildString {
             append("element", 2, 4)
-        }.toString())
+        })
     }
 }

@@ -6,14 +6,16 @@ package kotlin
 /**
  * Builds newly created StringBuilder using provided body.
  */
-public inline fun StringBuilder(body: StringBuilder.() -> Unit): StringBuilder {
-    val sb = StringBuilder()
-    sb.body()
-    return sb
-}
+@Deprecated("Use StringBuilder().apply { body } or use String.build { body } if you need String as a result.", ReplaceWith("StringBuilder().apply(body)"))
+public inline fun StringBuilder(body: StringBuilder.() -> Unit): StringBuilder = StringBuilder().apply(body)
 
 /**
- * Appends all arguments to the given Appendable.
+ * Builds new string by populating newly created [StringBuilder] using provided [builderAction] and then converting it to [String].
+ */
+public inline fun buildString(builderAction: StringBuilder.() -> Unit): String = StringBuilder().apply(builderAction).toString()
+
+/**
+ * Appends all arguments to the given [Appendable].
  */
 public fun <T : Appendable> T.append(vararg value: CharSequence?): T {
     for (item in value)
