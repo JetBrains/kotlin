@@ -10,12 +10,12 @@ import bar.*
     fun localFun() = b
     fun /*p:local.declarations*/Int.localExtFun() = localFun()
 
-    interface LocalI {
-        var a: /*p:local.declarations*/Int
-        fun foo()
+    abstract class LocalI {
+        abstract var a: /*p:local.declarations*/Int
+        abstract fun foo()
     }
 
-    class LocalC : LocalI {
+    class LocalC : LocalI() {
         override var a = 1
 
         override fun foo() {}
