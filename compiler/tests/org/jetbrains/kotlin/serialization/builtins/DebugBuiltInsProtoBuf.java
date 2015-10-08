@@ -16,6 +16,7 @@ public final class DebugBuiltInsProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.propertyAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.parameterAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.typeAnnotation);
   }
   public static final int CLASS_NAME_FIELD_NUMBER = 150;
   /**
@@ -116,6 +117,17 @@ public final class DebugBuiltInsProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+  public static final int TYPE_ANNOTATION_FIELD_NUMBER = 150;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Type { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Type,
+      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> typeAnnotation = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -156,7 +168,10 @@ public final class DebugBuiltInsProtoBuf {
       "\201\001\n\024parameter_annotation\0222.org.jetbrains" +
       ".kotlin.serialization.ValueParameter\030\226\001 ",
       "\003(\0132..org.jetbrains.kotlin.serialization" +
-      ".AnnotationB\027B\025DebugBuiltInsProtoBuf"
+      ".Annotation:r\n\017type_annotation\022(.org.jet" +
+      "brains.kotlin.serialization.Type\030\226\001 \003(\0132" +
+      "..org.jetbrains.kotlin.serialization.Ann" +
+      "otationB\027B\025DebugBuiltInsProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -172,6 +187,7 @@ public final class DebugBuiltInsProtoBuf {
           propertyAnnotation.internalInit(descriptor.getExtensions().get(6));
           compileTimeValue.internalInit(descriptor.getExtensions().get(7));
           parameterAnnotation.internalInit(descriptor.getExtensions().get(8));
+          typeAnnotation.internalInit(descriptor.getExtensions().get(9));
           return null;
         }
       };
