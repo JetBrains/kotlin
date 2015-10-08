@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -357,14 +356,10 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             value.put(K_CLASS_TYPE, iv);
         }
         else if (container instanceof PackageFragmentDescriptor) {
-            String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(
-                    ((PackageFragmentDescriptor) container).getFqName()
-            );
-            iv.aconst(Type.getObjectType(packageClassInternalName));
+            iv.aconst(state.getTypeMapper().mapOwner(descriptor));
             iv.aconst(state.getModuleName());
-            // TODO: create KPackage with a useful class, not the old package facade
-            iv.invokestatic(REFLECTION, "createKotlinPackage",
-                            Type.getMethodDescriptor(K_PACKAGE_TYPE, getType(Class.class), getType(String.class)), false);
+            iv.invokestatic(REFLECTION, "getOrCreateKotlinPackage",
+                            Type.getMethodDescriptor(K_DECLARATION_CONTAINER_TYPE, getType(Class.class), getType(String.class)), false);
         }
         else if (container instanceof ScriptDescriptor) {
             // TODO: correct container for scripts (KScript?)

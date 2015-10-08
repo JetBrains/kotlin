@@ -18,7 +18,6 @@ package kotlin.reflect.jvm.internal;
 
 import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 
 /**
  * @suppress
@@ -31,12 +30,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     }
 
     @Override
-    public KPackage createKotlinPackage(Class javaClass) {
-        return createKotlinPackage(javaClass, JvmAbi.DEFAULT_MODULE_NAME);
-    }
-
-    @Override
-    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
+    public KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
         return new KPackageImpl(javaClass, moduleName);
     }
 
@@ -91,5 +85,10 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     @Override
     public KClass foreignKotlinClass(Class javaClass) {
         return getOrCreateKotlinClass(javaClass);
+    }
+
+    @Override
+    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
+        return new KPackageImpl(javaClass, moduleName);
     }
 }

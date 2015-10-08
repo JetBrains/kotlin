@@ -15,8 +15,8 @@ fun box(): String {
     val getter = p.javaGetter!!
     val setter = p.javaSetter!!
 
-    assertEquals(getter, Class.forName("_DefaultPackage").getMethod("getExt", javaClass<K>()))
-    assertEquals(setter, Class.forName("_DefaultPackage").getMethod("setExt", javaClass<K>(), javaClass<Double>()))
+    assertEquals(getter, Class.forName("ExtensionPropertyKt").getMethod("getExt", javaClass<K>()))
+    assertEquals(setter, Class.forName("ExtensionPropertyKt").getMethod("setExt", javaClass<K>(), javaClass<Double>()))
 
     val k = K(42L)
     assert(getter.invoke(null, k) == 42.0, "Fail k getter")

@@ -14,8 +14,8 @@ fun box(): String {
     val getter = p.javaGetter!!
     val setter = p.javaSetter!!
 
-    assertEquals(getter, Class.forName("_DefaultPackage").getMethod("getTopLevel"))
-    assertEquals(setter, Class.forName("_DefaultPackage").getMethod("setTopLevel", javaClass<String>()))
+    assertEquals(getter, Class.forName("TopLevelPropertyKt").getMethod("getTopLevel"))
+    assertEquals(setter, Class.forName("TopLevelPropertyKt").getMethod("setTopLevel", javaClass<String>()))
 
     assert(getter.invoke(null) == "123", "Fail k getter")
     setter.invoke(null, "456")
