@@ -207,16 +207,40 @@ public class DeclarationsChecker {
     }
 
     private void checkClassExposedType(@NotNull JetClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
+        checkExposedSupertypes(klass, classDescriptor);
+        checkExposedParameterBounds(klass, classDescriptor);
+
+        if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null && klass.getPrimaryConstructor() != null) {
+            checkFunctionExposedType(klass.getPrimaryConstructor(), classDescriptor.getUnsubstitutedPrimaryConstructor());
+        }
+    }
+
+    private void checkExposedParameterBounds(@NotNull JetClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
+        EffectiveVisibility classVisibility = EffectiveVisibility.Companion.forClass(classDescriptor);
+        List<JetTypeParameter> typeParameterList = klass.getTypeParameters();
+        int i = 0;
+        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
+            if (i >= typeParameterList.size()) return;
+            for (JetType upperBound : typeParameterDescriptor.getUpperBounds()) {
+                EffectiveVisibility upperBoundVisibility = EffectiveVisibility.Companion.forType(upperBound);
+                if (!upperBoundVisibility.sameOrMorePermissive(classVisibility)) {
+                    JetTypeParameter typeParameter = typeParameterList.get(i);
+                    trace.report(EXPOSED_TYPE_PARAMETER_BOUND.on(typeParameter, classVisibility, upperBoundVisibility));
+                    break;
+                }
+            }
+            i++;
+        }
+    }
+
+    private void checkExposedSupertypes(@NotNull JetClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
         EffectiveVisibility classVisibility = EffectiveVisibility.Companion.forClass(classDescriptor);
         boolean isInterface = classDescriptor.getKind() == ClassKind.INTERFACE;
         List<JetDelegationSpecifier> delegationList = klass.getDelegationSpecifiers();
         int i = -1;
-        // Encapsulate
         for (JetType superType : classDescriptor.getTypeConstructor().getSupertypes()) {
             i++;
-            if (i >= delegationList.size()) {
-                break;
-            }
+            if (i >= delegationList.size()) return;
             ClassDescriptor superDescriptor = TypeUtils.getClassDescriptor(superType);
             if (superDescriptor == null) {
                 continue;
@@ -234,26 +258,6 @@ public class DeclarationsChecker {
                     trace.report(EXPOSED_SUPER_CLASS.on(delegationList.get(i), classVisibility, superTypeVisibility));
                 }
             }
-        }
-        // Encapsulate
-        List<JetTypeParameter> typeParameterList = klass.getTypeParameters();
-        int j = 0;
-        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
-            if (j >= typeParameterList.size()) {
-                break;
-            }
-            for (JetType upperBound : typeParameterDescriptor.getUpperBounds()) {
-                EffectiveVisibility upperBoundVisibility = EffectiveVisibility.Companion.forType(upperBound);
-                if (!upperBoundVisibility.sameOrMorePermissive(classVisibility)) {
-                    JetTypeParameter typeParameter = typeParameterList.get(i);
-                    trace.report(EXPOSED_TYPE_PARAMETER_BOUND.on(typeParameter, classVisibility, upperBoundVisibility));
-                    break;
-                }
-            }
-            j++;
-        }
-        if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null && klass.getPrimaryConstructor() != null) {
-            checkFunctionExposedType(klass.getPrimaryConstructor(), classDescriptor.getUnsubstitutedPrimaryConstructor());
         }
     }
 
