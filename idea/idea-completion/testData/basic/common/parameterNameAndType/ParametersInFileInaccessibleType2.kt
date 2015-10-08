@@ -14,6 +14,6 @@ class X {
 
 class C(val neste<caret>)
 
-// EXIST: { lookupString: "nested", itemText: "nested: X.PublicNested", tailText: " (ppp)" }
-// EXIST: { lookupString: "nestedList", itemText: "nestedList: List<X.PublicNested>", tailText: " (kotlin)" }
+// EXIST: { itemText: "nested: X.PublicNested", tailText: " (ppp)" }
+// EXIST: { itemText: "nestedList: List<X.PublicNested>", tailText: " (kotlin)" }
 // NOTHING_ELSE

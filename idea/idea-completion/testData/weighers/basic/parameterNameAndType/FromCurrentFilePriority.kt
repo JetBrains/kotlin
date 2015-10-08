@@ -8,9 +8,9 @@ fun h(myFileX: String)
 
 fun foo(myFi<caret>)
 
-// ORDER: myFileY
-// ORDER: myFileB
-// ORDER: myFileX
-// ORDER: myFileX
-// ORDER: myFileA
-// ORDER: myFileC
+// ORDER: myFileY: Int
+// ORDER: myFileB: MyFileB
+// ORDER: myFileX: Int
+// ORDER: myFileX: String
+// ORDER: myFileA: MyFileA
+// ORDER: myFileC: MyFileC

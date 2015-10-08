@@ -10,7 +10,7 @@ fun f3(algorithmException: MyAlgorithmException){}
 
 fun f(algorith<caret>)
 
-// EXIST_JAVA_ONLY: { lookupString: "algorithmException", itemText: "algorithmException: NoSuchAlgorithmException", tailText: " (java.security)" }
-// EXIST_JAVA_ONLY: { lookupString: "algorithmException", itemText: "algorithmException: NoSuchAlgorithmException?", tailText: " (java.security)" }
-// EXIST: { lookupString: "algorithmException", itemText: "algorithmException: MyAlgorithmException", tailText: " (ppp)" }
+// EXIST_JAVA_ONLY: { itemText: "algorithmException: NoSuchAlgorithmException", tailText: " (java.security)" }
+// EXIST_JAVA_ONLY: { itemText: "algorithmException: NoSuchAlgorithmException?", tailText: " (java.security)" }
+// EXIST: { itemText: "algorithmException: MyAlgorithmException", tailText: " (ppp)" }
 // NOTHING_ELSE

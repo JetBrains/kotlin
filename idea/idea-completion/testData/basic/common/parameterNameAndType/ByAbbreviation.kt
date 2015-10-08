@@ -4,4 +4,4 @@ class DeclarationDescriptor
 
 fun f(dd<caret>)
 
-// EXIST: { lookupString: "declarationDescriptor", itemText: "declarationDescriptor: DeclarationDescriptor", tailText: " (pack)" }
+// EXIST: { lookupString: "declarationDescriptor: DeclarationDescriptor", itemText: "declarationDescriptor: DeclarationDescriptor", tailText: " (pack)" }

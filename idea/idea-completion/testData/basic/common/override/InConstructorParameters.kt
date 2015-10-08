@@ -18,5 +18,5 @@ class A(overr<caret>) : Base2(), I
 // EXIST: { itemText: "override val someVal: Int", tailText: null, typeText: "I" }
 // EXIST: { itemText: "override var someVar: Int", tailText: null, typeText: "I" }
 // EXIST: { itemText: "override val fromBase: String", tailText: null, typeText: "Base1" }
-// EXIST_JAVA_ONLY: { lookupString: "override", itemText: "override: Override" }
+// EXIST_JAVA_ONLY: { lookupString: "override: Override", itemText: "override: Override" }
 // NOTHING_ELSE

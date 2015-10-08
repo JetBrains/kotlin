@@ -18,11 +18,11 @@ class C(val handler: () -> Unit) {
     }
 }
 
-// EXIST: { lookupString: "strings", itemText: "strings: List<String>", tailText: " (kotlin)" }
-// EXIST: { lookupString: "numbers", itemText: "numbers: List<Int>", tailText: " (kotlin)" }
-// EXIST: { lookupString: "value", itemText: "value: Any?", tailText: " (kotlin)" }
-// EXIST_JAVA_ONLY: { lookupString: "value", itemText: "value: File", tailText: " (java.io)" }
-// EXIST: { lookupString: "handler", itemText: "handler: (() -> String)?", tailText: null }
-// EXIST: { lookupString: "handler", itemText: "handler: () -> Unit", tailText: null }
-// ABSENT: "localParam"
-// ABSENT: "file"
+// EXIST: { lookupString: "strings: List", itemText: "strings: List<String>", tailText: " (kotlin)" }
+// EXIST: { lookupString: "numbers: List", itemText: "numbers: List<Int>", tailText: " (kotlin)" }
+// EXIST: { lookupString: "value: Any", itemText: "value: Any?", tailText: " (kotlin)" }
+// EXIST_JAVA_ONLY: { lookupString: "value: File", itemText: "value: File", tailText: " (java.io)" }
+// EXIST: { lookupString: "handler: (() -> String)?", itemText: "handler: (() -> String)?", tailText: null }
+// EXIST: { lookupString: "handler: () -> Unit", itemText: "handler: () -> Unit", tailText: null }
+// ABSENT: "localParam: String"
+// ABSENT: "file: File"

@@ -7,4 +7,4 @@ fun f() {
     }
 }
 
-// ABSENT: "exception"
+// ABSENT: "exception: Exception"

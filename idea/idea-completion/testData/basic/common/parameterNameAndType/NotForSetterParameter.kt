@@ -4,4 +4,4 @@ var v: Int
     get(){}
     set(v<caret>)
 
-// ABSENT: voo
+// ABSENT: voo: Voo

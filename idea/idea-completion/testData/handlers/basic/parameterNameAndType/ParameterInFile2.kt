@@ -2,4 +2,4 @@ fun foo(xxx: java.io.File?)
 
 fun bar(x<caret>)
 
-// ELEMENT: xxx
+// ELEMENT_TEXT: xxx: File?

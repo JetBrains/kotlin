@@ -52,7 +52,7 @@ class ParameterNameAndTypeCompletion(
         defaultPrefixMatcher: PrefixMatcher,
         private val resolutionFacade: ResolutionFacade
 ) {
-    private val parametersInCurrentFilePrefixMatcher = MyPrefixMatcher(defaultPrefixMatcher.getPrefix())
+    private val modifiedPrefixMatcher = MyPrefixMatcher(defaultPrefixMatcher.prefix)
 
     private val prefixWords: Array<String>
     private val nameSuggestionPrefixes: List<String> // prefixes to use to generate parameter names from class names
@@ -74,13 +74,13 @@ class ParameterNameAndTypeCompletion(
     private val suggestionsByTypesAdded = HashSet<Type>()
 
     public fun addFromImportedClasses(position: PsiElement, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
-        for ((i, prefixMatcher) in nameSuggestionPrefixMatchers.withIndex()) {
+        for ((prefixMatcher, userPrefix) in nameSuggestionPrefixMatchers.zip(userPrefixes)) {
             val resolutionScope = position.getResolutionScope(bindingContext, resolutionFacade)
             val classifiers = resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, prefixMatcher.toClassifierNamePrefixMatcher().asNameFilter())
 
             for (classifier in classifiers) {
                 if (visibilityFilter(classifier)) {
-                    addSuggestionsForClassifier(classifier, userPrefixes[i], prefixMatcher, notImported = false)
+                    addSuggestionsForClassifier(classifier, userPrefix, prefixMatcher, notImported = false)
                 }
             }
 
@@ -89,13 +89,13 @@ class ParameterNameAndTypeCompletion(
     }
 
     public fun addFromAllClasses(parameters: CompletionParameters, indicesHelper: KotlinIndicesHelper) {
-        for ((i, prefixMatcher) in nameSuggestionPrefixMatchers.withIndex()) {
+        for ((prefixMatcher, userPrefix) in nameSuggestionPrefixMatchers.zip(userPrefixes)) {
             AllClassesCompletion(
                     parameters, indicesHelper, prefixMatcher.toClassifierNamePrefixMatcher(), resolutionFacade, { !it.isSingleton() }
             ).collect(
-                    { addSuggestionsForClassifier(it, userPrefixes[i], prefixMatcher, notImported = true) },
-                            { addSuggestionsForJavaClass(it, userPrefixes[i], prefixMatcher, notImported = true) }
-                    )
+                    { addSuggestionsForClassifier(it, userPrefix, prefixMatcher, notImported = true) },
+                    { addSuggestionsForJavaClass(it, userPrefix, prefixMatcher, notImported = true) }
+            )
 
             collector.flushToResultSet()
         }
@@ -111,12 +111,12 @@ class ParameterNameAndTypeCompletion(
             ProgressManager.checkCanceled()
 
             val name = parameter.getName()
-            if (name != null && parametersInCurrentFilePrefixMatcher.prefixMatches(name)) {
+            if (name != null && modifiedPrefixMatcher.prefixMatches(name)) {
                 val descriptor = resolutionFacade.analyze(parameter)[BindingContext.VALUE_PARAMETER, parameter]
                 if (descriptor != null) {
                     val parameterType = descriptor.getType()
                     if (parameterType.isVisible(visibilityFilter)) {
-                        val lookupElement = MyLookupElement.create("", name, ArbitraryType(parameterType), lookupElementFactory)
+                        val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), lookupElementFactory)
                         val count = lookupElementToCount[lookupElement] ?: 0
                         lookupElementToCount[lookupElement!!] = count + 1
                     }
@@ -126,7 +126,7 @@ class ParameterNameAndTypeCompletion(
 
         for ((lookupElement, count) in lookupElementToCount) {
             lookupElement.putUserData(PRIORITY_KEY, -count)
-            collector.addElement(lookupElement, parametersInCurrentFilePrefixMatcher)
+            collector.addElement(lookupElement, modifiedPrefixMatcher)
         }
     }
 
@@ -145,10 +145,10 @@ class ParameterNameAndTypeCompletion(
         val nameSuggestions = KotlinNameSuggester.getCamelNames(className, { true }, userPrefix.isEmpty())
         for (name in nameSuggestions) {
             if (prefixMatcher.prefixMatches(name)) {
-                val lookupElement = MyLookupElement.create(userPrefix, name, type, lookupElementFactory)
+                val lookupElement = MyLookupElement.create(userPrefix + name, type, lookupElementFactory)
                 if (lookupElement != null) {
-                    lookupElement.putUserData(PRIORITY_KEY, userPrefix.length()) // suggestions with longer user prefix get smaller priority
-                    collector.addElement(lookupElement, prefixMatcher, notImported)
+                    lookupElement.putUserData(PRIORITY_KEY, userPrefix.length()) // suggestions with longer user prefix get lower priority
+                    collector.addElement(lookupElement, modifiedPrefixMatcher, notImported = notImported)
                     suggestionsByTypesAdded.add(type)
                 }
             }
@@ -184,28 +184,23 @@ class ParameterNameAndTypeCompletion(
     }
 
     private class MyLookupElement private constructor(
-            private val userPrefix: String,
-            private val nameSuggestion: String,
+            private val parameterName: String,
             private val type: Type,
             typeLookupElement: LookupElement
     ) : LookupElementDecorator<LookupElement>(typeLookupElement) {
 
         companion object {
-            fun create(userPrefix: String, nameSuggestion: String, type: Type, factory: LookupElementFactory): LookupElement? {
+            fun create(parameterName: String, type: Type, factory: LookupElementFactory): LookupElement? {
                 val typeLookupElement = type.createTypeLookupElement(factory) ?: return null
-                val lookupElement = MyLookupElement(userPrefix, nameSuggestion, type, typeLookupElement)
+                val lookupElement = MyLookupElement(parameterName, type, typeLookupElement)
                 return lookupElement.suppressAutoInsertion()
             }
         }
 
-        private val parameterName = userPrefix + nameSuggestion
+        private val lookupString = parameterName + ": " + delegate.lookupString
 
-        override fun equals(other: Any?)
-                = other is MyLookupElement && nameSuggestion == other.nameSuggestion && userPrefix == other.userPrefix && type == other.type
-        override fun hashCode() = parameterName.hashCode()
-
-        override fun getLookupString() = nameSuggestion
-        override fun getAllLookupStrings() = setOf(nameSuggestion)
+        override fun getLookupString() = lookupString
+        override fun getAllLookupStrings() = setOf(lookupString)
 
         override fun renderElement(presentation: LookupElementPresentation) {
             super.renderElement(presentation)
@@ -216,7 +211,7 @@ class ParameterNameAndTypeCompletion(
             val settings = CodeStyleSettingsManager.getInstance(context.getProject()).getCurrentSettings().getCustomSettings(javaClass<JetCodeStyleSettings>())
             val spaceBefore = if (settings.SPACE_BEFORE_TYPE_COLON) " " else ""
             val spaceAfter = if (settings.SPACE_AFTER_TYPE_COLON) " " else ""
-            val text = nameSuggestion + spaceBefore + ":" + spaceAfter
+            val text = parameterName + spaceBefore + ":" + spaceAfter
             val startOffset = context.getStartOffset()
             context.getDocument().insertString(startOffset, text)
 
@@ -225,6 +220,10 @@ class ParameterNameAndTypeCompletion(
 
             super.handleInsert(context)
         }
+
+        override fun equals(other: Any?)
+                = other is MyLookupElement && parameterName == other.parameterName && type == other.type
+        override fun hashCode() = parameterName.hashCode()
     }
 
     private companion object {

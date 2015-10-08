@@ -2,4 +2,4 @@ class FooBar
 
 fun f(myFo<caret>)
 
-// ELEMENT: FooBar
+// ELEMENT: myFooBar: FooBar
