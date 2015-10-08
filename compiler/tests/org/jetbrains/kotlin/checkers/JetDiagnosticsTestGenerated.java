@@ -2079,6 +2079,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/cast"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("AsArray.kt")
+            public void testAsArray() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/AsArray.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("AsErasedError.kt")
             public void testAsErasedError() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/AsErasedError.kt");
@@ -2112,12 +2118,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("DowncastMap.kt")
             public void testDowncastMap() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/DowncastMap.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("IsArray.kt")
-            public void testIsArray() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsArray.kt");
                 doTest(fileName);
             }
 
@@ -2310,12 +2310,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("IsRecursionSustainable.kt")
             public void testIsRecursionSustainable() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsRecursionSustainable.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("IsReified.kt")
-            public void testIsReified() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsReified.kt");
                 doTest(fileName);
             }
 

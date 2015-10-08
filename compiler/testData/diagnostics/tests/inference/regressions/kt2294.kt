@@ -14,5 +14,5 @@ public fun test()
 }
 
 //--------------------
-
+@Suppress("UNCHECKED_CAST")
 fun <T> array(vararg t : T) : Array<T> = t as Array<T>

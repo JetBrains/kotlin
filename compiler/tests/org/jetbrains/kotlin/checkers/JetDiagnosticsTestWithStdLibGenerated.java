@@ -524,6 +524,27 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/cast")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Cast extends AbstractJetDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInCast() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/cast"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("IsArray.kt")
+        public void testIsArray() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/cast/IsArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IsReified.kt")
+        public void testIsReified() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/cast/IsReified.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

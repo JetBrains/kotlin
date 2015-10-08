@@ -579,6 +579,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         TypeConstructor typeConstructor = type.getConstructor();
         ClassifierDescriptor typeDeclarationDescriptor = typeConstructor.getDeclarationDescriptor();
+        boolean typeIsArray = KotlinBuiltIns.isArray(type);
 
         if (typeDeclarationDescriptor instanceof ClassDescriptor) {
             List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
@@ -586,8 +587,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
             Iterator<TypeProjection> typeArgumentsIterator = type.getArguments().iterator();
             for (TypeParameterDescriptor parameter : parameters) {
-                if (!parameter.isReified()) return false;
+                if (!typeIsArray && !parameter.isReified()) return false;
+
                 TypeProjection typeArgument = typeArgumentsIterator.next();
+
                 if (typeArgument == null) return false;
                 if (typeArgument.isStarProjection()) return false;
                 if (!isClassAvailableAtRuntime(typeArgument.getType(), true)) return false;

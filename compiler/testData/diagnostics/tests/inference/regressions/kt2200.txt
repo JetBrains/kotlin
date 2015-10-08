@@ -1,6 +1,6 @@
 package
 
 package n {
-    public fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
+    @kotlin.Suppress(names = {"UNCHECKED_CAST"}) public fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
     public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 }
