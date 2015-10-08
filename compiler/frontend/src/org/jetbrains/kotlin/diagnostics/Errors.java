@@ -346,8 +346,8 @@ public interface Errors {
     DiagnosticFactory0<JetProperty> PRIVATE_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR, PRIVATE_MODIFIER);
     DiagnosticFactory0<JetProperty> BACKING_FIELD_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
-    DiagnosticFactory0<JetSimpleNameExpression> BACKING_FIELD_SYNTAX_DEPRECATED = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<JetSimpleNameExpression> BACKING_FIELD_USAGE_DEPRECATED = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetSimpleNameExpression> BACKING_FIELD_OLD_SYNTAX = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetSimpleNameExpression> BACKING_FIELD_USAGE_FORBIDDEN = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_IMMUTABLE = DiagnosticFactory0.create(ERROR);

@@ -22,7 +22,7 @@ class A {
                 return 1
             }
             set(i: Int) {
-                $prop = i
+                field = i
             }
     }
 }

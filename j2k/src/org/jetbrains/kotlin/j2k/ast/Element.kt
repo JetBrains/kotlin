@@ -72,10 +72,10 @@ abstract class Element {
         set(value) {
             // do not assign prototypes to singleton instances
             if (canBeSingleton) {
-                $prototypes = listOf()
+                field = listOf()
                 return
             }
-            $prototypes = value
+            field = value
         }
 
     protected open val canBeSingleton: Boolean

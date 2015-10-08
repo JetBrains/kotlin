@@ -62,7 +62,7 @@ public class KotlinInplacePropertyIntroducer(
         set(value: ExtractionTarget) {
             if (value == currentTarget) return
 
-            $currentTarget = value
+            field = value
             runWriteActionAndRestartRefactoring {
                 with (extractionResult.config) {
                     extractionResult = copy(generatorOptions = generatorOptions.copy(target = currentTarget)).generateDeclaration(property)

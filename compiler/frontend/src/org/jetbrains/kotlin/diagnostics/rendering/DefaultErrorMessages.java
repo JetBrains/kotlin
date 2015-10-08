@@ -169,8 +169,8 @@ public class DefaultErrorMessages {
         MAP.put(INACCESSIBLE_BACKING_FIELD, "The backing field is not accessible here");
         MAP.put(NOT_PROPERTY_BACKING_FIELD, "The referenced variable is not a property and doesn't have backing field");
 
-        MAP.put(BACKING_FIELD_SYNTAX_DEPRECATED, "This backing field syntax is deprecated, use 'field' instead");
-        MAP.put(BACKING_FIELD_USAGE_DEPRECATED, "Backing field usage is deprecated here, soon it will be possible only in property accessors");
+        MAP.put(BACKING_FIELD_OLD_SYNTAX, "This backing field syntax is forbidden, use 'field' instead");
+        MAP.put(BACKING_FIELD_USAGE_FORBIDDEN, "Backing field usage is forbidden here");
 
         MAP.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, "Mixing named and positioned arguments is not allowed");
         MAP.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter");

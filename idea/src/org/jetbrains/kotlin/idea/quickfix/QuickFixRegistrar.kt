@@ -324,9 +324,9 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.registerFactory(ConstFixFactory)
 
-        BACKING_FIELD_SYNTAX_DEPRECATED.registerFactory(MigrateBackingFieldSyntaxFix)
-        BACKING_FIELD_USAGE_DEPRECATED.registerFactory(MigrateBackingFieldUsageFix)
-        BACKING_FIELD_USAGE_DEPRECATED.registerFactory(IntroduceBackingPropertyFix)
+        BACKING_FIELD_OLD_SYNTAX.registerFactory(MigrateBackingFieldSyntaxFix)
+        BACKING_FIELD_USAGE_FORBIDDEN.registerFactory(MigrateBackingFieldUsageFix)
+        BACKING_FIELD_USAGE_FORBIDDEN.registerFactory(IntroduceBackingPropertyFix)
 
         OPERATOR_MODIFIER_REQUIRED.registerFactory(ModifierFixFactory(JetTokens.OPERATOR_KEYWORD))
         INFIX_MODIFIER_REQUIRED.registerFactory(ModifierFixFactory(JetTokens.INFIX_KEYWORD))

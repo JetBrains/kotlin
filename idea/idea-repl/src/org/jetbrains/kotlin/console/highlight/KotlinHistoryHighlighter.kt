@@ -36,7 +36,7 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
             else
                 runner.changeConsoleEditorIndicator(ReplIcons.EDITOR_INDICATOR)
 
-            $isReadLineMode = value
+            field = value
         }
 
     fun printNewCommandInHistory(trimmedCommandText: String) {

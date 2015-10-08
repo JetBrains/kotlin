@@ -5650,21 +5650,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt535.kt")
-        public void testKt535() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/kt535.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("kt560.kt")
         public void testKt560() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/kt560.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt640.kt")
-        public void testKt640() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/kt640.kt");
             doTest(fileName);
         }
 
@@ -7765,12 +7753,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt2811.kt")
         public void testKt2811() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/typeInfo/kt2811.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt511.kt")
-        public void testKt511() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/typeInfo/kt511.kt");
             doTest(fileName);
         }
 

@@ -90,7 +90,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION,
             Errors.DEPRECATED_SYMBOL_WITH_MESSAGE,
             Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION,
-            Errors.BACKING_FIELD_SYNTAX_DEPRECATED,
+            Errors.BACKING_FIELD_OLD_SYNTAX,
             Errors.OPERATOR_MODIFIER_REQUIRED,
             Errors.INFIX_MODIFIER_REQUIRED,
             Errors.CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS,

@@ -1,6 +1,6 @@
 class A(var a: Int) {
     init {
-        $a = 3
+        a = 3
     }
 }
 

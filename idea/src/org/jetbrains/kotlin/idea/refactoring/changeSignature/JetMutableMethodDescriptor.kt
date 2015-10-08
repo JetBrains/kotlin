@@ -26,7 +26,7 @@ public class JetMutableMethodDescriptor(override val original: JetMethodDescript
             if (value != null && value !in parameters) {
                 parameters.add(value)
             }
-            $receiver = value
+            field = value
         }
 
     public fun addParameter(parameter: JetParameterInfo) {

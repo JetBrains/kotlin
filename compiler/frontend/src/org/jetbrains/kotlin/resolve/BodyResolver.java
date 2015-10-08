@@ -655,7 +655,7 @@ public class BodyResolver {
                         // This check may be considered redundant as long as $x is only accessible from accessors to $x
                         if (descriptor == propertyDescriptor) { // TODO : original?
                             trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this trace?
-                            trace.report(Errors.BACKING_FIELD_SYNTAX_DEPRECATED.on(simpleNameExpression));
+                            trace.report(Errors.BACKING_FIELD_OLD_SYNTAX.on(simpleNameExpression));
                         }
                     }
                     if (descriptor instanceof SyntheticFieldDescriptor) {

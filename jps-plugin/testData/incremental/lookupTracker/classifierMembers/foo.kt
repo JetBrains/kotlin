@@ -10,8 +10,8 @@ import bar.*
         get() = /*c:foo.A*/b
 
     var d: /*c:foo.A c:foo.A.Companion p:foo*/String = "ddd"
-        get() = /*c:foo.A*/$d
-        set(v) { /*c:foo.A*/$d = v }
+        get() = field
+        set(v) { field = v }
 
     fun foo() {
         /*c:foo.A*/a

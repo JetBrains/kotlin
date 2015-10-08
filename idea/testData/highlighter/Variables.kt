@@ -7,7 +7,7 @@ val <info textAttributesKey="KOTLIN_CLASS">Int</info>.<info textAttributesKey="K
 
 val <info textAttributesKey="KOTLIN_PACKAGE_PROPERTY"><info textAttributesKey="KOTLIN_PROPERTY_WITH_BACKING_FIELD">y</info></info> : <info textAttributesKey="KOTLIN_CLASS">Int</info> = 1
 <info textAttributesKey="KOTLIN_KEYWORD">get</info>() {
-  return 5.<info textAttributesKey="KOTLIN_EXTENSION_PROPERTY"><info textAttributesKey="KOTLIN_PACKAGE_PROPERTY">sq</info></info> + <info textAttributesKey="KOTLIN_PACKAGE_PROPERTY"><info textAttributesKey="KOTLIN_BACKING_FIELD_ACCESS">$y</info></info> + <info textAttributesKey="KOTLIN_MUTABLE_VARIABLE"><info textAttributesKey="KOTLIN_PACKAGE_PROPERTY">x</info></info>
+  return 5.<info textAttributesKey="KOTLIN_EXTENSION_PROPERTY"><info textAttributesKey="KOTLIN_PACKAGE_PROPERTY">sq</info></info> + <info textAttributesKey="KOTLIN_LOCAL_VARIABLE"><info textAttributesKey="KOTLIN_BACKING_FIELD_VARIABLE">field</info></info> + <info textAttributesKey="KOTLIN_PACKAGE_PROPERTY"><info textAttributesKey="KOTLIN_MUTABLE_VARIABLE">x</info></info>
 }
 
 class <info textAttributesKey="KOTLIN_CLASS">Foo</info>(val <info textAttributesKey="KOTLIN_PARAMETER"><info textAttributesKey="KOTLIN_INSTANCE_PROPERTY"><info textAttributesKey="KOTLIN_PROPERTY_WITH_BACKING_FIELD">a</info></info></info> : <info textAttributesKey="KOTLIN_CLASS">Int</info>, <info textAttributesKey="KOTLIN_PARAMETER">b</info> : <info textAttributesKey="KOTLIN_CLASS">String</info>) {

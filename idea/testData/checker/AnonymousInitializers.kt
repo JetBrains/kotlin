@@ -13,7 +13,7 @@ interface NoC {
 class WithC() {
   val x : Int
   init {
-    <warning descr="[BACKING_FIELD_USAGE_DEPRECATED] Backing field usage is deprecated here, soon it will be possible only in property accessors">$x</warning> = 1
+    <error>$x</error> = 1
     <error>$y</error> = 2
     val <warning>b</warning> = x
 

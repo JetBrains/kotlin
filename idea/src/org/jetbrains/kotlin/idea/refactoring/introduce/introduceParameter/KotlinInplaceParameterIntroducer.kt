@@ -101,7 +101,7 @@ public class KotlinInplaceParameterIntroducer(
         var addedRange: TextRange? = null
             private set
 
-        var text: String
+        var text: String = ""
             private set
 
         val rangesToRemove: List<TextRange> get() = _rangesToRemove
@@ -163,7 +163,7 @@ public class KotlinInplaceParameterIntroducer(
                 }
             }
 
-            $text = builder.toString()
+            text = builder.toString()
         }
     }
 

@@ -85,7 +85,7 @@ public open class ObjectValue(value: Any?, asmType: Type): AbstractValue<Any?>(v
 class NewObjectValue(asmType: Type): ObjectValue(null, asmType) {
     override var value: Any? = null
         get(): Any? {
-            return $value ?: throw IllegalStateException("Trying to access an unitialized object: $this")
+            return field ?: throw IllegalStateException("Trying to access an unitialized object: $this")
         }
 }
 
