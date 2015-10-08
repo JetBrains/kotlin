@@ -241,6 +241,7 @@ public interface Errors {
     DiagnosticFactory0<JetObjectDeclaration> MANY_COMPANION_OBJECTS = DiagnosticFactory0.create(ERROR, COMPANION_OBJECT);
 
     DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATION = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATION_ERROR = DiagnosticFactory2.create(ERROR);
 
     // Objects
 

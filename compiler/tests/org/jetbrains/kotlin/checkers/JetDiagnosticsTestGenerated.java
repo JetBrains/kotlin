@@ -4647,6 +4647,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("deprecatedError.kt")
+            public void testDeprecatedError() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/deprecatedError.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("deprecatedErrorBuilder.kt")
+            public void testDeprecatedErrorBuilder() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/deprecatedErrorBuilder.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("functionUsage.kt")
             public void testFunctionUsage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/functionUsage.kt");

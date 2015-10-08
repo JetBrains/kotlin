@@ -117,6 +117,12 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
 
     private fun createDeprecationDiagnostic(element: PsiElement, descriptor: DeclarationDescriptor, deprecated: AnnotationDescriptor): Diagnostic {
         val message = deprecated.argumentValue("message") as? String ?: ""
+        val level = deprecated.argumentValue("level") as? ClassDescriptor
+
+        if (level?.name?.asString() == "ERROR") {
+            return Errors.DEPRECATION_ERROR.on(element, descriptor.original, message)
+        }
+
         return Errors.DEPRECATION.on(element, descriptor.original, message)
     }
 

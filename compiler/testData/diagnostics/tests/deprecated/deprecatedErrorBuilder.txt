@@ -1,0 +1,20 @@
+package
+
+public fun builderTest(): kotlin.Unit
+public fun table(/*0*/ body: Table.() -> kotlin.Unit): kotlin.Unit
+public fun Table.tr(/*0*/ body: Tr.() -> kotlin.Unit): kotlin.Unit
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Don't call me") public fun Tr.tr(/*0*/ body: Tr.() -> kotlin.Unit): kotlin.Unit
+
+public final class Table {
+    public constructor Table()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Tr {
+    public constructor Tr()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
