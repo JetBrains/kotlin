@@ -4397,6 +4397,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("infixModifier.kt")
+        public void testInfixModifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/infixModifier.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nestedClassNotAllowed.kt")
         public void testNestedClassNotAllowed() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/nestedClassNotAllowed.kt");
