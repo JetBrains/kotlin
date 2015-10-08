@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.resolve.calls.results;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTask;
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 
 import java.util.Collection;
 import java.util.EnumSet;
@@ -42,10 +44,11 @@ public class ResolutionResultsHandler {
 
     @NotNull
     public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
-            @NotNull ResolutionTask task,
+            @NotNull CallResolutionContext context,
+            @NotNull TracingStrategy tracing,
             @NotNull Collection<MutableResolvedCall<D>> candidates
     ) {
-        boolean resolveOverloads = task.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS; // todo rename CheckArgumentTypesMode
+        boolean resolveOverloads = context.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS; // todo rename CheckArgumentTypesMode
 
         Set<MutableResolvedCall<D>> successfulCandidates = Sets.newLinkedHashSet();
         Set<MutableResolvedCall<D>> failedCandidates = Sets.newLinkedHashSet();
@@ -70,22 +73,23 @@ public class ResolutionResultsHandler {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
 
         if (!successfulCandidates.isEmpty() || !incompleteCandidates.isEmpty()) {
-            return computeSuccessfulResult(task, successfulCandidates, incompleteCandidates, resolveOverloads);
+            return computeSuccessfulResult(context, tracing, successfulCandidates, incompleteCandidates, resolveOverloads);
         }
         else if (!failedCandidates.isEmpty()) {
-            return computeFailedResult(task, failedCandidates, resolveOverloads);
+            return computeFailedResult(tracing, context.trace, failedCandidates, resolveOverloads);
         }
         if (!candidatesWithWrongReceiver.isEmpty()) {
-            task.tracing.unresolvedReferenceWrongReceiver(task.trace, candidatesWithWrongReceiver);
+            tracing.unresolvedReferenceWrongReceiver(context.trace, candidatesWithWrongReceiver);
             return OverloadResolutionResultsImpl.candidatesWithWrongReceiver(candidatesWithWrongReceiver);
         }
-        task.tracing.unresolvedReference(task.trace);
+        tracing.unresolvedReference(context.trace);
         return OverloadResolutionResultsImpl.nameNotFound();
     }
 
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeSuccessfulResult(
-            @NotNull ResolutionTask task,
+            @NotNull CallResolutionContext context,
+            @NotNull TracingStrategy tracing,
             @NotNull Set<MutableResolvedCall<D>> successfulCandidates,
             @NotNull Set<MutableResolvedCall<D>> incompleteCandidates,
             boolean resolveOverloads
@@ -96,23 +100,23 @@ public class ResolutionResultsHandler {
         OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulAndIncomplete, true, resolveOverloads);
         if (results.isSingleResult()) {
             MutableResolvedCall<D> resultingCall = results.getResultingCall();
-            resultingCall.getTrace().moveAllMyDataTo(task.trace);
+            resultingCall.getTrace().moveAllMyDataTo(context.trace);
             if (resultingCall.getStatus() == INCOMPLETE_TYPE_INFERENCE) {
                 return OverloadResolutionResultsImpl.incompleteTypeInference(resultingCall);
             }
         }
         if (results.isAmbiguity()) {
-            task.tracing.recordAmbiguity(task.trace, results.getResultingCalls());
+            tracing.recordAmbiguity(context.trace, results.getResultingCalls());
             boolean allCandidatesIncomplete = allIncomplete(results.getResultingCalls());
             // This check is needed for the following case:
             //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
-            if (task.checkArguments != CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ||
-                    !CallUtilKt.hasUnresolvedArguments(task.call, task)) {
+            if (context.checkArguments != CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ||
+                    !CallUtilKt.hasUnresolvedArguments(context.call, context)) {
                 if (allCandidatesIncomplete) {
-                    task.tracing.cannotCompleteResolve(task.trace, results.getResultingCalls());
+                    tracing.cannotCompleteResolve(context.trace, results.getResultingCalls());
                 }
                 else {
-                    task.tracing.ambiguity(task.trace, results.getResultingCalls());
+                    tracing.ambiguity(context.trace, results.getResultingCalls());
                 }
             }
             if (allCandidatesIncomplete) {
@@ -124,7 +128,8 @@ public class ResolutionResultsHandler {
 
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeFailedResult(
-            @NotNull ResolutionTask task,
+            @NotNull TracingStrategy tracing,
+            @NotNull BindingTrace trace,
             @NotNull Set<MutableResolvedCall<D>> failedCandidates,
             boolean resolveOverloads
     ) {
@@ -141,34 +146,35 @@ public class ResolutionResultsHandler {
                 }
                 if (!thisLevel.isEmpty()) {
                     if (severityLevel.contains(ARGUMENTS_MAPPING_ERROR)) {
-                        return recordFailedInfo(task, thisLevel);
+                        return recordFailedInfo(tracing, trace, thisLevel);
                     }
                     OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false, resolveOverloads);
-                    return recordFailedInfo(task, results.getResultingCalls());
+                    return recordFailedInfo(tracing, trace, results.getResultingCalls());
                 }
             }
 
             assert false : "Should not be reachable, cause every status must belong to some level";
 
             Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(failedCandidates, MAP_TO_CANDIDATE);
-            return recordFailedInfo(task, noOverrides);
+            return recordFailedInfo(tracing, trace, noOverrides);
         }
 
-        return recordFailedInfo(task, failedCandidates);
+        return recordFailedInfo(tracing, trace, failedCandidates);
     }
 
     @NotNull
     private static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> recordFailedInfo(
-            @NotNull ResolutionTask task,
+            @NotNull TracingStrategy tracing,
+            @NotNull BindingTrace trace,
             @NotNull Collection<MutableResolvedCall<D>> candidates
     ) {
         if (candidates.size() == 1) {
             MutableResolvedCall<D> failed = candidates.iterator().next();
-            failed.getTrace().moveAllMyDataTo(task.trace);
+            failed.getTrace().moveAllMyDataTo(trace);
             return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
         }
-        task.tracing.noneApplicable(task.trace, candidates);
-        task.tracing.recordAmbiguity(task.trace, candidates);
+        tracing.noneApplicable(trace, candidates);
+        tracing.recordAmbiguity(trace, candidates);
         return OverloadResolutionResultsImpl.manyFailedCandidates(candidates);
     }
 

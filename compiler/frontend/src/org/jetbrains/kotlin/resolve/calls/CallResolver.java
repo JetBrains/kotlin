@@ -641,7 +641,7 @@ public class CallResolver {
         }
 
         OverloadResolutionResultsImpl<F> results = resolutionResultsHandler.computeResultAndReportErrors(
-                task, task.getResolvedCalls());
+                task, task.tracing, task.getResolvedCalls());
         if (!results.isSingleResult() && !results.isIncomplete()) {
             argumentTypeResolver.checkTypesWithNoCallee(task.toBasic());
         }
@@ -666,7 +666,7 @@ public class CallResolver {
                     Collection<CallCandidateResolutionContext<D>> contexts =
                             callTransformer.createCallContexts(resolutionCandidate, task, candidateTrace, candidateResolveMode);
                     for (CallCandidateResolutionContext<D> context : contexts) {
-                        candidateResolver.performResolutionForCandidateCall(context, task);
+                        candidateResolver.performResolutionForCandidateCall(context, task.checkArguments);
                         candidateResolutionContexts.add(context);
                     }
                     return Unit.INSTANCE$;

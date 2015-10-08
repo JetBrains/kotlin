@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
-import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTask
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -63,7 +62,7 @@ public class CandidateResolver(
 
     public fun <D : CallableDescriptor, F : D> performResolutionForCandidateCall(
             context: CallCandidateResolutionContext<D>,
-            task: ResolutionTask<D, F>
+            checkArguments: CheckArgumentTypesMode
     ): Unit = with(context) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -79,7 +78,7 @@ public class CandidateResolver(
 
         checkVisibility()
 
-        when (task.checkArguments) {
+        when (checkArguments) {
             CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->
                 mapArguments()
             CheckArgumentTypesMode.CHECK_CALLABLE_TYPE ->
