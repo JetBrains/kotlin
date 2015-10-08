@@ -211,21 +211,21 @@ public class DescriptorKindFilter(
     }
 }
 
-public interface DescriptorKindExclude {
-    public fun excludes(descriptor: DeclarationDescriptor): Boolean
+public abstract class DescriptorKindExclude {
+    public abstract fun excludes(descriptor: DeclarationDescriptor): Boolean
 
-    public val fullyExcludedDescriptorKinds: Int
+    public abstract val fullyExcludedDescriptorKinds: Int
 
     override fun toString() = this.javaClass.getSimpleName()
 
-    public object Extensions : DescriptorKindExclude {
+    public object Extensions : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor)
                 = descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null
 
         override val fullyExcludedDescriptorKinds: Int get() = 0
     }
 
-    public object NonExtensions : DescriptorKindExclude {
+    public object NonExtensions : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor)
                 = descriptor !is CallableDescriptor || descriptor.getExtensionReceiverParameter() == null
 
@@ -233,14 +233,14 @@ public interface DescriptorKindExclude {
             get() = DescriptorKindFilter.ALL_KINDS_MASK and (DescriptorKindFilter.FUNCTIONS_MASK or DescriptorKindFilter.VARIABLES_MASK).inv()
     }
 
-    public object EnumEntry : DescriptorKindExclude {
+    public object EnumEntry : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor)
                 = descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY
 
         override val fullyExcludedDescriptorKinds: Int get() = 0
     }
 
-    public object TopLevelPackages : DescriptorKindExclude {
+    public object TopLevelPackages : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor): Boolean {
             val fqName = when (descriptor) {
                 is PackageFragmentDescriptor -> descriptor.fqName

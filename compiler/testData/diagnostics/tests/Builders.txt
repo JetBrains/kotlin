@@ -84,7 +84,8 @@ package html {
         public final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
     }
 
-    public interface Element {
+    public abstract class Element {
+        public constructor Element()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public abstract fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit

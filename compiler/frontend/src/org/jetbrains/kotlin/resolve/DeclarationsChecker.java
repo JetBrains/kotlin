@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
@@ -288,7 +289,8 @@ public class DeclarationsChecker {
         checkTypeParameterConstraints(aClass);
 
         if (aClass.isInterface()) {
-            checkConstructorInTrait(aClass);
+            checkConstructorInInterface(aClass);
+            checkMethodsOfAnyInInterface(classDescriptor);
             if (aClass.isLocal() && !(classDescriptor.getContainingDeclaration() instanceof ClassDescriptor)) {
                 trace.report(LOCAL_INTERFACE_NOT_ALLOWED.on(aClass, classDescriptor));
             }
@@ -367,11 +369,69 @@ public class DeclarationsChecker {
         return false;
     }
 
-    private void checkConstructorInTrait(JetClass klass) {
+    private void checkConstructorInInterface(JetClass klass) {
         JetPrimaryConstructor primaryConstructor = klass.getPrimaryConstructor();
         if (primaryConstructor != null) {
             trace.report(CONSTRUCTOR_IN_TRAIT.on(primaryConstructor));
         }
+    }
+
+    private void checkMethodsOfAnyInInterface(ClassDescriptorWithResolutionScopes classDescriptor) {
+        for (CallableMemberDescriptor declaredCallableMember : classDescriptor.getDeclaredCallableMembers()) {
+            if (!(declaredCallableMember instanceof FunctionDescriptor)) continue;
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) declaredCallableMember;
+
+            PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
+            if (!(declaration instanceof JetNamedFunction)) continue;
+            JetNamedFunction functionDeclaration = (JetNamedFunction) declaration;
+
+            if (isHidingParentMemberIfPresent(declaredCallableMember)) continue;
+
+            if (isImplementingMethodOfAny(declaredCallableMember)) {
+                trace.report(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE.on(functionDeclaration));
+            }
+        }
+    }
+
+    private static final Set<String> METHOD_OF_ANY_NAMES = ImmutableSet.of("toString", "hashCode", "equals");
+
+    private static boolean isImplementingMethodOfAny(CallableMemberDescriptor member) {
+        if (!METHOD_OF_ANY_NAMES.contains(member.getName().asString())) return false;
+        if (member.getModality() == Modality.ABSTRACT) return false;
+
+        return isImplementingMethodOfAnyInternal(member, new HashSet<ClassDescriptor>());
+    }
+
+    private static boolean isImplementingMethodOfAnyInternal(CallableMemberDescriptor member, Set<ClassDescriptor> visitedClasses) {
+        for (CallableMemberDescriptor overridden : member.getOverriddenDescriptors()) {
+            DeclarationDescriptor containingDeclaration = overridden.getContainingDeclaration();
+            if (!(containingDeclaration instanceof ClassDescriptor)) continue;
+            ClassDescriptor containingClass = (ClassDescriptor) containingDeclaration;
+            if (visitedClasses.contains(containingClass)) continue;
+
+            if (DescriptorUtils.getFqName(containingClass).equals(KotlinBuiltIns.FQ_NAMES.any)) {
+                return true;
+            }
+
+            if (isHidingParentMemberIfPresent(overridden)) continue;
+
+            visitedClasses.add(containingClass);
+
+            if (isImplementingMethodOfAnyInternal(overridden, visitedClasses)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isHidingParentMemberIfPresent(CallableMemberDescriptor member) {
+        JetNamedDeclaration declaration = (JetNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
+        if (declaration != null) {
+            JetModifierList modifierList = declaration.getModifierList();
+            return modifierList == null || !modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD);
+        }
+        return false;
     }
 
     private void checkAnnotationClassWithBody(JetClassOrObject classOrObject) {

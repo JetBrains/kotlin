@@ -217,6 +217,7 @@ public interface Errors {
             .create(WARNING, ABSTRACT_MODIFIER);
 
     DiagnosticFactory0<JetDeclaration> CONSTRUCTOR_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<JetDeclaration> METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> SUPERTYPE_INITIALIZED_IN_TRAIT = DiagnosticFactory0.create(ERROR);
 

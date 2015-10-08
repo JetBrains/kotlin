@@ -56,7 +56,7 @@ public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: 
 
     object TYPE : CallType<JetExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK))
 
-    private object NonInfixExclude : DescriptorKindExclude {
+    private object NonInfixExclude : DescriptorKindExclude() {
         //TODO: check 'infix' modifier
         override fun excludes(descriptor: DeclarationDescriptor) =
                 !(descriptor is SimpleFunctionDescriptor && descriptor.valueParameters.size() == 1)
@@ -65,7 +65,7 @@ public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: 
             get() = 0
     }
 
-    private object NonOperatorExclude : DescriptorKindExclude {
+    private object NonOperatorExclude : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor) =
                 !(descriptor is SimpleFunctionDescriptor && descriptor.isOperator)
 
@@ -73,7 +73,7 @@ public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: 
             get() = 0
     }
 
-    private object CallableReferenceExclude : DescriptorKindExclude {
+    private object CallableReferenceExclude : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor) /* currently not supported for locals, synthetic and genetic */
                 = descriptor !is CallableMemberDescriptor || descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED || descriptor.typeParameters.isNotEmpty()
 

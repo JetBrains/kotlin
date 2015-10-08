@@ -40,7 +40,9 @@ interface CallInfo {
     val extensionReceiver: JsExpression?
 
     fun constructSafeCallIsNeeded(result: JsExpression): JsExpression
+}
 
+abstract class AbstractCallInfo : CallInfo {
     override fun toString(): String {
         val location = DiagnosticUtils.atLocation(callableDescriptor)
         val name = callableDescriptor.getName().asString()
@@ -49,9 +51,9 @@ interface CallInfo {
 }
 
 // if value == null, it is get access
-class VariableAccessInfo(callInfo: CallInfo, val value: JsExpression? = null) : CallInfo by callInfo
+class VariableAccessInfo(callInfo: CallInfo, val value: JsExpression? = null) : AbstractCallInfo(), CallInfo by callInfo
 
-class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfo by callInfo
+class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : AbstractCallInfo(), CallInfo by callInfo
 
 /**
  * no receivers - extensionOrDispatchReceiver = null,     extensionReceiver = null
@@ -146,7 +148,7 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
             }
         }
     }
-    return object : CallInfo {
+    return object : AbstractCallInfo(), CallInfo {
         override val context: TranslationContext = this@createCallInfo
         override val resolvedCall: ResolvedCall<out CallableDescriptor> = resolvedCall
         override val dispatchReceiver: JsExpression? = dispatchReceiver

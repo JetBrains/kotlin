@@ -439,6 +439,7 @@ public class DefaultErrorMessages {
         MAP.put(SUPERTYPE_INITIALIZED_IN_TRAIT, "Interfaces cannot initialize supertypes");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
         MAP.put(CONSTRUCTOR_IN_TRAIT, "An interface may not have a constructor");
+        MAP.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'kotlin.Any'");
         MAP.put(TRAIT_WITH_SUPERCLASS, "An interface cannot inherit from a class");
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");

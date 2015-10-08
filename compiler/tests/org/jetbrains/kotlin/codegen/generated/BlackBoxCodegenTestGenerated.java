@@ -7540,12 +7540,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt5393_toString.kt")
-        public void testKt5393_toString() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt5393_toString.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("multiple.kt")
         public void testMultiple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/multiple.kt");
