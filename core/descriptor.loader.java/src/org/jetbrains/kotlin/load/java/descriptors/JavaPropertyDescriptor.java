@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -79,8 +80,16 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             newGetter.initialize(enhancedReturnType);
         }
 
-        assert getSetter() == null : "Field must not have a setter: " + this;
-        enhanced.initialize(newGetter, null);
+        PropertySetterDescriptorImpl newSetter = null;
+        PropertySetterDescriptor setter = getSetter();
+        if (setter != null) {
+            newSetter = new PropertySetterDescriptorImpl(
+                    enhanced, setter.getAnnotations(), setter.getModality(), setter.getVisibility(),
+                    setter.hasBody(), setter.isDefault(), getKind(), setter, SourceElement.NO_SOURCE);
+            newSetter.initialize(setter.getValueParameters().get(0));
+        }
+
+        enhanced.initialize(newGetter, newSetter);
         enhanced.setSetterProjectedOut(isSetterProjectedOut());
         if (compileTimeInitializer != null) {
             enhanced.setCompileTimeInitializer(compileTimeInitializer);

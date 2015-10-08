@@ -359,6 +359,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("commonProperties")
+        public void testCommonProperties() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/commonProperties/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("substituteJavaSuperField")
         public void testSubstituteJavaSuperField() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/substituteJavaSuperField/");

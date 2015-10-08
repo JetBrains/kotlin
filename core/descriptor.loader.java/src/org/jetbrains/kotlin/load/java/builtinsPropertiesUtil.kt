@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 private val BUILTIN_SPECIAL_PROPERTIES_FQ_NAMES = setOf(FqName("kotlin.Collection.size"), FqName("kotlin.Map.size"))
 private val BUILTIN_SPECIAL_PROPERTIES_SHORT_NAMES = BUILTIN_SPECIAL_PROPERTIES_FQ_NAMES.map { it.shortName() }.toSet()
@@ -61,35 +60,26 @@ private fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it
 
 val Name.isBuiltinSpecialPropertyName: Boolean get() = this in BUILTIN_SPECIAL_PROPERTIES_SHORT_NAMES
 
-private val CallableDescriptor.builtinSpecialPropertyAccessorName: String?
-    get() = when(this) {
-        is PropertyAccessorDescriptor -> correspondingProperty.check { it.hasBuiltinSpecialPropertyFqName() }?.name?.asString()
-        else -> null
-    }
+public val CallableMemberDescriptor.builtinSpecialPropertyAccessorName: String?
+    get() = propertyIfAccessor.check { it.hasBuiltinSpecialPropertyFqName() }?.name?.asString()
 
 @Suppress("UNCHECKED_CAST")
-val <T : CallableDescriptor> T.builtinSpecialOverridden: T? get() {
-    return when (this) {
-        is PropertyAccessorDescriptor -> check { correspondingProperty.hasBuiltinSpecialPropertyFqName() }
-                                         ?: overriddenDescriptors.firstNotNullResult { it.builtinSpecialOverridden } as T?
-        is PropertyDescriptor -> check { hasBuiltinSpecialPropertyFqName() }
-                                 ?: overriddenDescriptors.firstNotNullResult { it.builtinSpecialOverridden } as T?
-        else -> null
-    }
+val <T : CallableMemberDescriptor> T.builtinSpecialOverridden: T? get() {
+    return firstOverridden { it.propertyIfAccessor.hasBuiltinSpecialPropertyFqName() } as T?
 }
 
-fun CallableDescriptor.overridesBuiltinSpecialDeclaration(): Boolean = builtinSpecialOverridden != null
+fun CallableMemberDescriptor.overridesBuiltinSpecialDeclaration(): Boolean = builtinSpecialOverridden != null
 
-public val CallableDescriptor.jvmMethodNameIfSpecial: String?
+public val CallableMemberDescriptor.jvmMethodNameIfSpecial: String?
     get() = builtinOverriddenThatAffectsJvmName?.builtinSpecialPropertyAccessorName
 
-public val CallableDescriptor.builtinOverriddenThatAffectsJvmName: CallableDescriptor?
-    get() = if (hasBuiltinSpecialPropertyFqName() || isFromJava) builtinSpecialOverridden else null
+private val CallableMemberDescriptor.builtinOverriddenThatAffectsJvmName: CallableMemberDescriptor?
+    get() = if (hasBuiltinSpecialPropertyFqName() || original.isFromJava) builtinSpecialOverridden else null
 
-private val CallableDescriptor.isFromJava: Boolean
+private val CallableMemberDescriptor.isFromJava: Boolean
     get() = propertyIfAccessor is JavaCallableMemberDescriptor
 
-private val CallableDescriptor.propertyIfAccessor: CallableDescriptor
+private val CallableMemberDescriptor.propertyIfAccessor: CallableDescriptor
     get() = if (this is PropertyAccessorDescriptor) correspondingProperty else this
 
 val CallableMemberDescriptor.hasErasedValueParametersInJava: Boolean

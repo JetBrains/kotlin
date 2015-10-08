@@ -57,9 +57,19 @@ public class DescriptorFactory {
             @NotNull Annotations annotations,
             boolean isDefault
     ) {
+        return createSetter(propertyDescriptor, annotations, isDefault, propertyDescriptor.getVisibility());
+    }
+
+    @NotNull
+    public static PropertySetterDescriptorImpl createSetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations,
+            boolean isDefault,
+            @NotNull Visibility visibility
+    ) {
         PropertySetterDescriptorImpl setterDescriptor =
                 new PropertySetterDescriptorImpl(propertyDescriptor, annotations, propertyDescriptor.getModality(),
-                                                 propertyDescriptor.getVisibility(), !isDefault, isDefault,
+                                                 visibility, !isDefault, isDefault,
                                                  CallableMemberDescriptor.Kind.DECLARATION, null, propertyDescriptor.getSource());
         setterDescriptor.initializeDefault();
         return setterDescriptor;
@@ -78,9 +88,18 @@ public class DescriptorFactory {
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations,
             boolean isDefault) {
+        return createGetter(propertyDescriptor, annotations, isDefault, propertyDescriptor.getSource());
+    }
+
+    @NotNull
+    public static PropertyGetterDescriptorImpl createGetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations,
+            boolean isDefault,
+            @NotNull SourceElement sourceElement) {
         return new PropertyGetterDescriptorImpl(propertyDescriptor, annotations, propertyDescriptor.getModality(),
                                                 propertyDescriptor.getVisibility(), !isDefault, isDefault,
-                                                CallableMemberDescriptor.Kind.DECLARATION, null, propertyDescriptor.getSource());
+                                                CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement);
     }
 
     @NotNull

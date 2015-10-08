@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java
+package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
-import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 
-class FieldOverridabilityCondition : ExternalOverridabilityCondition {
-    override fun isOverridable(superDescriptor: CallableDescriptor, subDescriptor: CallableDescriptor): Boolean {
-        if (subDescriptor !is PropertyDescriptor || superDescriptor !is PropertyDescriptor) return true
 
-        return subDescriptor.isJavaField == superDescriptor.isJavaField
-    }
-}
+// Currently getter is null iff it's loaded from Java field
+public val PropertyDescriptor.isJavaField: Boolean
+    get() = getter == null

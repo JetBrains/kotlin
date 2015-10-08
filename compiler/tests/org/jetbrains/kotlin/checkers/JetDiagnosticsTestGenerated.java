@@ -9087,6 +9087,39 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/j+k/properties")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Properties extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInProperties() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/properties"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("interface.kt")
+                public void testInterface() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/properties/interface.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("isName.kt")
+                public void testIsName() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/properties/isName.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("val.kt")
+                public void testVal() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/properties/val.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("var.kt")
+                public void testVar() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/properties/var.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/j+k/types")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

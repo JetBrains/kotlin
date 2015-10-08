@@ -62,28 +62,10 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
         }
 
         fun propertyNameByGetMethodName(methodName: Name): Name?
-                = propertyNameFromAccessorMethodName(methodName, "get") ?: propertyNameFromAccessorMethodName(methodName, "is", removePrefix = false)
+                = org.jetbrains.kotlin.load.java.propertyNameByGetMethodName(methodName)
 
         fun propertyNameBySetMethodName(methodName: Name, withIsPrefix: Boolean): Name?
-                = propertyNameFromAccessorMethodName(methodName, "set", addPrefix = if (withIsPrefix) "is" else null)
-
-        private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String, removePrefix: Boolean = true, addPrefix: String? = null): Name? {
-            if (methodName.isSpecial()) return null
-            val identifier = methodName.getIdentifier()
-            if (!identifier.startsWith(prefix)) return null
-            if (identifier.length() == prefix.length()) return null
-            if (identifier[prefix.length()] in 'a'..'z') return null
-
-            if (addPrefix != null) {
-                assert(removePrefix)
-                return Name.identifier(addPrefix + identifier.removePrefix(prefix))
-            }
-
-            if (!removePrefix) return methodName
-            val name = identifier.removePrefix(prefix).decapitalizeSmart(asciiOnly = true)
-            if (!Name.isValidIdentifier(name)) return null
-            return Name.identifier(name)
-        }
+                = org.jetbrains.kotlin.load.java.propertyNameBySetMethodName(methodName, withIsPrefix)
     }
 }
 
