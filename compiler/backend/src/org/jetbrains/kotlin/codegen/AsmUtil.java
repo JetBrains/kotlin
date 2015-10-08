@@ -905,12 +905,11 @@ public class AsmUtil {
     }
 
     public static void wrapJavaClassIntoKClass(@NotNull InstructionAdapter v) {
-        v.invokestatic(REFLECTION, "foreignKotlinClass", Type.getMethodDescriptor(K_CLASS_TYPE, getType(Class.class)), false);
+        v.invokestatic(REFLECTION, "getOrCreateKotlinClass", Type.getMethodDescriptor(K_CLASS_TYPE, getType(Class.class)), false);
     }
 
-
     public static void wrapJavaClassesIntoKClasses(@NotNull InstructionAdapter v) {
-        v.invokestatic(REFLECTION, "foreignKotlinClasses", Type.getMethodDescriptor(K_CLASS_ARRAY_TYPE, getType(Class[].class)), false);
+        v.invokestatic(REFLECTION, "getOrCreateKotlinClasses", Type.getMethodDescriptor(K_CLASS_ARRAY_TYPE, getType(Class[].class)), false);
     }
 
     public static int getReceiverIndex(@NotNull CodegenContext context, @NotNull CallableMemberDescriptor descriptor) {

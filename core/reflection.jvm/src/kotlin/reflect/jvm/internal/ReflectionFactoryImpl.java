@@ -41,8 +41,8 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     }
 
     @Override
-    public KClass foreignKotlinClass(Class javaClass) {
-        return InternalPackage.foreignKotlinClass(javaClass);
+    public KClass getOrCreateKotlinClass(Class javaClass) {
+        return InternalPackage.getOrCreateKotlinClass(javaClass);
     }
 
     // Functions
@@ -84,5 +84,12 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
         // TODO: support member extension property references
         return p;
+    }
+
+    // Deprecated
+
+    @Override
+    public KClass foreignKotlinClass(Class javaClass) {
+        return getOrCreateKotlinClass(javaClass);
     }
 }
