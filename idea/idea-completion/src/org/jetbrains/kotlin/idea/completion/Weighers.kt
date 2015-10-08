@@ -48,7 +48,7 @@ class NotImportedWeigher(private val classifier: ImportableFqNameClassifier) : L
         notToBeUsedInKotlin
     }
 
-    override fun weigh(element: LookupElement): Weight {
+    override fun weigh(element: LookupElement): Comparable<*> {
         if (element.getUserData(NOT_IMPORTED_KEY) == null) return Weight.default
         val o = element.`object` as? DeclarationLookupObject
         val fqName = o?.importableFqName ?: return Weight.default
@@ -69,7 +69,7 @@ class ImportedWeigher(private val classifier: ImportableFqNameClassifier) : Look
         allUnderImport
     }
 
-    override fun weigh(element: LookupElement): Weight? {
+    override fun weigh(element: LookupElement): Comparable<*>? {
         val o = element.`object` as? DeclarationLookupObject
         val fqName = o?.importableFqName ?: return null
         return when (classifier.classify(fqName, o is PackageLookupObject)) {
