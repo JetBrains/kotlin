@@ -20,8 +20,8 @@ public interface HalfSubstitutedTypeParameters {
         public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
         public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: kotlin.Collection<E>): kotlin.Boolean
         public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
-        public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
-        public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+        public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: E): kotlin.Boolean
+        public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
         public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): E
         public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
         public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean

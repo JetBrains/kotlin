@@ -13,8 +13,8 @@ public abstract class Mine</*0*/ T> : java.util.AbstractList<T> {
     public open /*fake_override*/ fun addAll(/*0*/ kotlin.Collection<T!>): kotlin.Boolean
     public open /*fake_override*/ fun addAll(/*0*/ kotlin.Int, /*1*/ kotlin.Collection<T!>): kotlin.Boolean
     public open /*fake_override*/ fun clear(): kotlin.Unit
-    public open /*fake_override*/ fun contains(/*0*/ kotlin.Any?): kotlin.Boolean
-    public open /*fake_override*/ fun containsAll(/*0*/ kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public open /*fake_override*/ fun contains(/*0*/ T!): kotlin.Boolean
+    public open /*fake_override*/ fun containsAll(/*0*/ kotlin.Collection<T!>): kotlin.Boolean
     public abstract /*fake_override*/ fun get(/*0*/ kotlin.Int): T!
     public open /*fake_override*/ fun indexOf(/*0*/ kotlin.Any?): kotlin.Int
     public open /*fake_override*/ fun isEmpty(): kotlin.Boolean

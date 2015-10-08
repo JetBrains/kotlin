@@ -12,8 +12,8 @@ public val y: B<kotlin.String>
     public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<T!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: kotlin.Collection<T!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ o: T!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<T!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ fun get(/*0*/ index: kotlin.Int): T!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -51,8 +51,8 @@ public val y: B<kotlin.String>
     public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<T!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: kotlin.Collection<T!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ o: T!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<T!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): T!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

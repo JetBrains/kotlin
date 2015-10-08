@@ -31,8 +31,8 @@ public final class Foo1 : java.util.ArrayList<kotlin.Int> {
     invisible_fake open override /*1*/ /*fake_override*/ fun batchRemove(/*0*/ p0: kotlin.(Mutable)Collection<*>!, /*1*/ p1: kotlin.Boolean): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Int>): kotlin.Boolean
     invisible_fake open override /*1*/ /*fake_override*/ fun elementData(/*0*/ p0: kotlin.Int): kotlin.Int!
     public open override /*1*/ /*fake_override*/ fun ensureCapacity(/*0*/ p0: kotlin.Int): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun ensureCapacityInternal(/*0*/ p0: kotlin.Int): kotlin.Unit

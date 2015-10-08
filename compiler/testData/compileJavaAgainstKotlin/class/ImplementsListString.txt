@@ -8,8 +8,8 @@ public abstract class Mine : java.util.List<kotlin.String> {
     public abstract /*fake_override*/ fun addAll(/*0*/ kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public abstract /*fake_override*/ fun addAll(/*0*/ kotlin.Int, /*1*/ (kotlin.MutableCollection<out kotlin.String!>..kotlin.Collection<kotlin.String!>?)): kotlin.Boolean
     public abstract /*fake_override*/ fun clear(): kotlin.Unit
-    public abstract /*fake_override*/ fun contains(/*0*/ kotlin.Any?): kotlin.Boolean
-    public abstract /*fake_override*/ fun containsAll(/*0*/ kotlin.Collection<*>): kotlin.Boolean
+    public abstract /*fake_override*/ fun contains(/*0*/ kotlin.String!): kotlin.Boolean
+    public abstract /*fake_override*/ fun containsAll(/*0*/ kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public abstract /*fake_override*/ fun get(/*0*/ kotlin.Int): kotlin.String!
     public abstract /*fake_override*/ fun indexOf(/*0*/ kotlin.Any!): kotlin.Int
     public abstract /*fake_override*/ fun isEmpty(): kotlin.Boolean

@@ -8,8 +8,8 @@ public interface Generic</*0*/ E : My> {
 
 public interface His : kotlin.List<My> {
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: My): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<My>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): My
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
