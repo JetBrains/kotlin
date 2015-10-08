@@ -268,7 +268,7 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> CYCLIC_GENERIC_UPPER_BOUND = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<JetTypeParameter> MISPLACED_TYPE_PARAMETER_CONSTRAINTS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeParameter> MISPLACED_TYPE_PARAMETER_CONSTRAINTS = DiagnosticFactory0.create(WARNING);
 
     // Members
 
