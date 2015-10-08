@@ -183,7 +183,7 @@ class ParameterNameAndTypeCompletion(
                 = lookupElementFactory.createLookupElementForType(type)
     }
 
-    private data class MyLookupElement private constructor(
+    private class MyLookupElement private constructor(
             private val userPrefix: String,
             private val nameSuggestion: String,
             private val type: Type,
