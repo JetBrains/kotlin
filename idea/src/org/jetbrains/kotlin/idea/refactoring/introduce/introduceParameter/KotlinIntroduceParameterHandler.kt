@@ -29,6 +29,7 @@ import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer
 import com.intellij.refactoring.listeners.RefactoringEventListener
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -222,12 +223,7 @@ public open class KotlinIntroduceParameterHandler(
         }
 
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, targetParent]
-        val functionDescriptor: FunctionDescriptor =
-                when (descriptor) {
-                    is FunctionDescriptor -> descriptor : FunctionDescriptor
-                    is ClassDescriptor -> descriptor.getUnsubstitutedPrimaryConstructor()
-                    else -> null
-                } ?: throw AssertionError("Unexpected element type: ${targetParent.getElementTextWithContext()}")
+        val functionDescriptor = descriptor.toFunctionDescriptor(targetParent)
         val replacementType = expressionType.approximateWithResolvableType(targetParent.getResolutionScope(context, targetParent.getResolutionFacade()), false)
 
         val body = when (targetParent) {
@@ -354,6 +350,19 @@ public open class KotlinIntroduceParameterHandler(
     }
 }
 
+private fun DeclarationDescriptor?.toFunctionDescriptor(targetParent: JetNamedDeclaration): FunctionDescriptor {
+    val functionDescriptor: FunctionDescriptor? =
+            when (this) {
+                is FunctionDescriptor -> this
+                is ClassDescriptor -> this.getUnsubstitutedPrimaryConstructor()
+                else -> null
+            }
+    if (functionDescriptor == null) {
+        throw AssertionError("Unexpected element type: ${targetParent.getElementTextWithContext()}")
+    }
+    return functionDescriptor
+}
+
 private fun findInternalUsagesOfParametersAndReceiver(
         targetParent: JetNamedDeclaration,
         targetDescriptor: FunctionDescriptor
@@ -413,12 +422,7 @@ public open class KotlinIntroduceLambdaParameterHandler(
         ): KotlinIntroduceParameterDialog {
             val callable = lambdaExtractionDescriptor.extractionData.targetSibling as JetNamedDeclaration
             val descriptor = callable.resolveToDescriptor()
-            val callableDescriptor: FunctionDescriptor =
-                    when (descriptor) {
-                        is FunctionDescriptor -> descriptor : FunctionDescriptor
-                        is ClassDescriptor -> descriptor.getUnsubstitutedPrimaryConstructor()
-                        else -> null
-                    } ?: throw AssertionError("Unexpected element type: ${callable.getElementTextWithContext()}")
+            val callableDescriptor = descriptor.toFunctionDescriptor(callable)
             val originalRange = lambdaExtractionDescriptor.extractionData.originalRange
             val introduceParameterDescriptor = IntroduceParameterDescriptor(
                     originalRange = originalRange,

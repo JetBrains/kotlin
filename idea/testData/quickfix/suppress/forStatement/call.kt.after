@@ -2,7 +2,7 @@
 
 fun foo() {
     @Suppress("REDUNDANT_NULLABLE")
-    call("": String?<caret>?)
+    call("" as String??)
 }
 
 fun call(s: String?) {}

@@ -6413,12 +6413,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("changeFunctionParameterType5.kt")
-            public void testChangeFunctionParameterType5() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/parameterTypeMismatch/changeFunctionParameterType5.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("changeParameterTypeLongNameRuntime.kt")
             public void testChangeParameterTypeLongNameRuntime() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/parameterTypeMismatch/changeParameterTypeLongNameRuntime.kt");
@@ -6497,12 +6491,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("propertyGetterInitializerTypeMismatch.kt")
             public void testPropertyGetterInitializerTypeMismatch() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/propertyGetterInitializerTypeMismatch.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("returnedExpresionCantEvaluateToExpresionThatTypeMismatch.kt")
-            public void testReturnedExpresionCantEvaluateToExpresionThatTypeMismatch() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/returnedExpresionCantEvaluateToExpresionThatTypeMismatch.kt");
                 doTest(fileName);
             }
 

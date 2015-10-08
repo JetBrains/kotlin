@@ -116,13 +116,14 @@ public class DelegationTranslator(
             val delegateRefName = context().getScopeForDescriptor(getterDescriptor).declareName(delegateName)
             val delegateRef = JsNameRef(delegateRefName, JsLiteral.THIS)
 
-            val returnExpression: JsExpression = if (DescriptorUtils.isExtension(descriptor)) { // TODO remove explicit type specification after resolving KT-5569
+            val returnExpression: JsExpression = if (DescriptorUtils.isExtension(descriptor)) {
                 val getterName = context().getNameForDescriptor(getterDescriptor)
                 val receiver = Namer.getReceiverParameterName()
                 JsInvocation(JsNameRef(getterName, delegateRef), JsNameRef(receiver))
             }
             else {
-                JsNameRef(propertyName, delegateRef)
+                @Suppress("USELESS_CAST")
+                (JsNameRef(propertyName, delegateRef) as JsExpression)  // TODO remove explicit type specification after resolving KT-5569
             }
 
             val jsFunction = simpleReturnFunction(context().getScopeForDescriptor(getterDescriptor.getContainingDeclaration()), returnExpression)
