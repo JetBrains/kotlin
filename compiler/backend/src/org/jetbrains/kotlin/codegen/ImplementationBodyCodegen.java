@@ -1001,6 +1001,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             InstructionAdapter v = createOrGetClInitCodegen().v;
             v.anew(classAsmType);
             v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
+            if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+                //We should load containing class to initialize companion fields
+                StackValue companion = StackValue.singletonForCompanion(descriptor, typeMapper);
+                companion.put(companion.type, v);
+                AsmUtil.pop(v, companion.type);
+            }
             return;
         }
 
