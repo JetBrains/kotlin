@@ -14,8 +14,9 @@ class D() {
   companion object : A(), B {}
 }
 
-class Test1<T : A>()
+class Test1<T>()
   where
+    T : A,
     T : B,
     <error>B</error> : T // error
   {
@@ -41,10 +42,11 @@ class Bar<T : <warning>Foo</warning>>
 class Buzz<T> where T : <warning>Bar<<error>Int</error>></warning>, T : <error>nioho</error>
 
 class X<T : <warning>Foo</warning>>
-class Y<<error>T</error> : <warning>Foo</warning>> where T : <warning>Bar<Foo></warning>
+class Y<<error>T</error>> where T :  <warning>Foo</warning>, T : <warning>Bar<Foo></warning>
 
-fun <T : A> test2(t : T)
+fun <T> test2(t : T)
   where
+    T : A,
     T : B,
     <error>B</error> : T
 {
