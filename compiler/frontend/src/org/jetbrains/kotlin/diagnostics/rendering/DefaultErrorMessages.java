@@ -214,12 +214,7 @@ public class DefaultErrorMessages {
         MAP.put(DELEGATED_PROPERTY_IN_INTERFACE, "Delegated properties are not allowed in interfaces");
         MAP.put(LOCAL_VARIABLE_WITH_DELEGATE, "Local variables are not allowed to have delegates");
 
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier is allowed only on member properties with a backing field");
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_IMMUTABLE, "''lateinit'' modifier is allowed only on mutable properties");
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_ABSTRACT_PROPERTY, "''lateinit'' modifier is not allowed on abstract properties");
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_PRIMARY_CONSTRUCTOR_PARAMETER, "''lateinit'' modifier is not allowed on primary constructor parameters");
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE, "''lateinit'' modifier is not allowed on nullable properties");
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE, "''lateinit'' modifier is not allowed on primitive type properties");
+        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier {0}", STRING);
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
         MAP.put(PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR, "Private setter is not allowed on non-private lateinit property");
