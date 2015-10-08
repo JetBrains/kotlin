@@ -457,11 +457,11 @@ private fun copyModifierListItems(from: PsiModifierList, to: PsiModifierList, wi
     }
 }
 
-private fun copyTypeParameters<T: PsiTypeParameterListOwner>(
+private fun copyTypeParameters<T>(
         from: T,
         to: T,
         inserter: (T, PsiTypeParameterList) -> Unit
-) where T : PsiNameIdentifierOwner {
+) where T : PsiTypeParameterListOwner, T : PsiNameIdentifierOwner {
     val factory = PsiElementFactory.SERVICE.getInstance((from : PsiElement).getProject())
     val templateTypeParams = from.getTypeParameterList()?.getTypeParameters() ?: PsiTypeParameter.EMPTY_ARRAY
     if (templateTypeParams.isNotEmpty()) {
