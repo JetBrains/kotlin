@@ -5,4 +5,4 @@ class Foo {
 
 // TESTED_OBJECT_KIND: function
 // TESTED_OBJECTS: Foo$Test, <init>
-// FLAGS:
+// FLAGS: ACC_PRIVATE

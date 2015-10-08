@@ -17,5 +17,5 @@ public final class A {
 
     public final int f() { /* compiled code */ }
 
-    A() { /* compiled code */ }
+    private A() { /* compiled code */ }
 }

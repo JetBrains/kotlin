@@ -365,7 +365,7 @@ public class AsmUtil {
 
         // the following code is only for PRIVATE visibility of member
         if (memberDescriptor instanceof ConstructorDescriptor) {
-            if (isNonCompanionObject(containingDeclaration) || isEnumEntry(containingDeclaration)) {
+            if (isEnumEntry(containingDeclaration)) {
                 return NO_FLAG_PACKAGE_PRIVATE;
             }
             if (isEnumClass(containingDeclaration)) {
