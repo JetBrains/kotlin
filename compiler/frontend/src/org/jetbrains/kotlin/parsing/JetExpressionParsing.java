@@ -1074,7 +1074,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 //   {a -> ...}
                 //   {a, b -> ...}
                 PsiBuilder.Marker rollbackMarker = mark();
-                boolean preferParamsToExpressions = (lookahead(1) == COMMA);
+                IElementType nextToken = lookahead(1);
+                boolean preferParamsToExpressions = (nextToken == COMMA || nextToken == COLON);
                 parseFunctionLiteralShorthandParameterList();
 
                 paramsFound = preferParamsToExpressions ?
@@ -1710,6 +1711,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 while (true) {
                     while (at(COMMA)) errorAndAdvance("Expecting an argument");
                     parseValueArgument();
+                    if (at(COLON) && lookahead(1) == IDENTIFIER) {
+                        errorAndAdvance("Unexpected type specification", 2);
+                    }
                     if (!at(COMMA)) break;
                     advance(); // COMMA
                     if (at(RPAR)) {

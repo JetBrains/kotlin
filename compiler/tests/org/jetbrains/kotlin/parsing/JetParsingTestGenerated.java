@@ -451,6 +451,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("IncompleteFunctionLiteral.kt")
+        public void testIncompleteFunctionLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/IncompleteFunctionLiteral.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Inner.kt")
         public void testInner() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Inner.kt");
