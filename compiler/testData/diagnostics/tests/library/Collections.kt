@@ -3,7 +3,7 @@ package collections
 fun <T> testCollection(c: Collection<T>, t: T) {
     c.size
     c.isEmpty()
-    c.contains(1)
+    c.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
     val <!UNUSED_VARIABLE!>iterator<!>: Iterator<T> = c.iterator()
     c.containsAll(c)
 
@@ -19,7 +19,7 @@ fun <T> testCollection(c: Collection<T>, t: T) {
 fun <T> testMutableCollection(c: MutableCollection<T>, t: T) {
     c.size
     c.isEmpty()
-    c.contains(1)
+    c.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
     val <!UNUSED_VARIABLE!>iterator<!>: Iterator<T> = c.iterator()
     c.containsAll(c)
 
@@ -61,7 +61,7 @@ fun <T> testMutableList(l: MutableList<T>, t: T) {
 fun <T> testSet(s: Set<T>, t: T) {
     s.size
     s.isEmpty()
-    s.contains(1)
+    s.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
     val <!UNUSED_VARIABLE!>iterator<!>: Iterator<T> = s.iterator()
     s.containsAll(s)
 
@@ -77,7 +77,7 @@ fun <T> testSet(s: Set<T>, t: T) {
 fun <T> testMutableSet(s: MutableSet<T>, t: T) {
     s.size
     s.isEmpty()
-    s.contains(1)
+    s.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
     val <!UNUSED_VARIABLE!>iterator<!>: Iterator<T> = s.iterator()
     s.containsAll(s)
 

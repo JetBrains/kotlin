@@ -1,9 +1,9 @@
 class MyList: List<String> {
     override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
-    override fun contains(o: Any?): Boolean = false
+    override fun contains(o: String): Boolean = false
     override fun iterator(): Iterator<String> = throw Error()
-    override fun containsAll(c: Collection<Any?>): Boolean = false
+    override fun containsAll(c: Collection<String>): Boolean = false
     override fun get(index: Int): String = throw IndexOutOfBoundsException()
     override fun indexOf(o: Any?): Int = -1
     override fun lastIndexOf(o: Any?): Int = -1

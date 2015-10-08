@@ -1,9 +1,9 @@
 class MyList<T>(val v: T): List<T> {
     override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
-    override fun contains(o: Any?): Boolean = false
+    override fun contains(o: T): Boolean = false
     override fun iterator(): Iterator<T> = throw Error()
-    override fun containsAll(c: Collection<Any?>): Boolean = false
+    override fun containsAll(c: Collection<T>): Boolean = false
     override fun get(index: Int): T = v
     override fun indexOf(o: Any?): Int = -1
     override fun lastIndexOf(o: Any?): Int = -1
