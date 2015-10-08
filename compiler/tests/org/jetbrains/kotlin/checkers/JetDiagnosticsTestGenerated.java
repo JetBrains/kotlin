@@ -12840,6 +12840,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt9430.kt")
+            public void testKt9430() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/kt9430.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoAmbiguityBetweenRootAndPackage.kt")
             public void testNoAmbiguityBetweenRootAndPackage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/NoAmbiguityBetweenRootAndPackage.kt");
