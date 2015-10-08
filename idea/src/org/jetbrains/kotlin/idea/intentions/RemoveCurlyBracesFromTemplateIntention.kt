@@ -20,8 +20,8 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.JetBlockStringTemplateEntry
+import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
 import java.util.regex.Pattern
 
@@ -29,7 +29,7 @@ public class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<
 
 public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBlockStringTemplateEntry>(javaClass(), "Remove curly braces") {
     override fun isApplicableTo(element: JetBlockStringTemplateEntry): Boolean {
-        if (element.getExpression() !is JetSimpleNameExpression) return false
+        if (element.getExpression() !is JetNameReferenceExpression) return false
         val nextSiblingText = element.getNextSibling()?.getText()
         return nextSiblingText == null || !pattern.matcher(nextSiblingText).matches()
     }
@@ -39,7 +39,7 @@ public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingOffsetInde
     }
 
     public fun applyTo(element: JetBlockStringTemplateEntry): JetStringTemplateEntryWithExpression {
-        val name = (element.getExpression() as JetSimpleNameExpression).getReferencedName()
+        val name = (element.getExpression() as JetNameReferenceExpression).getReferencedName()
         val newEntry = JetPsiFactory(element).createSimpleNameStringTemplateEntry(name)
         return element.replaced(newEntry)
     }

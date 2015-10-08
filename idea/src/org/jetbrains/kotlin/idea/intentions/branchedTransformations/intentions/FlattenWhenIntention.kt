@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class FlattenWhenIntention : JetSelfTargetingIntention<JetWhenExpression>(javaClass(), "Flatten 'when' expression") {
     override fun isApplicableTo(element: JetWhenExpression, caretOffset: Int): Boolean {
         val subject = element.getSubjectExpression()
-        if (subject != null && subject !is JetSimpleNameExpression) return false
+        if (subject != null && subject !is JetNameReferenceExpression) return false
 
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(element)) return false
 

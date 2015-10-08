@@ -23,19 +23,16 @@ import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTargetingOffsetIndependentIntention<JetSimpleNameExpression> (
+public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTargetingOffsetIndependentIntention<JetNameReferenceExpression> (
         javaClass(), "Replace 'it' with explicit parameter"
 ), LowPriorityAction {
-    override fun isApplicableTo(element: JetSimpleNameExpression)
+    override fun isApplicableTo(element: JetNameReferenceExpression)
             = isAutoCreatedItUsage(element)
 
-    override fun applyTo(element: JetSimpleNameExpression, editor: Editor) {
+    override fun applyTo(element: JetNameReferenceExpression, editor: Editor) {
         val target = element.mainReference.resolveToDescriptors(element.analyze()).single()
 
         val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as JetFunctionLiteral

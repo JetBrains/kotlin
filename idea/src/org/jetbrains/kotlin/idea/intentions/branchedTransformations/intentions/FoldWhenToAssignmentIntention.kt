@@ -21,7 +21,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.*
-import java.util.ArrayList
+import java.util.*
 
 public class FoldWhenToAssignmentIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Replace 'when' expression with assignment") {
     override fun applicabilityRange(element: JetWhenExpression): TextRange? {
@@ -53,7 +53,7 @@ public class FoldWhenToAssignmentIntention : JetSelfTargetingRangeIntention<JetW
         val firstAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getEntries().get(0).getExpression()!!)!!
 
         val op = firstAssignment.getOperationReference().getText()
-        val lhs = firstAssignment.getLeft() as JetSimpleNameExpression
+        val lhs = firstAssignment.getLeft() as JetNameReferenceExpression
 
         val assignment = JetPsiFactory(element).createExpressionByPattern("$0 $1 $2", lhs, op, element)
         val newWhenExpression = (assignment as JetBinaryExpression).getRight() as JetWhenExpression

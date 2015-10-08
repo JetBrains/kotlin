@@ -109,7 +109,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
                 }
             }
 
-            is JetSimpleNameExpression ->
+            is JetNameReferenceExpression ->
                 "$" + (if (forceBraces) "{$expressionText}" else expressionText)
 
             null -> ""

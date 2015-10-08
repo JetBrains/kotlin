@@ -21,11 +21,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.unpackFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Move lambda argument out of parentheses") {
@@ -36,7 +37,7 @@ public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<J
         val functionLiteral = expression.unpackFunctionLiteral() ?: return false
 
         val callee = element.getCalleeExpression()
-        if (callee is JetSimpleNameExpression) {
+        if (callee is JetNameReferenceExpression) {
             val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
             val targets = bindingContext[BindingContext.REFERENCE_TARGET, callee]?.let { listOf(it) }
                           ?: bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, callee]

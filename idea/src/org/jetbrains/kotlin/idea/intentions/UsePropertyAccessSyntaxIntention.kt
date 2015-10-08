@@ -78,7 +78,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
     public fun detectPropertyNameToUse(callExpression: JetCallExpression): Name? {
         if (callExpression.getQualifiedExpressionForSelector()?.getReceiverExpression() is JetSuperExpression) return null // cannot call extensions on "super"
 
-        val callee = callExpression.getCalleeExpression() as? JetSimpleNameExpression ?: return null
+        val callee = callExpression.getCalleeExpression() as? JetNameReferenceExpression ?: return null
 
         val resolutionFacade = callExpression.getResolutionFacade()
         val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)

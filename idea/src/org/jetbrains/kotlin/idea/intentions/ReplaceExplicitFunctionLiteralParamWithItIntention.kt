@@ -27,13 +27,13 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseIntentionAction() {
     override fun getFamilyName() = "Replace explicit lambda parameter with 'it'"
@@ -56,9 +56,9 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
     }
 
     private fun targetFunctionLiteral(element: PsiElement, caretOffset: Int): JetFunctionLiteral? {
-        val expression = element.getParentOfType<JetSimpleNameExpression>(true)
+        val expression = element.getParentOfType<JetNameReferenceExpression>(true)
         if (expression != null) {
-            val target = expression.mainReference.resolveToDescriptors(expression.analyze())
+            val target = expression.mainReference.resolveToDescriptors(expression.analyze(BodyResolveMode.PARTIAL))
                                  .singleOrNull() as? ParameterDescriptor ?: return null
             val functionDescriptor = target.getContainingDeclaration() as? AnonymousFunctionDescriptor ?: return null
             return DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? JetFunctionLiteral

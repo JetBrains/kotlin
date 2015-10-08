@@ -17,23 +17,22 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 val NULL_PTR_EXCEPTION_FQ = "java.lang.NullPointerException"
 val KOTLIN_NULL_PTR_EXCEPTION_FQ = "kotlin.KotlinNullPointerException"
@@ -68,8 +67,9 @@ fun JetThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
     val thrownExpression = this.getThrownExpression()
     if (thrownExpression !is JetCallExpression) return false
 
-    val context = this.analyze()
-    val descriptor = context.get(BindingContext.REFERENCE_TARGET, thrownExpression.getCalleeExpression() as JetSimpleNameExpression)
+    val context = this.analyze(BodyResolveMode.PARTIAL)
+    val nameExpression = thrownExpression.calleeExpression as? JetNameReferenceExpression ?: return false
+    val descriptor = context[BindingContext.REFERENCE_TARGET, nameExpression]
     val declDescriptor = descriptor?.getContainingDeclaration() ?: return false
 
     val exceptionName = DescriptorUtils.getFqName(declDescriptor).asString()
@@ -104,7 +104,7 @@ fun JetIfExpression.introduceValueForCondition(occurrenceInThenClause: JetExpres
                                                  null)
 }
 
-fun JetSimpleNameExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor) {
+fun JetNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor) {
     val declaration = this.mainReference.resolve() as? JetProperty ?: return
 
     val enclosingElement = JetPsiUtil.getEnclosingElementForLocalDeclaration(declaration)
@@ -120,15 +120,15 @@ fun JetSimpleNameExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(edi
 }
 
 fun JetSafeQualifiedExpression.inlineReceiverIfApplicableWithPrompt(editor: Editor) {
-    (this.getReceiverExpression() as? JetSimpleNameExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
+    (this.getReceiverExpression() as? JetNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
 fun JetBinaryExpression.inlineLeftSideIfApplicableWithPrompt(editor: Editor) {
-    (this.getLeft() as? JetSimpleNameExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
+    (this.getLeft() as? JetNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
 fun JetPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Editor) {
-    (this.getBaseExpression() as? JetSimpleNameExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
+    (this.getBaseExpression() as? JetNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
 fun JetExpression.isStableVariable(): Boolean {

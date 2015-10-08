@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.core.replaced
 
 fun JetWhenCondition.toExpression(subject: JetExpression?): JetExpression {
     val factory = JetPsiFactory(this)
@@ -58,7 +58,7 @@ public fun JetWhenExpression.getSubjectToIntroduce(): JetExpression?  {
         for (condition in conditions) {
             if (condition !is JetWhenConditionWithExpression) return null
 
-            val candidate = condition.getExpression()?.getWhenConditionSubjectCandidate() as? JetSimpleNameExpression ?: return null
+            val candidate = condition.getExpression()?.getWhenConditionSubjectCandidate() as? JetNameReferenceExpression ?: return null
 
             if (lastCandidate == null) {
                 lastCandidate = candidate
@@ -82,7 +82,7 @@ private fun JetExpression?.getWhenConditionSubjectCandidate(): JetExpression? {
             val op = getOperationToken()
             when (op) {
                 JetTokens.IN_KEYWORD, JetTokens.NOT_IN -> lhs
-                JetTokens.EQEQ -> lhs as? JetSimpleNameExpression ?: getRight()
+                JetTokens.EQEQ -> lhs as? JetNameReferenceExpression ?: getRight()
                 else -> null
             }
 

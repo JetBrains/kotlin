@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 
 public class ReplaceWithOperatorAssignmentInspection : IntentionBasedInspection<JetBinaryExpression>(ReplaceWithOperatorAssignmentIntention())
@@ -35,14 +35,14 @@ public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetInde
 
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
         if (element.getOperationToken() != JetTokens.EQ) return false
-        val left = element.getLeft() as? JetSimpleNameExpression ?: return false
+        val left = element.getLeft() as? JetNameReferenceExpression ?: return false
         val right = element.getRight() as? JetBinaryExpression ?: return false
         if (right.getLeft() == null || right.getRight() == null) return false
 
         return checkExpressionRepeat(left, right)
     }
 
-    private fun checkExpressionRepeat(variableExpression: JetSimpleNameExpression, expression: JetBinaryExpression): Boolean {
+    private fun checkExpressionRepeat(variableExpression: JetNameReferenceExpression, expression: JetBinaryExpression): Boolean {
         val context = expression.analyze()
         val descriptor = context[BindingContext.REFERENCE_TARGET, expression.getOperationReference()]?.getContainingDeclaration()
         val isPrimitiveOperation = descriptor is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(descriptor.getDefaultType())
@@ -81,14 +81,14 @@ public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetInde
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
         val replacement = buildOperatorAssignmentText(
-                element.getLeft() as JetSimpleNameExpression,
+                element.getLeft() as JetNameReferenceExpression,
                 element.getRight() as JetBinaryExpression,
                 ""
         )
         element.replace(JetPsiFactory(element).createExpression(replacement))
     }
 
-    tailrec private fun buildOperatorAssignmentText(variableExpression: JetSimpleNameExpression, expression: JetBinaryExpression, tail: String): String {
+    tailrec private fun buildOperatorAssignmentText(variableExpression: JetNameReferenceExpression, expression: JetBinaryExpression, tail: String): String {
         val operationText = expression.getOperationReference().getText()
         val variableName = variableExpression.getText()
 
