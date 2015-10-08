@@ -23,11 +23,7 @@ public class ReflectionFactory {
         return new ClassReference(javaClass);
     }
 
-    public KPackage createKotlinPackage(Class javaClass) {
-        return null;
-    }
-
-    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
+    public KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
         return null;
     }
 
@@ -72,5 +68,10 @@ public class ReflectionFactory {
     @Deprecated
     public KClass foreignKotlinClass(Class javaClass) {
         return new ClassReference(javaClass);
+    }
+
+    @Deprecated
+    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
+        return null;
     }
 }

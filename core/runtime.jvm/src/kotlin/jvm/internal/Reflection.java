@@ -45,12 +45,8 @@ public class Reflection {
         return factory.createKotlinClass(javaClass);
     }
 
-    public static KPackage createKotlinPackage(Class javaClass) {
-        return factory.createKotlinPackage(javaClass);
-    }
-
-    public static KPackage createKotlinPackage(Class javaClass, String moduleName) {
-        return factory.createKotlinPackage(javaClass, moduleName);
+    public static KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
+        return factory.getOrCreateKotlinPackage(javaClass, moduleName);
     }
 
     public static KClass getOrCreateKotlinClass(Class javaClass) {
@@ -100,6 +96,11 @@ public class Reflection {
     }
 
     // Deprecated
+
+    @Deprecated
+    public static KPackage createKotlinPackage(Class javaClass, String moduleName) {
+        return (KPackage) factory.getOrCreateKotlinPackage(javaClass, moduleName);
+    }
 
     @Deprecated
     public static KClass foreignKotlinClass(Class javaClass) {
