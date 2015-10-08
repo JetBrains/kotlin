@@ -145,7 +145,7 @@ class ParameterNameAndTypeCompletion(
                 val lookupElement = MyLookupElement.create(parameterName, type, lookupElementFactory)
                 if (lookupElement != null) {
                     lookupElement.putUserData(PRIORITY_KEY, userPrefix.length()) // suggestions with longer user prefix get lower priority
-                    collector.addElement(lookupElement, notImported = notImported)
+                    collector.addElement(lookupElement, notImported)
                     suggestionsByTypesAdded.add(type)
                 }
             }
