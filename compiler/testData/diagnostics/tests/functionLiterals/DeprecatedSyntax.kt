@@ -15,7 +15,7 @@ val parenthesizedParameters2 = { (<!UNRESOLVED_REFERENCE!>b<!>) <!SYNTAX!>-><!> 
 val none = { -> }
 
 
-val parameterWithFunctionType = { <!UNRESOLVED_REFERENCE!>a<!><!SYNTAX!>: ((Int) -> Int) -><!> } // todo fix parser
+val parameterWithFunctionType = { a: ((Int) -> Int) -> <!SYNTAX!><!>} // todo fix parser
 
 val newSyntax = { a: Int -> }
 val newSyntax1 = { <!CANNOT_INFER_PARAMETER_TYPE!>a<!>, <!CANNOT_INFER_PARAMETER_TYPE!>b<!> -> }

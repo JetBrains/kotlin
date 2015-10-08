@@ -12,11 +12,11 @@ Supertype (23: 23) companion object: Server() {
 Supertype (28: 22) object ClientObject: Server() {
 Supertype (5: 43) class Client(name: String = Server.NAME): Server() {
 Target type of 'is' operation (48: 12) is Server -> println("Server!")
-Target type of 'is' operation (50: 24) return if (this is Server) this: Server else this as? Server
+Target type of 'is' operation (50: 24) return if (this is Server) this as Server else this as? Server
 Type parameter (32: 25) class Servers: Iterator<Server> {
 Type parameter (36: 14) fun Iterator<Server>.f(p: Iterator<Server>): Iterator<Server> = this
 Type parameter (36: 36) fun Iterator<Server>.f(p: Iterator<Server>): Iterator<Server> = this
 Type parameter (36: 55) fun Iterator<Server>.f(p: Iterator<Server>): Iterator<Server> = this
-Usage in cast target type (50: 38) return if (this is Server) this: Server else this as? Server
-Usage in cast target type (50: 59) return if (this is Server) this: Server else this as? Server
+Usage in cast target type (50: 40) return if (this is Server) this as Server else this as? Server
+Usage in cast target type (50: 61) return if (this is Server) this as Server else this as? Server
 Usage in import (3: 15) import server.Server

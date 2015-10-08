@@ -3,12 +3,12 @@ package b
 import a.Outer
 
 public class KOuter: Outer() {
-    public inner class X(bar: String? = (this@KOuter : Outer).A().bar): Outer.A() {
-        var next: Outer.A? = (this@KOuter : Outer).A()
-        val myBar: String? = (this@KOuter : Outer).A().bar
+    public inner class X(bar: String? = (this@KOuter as Outer).A().bar): Outer.A() {
+        var next: Outer.A? = (this@KOuter as Outer).A()
+        val myBar: String? = (this@KOuter as Outer).A().bar
 
         init {
-            (this@KOuter : Outer).A().bar = ""
+            (this@KOuter as Outer).A().bar = ""
         }
 
         fun foo(a: Outer.A) {

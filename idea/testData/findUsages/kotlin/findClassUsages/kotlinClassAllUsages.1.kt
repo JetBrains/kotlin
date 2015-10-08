@@ -47,5 +47,5 @@ fun Any.asServer(): Server? {
     when (this) {
         is Server -> println("Server!")
     }
-    return if (this is Server) this: Server else this as? Server
+    return if (this is Server) this as Server else this as? Server
 }

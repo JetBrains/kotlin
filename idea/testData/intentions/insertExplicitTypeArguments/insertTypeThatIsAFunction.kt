@@ -1,6 +1,6 @@
 // IS_APPLICABLE: true
 fun foo() {
-    <caret>bar({ 2 * it } as (Int) -> Int)
+    <caret>bar({ i: Int -> 2 * i })
 }
 
 fun bar<T>(t: T): Int = 1

@@ -6,7 +6,7 @@ public val newSyntax2: (kotlin.Int, kotlin.Int) -> kotlin.Unit
 public val newSyntax3: (???, kotlin.Int) -> kotlin.Unit
 public val newSyntax4: (kotlin.Int, ???) -> kotlin.Unit
 public val none: () -> kotlin.Unit
-public val parameterWithFunctionType: () -> ???
+public val parameterWithFunctionType: (((kotlin.Int) -> kotlin.Int) -> [ERROR : No type element]) -> kotlin.Unit
 public val parenthesizedParameters: () -> ???
 public val parenthesizedParameters2: () -> ???
 public val receiver: () -> ???
