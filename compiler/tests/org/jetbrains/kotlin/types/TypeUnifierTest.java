@@ -74,7 +74,7 @@ public class TypeUnifierTest extends JetLiteFixture {
 
     private TypeParameterDescriptor createTypeVariable(String name) {
         return TypeParameterDescriptorImpl.createWithDefaultBound(
-                builtIns.getBuiltInsModule(), Annotations.EMPTY, false, Variance.INVARIANT,
+                builtIns.getBuiltInsModule(), Annotations.Companion.getEMPTY(), false, Variance.INVARIANT,
                 Name.identifier(name), 0);
     }
 

@@ -66,7 +66,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             @NotNull JetType type
     ) {
         return new ValueParameterDescriptorImpl(
-                setterDescriptor, null, 0, Annotations.EMPTY, Name.special("<set-?>"), type, false, null, SourceElement.NO_SOURCE
+                setterDescriptor, null, 0, Annotations.Companion.getEMPTY(), Name.special("<set-?>"), type, false, null, SourceElement.NO_SOURCE
         );
     }
 

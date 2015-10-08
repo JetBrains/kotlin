@@ -187,7 +187,7 @@ public class ManglingUtils {
 
                         if (!hasPrimaryConstructor(classDescriptor)) {
                             ConstructorDescriptorImpl fakePrimaryConstructor =
-                                    ConstructorDescriptorImpl.create(classDescriptor, Annotations.EMPTY, true, SourceElement.NO_SOURCE);
+                                    ConstructorDescriptorImpl.create(classDescriptor, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
                             return CollectionsKt.plus(constructors, fakePrimaryConstructor);
                         }
 

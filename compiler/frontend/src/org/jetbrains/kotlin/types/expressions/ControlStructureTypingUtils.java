@@ -103,11 +103,11 @@ public class ControlStructureTypingUtils {
         Name specialFunctionName = Name.identifierNoValidate("<SPECIAL-FUNCTION-FOR-" + constructionName + "-RESOLVE>");
 
         SimpleFunctionDescriptorImpl function = SimpleFunctionDescriptorImpl.create(
-                moduleDescriptor, Annotations.EMPTY, specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE
+                moduleDescriptor, Annotations.Companion.getEMPTY(), specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE
         );
 
         TypeParameterDescriptor typeParameter = TypeParameterDescriptorImpl.createWithDefaultBound(
-                function, Annotations.EMPTY, false, Variance.INVARIANT,
+                function, Annotations.Companion.getEMPTY(), false, Variance.INVARIANT,
                 Name.identifierNoValidate("<TYPE-PARAMETER-FOR-" + constructionName + "-RESOLVE>"), 0);
 
         JetType type = typeParameter.getDefaultType();
@@ -117,7 +117,7 @@ public class ControlStructureTypingUtils {
         for (int i = 0; i < argumentNames.size(); i++) {
             JetType argumentType = isArgumentNullable.get(i) ? nullableType : type;
             ValueParameterDescriptorImpl valueParameter = new ValueParameterDescriptorImpl(
-                    function, null, i, Annotations.EMPTY, Name.identifier(argumentNames.get(i)),
+                    function, null, i, Annotations.Companion.getEMPTY(), Name.identifier(argumentNames.get(i)),
                     argumentType, false, null, SourceElement.NO_SOURCE
             );
             valueParameters.add(valueParameter);

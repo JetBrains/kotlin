@@ -673,7 +673,7 @@ public abstract class KotlinBuiltIns {
     public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return JetTypeImpl.create(
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 getArray(),
                 false,
                 types
@@ -685,7 +685,7 @@ public abstract class KotlinBuiltIns {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return JetTypeImpl.create(
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 getEnum(),
                 false,
                 types
@@ -857,7 +857,7 @@ public abstract class KotlinBuiltIns {
         for (int i = 0; i < parameterTypes.size(); i++) {
             TypeProjection parameterType = parameterTypes.get(i);
             ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
-                    functionDescriptor, null, i, Annotations.EMPTY,
+                    functionDescriptor, null, i, Annotations.Companion.getEMPTY(),
                     Name.identifier("p" + (i + 1)), parameterType.getType(), false, null, SourceElement.NO_SOURCE
             );
             valueParameters.add(valueParameterDescriptor);

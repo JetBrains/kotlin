@@ -104,7 +104,7 @@ public class SignaturesPropagationData {
     ) {
         JavaMethodDescriptor autoMethodDescriptor = JavaMethodDescriptor.createJavaMethod(
                 containingClass,
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 method.getName(),
                 //TODO: what to do?
                 SourceElement.NO_SOURCE

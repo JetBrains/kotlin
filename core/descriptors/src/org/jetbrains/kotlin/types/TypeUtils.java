@@ -243,7 +243,7 @@ public class TypeUtils {
         TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
         return JetTypeImpl.create(
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 typeConstructor,
                 false,
                 arguments,

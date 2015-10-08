@@ -159,7 +159,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     @Override
     public Annotations getAnnotations() {
         // TODO
-        return Annotations.EMPTY;
+        return Annotations.Companion.getEMPTY();
     }
 
     @Override

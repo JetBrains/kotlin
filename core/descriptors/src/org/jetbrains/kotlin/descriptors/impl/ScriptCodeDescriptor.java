@@ -29,7 +29,7 @@ import java.util.List;
 public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
 
     public ScriptCodeDescriptor(@NotNull ScriptDescriptor containingDeclaration) {
-        super(containingDeclaration, null, Annotations.EMPTY, Name.special("<script-code>"), Kind.DECLARATION, SourceElement.NO_SOURCE);
+        super(containingDeclaration, null, Annotations.Companion.getEMPTY(), Name.special("<script-code>"), Kind.DECLARATION, SourceElement.NO_SOURCE);
     }
 
     public void initialize(

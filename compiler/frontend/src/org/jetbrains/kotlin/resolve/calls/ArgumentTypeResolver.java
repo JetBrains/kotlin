@@ -280,7 +280,7 @@ public class ArgumentTypeResolver {
             return expectedTypeIsUnknown
                    ? functionPlaceholders
                            .createFunctionPlaceholderType(Collections.<JetType>emptyList(), /* hasDeclaredArguments = */ false)
-                   : builtIns.getFunctionType(Annotations.EMPTY, null, Collections.<JetType>emptyList(), DONT_CARE);
+                   : builtIns.getFunctionType(Annotations.Companion.getEMPTY(), null, Collections.<JetType>emptyList(), DONT_CARE);
         }
         List<JetParameter> valueParameters = function.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
@@ -295,7 +295,7 @@ public class ArgumentTypeResolver {
 
         return expectedTypeIsUnknown && isFunctionLiteral
                ? functionPlaceholders.createFunctionPlaceholderType(parameterTypes, /* hasDeclaredArguments = */ true)
-               : builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, returnType);
+               : builtIns.getFunctionType(Annotations.Companion.getEMPTY(), receiverType, parameterTypes, returnType);
     }
 
     @Nullable

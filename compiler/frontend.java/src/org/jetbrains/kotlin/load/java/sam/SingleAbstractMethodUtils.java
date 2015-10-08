@@ -122,7 +122,7 @@ public class SingleAbstractMethodUtils {
         for (ValueParameterDescriptor parameter : valueParameters) {
             parameterTypes.add(parameter.getType());
         }
-        return getBuiltIns(function).getFunctionType(Annotations.EMPTY, null, parameterTypes, returnType);
+        return getBuiltIns(function).getFunctionType(Annotations.Companion.getEMPTY(), null, parameterTypes, returnType);
     }
 
     private static boolean isSamInterface(@NotNull ClassDescriptor klass) {
@@ -157,7 +157,7 @@ public class SingleAbstractMethodUtils {
         assert parameterType != null : "couldn't substitute type: " + parameterTypeUnsubstituted +
                                        ", substitutor = " + typeParameters.substitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
-                result, null, 0, Annotations.EMPTY, Name.identifier("function"), parameterType, false, null, SourceElement.NO_SOURCE);
+                result, null, 0, Annotations.Companion.getEMPTY(), Name.identifier("function"), parameterType, false, null, SourceElement.NO_SOURCE);
 
         JetType returnType = typeParameters.substitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
         assert returnType != null : "couldn't substitute type: " + samInterface.getDefaultType() +

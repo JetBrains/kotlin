@@ -318,7 +318,7 @@ public class CallResolver {
             for (int i = 0; i < parameterNumber; i++) {
                 parameterTypes.add(NO_EXPECTED_TYPE);
             }
-            expectedType = builtIns.getFunctionType(Annotations.EMPTY, null, parameterTypes, context.expectedType);
+            expectedType = builtIns.getFunctionType(Annotations.Companion.getEMPTY(), null, parameterTypes, context.expectedType);
         }
         JetType calleeType = expressionTypingServices.safeGetType(
                 context.scope, calleeExpression, expectedType, context.dataFlowInfo, context.trace);

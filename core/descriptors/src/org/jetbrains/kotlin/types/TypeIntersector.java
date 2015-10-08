@@ -125,7 +125,7 @@ public class TypeIntersector {
             return TypeUtils.makeNullableAsSpecified(resultingTypes.get(0), allNullable);
         }
 
-        TypeConstructor constructor = new IntersectionTypeConstructor(Annotations.EMPTY, resultingTypes);
+        TypeConstructor constructor = new IntersectionTypeConstructor(Annotations.Companion.getEMPTY(), resultingTypes);
 
         JetScope[] scopes = new JetScope[resultingTypes.size()];
         int i = 0;
@@ -135,7 +135,7 @@ public class TypeIntersector {
         }
 
         return JetTypeImpl.create(
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 constructor,
                 allNullable,
                 Collections.<TypeProjection>emptyList(),

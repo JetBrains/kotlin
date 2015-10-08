@@ -395,7 +395,7 @@ public class PropertyCodegen {
     private void generateGetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable JetPropertyAccessor getter) {
         generateAccessor(p, getter, descriptor.getGetter() != null
                                     ? descriptor.getGetter()
-                                    : DescriptorFactory.createDefaultGetter(descriptor, Annotations.EMPTY));
+                                    : DescriptorFactory.createDefaultGetter(descriptor, Annotations.Companion.getEMPTY()));
     }
 
     private void generateSetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable JetPropertyAccessor setter) {
@@ -403,7 +403,7 @@ public class PropertyCodegen {
 
         generateAccessor(p, setter, descriptor.getSetter() != null
                                     ? descriptor.getSetter()
-                                    : DescriptorFactory.createDefaultSetter(descriptor, Annotations.EMPTY));
+                                    : DescriptorFactory.createDefaultSetter(descriptor, Annotations.Companion.getEMPTY()));
     }
 
     private void generateAccessor(

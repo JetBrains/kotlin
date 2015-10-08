@@ -180,12 +180,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             );
         }
         else {
-            this.annotations = Annotations.EMPTY;
+            this.annotations = Annotations.Companion.getEMPTY();
         }
 
         List<JetAnnotationEntry> jetDanglingAnnotations = classLikeInfo.getDanglingAnnotations();
         if (jetDanglingAnnotations.isEmpty()) {
-            this.danglingAnnotations = Annotations.EMPTY;
+            this.danglingAnnotations = Annotations.Companion.getEMPTY();
         }
         else {
             this.danglingAnnotations = new LazyAnnotations(
@@ -672,7 +672,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         @NotNull
         @Override
         public Annotations getAnnotations() {
-            return Annotations.EMPTY; // TODO
+            return Annotations.Companion.getEMPTY(); // TODO
         }
 
         @Override

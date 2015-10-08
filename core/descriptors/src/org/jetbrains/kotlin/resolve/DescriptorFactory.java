@@ -34,7 +34,7 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.
 public class DescriptorFactory {
     private static class DefaultConstructorDescriptor extends ConstructorDescriptorImpl {
         public DefaultConstructorDescriptor(@NotNull ClassDescriptor containingClass, @NotNull SourceElement source) {
-            super(containingClass, null, Annotations.EMPTY, true, Kind.DECLARATION, source);
+            super(containingClass, null, Annotations.Companion.getEMPTY(), true, Kind.DECLARATION, source);
             initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                        getDefaultConstructorVisibility(containingClass));
         }
@@ -98,7 +98,7 @@ public class DescriptorFactory {
     @NotNull
     public static SimpleFunctionDescriptor createEnumValuesMethod(@NotNull ClassDescriptor enumClass) {
         SimpleFunctionDescriptorImpl values =
-                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.EMPTY, DescriptorUtils.ENUM_VALUES,
+                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.Companion.getEMPTY(), DescriptorUtils.ENUM_VALUES,
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
         return values.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
@@ -109,10 +109,10 @@ public class DescriptorFactory {
     @NotNull
     public static SimpleFunctionDescriptor createEnumValueOfMethod(@NotNull ClassDescriptor enumClass) {
         SimpleFunctionDescriptorImpl valueOf =
-                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.EMPTY, DescriptorUtils.ENUM_VALUE_OF,
+                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.Companion.getEMPTY(), DescriptorUtils.ENUM_VALUE_OF,
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
-                valueOf, null, 0, Annotations.EMPTY, Name.identifier("value"), getBuiltIns(enumClass).getStringType(), false, null,
+                valueOf, null, 0, Annotations.Companion.getEMPTY(), Name.identifier("value"), getBuiltIns(enumClass).getStringType(), false, null,
                 enumClass.getSource()
         );
         return valueOf.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),

@@ -519,7 +519,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType type = resolveClassLiteral(expression, c);
         if (type != null && !type.isError()) {
             return components.dataFlowAnalyzer.createCheckedTypeInfo(
-                    components.reflectionTypes.getKClassType(Annotations.EMPTY, type), c, expression
+                    components.reflectionTypes.getKClassType(Annotations.Companion.getEMPTY(), type), c, expression
             );
         }
 
@@ -582,7 +582,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     }
                 });
 
-        return JetTypeImpl.create(Annotations.EMPTY, descriptor, false, arguments);
+        return JetTypeImpl.create(Annotations.Companion.getEMPTY(), descriptor, false, arguments);
     }
 
     private static boolean isAllowedInClassLiteral(@NotNull JetType type) {

@@ -229,7 +229,7 @@ public class DescriptorResolver {
 
         SimpleFunctionDescriptorImpl functionDescriptor = SimpleFunctionDescriptorImpl.create(
                 classDescriptor,
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 functionName,
                 CallableMemberDescriptor.Kind.SYNTHESIZED,
                 parameter.getSource()
@@ -261,7 +261,7 @@ public class DescriptorResolver {
 
         SimpleFunctionDescriptorImpl functionDescriptor = SimpleFunctionDescriptorImpl.create(
                 classDescriptor,
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 COPY_METHOD_NAME,
                 CallableMemberDescriptor.Kind.SYNTHESIZED,
                 classDescriptor.getSource()
@@ -344,7 +344,7 @@ public class DescriptorResolver {
 
         Annotations allAnnotations =
                 annotationResolver.resolveAnnotationsWithoutArguments(scope, valueParameter.getModifierList(), trace);
-        Annotations valueParameterAnnotations = Annotations.EMPTY;
+        Annotations valueParameterAnnotations = Annotations.Companion.getEMPTY();
 
         if (modifierList != null) {
             if (valueParameter.hasValOrVar()) {
@@ -413,7 +413,7 @@ public class DescriptorResolver {
 
         TypeParameterDescriptorImpl typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDescriptor,
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 typeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
@@ -676,13 +676,13 @@ public class DescriptorResolver {
     private static void initializeWithDefaultGetterSetter(PropertyDescriptorImpl propertyDescriptor) {
         PropertyGetterDescriptorImpl getter = propertyDescriptor.getGetter();
         if (getter == null && !Visibilities.isPrivate(propertyDescriptor.getVisibility())) {
-            getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY);
+            getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.Companion.getEMPTY());
             getter.initialize(propertyDescriptor.getType());
         }
 
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         if (setter == null && propertyDescriptor.isVar()) {
-            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.EMPTY);
+            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.Companion.getEMPTY());
         }
         propertyDescriptor.initialize(getter, setter);
     }
