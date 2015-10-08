@@ -73,7 +73,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         try {
             checkQueued = false
 
-            var latestVersionInRepository = getPluginVersionFromMainRepository()
+            var (mainRepoUpdateSuccess, latestVersionInRepository) = getPluginVersionFromMainRepository()
             var descriptorToInstall: IdeaPluginDescriptor? = null
             var hostToInstallFrom: String? = null
 
@@ -94,16 +94,16 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                 }
             }
 
-            if (latestVersionInRepository != null) {
+            if (mainRepoUpdateSuccess || latestVersionInRepository != null) {
                 recordSuccessfulUpdateCheck()
-                if (VersionComparatorUtil.compare(latestVersionInRepository, JetPluginUtil.getPluginVersion()) > 0) {
+                if (latestVersionInRepository != null && VersionComparatorUtil.compare(latestVersionInRepository, JetPluginUtil.getPluginVersion()) > 0) {
                     ApplicationManager.getApplication().invokeLater {
                         notifyPluginUpdateAvailable(latestVersionInRepository!!, descriptorToInstall, hostToInstallFrom)
                     }
                 }
             }
             else {
-                queueUpdateCheck()
+                ApplicationManager.getApplication().invokeLater { queueUpdateCheck() }
             }
         }
         catch(e: Exception) {
@@ -113,7 +113,10 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         }
     }
 
-    fun getPluginVersionFromMainRepository(): String? {
+
+    data class RepositoryCheckResult(val success: Boolean, val newVersion: String?)
+
+    fun getPluginVersionFromMainRepository(): RepositoryCheckResult {
         val buildNumber = ApplicationInfo.getInstance().build.asString()
         val pluginVersion = JetPluginUtil.getPluginVersion()
         val os = URLEncoder.encode(SystemInfo.OS_NAME, CharsetToolkit.UTF8)
@@ -122,11 +125,20 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         val responseDoc = HttpRequests.request(url).connect {
             JDOMUtil.load(it.inputStream)
         }
+        if (responseDoc.name != "plugin-repository") {
+            LOG.info("Unexpected plugin repository response: ${JDOMUtil.writeElement(responseDoc, "\n")}")
+            return RepositoryCheckResult(false, null)
+        }
+        if (responseDoc.children.isEmpty()) {
+            // No plugin version compatible with current IDEA build; don't retry updates
+            return RepositoryCheckResult(true, null)
+        }
         val version = responseDoc.getChild("category")?.getChild("idea-plugin")?.getChild("version")?.text
         if (version == null) {
             LOG.info("Couldn't find plugin version in repository response: ${JDOMUtil.writeElement(responseDoc, "\n")}")
+            return RepositoryCheckResult(false, null)
         }
-        return version
+        return RepositoryCheckResult(true, version)
     }
 
     private fun recordSuccessfulUpdateCheck() {
