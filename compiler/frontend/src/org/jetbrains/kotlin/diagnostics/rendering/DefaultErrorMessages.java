@@ -280,9 +280,9 @@ public class DefaultErrorMessages {
         MAP.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING);
 
         MAP.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER,
-                "This property has a custom setter, so initialization using backing field required", NAME);
+                "This property cannot be initialized inside ''init'' block because it has a custom setter", NAME);
         MAP.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER,
-                "Setter of this property can be overridden, so initialization using backing field required", NAME);
+                "This property cannot be initialized inside ''init'' block because it has an open setter", NAME);
 
         MAP.put(UNREACHABLE_CODE, "Unreachable code", TO_STRING);
 
