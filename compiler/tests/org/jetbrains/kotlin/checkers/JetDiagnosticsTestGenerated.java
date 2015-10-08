@@ -12934,6 +12934,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                         doTest(fileName);
                     }
 
+                    @TestMetadata("nameClash0.kt")
+                    public void testNameClash0() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/nameClash0.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("nameClash1.kt")
+                    public void testNameClash1() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/nameClash1.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("nameClash2.kt")
+                    public void testNameClash2() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/nameClash2.kt");
+                        doTest(fileName);
+                    }
+
                     @TestMetadata("oneInterfaceManyTimes.kt")
                     public void testOneInterfaceManyTimes() throws Exception {
                         String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/oneInterfaceManyTimes.kt");

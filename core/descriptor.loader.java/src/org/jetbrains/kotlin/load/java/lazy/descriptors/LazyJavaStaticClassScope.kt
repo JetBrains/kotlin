@@ -85,7 +85,20 @@ public class LazyJavaStaticClassScope(
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
         val propertiesFromSupertypes = getStaticPropertiesFromJavaSupertypes(name, getContainingDeclaration())
-        result.addAll(DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter))
+
+        val actualProperties =
+                if (!result.isEmpty()) {
+                    DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter)
+                }
+                else {
+                    propertiesFromSupertypes.groupBy {
+                        it.realOriginal
+                    }.flatMap {
+                        DescriptorResolverUtils.resolveOverrides(name, it.value, result, getContainingDeclaration(), c.components.errorReporter)
+                    }
+                }
+
+        result.addAll(actualProperties)
     }
 
     override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyJavaClassDescriptor
@@ -114,4 +127,11 @@ public class LazyJavaStaticClassScope(
 
         return descriptor.typeConstructor.supertypes.flatMap(::getStaticProperties).toSet()
     }
+
+    private val PropertyDescriptor.realOriginal: PropertyDescriptor
+        get() {
+            if (this.kind.isReal) return this
+
+            return this.overriddenDescriptors.map { it.realOriginal }.distinct().single()
+        }
 }
