@@ -625,6 +625,24 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("ConcreteJavaClassExpected.kt")
+        public void testConcreteJavaClassExpected() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ConcreteJavaClassExpected.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ConcreteKClassExpected.kt")
+        public void testConcreteKClassExpected() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ConcreteKClassExpected.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ConcreteKClassExpectedNoDuplicates.kt")
+        public void testConcreteKClassExpectedNoDuplicates() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ConcreteKClassExpectedNoDuplicates.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("EmptyQualifier1.kt")
         public void testEmptyQualifier1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/EmptyQualifier1.kt");
@@ -700,6 +718,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         @TestMetadata("NoQualifierPropertyExpected.kt")
         public void testNoQualifierPropertyExpected() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifierPropertyExpected.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonConcreteKClassExpected.kt")
+        public void testNonConcreteKClassExpected() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NonConcreteKClassExpected.kt");
             doTest(fileName);
         }
 

@@ -207,6 +207,8 @@ class SmartCompletion(
                     StaticMembers(bindingContext, lookupElementFactory).addToCollection(items, expectedInfos, expression, descriptorsToSkip)
                 }
 
+                ClassLiteralItems.addToCollection(items, expectedInfos, lookupElementFactory, isJvmModule)
+
                 if (!forBasicCompletion) {
                     LambdaItems.addToCollection(items, expectedInfos)
 
