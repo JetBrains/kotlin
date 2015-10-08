@@ -1,8 +1,8 @@
-// "Create extension function '\u00A0'" "true"
+// "Create extension function '!u00A0'" "true"
 fun test() {
-    val t: Int = 1 `\u00A0` 2
+    val t: Int = 1 `!u00A0` 2
 }
 
-fun Int.`\u00A0`(i: Int): Int {
+fun Int.`!u00A0`(i: Int): Int {
     throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
 }
