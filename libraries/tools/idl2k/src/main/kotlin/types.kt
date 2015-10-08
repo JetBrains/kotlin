@@ -5,9 +5,9 @@ import java.util.*
 interface Type {
     val nullable: Boolean
     fun render(): String
-
-    fun String.withSuffix(): String = if (nullable) "$this?" else this
 }
+
+private fun String.appendNullabilitySuffix(type: Type) = if (type.nullable) "$this?" else this
 
 object UnitType : Type {
     override val nullable: Boolean
@@ -22,10 +22,10 @@ object DynamicType : Type {
     override fun render() = "dynamic"
 }
 data class AnyType(override val nullable: Boolean = true) : Type {
-    override fun render() = "Any".withSuffix()
+    override fun render() = "Any".appendNullabilitySuffix(this)
 }
 data class SimpleType(val type: String, override val nullable: Boolean) : Type {
-    override fun render() = type.withSuffix()
+    override fun render() = type.appendNullabilitySuffix(this)
 }
 data class FunctionType(val parameterTypes : List<Attribute>, val returnType : Type, override val nullable: Boolean) : Type {
     override fun render() = if (nullable) "(${renderImpl()})?" else renderImpl()
@@ -35,7 +35,8 @@ data class FunctionType(val parameterTypes : List<Attribute>, val returnType : T
 val FunctionType.arity : Int
     get() = parameterTypes.size
 
-class UnionType(val namespace: String, types: Collection<Type>, override val nullable: Boolean, val memberTypes: Set<Type> = LinkedHashSet(types.sortedBy { it.toString() })) : Type {
+class UnionType(val namespace: String, types: Collection<Type>, override val nullable: Boolean) : Type {
+    val memberTypes: Set<Type> = LinkedHashSet(types.sortedBy { it.toString() })
     val name = "Union${this.memberTypes.map { it.render() }.joinToString("Or")}"
 
     operator fun contains(type: Type) = type in memberTypes
@@ -43,7 +44,7 @@ class UnionType(val namespace: String, types: Collection<Type>, override val nul
     override fun hashCode(): Int = memberTypes.hashCode()
     override fun toString(): String = memberTypes.map { it.toString() }.join(", ", "Union<", ">")
 
-    override fun render(): String = name.withSuffix()
+    override fun render(): String = name.appendNullabilitySuffix(this)
 
     fun copy(namespace: String = this.namespace, types: Collection<Type> = this.memberTypes, nullable: Boolean = this.nullable) =
             UnionType(namespace, types, nullable)
@@ -52,7 +53,7 @@ class UnionType(val namespace: String, types: Collection<Type>, override val nul
 fun UnionType.toSingleTypeIfPossible() = if (this.memberTypes.size == 1) this.memberTypes.single().withNullability(nullable) else this
 
 data class ArrayType(val memberType: Type, override val nullable: Boolean) : Type {
-    override fun render(): String = "Array<${memberType.render()}>".withSuffix()
+    override fun render(): String = "Array<${memberType.render()}>".appendNullabilitySuffix(this)
 }
 
 @Suppress("UNCHECKED_CAST")
