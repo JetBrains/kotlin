@@ -92,20 +92,6 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         );
     }
 
-    public void testLocalTraitImpl() {
-        doTestKotlinSyntheticClass(
-                "fun foo() { interface Local { fun bar() = 42 } }",
-                "Local$DefaultImpls.class"
-        );
-    }
-
-    public void testLocalTraitInterface() {
-        doTestKotlinClass(
-                "fun foo() { interface Local { fun bar() = 42 } }",
-                "Local.class"
-        );
-    }
-
     public void testInnerClassOfLocalClass() {
         doTestKotlinClass(
                 "fun foo() { class Local { inner class Inner } }",

@@ -1,9 +1,9 @@
 fun box(): String {
-    interface L1 {
-        fun foo(): String
+    abstract class L1 {
+        abstract fun foo(): String
     }
 
-    open class L2(val s: String) : L1 {
+    open class L2(val s: String) : L1() {
         override fun foo() = s
     }
 

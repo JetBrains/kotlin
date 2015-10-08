@@ -179,12 +179,6 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("commonSuperclasses.kt")
-                public void testCommonSuperclasses() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/commonSuperclasses.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("delegation.kt")
                 public void testDelegation() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/delegation.kt");
@@ -209,21 +203,9 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("matchedSuperclasses.kt")
-                public void testMatchedSuperclasses() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/matchedSuperclasses.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("members.kt")
                 public void testMembers() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/members.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("superTypeOrder.kt")
-                public void testSuperTypeOrder() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/superTypeOrder.kt");
                     doTest(fileName);
                 }
             }

@@ -1,3 +1,0 @@
-class A: Z(1), T, U
-
-class B: Z(1), U, T

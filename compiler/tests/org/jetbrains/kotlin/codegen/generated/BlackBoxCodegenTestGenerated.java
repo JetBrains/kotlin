@@ -778,12 +778,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("dontGenerateBodyInTrait.kt")
-        public void testDontGenerateBodyInTrait() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/dontGenerateBodyInTrait.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("implementationInTrait.kt")
         public void testImplementationInTrait() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinStubMethods/implementationInTrait.kt");
@@ -7432,12 +7426,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("unqualifiedSuperWithLocalClass.kt")
-        public void testUnqualifiedSuperWithLocalClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/super/unqualifiedSuperWithLocalClass.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("unqualifiedSuperWithMethodsOfAny.kt")
         public void testUnqualifiedSuperWithMethodsOfAny() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/super/unqualifiedSuperWithMethodsOfAny.kt");
@@ -7678,12 +7666,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt5393_toString.kt")
         public void testKt5393_toString() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt5393_toString.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt5495.kt")
-        public void testKt5495() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/kt5495.kt");
             doTest(fileName);
         }
 

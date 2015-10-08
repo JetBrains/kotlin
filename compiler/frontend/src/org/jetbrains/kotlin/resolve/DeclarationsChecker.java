@@ -287,6 +287,9 @@ public class DeclarationsChecker {
 
         if (aClass.isInterface()) {
             checkConstructorInTrait(aClass);
+            if (aClass.isLocal() && !(classDescriptor.getContainingDeclaration() instanceof ClassDescriptor)) {
+                trace.report(LOCAL_INTERFACE_NOT_ALLOWED.on(aClass, classDescriptor));
+            }
         }
         else if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
             checkAnnotationClassWithBody(aClass);

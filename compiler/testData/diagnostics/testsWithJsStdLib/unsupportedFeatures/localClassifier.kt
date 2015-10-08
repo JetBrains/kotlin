@@ -7,6 +7,6 @@ fun foo() {
         }
     }
 
-    <!NON_TOPLEVEL_CLASS_DECLARATION!>interface T<!> {
+    <!LOCAL_INTERFACE_NOT_ALLOWED, NON_TOPLEVEL_CLASS_DECLARATION!>interface T<!> {
     }
 }
