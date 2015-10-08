@@ -9678,6 +9678,36 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ambiguousNamedArguments1.kt")
+            public void testAmbiguousNamedArguments1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/namedArguments/ambiguousNamedArguments1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ambiguousNamedArguments2.kt")
+            public void testAmbiguousNamedArguments2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/namedArguments/ambiguousNamedArguments2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ambiguousNamedArgumentsWithGenerics1.kt")
+            public void testAmbiguousNamedArgumentsWithGenerics1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/namedArguments/ambiguousNamedArgumentsWithGenerics1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ambiguousNamedArgumentsWithGenerics2.kt")
+            public void testAmbiguousNamedArgumentsWithGenerics2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/namedArguments/ambiguousNamedArgumentsWithGenerics2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ambiguousNamedArgumentsWithGenerics3.kt")
+            public void testAmbiguousNamedArgumentsWithGenerics3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/namedArguments/ambiguousNamedArgumentsWithGenerics3.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("disallowForJavaConstructor.kt")
             public void testDisallowForJavaConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/namedArguments/disallowForJavaConstructor.kt");
@@ -9705,6 +9735,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("namedArgumentsAndDefaultValues.kt")
             public void testNamedArgumentsAndDefaultValues() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/namedArguments/namedArgumentsAndDefaultValues.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("namedArgumentsInOverloads.kt")
+            public void testNamedArgumentsInOverloads() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/namedArguments/namedArgumentsInOverloads.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("namedArgumentsInOverrides.kt")
+            public void testNamedArgumentsInOverrides() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/namedArguments/namedArgumentsInOverrides.kt");
                 doTest(fileName);
             }
         }
