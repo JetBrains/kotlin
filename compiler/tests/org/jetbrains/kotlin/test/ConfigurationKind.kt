@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.test
 
 public enum class ConfigurationKind(
-        public val withJdkAnnotations: Boolean,
         public val withRuntime: Boolean,
         public val withReflection: Boolean
 ) {
-    JDK_ONLY(withJdkAnnotations = false, withRuntime = false, withReflection = false),
-    JDK_AND_ANNOTATIONS(withJdkAnnotations = true, withRuntime = false, withReflection = false),
-    NO_KOTLIN_REFLECT(withJdkAnnotations = true, withRuntime = true, withReflection = false),
-    ALL(withJdkAnnotations = true, withRuntime = true, withReflection = true),
+    JDK_ONLY(withRuntime = false, withReflection = false),
+    NO_KOTLIN_REFLECT(withRuntime = true, withReflection = false),
+    ALL(withRuntime = true, withReflection = true),
 }

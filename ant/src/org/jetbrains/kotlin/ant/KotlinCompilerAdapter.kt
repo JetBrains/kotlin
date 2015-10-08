@@ -27,19 +27,9 @@ import java.io.File
 import java.util.*
 
 class KotlinCompilerAdapter : Javac13() {
-
-    var externalAnnotations: Path? = null
-
     var moduleName: String? = null
 
     var additionalArguments: MutableList<Commandline.Argument> = ArrayList(0)
-
-    fun createExternalAnnotations(): Path {
-        if (externalAnnotations == null) {
-            externalAnnotations = Path(getProject())
-        }
-        return externalAnnotations!!.createPath()
-    }
 
     fun createCompilerArg(): Commandline.Argument {
         val argument = Commandline.Argument()
@@ -69,8 +59,6 @@ class KotlinCompilerAdapter : Javac13() {
         // We use the provided src dir instead of compileList, because the latter is insane:
         // it is constructed only of sources which are newer than classes with the same name
         kotlinc.src = javac.srcdir
-
-        kotlinc.externalAnnotations = externalAnnotations
 
         if (moduleName == null) {
             moduleName = javac.defaultModuleName

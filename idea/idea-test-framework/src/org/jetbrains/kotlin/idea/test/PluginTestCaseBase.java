@@ -18,13 +18,7 @@ package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
-import com.intellij.openapi.roots.AnnotationOrderRootType;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
@@ -43,13 +37,7 @@ public class PluginTestCaseBase {
 
     @NotNull
     private static Sdk getSdk(String sdkHome) {
-        Sdk sdk = JavaSdk.getInstance().createJdk("JDK", sdkHome, true);
-        SdkModificator modificator = sdk.getSdkModificator();
-        VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(getJdkAnnotationsJar());
-        assert file != null;
-        modificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(file), AnnotationOrderRootType.getInstance());
-        modificator.commitChanges();
-        return sdk;
+        return JavaSdk.getInstance().createJdk("JDK", sdkHome, true);
     }
 
     @NotNull
@@ -62,15 +50,6 @@ public class PluginTestCaseBase {
         String javaHome = System.getProperty("java.home");
         assert new File(javaHome).isDirectory();
         return getSdk(javaHome);
-    }
-
-    @NotNull
-    public static File getJdkAnnotationsJar() {
-        File jdkAnnotations = new File(JetTestUtils.getHomeDirectory(), "dist/kotlinc/lib/kotlin-jdk-annotations.jar");
-        if (!jdkAnnotations.exists()) {
-            throw new RuntimeException("Kotlin JDK annotations jar not found; please run 'ant dist' to build it");
-        }
-        return jdkAnnotations;
     }
 
     public static boolean isAllFilesPresentTest(@NotNull String testName) {

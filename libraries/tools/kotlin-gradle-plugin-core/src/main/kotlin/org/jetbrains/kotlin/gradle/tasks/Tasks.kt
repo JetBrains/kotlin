@@ -36,10 +36,10 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.IOException
 import java.lang.ref.WeakReference
-
-val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 import java.io.File
 import java.util.HashSet
+
+val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
 val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 

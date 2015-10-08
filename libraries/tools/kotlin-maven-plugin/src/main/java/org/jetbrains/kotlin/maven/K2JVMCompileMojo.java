@@ -97,6 +97,9 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         getLog().info("Classes directory is " + output);
         arguments.destination = output;
 
+        arguments.moduleName = moduleName;
+        getLog().info("Module name is " + moduleName);
+
         try {
             Args.parse(arguments, ArrayUtil.toStringArray(args));
         }

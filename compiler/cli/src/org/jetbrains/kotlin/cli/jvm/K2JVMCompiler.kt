@@ -121,8 +121,6 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         configuration.addJvmClasspathRoots(getClasspath(paths, arguments))
 
-        configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments))
-
         configuration.put(JVMConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
         if (arguments.module == null && arguments.freeArgs.isEmpty() && !arguments.version) {
@@ -286,17 +284,6 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 classpath.add(paths.getRuntimePath())
             }
             return classpath
-        }
-
-        private fun getAnnotationsPath(paths: KotlinPaths, arguments: K2JVMCompilerArguments): List<File> {
-            val annotationsPath = arrayListOf<File>()
-            if (arguments.annotations != null) {
-                annotationsPath.addAll(arguments.annotations.split(File.pathSeparatorChar).map { File(it) })
-            }
-            if (!arguments.noJdkAnnotations) {
-                annotationsPath.add(paths.getJdkAnnotationsPath())
-            }
-            return annotationsPath
         }
     }
 }
