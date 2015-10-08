@@ -39,16 +39,10 @@ public class Reflection {
         factory = impl != null ? impl : new ReflectionFactory();
     }
 
+    private static final KClass[] EMPTY_K_CLASS_ARRAY = new KClass[0];
+
     public static KClass createKotlinClass(Class javaClass) {
         return factory.createKotlinClass(javaClass);
-    }
-
-    public static KClass[] foreignKotlinClasses(Class[] javaClasses) {
-        KClass[] kClasses = new KClass[javaClasses.length];
-        for (int i = 0; i < javaClasses.length; i++) {
-            kClasses[i] = foreignKotlinClass(javaClasses[i]);
-        }
-        return kClasses;
     }
 
     public static KPackage createKotlinPackage(Class javaClass) {
@@ -59,8 +53,18 @@ public class Reflection {
         return factory.createKotlinPackage(javaClass, moduleName);
     }
 
-    public static KClass foreignKotlinClass(Class javaClass) {
-        return factory.foreignKotlinClass(javaClass);
+    public static KClass getOrCreateKotlinClass(Class javaClass) {
+        return factory.getOrCreateKotlinClass(javaClass);
+    }
+
+    public static KClass[] getOrCreateKotlinClasses(Class[] javaClasses) {
+        int size = javaClasses.length;
+        if (size == 0) return EMPTY_K_CLASS_ARRAY;
+        KClass[] kClasses = new KClass[size];
+        for (int i = 0; i < size; i++) {
+            kClasses[i] = getOrCreateKotlinClass(javaClasses[i]);
+        }
+        return kClasses;
     }
 
     // Functions
@@ -93,5 +97,17 @@ public class Reflection {
 
     public static KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
         return factory.mutableProperty2(p);
+    }
+
+    // Deprecated
+
+    @Deprecated
+    public static KClass foreignKotlinClass(Class javaClass) {
+        return getOrCreateKotlinClass(javaClass);
+    }
+
+    @Deprecated
+    public static KClass[] foreignKotlinClasses(Class[] javaClasses) {
+        return getOrCreateKotlinClasses(javaClasses);
     }
 }
