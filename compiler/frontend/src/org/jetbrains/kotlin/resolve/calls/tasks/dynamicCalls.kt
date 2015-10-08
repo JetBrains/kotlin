@@ -104,7 +104,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
                 dynamicType,
                 createTypeParameters(propertyDescriptor, call),
                 createDynamicDispatchReceiverParameter(propertyDescriptor),
-                null: JetType?
+                null as JetType?
         )
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)

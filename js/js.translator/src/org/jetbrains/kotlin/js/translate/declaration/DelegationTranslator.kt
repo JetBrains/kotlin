@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetDelegationSpecifier
 import org.jetbrains.kotlin.psi.JetDelegatorByExpressionSpecifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.HashMap
+import java.util.*
 
 public class DelegationTranslator(
         private val classDeclaration: JetClassOrObject,
@@ -116,13 +116,13 @@ public class DelegationTranslator(
             val delegateRefName = context().getScopeForDescriptor(getterDescriptor).declareName(delegateName)
             val delegateRef = JsNameRef(delegateRefName, JsLiteral.THIS)
 
-            val returnExpression = if (DescriptorUtils.isExtension(descriptor)) {
+            val returnExpression: JsExpression = if (DescriptorUtils.isExtension(descriptor)) { // TODO remove explicit type specification after resolving KT-5569
                 val getterName = context().getNameForDescriptor(getterDescriptor)
                 val receiver = Namer.getReceiverParameterName()
                 JsInvocation(JsNameRef(getterName, delegateRef), JsNameRef(receiver))
             }
             else {
-                JsNameRef(propertyName, delegateRef): JsExpression // TODO remove explicit type specification after resolving KT-5569
+                JsNameRef(propertyName, delegateRef)
             }
 
             val jsFunction = simpleReturnFunction(context().getScopeForDescriptor(getterDescriptor.getContainingDeclaration()), returnExpression)

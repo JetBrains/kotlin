@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
@@ -484,7 +486,7 @@ public class TaskPrioritizer(
 
         private fun isSynthesized(candidate: ResolutionCandidate<D>): Boolean {
             val descriptor = candidate.getDescriptor()
-            return descriptor is CallableMemberDescriptor && isOrOverridesSynthesized(descriptor : CallableMemberDescriptor)
+            return descriptor is CallableMemberDescriptor && isOrOverridesSynthesized(descriptor)
         }
 
         fun hasImplicitDynamicReceiver(candidate: ResolutionCandidate<D>): Boolean {

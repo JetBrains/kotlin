@@ -282,7 +282,8 @@ object DynamicOperatorCallCase : FunctionCallCase() {
             }
             is JetPostfixExpression -> {
                 // TODO drop hack with ":JsExpression" when KT-5569 will be fixed
-                JsPostfixOperation(OperatorTable.getUnaryOperator(operationToken), dispatchReceiver): JsExpression
+                @Suppress("USELESS_CAST")
+                (JsPostfixOperation(OperatorTable.getUnaryOperator(operationToken), dispatchReceiver) as JsExpression)
             }
             else -> unsupported("Unsupported callElement type: ${callElement.javaClass}, callElement: $callElement, callInfo: $this")
         }

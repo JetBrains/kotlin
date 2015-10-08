@@ -16,17 +16,16 @@
 
 package org.jetbrains.kotlin.cfg
 
-import org.jetbrains.kotlin.psi.JetElement
 import com.intellij.openapi.util.TextRange
-import java.util.HashSet
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
-import java.util.ArrayList
-import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.PsiComment
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import java.util.*
 
 interface UnreachableCode {
     val elements: Set<JetElement>
@@ -99,7 +98,7 @@ class UnreachableCodeImpl(
 
     private fun List<PsiElement>.mergeAdjacentTextRanges(): List<TextRange> {
         val result = ArrayList<TextRange>()
-        val lastRange = fold(null: TextRange?) {
+        val lastRange = fold(null as TextRange?) {
             currentTextRange, element ->
 
             val elementRange = element.getTextRange()!!
