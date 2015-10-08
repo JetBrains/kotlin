@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.descriptors
+package org.jetbrains.kotlin.descriptors;
 
 public interface SourceFile {
-    companion object {
-        val NO_SOURCE_FILE = object : SourceFile {}
-    }
+    SourceFile NO_SOURCE_FILE = new SourceFile() {};
 }

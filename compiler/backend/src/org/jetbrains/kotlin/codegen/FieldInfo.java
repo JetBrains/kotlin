@@ -17,37 +17,34 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.org.objectweb.asm.Type;
-
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 
 public class FieldInfo {
 
-    private static final CompanionObjectMapping COMPANION_OBJECT_MAPPING = new CompanionObjectMapping(JvmPlatform.INSTANCE$.getBuiltIns());
+    @NotNull
+    public static FieldInfo createForCompanionSingleton(@NotNull ClassDescriptor companionObject, @NotNull JetTypeMapper typeMapper) {
+        ClassDescriptor ownerDescriptor = DescriptorUtils.getParentOfType(companionObject, ClassDescriptor.class);
+        assert ownerDescriptor != null : "Owner not found for class: " + companionObject;
+        Type ownerType = typeMapper.mapType(ownerDescriptor);
+        return new FieldInfo(ownerType, typeMapper.mapType(companionObject), companionObject.getName().asString(), true);
+    }
 
     @NotNull
     public static FieldInfo createForSingleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
+        return createForSingleton(classDescriptor, typeMapper, false);
+    }
+
+    @NotNull
+    public static FieldInfo createForSingleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper, boolean oldSingleton) {
         if (!classDescriptor.getKind().isSingleton()) {
             throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
-
-        if (isNonCompanionObject(classDescriptor) || COMPANION_OBJECT_MAPPING.hasMappingToObject(classDescriptor)) {
-            Type type = typeMapper.mapType(classDescriptor);
-            return new FieldInfo(type, type, JvmAbi.INSTANCE_FIELD, true);
-        }
-        else {
-            ClassDescriptor ownerDescriptor = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
-            assert ownerDescriptor != null : "Owner not found for class: " + classDescriptor;
-            Type ownerType = typeMapper.mapType(ownerDescriptor);
-            return new FieldInfo(ownerType, typeMapper.mapType(classDescriptor), classDescriptor.getName().asString(), true);
-        }
+        Type type = typeMapper.mapType(classDescriptor);
+        return new FieldInfo(type, type, oldSingleton ? JvmAbi.DEPRECATED_INSTANCE_FIELD : JvmAbi.INSTANCE_FIELD, true);
     }
 
     @NotNull

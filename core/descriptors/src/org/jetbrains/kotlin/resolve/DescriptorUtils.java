@@ -624,7 +624,7 @@ public class DescriptorUtils {
             result.add(fqName);
         }
 
-        for (DeclarationDescriptor descriptor : packageView.getMemberScope().getDescriptors(DescriptorKindFilter.PACKAGES, JetScope.ALL_NAME_FILTER)) {
+        for (DeclarationDescriptor descriptor : packageView.getMemberScope().getDescriptors(DescriptorKindFilter.PACKAGES, JetScope.Companion.getALL_NAME_FILTER())) {
             if (descriptor instanceof PackageViewDescriptor) {
                 getSubPackagesFqNames((PackageViewDescriptor) descriptor, result);
             }

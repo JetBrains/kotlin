@@ -348,7 +348,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
             @NotNull LazyPackageDescriptor current
     ) {
         result.add(current);
-        for (FqName subPackage : packageFragmentProvider.getSubPackagesOf(current.getFqName(), JetScope.ALL_NAME_FILTER)) {
+        for (FqName subPackage : packageFragmentProvider.getSubPackagesOf(current.getFqName(), JetScope.Companion.getALL_NAME_FILTER())) {
             LazyPackageDescriptor fragment = getPackageFragment(subPackage);
             assert fragment != null : "Couldn't find fragment for " + subPackage;
             collectAllPackages(result, fragment);

@@ -176,7 +176,7 @@ public class ManglingUtils {
         if (jetScope != null) {
             final String finalNameToCompare = nameToCompare;
 
-            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(DescriptorKindFilter.CALLABLES, JetScope.ALL_NAME_FILTER);
+            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(DescriptorKindFilter.CALLABLES, JetScope.Companion.getALL_NAME_FILTER());
             List<CallableDescriptor> overloadedFunctions =
                     CollectionsKt.flatMap(declarations, new Function1<DeclarationDescriptor, Iterable<? extends CallableDescriptor>>() {
                 @Override

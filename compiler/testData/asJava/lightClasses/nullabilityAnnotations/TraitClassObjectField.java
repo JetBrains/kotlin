@@ -5,8 +5,9 @@ public interface TraitClassObjectField {
 
     static final class Companion {
         @org.jetbrains.annotations.Nullable
-        private final java.lang.String x = "";
-        private final java.lang.String y = "";
+        private static final java.lang.String x = "";
+        private static final java.lang.String y = "";
+        public static final TraitClassObjectField.Companion INSTANCE;
 
         /**
          * @deprecated

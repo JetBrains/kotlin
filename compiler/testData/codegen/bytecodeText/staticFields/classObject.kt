@@ -4,4 +4,4 @@ class A {
     }
 }
 // A and companion object constructor call
-// 3 ALOAD 0
+// 4 ALOAD 0

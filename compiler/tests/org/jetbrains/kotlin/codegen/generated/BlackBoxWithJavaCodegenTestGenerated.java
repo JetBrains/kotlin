@@ -53,6 +53,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("deprecatedFieldForObject")
+    public void testDeprecatedFieldForObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/deprecatedFieldForObject/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("inline")
     public void testInline() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/inline/");

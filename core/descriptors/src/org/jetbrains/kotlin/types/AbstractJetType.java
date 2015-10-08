@@ -63,7 +63,7 @@ public abstract class AbstractJetType implements JetType {
 
         for (AnnotationWithTarget annotationWithTarget : getAnnotations().getAllAnnotations()) {
             sb.append("[");
-            sb.append(DescriptorRenderer.DEBUG_TEXT.renderAnnotation(
+            sb.append(DescriptorRenderer.Companion.getDEBUG_TEXT().renderAnnotation(
                     annotationWithTarget.getAnnotation(), annotationWithTarget.getTarget()));
             sb.append("] ");
         }

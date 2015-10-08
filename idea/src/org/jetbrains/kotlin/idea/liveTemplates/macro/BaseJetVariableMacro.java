@@ -109,9 +109,9 @@ public abstract class BaseJetVariableMacro extends Macro {
 
     private static Collection<DeclarationDescriptor> getAllVariables(JetScope scope) {
         Collection<DeclarationDescriptor> result = ContainerUtil.newArrayList();
-        result.addAll(scope.getDescriptors(DescriptorKindFilter.VARIABLES, JetScope.ALL_NAME_FILTER));
+        result.addAll(scope.getDescriptors(DescriptorKindFilter.VARIABLES, JetScope.Companion.getALL_NAME_FILTER()));
         for (ReceiverParameterDescriptor implicitReceiver : scope.getImplicitReceiversHierarchy()) {
-            result.addAll(implicitReceiver.getType().getMemberScope().getDescriptors(DescriptorKindFilter.VARIABLES, JetScope.ALL_NAME_FILTER));
+            result.addAll(implicitReceiver.getType().getMemberScope().getDescriptors(DescriptorKindFilter.VARIABLES, JetScope.Companion.getALL_NAME_FILTER()));
         }
         return result;
     }

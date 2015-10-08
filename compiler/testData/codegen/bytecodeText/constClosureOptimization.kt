@@ -17,6 +17,6 @@ fun test() {
     (::local)()
 }
 
-// 3 GETSTATIC ConstClosureOptimizationKt\$test\$1\.INSTANCE\$
-// 1 GETSTATIC ConstClosureOptimizationKt\$test\$2\.INSTANCE\$
-// 1 GETSTATIC ConstClosureOptimizationKt\$test\$3\.INSTANCE\$
+// 3 GETSTATIC ConstClosureOptimizationKt\$test\$1\.INSTANCE
+// 1 GETSTATIC ConstClosureOptimizationKt\$test\$2\.INSTANCE
+// 1 GETSTATIC ConstClosureOptimizationKt\$test\$3\.INSTANCE

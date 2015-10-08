@@ -163,7 +163,7 @@ public class PackageCodegen {
             return Collections.emptyList();
         }
         List<DeserializedCallableMemberDescriptor> callables = Lists.newArrayList();
-        for (DeclarationDescriptor member : packageFragment.getMemberScope().getDescriptors(DescriptorKindFilter.CALLABLES, JetScope.ALL_NAME_FILTER)) {
+        for (DeclarationDescriptor member : packageFragment.getMemberScope().getDescriptors(DescriptorKindFilter.CALLABLES, JetScope.Companion.getALL_NAME_FILTER())) {
             if (member instanceof DeserializedCallableMemberDescriptor) {
                 callables.add((DeserializedCallableMemberDescriptor) member);
             }
