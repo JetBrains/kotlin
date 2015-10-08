@@ -90,7 +90,10 @@ public fun LexicalScope.getDescriptorsFiltered(
 @Deprecated("Use getOwnProperties instead")
 public fun LexicalScope.getLocalVariable(name: Name): VariableDescriptor? {
     processForMeAndParent {
-        if (it is LazyFileScope) {
+        if (it is LexicalScopeWrapper) {
+            return it.delegate.getLocalVariable(name)
+        }
+        else if (it is LazyFileScope) {
             return it.getLocalVariable(name) // todo: remove hack for repl interpreter
         }
         else if (it is MemberScopeToFileScopeAdapter) { // todo remove hack
@@ -272,4 +275,22 @@ internal inline fun <T: Any> LexicalScope.collectAllFromMeAndParent(
     var result: Collection<T>? = null
     processForMeAndParent { result = result.concat(collect(it)) }
     return result ?: emptySet()
+}
+
+public fun LexicalScope.addImportScope(importScope: JetScope): LexicalScope {
+    val fileScope = getFileScope()
+    val scopeWithAdditionImport =
+            LexicalChainedScope(fileScope, fileScope.ownerDescriptor, false, null, "Scope with addition import", importScope)
+    return LexicalScopeWrapper(this, scopeWithAdditionImport)
+}
+
+private class LexicalScopeWrapper(val delegate: LexicalScope, val fileScopeReplace: LexicalScope): LexicalScope by delegate {
+    override val parent: LexicalScope? by lazy(LazyThreadSafetyMode.NONE) {
+        if (delegate is FileScope) {
+            fileScopeReplace
+        }
+        else {
+            LexicalScopeWrapper(delegate.parent!!, fileScopeReplace)
+        }
+    }
 }
