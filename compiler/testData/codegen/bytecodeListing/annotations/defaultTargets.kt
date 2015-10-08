@@ -25,3 +25,14 @@ public class A(
     public val a: Int = 1
 
 }
+
+@Target(AnnotationTarget.FIELD)
+annotation class Anno
+
+@Anno
+val p: Int
+    get() = 5
+
+@Anno
+val p2: Int = 4
+    get() = field
