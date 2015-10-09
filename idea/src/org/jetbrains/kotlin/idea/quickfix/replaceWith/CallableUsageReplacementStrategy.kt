@@ -60,9 +60,23 @@ class CallableUsageReplacementStrategy(
         val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = usage.getResolvedCall(bindingContext) ?: return null
         if (!resolvedCall.isReallySuccess()) return null
+
+        val callElement = resolvedCall.call.callElement
+        val callTypeHandler = callTypeHandler(callElement) ?: return null
+
+        if (!callTypeHandler.precheckReplacementPattern(replacement)) return null
+
         return {
             // copy replacement expression because it is modified by performCallReplacement
-            performCallReplacement(usage, bindingContext, resolvedCall, replacement.copy())
+            performCallReplacement(usage, bindingContext, resolvedCall, callElement, callTypeHandler, replacement.copy())
+        }
+    }
+
+    private fun callTypeHandler(callElement: JetElement): CallKindHandler? {
+        return when (callElement) {
+            is JetExpression -> CallExpressionHandler(callElement)
+            is JetAnnotationEntry -> AnnotationEntryHandler(callElement)
+            else -> null
         }
     }
 }
@@ -71,15 +85,16 @@ private fun performCallReplacement(
         element: JetSimpleNameExpression,
         bindingContext: BindingContext,
         resolvedCall: ResolvedCall<out CallableDescriptor>,
+        callElement: JetElement,
+        callKindHandler: CallKindHandler,
         replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression
 ): JetElement {
     val project = element.project
     val psiFactory = JetPsiFactory(project)
     val descriptor = resolvedCall.resultingDescriptor
 
-    val callElement = resolvedCall.call.callElement
     val qualifiedExpression = callElement.getQualifiedExpressionForSelector()
-    val elementToBeReplaced = qualifiedExpression ?: callElement
+    val elementToBeReplaced = callKindHandler.elementToReplace
 
     val commentSaver = CommentSaver(elementToBeReplaced, saveLineBreaks = true)
 
@@ -137,7 +152,8 @@ private fun performCallReplacement(
         }
     }
 
-    var result = elementToBeReplaced.replaceCallElement(wrapper.expression)
+    val wrappedExpression = callKindHandler.wrapGeneratedExpression(wrapper.expression)
+    var result = elementToBeReplaced.replace(wrappedExpression) as JetElement
 
     val file = result.getContainingJetFile()
     replacement.fqNamesToImport
@@ -153,27 +169,8 @@ private fun performCallReplacement(
 
     commentSaver.restore(resultRange)
 
-    var resultElement = resultRange.last as JetElement
-
-    if (resultElement is JetAnnotationEntry) { // unwrap "@Dummy(...)"
-        val text = resultElement.valueArguments.single().getArgumentExpression()!!.text
-        resultElement = resultElement.replaced(JetPsiFactory(project).createAnnotationEntry("@" + text)) //TODO: what if it does not work?
-    }
-
-    return resultElement
-}
-
-private fun JetElement.replaceCallElement(generatedExpression: JetExpression): JetElement {
-    when (this) {
-        is JetExpression -> return replace(generatedExpression) as JetExpression
-
-        is JetAnnotationEntry -> {
-            val dummyAnnotation = createByPattern("@Dummy($0)", generatedExpression) { JetPsiFactory(project).createAnnotationEntry(it) }
-            return replace(dummyAnnotation) as JetElement
-        }
-
-        else -> throw UnsupportedOperationException() //TODO: check it before!!
-    }
+    @Suppress("UNCHECKED_CAST")
+    return callKindHandler.unwrapResult(resultRange.last as JetElement)
 }
 
 private fun ConstructedExpressionWrapper.processValueParameterUsages(
