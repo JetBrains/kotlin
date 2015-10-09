@@ -1,5 +1,4 @@
 [INFO] Kotlin Compiler version @snapshot@
 [INFO] Compiling Kotlin sources from [/src/main/kotlin]
 [INFO] Classes directory is /target/classes
-[INFO] Using kotlin annotations from /local-repo/org/jetbrains/kotlin/kotlin-jdk-annotations/0.1-SNAPSHOT/kotlin-jdk-annotations-0.1-SNAPSHOT.jar
 [INFO] Module name is test-project

@@ -111,4 +111,13 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             getLog().info("Optimization is turned off");
         }
     }
+
+    protected List<String> filterClassPath(List<String> classpath) {
+        return CollectionsKt.filter(classpath, new Function1<String, Boolean>() {
+            @Override
+            public Boolean invoke(String s) {
+                return new File(s).exists() || new File(project.getBasedir(), s).exists();
+            }
+        });
+    }
 }
