@@ -1,6 +1,6 @@
 package test
 
-@HiddenDeclaration
+@Deprecated("hidden", level = DeprecationLevel.HIDDEN)
 fun hiddenFunFromSameFile(){}
 
 fun String.foo() {

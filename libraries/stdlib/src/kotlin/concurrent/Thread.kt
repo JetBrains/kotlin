@@ -2,7 +2,9 @@
 @file:JvmName("ThreadsKt")
 package kotlin.concurrent
 
-import java.util.concurrent.*
+import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Future
 
 /**
  * Returns the current thread.
@@ -13,8 +15,7 @@ public val currentThread: Thread
 /**
  * Exposes the name of this thread as a property.
  */
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"), level = DeprecationLevel.HIDDEN)
 public var Thread.name: String
     get() = getName()
     set(value) {
@@ -42,8 +43,7 @@ public val Thread.alive: Boolean
 /**
  * Exposes the priority of this thread as a property.
  */
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("priority"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("priority"), level = DeprecationLevel.HIDDEN)
 public var Thread.priority: Int
     get() = getPriority()
     set(value) {
@@ -53,8 +53,7 @@ public var Thread.priority: Int
 /**
  * Exposes the context class loader of this thread as a property.
  */
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("contextClassLoader"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("contextClassLoader"), level = DeprecationLevel.HIDDEN)
 public var Thread.contextClassLoader: ClassLoader?
     get() = getContextClassLoader()
     set(value) {
