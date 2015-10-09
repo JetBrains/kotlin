@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -70,24 +72,24 @@ private fun performCallReplacement(
         bindingContext: BindingContext,
         resolvedCall: ResolvedCall<out CallableDescriptor>,
         replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression
-): JetExpression {
+): JetElement {
     val project = element.project
     val psiFactory = JetPsiFactory(project)
     val descriptor = resolvedCall.resultingDescriptor
 
-    val callExpression = resolvedCall.call.callElement as JetExpression
-    val qualifiedExpression = callExpression.getQualifiedExpressionForSelector()
-    val expressionToBeReplaced = qualifiedExpression ?: callExpression
+    val callElement = resolvedCall.call.callElement
+    val qualifiedExpression = callElement.getQualifiedExpressionForSelector()
+    val elementToBeReplaced = qualifiedExpression ?: callElement
 
-    val commentSaver = CommentSaver(expressionToBeReplaced, saveLineBreaks = true)
+    val commentSaver = CommentSaver(elementToBeReplaced, saveLineBreaks = true)
 
     var receiver = element.getReceiverExpression()?.marked(USER_CODE_KEY)
     var receiverType = if (receiver != null) bindingContext.getType(receiver) else null
 
     if (receiver == null) {
         val receiverValue = if (descriptor.isExtension) resolvedCall.extensionReceiver else resolvedCall.dispatchReceiver
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expressionToBeReplaced]
-        if (receiverValue is ThisReceiver && resolutionScope != null) {
+        val resolutionScope = elementToBeReplaced.getResolutionScope(bindingContext, elementToBeReplaced.getResolutionFacade()).asJetScope()
+        if (receiverValue is ThisReceiver) {
             receiver = receiverValue.asExpression(resolutionScope, psiFactory)
             receiverType = receiverValue.type
         }
@@ -95,7 +97,10 @@ private fun performCallReplacement(
 
     receiver?.mark(RECEIVER_VALUE_KEY)
 
-    val wrapper = ConstructedExpressionWrapper(replacement.expression, expressionToBeReplaced, bindingContext)
+    val wrapper = if (elementToBeReplaced is JetExpression)
+        ConstructedExpressionWrapperWithIntroduceFeature(replacement.expression, bindingContext, elementToBeReplaced)
+    else
+        ConstructedExpressionWrapper(replacement.expression, bindingContext)
 
     //TODO: this@
     for (thisExpression in replacement.expression.collectDescendantsOfType<JetThisExpression>()) {
@@ -112,41 +117,57 @@ private fun performCallReplacement(
     wrapper.processTypeParameterUsages(resolvedCall)
 
     if (qualifiedExpression is JetSafeQualifiedExpression) {
-        wrapper.wrapExpressionForSafeCall(receiver!!, receiverType)
+        (wrapper as ConstructedExpressionWrapperWithIntroduceFeature).wrapExpressionForSafeCall(receiver!!, receiverType)
     }
-    else if (callExpression is JetBinaryExpression && callExpression.operationToken == JetTokens.IDENTIFIER) {
+    else if (callElement is JetBinaryExpression && callElement.operationToken == JetTokens.IDENTIFIER) {
         wrapper.keepInfixFormIfPossible()
     }
 
-    if (receiver != null) {
+    if (receiver != null && wrapper is ConstructedExpressionWrapperWithIntroduceFeature) {
         val thisReplaced = wrapper.expression.collectDescendantsOfType<JetExpression> { it[RECEIVER_VALUE_KEY] }
-        if (receiver.shouldKeepValue(thisReplaced.size())) {
+        if (receiver.shouldKeepValue(thisReplaced.size)) {
             wrapper.introduceValue(receiver, receiverType, thisReplaced)
         }
     }
 
-    for ((parameter, value, valueType) in introduceValuesForParameters) {
-        val usagesReplaced = wrapper.expression.collectDescendantsOfType<JetExpression> { it[PARAMETER_VALUE_KEY] == parameter }
-        wrapper.introduceValue(value, valueType, usagesReplaced, nameSuggestion = parameter.name.asString())
+    if (wrapper is ConstructedExpressionWrapperWithIntroduceFeature) {
+        for ((parameter, value, valueType) in introduceValuesForParameters) {
+            val usagesReplaced = wrapper.expression.collectDescendantsOfType<JetExpression> { it[PARAMETER_VALUE_KEY] == parameter }
+            wrapper.introduceValue(value, valueType, usagesReplaced, nameSuggestion = parameter.name.asString())
+        }
     }
 
-    var result = expressionToBeReplaced.replace(wrapper.expression) as JetExpression
+    var result = elementToBeReplaced.replaceCallElement(wrapper.expression)
 
     val file = result.getContainingJetFile()
     replacement.fqNamesToImport
             .flatMap { file.resolveImportReference(it) }
             .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
 
-    var resultRange = if (wrapper.addedStatements.isEmpty())
+    var resultRange = if (wrapper !is ConstructedExpressionWrapperWithIntroduceFeature || wrapper.addedStatements.isEmpty())
         PsiChildRange.singleElement(result)
     else
         PsiChildRange(wrapper.addedStatements.first(), result)
 
-    resultRange = postProcessInsertedExpression(resultRange)
+    resultRange = postProcessInsertedCode(resultRange)
 
     commentSaver.restore(resultRange)
 
-    return resultRange.last as JetExpression
+    return resultRange.last as JetElement
+}
+
+private fun JetElement.replaceCallElement(generatedExpression: JetExpression): JetElement {
+    when (this) {
+        is JetExpression -> return replace(generatedExpression) as JetExpression
+
+        is JetAnnotationEntry -> {
+            //TODO: bad techinique!!
+            val annotationEntry = JetPsiFactory(project).createAnnotationEntry("@" + generatedExpression.text)
+            return replace(annotationEntry) as JetElement
+        }
+
+        else -> throw UnsupportedOperationException() //TODO: check it before!!
+    }
 }
 
 private fun ConstructedExpressionWrapper.processValueParameterUsages(
@@ -243,7 +264,7 @@ private fun ConstructedExpressionWrapper.processTypeParameterUsages(resolvedCall
     }
 }
 
-private fun ConstructedExpressionWrapper.wrapExpressionForSafeCall(receiver: JetExpression, receiverType: JetType?) {
+private fun ConstructedExpressionWrapperWithIntroduceFeature.wrapExpressionForSafeCall(receiver: JetExpression, receiverType: JetType?) {
     val qualified = expression as? JetQualifiedExpression
     if (qualified != null) {
         if (qualified.receiverExpression[RECEIVER_VALUE_KEY]) {
@@ -363,10 +384,10 @@ private fun argumentForParameter(
     }
 }
 
-private fun postProcessInsertedExpression(range: PsiChildRange): PsiChildRange {
-    val expressions = range.filterIsInstance<JetExpression>().toList()
+private fun postProcessInsertedCode(range: PsiChildRange): PsiChildRange {
+    val elements = range.filterIsInstance<JetElement>().toList()
 
-    expressions.forEach {
+    elements.forEach {
         introduceNamedArguments(it)
 
         restoreFunctionLiteralArguments(it)
@@ -393,11 +414,11 @@ private fun postProcessInsertedExpression(range: PsiChildRange): PsiChildRange {
         }
     }
 
-    val newExpressions = expressions.map {
-        ShortenReferences({ ShortenReferences.Options(removeThis = true) }).process(it, shortenFilter) as JetExpression
+    val newElements = elements.map {
+        ShortenReferences({ ShortenReferences.Options(removeThis = true) }).process(it, shortenFilter)
     }
 
-    newExpressions.forEach {
+    newElements.forEach {
         // clean up user data
         it.forEachDescendantOfType<JetExpression> {
             it.clear(USER_CODE_KEY)
@@ -413,10 +434,10 @@ private fun postProcessInsertedExpression(range: PsiChildRange): PsiChildRange {
         }
     }
 
-    return PsiChildRange(newExpressions.first(), newExpressions.last())
+    return PsiChildRange(newElements.first(), newElements.last())
 }
 
-private fun introduceNamedArguments(result: JetExpression) {
+private fun introduceNamedArguments(result: JetElement) {
     val callsToProcess = LinkedHashSet<JetCallExpression>()
     result.forEachDescendantOfType<JetValueArgument> {
         if (it[MAKE_ARGUMENT_NAMED_KEY] && !it.isNamed()) {
@@ -450,7 +471,7 @@ private fun introduceNamedArguments(result: JetExpression) {
     }
 }
 
-private fun dropArgumentsForDefaultValues(result: JetExpression) {
+private fun dropArgumentsForDefaultValues(result: JetElement) {
     val project = result.project
     val newBindingContext = result.analyze()
     val argumentsToDrop = ArrayList<ValueArgument>()
@@ -492,18 +513,18 @@ private fun arrayOfFunctionName(elementType: JetType): String {
     }
 }
 
-private fun removeExplicitTypeArguments(result: JetExpression) {
+private fun removeExplicitTypeArguments(result: JetElement) {
     result.collectDescendantsOfType<JetTypeArgumentList>(canGoInside = { !it[USER_CODE_KEY] }) {
         RemoveExplicitTypeArgumentsIntention.isApplicableTo(it, approximateFlexible = true)
     }.forEach { it.delete() }
 }
 
-private fun simplifySpreadArrayOfArguments(expression: JetExpression) {
+private fun simplifySpreadArrayOfArguments(result: JetElement) {
     //TODO: test for nested
 
     val argumentsToExpand = ArrayList<Pair<JetValueArgument, Collection<JetValueArgument>>>()
 
-    expression.forEachDescendantOfType<JetValueArgument>(canGoInside = { !it[USER_CODE_KEY] }) { argument ->
+    result.forEachDescendantOfType<JetValueArgument>(canGoInside = { !it[USER_CODE_KEY] }) { argument ->
         if (argument.getSpreadElement() != null && !argument.isNamed()) {
             val argumentExpression = argument.getArgumentExpression() ?: return@forEachDescendantOfType
             val resolvedCall = argumentExpression.getResolvedCall(argumentExpression.analyze(BodyResolveMode.PARTIAL)) ?: return@forEachDescendantOfType
@@ -533,10 +554,10 @@ private fun JetValueArgument.replaceByMultiple(arguments: Collection<JetValueArg
     }
 }
 
-private fun restoreFunctionLiteralArguments(expression: JetExpression) {
+private fun restoreFunctionLiteralArguments(expression: JetElement) {
     val callExpressions = ArrayList<JetCallExpression>()
 
-    expression.forEachDescendantOfType<JetExpression>(fun (expr: JetExpression) {
+    expression.forEachDescendantOfType<JetExpression>(fun (expr) {
         if (!expr[WAS_FUNCTION_LITERAL_ARGUMENT_KEY]) return
         assert(expr.unpackFunctionLiteral() != null)
 
@@ -559,8 +580,8 @@ private fun restoreFunctionLiteralArguments(expression: JetExpression) {
     callExpressions.forEach { it.moveFunctionLiteralOutsideParentheses() }
 }
 
-internal fun <T: Any> PsiElement.get(key: Key<T>): T? = getCopyableUserData(key)
-internal fun PsiElement.get(key: Key<Unit>): Boolean = getCopyableUserData(key) != null
+internal operator fun <T: Any> PsiElement.get(key: Key<T>): T? = getCopyableUserData(key)
+internal operator fun PsiElement.get(key: Key<Unit>): Boolean = getCopyableUserData(key) != null
 private fun <T: Any> JetElement.clear(key: Key<T>) = putCopyableUserData(key, null)
 private fun <T: Any> JetElement.put(key: Key<T>, value: T) = putCopyableUserData(key, value)
 private fun JetElement.mark(key: Key<Unit>) = putCopyableUserData(key, Unit)
@@ -580,14 +601,11 @@ private val WAS_FUNCTION_LITERAL_ARGUMENT_KEY = Key<Unit>("WAS_FUNCTION_LITERAL_
 private val MAKE_ARGUMENT_NAMED_KEY = Key<Unit>("MAKE_ARGUMENT_NAMED")
 private val DEFAULT_PARAMETER_VALUE_KEY = Key<Unit>("DEFAULT_PARAMETER_VALUE")
 
-private class ConstructedExpressionWrapper(
+private open class ConstructedExpressionWrapper(
         var expression: JetExpression,
-        val expressionToBeReplaced: JetExpression,
         val bindingContext: BindingContext
 ) {
-    val addedStatements = ArrayList<JetExpression>()
-
-    val psiFactory = JetPsiFactory(expressionToBeReplaced)
+    val psiFactory = JetPsiFactory(expression)
 
     public fun replaceExpression(oldExpression: JetExpression, newExpression: JetExpression): JetExpression {
         assert(expression.isAncestor(oldExpression))
@@ -597,6 +615,14 @@ private class ConstructedExpressionWrapper(
         }
         return result
     }
+}
+
+private class ConstructedExpressionWrapperWithIntroduceFeature(
+        expression: JetExpression,
+        bindingContext: BindingContext,
+        val expressionToBeReplaced: JetExpression
+) : ConstructedExpressionWrapper(expression, bindingContext) {
+    val addedStatements = ArrayList<JetExpression>()
 
     public fun introduceValue(
             value: JetExpression,
@@ -683,3 +709,4 @@ private class ConstructedExpressionWrapper(
     private fun collectNameUsages(scope: JetExpression, name: String)
             = scope.collectDescendantsOfType<JetSimpleNameExpression> { it.getReceiverExpression() == null && it.getReferencedName() == name }
 }
+
