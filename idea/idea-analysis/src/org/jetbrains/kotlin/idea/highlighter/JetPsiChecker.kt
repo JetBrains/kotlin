@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -79,22 +80,25 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
     fun annotateElement(element: PsiElement, holder: AnnotationHolder, diagnostics: Diagnostics) {
         if (ProjectRootsUtil.isInProjectSource(element) || element.getContainingFile() is KtCodeFragment) {
-            val elementAnnotator = ElementAnnotator(element, holder)
-            for (diagnostic in diagnostics.forElement(element)) {
-                elementAnnotator.registerDiagnosticAnnotations(diagnostic)
-            }
+            ElementAnnotator(element, holder).registerDiagnosticsAnnotations(diagnostics.forElement(element))
         }
     }
 
     private inner class ElementAnnotator(private val element: PsiElement, private val holder: AnnotationHolder) {
-        private var isMarkedWithRedeclaration = false
+        fun registerDiagnosticsAnnotations(diagnostics: Collection<Diagnostic>) {
+            diagnostics.groupBy { diagnostic -> diagnostic.factory }.forEach { group -> registerDiagnosticAnnotations(group.getValue()) }
+        }
 
-        fun registerDiagnosticAnnotations(diagnostic: Diagnostic) {
-            if (!diagnostic.isValid()) return
+        private fun registerDiagnosticAnnotations(diagnostics: List<Diagnostic>) {
+            assert(diagnostics.isNotEmpty())
 
-            assert(diagnostic.getPsiElement() == element)
+            val validDiagnostics = diagnostics.filter { it.isValid }
+            if (validDiagnostics.isEmpty()) return
 
+            val diagnostic = diagnostics.first()
             val factory = diagnostic.getFactory()
+
+            assert(diagnostics.all { it.getPsiElement() == element && it.factory == factory })
 
             val presentationInfo: AnnotationPresentationInfo = when (factory.severity) {
                 Severity.ERROR -> {
@@ -142,32 +146,59 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                 Severity.INFO -> return // Do nothing
             }
 
-            setUpAnnotation(diagnostic, presentationInfo)
+            setUpAnnotations(diagnostics, presentationInfo)
         }
 
-        private fun setUpAnnotation(diagnostic: Diagnostic, data: AnnotationPresentationInfo) {
+        private fun setUpAnnotations(diagnostics: List<Diagnostic>, data: AnnotationPresentationInfo) {
             for (range in data.ranges) {
-                registerQuickFix(diagnostic, range, data)
+                registerQuickFixes(diagnostics, range, data)
             }
         }
 
-        private fun registerQuickFix(diagnostic: Diagnostic, range: TextRange, data: AnnotationPresentationInfo) {
-            val annotation = data.create(range, holder)
+        fun registerQuickFixes(diagnostics: List<Diagnostic>, range: TextRange, data: AnnotationPresentationInfo) {
+            val (multiFixes, processedFactories) = createQuickFixesForSameTypeDiagnostics(diagnostics)
 
-            createQuickfixes(diagnostic).forEach {
-                annotation.registerFix(it)
+            val annotations = diagnostics.map { diagnostic ->
+                val annotation = data.create(range, holder)
+
+                createQuickfixes(diagnostic, processedFactories).forEach { annotation.registerFix(it) }
+
+                // Making warnings suppressable
+                if (diagnostic.getSeverity() == Severity.WARNING) {
+                    annotation.setProblemGroup(KotlinSuppressableWarningProblemGroup(diagnostic.getFactory()))
+
+                    val fixes = annotation.getQuickFixes()
+                    if (fixes == null || (fixes.isEmpty() && multiFixes.isEmpty())) {
+                        // if there are no quick fixes we need to register an EmptyIntentionAction to enable 'suppress' actions
+                        annotation.registerFix(EmptyIntentionAction(diagnostic.getFactory().getName()))
+                    }
+                }
+
+                annotation
             }
 
-            // Making warnings suppressable
-            if (diagnostic.getSeverity() == Severity.WARNING) {
-                annotation.setProblemGroup(KotlinSuppressableWarningProblemGroup(diagnostic.getFactory()))
+            // Always register all group fixes on the same annotation
+            val firstAnnotation = annotations.minBy { it.message }!!
+            multiFixes.forEach { fix -> firstAnnotation.registerFix(fix) }
+        }
 
-                val fixes = annotation.getQuickFixes()
-                if (fixes == null || fixes.isEmpty()) {
-                    // if there are no quick fixes we need to register an EmptyIntentionAction to enable 'suppress' actions
-                    annotation.registerFix(EmptyIntentionAction(diagnostic.getFactory().getName()))
+        private fun createQuickFixesForSameTypeDiagnostics(diagnostics: List<Diagnostic>):
+                Pair<Collection<IntentionAction>, Collection<JetIntentionActionsFactory>> {
+            val factory = diagnostics.first().factory
+            val sameProblemsFixesFactories = QuickFixes.getInstance().getActionFactories(factory).filter { it.canFixSeveralSameProblems() }
+
+            val processedFactories = hashSetOf<JetIntentionActionsFactory>()
+            val fixActions = arrayListOf<IntentionAction>()
+
+            for (actionFactory in sameProblemsFixesFactories) {
+                val actions = actionFactory.createActions(diagnostics)
+                if (actions.isNotEmpty()) {
+                    processedFactories.add(actionFactory)
+                    fixActions.addAll(actions)
                 }
             }
+
+            return Pair(fixActions, processedFactories)
         }
     }
 
@@ -234,9 +265,11 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                 TypeKindHighlightingVisitor(holder, bindingContext)
         )
 
-        public fun createQuickfixes(diagnostic: Diagnostic): Collection<IntentionAction> {
+        public fun createQuickfixes(
+                diagnostic: Diagnostic,
+                excludedFactories : Collection<JetIntentionActionsFactory> = emptySet<JetIntentionActionsFactory>()): Collection<IntentionAction> {
             val result = arrayListOf<IntentionAction>()
-            val intentionActionsFactories = QuickFixes.getInstance().getActionFactories(diagnostic.getFactory())
+            val intentionActionsFactories = QuickFixes.getInstance().getActionFactories(diagnostic.getFactory()) - excludedFactories
             for (intentionActionsFactory in intentionActionsFactories.filterNotNull()) {
                 result.addAll(intentionActionsFactory.createActions(diagnostic))
             }
