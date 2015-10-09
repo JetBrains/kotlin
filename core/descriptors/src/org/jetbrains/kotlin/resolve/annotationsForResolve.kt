@@ -16,13 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.descriptorUtil
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.name.FqName
-
-private val HIDDEN_ANNOTATION_FQ_NAME = FqName("kotlin.HiddenDeclaration")
-
-public fun DeclarationDescriptor.isAnnotatedAsHidden(): Boolean = annotations.findAnnotation(HIDDEN_ANNOTATION_FQ_NAME) != null
 
 private val NO_INFER_ANNOTATION_FQ_NAME = FqName("kotlin.NoInfer")
 

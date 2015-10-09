@@ -19,24 +19,23 @@ package org.jetbrains.kotlin.resolve.validation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_GETTER
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_SETTER
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.getDeprecatedAnnotation
+import org.jetbrains.kotlin.resolve.getDeprecatedAnnotationLevel
 
 public class DeprecatedSymbolValidator : SymbolUsageValidator {
-    private val JAVA_DEPRECATED = FqName(java.lang.Deprecated::class.java.name)
 
     override fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
         val deprecated = targetDescriptor.getDeprecatedAnnotation()
@@ -67,59 +66,10 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
         }
     }
 
-    private fun DeclarationDescriptor.getDeprecatedAnnotation(): Pair<AnnotationDescriptor, DeclarationDescriptor>? {
-        val ownAnnotation = getDeclaredDeprecatedAnnotation(AnnotationUseSiteTarget.getAssociatedUseSiteTarget(this))
-        if (ownAnnotation != null)
-            return ownAnnotation to this
-
-        when (this) {
-            is ConstructorDescriptor -> {
-                val classDescriptor = getContainingDeclaration()
-                val classAnnotation = classDescriptor.getDeclaredDeprecatedAnnotation()
-                if (classAnnotation != null)
-                    return classAnnotation to classDescriptor
-            }
-            is PropertyAccessorDescriptor -> {
-                val propertyDescriptor = correspondingProperty
-
-                val target = if (this is PropertyGetterDescriptor) PROPERTY_GETTER else PROPERTY_SETTER
-                val accessorAnnotation = propertyDescriptor.getDeclaredDeprecatedAnnotation(target, false)
-                if (accessorAnnotation != null)
-                    return accessorAnnotation to this
-
-                val classDescriptor = containingDeclaration as? ClassDescriptor
-                if (classDescriptor != null && classDescriptor.isCompanionObject) {
-                    val classAnnotation = classDescriptor.getDeclaredDeprecatedAnnotation()
-                    if (classAnnotation != null)
-                        return classAnnotation to classDescriptor
-                }
-            }
-        }
-        return null
-    }
-
-    private fun DeclarationDescriptor.getDeclaredDeprecatedAnnotation(
-            target: AnnotationUseSiteTarget? = null,
-            findAnnotationsWithoutTarget: Boolean = true
-    ): AnnotationDescriptor? {
-        if (findAnnotationsWithoutTarget) {
-            val annotations = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: annotations.findAnnotation(JAVA_DEPRECATED)
-            if (annotations != null) return annotations
-        }
-
-        if (target != null) {
-            return Annotations.Companion.findUseSiteTargetedAnnotation(annotations, target, KotlinBuiltIns.FQ_NAMES.deprecated)
-                   ?: Annotations.Companion.findUseSiteTargetedAnnotation(annotations, target, JAVA_DEPRECATED)
-        }
-
-        return null
-    }
-
     private fun createDeprecationDiagnostic(element: PsiElement, descriptor: DeclarationDescriptor, deprecated: AnnotationDescriptor): Diagnostic {
         val message = deprecated.argumentValue("message") as? String ?: ""
-        val level = deprecated.argumentValue("level") as? ClassDescriptor
 
-        if (level?.name?.asString() == "ERROR") {
+        if (deprecated.getDeprecatedAnnotationLevel() == DeprecationLevelValue.ERROR) {
             return Errors.DEPRECATION_ERROR.on(element, descriptor.original, message)
         }
 
