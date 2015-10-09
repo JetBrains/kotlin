@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.apache.commons.lang.SystemUtils
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
-import java.lang.ref.Reference
 import java.util.concurrent.ScheduledExecutorService
-import kotlin.text.MatchGroup
 
 internal fun getUsedMemoryKb(): Long {
     System.gc()
@@ -42,7 +40,7 @@ private fun comparableVersionStr(version: String) =
                 ?.joinToString(".", transform = { it!!.value.padStart(3, '0') })
 
 
-class FinishBuildListener(pluginClassLoader: ClassLoader?, val startMemory: Long) : BuildAdapter() {
+class FinishBuildListener(pluginClassLoader: ClassLoader, val startMemory: Long) : BuildAdapter() {
     val log = Logging.getLogger(this.javaClass)
 
     private var threadTracker: ThreadTracker? = ThreadTracker()
@@ -52,26 +50,11 @@ class FinishBuildListener(pluginClassLoader: ClassLoader?, val startMemory: Long
     override fun buildFinished(result: BuildResult?) {
         log.kotlinDebug("Build finished listener")
 
-        val gradle = result?.getGradle()
+        val gradle = result?.gradle
         if (gradle != null) {
-            // making cleanup only on recognized versions of gradle and if version < 2.4
-            // otherwise it may cause problems e.g. with JobScheduler on subsequent runs
-            // this strategy may lead to memory leaks, but prevent crashes due to destroyed JobScheduler
-            // the reason for the strategy is the following:
-            // gradle < 2.4 has problems with plugin reuse in the daemon: new calls to the plugin are made with a new classloader
-            // for every new build. With statically initialized daemons like JobScheduler that leads to big leaks of classloaders and classes,
-            // therefore to reduce leaks JobScheduler (and deprecated ZipFileCache for now) should be stopped)
-            // It should be noted that because of this behavior there are no benefits of using daemon in these versions.
-            // Starting from 2.4 gradle using cached classloaders, that leads to effective class reusing in the daemon, but
-            // in that case premature stopping of the static daemons may lead to crashes.
-            comparableVersionStr(gradle.getGradleVersion())?.let {
-                log.kotlinDebug("detected gradle version $it")
-                if (it < comparableVersionStr("2.4")!!) {
-                    cleanup()
-                    // checking thread leaks only then cleaning up
-                    threadTracker?.checkThreadLeak(gradle)
-                }
-            }
+            cleanup(gradle.gradleVersion)
+            // checking thread leaks only then cleaning up
+            threadTracker?.checkThreadLeak(gradle)
 
             threadTracker = null
             gradle.removeListener(this)
@@ -87,14 +70,36 @@ class FinishBuildListener(pluginClassLoader: ClassLoader?, val startMemory: Long
 class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
     val log = Logging.getLogger(this.javaClass)
 
-    fun invoke() {
+    operator fun invoke(gradleVersion: String) {
         assert(pluginClassLoader != null)
 
         log.kotlinDebug("compiler services cleanup")
 
-        // TODO: remove ZipFileCache cleanup after switching to recent idea libs
-        stopZipFileCache()
-        stopJobScheduler()
+        // clearing jar cache to avoid problems like KT-9440 (unable to clean/rebuild a project due to locked jar file)
+        // problem is known to happen only on windows - the reason (seems) related to http://bugs.java.com/view_bug.do?bug_id=6357433
+        // clean cache only when running on windows
+        if (SystemUtils.IS_OS_WINDOWS) {
+            cleanJarCache()
+        }
+
+        // making cleanup of static objects only on recognized versions of gradle and if version < 2.4
+        // otherwise it may cause problems e.g. with JobScheduler on subsequent runs
+        // this strategy may lead to memory leaks, but prevent crashes due to destroyed JobScheduler
+        // the reason for the strategy is the following:
+        // gradle < 2.4 has problems with plugin reuse in the daemon: new calls to the plugin are made with a new classloader
+        // for every new build. With statically initialized daemons like JobScheduler that leads to big leaks of classloaders and classes,
+        // therefore to reduce leaks JobScheduler (and deprecated ZipFileCache for now) should be stopped)
+        // It should be noted that because of this behavior there are no benefits of using daemon in these versions.
+        // Starting from 2.4 gradle using cached classloaders, that leads to effective class reusing in the daemon, but
+        // in that case premature stopping of the static daemons may lead to crashes.
+        comparableVersionStr(gradleVersion)?.let {
+            log.kotlinDebug("detected gradle version $it")
+            if (it < comparableVersionStr("2.4")!!) {
+                // TODO: remove ZipFileCache cleanup after switching to recent idea libs
+                stopZipFileCache()
+                stopJobScheduler()
+            }
+        }
 
         pluginClassLoader = null
     }
@@ -127,5 +132,25 @@ class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
 
         log.kotlinDebug("Call $shortName.$methodName()")
         shutdownMethod.invoke(null)
+    }
+
+    private fun cleanJarCache() {
+        val zipHandlerClass = pluginClassLoader!!.loadClass("com.intellij.openapi.vfs.impl.ZipHandler")
+        val privateCacheField = zipHandlerClass.getDeclaredField("ourZipFileFileAccessorCache")
+        privateCacheField.isAccessible = true
+        privateCacheField.get(null)?.let {
+            val innerCache = privateCacheField.type.getDeclaredField("myCache")
+            innerCache.isAccessible = true
+            innerCache.get(it)?.let {
+                val clearMethod = innerCache.type.getMethod("clear")
+                if (clearMethod != null) {
+                    clearMethod.invoke(it)
+                    log.kotlinDebug("successfuly cleared ZipHandler.ourZipFileFileAccessorCache.myCache")
+                }
+                else {
+                    log.kotlinDebug("unable to access ZipHandler.ourZipFileFileAccessorCache.myCache.clear")
+                }
+            } ?: log.kotlinDebug("unable to access ZipHandler.ourZipFileFileAccessorCache.myCache (${innerCache.get(it)})")
+        } ?: log.kotlinDebug("unable to access ZipHandler.ourZipFileFileAccessorCache (${privateCacheField.get(null)})")
     }
 }

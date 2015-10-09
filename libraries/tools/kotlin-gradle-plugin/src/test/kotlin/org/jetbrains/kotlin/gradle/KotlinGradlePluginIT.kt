@@ -71,6 +71,10 @@ class KotlinGradleIT: BaseGradleIT() {
                 }
             }
 
+            // testing that nothing remains locked by daemon, see KT-9440
+            project.build(userVariantArg, "clean", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
+                assertSuccessful()
+            }
         }
         finally {
             exitTestDaemon()
