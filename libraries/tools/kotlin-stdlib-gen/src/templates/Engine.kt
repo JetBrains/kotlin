@@ -413,20 +413,11 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
 }
 
-fun f(signature: String, init: GenericFunction.() -> Unit): GenericFunction {
-    val gf = GenericFunction(signature)
-    gf.init()
-    return gf
-}
+infix fun MutableList<GenericFunction>.add(item: GenericFunction) = add(item)
+infix fun MutableList<GenericFunction>.addAll(items: Iterable<GenericFunction>) = this.addAll(iterable = items)
 
-fun pval(signature: String, init: GenericFunction.() -> Unit): GenericFunction {
-    val gf = GenericFunction(signature, "val")
-    gf.init()
-    return gf
-}
+fun f(signature: String, init: GenericFunction.() -> Unit) = GenericFunction(signature).apply(init)
 
-fun pvar(signature: String, init: GenericFunction.() -> Unit): GenericFunction {
-    val gf = GenericFunction(signature, "var")
-    gf.init()
-    return gf
-}
+fun pval(signature: String, init: GenericFunction.() -> Unit) = GenericFunction(signature, "val").apply(init)
+
+fun pvar(signature: String, init: GenericFunction.() -> Unit) = GenericFunction(signature, "var").apply(init)
