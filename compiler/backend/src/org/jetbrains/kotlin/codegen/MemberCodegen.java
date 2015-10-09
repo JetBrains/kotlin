@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
@@ -62,7 +61,6 @@ import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYN
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
-import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.TraitImpl;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -366,16 +364,6 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, true, StackValue.LOCAL_0);
 
         propValue.store(codegen.gen(initializer), codegen.v);
-
-        ResolvedCall<FunctionDescriptor> pdResolvedCall =
-                bindingContext.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, propertyDescriptor);
-        if (pdResolvedCall != null) {
-            int index = PropertyCodegen.indexOfDelegatedProperty(property);
-            StackValue lastValue = PropertyCodegen.invokeDelegatedPropertyConventionMethod(
-                    propertyDescriptor, codegen, typeMapper, pdResolvedCall, index, 0
-            );
-            lastValue.put(Type.VOID_TYPE, codegen.v);
-        }
     }
 
     private boolean shouldInitializeProperty(@NotNull JetProperty property) {
