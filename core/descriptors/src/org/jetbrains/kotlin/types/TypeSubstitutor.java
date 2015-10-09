@@ -16,11 +16,15 @@
 
 package org.jetbrains.kotlin.types;
 
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations;
+import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.calls.inference.InferencePackage;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
@@ -179,9 +183,10 @@ public class TypeSubstitutor {
 
             // substitutionType.annotations = replacement.annotations ++ type.annotations
             if (!type.getAnnotations().isEmpty()) {
+                Annotations typeAnnotations = filterOutUnsafeVariance(type.getAnnotations());
                 substitutedType = TypeUtilPackage.replaceAnnotations(
                         substitutedType,
-                        new CompositeAnnotations(substitutedType.getAnnotations(), type.getAnnotations())
+                        new CompositeAnnotations(substitutedType.getAnnotations(), typeAnnotations)
                 );
             }
 
@@ -192,6 +197,17 @@ public class TypeSubstitutor {
         }
         // The type is not within the substitution range, i.e. Foo, Bar<T> etc.
         return substituteCompoundType(originalProjection, recursionDepth);
+    }
+
+    @NotNull
+    private static Annotations filterOutUnsafeVariance(@NotNull Annotations annotations) {
+        if (!annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.unsafeVariance)) return annotations;
+        return new FilteredAnnotations(annotations, new Function1<FqName, Boolean>() {
+            @Override
+            public Boolean invoke(@NotNull  FqName name) {
+                return !name.equals(KotlinBuiltIns.FQ_NAMES.unsafeVariance);
+            }
+        });
     }
 
     private TypeProjection substituteCompoundType(
