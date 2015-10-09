@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core
 
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
@@ -65,12 +66,19 @@ class ImportableFqNameClassifier(private val file: JetFile) {
         }
 
         return when {
-            JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName).isNotEmpty() -> Classification.notToBeUsedInKotlin
+            JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName).isNotEmpty()
+                    || JavaAnnotationMapper.javaToKotlinNameMap[fqName] != null -> Classification.notToBeUsedInKotlin
+
             fqName.parent() == file.packageFqName -> Classification.fromCurrentPackage
+
             ImportInsertHelper.getInstance(file.project).isImportedWithDefault(importPath, file) -> Classification.defaultImport
+
             isImportedWithPreciseImport(fqName) -> Classification.preciseImport
+
             isImportedWithAllUnderImport(fqName) -> Classification.allUnderImport
+
             hasPreciseImportFromPackage(fqName.parent()) -> Classification.hasImportFromSamePackage
+
             else -> Classification.notImported
         }
     }

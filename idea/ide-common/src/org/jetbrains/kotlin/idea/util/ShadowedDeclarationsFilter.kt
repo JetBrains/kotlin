@@ -55,6 +55,7 @@ public class ShadowedDeclarationsFilter private constructor(
                 is CallTypeAndReceiver.DOT -> callTypeAndReceiver.receiver
                 is CallTypeAndReceiver.SAFE -> callTypeAndReceiver.receiver
                 is CallTypeAndReceiver.INFIX -> callTypeAndReceiver.receiver
+                is CallTypeAndReceiver.TYPE -> null // need filtering of classes with the same FQ-name
                 else -> return null // TODO: support shadowed declarations filtering for callable references
             }
 
@@ -98,7 +99,8 @@ public class ShadowedDeclarationsFilter private constructor(
     private fun signature(descriptor: DeclarationDescriptor): Any {
         return when (descriptor) {
             is SimpleFunctionDescriptor -> FunctionSignature(descriptor)
-            is VariableDescriptor -> descriptor.getName()
+            is VariableDescriptor -> descriptor.name
+            is ClassDescriptor -> descriptor.importableFqName ?: descriptor
             else -> descriptor
         }
     }
@@ -109,9 +111,14 @@ public class ShadowedDeclarationsFilter private constructor(
             descriptors: Collection<TDescriptor>,
             descriptorsToImport: Collection<TDescriptor> = emptyList()
     ): Collection<TDescriptor> {
-        if (descriptors.size() == 1) return descriptors
+        if (descriptors.size == 1) return descriptors
 
         val first = descriptors.first()
+
+        if (first is ClassDescriptor) { // for classes with the same FQ-name we simply take the first one
+            return listOf<TDescriptor>(first)
+        }
+
         val isFunction = first is FunctionDescriptor
         val name = first.getName()
         val parameters = (first as CallableDescriptor).getValueParameters()

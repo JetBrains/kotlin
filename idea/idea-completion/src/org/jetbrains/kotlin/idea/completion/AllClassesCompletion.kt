@@ -39,8 +39,13 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
 ) {
     fun collect(classDescriptorCollector: (ClassDescriptor) -> Unit, javaClassCollector: (PsiClass) -> Unit) {
 
-        //TODO: this is a temporary hack until we have built-ins in indices
-        collectClassesFromScope(classDescriptorCollector, resolutionFacade.moduleDescriptor.builtIns.builtInsPackageScope)
+        //TODO: this is a temporary solution until we have built-ins in indices
+        // we need only nested classes because top-level built-ins are all added through default imports
+        collectClassesFromScope(resolutionFacade.moduleDescriptor.builtIns.builtInsPackageScope) {
+            if (it.containingDeclaration is ClassDescriptor) {
+                classDescriptorCollector(it)
+            }
+        }
 
         kotlinIndicesHelper
                 .getKotlinClasses({ prefixMatcher.prefixMatches(it) }, kindFilter)
@@ -51,14 +56,14 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
         }
     }
 
-    private fun collectClassesFromScope(collector: (ClassDescriptor) -> Unit, scope: JetScope) {
+    private fun collectClassesFromScope(scope: JetScope, collector: (ClassDescriptor) -> Unit) {
         for (descriptor in scope.getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS)) {
             if (descriptor is ClassDescriptor) {
                 if (kindFilter(descriptor.kind) && prefixMatcher.prefixMatches(descriptor.name.asString())) {
                     collector(descriptor)
                 }
 
-                collectClassesFromScope(collector, descriptor.unsubstitutedInnerClassesScope)
+                collectClassesFromScope(descriptor.unsubstitutedInnerClassesScope, collector)
             }
         }
     }
