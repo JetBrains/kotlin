@@ -109,7 +109,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
         Matcher matcher = filenamePattern.matcher(file.getName());
         boolean found = matcher.find();
         assert found : file.getName() + " isn't matched by regex " + filenamePattern.pattern();
-        assert matcher.groupCount() == 1 : filenamePattern.pattern();
+        assert matcher.groupCount() >= 1 : filenamePattern.pattern();
         String extractedName = matcher.group(1);
         assert extractedName != null : "extractedName should not be null: "  + filenamePattern.pattern();
 

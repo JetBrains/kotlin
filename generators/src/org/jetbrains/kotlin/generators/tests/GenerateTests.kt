@@ -425,7 +425,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractQuickFixMultiFileTest>() {
-            model("quickfix", pattern = """^(\w+)\.before\.Main\.\w+$""", testMethod = "doTestWithExtraFile")
+            model("quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
         }
 
         testClass<AbstractHighlightingTest>() {

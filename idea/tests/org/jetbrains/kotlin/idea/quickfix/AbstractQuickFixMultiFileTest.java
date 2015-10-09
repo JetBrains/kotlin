@@ -29,14 +29,17 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import junit.framework.ComparisonFailure;
 import kotlin.ArraysKt;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.kotlin.idea.quickfix.utils.QuickfixTestUtilsKt;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
@@ -52,6 +55,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzerTestCase {
 
@@ -73,7 +77,13 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
     protected void doTestWithExtraFile(String beforeFileName) throws Exception {
         enableInspections(beforeFileName);
-        doTest(beforeFileName, true);
+
+        if (beforeFileName.endsWith(".test")) {
+            doMultiFileTest(beforeFileName);
+        }
+        else {
+            doTest(beforeFileName, true);
+        }
     }
 
     private void enableInspections(String beforeFileName) throws IOException, ClassNotFoundException {
@@ -111,6 +121,96 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     protected void tearDown() throws Exception {
         CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = ArrayUtil.EMPTY_STRING_ARRAY;
         super.tearDown();
+    }
+
+    protected void doMultiFileTest(final String beforeFileName) throws Exception {
+        String multifileText = FileUtil.loadFile(new File(beforeFileName), true);
+
+        final List<TestFile> subFiles = JetTestUtils.createTestFiles(
+                "single.kt",
+                multifileText,
+                new JetTestUtils.TestFileFactoryNoModules<TestFile>() {
+                    @NotNull
+                    @Override
+                    public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
+                        if (text.startsWith("// FILE")) {
+                            String firstLineDropped = StringUtil.substringAfter(text, "\n");
+                            assert firstLineDropped != null;
+
+                            text = firstLineDropped;
+                        }
+                        return new TestFile(fileName, text);
+                    }
+                });
+
+        final TestFile afterFile = CollectionsKt.find(subFiles, new Function1<TestFile, Boolean>() {
+            @Override
+            public Boolean invoke(TestFile file) {
+                return file.name.contains(".after");
+            }
+        });
+        final TestFile beforeFile = CollectionsKt.find(subFiles, new Function1<TestFile, Boolean>() {
+            @Override
+            public Boolean invoke(TestFile file) {
+                return file.name.contains(".before");
+            }
+        });
+
+        assert beforeFile != null;
+        assert afterFile != null;
+
+        subFiles.remove(afterFile);
+        subFiles.remove(beforeFile);
+
+        for (TestFile file : subFiles) {
+            configureByText(JetFileType.INSTANCE, file.content);
+        }
+
+        configureByText(JetFileType.INSTANCE, beforeFile.content);
+
+        CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PsiFile psiFile = getFile();
+
+                    Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(psiFile, beforeFile.content);
+                    String text = pair.getFirst();
+
+                    boolean actionShouldBeAvailable = pair.getSecond();
+
+                    if (psiFile instanceof JetFile) {
+                        DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((JetFile) psiFile);
+                    }
+
+                    doAction(text, actionShouldBeAvailable, getTestName(false));
+
+                    String actualText = getFile().getText();
+                    String afterText = new StringBuilder(actualText).insert(getEditor().getCaretModel().getOffset(), "<caret>").toString();
+
+                    if (pair.second && !afterText.equals(afterFile.content)) {
+                        StringBuilder actualTestFile = new StringBuilder();
+                        actualTestFile.append("// FILE: ").append(beforeFile.name).append("\n").append(beforeFile.content);
+                        for (TestFile file : subFiles) {
+                            actualTestFile.append("// FILE: ").append(file.name).append("\n").append(file.content);
+                        }
+                        actualTestFile.append("// FILE: ").append(afterFile.name).append("\n").append(afterText);
+
+                        JetTestUtils.assertEqualsToFile(new File(beforeFileName), actualTestFile.toString());
+                    }
+                }
+                catch (ComparisonFailure e) {
+                    throw e;
+                }
+                catch (AssertionError e) {
+                    throw e;
+                }
+                catch (Throwable e) {
+                    e.printStackTrace();
+                    fail(getTestName(true));
+                }
+            }
+        }, "", "");
     }
 
     private void doTest(final String beforeFileName, boolean withExtraFile) throws Exception {
@@ -174,6 +274,29 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                         }
 
                         doAction(text, actionShouldBeAvailable, beforeFileName);
+
+                        if (actionShouldBeAvailable) {
+                            checkResultByFile(beforeFileName.replace(".before.Main.", ".after."));
+
+                            PsiFile mainFile = myFile;
+                            String mainFileName = mainFile.getName();
+                            for (PsiFile file : mainFile.getContainingDirectory().getFiles()) {
+                                String fileName = file.getName();
+                                if (fileName.equals(mainFileName) || !fileName.startsWith(extraFileNamePrefix(myFile.getName()))) continue;
+
+                                myFile = file;
+                                String extraFileFullPath = beforeFileName.replace(mainFileName, fileName);
+                                try {
+                                    checkResultByFile(extraFileFullPath.replace(".before.", ".after."));
+                                }
+                                catch (AssertionError e) {
+                                    if (e.getMessage().startsWith("Cannot find file")) {
+                                        checkResultByFile(extraFileFullPath);
+                                    }
+                                    else throw e;
+                                }
+                            }
+                        }
                     }
                     catch (ComparisonFailure e) {
                         throw e;
@@ -193,8 +316,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     }
 
     @SuppressWarnings({"HardCodedStringLiteral"})
-    public void doAction(String text, boolean actionShouldBeAvailable, String testFullPath)
-            throws Exception {
+    public void doAction(String text, boolean actionShouldBeAvailable, String testFilePath) throws Exception {
         List<IntentionAction> availableActions = getAvailableActions();
         IntentionAction action = LightQuickFixTestCase.findActionWithText(availableActions, text);
 
@@ -202,7 +324,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
             if (actionShouldBeAvailable) {
                 List<String> texts = getActionsTexts(availableActions);
                 Collection<HighlightInfo> infos = doHighlighting();
-                fail("Action with text '" + text + "' is not available in test " + testFullPath + "\n" +
+                fail("Action with text '" + text + "' is not available in test " + testFilePath + "\n" +
                      "Available actions (" + texts.size() + "): " + texts + "\n" +
                      availableActions + "\n" +
                      "Infos:" + infos);
@@ -213,39 +335,19 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
         }
         else {
             if (!actionShouldBeAvailable) {
-                fail("Action '" + text + "' is available (but must not) in test " + testFullPath);
+                fail("Action '" + text + "' is available (but must not) in test " + testFilePath);
             }
 
             ShowIntentionActionsHandler.chooseActionAndInvoke(getFile(), getEditor(), action, action.getText());
 
             UIUtil.dispatchAllInvocationEvents();
 
+            //noinspection ConstantConditions
             if (!shouldBeAvailableAfterExecution()) {
                 IntentionAction afterAction = LightQuickFixTestCase.findActionWithText(getAvailableActions(), text);
 
                 if (afterAction != null) {
-                    fail("Action '" + text + "' is still available after its invocation in test " + testFullPath);
-                }
-            }
-
-            checkResultByFile(testFullPath.replace(".before.Main.", ".after."));
-
-            PsiFile mainFile = myFile;
-            String mainFileName = mainFile.getName();
-            for (PsiFile file : mainFile.getContainingDirectory().getFiles()) {
-                String fileName = file.getName();
-                if (fileName.equals(mainFileName) || !fileName.startsWith(extraFileNamePrefix(myFile.getName()))) continue;
-
-                myFile = file;
-                String extraFileFullPath = testFullPath.replace(mainFileName, fileName);
-                try {
-                    checkResultByFile(extraFileFullPath.replace(".before.", ".after."));
-                }
-                catch (AssertionError e) {
-                    if (e.getMessage().startsWith("Cannot find file")) {
-                        checkResultByFile(extraFileFullPath);
-                    }
-                    else throw e;
+                    fail("Action '" + text + "' is still available after its invocation in test " + testFilePath);
                 }
             }
         }
@@ -269,5 +371,15 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     @NotNull
     private static String extraFileNamePrefix(@NotNull  String mainFileName) {
         return mainFileName.replace(".Main.kt", ".").replace(".Main.java", ".");
+    }
+
+    private static class TestFile {
+        public final String name;
+        public final String content;
+
+        TestFile(String name, String content) {
+            this.name = name;
+            this.content = content;
+        }
     }
 }
