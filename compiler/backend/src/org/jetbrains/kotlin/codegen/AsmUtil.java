@@ -66,7 +66,7 @@ import java.util.Set;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
@@ -837,7 +837,7 @@ public class AsmUtil {
     }
 
     public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v, @NotNull GenerationState state) {
-        AnnotationVisitor av = v.newAnnotation(Type.getObjectType(KotlinSyntheticClass.CLASS_NAME.getInternalName()).getDescriptor(), true);
+        AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(KOTLIN_SYNTHETIC_CLASS), true);
         JvmCodegenUtil.writeAbiVersion(av);
         JvmCodegenUtil.writeModuleName(av, state);
         av.visitEnd();
