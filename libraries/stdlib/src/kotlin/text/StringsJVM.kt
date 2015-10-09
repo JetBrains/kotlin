@@ -34,7 +34,9 @@ internal fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this 
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
-public fun String.equals(anotherString: String, ignoreCase: Boolean = false): Boolean {
+public fun String?.equals(anotherString: String?, ignoreCase: Boolean = false): Boolean {
+    if (this === null)
+        return anotherString === null
     return if (!ignoreCase)
         (this as java.lang.String).equals(anotherString)
     else

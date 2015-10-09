@@ -47,11 +47,13 @@ public inline fun CharSequence.isEmpty(): Boolean = this.length() == 0
 
 public fun String.isBlank(): Boolean = length() == 0 || matches("^[\\s\\xA0]+$")
 
-public fun String.equals(anotherString: String, ignoreCase: Boolean = false): Boolean =
-        if (!ignoreCase)
+public fun String?.equals(anotherString: String?, ignoreCase: Boolean = false): Boolean =
+        if (this == null)
+            anotherString == null
+        else if (!ignoreCase)
             this == anotherString
         else
-            this.toLowerCase() == anotherString.toLowerCase()
+            anotherString != null && this.toLowerCase() == anotherString.toLowerCase()
 
 
 public fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean {
