@@ -14,11 +14,9 @@ fun box(): String {
         it.name.startsWith("mangled$")
     }
     if (mangled == null) return "Class internal function should exist"
-    if (!mangled.isSynthetic) return "Class internal function should be synthetic"
 
     val topLevel = Class.forName("test.FunKt").getMethod("noMangling")
     if (topLevel == null) return "Top level internal function should exist"
-    if (!topLevel.isSynthetic) return "Top level internal function should be synthetic"
 
     return "OK"
 }

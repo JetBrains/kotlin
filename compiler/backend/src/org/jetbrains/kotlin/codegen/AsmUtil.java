@@ -214,7 +214,6 @@ public class AsmUtil {
         }
 
         if (JetTypeMapper.isAccessor(functionDescriptor)
-            || functionDescriptor.getVisibility() == Visibilities.INTERNAL
             || AnnotationUtilKt.hasJvmSyntheticAnnotation(functionDescriptor)) {
             flags |= ACC_SYNTHETIC;
         }

@@ -552,6 +552,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kotlinInternalMethodUsages.0.kt")
+            public void testKotlinInternalMethodUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinInternalMethodUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kotlinLocalMethodUsages1.0.kt")
             public void testKotlinLocalMethodUsages1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinLocalMethodUsages1.0.kt");
