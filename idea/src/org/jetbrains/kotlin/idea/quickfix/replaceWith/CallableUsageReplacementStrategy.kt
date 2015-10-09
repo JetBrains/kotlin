@@ -153,7 +153,14 @@ private fun performCallReplacement(
 
     commentSaver.restore(resultRange)
 
-    return resultRange.last as JetElement
+    var resultElement = resultRange.last as JetElement
+
+    if (resultElement is JetAnnotationEntry) { // unwrap "@Dummy(...)"
+        val text = resultElement.valueArguments.single().getArgumentExpression()!!.text
+        resultElement = resultElement.replaced(JetPsiFactory(project).createAnnotationEntry("@" + text)) //TODO: what if it does not work?
+    }
+
+    return resultElement
 }
 
 private fun JetElement.replaceCallElement(generatedExpression: JetExpression): JetElement {
@@ -161,9 +168,8 @@ private fun JetElement.replaceCallElement(generatedExpression: JetExpression): J
         is JetExpression -> return replace(generatedExpression) as JetExpression
 
         is JetAnnotationEntry -> {
-            //TODO: bad techinique!!
-            val annotationEntry = JetPsiFactory(project).createAnnotationEntry("@" + generatedExpression.text)
-            return replace(annotationEntry) as JetElement
+            val dummyAnnotation = createByPattern("@Dummy($0)", generatedExpression) { JetPsiFactory(project).createAnnotationEntry(it) }
+            return replace(dummyAnnotation) as JetElement
         }
 
         else -> throw UnsupportedOperationException() //TODO: check it before!!
