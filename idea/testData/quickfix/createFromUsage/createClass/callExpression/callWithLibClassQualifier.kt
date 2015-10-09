@@ -1,6 +1,5 @@
 // "Create class 'Foo'" "false"
 // ACTION: Create extension function 'Foo'
-// ACTION: Replace with infix function call
 // ERROR: Unresolved reference: Foo
 
 fun test() {

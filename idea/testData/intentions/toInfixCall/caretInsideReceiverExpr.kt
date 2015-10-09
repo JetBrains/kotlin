@@ -1,4 +1,8 @@
 // IS_APPLICABLE: false
-fun foo(num: Int) {
-    n<caret>um.times(1)
+interface X {
+    infix fun infix(p: Int): X
+}
+
+fun foo(num: X) {
+    n<caret>um.infix(1)
 }

@@ -1,3 +1,5 @@
+infix fun String.xxx(p: Int): String = this
+
 fun foo(x: String?) {
-    x!! plus 1
+    x!! xxx 1
 }

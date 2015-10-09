@@ -4,5 +4,5 @@ fun foo(x: Foo) {
 }
 
 interface Foo {
-    fun foo(baz: Int = 0, bar: Foo? = null)
+    infix fun foo(baz: Int = 0, bar: Foo? = null)
 }

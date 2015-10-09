@@ -1,5 +1,9 @@
 // IS_APPLICABLE: false
-// WITH_RUNTIME
+// ERROR: 'infix' modifier is inapplicable on this function
+package ppp
+
+infix fun foo(p: String){}
+
 fun main() {
-    kotlin.io.<caret>println("")
+    ppp.<caret>foo("")
 }
