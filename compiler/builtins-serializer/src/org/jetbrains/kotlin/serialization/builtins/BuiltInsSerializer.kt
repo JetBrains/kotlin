@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -168,7 +169,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
             writeClass: (ClassDescriptor, ProtoBuf.Class) -> Unit
     ) {
         for (descriptor in descriptors) {
-            if (descriptor is ClassDescriptor) {
+            if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.ENUM_ENTRY) {
                 serializeClass(descriptor, serializer, writeClass)
             }
         }
