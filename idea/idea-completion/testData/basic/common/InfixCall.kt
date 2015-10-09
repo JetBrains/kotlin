@@ -1,18 +1,18 @@
 class C {
-    fun foo(){}
-    fun bar(p: Int) {}
+    fun foo(p: Int){}
+    infix fun bar(p: Int) {}
     fun zoo(p1: Int, p2: Int){}
     val prop: Int = 1
 }
 
-fun C.xxx() {}
-fun C.yyy(p: Int) {}
+fun C.xxx(p: Int) {}
+infix fun C.yyy(p: Int) {}
 fun C.zzz(p1: Int, p2: Int) {}
 val C.extensionProp: Int get() = 1
 
-fun <A, B> A.and(that: B): Pair<A, B> = Pair(this, that)
+infix fun <A, B> A.and(that: B): Pair<A, B> = Pair(this, that)
 
-fun String.ttt(p: Int) {}
+infix fun String.ttt(p: Int) {}
 
 fun f() {
     C() <caret>

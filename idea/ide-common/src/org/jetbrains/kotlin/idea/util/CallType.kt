@@ -57,9 +57,8 @@ public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: 
     object TYPE : CallType<JetExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK))
 
     private object NonInfixExclude : DescriptorKindExclude() {
-        //TODO: check 'infix' modifier
         override fun excludes(descriptor: DeclarationDescriptor) =
-                !(descriptor is SimpleFunctionDescriptor && descriptor.valueParameters.size() == 1)
+                !(descriptor is SimpleFunctionDescriptor && descriptor.isInfix)
 
         override val fullyExcludedDescriptorKinds: Int
             get() = 0

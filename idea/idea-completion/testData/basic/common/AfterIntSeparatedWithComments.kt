@@ -1,4 +1,4 @@
-fun Int.func(s: String): Int{}
+infix fun Int.func(s: String): Int{}
 
 fun test() {
     val floor = "Floor"
