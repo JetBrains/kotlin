@@ -57,7 +57,13 @@ object KDocRenderer {
         to.append("<DT><b>").append("See Also:").append("</b>")
         to.append("<DD>")
         seeTags.forEachIndexed { index, tag ->
-            DocumentationManagerUtil.createHyperlink(to, tag.getSubjectName(), tag.getSubjectName(), false)
+            val subjectName = tag.getSubjectName()
+            if (subjectName != null) {
+                DocumentationManagerUtil.createHyperlink(to, subjectName, subjectName, false)
+            }
+            else {
+                to.append(tag.getContent())
+            }
             if (index < seeTags.size() - 1) {
                 to.append(", ")
             }
