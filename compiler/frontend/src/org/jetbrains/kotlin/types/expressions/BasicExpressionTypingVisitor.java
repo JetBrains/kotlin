@@ -408,7 +408,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (result != null) {
             if (DescriptorUtils.isInterface(thisType.getConstructor().getDeclarationDescriptor())) {
                 if (DescriptorUtils.isClass(result.getConstructor().getDeclarationDescriptor())) {
-                    context.trace.report(SUPERCLASS_NOT_ACCESSIBLE_FROM_TRAIT.on(expression));
+                    context.trace.report(SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE.on(expression));
                 }
             }
             context.trace.recordType(expression.getInstanceReference(), result);

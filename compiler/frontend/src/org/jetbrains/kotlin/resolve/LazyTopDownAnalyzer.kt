@@ -22,7 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors.CONSTRUCTOR_IN_OBJECT
-import org.jetbrains.kotlin.diagnostics.Errors.CONSTRUCTOR_IN_TRAIT
+import org.jetbrains.kotlin.diagnostics.Errors.CONSTRUCTOR_IN_INTERFACE
 import org.jetbrains.kotlin.diagnostics.Errors.MANY_COMPANION_OBJECTS
 import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
@@ -126,7 +126,7 @@ public class LazyTopDownAnalyzer(
                                 trace.report(CONSTRUCTOR_IN_OBJECT.on(jetDeclaration))
                             }
                             else if (classDescriptor.getKind() == ClassKind.INTERFACE) {
-                                trace.report(CONSTRUCTOR_IN_TRAIT.on(jetDeclaration))
+                                trace.report(CONSTRUCTOR_IN_INTERFACE.on(jetDeclaration))
                             }
                         }
                     }

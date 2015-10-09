@@ -145,7 +145,7 @@ public class DefaultErrorMessages {
         MAP.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", STRING);
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
-        MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in interface");
+        MAP.put(ABSTRACT_MODIFIER_IN_INTERFACE, "Modifier ''abstract'' is redundant in interface");
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");
         MAP.put(TYPE_PARAMETERS_IN_ENUM, "Enum class cannot have type parameters");
         MAP.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM,
@@ -210,7 +210,7 @@ public class DefaultErrorMessages {
 
         MAP.put(ABSTRACT_DELEGATED_PROPERTY, "Delegated property cannot be abstract");
         MAP.put(ACCESSOR_FOR_DELEGATED_PROPERTY, "Delegated property cannot have accessors with non-default implementations");
-        MAP.put(DELEGATED_PROPERTY_IN_TRAIT, "Delegated properties are not allowed in interfaces");
+        MAP.put(DELEGATED_PROPERTY_IN_INTERFACE, "Delegated properties are not allowed in interfaces");
         MAP.put(LOCAL_VARIABLE_WITH_DELEGATE, "Local variables are not allowed to have delegates");
 
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier is allowed only on member properties with a backing field");
@@ -222,10 +222,10 @@ public class DefaultErrorMessages {
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
         MAP.put(PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR, "Private setter is not allowed on non-private lateinit property");
-        MAP.put(BACKING_FIELD_IN_TRAIT, "Property in an interface cannot have a backing field");
+        MAP.put(BACKING_FIELD_IN_INTERFACE, "Property in an interface cannot have a backing field");
         MAP.put(MUST_BE_INITIALIZED, "Property must be initialized");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract");
-        MAP.put(PROPERTY_INITIALIZER_IN_TRAIT, "Property initializers are not allowed in interfaces");
+        MAP.put(PROPERTY_INITIALIZER_IN_INTERFACE, "Property initializers are not allowed in interfaces");
         MAP.put(FINAL_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be final");
         MAP.put(PRIVATE_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be private");
         MAP.put(EXTENSION_PROPERTY_WITH_BACKING_FIELD, "Extension property cannot be initialized because it has no backing field");
@@ -297,8 +297,8 @@ public class DefaultErrorMessages {
         MAP.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated");
         MAP.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated");
 
-        MAP.put(DELEGATION_IN_TRAIT, "Interfaces cannot use delegation");
-        MAP.put(DELEGATION_NOT_TO_TRAIT, "Only interfaces can be delegated to");
+        MAP.put(DELEGATION_IN_INTERFACE, "Interfaces cannot use delegation");
+        MAP.put(DELEGATION_NOT_TO_INTERFACE, "Only interfaces can be delegated to");
         MAP.put(NO_CONSTRUCTOR, "This class does not have a constructor");
         MAP.put(NOT_A_CLASS, "Not a class");
         MAP.put(ILLEGAL_ESCAPE_SEQUENCE, "Illegal escape sequence");
@@ -327,7 +327,7 @@ public class DefaultErrorMessages {
         MAP.put(SETTER_PARAMETER_WITH_DEFAULT_VALUE, "Setter parameters cannot have default values");
         MAP.put(NO_THIS, "'this' is not defined in this context");
         MAP.put(SUPER_NOT_AVAILABLE, "No supertypes are accessible in this context");
-        MAP.put(SUPERCLASS_NOT_ACCESSIBLE_FROM_TRAIT, "Superclass is not accessible from interface");
+        MAP.put(SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE, "Superclass is not accessible from interface");
         MAP.put(AMBIGUOUS_SUPER, "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'");
         MAP.put(ABSTRACT_SUPER_CALL, "Abstract member cannot be accessed directly");
         MAP.put(NOT_A_SUPERTYPE, "Not a supertype");
@@ -435,12 +435,12 @@ public class DefaultErrorMessages {
         MAP.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has itself as an upper bound");
 
         MAP.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list");
-        MAP.put(SUPERTYPE_NOT_A_CLASS_OR_TRAIT, "Only classes and interfaces may serve as supertypes");
-        MAP.put(SUPERTYPE_INITIALIZED_IN_TRAIT, "Interfaces cannot initialize supertypes");
+        MAP.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Only classes and interfaces may serve as supertypes");
+        MAP.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
-        MAP.put(CONSTRUCTOR_IN_TRAIT, "An interface may not have a constructor");
+        MAP.put(CONSTRUCTOR_IN_INTERFACE, "An interface may not have a constructor");
         MAP.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'kotlin.Any'");
-        MAP.put(TRAIT_WITH_SUPERCLASS, "An interface cannot inherit from a class");
+        MAP.put(INTERFACE_WITH_SUPERCLASS, "An interface cannot inherit from a class");
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
         MAP.put(DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES, "Data class inheritance from other classes is deprecated");
@@ -471,7 +471,7 @@ public class DefaultErrorMessages {
         MAP.put(NOT_A_LOOP_LABEL, "The label ''{0}'' does not denote a loop", STRING);
         MAP.put(NOT_A_RETURN_LABEL, "The label ''{0}'' does not reference to a context from which we can return", STRING);
 
-        MAP.put(ANONYMOUS_INITIALIZER_IN_TRAIT, "Anonymous initializers are not allowed in interfaces");
+        MAP.put(ANONYMOUS_INITIALIZER_IN_INTERFACE, "Anonymous initializers are not allowed in interfaces");
         MAP.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable");
         MAP.put(DYNAMIC_SUPERTYPE, "A supertype cannot be dynamic");
         MAP.put(REDUNDANT_NULLABLE, "Redundant '?'");
