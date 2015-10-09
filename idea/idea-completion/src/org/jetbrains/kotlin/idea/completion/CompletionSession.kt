@@ -206,7 +206,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected abstract val expectedInfos: Collection<ExpectedInfo>
 
-    protected val importableFqNameClassifier = ImportableFqNameClassifier(file)
+    private val importableFqNameClassifier = ImportableFqNameClassifier(file)
 
     protected open fun createSorter(): CompletionSorter {
         var sorter = CompletionSorter.defaultSorter(parameters, prefixMatcher)!!
