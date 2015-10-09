@@ -2,10 +2,10 @@ import java.util.Collections
 
 class A<U : Number, V : U, W : V> : Set<W> {
     override val size: Int get() = 0
-    override fun isEmpty(): Boolean = true
+    override val isEmpty: Boolean get() = true
     override fun contains(o: W): Boolean = false
     override fun iterator(): Iterator<W> = Collections.emptySet<W>().iterator()
-    override fun containsAll(c: Collection<W>): Boolean = c.isEmpty()
+    override fun containsAll(c: Collection<W>): Boolean = c.isEmpty
 }
 
 fun expectUoe(block: () -> Any) {

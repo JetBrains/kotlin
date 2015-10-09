@@ -6,7 +6,7 @@ open class SetStringImpl {
 
 class S : Set<String>, SetStringImpl() {
     override val size: Int get() = 0
-    override fun isEmpty(): Boolean = true
+    override val isEmpty: Boolean get() = true
     override fun contains(o: String): Boolean = false
     override fun iterator(): Iterator<String> = null!!
     override fun containsAll(c: Collection<String>) = false

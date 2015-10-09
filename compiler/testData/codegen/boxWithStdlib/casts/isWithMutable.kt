@@ -18,13 +18,13 @@ class M : Map<String, String> by HashMap<String, String>()
 class MM : MutableMap<String, String> by HashMap<String, String>()
 
 class ME : Map.Entry<String, String> {
-    override fun getKey(): String = throw UnsupportedOperationException()
-    override fun getValue(): String = throw UnsupportedOperationException()
+    override val key: String get() = throw UnsupportedOperationException()
+    override val value: String get() = throw UnsupportedOperationException()
 }
 
 class MME : MutableMap.MutableEntry<String, String> {
-    override fun getKey(): String = throw UnsupportedOperationException()
-    override fun getValue(): String = throw UnsupportedOperationException()
+    override val key: String get() = throw UnsupportedOperationException()
+    override val value: String get() = throw UnsupportedOperationException()
     override fun setValue(value: String): String = throw UnsupportedOperationException()
 }
 

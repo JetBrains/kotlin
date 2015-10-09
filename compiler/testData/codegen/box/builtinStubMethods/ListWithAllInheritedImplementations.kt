@@ -13,7 +13,7 @@ open class Super<T>(val v: T) {
 
 class MyList<T>(v: T): Super<T>(v), List<T> {
     override val size: Int get() = 0
-    override fun isEmpty(): Boolean = true
+    override val isEmpty: Boolean get() = true
     override fun contains(o: T): Boolean = false
     override fun iterator(): Iterator<T> = throw Error()
     override fun containsAll(c: Collection<T>): Boolean = false

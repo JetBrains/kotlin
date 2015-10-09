@@ -1,6 +1,6 @@
 class MyMap<K, V>: Map<K, V> {
     override val size: Int get() = 0
-    override fun isEmpty(): Boolean = true
+    override val isEmpty: Boolean get() = true
     override fun containsKey(key: Any?): Boolean = false
     override fun containsValue(value: Any?): Boolean = false
     override fun get(key: Any?): V? = null

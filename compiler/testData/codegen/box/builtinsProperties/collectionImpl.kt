@@ -2,7 +2,7 @@ class A1 : MutableCollection<String> {
     override val size: Int
         get() = 56
 
-    override fun isEmpty(): Boolean {
+    override val isEmpty: Boolean get() {
         throw UnsupportedOperationException()
     }
 
