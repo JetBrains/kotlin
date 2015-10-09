@@ -58,6 +58,8 @@ class C {
     fun foo() {}
 
     fun bar() = C::foo
+
+    fun willBeInfix(i: Int) {}
 }
 
 fun <T> typed() {
@@ -65,3 +67,5 @@ fun <T> typed() {
 
 fun <T> withTypeParameters() where T : Cloneable, T : Comparable<T> {
 }
+
+C() willBeInfix 1

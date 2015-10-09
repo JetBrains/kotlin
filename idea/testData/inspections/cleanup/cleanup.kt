@@ -59,6 +59,8 @@ class C {
     fun foo() {}
 
     fun bar() = ::foo
+
+    fun willBeInfix(i: Int) {}
 }
 
 fun typed<T>() {
@@ -66,3 +68,5 @@ fun typed<T>() {
 
 fun <T : Cloneable> withTypeParameters() where T : Comparable<T> {
 }
+
+C() willBeInfix 1
