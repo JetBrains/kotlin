@@ -15,7 +15,7 @@ fun test3() {
     <!UNREACHABLE_CODE!>bar(<!>11, l@(todo()/*comment*/), <!UNREACHABLE_CODE!>"")<!>
 }
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()
 
 fun bar(<!UNUSED_PARAMETER!>i<!>: Int, <!UNUSED_PARAMETER!>s<!>: String, <!UNUSED_PARAMETER!>a<!>: Any) {}
 

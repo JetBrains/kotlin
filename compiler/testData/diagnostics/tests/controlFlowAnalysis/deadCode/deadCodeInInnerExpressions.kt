@@ -10,4 +10,4 @@ fun testCompound1() {
     <!UNREACHABLE_CODE!>(<!>todo() <!UNREACHABLE_CODE!>* "")[1]<!>
 }
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()

@@ -45,4 +45,4 @@ fun test4() {
     }
 }
 
-fun fail() = throw Exception()
+fun fail(): Nothing = throw Exception()

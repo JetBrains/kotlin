@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
@@ -640,6 +641,9 @@ public class DeclarationsChecker {
         }
         if (!function.hasBody() && !hasAbstractModifier) {
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
+        }
+        if (TypeUtilsKt.isNothing(functionDescriptor.getReturnType()) && !function.hasDeclaredReturnType()) {
+            trace.report(IMPLICIT_NOTHING_RETURN_TYPE.on(function.getNameIdentifier() != null ? function.getNameIdentifier() : function));
         }
         checkFunctionExposedType(function, functionDescriptor);
     }

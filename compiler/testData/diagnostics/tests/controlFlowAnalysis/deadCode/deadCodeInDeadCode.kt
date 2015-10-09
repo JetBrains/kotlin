@@ -21,4 +21,4 @@ fun unreachable4(array: Array<Any>) {
 }
 
 fun bar(a: Any) {}
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()

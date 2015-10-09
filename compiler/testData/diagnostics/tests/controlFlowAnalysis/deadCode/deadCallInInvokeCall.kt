@@ -8,4 +8,4 @@ fun testInvokeWithLambda() {
     todo()<!UNREACHABLE_CODE!>(1){ 42 }<!>
 }
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()

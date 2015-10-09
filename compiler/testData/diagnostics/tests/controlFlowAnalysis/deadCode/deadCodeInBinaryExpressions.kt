@@ -35,5 +35,5 @@ fun returnInBinary2(): Boolean {
     (return true) <!UNREACHABLE_CODE!>|| (return false)<!>
 }
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()
 fun bar() {}

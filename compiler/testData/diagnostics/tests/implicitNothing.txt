@@ -1,0 +1,6 @@
+package
+
+public fun bar(): kotlin.Nothing
+public fun baz(): kotlin.Nothing
+public fun foo(): kotlin.Nothing
+public fun gav(): kotlin.Any

@@ -8,5 +8,5 @@ fun testIf1(b: Boolean) {
     bar()
 }
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()
 fun bar() {}

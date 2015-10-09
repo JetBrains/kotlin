@@ -265,6 +265,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("implicitNothing.kt")
+        public void testImplicitNothing() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/implicitNothing.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("IncDec.kt")
         public void testIncDec() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/IncDec.kt");

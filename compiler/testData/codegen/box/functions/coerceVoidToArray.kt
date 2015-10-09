@@ -1,6 +1,6 @@
 fun a(): IntArray? = null
 
-fun b() = throw Exception()
+fun b(): Nothing = throw Exception()
 
 fun foo(): IntArray = a() ?: b()
 

@@ -525,6 +525,7 @@ public class DefaultErrorMessages {
                 RENDER_TYPE);
         MAP.put(TYPE_MISMATCH_IN_CONDITION, "Condition must be of type kotlin.Boolean, but is of type {0}", RENDER_TYPE);
         MAP.put(INCOMPATIBLE_TYPES, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(IMPLICIT_NOTHING_RETURN_TYPE, "''Nothing'' return type needs to be specified explicitly");
         MAP.put(EXPECTED_CONDITION, "Expected condition of type kotlin.Boolean");
 
         MAP.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type: {0}", RENDER_TYPE);

@@ -15,4 +15,4 @@ fun testPlusAssign() {
 }
 
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()
