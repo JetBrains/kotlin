@@ -33,7 +33,6 @@ import com.intellij.psi.MultiRangeReference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.xml.util.XmlStringUtil
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -95,87 +94,66 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
             assert(diagnostic.getPsiElement() == element)
 
-            val textRanges = diagnostic.getTextRanges()
             val factory = diagnostic.getFactory()
-            when (diagnostic.getSeverity()) {
-                Severity.ERROR -> {
 
+            val presentationInfo: AnnotationPresentationInfo = when (factory.severity) {
+                Severity.ERROR -> {
                     when (factory) {
                         in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS -> {
-                            val referenceExpression = diagnostic.getPsiElement() as JetReferenceExpression
+                            val referenceExpression = element as JetReferenceExpression
                             val reference = referenceExpression.mainReference
                             if (reference is MultiRangeReference) {
-                                for (range in reference.getRanges()) {
-                                    val annotation = holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), getDefaultMessage(diagnostic))
-                                    setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-                                }
+                                AnnotationPresentationInfo(diagnostic,
+                                        ranges = reference.getRanges().map { it.shiftRight(referenceExpression.getTextOffset()) },
+                                        highlightType = ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
                             }
                             else {
-                                for (textRange in textRanges) {
-                                    val annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic))
-                                    setUpAnnotation(diagnostic, annotation, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-                                }
+                                AnnotationPresentationInfo(diagnostic, highlightType = ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
                             }
                         }
 
-                        Errors.ILLEGAL_ESCAPE -> {
-                            for (textRange in textRanges) {
-                                val annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic))
-                                annotation.setTooltip(getMessage(diagnostic))
-                                annotation.setTextAttributes(JetHighlightingColors.INVALID_STRING_ESCAPE)
-                            }
-                        }
+                        Errors.ILLEGAL_ESCAPE -> AnnotationPresentationInfo(diagnostic, textAttributes = JetHighlightingColors.INVALID_STRING_ESCAPE)
 
-                        Errors.REDECLARATION -> {
-                            if (!isMarkedWithRedeclaration) {
-                                isMarkedWithRedeclaration = true
-                                val annotation = holder.createErrorAnnotation(diagnostic.getTextRanges()[0], "")
-                                setUpAnnotation(diagnostic, annotation, null)
-                            }
-                        }
+                        Errors.REDECLARATION -> AnnotationPresentationInfo(
+                                diagnostic, ranges = listOf(diagnostic.getTextRanges().first()), defaultMessage = "")
 
                         else -> {
-                            for (textRange in textRanges) {
-                                val annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic))
-                                setUpAnnotation(diagnostic, annotation, if (factory == Errors.INVISIBLE_REFERENCE)
-                                    ProblemHighlightType.LIKE_UNKNOWN_SYMBOL
-                                else
-                                    null)
-                            }
+                            AnnotationPresentationInfo(diagnostic,
+                                    highlightType = if (factory == Errors.INVISIBLE_REFERENCE)
+                                        ProblemHighlightType.LIKE_UNKNOWN_SYMBOL
+                                    else
+                                        null)
                         }
                     }
                 }
                 Severity.WARNING -> {
-                    if (factory == Errors.UNUSED_PARAMETER && shouldSuppressUnusedParameter(diagnostic.getPsiElement() as JetParameter)) {
+                    if (factory == Errors.UNUSED_PARAMETER && shouldSuppressUnusedParameter(element as JetParameter)) {
                         return
                     }
 
-                    for (textRange in textRanges) {
-                        val annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic))
-
-                        if (factory == Errors.DEPRECATION) {
-                            annotation.textAttributes = CodeInsightColors.DEPRECATED_ATTRIBUTES
-                        }
-
-                        setUpAnnotation(diagnostic, annotation, if (factory in Errors.UNUSED_ELEMENT_DIAGNOSTICS)
-                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                        else
-                            null)
-                    }
+                    AnnotationPresentationInfo(diagnostic,
+                            textAttributes = if (factory == Errors.DEPRECATION) CodeInsightColors.DEPRECATED_ATTRIBUTES else null,
+                            highlightType = if (factory in Errors.UNUSED_ELEMENT_DIAGNOSTICS)
+                                ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                            else
+                                null
+                    )
                 }
+                Severity.INFO -> return // Do nothing
+            }
+
+            setUpAnnotation(diagnostic, presentationInfo)
+        }
+
+        private fun setUpAnnotation(diagnostic: Diagnostic, data: AnnotationPresentationInfo) {
+            for (range in data.ranges) {
+                registerQuickFix(diagnostic, range, data)
             }
         }
 
-        private fun setUpAnnotation(diagnostic: Diagnostic, annotation: Annotation, highlightType: ProblemHighlightType?) {
-            annotation.setTooltip(getMessage(diagnostic))
-            registerQuickFix(annotation, diagnostic)
+        private fun registerQuickFix(diagnostic: Diagnostic, range: TextRange, data: AnnotationPresentationInfo) {
+            val annotation = data.create(range, holder)
 
-            if (highlightType != null) {
-                annotation.setHighlightType(highlightType)
-            }
-        }
-
-        private fun registerQuickFix(annotation: Annotation, diagnostic: Diagnostic) {
             createQuickfixes(diagnostic).forEach {
                 annotation.registerFix(it)
             }
@@ -191,7 +169,9 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                 }
             }
         }
+    }
 
+    companion object {
         private fun getMessage(diagnostic: Diagnostic): String {
             var message = IdeErrorMessages.render(diagnostic)
             if (KotlinInternalMode.enabled || ApplicationManager.getApplication().isUnitTestMode()) {
@@ -216,15 +196,42 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
             }
             return message
         }
-    }
 
-    companion object {
+        class AnnotationPresentationInfo(
+                diagnostic: Diagnostic,
+                val severity: Severity = diagnostic.severity,
+                val ranges: List<TextRange> = diagnostic.textRanges,
+                val defaultMessage: String = getDefaultMessage(diagnostic),
+                val tooltip: String = getMessage(diagnostic),
+                val highlightType: ProblemHighlightType? = null,
+                val textAttributes: TextAttributesKey? = null) {
+
+            public fun create(range: TextRange, holder: AnnotationHolder): Annotation {
+                val annotation = when (severity) {
+                    Severity.ERROR -> holder.createErrorAnnotation(range, defaultMessage)
+                    Severity.WARNING -> holder.createWarningAnnotation(range, defaultMessage)
+                    else -> throw IllegalArgumentException("Only ERROR and WARNING diagnostics are supported")
+                }
+
+                annotation.tooltip = tooltip
+
+                if (highlightType != null) {
+                    annotation.highlightType = highlightType
+                }
+
+                if (textAttributes != null) {
+                    annotation.textAttributes = textAttributes
+                }
+
+                return annotation
+            }
+        }
+
         private fun getAfterAnalysisVisitor(holder: AnnotationHolder, bindingContext: BindingContext) = arrayOf(
                 PropertiesHighlightingVisitor(holder, bindingContext),
                 FunctionsHighlightingVisitor(holder, bindingContext),
                 VariablesHighlightingVisitor(holder, bindingContext),
                 TypeKindHighlightingVisitor(holder, bindingContext)
-                //DeprecatedAnnotationVisitor(holder, bindingContext)
         )
 
         public fun createQuickfixes(diagnostic: Diagnostic): Collection<IntentionAction> {
