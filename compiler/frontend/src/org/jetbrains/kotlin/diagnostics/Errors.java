@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.diagnostics;
 import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
@@ -87,7 +86,7 @@ public interface Errors {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Errors/warnings in types
-    // Note: class/trait declaration is NOT a type. A type is something that may be written on the right-hand side of ":"
+    // Note: class/interface declaration is NOT a type. A type is something that may be written on the right-hand side of ":"
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -162,7 +161,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> INAPPLICABLE_PARAM_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> REDUNDANT_ANNOTATION_TARGET = DiagnosticFactory1.create(WARNING);
 
-    // Classes and traits
+    // Classes and interfaces
 
     DiagnosticFactory0<JetTypeProjection> PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE =
             DiagnosticFactory0.create(ERROR, VARIANCE_IN_PROJECTION);
@@ -171,8 +170,8 @@ public interface Errors {
 
     DiagnosticFactory0<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<JetTypeReference> DELEGATION_NOT_TO_TRAIT = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetTypeReference> SUPERTYPE_NOT_A_CLASS_OR_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> DELEGATION_NOT_TO_INTERFACE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> SUPERTYPE_NOT_A_CLASS_OR_INTERFACE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = DiagnosticFactory0.create(ERROR);
 
@@ -211,18 +210,18 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, DeclarationDescriptor> INSTANCE_ACCESS_BEFORE_SUPER_CALL = DiagnosticFactory1.create(ERROR);
 
-    // Trait-specific
+    // Interface-specific
 
-    DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_TRAIT = DiagnosticFactory0
+    DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_INTERFACE = DiagnosticFactory0
             .create(WARNING, ABSTRACT_MODIFIER);
 
-    DiagnosticFactory0<JetDeclaration> CONSTRUCTOR_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<JetDeclaration> CONSTRUCTOR_IN_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
-    DiagnosticFactory0<PsiElement> SUPERTYPE_INITIALIZED_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> SUPERTYPE_INITIALIZED_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<JetDelegatorByExpressionSpecifier> DELEGATION_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetDelegatorByExpressionSpecifier> DELEGATION_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> TRAIT_WITH_SUPERCLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INTERFACE_WITH_SUPERCLASS = DiagnosticFactory0.create(ERROR);
 
     // Enum-specific
 
@@ -331,7 +330,7 @@ public interface Errors {
 
     DiagnosticFactory0<JetPropertyDelegate> ABSTRACT_DELEGATED_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetPropertyAccessor> ACCESSOR_FOR_DELEGATED_PROPERTY = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetPropertyDelegate> DELEGATED_PROPERTY_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetPropertyDelegate> DELEGATED_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetPropertyDelegate> LOCAL_VARIABLE_WITH_DELEGATE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetProperty> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
@@ -341,10 +340,10 @@ public interface Errors {
 
     DiagnosticFactory0<JetExpression> EXTENSION_PROPERTY_WITH_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetProperty> FINAL_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
     DiagnosticFactory0<JetProperty> PRIVATE_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR, PRIVATE_MODIFIER);
-    DiagnosticFactory0<JetProperty> BACKING_FIELD_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<JetProperty> BACKING_FIELD_IN_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<JetSimpleNameExpression> BACKING_FIELD_SYNTAX_DEPRECATED = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetSimpleNameExpression> BACKING_FIELD_USAGE_DEPRECATED = DiagnosticFactory0.create(WARNING);
@@ -504,7 +503,7 @@ public interface Errors {
     DiagnosticFactory1<JetSuperExpression, String> SUPER_IS_NOT_AN_EXPRESSION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSuperExpression, String> SUPER_CANT_BE_EXTENSION_RECEIVER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetSuperExpression> SUPER_NOT_AVAILABLE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetSuperExpression> SUPERCLASS_NOT_ACCESSIBLE_FROM_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetSuperExpression> SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetSuperExpression> AMBIGUOUS_SUPER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ABSTRACT_SUPER_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> NOT_A_SUPERTYPE = DiagnosticFactory0.create(ERROR);
@@ -701,7 +700,7 @@ public interface Errors {
     DiagnosticFactory0<JetDeclarationWithBody>
             NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_WITH_BODY);
 
-    DiagnosticFactory0<JetClassInitializer> ANONYMOUS_INITIALIZER_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetClassInitializer> ANONYMOUS_INITIALIZER_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetThisExpression> NO_THIS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetRootPackageExpression> PACKAGE_IS_NOT_AN_EXPRESSION = DiagnosticFactory0.create(ERROR);

@@ -55,7 +55,7 @@ public class NativeFunChecker : DeclarationChecker {
         if (!descriptor.hasNativeAnnotation()) return
 
         if (DescriptorUtils.isInterface(descriptor.getContainingDeclaration())) {
-            diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_IN_TRAIT.on(declaration))
+            diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE.on(declaration))
         }
         else if (descriptor is CallableMemberDescriptor &&
             descriptor.getModality() == Modality.ABSTRACT) {

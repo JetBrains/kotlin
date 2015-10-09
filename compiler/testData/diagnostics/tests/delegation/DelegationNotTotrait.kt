@@ -2,7 +2,7 @@ open class Foo() {
 
 }
 
-class Barrr() : <!DELEGATION_NOT_TO_TRAIT!>Foo<!> by Foo() {}
+class Barrr() : <!DELEGATION_NOT_TO_INTERFACE!>Foo<!> by Foo() {}
 
 interface T {}
 
@@ -12,4 +12,4 @@ class Br(t : T) : T by t {}
   A
 }
 
-class Test2(e : EN) : <!DELEGATION_NOT_TO_TRAIT!>EN<!> by e {}
+class Test2(e : EN) : <!DELEGATION_NOT_TO_INTERFACE!>EN<!> by e {}

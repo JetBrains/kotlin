@@ -365,7 +365,7 @@ public class DeclarationsChecker {
     private void checkConstructorInTrait(JetClass klass) {
         JetPrimaryConstructor primaryConstructor = klass.getPrimaryConstructor();
         if (primaryConstructor != null) {
-            trace.report(CONSTRUCTOR_IN_TRAIT.on(primaryConstructor));
+            trace.report(CONSTRUCTOR_IN_INTERFACE.on(primaryConstructor));
         }
     }
 
@@ -489,7 +489,7 @@ public class DeclarationsChecker {
                 return;
             }
             if (classDescriptor.getKind() == ClassKind.INTERFACE) {
-                trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(property));
+                trace.report(ABSTRACT_MODIFIER_IN_INTERFACE.on(property));
             }
         }
 
@@ -534,7 +534,7 @@ public class DeclarationsChecker {
                 Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
 
         if (inTrait && backingFieldRequired && hasAccessorImplementation) {
-            trace.report(BACKING_FIELD_IN_TRAIT.on(property));
+            trace.report(BACKING_FIELD_IN_INTERFACE.on(property));
         }
 
         if (initializer == null && delegate == null) {
@@ -561,10 +561,10 @@ public class DeclarationsChecker {
 
         if (inTrait) {
             if (delegate != null) {
-                trace.report(DELEGATED_PROPERTY_IN_TRAIT.on(delegate));
+                trace.report(DELEGATED_PROPERTY_IN_INTERFACE.on(delegate));
             }
             else {
-                trace.report(PROPERTY_INITIALIZER_IN_TRAIT.on(initializer));
+                trace.report(PROPERTY_INITIALIZER_IN_INTERFACE.on(initializer));
             }
         }
         else if (delegate == null) {
@@ -615,7 +615,7 @@ public class DeclarationsChecker {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName().asString(), classDescriptor));
             }
             if (hasAbstractModifier && inTrait) {
-                trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(function));
+                trace.report(ABSTRACT_MODIFIER_IN_INTERFACE.on(function));
             }
             boolean hasBody = function.hasBody();
             if (hasBody && hasAbstractModifier) {
