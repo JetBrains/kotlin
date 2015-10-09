@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
@@ -653,6 +654,58 @@ public class DeclarationsChecker {
         }
     }
 
+    private void checkLocalTypesInFunctionReturnType(@NotNull JetFunction function, @NotNull FunctionDescriptor functionDescriptor) {
+        if (functionDescriptor instanceof ConstructorDescriptor) return;
+        if (!isExposedAsPublicAPI(functionDescriptor)) return;
+        JetType returnType = functionDescriptor.getReturnType();
+        if (returnType == null) return;
+        checkLocalTypesExposedInType(function, functionDescriptor, returnType,
+                                     FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS,
+                                     new HashSet<JetType>());
+    }
+
+    private void checkLocalTypesInPropertyType(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+        if (!isExposedAsPublicAPI(propertyDescriptor)) return;
+        JetType propertyType = propertyDescriptor.getType();
+        checkLocalTypesExposedInType(property, propertyDescriptor, propertyType,
+                                     PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS,
+                                     new HashSet<JetType>());
+    }
+
+    private static boolean isExposedAsPublicAPI(@NotNull DeclarationDescriptor descriptor) {
+        for (DeclarationDescriptor finger = descriptor; finger != null; finger = finger.getContainingDeclaration()) {
+            if (finger instanceof DeclarationDescriptorWithVisibility) {
+                Visibility visibility = ((DeclarationDescriptorWithVisibility) finger).getVisibility();
+                if (Visibilities.isPrivate(visibility) || visibility == Visibilities.LOCAL) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private <D extends JetDeclaration> void checkLocalTypesExposedInType(
+            @NotNull D reportOnDeclaration,
+            @NotNull DeclarationDescriptor parentDeclarationDescriptor,
+            @NotNull JetType type,
+            @NotNull DiagnosticFactory1<D, ClassDescriptor> diagnostic,
+            @NotNull Set<JetType> visitedTypes
+    ) {
+        visitedTypes.add(type);
+        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
+        if (classDescriptor != null) {
+            if (DescriptorUtils.isLocal(classDescriptor) && DescriptorUtils.isAncestor(parentDeclarationDescriptor, classDescriptor, true)) {
+                trace.report(diagnostic.on(reportOnDeclaration, classDescriptor));
+            }
+        }
+        for (TypeProjection projection : type.getArguments()) {
+            JetType projectedType = projection.getType();
+            if (!visitedTypes.contains(projectedType)) {
+                checkLocalTypesExposedInType(reportOnDeclaration, parentDeclarationDescriptor, projectedType, diagnostic, visitedTypes);
+            }
+        }
+    }
+
     private void checkPropertyExposedType(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         EffectiveVisibility propertyVisibility = EffectiveVisibility.Companion.forMember(propertyDescriptor);
         EffectiveVisibility typeVisibility = EffectiveVisibility.Companion.forType(propertyDescriptor.getType());
@@ -660,6 +713,7 @@ public class DeclarationsChecker {
             trace.report(EXPOSED_PROPERTY_TYPE.on(property, propertyVisibility, typeVisibility));
         }
         checkMemberReceiverExposedType(property.getReceiverTypeReference(), propertyDescriptor);
+        checkLocalTypesInPropertyType(property, propertyDescriptor);
     }
 
     protected void checkFunction(JetNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
@@ -729,6 +783,7 @@ public class DeclarationsChecker {
             i++;
         }
         checkMemberReceiverExposedType(function.getReceiverTypeReference(), functionDescriptor);
+        checkLocalTypesInFunctionReturnType(function, functionDescriptor);
     }
 
     private void checkAccessors(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {

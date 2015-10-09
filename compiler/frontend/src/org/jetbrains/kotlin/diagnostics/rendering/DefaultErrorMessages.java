@@ -268,6 +268,8 @@ public class DefaultErrorMessages {
         MAP.put(UNUSED_CHANGED_VALUE, "The value changed at ''{0}'' is never used", ELEMENT_TEXT);
         MAP.put(UNUSED_EXPRESSION, "The expression is unused");
         MAP.put(UNUSED_FUNCTION_LITERAL, "The function literal is unused. If you mean block, you can use 'run { ... }'");
+        MAP.put(FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS, "Function return type depends on local class or object {0}", NAME);
+        MAP.put(PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS, "Property type depends on local class or object {0}", NAME);
 
         MAP.put(VAL_REASSIGNMENT, "Val cannot be reassigned", NAME);
         MAP.put(SETTER_PROJECTED_OUT, "Setter for ''{0}'' is removed by type projection", NAME);

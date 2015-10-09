@@ -5760,6 +5760,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localInFunReturnType.kt")
+            public void testLocalInFunReturnType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/localInFunReturnType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localInMemberType.kt")
+            public void testLocalInMemberType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/localInMemberType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localInPropertyType.kt")
+            public void testLocalInPropertyType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/localInPropertyType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nested.kt")
             public void testNested() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/nested.kt");

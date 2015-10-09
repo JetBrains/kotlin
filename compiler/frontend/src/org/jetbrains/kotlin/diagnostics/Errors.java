@@ -395,6 +395,9 @@ public interface Errors {
 
     DiagnosticFactory0<JetParameter> USELESS_VARARG_ON_PARAMETER = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory1<JetFunction, ClassDescriptor> FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS = DiagnosticFactory1.create(ERROR, DECLARATION_RETURN_TYPE);
+    DiagnosticFactory1<JetProperty, ClassDescriptor> PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS = DiagnosticFactory1.create(ERROR, DECLARATION_RETURN_TYPE);
+
     // Named parameters
 
     DiagnosticFactory0<JetParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);

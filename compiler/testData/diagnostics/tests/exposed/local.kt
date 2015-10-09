@@ -2,21 +2,21 @@ fun <T> run(f: () -> T): T {
     return f()
 }
 
-// valid, A here is effectively Any
-fun foo() = run {
+// invalid, depends on local class
+fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>foo<!>() = run {
     class A
     A()
 }
 
-// valid, B here is also effectively Any
-fun gav() = {
+// invalid, depends on local class
+fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>gav<!>() = {
     class B
     B()
 }
 
 abstract class My
 
-// valid, object literal here is also effectively Any
+// valid, object literal here is effectively My
 fun bar() = run {
     object: My() {}
 }

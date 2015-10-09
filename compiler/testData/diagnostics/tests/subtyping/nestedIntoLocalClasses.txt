@@ -1,8 +1,8 @@
 package
 
 package p {
-    public fun foo(): p.foo.<anonymous>.<no name provided>.A
-    public fun foo(/*0*/ a: kotlin.Int): p.foo.<anonymous>.<no name provided>.A
+    private fun foo(): p.foo.<anonymous>.<no name provided>.A
+    private fun foo(/*0*/ a: kotlin.Int): p.foo.<anonymous>.<no name provided>.A
     public fun </*0*/ T> run(/*0*/ f: () -> T): T
     public fun test(): kotlin.Unit
 }
