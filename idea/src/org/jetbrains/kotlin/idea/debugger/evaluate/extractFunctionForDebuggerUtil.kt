@@ -16,25 +16,24 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
-import org.jetbrains.kotlin.idea.util.application.runReadAction
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
-import java.util.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 
 fun getFunctionForExtractedFragment(
         codeFragment: JetCodeFragment,
@@ -120,7 +119,17 @@ private fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
             tmpFile.addAfter(newImportList, tmpFile.getPackageDirective())
         }
         else {
-            tmpFileImportList.replace(newImportList)
+            val tmpFileImports = tmpFileImportList.imports
+            if (tmpFileImports.isEmpty()) {
+                tmpFileImportList.replace(newImportList)
+            }
+            else {
+                val lastImport = tmpFileImports.last()
+                newImportList.imports.forEach {
+                    tmpFileImportList.addAfter(it, lastImport)
+                }
+                tmpFileImportList.addAfter(psiFactory.createNewLine(), lastImport)
+            }
         }
         tmpFile.addAfter(psiFactory.createNewLine(), packageDirective)
     }

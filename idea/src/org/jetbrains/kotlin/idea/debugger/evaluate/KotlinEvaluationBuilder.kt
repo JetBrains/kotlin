@@ -470,10 +470,18 @@ private val packageInternalName = PackageClassUtils.getPackageClassInternalName(
 private fun createFileForDebugger(codeFragment: JetCodeFragment,
                                   extractedFunction: JetNamedFunction
 ): JetFile {
-    var fileText = template.replace("!IMPORT_LIST!",
-                                    codeFragment.importsToString()
-                                            .split(JetCodeFragment.IMPORT_SEPARATOR)
-                                            .joinToString("\n"))
+    val containingContextFile = (codeFragment.context as? JetElement)?.getContainingJetFile()
+    val importsFromContextFile = containingContextFile?.importList?.let { it.text + "\n" } ?: ""
+    val packageFromContextFile = containingContextFile?.packageName?.let {
+        if (it.isNotBlank()) "import $it.*\n" else null
+    } ?: ""
+
+    var fileText = template.replace(
+            "!IMPORT_LIST!",
+            packageFromContextFile
+                    + importsFromContextFile
+                    + codeFragment.importsToString().split(JetCodeFragment.IMPORT_SEPARATOR).joinToString("\n")
+    )
 
     val extractedFunctionText = extractedFunction.text
     assert(extractedFunctionText != null) { "Text of extracted function shouldn't be null" }
