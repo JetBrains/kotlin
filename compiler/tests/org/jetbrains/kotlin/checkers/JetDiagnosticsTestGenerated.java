@@ -8603,6 +8603,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Inner extends AbstractJetDiagnosticsTest {
+            @TestMetadata("accessingToJavaNestedClass.kt")
+            public void testAccessingToJavaNestedClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/accessingToJavaNestedClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("accessingToKotlinNestedClass.kt")
+            public void testAccessingToKotlinNestedClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/accessingToKotlinNestedClass.kt");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInInner() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inner"), Pattern.compile("^(.+)\\.kt$"), true);
             }
