@@ -322,6 +322,7 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> REDUNDANT_MODIFIER_IN_GETTER = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<JetTypeReference, JetType, JetType> WRONG_GETTER_RETURN_TYPE = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory0<JetModifierListOwner>

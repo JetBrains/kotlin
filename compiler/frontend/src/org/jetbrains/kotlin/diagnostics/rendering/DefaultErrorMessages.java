@@ -221,6 +221,7 @@ public class DefaultErrorMessages {
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE, "''lateinit'' modifier is not allowed on primitive type properties");
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
+        MAP.put(PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR, "Private setter is not allowed on non-private lateinit property");
         MAP.put(BACKING_FIELD_IN_TRAIT, "Property in an interface cannot have a backing field");
         MAP.put(MUST_BE_INITIALIZED, "Property must be initialized");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract");

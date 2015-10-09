@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
@@ -672,22 +673,39 @@ public class DeclarationsChecker {
             assert propertyAccessorDescriptor != null : "No property accessor descriptor for " + property.getText();
             modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor);
         }
-        JetPropertyAccessor getter = property.getGetter();
-        PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
-        JetModifierList getterModifierList = getter != null ? getter.getModifierList() : null;
-        if (getterModifierList != null && getterDescriptor != null) {
-            Map<JetModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(getterModifierList, Sets
+        checkAccessor(propertyDescriptor, property.getGetter(), propertyDescriptor.getGetter());
+        checkAccessor(propertyDescriptor, property.getSetter(), propertyDescriptor.getSetter());
+    }
+
+    private void reportVisibilityModifierDiagnostics(Collection<PsiElement> tokens, DiagnosticFactory0<PsiElement> diagnostic) {
+        for (PsiElement token : tokens) {
+            trace.report(diagnostic.on(token));
+        }
+    }
+
+    private void checkAccessor(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @Nullable JetPropertyAccessor accessor,
+            @Nullable PropertyAccessorDescriptor accessorDescriptor
+    ) {
+        if (accessor == null) return;
+        JetModifierList accessorModifierList = accessor.getModifierList();
+        if (accessorModifierList != null && accessorDescriptor != null) {
+            Map<JetModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(accessorModifierList, Sets
                     .newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD,
                                 JetTokens.INTERNAL_KEYWORD));
-            if (getterDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
-                for (PsiElement token : tokens.values()) {
-                    trace.report(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.on(token));
+            if (accessor.isGetter()) {
+                if (accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
+                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY);
+                }
+                else {
+                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.REDUNDANT_MODIFIER_IN_GETTER);
                 }
             }
-            else {
-                for (PsiElement token : tokens.values()) {
-                    trace.report(Errors.REDUNDANT_MODIFIER_IN_GETTER.on(token));
-                }
+            else if (accessorDescriptor.getVisibility() == Visibilities.PRIVATE
+                     && propertyDescriptor.getVisibility() != Visibilities.PRIVATE
+                     && propertyDescriptor.isLateInit()) {
+                reportVisibilityModifierDiagnostics(tokens.values(), Errors.PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR);
             }
         }
     }

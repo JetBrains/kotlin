@@ -325,6 +325,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("LateInitSetter.kt")
+        public void testLateInitSetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/LateInitSetter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LiteralAsResult.kt")
         public void testLiteralAsResult() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/LiteralAsResult.kt");

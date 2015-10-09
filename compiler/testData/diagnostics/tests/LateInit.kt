@@ -13,7 +13,7 @@ public abstract class A<T: Any, V: String?>(<!INAPPLICABLE_LATEINIT_MODIFIER_PRI
 
     public lateinit var e: String
         get
-        private set
+        <!PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR!>private<!> set
 
     fun a() {
         <!WRONG_MODIFIER_TARGET!>lateinit<!> var <!UNUSED_VARIABLE!>a<!>: String
