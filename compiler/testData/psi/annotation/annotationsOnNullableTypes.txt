@@ -1,0 +1,61 @@
+JetFile: annotationsOnNullableTypes.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('i')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+            PsiElement(QUEST)('?')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
+        PsiElement(QUEST)('?')
+    PsiElement(DOT)('.')
+    PsiElement(IDENTIFIER)('bar')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')

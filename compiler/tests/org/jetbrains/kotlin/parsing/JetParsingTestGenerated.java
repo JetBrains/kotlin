@@ -771,6 +771,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("annotationsOnNullableTypes.kt")
+            public void testAnnotationsOnNullableTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/annotationsOnNullableTypes.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("AnnotationsOnPatterns.kt")
             public void testAnnotationsOnPatterns() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/AnnotationsOnPatterns.kt");
