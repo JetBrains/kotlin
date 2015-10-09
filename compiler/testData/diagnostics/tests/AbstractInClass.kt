@@ -9,8 +9,8 @@ class MyClass() {
 
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var b: Int<!>                private set
     var b1: Int = 0;                         private set
-    <!ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS!>abstract<!> var b2: Int      private set
-    <!ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS!>abstract<!> var b3: Int = 0; private set
+    <!ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS!>abstract<!> var b2: Int      <!ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY!>private<!> set
+    <!ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS!>abstract<!> var b3: Int = 0; <!ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY!>private<!> set
 
     <!MUST_BE_INITIALIZED!>var c: Int<!>                set(v: Int) { field = v }
     var c1: Int = 0;                         set(v: Int) { field = v }

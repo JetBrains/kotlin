@@ -813,7 +813,10 @@ public class DeclarationsChecker {
             Map<JetModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(accessorModifierList, Sets
                     .newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD,
                                 JetTokens.INTERNAL_KEYWORD));
-            if (accessor.isGetter()) {
+            if (propertyDescriptor.getModality() == Modality.ABSTRACT && accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
+                reportVisibilityModifierDiagnostics(tokens.values(), Errors.ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY);
+            }
+            else if (accessor.isGetter()) {
                 if (accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
                     reportVisibilityModifierDiagnostics(tokens.values(), Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY);
                 }

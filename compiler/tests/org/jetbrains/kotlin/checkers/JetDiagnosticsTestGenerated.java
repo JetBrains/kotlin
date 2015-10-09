@@ -39,6 +39,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("AbstractAccessor.kt")
+        public void testAbstractAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/AbstractAccessor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("AbstractInAbstractClass.kt")
         public void testAbstractInAbstractClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/AbstractInAbstractClass.kt");

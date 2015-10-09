@@ -7,10 +7,10 @@ interface MyTrait {
     <!ABSTRACT_MODIFIER_IN_INTERFACE!>abstract<!> val a2: Int
     <!ABSTRACT_MODIFIER_IN_INTERFACE!>abstract<!> val a3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>1<!>
 
-    var b: Int                                                                                          private set
+    var b: Int                                                                                              <!ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY!>private<!> set
     var b1: Int = <!PROPERTY_INITIALIZER_IN_INTERFACE!>0<!>;                                                private set
-    <!ABSTRACT_MODIFIER_IN_INTERFACE!>abstract<!> var b2: Int                                               private set
-    <!ABSTRACT_MODIFIER_IN_INTERFACE!>abstract<!> var b3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; private set
+    <!ABSTRACT_MODIFIER_IN_INTERFACE!>abstract<!> var b2: Int                                               <!ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY!>private<!> set
+    <!ABSTRACT_MODIFIER_IN_INTERFACE!>abstract<!> var b3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY!>private<!> set
 
     <!BACKING_FIELD_IN_INTERFACE!>var c: Int<!>                                   set(v: Int) { field = v }
     <!BACKING_FIELD_IN_INTERFACE!>var c1: Int<!> = <!PROPERTY_INITIALIZER_IN_INTERFACE!>0<!>;              set(v: Int) { field = v }
