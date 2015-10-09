@@ -260,6 +260,10 @@ fun main(args: Array<String>) {
             model("loadJava/sourceJava", extension = "java", testMethod = "doTestSourceJava")
         }
 
+        testClass<AbstractLoadKotlinWithTypeTableTest>() {
+            model("loadJava/compiledKotlin")
+        }
+
         testClass<AbstractJvmRuntimeDescriptorLoaderTest>() {
             model("loadJava/compiledKotlin")
             model("loadJava/compiledJava", extension = "java", excludeDirs = listOf("sam", "kotlinSignature/propagation"))

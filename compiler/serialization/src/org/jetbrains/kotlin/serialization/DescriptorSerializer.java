@@ -39,13 +39,21 @@ import java.util.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
 public class DescriptorSerializer {
-
     private final Interner<TypeParameterDescriptor> typeParameters;
     private final SerializerExtension extension;
+    private final MutableTypeTable typeTable;
+    private final boolean serializeTypeTableToFunction;
 
-    private DescriptorSerializer(Interner<TypeParameterDescriptor> typeParameters, SerializerExtension extension) {
+    private DescriptorSerializer(
+            @NotNull Interner<TypeParameterDescriptor> typeParameters,
+            @NotNull SerializerExtension extension,
+            @NotNull MutableTypeTable typeTable,
+            boolean serializeTypeTableToFunction
+    ) {
         this.typeParameters = typeParameters;
         this.extension = extension;
+        this.typeTable = typeTable;
+        this.serializeTypeTableToFunction = serializeTypeTableToFunction;
     }
 
     @NotNull
@@ -63,7 +71,12 @@ public class DescriptorSerializer {
 
     @NotNull
     public static DescriptorSerializer createTopLevel(@NotNull SerializerExtension extension) {
-        return new DescriptorSerializer(new Interner<TypeParameterDescriptor>(), extension);
+        return new DescriptorSerializer(new Interner<TypeParameterDescriptor>(), extension, new MutableTypeTable(), false);
+    }
+
+    @NotNull
+    public static DescriptorSerializer createForLambda(@NotNull SerializerExtension extension) {
+        return new DescriptorSerializer(new Interner<TypeParameterDescriptor>(), extension, new MutableTypeTable(), true);
     }
 
     @NotNull
@@ -77,7 +90,12 @@ public class DescriptorSerializer {
         // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
         // serializing outer classes before nested classes.
         // Otherwise our interner can get wrong ids because we may serialize classes in any order.
-        DescriptorSerializer serializer = parentSerializer.createChildSerializer();
+        DescriptorSerializer serializer = new DescriptorSerializer(
+                new Interner<TypeParameterDescriptor>(parentSerializer.typeParameters),
+                parentSerializer.extension,
+                new MutableTypeTable(),
+                false
+        );
         for (TypeParameterDescriptor typeParameter : descriptor.getTypeConstructor().getParameters()) {
             serializer.typeParameters.intern(typeParameter);
         }
@@ -86,12 +104,16 @@ public class DescriptorSerializer {
 
     @NotNull
     private DescriptorSerializer createChildSerializer() {
-        return new DescriptorSerializer(new Interner<TypeParameterDescriptor>(typeParameters), extension);
+        return new DescriptorSerializer(new Interner<TypeParameterDescriptor>(typeParameters), extension, typeTable, false);
     }
 
     @NotNull
     public StringTable getStringTable() {
         return extension.getStringTable();
+    }
+
+    private boolean useTypeTable() {
+        return extension.shouldUseTypeTable();
     }
 
     @NotNull
@@ -113,7 +135,12 @@ public class DescriptorSerializer {
         if (!KotlinBuiltIns.isSpecialClassWithNoSupertypes(classDescriptor)) {
             // Special classes (Any, Nothing) have no supertypes
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-                builder.addSupertype(type(supertype));
+                if (useTypeTable()) {
+                    builder.addSupertypeId(typeId(supertype));
+                }
+                else {
+                    builder.addSupertype(type(supertype));
+                }
             }
         }
 
@@ -148,6 +175,11 @@ public class DescriptorSerializer {
         ClassDescriptor companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor();
         if (companionObjectDescriptor != null) {
             builder.setCompanionObjectName(getSimpleNameIndex(companionObjectDescriptor.getName()));
+        }
+
+        ProtoBuf.TypeTable typeTableProto = typeTable.serialize();
+        if (typeTableProto != null) {
+            builder.setTypeTable(typeTableProto);
         }
 
         extension.serializeClass(classDescriptor, builder);
@@ -212,7 +244,12 @@ public class DescriptorSerializer {
 
         builder.setName(getSimpleNameIndex(descriptor.getName()));
 
-        builder.setReturnType(local.type(descriptor.getType()));
+        if (useTypeTable()) {
+            builder.setReturnTypeId(local.typeId(descriptor.getType()));
+        }
+        else {
+            builder.setReturnType(local.type(descriptor.getType()));
+        }
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
             builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
@@ -220,7 +257,12 @@ public class DescriptorSerializer {
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
-            builder.setReceiverType(local.type(receiverParameter.getType()));
+            if (useTypeTable()) {
+                builder.setReceiverTypeId(local.typeId(receiverParameter.getType()));
+            }
+            else {
+                builder.setReceiverType(local.type(receiverParameter.getType()));
+            }
         }
 
         extension.serializeProperty(descriptor, builder);
@@ -244,8 +286,14 @@ public class DescriptorSerializer {
 
         builder.setName(getSimpleNameIndex(descriptor.getName()));
 
-        //noinspection ConstantConditions
-        builder.setReturnType(local.type(descriptor.getReturnType()));
+        if (useTypeTable()) {
+            //noinspection ConstantConditions
+            builder.setReturnTypeId(local.typeId(descriptor.getReturnType()));
+        }
+        else {
+            //noinspection ConstantConditions
+            builder.setReturnType(local.type(descriptor.getReturnType()));
+        }
 
         for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
             builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
@@ -253,11 +301,23 @@ public class DescriptorSerializer {
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
-            builder.setReceiverType(local.type(receiverParameter.getType()));
+            if (useTypeTable()) {
+                builder.setReceiverTypeId(local.typeId(receiverParameter.getType()));
+            }
+            else {
+                builder.setReceiverType(local.type(receiverParameter.getType()));
+            }
         }
 
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
+        }
+
+        if (serializeTypeTableToFunction) {
+            ProtoBuf.TypeTable typeTableProto = typeTable.serialize();
+            if (typeTableProto != null) {
+                builder.setTypeTable(typeTableProto);
+            }
         }
 
         extension.serializeFunction(descriptor, builder);
@@ -305,11 +365,21 @@ public class DescriptorSerializer {
 
         builder.setName(getSimpleNameIndex(descriptor.getName()));
 
-        builder.setType(type(descriptor.getType()));
+        if (useTypeTable()) {
+            builder.setTypeId(typeId(descriptor.getType()));
+        }
+        else {
+            builder.setType(type(descriptor.getType()));
+        }
 
         JetType varargElementType = descriptor.getVarargElementType();
         if (varargElementType != null) {
-            builder.setVarargElementType(type(varargElementType));
+            if (useTypeTable()) {
+                builder.setVarargElementTypeId(typeId(varargElementType));
+            }
+            else {
+                builder.setVarargElementType(type(varargElementType));
+            }
         }
 
         extension.serializeValueParameter(descriptor, builder);
@@ -337,7 +407,12 @@ public class DescriptorSerializer {
         if (upperBounds.size() == 1 && KotlinBuiltIns.isDefaultBound(CollectionsKt.single(upperBounds))) return builder;
 
         for (JetType upperBound : upperBounds) {
-            builder.addUpperBound(type(upperBound));
+            if (useTypeTable()) {
+                builder.addUpperBoundId(typeId(upperBound));
+            }
+            else {
+                builder.addUpperBound(type(upperBound));
+            }
         }
 
         return builder;
@@ -355,16 +430,26 @@ public class DescriptorSerializer {
         throw new IllegalStateException("Unknown variance: " + variance);
     }
 
+    private int typeId(@NotNull JetType type) {
+        return typeTable.get(type(type));
+    }
+
     @NotNull
-    public ProtoBuf.Type.Builder type(@NotNull JetType type) {
+    private ProtoBuf.Type.Builder type(@NotNull JetType type) {
         assert !type.isError() : "Can't serialize error types: " + type; // TODO
 
         if (FlexibleTypesKt.isFlexible(type)) {
             Flexibility flexibility = FlexibleTypesKt.flexibility(type);
 
-            return type(flexibility.getLowerBound())
-                    .setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(flexibility.getExtraCapabilities().getId()))
-                    .setFlexibleUpperBound(type(flexibility.getUpperBound()));
+            ProtoBuf.Type.Builder lowerBound = type(flexibility.getLowerBound());
+            lowerBound.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(flexibility.getExtraCapabilities().getId()));
+            if (useTypeTable()) {
+                lowerBound.setFlexibleUpperBoundId(typeId(flexibility.getUpperBound()));
+            }
+            else {
+                lowerBound.setFlexibleUpperBound(type(flexibility.getUpperBound()));
+            }
+            return lowerBound;
         }
 
         ProtoBuf.Type.Builder builder = ProtoBuf.Type.newBuilder();
@@ -403,7 +488,13 @@ public class DescriptorSerializer {
             if (projection != builder.getProjection()) {
                 builder.setProjection(projection);
             }
-            builder.setType(type(typeProjection.getType()));
+
+            if (useTypeTable()) {
+                builder.setTypeId(typeId(typeProjection.getType()));
+            }
+            else {
+                builder.setType(type(typeProjection.getType()));
+            }
         }
 
         return builder;
@@ -443,6 +534,11 @@ public class DescriptorSerializer {
             }
         }
 
+        ProtoBuf.TypeTable typeTableProto = typeTable.serialize();
+        if (typeTableProto != null) {
+            builder.setTypeTable(typeTableProto);
+        }
+
         extension.serializePackage(fragments, builder);
 
         return builder;
@@ -459,6 +555,11 @@ public class DescriptorSerializer {
             else if (declaration instanceof FunctionDescriptor) {
                 builder.addFunction(functionProto((FunctionDescriptor) declaration));
             }
+        }
+
+        ProtoBuf.TypeTable typeTableProto = typeTable.serialize();
+        if (typeTableProto != null) {
+            builder.setTypeTable(typeTableProto);
         }
 
         return builder;

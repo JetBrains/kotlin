@@ -38,7 +38,7 @@ import java.net.URLClassLoader
 public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
     protected fun doTest(filename: String) {
         val source = File(filename)
-        LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult(listOf(source), tmpdir, testRootDisposable, ConfigurationKind.ALL)
+        LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult(listOf(source), tmpdir, testRootDisposable, ConfigurationKind.ALL, false)
 
         val classNameSuffix = InTextDirectivesUtils.findStringWithPrefixes(source.readText(), "// CLASS_NAME_SUFFIX: ")
                               ?: error("CLASS_NAME_SUFFIX directive not found in test data")

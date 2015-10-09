@@ -26,6 +26,10 @@ public abstract class SerializerExtension {
     @NotNull
     public abstract StringTable getStringTable();
 
+    public boolean shouldUseTypeTable() {
+        return false;
+    }
+
     public void serializeClass(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class.Builder proto) {
     }
 

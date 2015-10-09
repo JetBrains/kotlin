@@ -22,6 +22,7 @@ import kotlin.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -67,6 +67,7 @@ public class CodegenTestUtil {
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
+                /* useTypeTableInSerializer = */ false,
                 configuration.get(JVMConfigurationKeys.PACKAGE_FACADES_AS_MULTIFILE_CLASSES, false),
                 forExtraDiagnostics
         );

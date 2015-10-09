@@ -398,6 +398,7 @@ public class KotlinToJVMBytecodeCompiler {
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
+                /* useTypeTableInSerializer = */ false,
                 configuration.get(JVMConfigurationKeys.PACKAGE_FACADES_AS_MULTIFILE_CLASSES, false),
                 diagnosticHolder,
                 packagesWithObsoleteParts,

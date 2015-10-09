@@ -521,7 +521,7 @@ public class JetTestUtils {
             @Nullable File javaErrorFile
     ) throws IOException {
         if (!ktFiles.isEmpty()) {
-            compileKotlinToDirAndGetAnalysisResult(ktFiles, outDir, disposable, ALL);
+            compileKotlinToDirAndGetAnalysisResult(ktFiles, outDir, disposable, ALL, false);
         }
         else {
             boolean mkdirs = outDir.mkdirs();

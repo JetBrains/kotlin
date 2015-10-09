@@ -256,7 +256,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         DescriptorSerializer serializer =
-                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), typeMapper));
+                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(
+                        v.getSerializationBindings(), typeMapper, state.getUseTypeTableInSerializer()
+                ));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 

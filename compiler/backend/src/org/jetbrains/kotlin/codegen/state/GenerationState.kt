@@ -52,6 +52,7 @@ public class GenerationState @JvmOverloads constructor(
         public val generateDeclaredClassFilter: GenerationState.GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
         disableInline: Boolean = false,
         disableOptimization: Boolean = false,
+        public val useTypeTableInSerializer: Boolean = false,
         public val packageFacadesAsMultifileClasses: Boolean = false,
         public val diagnostics: DiagnosticSink = DiagnosticSink.DO_NOTHING,
         public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
