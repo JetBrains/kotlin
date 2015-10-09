@@ -1847,6 +1847,8 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker typeRefMarker = mark();
         parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
+        PsiBuilder.Marker typeElementMarker = mark();
+
         IElementType lookahead = lookahead(1);
         IElementType lookahead2 = lookahead(2);
         boolean typeBeforeDot = true;
@@ -1903,7 +1905,7 @@ public class JetParsing extends AbstractJetParsing {
         // Disabling token merge is required for cases like
         //    Int?.(Foo) -> Bar
         myBuilder.disableJoiningComplexTokens();
-        typeRefMarker = parseNullableTypeSuffix(typeRefMarker);
+        typeElementMarker = parseNullableTypeSuffix(typeElementMarker);
         myBuilder.restoreJoiningComplexTokensState();
 
         if (typeBeforeDot && at(DOT)) {
@@ -1929,19 +1931,20 @@ public class JetParsing extends AbstractJetParsing {
             functionType.done(FUNCTION_TYPE);
         }
 
+        typeElementMarker.drop();
         return typeRefMarker;
     }
 
     @NotNull
-    PsiBuilder.Marker parseNullableTypeSuffix(@NotNull PsiBuilder.Marker typeRefMarker) {
+    PsiBuilder.Marker parseNullableTypeSuffix(@NotNull PsiBuilder.Marker typeElementMarker) {
         // ?: is joined regardless of joining state
         while (at(QUEST) && myBuilder.rawLookup(1) != COLON) {
-            PsiBuilder.Marker precede = typeRefMarker.precede();
+            PsiBuilder.Marker precede = typeElementMarker.precede();
             advance(); // QUEST
-            typeRefMarker.done(NULLABLE_TYPE);
-            typeRefMarker = precede;
+            typeElementMarker.done(NULLABLE_TYPE);
+            typeElementMarker = precede;
         }
-        return typeRefMarker;
+        return typeElementMarker;
     }
 
     /*

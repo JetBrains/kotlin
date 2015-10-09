@@ -14,15 +14,15 @@ JetFile: annotationsOnNullableTypes.kt
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
           NULLABLE_TYPE
-            ANNOTATION_ENTRY
-              PsiElement(AT)('@')
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-            PsiWhiteSpace(' ')
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Int')
@@ -37,15 +37,15 @@ JetFile: annotationsOnNullableTypes.kt
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
       NULLABLE_TYPE
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace(' ')
         USER_TYPE
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('Int')
