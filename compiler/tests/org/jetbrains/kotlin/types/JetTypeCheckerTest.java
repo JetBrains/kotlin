@@ -110,10 +110,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         assertType("1.0", builtIns.getDoubleType());
         assertType("1.0.toDouble()", builtIns.getDoubleType());
-        assertType("0x1.fffffffffffffp1023", builtIns.getDoubleType());
 
         assertType("1.0.toFloat()", builtIns.getFloatType());
-        assertType("0x1.fffffffffffffp1023.toFloat()", builtIns.getFloatType());
 
         assertType("true", builtIns.getBooleanType());
         assertType("false", builtIns.getBooleanType());
