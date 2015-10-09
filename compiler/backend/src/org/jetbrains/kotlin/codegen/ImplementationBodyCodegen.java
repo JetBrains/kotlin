@@ -999,6 +999,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
+            markLineNumberForSyntheticFunction(descriptor, v);
             v.anew(classAsmType);
             v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
             if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
