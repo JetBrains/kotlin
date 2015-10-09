@@ -48,18 +48,18 @@ import java.util.*
 public object SuperClassNotInitialized : JetIntentionActionsFactory() {
     private val DISPLAY_MAX_PARAMS = 5
 
-    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val delegator = diagnostic.getPsiElement() as JetDelegatorToSuperClass
-        val classOrObjectDeclaration = delegator.getParent().getParent() as? JetClassOrObject ?: return null
+        val classOrObjectDeclaration = delegator.getParent().getParent() as? JetClassOrObject ?: return emptyList()
 
-        val typeRef = delegator.getTypeReference() ?: return null
-        val type = typeRef.analyze()[BindingContext.TYPE, typeRef] ?: return null
-        if (type.isError()) return null
+        val typeRef = delegator.getTypeReference() ?: return emptyList()
+        val type = typeRef.analyze()[BindingContext.TYPE, typeRef] ?: return emptyList()
+        if (type.isError()) return emptyList()
 
-        val superClass = (type.getConstructor().getDeclarationDescriptor() as? ClassDescriptor) ?: return null
+        val superClass = (type.getConstructor().getDeclarationDescriptor() as? ClassDescriptor) ?: return emptyList()
         val classDescriptor = delegator.getResolutionFacade().resolveToDescriptor(classOrObjectDeclaration) as ClassDescriptor
         val constructors = superClass.getConstructors().filter { it.isVisible(classDescriptor) }
-        if (constructors.isEmpty()) return null // no accessible constructor
+        if (constructors.isEmpty()) return emptyList() // no accessible constructor
 
         val fixes = ArrayList<IntentionAction>()
 

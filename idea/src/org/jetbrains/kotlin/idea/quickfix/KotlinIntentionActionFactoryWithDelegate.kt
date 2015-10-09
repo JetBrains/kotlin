@@ -62,10 +62,10 @@ abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D : Any>
 
     protected abstract fun extractFixData(element: E, diagnostic: Diagnostic): D?
 
-    override final fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
+    override final fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val diagnosticMessage = DefaultErrorMessages.render(diagnostic)
         val diagnosticElementPointer = diagnostic.psiElement.createSmartPointer()
-        val originalElement = getElementOfInterest(diagnostic) ?: return null
+        val originalElement = getElementOfInterest(diagnostic) ?: return emptyList()
         val originalElementPointer = originalElement.createSmartPointer()
 
         val file = originalElement.containingFile

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public object KotlinAddOrderEntryActionFactory : JetIntentionActionsFactory() {
-    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
+    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val simpleExpression = diagnostic.psiElement as? JetSimpleNameExpression ?: return emptyList()
         val refElement = simpleExpression.getQualifiedElement()
 
@@ -52,6 +52,7 @@ public object KotlinAddOrderEntryActionFactory : JetIntentionActionsFactory() {
                 return simpleExpression.mainReference.bindToElement(element, ShorteningMode.FORCED_SHORTENING)
             }
         }
+
         @Suppress("UNCHECKED_CAST")
         return OrderEntryFix.registerFixes(QuickFixActionRegistrarImpl(null), reference) as List<IntentionAction>? ?: emptyList()
     }
