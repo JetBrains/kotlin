@@ -403,7 +403,7 @@ class CollectionTest {
         assertEquals(2, arr.size())
         todo {
             assertTrue {
-                arr is Array<String>
+                arr.isArrayOf<String>()
             }
         }
     }

@@ -66,6 +66,7 @@ public class IntrinsicMethods {
         namedMethods.put("kotlin.arrays.array", new JavaClassArray());
         namedMethods.put("kotlin.jvm.internal.unsafe.monitorEnter", MonitorInstruction.MONITOR_ENTER);
         namedMethods.put("kotlin.jvm.internal.unsafe.monitorExit", MonitorInstruction.MONITOR_EXIT);
+        namedMethods.put("kotlin.jvm.isArrayOf", new IsArrayOf());
 
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {

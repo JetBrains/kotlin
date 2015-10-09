@@ -256,6 +256,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("kt602.kt")
+        public void testKt602() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/kt602.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("kt7009.kt")
         public void testKt7009() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/kt7009.kt");
@@ -4642,6 +4648,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("returnCopyToArray.kt")
         public void testReturnCopyToArray() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/toArray/returnCopyToArray.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("toArray.kt")
+        public void testToArray() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/toArray/toArray.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("toArrayAlreadyPresent.kt")
+        public void testToArrayAlreadyPresent() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/toArray/toArrayAlreadyPresent.kt");
             doTestWithStdlib(fileName);
         }
     }

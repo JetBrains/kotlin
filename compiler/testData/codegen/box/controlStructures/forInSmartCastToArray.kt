@@ -1,5 +1,5 @@
-fun f(x: Any?): String {
-    if (x is Array<String>) {
+fun f(x: Any?): Any? {
+    if (x is Array<*>) {
         for (i in x) {
             return i
         }
@@ -10,5 +10,5 @@ fun f(x: Any?): String {
 fun box(): String {
     val a = arrayOfNulls<String>(1) as Array<String>
     a[0] = "OK"
-    return f(a)
+    return f(a) as String
 }
