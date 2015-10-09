@@ -324,14 +324,12 @@ public class DescriptorSerializer {
 
         builder.setName(getSimpleNameIndex(typeParameter.getName()));
 
-        // to avoid storing a default
-        if (typeParameter.isReified()) {
-            builder.setReified(true);
+        if (typeParameter.isReified() != builder.getReified()) {
+            builder.setReified(typeParameter.isReified());
         }
 
-        // to avoid storing a default
         ProtoBuf.TypeParameter.Variance variance = variance(typeParameter.getVariance());
-        if (variance != ProtoBuf.TypeParameter.Variance.INV) {
+        if (variance != builder.getVariance()) {
             builder.setVariance(variance);
         }
 
@@ -383,9 +381,8 @@ public class DescriptorSerializer {
             builder.addArgument(typeArgument(projection));
         }
 
-        // to avoid storing a default
-        if (type.isMarkedNullable()) {
-            builder.setNullable(true);
+        if (type.isMarkedNullable() != builder.getNullable()) {
+            builder.setNullable(type.isMarkedNullable());
         }
 
         extension.serializeType(type, builder);
@@ -403,8 +400,7 @@ public class DescriptorSerializer {
         else {
             ProtoBuf.Type.Argument.Projection projection = projection(typeProjection.getProjectionKind());
 
-            // to avoid storing a default
-            if (projection != ProtoBuf.Type.Argument.Projection.INV) {
+            if (projection != builder.getProjection()) {
                 builder.setProjection(projection);
             }
             builder.setType(type(typeProjection.getType()));
