@@ -606,6 +606,39 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/platformStaticInObject.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Statics extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInStatics() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("jjk.kt")
+            public void testJjk() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics/jjk.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jk.kt")
+            public void testJk() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics/jk.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jkjk.kt")
+            public void testJkjk() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics/jkjk.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kotlinMembersVsJavaNonVisibleStatics.kt")
+            public void testKotlinMembersVsJavaNonVisibleStatics() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/statics/kotlinMembersVsJavaNonVisibleStatics.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/functionLiterals")

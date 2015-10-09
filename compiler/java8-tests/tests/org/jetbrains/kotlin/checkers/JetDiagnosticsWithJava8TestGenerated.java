@@ -68,6 +68,36 @@ public class JetDiagnosticsWithJava8TestGenerated extends AbstractJetDiagnostics
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DuplicateJvmSignature extends AbstractJetDiagnosticsWithFullJdkTest {
+        public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature/statics")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Statics extends AbstractJetDiagnosticsWithFullJdkTest {
+            public void testAllFilesPresentInStatics() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("jjk.kt")
+            public void testJjk() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature/statics/jjk.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jk.kt")
+            public void testJk() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature/statics/jk.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithJava8/statics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

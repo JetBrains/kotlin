@@ -5223,6 +5223,39 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/statics")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Statics extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInStatics() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("jjk.kt")
+                public void testJjk() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/statics/jjk.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("jk.kt")
+                public void testJk() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/statics/jk.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("jkjk.kt")
+                public void testJkjk() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/statics/jkjk.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kotlinMembersVsJavaNonVisibleStatics.kt")
+                public void testKotlinMembersVsJavaNonVisibleStatics() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/statics/kotlinMembersVsJavaNonVisibleStatics.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/synthesized")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
