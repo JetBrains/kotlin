@@ -442,7 +442,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (((PsiMethod) method).getContainingClass() == null) return;
 
         FunctionDescriptor methodDescriptor = JavaResolutionUtils.getJavaMethodDescriptor((PsiMethod) method);
-        assert methodDescriptor != null;
+        if (methodDescriptor == null) return;
 
         DeclarationDescriptor containingDescriptor = methodDescriptor.getContainingDeclaration();
         if (!(containingDescriptor instanceof JavaClassDescriptor)) return;
