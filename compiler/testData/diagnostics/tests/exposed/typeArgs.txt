@@ -7,6 +7,7 @@ public interface Generic</*0*/ E : My> {
 }
 
 public interface His : kotlin.List<My> {
+    public abstract override /*1*/ /*fake_override*/ val isEmpty: kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: My): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<My>): kotlin.Boolean
@@ -14,7 +15,6 @@ public interface His : kotlin.List<My> {
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): My
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.Iterator<My>
     public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.ListIterator<My>

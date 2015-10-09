@@ -2,6 +2,7 @@ package test
 
 public abstract class Mine : java.util.List<kotlin.String> {
     public constructor Mine()
+    public abstract /*fake_override*/ val isEmpty: kotlin.Boolean
     public abstract /*fake_override*/ val size: kotlin.Int
     public abstract /*fake_override*/ fun add(/*0*/ kotlin.Int, /*1*/ kotlin.String!): kotlin.Unit
     public abstract /*fake_override*/ fun add(/*0*/ kotlin.String!): kotlin.Boolean
@@ -12,7 +13,6 @@ public abstract class Mine : java.util.List<kotlin.String> {
     public abstract /*fake_override*/ fun containsAll(/*0*/ kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public abstract /*fake_override*/ fun get(/*0*/ kotlin.Int): kotlin.String!
     public abstract /*fake_override*/ fun indexOf(/*0*/ kotlin.Any!): kotlin.Int
-    public abstract /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract /*fake_override*/ fun iterator(): kotlin.MutableIterator<kotlin.String!>
     public abstract /*fake_override*/ fun lastIndexOf(/*0*/ kotlin.Any!): kotlin.Int
     public abstract /*fake_override*/ fun listIterator(): kotlin.(Mutable)ListIterator<kotlin.String!>!

@@ -6,6 +6,7 @@ public/*package*/ open class ExtendsAbstractListT {
 
 public abstract class Mine</*0*/ T> : java.util.AbstractList<T> {
     public constructor Mine</*0*/ T>()
+    public open /*fake_override*/ val isEmpty: kotlin.Boolean
     protected/*protected and package*/ final /*fake_override*/ var modCount: kotlin.Int
     public abstract /*fake_override*/ val size: kotlin.Int
     public open /*fake_override*/ fun add(/*0*/ T!): kotlin.Boolean
@@ -17,7 +18,6 @@ public abstract class Mine</*0*/ T> : java.util.AbstractList<T> {
     public open /*fake_override*/ fun containsAll(/*0*/ kotlin.Collection<T!>): kotlin.Boolean
     public abstract /*fake_override*/ fun get(/*0*/ kotlin.Int): T!
     public open /*fake_override*/ fun indexOf(/*0*/ kotlin.Any?): kotlin.Int
-    public open /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open /*fake_override*/ fun iterator(): kotlin.MutableIterator<T!>
     public open /*fake_override*/ fun lastIndexOf(/*0*/ kotlin.Any?): kotlin.Int
     public open /*fake_override*/ fun listIterator(): kotlin.MutableListIterator<T!>

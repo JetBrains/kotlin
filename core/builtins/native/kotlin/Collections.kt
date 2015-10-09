@@ -54,7 +54,7 @@ public interface Collection<out E> : Iterable<E> {
     /**
      * Returns `true` if the collection is empty (contains no elements), `false` otherwise.
      */
-    public fun isEmpty(): Boolean
+    public val isEmpty: Boolean
 
     /**
      * Checks if the specified element is contained in this collection.
@@ -129,7 +129,7 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
 public interface List<out E> : Collection<E> {
     // Query Operations
     override val size: Int
-    override fun isEmpty(): Boolean
+    override val isEmpty: Boolean
     override fun contains(o: @UnsafeVariance E): Boolean
     override fun iterator(): Iterator<E>
 
@@ -233,7 +233,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
 public interface Set<out E> : Collection<E> {
     // Query Operations
     override val size: Int
-    override fun isEmpty(): Boolean
+    override val isEmpty: Boolean
     override fun contains(o: @UnsafeVariance E): Boolean
     override fun iterator(): Iterator<E>
 
@@ -279,7 +279,7 @@ public interface Map<K, out V> {
     /**
      * Returns `true` if the map is empty (contains no elements), `false` otherwise.
      */
-    public fun isEmpty(): Boolean
+    public val isEmpty: Boolean
 
     /**
      * Returns `true` if the map contains the specified [key].
@@ -319,12 +319,12 @@ public interface Map<K, out V> {
         /**
          * Returns the key of this key/value pair.
          */
-        public fun getKey(): K
+        public val key: K
 
         /**
          * Returns the value of this key/value pair.
          */
-        public fun getValue(): V
+        public val value: V
     }
 }
 
@@ -375,6 +375,6 @@ public interface MutableMap<K, V> : Map<K, V> {
          *
          * @return the previous value corresponding to the key.
          */
-    	public fun setValue(value: V): V
+         public fun setValue(value: V): V
     }
 }

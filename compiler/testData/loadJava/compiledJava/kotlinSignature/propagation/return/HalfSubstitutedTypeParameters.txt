@@ -13,6 +13,7 @@ public interface HalfSubstitutedTypeParameters {
     }
 
     public interface TrickyList</*0*/ X : kotlin.Any!, /*1*/ E : kotlin.Any!> : kotlin.MutableList<E!> {
+        public abstract override /*1*/ /*fake_override*/ val isEmpty: kotlin.Boolean
         public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
         public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e: E!): kotlin.Boolean
         public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: E!): kotlin.Unit
@@ -23,7 +24,6 @@ public interface HalfSubstitutedTypeParameters {
         public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<E!>): kotlin.Boolean
         public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): E!
         public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
-        public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
         public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<E!>
         public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
         public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.MutableListIterator<E!>

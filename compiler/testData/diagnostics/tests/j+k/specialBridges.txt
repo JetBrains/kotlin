@@ -3,6 +3,7 @@ package
 public final class B2 : java.util.ArrayList<kotlin.String>, I2 {
     public constructor B2()
     invisible_fake final override /*1*/ /*fake_override*/ var elementData: kotlin.Array<(out) kotlin.Any!>!
+    public open override /*1*/ /*fake_override*/ val isEmpty: kotlin.Boolean
     protected/*protected and package*/ final override /*1*/ /*fake_override*/ var modCount: kotlin.Int
     invisible_fake final override /*1*/ /*fake_override*/ var size: kotlin.Int
     public open override /*2*/ /*fake_override*/ val size: kotlin.Int
@@ -24,7 +25,6 @@ public final class B2 : java.util.ArrayList<kotlin.String>, I2 {
     invisible_fake open override /*1*/ /*fake_override*/ fun grow(/*0*/ p0: kotlin.Int): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<kotlin.String>
     public open override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun listIterator(): kotlin.MutableListIterator<kotlin.String>

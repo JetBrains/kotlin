@@ -2,6 +2,7 @@ package
 
 public final class A : kotlin.List<kotlin.String> {
     public constructor A()
+    public open override /*1*/ /*delegation*/ val isEmpty: kotlin.Boolean
     public open override /*1*/ /*delegation*/ val size: kotlin.Int
     public open override /*1*/ /*delegation*/ fun contains(/*0*/ o: kotlin.String): kotlin.Boolean
     public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.String>): kotlin.Boolean
@@ -9,7 +10,6 @@ public final class A : kotlin.List<kotlin.String> {
     public open override /*1*/ /*delegation*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*delegation*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
-    public open override /*1*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*delegation*/ fun iterator(): kotlin.Iterator<kotlin.String>
     public open override /*1*/ /*delegation*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
     public open override /*1*/ /*delegation*/ fun listIterator(): kotlin.ListIterator<kotlin.String>
@@ -20,6 +20,7 @@ public final class A : kotlin.List<kotlin.String> {
 
 public final class B : kotlin.List<kotlin.String> {
     public constructor B()
+    public open override /*1*/ /*delegation*/ val isEmpty: kotlin.Boolean
     public open override /*1*/ /*delegation*/ val size: kotlin.Int
     public open override /*1*/ /*delegation*/ fun contains(/*0*/ o: kotlin.String): kotlin.Boolean
     public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.String>): kotlin.Boolean
@@ -27,7 +28,6 @@ public final class B : kotlin.List<kotlin.String> {
     public open override /*1*/ /*delegation*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*delegation*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
-    public open override /*1*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*delegation*/ fun iterator(): kotlin.Iterator<kotlin.String>
     public open override /*1*/ /*delegation*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
     public open override /*1*/ /*delegation*/ fun listIterator(): kotlin.ListIterator<kotlin.String>
@@ -38,6 +38,7 @@ public final class B : kotlin.List<kotlin.String> {
 
 public final class C : kotlin.List<kotlin.String> {
     public constructor C()
+    public open override /*1*/ /*delegation*/ val isEmpty: kotlin.Boolean
     public open override /*1*/ /*delegation*/ val size: kotlin.Int
     public open override /*1*/ /*delegation*/ fun contains(/*0*/ o: kotlin.String): kotlin.Boolean
     public open override /*1*/ /*delegation*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.String>): kotlin.Boolean
@@ -45,7 +46,6 @@ public final class C : kotlin.List<kotlin.String> {
     public open override /*1*/ /*delegation*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*delegation*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
-    public open override /*1*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*delegation*/ fun iterator(): kotlin.Iterator<kotlin.String>
     public open override /*1*/ /*delegation*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
     public open override /*1*/ /*delegation*/ fun listIterator(): kotlin.ListIterator<kotlin.String>

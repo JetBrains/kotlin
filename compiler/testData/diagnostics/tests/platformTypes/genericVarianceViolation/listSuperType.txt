@@ -12,6 +12,7 @@ public open class A {
 
 public abstract class B : kotlin.MutableList<kotlin.String> {
     public constructor B()
+    public abstract override /*1*/ /*fake_override*/ val isEmpty: kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e: kotlin.String): kotlin.Boolean
@@ -24,7 +25,6 @@ public abstract class B : kotlin.MutableList<kotlin.String> {
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<kotlin.String>
     public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.MutableListIterator<kotlin.String>
