@@ -316,9 +316,7 @@ public class PropertyCodegen {
             else if (hasPublicFieldAnnotation && !isDelegate) {
                 modifiers |= ACC_PUBLIC;
             }
-            else if (isInterfaceCompanionObject(propertyDescriptor.getContainingDeclaration())) {
-                modifiers |= ACC_PRIVATE;
-            } else {
+            else {
                 modifiers |= getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
             }
 
