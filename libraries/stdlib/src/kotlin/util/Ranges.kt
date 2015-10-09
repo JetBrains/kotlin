@@ -21,6 +21,8 @@ public class ComparableRange<T: Comparable<T>> (
     override fun hashCode(): Int {
         return if (isEmpty()) -1 else 31 * start.hashCode() + end.hashCode()
     }
+
+    override fun toString(): String = "$start..$end"
 }
 
 /**

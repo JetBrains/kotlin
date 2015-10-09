@@ -62,6 +62,8 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 "    }"
             }
 
+            val toString = "\"\$start..\$end\""
+
             out.println(
 """/**
  * A range of values of type `$t`.
@@ -81,6 +83,8 @@ public class $range(override val start: $t, override val end: $t) : Range<$t>, P
         ${compare("start")} && ${compare("end")})
 
     override fun hashCode(): Int $hashCode
+
+    override fun toString(): String = $toString
 
     companion object {
         /** An empty range of values of type $t. */
