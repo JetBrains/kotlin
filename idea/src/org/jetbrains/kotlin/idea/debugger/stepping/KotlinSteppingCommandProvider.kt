@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.idea.debugger.stepping
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
+import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.JvmSteppingCommandProvider
 import com.intellij.psi.PsiElement
 import com.intellij.xdebugger.impl.XSourcePositionImpl
 import com.sun.jdi.Location
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -49,7 +51,19 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         if (suspendContext == null || suspendContext.isResumed) return null
 
         val sourcePosition = suspendContext.debugProcess.debuggerContext.sourcePosition
+        return getStepOverCommand(suspendContext, ignoreBreakpoints, sourcePosition)
+    }
 
+    @TestOnly
+    fun getStepOverCommand(
+            suspendContext: SuspendContextImpl,
+            ignoreBreakpoints: Boolean,
+            debuggerContext: DebuggerContextImpl
+    ): DebugProcessImpl.ResumeCommand? {
+        return getStepOverCommand(suspendContext, ignoreBreakpoints, debuggerContext.sourcePosition)
+    }
+
+    fun getStepOverCommand(suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean, sourcePosition: SourcePosition): DebugProcessImpl.ResumeCommand? {
         val file = sourcePosition.file as? JetFile ?: return null
         if (sourcePosition.line < 0) return null
 
@@ -160,11 +174,19 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         return this?.textRange?.contains(element.textRange) ?: false
     }
 
+    @TestOnly
+    fun getStepOutCommand(suspendContext: SuspendContextImpl, debugContext: DebuggerContextImpl): DebugProcessImpl.ResumeCommand? {
+        return getStepOutCommand(suspendContext, debugContext.sourcePosition)
+    }
+
     override fun getStepOutCommand(suspendContext: SuspendContextImpl?, stepSize: Int): DebugProcessImpl.ResumeCommand? {
         if (suspendContext == null || suspendContext.isResumed) return null
 
         val sourcePosition = suspendContext.debugProcess.debuggerContext.sourcePosition ?: return null
+        return getStepOutCommand(suspendContext, sourcePosition)
+    }
 
+    private fun getStepOutCommand(suspendContext: SuspendContextImpl, sourcePosition: SourcePosition): DebugProcessImpl.ResumeCommand? {
         val file = sourcePosition.file as? JetFile ?: return null
         if (sourcePosition.line < 0) return null
 
