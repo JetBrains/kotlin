@@ -5,8 +5,22 @@ package kotlin
 
 @Deprecated("Use property `size` instead", ReplaceWith("this.size"))
 public inline fun Collection<*>.size() = size
+
 @Deprecated("Use property `size` instead", ReplaceWith("this.size"))
 public inline fun Map<*, *>.size() = size
+
+@Deprecated("Use property `isEmpty` instead", ReplaceWith("this.isEmpty"))
+public inline fun Collection<*>.isEmpty() = isEmpty
+
+@Deprecated("Use property `isEmpty` instead", ReplaceWith("this.isEmpty"))
+public inline fun Map<*, *>.isEmpty() = isEmpty
+
+
+@Deprecated("Use property `key` instead", ReplaceWith("this.key"))
+public fun <K, V> Map.Entry<K, V>.getKey(): K = key
+
+@Deprecated("Use property `value` instead", ReplaceWith("this.value"))
+public fun <K, V> Map.Entry<K, V>.getValue(): V = value
 
 /**
  * Adds the specified [element] to this mutable collection.
