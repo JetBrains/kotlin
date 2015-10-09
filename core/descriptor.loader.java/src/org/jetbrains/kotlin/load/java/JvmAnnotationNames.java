@@ -33,6 +33,7 @@ public final class JvmAnnotationNames {
     public static final FqName KOTLIN_FILE_FACADE = new FqName("kotlin.jvm.internal.KotlinFileFacade");
     public static final FqName KOTLIN_MULTIFILE_CLASS = new FqName("kotlin.jvm.internal.KotlinMultifileClass");
     public static final FqName KOTLIN_MULTIFILE_CLASS_PART = new FqName("kotlin.jvm.internal.KotlinMultifileClassPart");
+    public static final FqName KOTLIN_SYNTHETIC_CLASS = new FqName("kotlin.jvm.internal.KotlinSyntheticClass");
     public static final FqName KOTLIN_CALLABLE = new FqName("kotlin.jvm.internal.KotlinCallable");
     public static final FqName KOTLIN_INTERFACE_DEFAULT_IMPLS = new FqName("kotlin.jvm.internal.KotlinInterfaceDefaultImpls");
     public static final FqName KOTLIN_LOCAL_CLASS = new FqName("kotlin.jvm.internal.KotlinLocalClass");
@@ -70,10 +71,6 @@ public final class JvmAnnotationNames {
     public static final FqName ENHANCED_NULLABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedNullability");
     public static final FqName ENHANCED_MUTABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedMutability");
 
-    public static class KotlinSyntheticClass {
-        public static final JvmClassName CLASS_NAME = JvmClassName.byInternalName("kotlin/jvm/internal/KotlinSyntheticClass");
-    }
-
     public static final String OLD_ABI_VERSION_FIELD_NAME = "abiVersion";
 
     // When these annotations appear on a declaration, they are copied to the _type_ of the declaration, becoming type annotations
@@ -89,16 +86,16 @@ public final class JvmAnnotationNames {
     private static final Set<JvmClassName> NULLABILITY_ANNOTATIONS = new HashSet<JvmClassName>();
     private static final Set<JvmClassName> SPECIAL_META_ANNOTATIONS = new HashSet<JvmClassName>();
     static {
-        for (FqName fqName : Arrays.asList(KOTLIN_CLASS, KOTLIN_PACKAGE, KOTLIN_SIGNATURE)) {
+        for (FqName fqName : Arrays.asList(
+                KOTLIN_CLASS, KOTLIN_PACKAGE, KOTLIN_SIGNATURE, KOTLIN_SYNTHETIC_CLASS, KOTLIN_INTERFACE_DEFAULT_IMPLS, KOTLIN_LOCAL_CLASS
+        )) {
             SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
         }
-        SPECIAL_ANNOTATIONS.add(KotlinSyntheticClass.CLASS_NAME);
-        SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_INTERFACE_DEFAULT_IMPLS));
-        SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_LOCAL_CLASS));
 
         for (FqName fqName : Arrays.asList(JETBRAINS_NOT_NULL_ANNOTATION, JETBRAINS_NULLABLE_ANNOTATION)) {
             NULLABILITY_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
         }
+
         for (FqName fqName : Arrays.asList(TARGET_ANNOTATION, RETENTION_ANNOTATION, DOCUMENTED_ANNOTATION)) {
             SPECIAL_META_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
         }
