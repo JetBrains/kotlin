@@ -60,21 +60,24 @@ private fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it
 
 val Name.isBuiltinSpecialPropertyName: Boolean get() = this in BUILTIN_SPECIAL_PROPERTIES_SHORT_NAMES
 
-public val CallableMemberDescriptor.builtinSpecialPropertyAccessorName: String?
-    get() = propertyIfAccessor.check { it.hasBuiltinSpecialPropertyFqName() }?.name?.asString()
+public fun CallableMemberDescriptor.getBuiltinSpecialPropertyAccessorName(): String? {
+    return propertyIfAccessor.check { it.hasBuiltinSpecialPropertyFqName() }?.name?.asString()
+}
 
 @Suppress("UNCHECKED_CAST")
-val <T : CallableMemberDescriptor> T.builtinSpecialOverridden: T? get() {
+fun <T : CallableMemberDescriptor> T.getBuiltinSpecialOverridden(): T? {
     return firstOverridden { it.propertyIfAccessor.hasBuiltinSpecialPropertyFqName() } as T?
 }
 
-fun CallableMemberDescriptor.overridesBuiltinSpecialDeclaration(): Boolean = builtinSpecialOverridden != null
+fun CallableMemberDescriptor.overridesBuiltinSpecialDeclaration(): Boolean = getBuiltinSpecialOverridden() != null
 
-public val CallableMemberDescriptor.jvmMethodNameIfSpecial: String?
-    get() = builtinOverriddenThatAffectsJvmName?.builtinSpecialPropertyAccessorName
+public fun CallableMemberDescriptor.getJvmMethodNameIfSpecial(): String? {
+    return getBuiltinOverriddenThatAffectsJvmName()?.getBuiltinSpecialPropertyAccessorName()
+}
 
-private val CallableMemberDescriptor.builtinOverriddenThatAffectsJvmName: CallableMemberDescriptor?
-    get() = if (hasBuiltinSpecialPropertyFqName() || original.isFromJava) builtinSpecialOverridden else null
+private fun CallableMemberDescriptor.getBuiltinOverriddenThatAffectsJvmName(): CallableMemberDescriptor? {
+    return if (hasBuiltinSpecialPropertyFqName() || original.isFromJava) getBuiltinSpecialOverridden() else null
+}
 
 private val CallableMemberDescriptor.isFromJava: Boolean
     get() = propertyIfAccessor is JavaCallableMemberDescriptor
@@ -85,12 +88,10 @@ private val CallableMemberDescriptor.propertyIfAccessor: CallableDescriptor
 val CallableMemberDescriptor.hasErasedValueParametersInJava: Boolean
     get() = fqNameOrNull() in BUILTIN_METHODS_ERASED_VALUE_PARAMETERS_FQ_NAMES
 
-
-val FunctionDescriptor.overriddenBuiltinFunctionWithErasedValueParametersInJava: FunctionDescriptor?
-    get() {
-        if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
-        return firstOverridden { it.hasErasedValueParametersInJava } as FunctionDescriptor?
-    }
+fun FunctionDescriptor.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(): FunctionDescriptor? {
+    if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
+    return firstOverridden { it.hasErasedValueParametersInJava } as FunctionDescriptor?
+}
 
 private fun CallableMemberDescriptor.firstOverridden(
         predicate: (CallableMemberDescriptor) -> Boolean
@@ -122,14 +123,13 @@ enum class SpecialSignatureInfo(val signature: String?) {
     GENERIC_PARAMETER(null)
 }
 
-val CallableMemberDescriptor.specialSignatureInfo: SpecialSignatureInfo?
-    get() {
-        val builtinFqName = firstOverridden { it is FunctionDescriptor && it.hasErasedValueParametersInJava }?.fqNameOrNull()
-                            ?: return null
+fun CallableMemberDescriptor.getSpecialSignatureInfo(): SpecialSignatureInfo? {
+    val builtinFqName = firstOverridden { it is FunctionDescriptor && it.hasErasedValueParametersInJava }?.fqNameOrNull()
+            ?: return null
 
-        return when (builtinFqName) {
-            in BUILTIN_METHODS_ERASED_COLLECTION_PARAMETER_FQ_NAMES -> SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
-            in BUILTIN_METHODS_GENERIC_PARAMETERS_FQ_NAMES          -> SpecialSignatureInfo.GENERIC_PARAMETER
-            else -> error("Unexpected kind of special builtin: $builtinFqName")
-        }
+    return when (builtinFqName) {
+        in BUILTIN_METHODS_ERASED_COLLECTION_PARAMETER_FQ_NAMES -> SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
+        in BUILTIN_METHODS_GENERIC_PARAMETERS_FQ_NAMES -> SpecialSignatureInfo.GENERIC_PARAMETER
+        else -> error("Unexpected kind of special builtin: $builtinFqName")
     }
+}

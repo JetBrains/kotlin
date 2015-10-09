@@ -106,7 +106,7 @@ public class LazyJavaClassMemberScope(
             = properties.any { property -> doesClassOverridesProperty(property) }
 
     private fun PropertyDescriptor.findGetterOverride(): JavaMethodDescriptor? {
-        val getterName = getter?.builtinSpecialOverridden?.builtinSpecialPropertyAccessorName ?: JvmAbi.getterName(name.asString())
+        val getterName = getter?.getBuiltinSpecialOverridden()?.getBuiltinSpecialPropertyAccessorName() ?: JvmAbi.getterName(name.asString())
         return memberIndex().findMethodsByName(Name.identifier(getterName)).firstNotNullResult factory@{
             javaMethod ->
             val descriptor = resolveMethodToFunctionDescriptor(javaMethod)
@@ -273,7 +273,7 @@ public class LazyJavaClassMemberScope(
     ): JavaMethodDescriptor? {
 
         val overriddenCandidates =
-                getFunctionsFromSupertypes(methodDescriptor.name).map { it.overriddenBuiltinFunctionWithErasedValueParametersInJava }.filterNotNull()
+                getFunctionsFromSupertypes(methodDescriptor.name).map { it.getOverriddenBuiltinFunctionWithErasedValueParametersInJava() }.filterNotNull()
 
         if (overriddenCandidates.isEmpty()) return null
 
