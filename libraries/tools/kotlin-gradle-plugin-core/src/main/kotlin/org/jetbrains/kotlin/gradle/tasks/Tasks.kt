@@ -25,11 +25,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.doc.KDocArguments
-import org.jetbrains.kotlin.doc.KDocCompiler
 import org.jetbrains.kotlin.utils.LibraryUtils
-import com.intellij.openapi.util.io.FileUtil
-import org.apache.commons.io.FilenameUtils
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.compile.JavaCompile
@@ -37,7 +33,6 @@ import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.io.File
-import java.util.HashSet
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
