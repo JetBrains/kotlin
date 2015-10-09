@@ -92,6 +92,7 @@ public annotation class publicField
  *
  * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.SOURCE)
 public annotation class Throws(public vararg val exceptionClasses: KClass<out Throwable>)
 
