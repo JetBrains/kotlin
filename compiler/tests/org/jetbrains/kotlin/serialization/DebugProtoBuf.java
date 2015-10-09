@@ -5461,6 +5461,24 @@ public final class DebugProtoBuf {
      * </pre>
      */
     int getTypeParameter();
+
+    // optional int32 type_parameter_name = 9;
+    /**
+     * <code>optional int32 type_parameter_name = 9;</code>
+     *
+     * <pre>
+     * Name of the type parameter in the immediate owner
+     * </pre>
+     */
+    boolean hasTypeParameterName();
+    /**
+     * <code>optional int32 type_parameter_name = 9;</code>
+     *
+     * <pre>
+     * Name of the type parameter in the immediate owner
+     * </pre>
+     */
+    int getTypeParameterName();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
@@ -5557,6 +5575,11 @@ public final class DebugProtoBuf {
             case 64: {
               bitField0_ |= 0x00000008;
               flexibleUpperBoundId_ = input.readInt32();
+              break;
+            }
+            case 72: {
+              bitField0_ |= 0x00000040;
+              typeParameterName_ = input.readInt32();
               break;
             }
           }
@@ -6608,6 +6631,30 @@ public final class DebugProtoBuf {
       return typeParameter_;
     }
 
+    // optional int32 type_parameter_name = 9;
+    public static final int TYPE_PARAMETER_NAME_FIELD_NUMBER = 9;
+    private int typeParameterName_;
+    /**
+     * <code>optional int32 type_parameter_name = 9;</code>
+     *
+     * <pre>
+     * Name of the type parameter in the immediate owner
+     * </pre>
+     */
+    public boolean hasTypeParameterName() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>optional int32 type_parameter_name = 9;</code>
+     *
+     * <pre>
+     * Name of the type parameter in the immediate owner
+     * </pre>
+     */
+    public int getTypeParameterName() {
+      return typeParameterName_;
+    }
+
     private void initFields() {
       argument_ = java.util.Collections.emptyList();
       nullable_ = false;
@@ -6616,6 +6663,7 @@ public final class DebugProtoBuf {
       flexibleUpperBoundId_ = 0;
       className_ = 0;
       typeParameter_ = 0;
+      typeParameterName_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -6669,6 +6717,9 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeInt32(8, flexibleUpperBoundId_);
       }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        output.writeInt32(9, typeParameterName_);
+      }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
     }
@@ -6706,6 +6757,10 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(8, flexibleUpperBoundId_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(9, typeParameterName_);
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -6848,6 +6903,8 @@ public final class DebugProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000020);
         typeParameter_ = 0;
         bitField0_ = (bitField0_ & ~0x00000040);
+        typeParameterName_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
 
@@ -6913,6 +6970,10 @@ public final class DebugProtoBuf {
           to_bitField0_ |= 0x00000020;
         }
         result.typeParameter_ = typeParameter_;
+        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+          to_bitField0_ |= 0x00000040;
+        }
+        result.typeParameterName_ = typeParameterName_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -6972,6 +7033,9 @@ public final class DebugProtoBuf {
         }
         if (other.hasTypeParameter()) {
           setTypeParameter(other.getTypeParameter());
+        }
+        if (other.hasTypeParameterName()) {
+          setTypeParameterName(other.getTypeParameterName());
         }
         this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
@@ -7571,6 +7635,55 @@ public final class DebugProtoBuf {
       public Builder clearTypeParameter() {
         bitField0_ = (bitField0_ & ~0x00000040);
         typeParameter_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 type_parameter_name = 9;
+      private int typeParameterName_ ;
+      /**
+       * <code>optional int32 type_parameter_name = 9;</code>
+       *
+       * <pre>
+       * Name of the type parameter in the immediate owner
+       * </pre>
+       */
+      public boolean hasTypeParameterName() {
+        return ((bitField0_ & 0x00000080) == 0x00000080);
+      }
+      /**
+       * <code>optional int32 type_parameter_name = 9;</code>
+       *
+       * <pre>
+       * Name of the type parameter in the immediate owner
+       * </pre>
+       */
+      public int getTypeParameterName() {
+        return typeParameterName_;
+      }
+      /**
+       * <code>optional int32 type_parameter_name = 9;</code>
+       *
+       * <pre>
+       * Name of the type parameter in the immediate owner
+       * </pre>
+       */
+      public Builder setTypeParameterName(int value) {
+        bitField0_ |= 0x00000080;
+        typeParameterName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 type_parameter_name = 9;</code>
+       *
+       * <pre>
+       * Name of the type parameter in the immediate owner
+       * </pre>
+       */
+      public Builder clearTypeParameterName() {
+        bitField0_ = (bitField0_ & ~0x00000080);
+        typeParameterName_ = 0;
         onChanged();
         return this;
       }
@@ -20494,7 +20607,7 @@ public final class DebugProtoBuf {
       "\n\004BYTE\020\000\022\010\n\004CHAR\020\001\022\t\n\005SHORT\020\002\022\007\n\003INT\020\003\022\010" +
       "\n\004LONG\020\004\022\t\n\005FLOAT\020\005\022\n\n\006DOUBLE\020\006\022\013\n\007BOOLE",
       "AN\020\007\022\n\n\006STRING\020\010\022\t\n\005CLASS\020\t\022\010\n\004ENUM\020\n\022\016\n" +
-      "\nANNOTATION\020\013\022\t\n\005ARRAY\020\014\"\222\004\n\004Type\022C\n\010arg" +
+      "\nANNOTATION\020\013\022\t\n\005ARRAY\020\014\"\265\004\n\004Type\022C\n\010arg" +
       "ument\030\002 \003(\01321.org.jetbrains.kotlin.seria" +
       "lization.Type.Argument\022\027\n\010nullable\030\003 \001(\010" +
       ":\005false\022+\n\035flexible_type_capabilities_id" +
@@ -20502,83 +20615,84 @@ public final class DebugProtoBuf {
       "(\0132(.org.jetbrains.kotlin.serialization." +
       "Type\022\037\n\027flexible_upper_bound_id\030\010 \001(\005\022\030\n" +
       "\nclass_name\030\006 \001(\005B\004\220\265\030\001\022\026\n\016type_paramete" +
-      "r\030\007 \001(\005\032\334\001\n\010Argument\022U\n\nprojection\030\001 \001(\016",
-      "2<.org.jetbrains.kotlin.serialization.Ty" +
-      "pe.Argument.Projection:\003INV\0226\n\004type\030\002 \001(" +
+      "r\030\007 \001(\005\022!\n\023type_parameter_name\030\t \001(\005B\004\210\265",
+      "\030\001\032\334\001\n\010Argument\022U\n\nprojection\030\001 \001(\0162<.or" +
+      "g.jetbrains.kotlin.serialization.Type.Ar" +
+      "gument.Projection:\003INV\0226\n\004type\030\002 \001(\0132(.o" +
+      "rg.jetbrains.kotlin.serialization.Type\022\017" +
+      "\n\007type_id\030\003 \001(\005\"0\n\nProjection\022\006\n\002IN\020\000\022\007\n" +
+      "\003OUT\020\001\022\007\n\003INV\020\002\022\010\n\004STAR\020\003*\005\010d\020\310\001\"\227\002\n\rTyp" +
+      "eParameter\022\n\n\002id\030\001 \002(\005\022\022\n\004name\030\002 \002(\005B\004\210\265" +
+      "\030\001\022\026\n\007reified\030\003 \001(\010:\005false\022Q\n\010variance\030\004" +
+      " \001(\0162:.org.jetbrains.kotlin.serializatio" +
+      "n.TypeParameter.Variance:\003INV\022=\n\013upper_b",
+      "ound\030\005 \003(\0132(.org.jetbrains.kotlin.serial" +
+      "ization.Type\022\026\n\016upper_bound_id\030\006 \003(\005\"$\n\010" +
+      "Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\"\300\005\n\005C" +
+      "lass\022\020\n\005flags\030\001 \001(\005:\0016\022\025\n\007fq_name\030\003 \002(\005B" +
+      "\004\220\265\030\001\022#\n\025companion_object_name\030\004 \001(\005B\004\210\265" +
+      "\030\001\022I\n\016type_parameter\030\005 \003(\01321.org.jetbrai" +
+      "ns.kotlin.serialization.TypeParameter\022;\n" +
+      "\tsupertype\030\006 \003(\0132(.org.jetbrains.kotlin." +
+      "serialization.Type\022\030\n\014supertype_id\030\002 \003(\005" +
+      "B\002\020\001\022!\n\021nested_class_name\030\007 \003(\005B\006\020\001\210\265\030\001\022",
+      "D\n\013constructor\030\010 \003(\0132/.org.jetbrains.kot" +
+      "lin.serialization.Constructor\022>\n\010functio" +
+      "n\030\t \003(\0132,.org.jetbrains.kotlin.serializa" +
+      "tion.Function\022>\n\010property\030\n \003(\0132,.org.je" +
+      "tbrains.kotlin.serialization.Property\022\032\n" +
+      "\nenum_entry\030\014 \003(\005B\006\020\001\210\265\030\001\022A\n\ntype_table\030" +
+      "\036 \001(\0132-.org.jetbrains.kotlin.serializati" +
+      "on.TypeTable\"x\n\004Kind\022\t\n\005CLASS\020\000\022\r\n\tINTER" +
+      "FACE\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024" +
+      "\n\020ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022\024\n\020COMP",
+      "ANION_OBJECT\020\006*\005\010d\020\310\001\"\323\001\n\007Package\022>\n\010fun" +
+      "ction\030\003 \003(\0132,.org.jetbrains.kotlin.seria" +
+      "lization.Function\022>\n\010property\030\004 \003(\0132,.or" +
+      "g.jetbrains.kotlin.serialization.Propert" +
+      "y\022A\n\ntype_table\030\036 \001(\0132-.org.jetbrains.ko" +
+      "tlin.serialization.TypeTable*\005\010d\020\310\001\"_\n\tT" +
+      "ypeTable\0226\n\004type\030\001 \003(\0132(.org.jetbrains.k" +
+      "otlin.serialization.Type\022\032\n\016first_nullab" +
+      "le\030\002 \001(\005:\002-1\"s\n\013Constructor\022\020\n\005flags\030\001 \001" +
+      "(\005:\0016\022K\n\017value_parameter\030\002 \003(\01322.org.jet",
+      "brains.kotlin.serialization.ValueParamet" +
+      "er*\005\010d\020\310\001\"\304\003\n\010Function\022\020\n\005flags\030\001 \001(\005:\0016" +
+      "\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022=\n\013return_type\030\003 \001(" +
       "\0132(.org.jetbrains.kotlin.serialization.T" +
-      "ype\022\017\n\007type_id\030\003 \001(\005\"0\n\nProjection\022\006\n\002IN" +
-      "\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\022\010\n\004STAR\020\003*\005\010d\020\310\001\"\227\002" +
-      "\n\rTypeParameter\022\n\n\002id\030\001 \002(\005\022\022\n\004name\030\002 \002(" +
-      "\005B\004\210\265\030\001\022\026\n\007reified\030\003 \001(\010:\005false\022Q\n\010varia" +
-      "nce\030\004 \001(\0162:.org.jetbrains.kotlin.seriali" +
-      "zation.TypeParameter.Variance:\003INV\022=\n\013up" +
-      "per_bound\030\005 \003(\0132(.org.jetbrains.kotlin.s",
-      "erialization.Type\022\026\n\016upper_bound_id\030\006 \003(" +
-      "\005\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\"" +
-      "\300\005\n\005Class\022\020\n\005flags\030\001 \001(\005:\0016\022\025\n\007fq_name\030\003" +
-      " \002(\005B\004\220\265\030\001\022#\n\025companion_object_name\030\004 \001(" +
-      "\005B\004\210\265\030\001\022I\n\016type_parameter\030\005 \003(\01321.org.je" +
-      "tbrains.kotlin.serialization.TypeParamet" +
-      "er\022;\n\tsupertype\030\006 \003(\0132(.org.jetbrains.ko" +
-      "tlin.serialization.Type\022\030\n\014supertype_id\030" +
-      "\002 \003(\005B\002\020\001\022!\n\021nested_class_name\030\007 \003(\005B\006\020\001" +
-      "\210\265\030\001\022D\n\013constructor\030\010 \003(\0132/.org.jetbrain",
-      "s.kotlin.serialization.Constructor\022>\n\010fu" +
-      "nction\030\t \003(\0132,.org.jetbrains.kotlin.seri" +
-      "alization.Function\022>\n\010property\030\n \003(\0132,.o" +
-      "rg.jetbrains.kotlin.serialization.Proper" +
-      "ty\022\032\n\nenum_entry\030\014 \003(\005B\006\020\001\210\265\030\001\022A\n\ntype_t" +
+      "ype\022\026\n\016return_type_id\030\007 \001(\005\022I\n\016type_para" +
+      "meter\030\004 \003(\01321.org.jetbrains.kotlin.seria" +
+      "lization.TypeParameter\022?\n\rreceiver_type\030" +
+      "\005 \001(\0132(.org.jetbrains.kotlin.serializati" +
+      "on.Type\022\030\n\020receiver_type_id\030\010 \001(\005\022K\n\017val" +
+      "ue_parameter\030\006 \003(\01322.org.jetbrains.kotli",
+      "n.serialization.ValueParameter\022A\n\ntype_t" +
       "able\030\036 \001(\0132-.org.jetbrains.kotlin.serial" +
-      "ization.TypeTable\"x\n\004Kind\022\t\n\005CLASS\020\000\022\r\n\t" +
-      "INTERFACE\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_ENTR" +
-      "Y\020\003\022\024\n\020ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022\024\n" +
-      "\020COMPANION_OBJECT\020\006*\005\010d\020\310\001\"\323\001\n\007Package\022>",
-      "\n\010function\030\003 \003(\0132,.org.jetbrains.kotlin." +
-      "serialization.Function\022>\n\010property\030\004 \003(\013" +
-      "2,.org.jetbrains.kotlin.serialization.Pr" +
-      "operty\022A\n\ntype_table\030\036 \001(\0132-.org.jetbrai" +
-      "ns.kotlin.serialization.TypeTable*\005\010d\020\310\001" +
-      "\"_\n\tTypeTable\0226\n\004type\030\001 \003(\0132(.org.jetbra" +
-      "ins.kotlin.serialization.Type\022\032\n\016first_n" +
-      "ullable\030\002 \001(\005:\002-1\"s\n\013Constructor\022\020\n\005flag" +
-      "s\030\001 \001(\005:\0016\022K\n\017value_parameter\030\002 \003(\01322.or" +
-      "g.jetbrains.kotlin.serialization.ValuePa",
-      "rameter*\005\010d\020\310\001\"\304\003\n\010Function\022\020\n\005flags\030\001 \001" +
-      "(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022=\n\013return_type" +
-      "\030\003 \001(\0132(.org.jetbrains.kotlin.serializat" +
-      "ion.Type\022\026\n\016return_type_id\030\007 \001(\005\022I\n\016type" +
-      "_parameter\030\004 \003(\01321.org.jetbrains.kotlin." +
-      "serialization.TypeParameter\022?\n\rreceiver_" +
-      "type\030\005 \001(\0132(.org.jetbrains.kotlin.serial" +
-      "ization.Type\022\030\n\020receiver_type_id\030\010 \001(\005\022K" +
-      "\n\017value_parameter\030\006 \003(\01322.org.jetbrains." +
-      "kotlin.serialization.ValueParameter\022A\n\nt",
-      "ype_table\030\036 \001(\0132-.org.jetbrains.kotlin.s" +
-      "erialization.TypeTable*\005\010d\020\310\001\"\266\003\n\010Proper" +
-      "ty\022\022\n\005flags\030\001 \001(\005:\003262\022\022\n\004name\030\002 \002(\005B\004\210\265" +
-      "\030\001\022=\n\013return_type\030\003 \001(\0132(.org.jetbrains." +
-      "kotlin.serialization.Type\022\026\n\016return_type" +
-      "_id\030\t \001(\005\022I\n\016type_parameter\030\004 \003(\01321.org." +
-      "jetbrains.kotlin.serialization.TypeParam" +
-      "eter\022?\n\rreceiver_type\030\005 \001(\0132(.org.jetbra" +
-      "ins.kotlin.serialization.Type\022\030\n\020receive" +
-      "r_type_id\030\n \001(\005\022R\n\026setter_value_paramete",
-      "r\030\006 \001(\01322.org.jetbrains.kotlin.serializa" +
-      "tion.ValueParameter\022\024\n\014getter_flags\030\007 \001(" +
-      "\005\022\024\n\014setter_flags\030\010 \001(\005*\005\010d\020\310\001\"\355\001\n\016Value" +
-      "Parameter\022\020\n\005flags\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(" +
-      "\005B\004\210\265\030\001\0226\n\004type\030\003 \001(\0132(.org.jetbrains.ko" +
-      "tlin.serialization.Type\022\017\n\007type_id\030\005 \001(\005" +
-      "\022E\n\023vararg_element_type\030\004 \001(\0132(.org.jetb" +
-      "rains.kotlin.serialization.Type\022\036\n\026varar" +
-      "g_element_type_id\030\006 \001(\005*\005\010d\020\310\001*9\n\010Modali" +
-      "ty\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n",
-      "\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n" +
-      "\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n" +
-      "\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberK" +
-      "ind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022" +
-      "\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\022B\rDebu" +
-      "gProtoBuf\210\001\000"
+      "ization.TypeTable*\005\010d\020\310\001\"\266\003\n\010Property\022\022\n" +
+      "\005flags\030\001 \001(\005:\003262\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022=\n" +
+      "\013return_type\030\003 \001(\0132(.org.jetbrains.kotli" +
+      "n.serialization.Type\022\026\n\016return_type_id\030\t" +
+      " \001(\005\022I\n\016type_parameter\030\004 \003(\01321.org.jetbr" +
+      "ains.kotlin.serialization.TypeParameter\022" +
+      "?\n\rreceiver_type\030\005 \001(\0132(.org.jetbrains.k" +
+      "otlin.serialization.Type\022\030\n\020receiver_typ",
+      "e_id\030\n \001(\005\022R\n\026setter_value_parameter\030\006 \001" +
+      "(\01322.org.jetbrains.kotlin.serialization." +
+      "ValueParameter\022\024\n\014getter_flags\030\007 \001(\005\022\024\n\014" +
+      "setter_flags\030\010 \001(\005*\005\010d\020\310\001\"\355\001\n\016ValueParam" +
+      "eter\022\020\n\005flags\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(\005B\004\210\265" +
+      "\030\001\0226\n\004type\030\003 \001(\0132(.org.jetbrains.kotlin." +
+      "serialization.Type\022\017\n\007type_id\030\005 \001(\005\022E\n\023v" +
+      "ararg_element_type\030\004 \001(\0132(.org.jetbrains" +
+      ".kotlin.serialization.Type\022\036\n\026vararg_ele" +
+      "ment_type_id\030\006 \001(\005*\005\010d\020\310\001*9\n\010Modality\022\t\n",
+      "\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEAL" +
+      "ED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIV" +
+      "ATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIV" +
+      "ATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017" +
+      "\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDE" +
+      "LEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\022B\rDebugProt" +
+      "oBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -20626,7 +20740,7 @@ public final class DebugProtoBuf {
           internal_static_org_jetbrains_kotlin_serialization_Type_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Type_descriptor,
-              new java.lang.String[] { "Argument", "Nullable", "FlexibleTypeCapabilitiesId", "FlexibleUpperBound", "FlexibleUpperBoundId", "ClassName", "TypeParameter", });
+              new java.lang.String[] { "Argument", "Nullable", "FlexibleTypeCapabilitiesId", "FlexibleUpperBound", "FlexibleUpperBoundId", "ClassName", "TypeParameter", "TypeParameterName", });
           internal_static_org_jetbrains_kotlin_serialization_Type_Argument_descriptor =
             internal_static_org_jetbrains_kotlin_serialization_Type_descriptor.getNestedTypes().get(0);
           internal_static_org_jetbrains_kotlin_serialization_Type_Argument_fieldAccessorTable = new
@@ -20690,6 +20804,7 @@ public final class DebugProtoBuf {
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
+          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);

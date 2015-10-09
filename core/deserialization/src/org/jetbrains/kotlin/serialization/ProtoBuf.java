@@ -4335,6 +4335,24 @@ public final class ProtoBuf {
      * </pre>
      */
     int getTypeParameter();
+
+    // optional int32 type_parameter_name = 9;
+    /**
+     * <code>optional int32 type_parameter_name = 9;</code>
+     *
+     * <pre>
+     * Name of the type parameter in the immediate owner
+     * </pre>
+     */
+    boolean hasTypeParameterName();
+    /**
+     * <code>optional int32 type_parameter_name = 9;</code>
+     *
+     * <pre>
+     * Name of the type parameter in the immediate owner
+     * </pre>
+     */
+    int getTypeParameterName();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
@@ -4423,6 +4441,11 @@ public final class ProtoBuf {
             case 64: {
               bitField0_ |= 0x00000008;
               flexibleUpperBoundId_ = input.readInt32();
+              break;
+            }
+            case 72: {
+              bitField0_ |= 0x00000040;
+              typeParameterName_ = input.readInt32();
               break;
             }
           }
@@ -5269,6 +5292,30 @@ public final class ProtoBuf {
       return typeParameter_;
     }
 
+    // optional int32 type_parameter_name = 9;
+    public static final int TYPE_PARAMETER_NAME_FIELD_NUMBER = 9;
+    private int typeParameterName_;
+    /**
+     * <code>optional int32 type_parameter_name = 9;</code>
+     *
+     * <pre>
+     * Name of the type parameter in the immediate owner
+     * </pre>
+     */
+    public boolean hasTypeParameterName() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>optional int32 type_parameter_name = 9;</code>
+     *
+     * <pre>
+     * Name of the type parameter in the immediate owner
+     * </pre>
+     */
+    public int getTypeParameterName() {
+      return typeParameterName_;
+    }
+
     private void initFields() {
       argument_ = java.util.Collections.emptyList();
       nullable_ = false;
@@ -5277,6 +5324,7 @@ public final class ProtoBuf {
       flexibleUpperBoundId_ = 0;
       className_ = 0;
       typeParameter_ = 0;
+      typeParameterName_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -5330,6 +5378,9 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeInt32(8, flexibleUpperBoundId_);
       }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        output.writeInt32(9, typeParameterName_);
+      }
       extensionWriter.writeUntil(200, output);
     }
 
@@ -5366,6 +5417,10 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(8, flexibleUpperBoundId_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(9, typeParameterName_);
       }
       size += extensionsSerializedSize();
       memoizedSerializedSize = size;
@@ -5472,6 +5527,8 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000020);
         typeParameter_ = 0;
         bitField0_ = (bitField0_ & ~0x00000040);
+        typeParameterName_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
 
@@ -5524,6 +5581,10 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000020;
         }
         result.typeParameter_ = typeParameter_;
+        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+          to_bitField0_ |= 0x00000040;
+        }
+        result.typeParameterName_ = typeParameterName_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -5557,6 +5618,9 @@ public final class ProtoBuf {
         }
         if (other.hasTypeParameter()) {
           setTypeParameter(other.getTypeParameter());
+        }
+        if (other.hasTypeParameterName()) {
+          setTypeParameterName(other.getTypeParameterName());
         }
         this.mergeExtensionFields(other);
         return this;
@@ -5984,6 +6048,55 @@ public final class ProtoBuf {
       public Builder clearTypeParameter() {
         bitField0_ = (bitField0_ & ~0x00000040);
         typeParameter_ = 0;
+        
+        return this;
+      }
+
+      // optional int32 type_parameter_name = 9;
+      private int typeParameterName_ ;
+      /**
+       * <code>optional int32 type_parameter_name = 9;</code>
+       *
+       * <pre>
+       * Name of the type parameter in the immediate owner
+       * </pre>
+       */
+      public boolean hasTypeParameterName() {
+        return ((bitField0_ & 0x00000080) == 0x00000080);
+      }
+      /**
+       * <code>optional int32 type_parameter_name = 9;</code>
+       *
+       * <pre>
+       * Name of the type parameter in the immediate owner
+       * </pre>
+       */
+      public int getTypeParameterName() {
+        return typeParameterName_;
+      }
+      /**
+       * <code>optional int32 type_parameter_name = 9;</code>
+       *
+       * <pre>
+       * Name of the type parameter in the immediate owner
+       * </pre>
+       */
+      public Builder setTypeParameterName(int value) {
+        bitField0_ |= 0x00000080;
+        typeParameterName_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 type_parameter_name = 9;</code>
+       *
+       * <pre>
+       * Name of the type parameter in the immediate owner
+       * </pre>
+       */
+      public Builder clearTypeParameterName() {
+        bitField0_ = (bitField0_ & ~0x00000080);
+        typeParameterName_ = 0;
         
         return this;
       }

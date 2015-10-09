@@ -126,6 +126,8 @@ message Type {
 
   optional int32 class_name = 6 [(fq_name_id_in_table) = true];
   optional int32 type_parameter = 7; // id of the type parameter
+  // Name of the type parameter in the immediate owner
+  optional int32 type_parameter_name = 9 [(name_id_in_table) = true];
 
   extensions 100 to 199;
 }

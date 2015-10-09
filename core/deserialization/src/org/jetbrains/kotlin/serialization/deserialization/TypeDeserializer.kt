@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -74,6 +75,17 @@ public class TypeDeserializer(
                     classDescriptors(proto.className)?.typeConstructor
                 proto.hasTypeParameter() ->
                     typeParameterTypeConstructor(proto.typeParameter)
+                proto.hasTypeParameterName() -> {
+                    val container = c.containingDeclaration
+                    val typeParameters = when (container) {
+                        is ClassDescriptor -> container.typeConstructor.parameters
+                        is CallableDescriptor -> container.typeParameters
+                        else -> emptyList<TypeParameterDescriptor>()
+                    }
+                    val name = c.nameResolver.getString(proto.typeParameterName)
+                    val parameter = typeParameters.find { it.name.asString() == name }
+                    parameter?.typeConstructor ?: ErrorUtils.createErrorType("Deserialized type parameter $name in $container").constructor
+                }
                 else ->
                     null
             } ?: ErrorUtils.createErrorType(presentableTextForErrorType(proto)).constructor
@@ -83,6 +95,8 @@ public class TypeDeserializer(
             c.nameResolver.getClassId(proto.className).asSingleFqName().asString()
         proto.hasTypeParameter() ->
             "Unknown type parameter ${proto.typeParameter}"
+        proto.hasTypeParameterName() ->
+            "Unknown type parameter ${c.nameResolver.getString(proto.typeParameterName)}"
         else ->
             "Unknown type"
     }

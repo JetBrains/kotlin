@@ -344,6 +344,11 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
             if (old.typeParameter != new.typeParameter) return false
         }
 
+        if (old.hasTypeParameterName() != new.hasTypeParameterName()) return false
+        if (old.hasTypeParameterName()) {
+            if (!checkStringEquals(old.typeParameterName, new.typeParameterName)) return false
+        }
+
         if (old.getExtensionCount(JvmProtoBuf.typeAnnotation) != new.getExtensionCount(JvmProtoBuf.typeAnnotation)) return false
 
         for(i in 0..old.getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {
@@ -1022,6 +1027,10 @@ public fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
 
     if (hasTypeParameter()) {
         hashCode = 31 * hashCode + typeParameter
+    }
+
+    if (hasTypeParameterName()) {
+        hashCode = 31 * hashCode + stringIndexes(typeParameterName)
     }
 
     for(i in 0..getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {

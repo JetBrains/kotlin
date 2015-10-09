@@ -56,14 +56,15 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 if (type.getNullable()) KotlinPlaceHolderStubImpl<JetNullableType>(typeReference, JetStubElementTypes.NULLABLE_TYPE)
                 else typeReference
 
+        fun createTypeParameterStub(name: Name) {
+            createTypeAnnotationStubs(effectiveParent, annotations)
+            createStubForTypeName(ClassId.topLevel(FqName.topLevel(name)), effectiveParent)
+        }
+
         when {
-            type.hasClassName() ->
-                createClassReferenceTypeStub(effectiveParent, type, annotations)
-            type.hasTypeParameter() -> {
-                createTypeAnnotationStubs(effectiveParent, annotations)
-                val typeParameterName = c.typeParameters[type.typeParameter]
-                createStubForTypeName(ClassId.topLevel(FqName.topLevel(typeParameterName)), effectiveParent)
-            }
+            type.hasClassName() -> createClassReferenceTypeStub(effectiveParent, type, annotations)
+            type.hasTypeParameter() -> createTypeParameterStub(c.typeParameters[type.typeParameter])
+            type.hasTypeParameterName() -> createTypeParameterStub(c.nameResolver.getName(type.typeParameterName))
         }
     }
 
