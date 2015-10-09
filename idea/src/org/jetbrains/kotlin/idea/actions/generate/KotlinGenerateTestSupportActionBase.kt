@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.actions.generate
 
-import com.intellij.codeInsight.CodeInsightActionHandler
 import com.intellij.codeInsight.generation.actions.GenerateActionPopupTemplateInjector
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.ide.fileTemplates.FileTemplateManager
@@ -48,7 +47,7 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObj
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateUnsupportedOrSuperCall
 import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.setupEditorSelection
-import org.jetbrains.kotlin.idea.quickfix.generateMember
+import org.jetbrains.kotlin.idea.quickfix.insertMember
 import org.jetbrains.kotlin.idea.testIntegration.findSuitableFrameworks
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -117,72 +116,6 @@ abstract class KotlinGenerateTestSupportActionBase(
         }
     }
 
-    private inner class HandlerImpl : CodeInsightActionHandler {
-        override fun startInWriteAction() = false
-
-        override fun invoke(project: Project, editor: Editor, file: PsiFile) {
-            val klass = findTargetClass(editor, file) ?: return
-            val frameworks = findSuitableFrameworks(klass)
-                    .filter { methodKind.getFileTemplateDescriptor(it) != null && isApplicableTo(it, klass) }
-            chooseAndPerform(editor, frameworks) { doGenerate(editor, file, klass, it) }
-        }
-
-        private fun doGenerate(editor: Editor, file: PsiFile, klass: JetClassOrObject, framework: TestFramework) {
-            val project = file.project
-            val commandName = "Generate test function"
-            project.executeWriteCommand(commandName) {
-                try {
-                    PsiDocumentManager.getInstance(project).commitAllDocuments()
-
-                    val fileTemplateDescriptor = methodKind.getFileTemplateDescriptor(framework)
-                    val fileTemplate = FileTemplateManager.getInstance(project).getCodeTemplate(fileTemplateDescriptor.fileName)
-                    var templateText = fileTemplate.text.replace(BODY_VAR, "")
-                    if (templateText.contains(NAME_VAR)) {
-                        var name = "Name"
-                        if (!ApplicationManager.getApplication().isUnitTestMode) {
-                            name = Messages.showInputDialog("Choose test name: ", commandName, null, name, NAME_VALIDATOR)
-                                   ?: return@executeWriteCommand
-                        }
-
-                        templateText = fileTemplate.text.replace(NAME_VAR, name)
-                    }
-                    val factory = PsiElementFactory.SERVICE.getInstance(project)
-                    val psiMethod = factory.createMethodFromText(templateText, null)
-                    psiMethod.throwsList.referenceElements.forEach { it.delete() }
-                    val function = psiMethod.j2k() as? JetNamedFunction
-                    if (function == null) {
-                        HintManager.getInstance().showErrorHint(editor, "Couldn't convert Java template to Kotlin")
-                        return@executeWriteCommand
-                    }
-                    val functionInPlace = generateMember(editor, klass, function)
-
-                    val functionDescriptor = functionInPlace.resolveToDescriptor() as FunctionDescriptor
-                    val overriddenDescriptors = functionDescriptor.overriddenDescriptors
-                    val bodyText = when (overriddenDescriptors.size()) {
-                        0 -> generateUnsupportedOrSuperCall(functionDescriptor, BodyType.EMPTY)
-                        1 -> generateUnsupportedOrSuperCall(overriddenDescriptors.single(), BodyType.SUPER)
-                        else -> generateUnsupportedOrSuperCall(overriddenDescriptors.first(), BodyType.QUALIFIED_SUPER)
-                    }
-                    functionInPlace.bodyExpression?.delete()
-                    functionInPlace.add(JetPsiFactory(project).createBlock(bodyText))
-
-                    if (overriddenDescriptors.isNotEmpty()) {
-                        functionInPlace.addModifier(JetTokens.OVERRIDE_KEYWORD)
-                    }
-
-                    setupEditorSelection(editor, functionInPlace)
-                }
-                catch (e: IncorrectOperationException) {
-                    HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.getMessage())
-                }
-            }
-        }
-    }
-
-    private val handler = HandlerImpl()
-
-    override fun getHandler() = handler
-
     override fun getTargetClass(editor: Editor, file: PsiFile): JetClassOrObject? {
         return findTargetClass(editor, file)
     }
@@ -192,6 +125,64 @@ abstract class KotlinGenerateTestSupportActionBase(
     }
 
     protected abstract fun isApplicableTo(framework: TestFramework, targetClass: JetClassOrObject): Boolean
+
+    override fun invoke(project: Project, editor: Editor, file: PsiFile) {
+        val klass = findTargetClass(editor, file) ?: return
+        val frameworks = findSuitableFrameworks(klass)
+                .filter { methodKind.getFileTemplateDescriptor(it) != null && isApplicableTo(it, klass) }
+        chooseAndPerform(editor, frameworks) { doGenerate(editor, file, klass, it) }
+    }
+
+    private fun doGenerate(editor: Editor, file: PsiFile, klass: JetClassOrObject, framework: TestFramework) {
+        val project = file.project
+        val commandName = "Generate test function"
+        project.executeWriteCommand(commandName) {
+            try {
+                PsiDocumentManager.getInstance(project).commitAllDocuments()
+
+                val fileTemplateDescriptor = methodKind.getFileTemplateDescriptor(framework)
+                val fileTemplate = FileTemplateManager.getInstance(project).getCodeTemplate(fileTemplateDescriptor.fileName)
+                var templateText = fileTemplate.text.replace(BODY_VAR, "")
+                if (templateText.contains(NAME_VAR)) {
+                    var name = "Name"
+                    if (!ApplicationManager.getApplication().isUnitTestMode) {
+                        name = Messages.showInputDialog("Choose test name: ", commandName, null, name, NAME_VALIDATOR)
+                                ?: return@executeWriteCommand
+                    }
+
+                    templateText = fileTemplate.text.replace(NAME_VAR, name)
+                }
+                val factory = PsiElementFactory.SERVICE.getInstance(project)
+                val psiMethod = factory.createMethodFromText(templateText, null)
+                psiMethod.throwsList.referenceElements.forEach { it.delete() }
+                val function = psiMethod.j2k() as? JetNamedFunction
+                if (function == null) {
+                    HintManager.getInstance().showErrorHint(editor, "Couldn't convert Java template to Kotlin")
+                    return@executeWriteCommand
+                }
+                val functionInPlace = insertMember(editor, klass, function)
+
+                val functionDescriptor = functionInPlace.resolveToDescriptor() as FunctionDescriptor
+                val overriddenDescriptors = functionDescriptor.overriddenDescriptors
+                val bodyText = when (overriddenDescriptors.size) {
+                    0 -> generateUnsupportedOrSuperCall(functionDescriptor, BodyType.EMPTY)
+                    1 -> generateUnsupportedOrSuperCall(overriddenDescriptors.single(), BodyType.SUPER)
+                    else -> generateUnsupportedOrSuperCall(overriddenDescriptors.first(), BodyType.QUALIFIED_SUPER)
+                }
+                functionInPlace.bodyExpression?.delete()
+                functionInPlace.add(JetPsiFactory(project).createBlock(bodyText))
+
+                if (overriddenDescriptors.isNotEmpty()) {
+                    functionInPlace.addModifier(JetTokens.OVERRIDE_KEYWORD)
+                }
+
+                setupEditorSelection(editor, functionInPlace)
+            }
+            catch (e: IncorrectOperationException) {
+                HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.getMessage())
+            }
+        }
+    }
 
     override fun createEditTemplateAction(dataContext: DataContext): AnAction? {
         val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return null

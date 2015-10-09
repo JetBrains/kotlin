@@ -756,6 +756,9 @@ public interface Errors {
             TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS,
             TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR,
             TYPE_INFERENCE_UPPER_BOUND_VIOLATED, TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH);
+    ImmutableSet<? extends DiagnosticFactory<?>> MUST_BE_INITIALIZED_DIAGNOSTICS = ImmutableSet.of(
+            MUST_BE_INITIALIZED, MUST_BE_INITIALIZED_OR_BE_ABSTRACT
+    );
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

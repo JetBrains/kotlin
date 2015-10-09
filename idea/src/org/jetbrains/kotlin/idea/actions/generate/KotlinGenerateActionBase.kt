@@ -23,14 +23,13 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-abstract class KotlinGenerateActionBase() : CodeInsightAction() {
+abstract class KotlinGenerateActionBase() : CodeInsightAction(), CodeInsightActionHandler {
     override fun update(
             presentation: Presentation,
             project: Project,
@@ -58,4 +57,8 @@ abstract class KotlinGenerateActionBase() : CodeInsightAction() {
     }
 
     protected abstract fun isValidForClass(targetClass: JetClassOrObject): Boolean
+
+    override fun startInWriteAction() = false
+
+    override fun getHandler() = this
 }

@@ -17,39 +17,37 @@
 package org.jetbrains.kotlin.idea.codeInsight.generate
 
 import com.intellij.codeInsight.actions.CodeInsightAction
-import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.PlatformTestUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 
 abstract class AbstractGenerateActionTest : JetLightCodeInsightFixtureTestCase() {
-    private fun setUpTestSourceRoot() {
-        val module = myModule
-        val model = ModuleRootManager.getInstance(module).modifiableModel
-        val entry = model.contentEntries.single()
-        val sourceFolderFile = entry.sourceFolderFiles.single()
-        entry.removeSourceFolder(entry.sourceFolders.single())
-        entry.addSourceFolder(sourceFolderFile, true)
-        runWriteAction {
-            model.commit()
-            module.project.save()
-        }
-    }
-
-    protected fun doTest(path: String) {
-        setUpTestSourceRoot()
-
+    protected open fun doTest(path: String) {
         val fileText = FileUtil.loadFile(File(path), true)
+
+        val conflictFile = File("$path.messages")
 
         try {
             ConfigLibraryUtil.configureLibrariesByDirective(myModule, PlatformTestUtil.getCommunityPath(), fileText)
 
+            val mainFile = File(path)
+            val mainFileName = mainFile.name
+            val fileNameBase = mainFile.nameWithoutExtension
+            val rootDir = mainFile.parentFile
+            rootDir
+                    .list { file, name ->
+                        name.startsWith(fileNameBase) && name != mainFileName && (name.endsWith(".kt") || name.endsWith(".java"))
+                    }
+                    .forEach {
+                        myFixture.configureByFile(File(rootDir, it).path.replace(File.separator, "/"))
+                    }
             myFixture.configureByFile(path)
 
             val actionClassName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// ACTION_CLASS: ")
@@ -60,11 +58,16 @@ abstract class AbstractGenerateActionTest : JetLightCodeInsightFixtureTestCase()
             val presentation = myFixture.testAction(action)
             TestCase.assertEquals(isApplicableExpected, presentation.isEnabled)
 
+            assert(!conflictFile.exists()) { "Conflict file $conflictFile should not exist" }
+
             if (isApplicableExpected) {
-                val afterFile = File(path + ".after")
+                val afterFile = File("$path.after")
                 TestCase.assertTrue(afterFile.exists())
                 myFixture.checkResult(FileUtil.loadFile(afterFile, true))
             }
+        }
+        catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
+            JetTestUtils.assertEqualsToFile(conflictFile, e.getMessage()!!)
         }
         finally {
             ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)

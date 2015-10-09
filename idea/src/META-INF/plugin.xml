@@ -169,6 +169,10 @@
       <action id="KotlinGenerateTearDownMethod"
               class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$TearDown"
               text="TearDown Function" />
+      <separator />
+      <action id="KotlinGenerateSecondaryConstructor"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction"
+              text="Secondary Constructor" />
 
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
