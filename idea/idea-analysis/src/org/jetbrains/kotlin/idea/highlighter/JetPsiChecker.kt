@@ -219,23 +219,6 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
     }
 
     companion object {
-        var namesHighlightingEnabled = true
-            @TestOnly set
-
-        @JvmStatic
-        fun highlightName(holder: AnnotationHolder, psiElement: PsiElement, attributesKey: TextAttributesKey) {
-            if (namesHighlightingEnabled) {
-                holder.createInfoAnnotation(psiElement, null).setTextAttributes(attributesKey)
-            }
-        }
-
-        @JvmStatic
-        fun highlightName(holder: AnnotationHolder, textRange: TextRange, attributesKey: TextAttributesKey) {
-            if (namesHighlightingEnabled) {
-                holder.createInfoAnnotation(textRange, null).setTextAttributes(attributesKey)
-            }
-        }
-
         private fun getAfterAnalysisVisitor(holder: AnnotationHolder, bindingContext: BindingContext) = arrayOf(
                 PropertiesHighlightingVisitor(holder, bindingContext),
                 FunctionsHighlightingVisitor(holder, bindingContext),

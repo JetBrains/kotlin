@@ -90,12 +90,12 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
 
             if (DynamicCallsKt.isDynamic(variableDescriptor)) {
-                JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
+                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
                 return;
             }
 
             if (variableDescriptor.isVar()) {
-                JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.MUTABLE_VARIABLE);
+                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.MUTABLE_VARIABLE);
             }
 
             if (bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) == CaptureKind.NOT_INLINE) {
@@ -106,11 +106,11 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             }
 
             if (descriptor instanceof LocalVariableDescriptor) {
-                JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.LOCAL_VARIABLE);
+                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.LOCAL_VARIABLE);
             }
 
             if (descriptor instanceof ValueParameterDescriptor) {
-                JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.PARAMETER);
+                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.PARAMETER);
             }
         }
     }

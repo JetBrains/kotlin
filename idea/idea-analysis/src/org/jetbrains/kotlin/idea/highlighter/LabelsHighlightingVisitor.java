@@ -33,7 +33,7 @@ class LabelsHighlightingVisitor extends JetVisitorVoid {
     public void visitExpressionWithLabel(@NotNull JetExpressionWithLabel expression) {
         JetSimpleNameExpression targetLabel = expression.getTargetLabel();
         if (targetLabel != null) {
-            JetPsiChecker.highlightName(holder, targetLabel, JetHighlightingColors.LABEL);
+            NameHighlighter.highlightName(holder, targetLabel, JetHighlightingColors.LABEL);
         }
     }
 }

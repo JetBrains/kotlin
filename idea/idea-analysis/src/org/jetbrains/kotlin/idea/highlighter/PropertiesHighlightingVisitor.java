@@ -44,7 +44,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         }
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (target instanceof SyntheticFieldDescriptor) {
-            JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_VARIABLE);
+            NameHighlighter.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_VARIABLE);
             return;
         }
         if (!(target instanceof PropertyDescriptor)) {
@@ -53,7 +53,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
         highlightProperty(expression, (PropertyDescriptor) target, false);
         if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-            JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_ACCESS);
+            NameHighlighter.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_ACCESS);
         }
     }
 
@@ -89,17 +89,17 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             boolean withBackingField
     ) {
         if (DynamicCallsKt.isDynamic(descriptor)) {
-            JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
+            NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
             return;
         }
 
         boolean isStatic = DescriptorUtils.isStaticDeclaration(descriptor);
-        JetPsiChecker.highlightName(
+        NameHighlighter.highlightName(
                 holder, elementToHighlight,
                 isStatic ? JetHighlightingColors.PACKAGE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
         );
         if (descriptor.getExtensionReceiverParameter() != null) {
-            JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.EXTENSION_PROPERTY);
+            NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.EXTENSION_PROPERTY);
         }
         if (withBackingField) {
             holder.createInfoAnnotation(elementToHighlight, "This property has a backing field")
