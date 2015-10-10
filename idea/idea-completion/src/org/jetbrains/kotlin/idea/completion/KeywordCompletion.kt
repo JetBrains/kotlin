@@ -28,15 +28,18 @@ import com.intellij.psi.filters.position.LeftNeighbour
 import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
 import org.jetbrains.kotlin.lexer.JetKeywordToken
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.resolve.ModifierCheckerCore
 
 open class KeywordLookupObject
 
@@ -47,10 +50,8 @@ object KeywordCompletion {
             .filter { it !in NON_ACTUAL_KEYWORDS }
             .map { it as JetKeywordToken }
 
-    private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(
-            OUT_KEYWORD to " X",
-            FILE_KEYWORD to ":"
-    )
+    private val DEFAULT_DUMMY_POSTFIX = " X"
+    private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(FILE_KEYWORD to ":")
 
     private val KEYWORDS_TO_IGNORE_PREFIX = TokenSet.create(OVERRIDE_KEYWORD /* it's needed to complete overrides that should be work by member name too */)
 
@@ -176,19 +177,32 @@ object KeywordCompletion {
 
     private fun buildFilterByText(prefixText: String, project: Project): (JetKeywordToken) -> Boolean {
         val psiFactory = JetPsiFactory(project)
-        return { keywordTokenType ->
-            val postfix = KEYWORD_TO_DUMMY_POSTFIX[keywordTokenType] ?: ""
+        return fun (keywordTokenType): Boolean {
+            val postfix = KEYWORD_TO_DUMMY_POSTFIX[keywordTokenType] ?: DEFAULT_DUMMY_POSTFIX
             val file = psiFactory.createFile(prefixText + keywordTokenType.getValue() + postfix)
             val elementAt = file.findElementAt(prefixText.length())!!
 
             when {
-                !elementAt.getNode()!!.getElementType().matchesKeyword(keywordTokenType) -> false
+                !elementAt.getNode()!!.getElementType().matchesKeyword(keywordTokenType) -> return false
 
-                elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> false
+                elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> return false
 
-                elementAt.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment } is PsiErrorElement -> false
+                elementAt.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment } is PsiErrorElement -> return false
 
-                else -> true
+                keywordTokenType !is JetModifierKeywordToken -> return true
+
+                else -> {
+                    if (elementAt.parent !is JetModifierList) return true
+                    val possibleTargets = when (elementAt.parent.parent) {
+                        is JetParameter -> listOf(VALUE_PARAMETER)
+                        is JetTypeParameter -> listOf(TYPE_PARAMETER)
+                        is JetClassBody -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, INNER_CLASS, MEMBER_FUNCTION, MEMBER_PROPERTY, FUNCTION, PROPERTY)
+                        is JetFile -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, FUNCTION, PROPERTY)
+                        else -> return true
+                    }
+                    val modifierTargets = ModifierCheckerCore.possibleTargetMap[keywordTokenType] ?: return true
+                    return possibleTargets.any { it in modifierTargets }
+                }
             }
         }
     }

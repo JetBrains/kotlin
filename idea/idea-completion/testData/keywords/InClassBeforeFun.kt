@@ -13,16 +13,10 @@ public class Test {
 // EXIST:  enum
 // EXIST:  final
 // EXIST:  fun
-// EXIST:  in
-/*why?*/
 // EXIST:  inner
 // EXIST:  internal
 // EXIST:  object
 // EXIST:  open
-// EXIST:  out
-/*why?*/
-// EXIST:  reified
-/*why?*/
 // EXIST:  override
 // EXIST:  private
 // EXIST:  protected
@@ -30,7 +24,6 @@ public class Test {
 // EXIST:  interface
 // EXIST:  val
 // EXIST:  var
-// EXIST:  vararg
 // EXIST:  constructor
 // EXIST:  init
 /*why?*/
@@ -41,10 +34,8 @@ public class Test {
 // EXIST:  lateinit
 // EXIST:  data
 // EXIST:  inline
-// EXIST:  noinline
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation
-// EXIST:  crossinline
 // EXIST:  const
 // NOTHING_ELSE

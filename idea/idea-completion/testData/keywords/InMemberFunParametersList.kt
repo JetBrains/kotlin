@@ -5,9 +5,10 @@ class TestSample() {
     }
 }
 
-/* TODO: they all are not correct */
+// EXIST: vararg
+// EXIST: noinline
+// EXIST: crossinline
+/* TODO: val&var are not correct */
 // EXIST: val
 // EXIST: var
-// EXIST: in
-// EXIST: out
 // NOTHING_ELSE

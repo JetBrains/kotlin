@@ -2,7 +2,6 @@
 
 // EXIST: {"lookupString":"class","itemText":"class","attributes":"bold"}
 // EXIST: {"lookupString":"fun","itemText":"fun","attributes":"bold"}
-// EXIST: {"lookupString":"in","itemText":"in","attributes":"bold"}
 // EXIST: {"lookupString":"interface","itemText":"interface","attributes":"bold"}
 // EXIST: {"lookupString":"object","itemText":"object","attributes":"bold"}
 // EXIST: {"lookupString":"package","itemText":"package","attributes":"bold"}

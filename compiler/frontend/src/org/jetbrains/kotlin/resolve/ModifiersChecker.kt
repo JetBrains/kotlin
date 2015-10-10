@@ -19,15 +19,20 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import java.util.*
-import org.jetbrains.kotlin.lexer.JetTokens.*
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.lexer.JetTokens.*
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.psi.JetModifierList
+import org.jetbrains.kotlin.psi.JetModifierListOwner
+import java.util.*
 
 public object ModifierCheckerCore {
     private enum class Compatibility {
@@ -51,7 +56,7 @@ public object ModifierCheckerCore {
                                                       MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
                                                       MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR)
 
-    private val possibleTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
+    val possibleTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
             ENUM_KEYWORD      to EnumSet.of(ENUM_CLASS),
             ABSTRACT_KEYWORD  to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
             OPEN_KEYWORD      to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),

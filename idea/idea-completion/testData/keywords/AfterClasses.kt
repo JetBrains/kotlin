@@ -17,37 +17,26 @@ class B {
 // EXIST:  enum
 // EXIST:  final
 // EXIST:  fun
-// EXIST:  in
-/*why?*/
-// EXIST:  inner
 // EXIST:  internal
 // EXIST:  object
 // EXIST:  open
-// EXIST:  out
-/*why?*/
-// EXIST:  reified
-/*why?*/
-// EXIST:  override
 // EXIST:  private
 // EXIST:  protected
 // EXIST:  public
 // EXIST:  interface
 // EXIST:  val
 // EXIST:  var
-// EXIST:  vararg
-/*why?*/
-// EXIST:  companion object
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed
-// EXIST:  lateinit
 // EXIST:  data
 // EXIST:  inline
-// EXIST:  noinline
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation
-// EXIST:  crossinline
 // EXIST:  const
-/*TODO*/
+/*TODO:*/
+// EXIST:  inner
+/*TODO:*/
+// EXIST:  companion object
 // NOTHING_ELSE
