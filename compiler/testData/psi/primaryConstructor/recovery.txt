@@ -82,17 +82,10 @@ JetFile: recovery.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A2')
   PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('Ann')
+  PsiWhiteSpace('\n\n')
   CLASS
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Ann')
-    PsiWhiteSpace('\n\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A3')

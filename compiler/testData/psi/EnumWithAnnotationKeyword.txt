@@ -24,23 +24,17 @@ JetFile: EnumWithAnnotationKeyword.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
+  MODIFIER_LIST
+    PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(annotation)('annotation')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('E1')
+  PsiWhiteSpace(' ')
   FUN
-    MODIFIER_LIST
-      PsiElement(enum)('enum')
-      PsiWhiteSpace(' ')
-      PsiElement(annotation)('annotation')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('E1')
     PsiErrorElement:Expecting a top level declaration
       <empty list>
-    PsiWhiteSpace(' ')
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')

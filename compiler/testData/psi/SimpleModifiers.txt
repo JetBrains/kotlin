@@ -15,43 +15,37 @@ JetFile: SimpleModifiers.kt
   IMPORT_LIST
     <empty list>
   PsiWhiteSpace('\n\n')
+  MODIFIER_LIST
+    PsiElement(abstract)('abstract')
+    PsiWhiteSpace('\n')
+    PsiElement(open)('open')
+    PsiWhiteSpace('\n')
+    PsiElement(open)('open')
+    PsiWhiteSpace('\n')
+    PsiElement(annotation)('annotation')
+    PsiWhiteSpace('\n')
+    PsiElement(override)('override')
+    PsiWhiteSpace('\n')
+    PsiElement(open)('open')
+    PsiWhiteSpace('\n')
+    PsiElement(abstract)('abstract')
+    PsiWhiteSpace('\n')
+    PsiElement(private)('private')
+    PsiWhiteSpace('\n')
+    PsiElement(protected)('protected')
+    PsiWhiteSpace('\n')
+    PsiElement(public)('public')
+    PsiWhiteSpace('\n')
+    PsiElement(internal)('internal')
+    PsiWhiteSpace('\n')
+    PsiElement(in)('in')
+    PsiWhiteSpace('\n')
+    PsiElement(out)('out')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('ref')
+  PsiWhiteSpace('\n ')
   CLASS
-    MODIFIER_LIST
-      PsiElement(abstract)('abstract')
-      PsiWhiteSpace('\n')
-      PsiElement(open)('open')
-      PsiWhiteSpace('\n')
-      PsiElement(open)('open')
-      PsiWhiteSpace('\n')
-      PsiElement(annotation)('annotation')
-      PsiWhiteSpace('\n')
-      PsiElement(override)('override')
-      PsiWhiteSpace('\n')
-      PsiElement(open)('open')
-      PsiWhiteSpace('\n')
-      PsiElement(abstract)('abstract')
-      PsiWhiteSpace('\n')
-      PsiElement(private)('private')
-      PsiWhiteSpace('\n')
-      PsiElement(protected)('protected')
-      PsiWhiteSpace('\n')
-      PsiElement(public)('public')
-      PsiWhiteSpace('\n')
-      PsiElement(internal)('internal')
-      PsiWhiteSpace('\n')
-      PsiElement(in)('in')
-      PsiWhiteSpace('\n')
-      PsiElement(out)('out')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace('\n')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('ref')
-    PsiWhiteSpace('\n ')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Bar')
@@ -86,20 +80,18 @@ JetFile: SimpleModifiers.kt
           PsiElement(in)('in')
           PsiWhiteSpace('\n        ')
           PsiElement(out)('out')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace('\n        ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('ref')
-        PsiWhiteSpace(' ')
+        PsiWhiteSpace('\n        ')
+        PsiElement(IDENTIFIER)('ref')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Missing '>'
         PsiElement(IDENTIFIER)('T')
-      PsiElement(GT)('>')
-    PsiWhiteSpace(' ')
-    CLASS_BODY
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiWhiteSpace(' ')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       PROPERTY

@@ -185,17 +185,10 @@ JetFile: Properties_ERR.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(EQ)('=')
   PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace('\n\n')
   PROPERTY
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-    PsiWhiteSpace('\n\n')
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE

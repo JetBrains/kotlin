@@ -15,39 +15,103 @@ JetFile: Annotations.kt
   IMPORT_LIST
     <empty list>
   PsiWhiteSpace('\n\n')
-  CLASS
-    MODIFIER_LIST
-      PsiElement(abstract)('abstract')
-      PsiWhiteSpace('\n')
-      PsiElement(open)('open')
-      PsiWhiteSpace('\n')
-      PsiElement(enum)('enum')
-      PsiWhiteSpace('\n')
-      PsiElement(open)('open')
-      PsiWhiteSpace('\n')
-      PsiElement(annotation)('annotation')
-      PsiWhiteSpace('\n')
-      PsiElement(override)('override')
-      PsiWhiteSpace('\n')
-      PsiElement(open)('open')
-      PsiWhiteSpace('\n')
-      PsiElement(abstract)('abstract')
-      PsiWhiteSpace('\n')
-      PsiElement(private)('private')
-      PsiWhiteSpace('\n')
-      PsiElement(protected)('protected')
-      PsiWhiteSpace('\n')
-      PsiElement(public)('public')
-      PsiWhiteSpace('\n')
-      PsiElement(internal)('internal')
-      PsiWhiteSpace('\n')
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
+  MODIFIER_LIST
+    PsiElement(abstract)('abstract')
+    PsiWhiteSpace('\n')
+    PsiElement(open)('open')
+    PsiWhiteSpace('\n')
+    PsiElement(enum)('enum')
+    PsiWhiteSpace('\n')
+    PsiElement(open)('open')
+    PsiWhiteSpace('\n')
+    PsiElement(annotation)('annotation')
+    PsiWhiteSpace('\n')
+    PsiElement(override)('override')
+    PsiWhiteSpace('\n')
+    PsiElement(open)('open')
+    PsiWhiteSpace('\n')
+    PsiElement(abstract)('abstract')
+    PsiWhiteSpace('\n')
+    PsiElement(private)('private')
+    PsiWhiteSpace('\n')
+    PsiElement(protected)('protected')
+    PsiWhiteSpace('\n')
+    PsiElement(public)('public')
+    PsiWhiteSpace('\n')
+    PsiElement(internal)('internal')
+    PsiWhiteSpace('\n')
+    ANNOTATION
+      PsiElement(AT)('@')
+      PsiElement(LBRACKET)('[')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('A')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('B')
+                PsiElement(GT)('>')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('ina')
+      PsiWhiteSpace(' ')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
               USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('foo')
+                      PsiElement(DOT)('.')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('bar')
+                    PsiElement(DOT)('.')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('goo')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('doo')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('f')
+                    PsiElement(GT)('>')
+                PsiElement(DOT)('.')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('foo')
                 TYPE_ARGUMENT_LIST
@@ -56,120 +120,50 @@ JetFile: Annotations.kt
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('A')
+                          PsiElement(IDENTIFIER)('bar')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
                   TYPE_PROJECTION
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('B')
+                          PsiElement(IDENTIFIER)('goo')
                   PsiElement(GT)('>')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
+              PsiElement(DOT)('.')
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            VALUE_ARGUMENT
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
-            PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('ina')
-        PsiWhiteSpace(' ')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  USER_TYPE
-                    USER_TYPE
-                      USER_TYPE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('foo')
-                        PsiElement(DOT)('.')
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('bar')
-                      PsiElement(DOT)('.')
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('goo')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('doo')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('f')
-                      PsiElement(GT)('>')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('bar')
-                    PsiElement(COMMA)(',')
-                    PsiWhiteSpace(' ')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('goo')
-                    PsiElement(GT)('>')
-                PsiElement(DOT)('.')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-        PsiElement(RBRACKET)(']')
-      PsiWhiteSpace('\n')
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('df')
-        PsiElement(RBRACKET)(']')
-      PsiWhiteSpace('\n')
-      PsiElement(in)('in')
-      PsiWhiteSpace('\n')
-      ANNOTATION
-        PsiElement(AT)('@')
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('sdfsdf')
-        PsiElement(RBRACKET)(']')
-      PsiWhiteSpace('\n')
-      PsiElement(out)('out')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace('\n')
+                PsiElement(IDENTIFIER)('foo')
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    ANNOTATION
+      PsiElement(AT)('@')
+      PsiElement(LBRACKET)('[')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('ref')
-    PsiWhiteSpace('\n ')
+                PsiElement(IDENTIFIER)('df')
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    PsiElement(in)('in')
+    PsiWhiteSpace('\n')
+    ANNOTATION
+      PsiElement(AT)('@')
+      PsiElement(LBRACKET)('[')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('sdfsdf')
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace('\n')
+    PsiElement(out)('out')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('ref')
+  PsiWhiteSpace('\n ')
+  CLASS
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Bar')
@@ -324,20 +318,18 @@ JetFile: Annotations.kt
           PsiElement(in)('in')
           PsiWhiteSpace('\n')
           PsiElement(out)('out')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace('\n')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('ref')
-        PsiWhiteSpace(' ')
+        PsiWhiteSpace('\n')
+        PsiElement(IDENTIFIER)('ref')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Missing '>'
         PsiElement(IDENTIFIER)('T')
-      PsiElement(GT)('>')
-    PsiWhiteSpace(' ')
-    CLASS_BODY
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiWhiteSpace(' ')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

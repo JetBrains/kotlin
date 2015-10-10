@@ -275,7 +275,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<KotlinPropertyStu
     @NotNull
     public PsiElement getValOrVarKeyword() {
         PsiElement element = findChildByType(VAL_VAR_TOKEN_SET);
-        assert element != null : "Val or var should always exist for property";
+        assert element != null : "Val or var should always exist for property" + this.getText();
         return element;
     }
 

@@ -288,20 +288,14 @@ JetFile: FunctionsWithFunctionReceivers.kt
     PsiElement(RPAR)(')')
   PsiErrorElement:Expecting a top level declaration
     PsiElement(DOT)('.')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('foo')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
   FUN
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -434,21 +428,14 @@ JetFile: FunctionsWithFunctionReceivers.kt
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('a')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(DOT)('.')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('b')
+  PsiWhiteSpace(' ')
   CLASS
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-              PsiElement(DOT)('.')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
-    PsiWhiteSpace(' ')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('C')

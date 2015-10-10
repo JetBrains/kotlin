@@ -21,6 +21,10 @@ class Foo {
 }
 
 fun test() {
+  when (@foo @bar(1) @buzz<T>(1) @zoo val a = 1) {
+    1 -> 1
+  }
+
   when (foo bar(1) buzz<T>(1) zoo val a = 1) {
     1 -> 1
   }

@@ -31,8 +31,8 @@ public final class C {
     }
 }
 
-public final class C1</*0*/ in <no name provided>> {
-    public constructor C1</*0*/ in <no name provided>>()
+public final class C1</*0*/ <no name provided>> {
+    public constructor C1</*0*/ <no name provided>>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

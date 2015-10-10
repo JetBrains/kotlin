@@ -16,19 +16,12 @@ JetFile: functionTypes.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(package)('package')
   PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('n')
+  PsiWhiteSpace(' ')
   FUN
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('n')
     PsiErrorElement:Expecting a top level declaration
       <empty list>
-    PsiWhiteSpace(' ')
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')

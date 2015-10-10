@@ -8,36 +8,15 @@ JetFile: FileStart_ERR.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(package)('package')
   PsiWhiteSpace(' ')
-  MODIFIER_LIST
-    PsiErrorElement:Use '@' symbol before annotations
-      <empty list>
-    ANNOTATION_ENTRY
-      CONSTRUCTOR_CALLEE
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('bar')
-    PsiErrorElement:Use '@' symbol before annotations
-      <empty list>
-    PsiWhiteSpace('\n')
-    ANNOTATION_ENTRY
-      CONSTRUCTOR_CALLEE
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('import')
-    PsiErrorElement:Use '@' symbol before annotations
-      <empty list>
-    PsiWhiteSpace(' ')
-    ANNOTATION_ENTRY
-      CONSTRUCTOR_CALLEE
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('foo')
   PsiErrorElement:Expecting a top level declaration
-    <empty list>
+    PsiElement(IDENTIFIER)('foo')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(DOT)('.')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('bar')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('import')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('foo')

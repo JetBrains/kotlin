@@ -447,22 +447,16 @@ JetFile: PropertiesWithFunctionReceivers.kt
         PsiElement(LBRACE)('{')
         PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n   ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('dfget')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
   FUN
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('dfget')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
     PsiErrorElement:Expecting a top level declaration
       <empty list>
-    PsiWhiteSpace(' ')
     BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
@@ -526,22 +520,16 @@ JetFile: PropertiesWithFunctionReceivers.kt
         PsiElement(LBRACE)('{')
         PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n   ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('set')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
   FUN
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('set')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
     PsiErrorElement:Expecting a top level declaration
       <empty list>
-    PsiWhiteSpace(' ')
     BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')

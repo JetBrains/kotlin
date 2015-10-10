@@ -819,6 +819,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("noParameterYet.kt")
+            public void testNoParameterYet() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/noParameterYet.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("oldAnnotationsRecovery.kt")
             public void testOldAnnotationsRecovery() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/oldAnnotationsRecovery.kt");
