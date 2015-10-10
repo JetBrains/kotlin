@@ -116,23 +116,34 @@ internal fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
 public fun Module.productionSourceInfo(): ModuleProductionSourceInfo = ModuleProductionSourceInfo(this)
 public fun Module.testSourceInfo(): ModuleTestSourceInfo = ModuleTestSourceInfo(this)
 
-private abstract data class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.getProject()) {
+private abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.getProject()) {
     override fun compare(file1: VirtualFile, file2: VirtualFile) = 0
     override fun isSearchInModuleContent(aModule: Module) = aModule == module
     override fun isSearchInLibraries() = false
-
-    // KT-6206
-    override fun hashCode(): Int = module.hashCode()
 }
 
 private class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(module) {
     val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return (other is ModuleProductionSourceScope && module == other.module)
+    }
+    // KT-6206
+    override fun hashCode(): Int = 31 * module.hashCode()
 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInSourceContent(file) && !moduleFileIndex.isInTestSourceContent(file)
 }
 
 private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) {
     val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return (other is ModuleTestSourceScope && module == other.module)
+    }
+    // KT-6206
+    override fun hashCode(): Int = 37 * module.hashCode()
 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInTestSourceContent(file)
 }

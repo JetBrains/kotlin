@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.AccessorForPropertyDescriptor;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
+import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,10 +46,14 @@ public abstract class FieldOwnerContext<T extends DeclarationDescriptor> extends
 
     @NotNull
     public String getFieldName(@NotNull PropertyDescriptor possiblySubstitutedDescriptor, boolean isDelegated) {
+        if (possiblySubstitutedDescriptor instanceof AccessorForPropertyDescriptor) {
+            possiblySubstitutedDescriptor = ((AccessorForPropertyDescriptor) possiblySubstitutedDescriptor).getCalleeDescriptor();
+        }
+
         PropertyDescriptor descriptor = possiblySubstitutedDescriptor.getOriginal();
         assert descriptor.getKind().isReal() : "Only declared properties can have backing fields: " + descriptor;
 
-        String defaultPropertyName = JvmAbi.getDefaultFieldNameForProperty(descriptor.getName(), isDelegated);
+        String defaultPropertyName = JetTypeMapper.mapDefaultFieldName(descriptor, isDelegated);
 
         Map<PropertyDescriptor, String> descriptor2Name = fieldNames.get(defaultPropertyName);
         if (descriptor2Name == null) {

@@ -1,7 +1,7 @@
 //KT-4529 Lambdas are analyzed improperly in an infix call nested inside a println
 
 class G {
-    fun foo(bar: (Int) -> Int) = bar
+    infix fun foo(bar: (Int) -> Int) = bar
 }
 
 fun main(args: Array<String>) {

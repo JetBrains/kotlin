@@ -92,18 +92,20 @@ public object ModifierCheckerCore {
 
     private val possibleParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
             INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, ENUM_ENTRY),
-            OVERRIDE_KEYWORD  to EnumSet.of(CLASS, ENUM_ENTRY),
-            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, INTERFACE, OBJECT),
+            OVERRIDE_KEYWORD  to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
+                                            INTERFACE, ENUM_CLASS, ENUM_ENTRY),
+            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, OBJECT),
+            INTERNAL_KEYWORD  to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
+                                            ENUM_CLASS, ENUM_ENTRY, FILE),
+            PRIVATE_KEYWORD   to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
+                                            INTERFACE, ENUM_CLASS, ENUM_ENTRY, FILE),
             COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE)
     )
 
     private val deprecatedParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
-            // Deprecated in M14, forbidden in M15
-            INTERNAL_KEYWORD  to EnumSet.of(INTERFACE),
-            PROTECTED_KEYWORD to EnumSet.of(INTERFACE, OBJECT),
             // Deprecated in M15
-            FINAL_KEYWORD     to EnumSet.of(INTERFACE)
-            //PROTECTED_KEYWORD to EnumSet.of(OBJECT)
+            FINAL_KEYWORD     to EnumSet.of(INTERFACE),
+            PROTECTED_KEYWORD to EnumSet.of(OBJECT)
     )
 
     // First modifier in pair should be also first in declaration
@@ -118,10 +120,10 @@ public object ModifierCheckerCore {
         // Abstract + open + final + sealed: incompatible
         result += incompatibilityRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, SEALED_KEYWORD)
         // data + open, data + inner, data + abstract, data + sealed
-        result += deprecationRegister(DATA_KEYWORD, OPEN_KEYWORD)
-        result += deprecationRegister(DATA_KEYWORD, INNER_KEYWORD)
-        result += deprecationRegister(DATA_KEYWORD, ABSTRACT_KEYWORD)
-        result += deprecationRegister(DATA_KEYWORD, SEALED_KEYWORD)
+        result += incompatibilityRegister(DATA_KEYWORD, OPEN_KEYWORD)
+        result += incompatibilityRegister(DATA_KEYWORD, INNER_KEYWORD)
+        result += incompatibilityRegister(DATA_KEYWORD, ABSTRACT_KEYWORD)
+        result += incompatibilityRegister(DATA_KEYWORD, SEALED_KEYWORD)
         // open is redundant to abstract & override
         result += redundantRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD)
         result += redundantRegister(OVERRIDE_KEYWORD, OPEN_KEYWORD)

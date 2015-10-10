@@ -6,7 +6,9 @@ abstract class Foo {
 
 fun box(): String {
     return object: Foo() {
-      inner data class NestedFoo(val bar: Bar)
+      inner class NestedFoo(val bar: Bar) {
+          fun copy(bar: Bar) = NestedFoo(bar)
+      }
 
       override fun foo(): String {
         return NestedFoo(Bar("Fail")).copy(bar = Bar("OK")).bar.name

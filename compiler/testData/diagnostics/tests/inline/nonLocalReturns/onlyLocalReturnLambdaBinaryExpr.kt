@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
 
 class Z {
-    inline fun <R> inlineFun(crossinline p: () -> R) {
+    inline infix fun <R> inlineFun(crossinline p: () -> R) {
         p()
     }
 }

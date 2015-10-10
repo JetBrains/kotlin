@@ -44,11 +44,12 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         bindingContext: BindingContext,
         private val diagnostics: DiagnosticSink,
         fileClassesProvider: JvmFileClassesProvider,
-        incrementalCache: IncrementalCache?
+        incrementalCache: IncrementalCache?,
+        moduleName: String
 ) : SignatureCollectingClassBuilderFactory(builderFactory) {
 
     // Avoid errors when some classes are not loaded for some reason
-    private val typeMapper = JetTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES, fileClassesProvider, incrementalCache)
+    private val typeMapper = JetTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES, fileClassesProvider, incrementalCache, moduleName)
 
     override fun handleClashingSignatures(data: ConflictingJvmDeclarationsData) {
         val noOwnImplementations = data.signatureOrigins.all { it.originKind in EXTERNAL_SOURCES_KINDS }

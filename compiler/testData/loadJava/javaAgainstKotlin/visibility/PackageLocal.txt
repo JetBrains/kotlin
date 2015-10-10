@@ -7,5 +7,5 @@ public open class Base {
 
 public final class Derived : test.Base {
     public constructor Derived()
-    internal open override /*1*/ fun foo(): kotlin.Unit
+    protected open override /*1*/ fun foo(): kotlin.Unit
 }

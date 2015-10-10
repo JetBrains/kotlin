@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure
 import org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor
 
 
-object NativeVariableAccessCase : VariableAccessCase {
+object NativeVariableAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.extensionReceiver(): JsExpression {
         return constructAccessExpression(JsNameRef(variableName, extensionReceiver!!))
     }
@@ -41,7 +41,7 @@ object NativeVariableAccessCase : VariableAccessCase {
     }
 }
 
-object DefaultVariableAccessCase : VariableAccessCase {
+object DefaultVariableAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.noReceivers(): JsExpression {
         val functionRef = context.aliasOrValue(callableDescriptor) {
             context.getQualifiedReference(variableDescriptor)
@@ -107,7 +107,7 @@ object DelegatePropertyAccessIntrinsic : DelegateIntrinsic<VariableAccessInfo> {
     }
 }
 
-object SuperPropertyAccessCase : VariableAccessCase {
+object SuperPropertyAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
         val variableName = context.program().getStringLiteral(this.variableName.getIdent())
         return if (isGetAccess())

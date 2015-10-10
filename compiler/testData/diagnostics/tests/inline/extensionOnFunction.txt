@@ -4,5 +4,5 @@ package
 @kotlin.inline() public fun inlineFunWrongExtension(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
 @kotlin.inline() public fun testExtension(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
 @kotlin.inline() public fun ((kotlin.Int) -> kotlin.Unit).inlineExt(): kotlin.Unit
-@kotlin.inline() public fun ((kotlin.Int) -> kotlin.Unit).inlineExt2(/*0*/ p: kotlin.Int): kotlin.Unit
-public fun ((kotlin.Int) -> kotlin.Unit).noInlineExt(/*0*/ p: kotlin.Int): kotlin.Unit
+@kotlin.inline() public infix fun ((kotlin.Int) -> kotlin.Unit).inlineExt2(/*0*/ p: kotlin.Int): kotlin.Unit
+public infix fun ((kotlin.Int) -> kotlin.Unit).noInlineExt(/*0*/ p: kotlin.Int): kotlin.Unit

@@ -1,4 +1,6 @@
-open data class A(val value: String)
+open class A(val value: String) {
+    fun component1() = value
+}
 
 interface B {
     fun component1(): Any

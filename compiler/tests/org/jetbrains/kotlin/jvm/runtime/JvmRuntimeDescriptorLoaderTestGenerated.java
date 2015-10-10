@@ -1035,18 +1035,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
-            @TestMetadata("OpenDataClass.kt")
-            public void testOpenDataClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/OpenDataClass.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("OpenPropertyFinalComponent.kt")
-            public void testOpenPropertyFinalComponent() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/OpenPropertyFinalComponent.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("ParamNameSameToField.kt")
             public void testParamNameSameToField() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/ParamNameSameToField.kt");
@@ -3033,12 +3021,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
-            @TestMetadata("InternalAbstractTraitMembersOverridden.kt")
-            public void testInternalAbstractTraitMembersOverridden() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalAbstractTraitMembersOverridden.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("InternalClass.kt")
             public void testInternalClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalClass.kt");
@@ -3054,18 +3036,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("InternalTopLevelMembers.kt")
             public void testInternalTopLevelMembers() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalTopLevelMembers.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("InternalTraitMembers.kt")
-            public void testInternalTraitMembers() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalTraitMembers.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("InternalTraitMembersInherited.kt")
-            public void testInternalTraitMembersInherited() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalTraitMembersInherited.kt");
                 doTest(fileName);
             }
 

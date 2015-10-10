@@ -66,8 +66,8 @@ public class HierarchySearchRequest<T: PsiElement> (
 }
 
 interface HierarchyTraverser<T> {
-    protected fun nextElements(current: T): Iterable<T>
-    protected fun shouldDescend(element: T): Boolean
+    fun nextElements(current: T): Iterable<T>
+    fun shouldDescend(element: T): Boolean
 
     fun forEach(initialElement: T, body: (T) -> Unit) {
         val stack = Stack<T>()

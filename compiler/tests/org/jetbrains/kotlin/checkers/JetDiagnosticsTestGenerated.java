@@ -271,6 +271,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Infix.kt")
+        public void testInfix() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Infix.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InfixModifierApplicability.kt")
+        public void testInfixModifierApplicability() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/InfixModifierApplicability.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("IsExpressions.kt")
         public void testIsExpressions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/IsExpressions.kt");
@@ -3322,12 +3334,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         public static class DataClasses extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInDataClasses() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/dataClasses"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-
-            @TestMetadata("componentFunctionInSubClass.kt")
-            public void testComponentFunctionInSubClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/componentFunctionInSubClass.kt");
-                doTest(fileName);
             }
 
             @TestMetadata("componentNamedComponent1.kt")
@@ -9156,6 +9162,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("annotations.kt")
+            public void testAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/annotations.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("defaultModifier.kt")
             public void testDefaultModifier() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/defaultModifier.kt");
@@ -9171,6 +9183,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("incompatibleVarianceModifiers.kt")
             public void testIncompatibleVarianceModifiers() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/incompatibleVarianceModifiers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("internalInInterface.kt")
+            public void testInternalInInterface() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/internalInInterface.kt");
                 doTest(fileName);
             }
 
@@ -9243,29 +9261,29 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 }
             }
 
-            @TestMetadata("compiler/testData/diagnostics/tests/modifiers/operator")
+            @TestMetadata("compiler/testData/diagnostics/tests/modifiers/operatorInfix")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Operator extends AbstractJetDiagnosticsTest {
-                public void testAllFilesPresentInOperator() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers/operator"), Pattern.compile("^(.+)\\.kt$"), true);
+            public static class OperatorInfix extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInOperatorInfix() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/modifiers/operatorInfix"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("LocalFunctions.kt")
                 public void testLocalFunctions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operator/LocalFunctions.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operatorInfix/LocalFunctions.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("MemberFunctions.kt")
                 public void testMemberFunctions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operator/MemberFunctions.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operatorInfix/MemberFunctions.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("Simple.kt")
                 public void testSimple() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operator/Simple.kt");
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/operatorInfix/Simple.kt");
                     doTest(fileName);
                 }
             }
@@ -10233,18 +10251,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("AllPrivateFromSuperTypes.kt")
             public void testAllPrivateFromSuperTypes() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/AllPrivateFromSuperTypes.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("CannotInferVisibilityForProperty.kt")
-            public void testCannotInferVisibilityForProperty() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/CannotInferVisibilityForProperty.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("CannotInferVisibilityForPropertySetter.kt")
-            public void testCannotInferVisibilityForPropertySetter() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/CannotInferVisibilityForPropertySetter.kt");
                 doTest(fileName);
             }
 

@@ -47,16 +47,19 @@ public interface ConstraintPosition {
     fun isParameter(): Boolean = kind in setOf(VALUE_PARAMETER_POSITION, RECEIVER_POSITION)
 }
 
-private open data class ConstraintPositionImpl(override val kind: ConstraintPositionKind) : ConstraintPosition {
+private data class ConstraintPositionImpl(override val kind: ConstraintPositionKind) : ConstraintPosition {
     override fun toString() = "$kind"
 }
+
 private data class ConstraintPositionWithIndex(override val kind: ConstraintPositionKind, val index: Int) : ConstraintPosition {
     override fun toString() = "$kind($index)"
 }
 
-class CompoundConstraintPosition(
-        vararg positions: ConstraintPosition
-) : ConstraintPositionImpl(ConstraintPositionKind.COMPOUND_CONSTRAINT_POSITION) {
+class CompoundConstraintPosition(vararg positions: ConstraintPosition) : ConstraintPosition {
+
+    override val kind: ConstraintPositionKind
+        get() = COMPOUND_CONSTRAINT_POSITION
+
     val positions: Collection<ConstraintPosition> =
             positions.flatMap { if (it is CompoundConstraintPosition) it.positions else listOf(it) }.toSet()
 

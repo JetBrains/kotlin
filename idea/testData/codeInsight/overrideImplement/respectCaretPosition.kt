@@ -1,6 +1,6 @@
 interface Test {
     public open fun test()
-    protected open val testProp : Int
+    public open val testProp : Int
 }
 
 class SomeTest : Test {

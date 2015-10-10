@@ -29,17 +29,17 @@ public class Boolean private () : Comparable<Boolean> {
     /**
      * Performs a logical `and` operation between this Boolean and the [other] one.
      */
-    public fun and(other: Boolean): Boolean
+    public infix fun and(other: Boolean): Boolean
 
     /**
      * Performs a logical `or` operation between this Boolean and the [other] one.
      */
-    public fun or(other: Boolean): Boolean
+    public infix fun or(other: Boolean): Boolean
 
     /**
      * Performs a logical `xor` operation between this Boolean and the [other] one.
      */
-    public fun xor(other: Boolean): Boolean
+    public infix fun xor(other: Boolean): Boolean
 
     public override fun compareTo(other: Boolean): Int
 }

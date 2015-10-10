@@ -13,7 +13,7 @@ fun <T: Any, E> T.foo(<warning>x</warning> : E, y : A) : T   {
 
 class A
 
-operator fun A.plus(<warning>a</warning> : Any) {
+infix operator fun A.plus(<warning>a</warning> : Any) {
 
   1.foo()
   true.<error>foo</error>(<error><error>)</error></error>
@@ -21,7 +21,7 @@ operator fun A.plus(<warning>a</warning> : Any) {
   <warning>1</warning>
 }
 
-operator fun A.plus(<warning>a</warning> : Int) {
+infix operator fun A.plus(<warning>a</warning> : Int) {
   <warning>1</warning>
 }
 
