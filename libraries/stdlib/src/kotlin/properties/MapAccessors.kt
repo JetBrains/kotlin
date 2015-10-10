@@ -11,7 +11,7 @@ package kotlin.properties
  *
  * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [withDefault]).
  */
-public fun <V> Map<in String, *>.getValue(thisRef: Any?, property: PropertyMetadata): V = getOrImplicitDefault(property.name) as V
+public fun <V, V1: V> Map<in String, @Exact V>.getValue(thisRef: Any?, property: PropertyMetadata): V1 = getOrImplicitDefault(property.name) as V1
 
 /**
  * Returns the value of the property for the given object from this mutable map.
