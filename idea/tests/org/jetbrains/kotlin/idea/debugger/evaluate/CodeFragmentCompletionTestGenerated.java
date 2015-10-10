@@ -77,6 +77,12 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
         doTest(fileName);
     }
 
+    @TestMetadata("noDuplicatesForSyntheticProperties.kt")
+    public void testNoDuplicatesForSyntheticProperties() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/noDuplicatesForSyntheticProperties.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("topLevel.kt")
     public void testTopLevel() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/topLevel.kt");

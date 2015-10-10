@@ -33,7 +33,7 @@ class B extends A {
 import org.jetbrains.annotations.*;
 
 // Just inherit enhanced types (annotations without conflicts)
-class B1 extends A {
+public class B1 extends A {
     @Override
     public int foo(@NotNull String x, String y);
     @Override

@@ -1,14 +1,14 @@
 // FILE: A.java
 import org.jetbrains.annotations.*;
 
-interface A {
+public interface A {
     void foo(@Nullable String x);
 }
 
 // FILE: B.java
 import org.jetbrains.annotations.*;
 
-interface B {
+public interface B {
     void foo(@NotNull String x);
 }
 

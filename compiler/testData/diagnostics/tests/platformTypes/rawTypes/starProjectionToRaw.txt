@@ -2,15 +2,15 @@ package
 
 public fun main(/*0*/ x: B<*>): kotlin.Unit
 
-public/*package*/ open class A</*0*/ T : kotlin.CharSequence!> {
-    public/*package*/ constructor A</*0*/ T : kotlin.CharSequence!>()
+public open class A</*0*/ T : kotlin.CharSequence!> {
+    public constructor A</*0*/ T : kotlin.CharSequence!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public/*package*/ open class B</*0*/ E : A<(raw) kotlin.CharSequence!>!> {
-    public/*package*/ constructor B</*0*/ E : A<(raw) kotlin.CharSequence!>!>()
+public open class B</*0*/ E : A<(raw) kotlin.CharSequence!>!> {
+    public constructor B</*0*/ E : A<(raw) kotlin.CharSequence!>!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

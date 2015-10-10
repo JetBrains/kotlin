@@ -49,4 +49,7 @@ public abstract class Visibility protected constructor(
     override final fun toString() = displayName
 
     public open fun normalize(): Visibility = this
+
+    // Should be overloaded in Java visibilities
+    public open fun effectiveVisibility(descriptor: ClassDescriptor?) = EffectiveVisibility.effectiveVisibility(normalize(), descriptor)
 }

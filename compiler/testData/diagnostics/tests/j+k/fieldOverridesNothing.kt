@@ -1,6 +1,6 @@
 // FILE: B.java
 
-abstract class B implements A {
+public abstract class B implements A {
     public int size = 1;
 }
 

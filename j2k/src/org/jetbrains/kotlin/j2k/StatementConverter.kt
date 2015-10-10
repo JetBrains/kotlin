@@ -58,14 +58,9 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
         }
         else {
             val description = codeConverter.convertExpression(descriptionExpr)
-            if (descriptionExpr is PsiLiteralExpression) {
-                result = MethodCallExpression.buildNotNull(null, "assert", listOf(condition, description))
-            }
-            else {
-                val block = Block(listOf(description), LBrace().assignNoPrototype(), RBrace().assignNoPrototype())
-                val lambda = LambdaExpression(null, block.assignNoPrototype())
-                result = MethodCallExpression.build(null, "assert", listOf(condition, lambda), listOf(), false)
-            }
+            val block = Block(listOf(description), LBrace().assignNoPrototype(), RBrace().assignNoPrototype())
+            val lambda = LambdaExpression(null, block.assignNoPrototype())
+            result = MethodCallExpression.build(null, "assert", listOf(condition, lambda), listOf(), false)
         }
     }
 

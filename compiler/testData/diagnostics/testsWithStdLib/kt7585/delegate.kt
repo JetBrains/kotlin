@@ -1,18 +1,18 @@
 // FILE: Base.java
 
-interface Base {}
+public interface Base {}
 
 // FILE: Other.java
 
-interface Other {}
+public interface Other {}
 
 // FILE: Derived.java
 
-final class Derived<T> implements Base, Other {}
+public final class Derived<T> implements Base, Other {}
 
 // FILE: Exotic.java
 
-final class Exotic implements Base, Other {
+public final class Exotic implements Base, Other {
 
     int x;
 

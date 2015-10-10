@@ -1,7 +1,7 @@
 // FILE: A.java
 import org.jetbrains.annotations.*;
 
-interface A {
+public interface A {
     @Nullable
     String foo();
 }
@@ -9,7 +9,7 @@ interface A {
 // FILE: B.java
 import org.jetbrains.annotations.*;
 
-interface B {
+public interface B {
     @NotNull
     String foo();
 }

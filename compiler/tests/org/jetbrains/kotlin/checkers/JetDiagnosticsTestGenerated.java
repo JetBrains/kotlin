@@ -5734,6 +5734,81 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/exposed")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Exposed extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInExposed() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/exposed"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("delegate.kt")
+            public void testDelegate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/delegate.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functional.kt")
+            public void testFunctional() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/functional.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implements.kt")
+            public void testImplements() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/implements.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("internal.kt")
+            public void testInternal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/internal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("local.kt")
+            public void testLocal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/local.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nested.kt")
+            public void testNested() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/nested.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("protected.kt")
+            public void testProtected() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/protected.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("protectedJava.kt")
+            public void testProtectedJava() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/protectedJava.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("protectedSameWay.kt")
+            public void testProtectedSameWay() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/protectedSameWay.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeArgs.kt")
+            public void testTypeArgs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/typeArgs.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/extensions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

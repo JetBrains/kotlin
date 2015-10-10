@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
@@ -86,6 +83,7 @@ public class DeclarationsChecker {
             checkPrimaryConstructor(classOrObject, classDescriptor);
 
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
+            checkClassExposedType(classOrObject, classDescriptor);
         }
 
         Map<JetNamedFunction, SimpleFunctionDescriptor> functions = bodiesResolveContext.getFunctions();
@@ -110,8 +108,8 @@ public class DeclarationsChecker {
             ConstructorDescriptor constructorDescriptor = entry.getValue();
             JetSecondaryConstructor declaration = entry.getKey();
             checkConstructorDeclaration(constructorDescriptor, declaration);
+            checkFunctionExposedType(declaration, constructorDescriptor);
         }
-
     }
 
     private void checkConstructorDeclaration(ConstructorDescriptor constructorDescriptor, JetDeclaration declaration) {
@@ -208,6 +206,57 @@ public class DeclarationsChecker {
         }
     }
 
+    private void checkClassExposedType(@NotNull JetClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
+        EffectiveVisibility classVisibility = EffectiveVisibility.Companion.forClass(classDescriptor);
+        boolean isInterface = classDescriptor.getKind() == ClassKind.INTERFACE;
+        List<JetDelegationSpecifier> delegationList = klass.getDelegationSpecifiers();
+        int i = -1;
+        // Encapsulate
+        for (JetType superType : classDescriptor.getTypeConstructor().getSupertypes()) {
+            i++;
+            if (i >= delegationList.size()) {
+                break;
+            }
+            ClassDescriptor superDescriptor = TypeUtils.getClassDescriptor(superType);
+            if (superDescriptor == null) {
+                continue;
+            }
+            boolean superIsInterface = superDescriptor.getKind() == ClassKind.INTERFACE;
+            if (superIsInterface != isInterface) {
+                continue;
+            }
+            EffectiveVisibility superTypeVisibility = EffectiveVisibility.Companion.forType(superType);
+            if (!superTypeVisibility.sameOrMorePermissive(classVisibility)) {
+                if (isInterface) {
+                    trace.report(EXPOSED_SUPER_INTERFACE.on(delegationList.get(i), classVisibility, superTypeVisibility));
+                }
+                else {
+                    trace.report(EXPOSED_SUPER_CLASS.on(delegationList.get(i), classVisibility, superTypeVisibility));
+                }
+            }
+        }
+        // Encapsulate
+        List<JetTypeParameter> typeParameterList = klass.getTypeParameters();
+        int j = 0;
+        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
+            if (j >= typeParameterList.size()) {
+                break;
+            }
+            for (JetType upperBound : typeParameterDescriptor.getUpperBounds()) {
+                EffectiveVisibility upperBoundVisibility = EffectiveVisibility.Companion.forType(upperBound);
+                if (!upperBoundVisibility.sameOrMorePermissive(classVisibility)) {
+                    JetTypeParameter typeParameter = typeParameterList.get(i);
+                    trace.report(EXPOSED_TYPE_PARAMETER_BOUND.on(typeParameter, classVisibility, upperBoundVisibility));
+                    break;
+                }
+            }
+            j++;
+        }
+        if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null && klass.getPrimaryConstructor() != null) {
+            checkFunctionExposedType(klass.getPrimaryConstructor(), classDescriptor.getUnsubstitutedPrimaryConstructor());
+        }
+    }
+
     private static void removeDuplicateTypes(Set<JetType> conflictingTypes) {
         for (Iterator<JetType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
             JetType type = iterator.next();
@@ -240,6 +289,13 @@ public class DeclarationsChecker {
         }
         else if (aClass instanceof JetEnumEntry) {
             checkEnumEntry((JetEnumEntry) aClass, classDescriptor);
+        }
+        for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
+            if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) continue;
+            JetNamedDeclaration member = (JetNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor);
+            if (member instanceof JetFunction && memberDescriptor instanceof FunctionDescriptor) {
+                checkFunctionExposedType((JetFunction) member, (FunctionDescriptor) memberDescriptor);
+            }
         }
     }
 
@@ -321,6 +377,7 @@ public class DeclarationsChecker {
         checkPropertyLateInit(property, propertyDescriptor);
         checkPropertyInitializer(property, propertyDescriptor);
         checkAccessors(property, propertyDescriptor);
+        checkPropertyExposedType(property, propertyDescriptor);
     }
 
     private void checkPropertyLateInit(@NotNull JetCallableDeclaration property, @NotNull PropertyDescriptor propertyDescriptor) {
@@ -488,6 +545,26 @@ public class DeclarationsChecker {
         }
     }
 
+    private void checkMemberReceiverExposedType(@Nullable JetTypeReference typeReference, @NotNull CallableMemberDescriptor memberDescriptor) {
+        if (typeReference == null) return;
+        ReceiverParameterDescriptor receiverParameterDescriptor = memberDescriptor.getExtensionReceiverParameter();
+        if (receiverParameterDescriptor == null) return;
+        EffectiveVisibility memberVisibility = EffectiveVisibility.Companion.forMember(memberDescriptor);
+        EffectiveVisibility receiverTypeVisibility = EffectiveVisibility.Companion.forType(receiverParameterDescriptor.getType());
+        if (!receiverTypeVisibility.sameOrMorePermissive(memberVisibility)) {
+            trace.report(EXPOSED_RECEIVER_TYPE.on(typeReference, memberVisibility, receiverTypeVisibility));
+        }
+    }
+
+    private void checkPropertyExposedType(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+        EffectiveVisibility propertyVisibility = EffectiveVisibility.Companion.forMember(propertyDescriptor);
+        EffectiveVisibility typeVisibility = EffectiveVisibility.Companion.forType(propertyDescriptor.getType());
+        if (!typeVisibility.sameOrMorePermissive(propertyVisibility)) {
+            trace.report(EXPOSED_PROPERTY_TYPE.on(property, propertyVisibility, typeVisibility));
+        }
+        checkMemberReceiverExposedType(property.getReceiverTypeReference(), propertyDescriptor);
+    }
+
     protected void checkFunction(JetNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
         JetTypeParameterList typeParameterList = function.getTypeParameterList();
         PsiElement nameIdentifier = function.getNameIdentifier();
@@ -527,6 +604,30 @@ public class DeclarationsChecker {
         if (!function.hasBody() && !hasAbstractModifier) {
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
         }
+        checkFunctionExposedType(function, functionDescriptor);
+    }
+
+    private void checkFunctionExposedType(@NotNull JetFunction function, @NotNull FunctionDescriptor functionDescriptor) {
+        EffectiveVisibility functionVisibility = EffectiveVisibility.Companion.forMember(functionDescriptor);
+        if (!(function instanceof JetConstructor)) {
+            EffectiveVisibility returnTypeVisibility = EffectiveVisibility.Companion.forType(functionDescriptor.getReturnType());
+            if (!returnTypeVisibility.sameOrMorePermissive(functionVisibility)) {
+                PsiElement reportOn = function.getNameIdentifier();
+                if (reportOn == null) {
+                    reportOn = function;
+                }
+                trace.report(EXPOSED_FUNCTION_RETURN_TYPE.on(reportOn, functionVisibility, returnTypeVisibility));
+            }
+        }
+        int i = 0;
+        for (ValueParameterDescriptor parameterDescriptor : functionDescriptor.getValueParameters()) {
+            EffectiveVisibility typeVisibility = EffectiveVisibility.Companion.forType(parameterDescriptor.getType());
+            if (!typeVisibility.sameOrMorePermissive(functionVisibility) && i < function.getValueParameters().size()) {
+                trace.report(EXPOSED_PARAMETER_TYPE.on(function.getValueParameters().get(i), functionVisibility, typeVisibility));
+            }
+            i++;
+        }
+        checkMemberReceiverExposedType(function.getReceiverTypeReference(), functionDescriptor);
     }
 
     private void checkAccessors(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {

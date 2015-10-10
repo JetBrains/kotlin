@@ -17,11 +17,22 @@
 package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.rmi.CompileService
+import org.jetbrains.kotlin.rmi.CompilerCallbackServicesFacade
+import org.jetbrains.kotlin.rmi.DummyProfiler
+import org.jetbrains.kotlin.rmi.Profiler
+import java.util.concurrent.TimeUnit
 
+val CANCELED_STATUS_CHECK_THRESHOLD_NS = TimeUnit.MILLISECONDS.toNanos(100)
 
-class RemoteCompilationCanceledStatusClient(val proxy: CompileService.RemoteCompilationCanceledStatus): CompilationCanceledStatus {
+class RemoteCompilationCanceledStatusClient(val facade: CompilerCallbackServicesFacade, val profiler: Profiler = DummyProfiler()): CompilationCanceledStatus {
+    @Volatile var lastChecked: Long = System.nanoTime()
     override fun checkCanceled() {
-        proxy.checkCanceled()
+        val curNanos = System.nanoTime()
+        if (curNanos - lastChecked > CANCELED_STATUS_CHECK_THRESHOLD_NS) {
+            profiler.withMeasure(this) {
+                facade.compilationCanceledStatus_checkCanceled()
+            }
+            lastChecked = curNanos
+        }
     }
 }

@@ -16,10 +16,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.ArrayUtil
-import com.intellij.util.Function
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -34,16 +30,13 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.rmi.CompilerId
-import org.jetbrains.kotlin.rmi.configureDaemonJVMOptions
-import org.jetbrains.kotlin.rmi.configureDaemonOptions
-import org.jetbrains.kotlin.rmi.isDaemonEnabled
+import org.jetbrains.kotlin.rmi.*
 import org.jetbrains.kotlin.rmi.kotlinr.*
-import org.jetbrains.kotlin.utils.rethrow
 import java.io.*
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 public object KotlinCompilerRunner {
     private val K2JVM_COMPILER = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
@@ -112,7 +105,7 @@ public object KotlinCompilerRunner {
 
             val argsArray = argumentsList.toTypedArray()
 
-            if (!tryCompileWithDaemon(messageCollector, collector, environment, argsArray)) {
+            if (!tryCompileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector)) {
                 // otherwise fallback to in-process
 
                 val stream = ByteArrayOutputStream()
@@ -132,35 +125,51 @@ public object KotlinCompilerRunner {
 
     }
 
-    private fun tryCompileWithDaemon(messageCollector: MessageCollector,
-                                     collector: OutputItemsCollector,
-                                     environment: CompilerEnvironment,
-                                     argsArray: Array<String>): Boolean {
+    internal class DaemonConnection(public val daemon: CompileService?)
 
-        if (isDaemonEnabled()) {
-            val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, messageCollector)
-            // TODO: it may be a good idea to cache the compilerId, since making it means calculating digest over jar(s) and if \\
-            //    the lifetime of JPS process is small anyway, we can neglect the probability of changed compiler
-            val compilerId = CompilerId.makeCompilerId(File(libPath, "kotlin-compiler.jar"))
-            val daemonOptions = configureDaemonOptions()
-            val daemonJVMOptions = configureDaemonJVMOptions(true)
+    internal object getDaemonConnection {
+        private var connection: DaemonConnection? = null
 
-            val daemonReportMessages = ArrayList<DaemonReportMessage>()
+        operator fun invoke(environment: CompilerEnvironment, messageCollector: MessageCollector): DaemonConnection? {
+            if (connection == null) {
+                val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, messageCollector)
+                val compilerId = CompilerId.makeCompilerId(File(libPath, "kotlin-compiler.jar"))
+                val daemonOptions = configureDaemonOptions()
+                val daemonJVMOptions = configureDaemonJVMOptions(true)
 
-            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
+                val daemonReportMessages = ArrayList<DaemonReportMessage>()
 
-            for (msg in daemonReportMessages) {
-                if (msg.category === DaemonReportCategory.EXCEPTION && daemon == null) {
+                val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
+
+                profiler.withMeasure(null) {
+                    connection = DaemonConnection(
+                            KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
+                    )
+                }
+
+                for (msg in daemonReportMessages) {
                     messageCollector.report(CompilerMessageSeverity.INFO,
-                                            "Falling  back to compilation without daemon due to error: " + msg.message,
+                                            (if (msg.category == DaemonReportCategory.EXCEPTION && connection?.daemon == null)  "Falling  back to compilation without daemon due to error: " else "") + msg.message,
                                             CompilerMessageLocation.NO_LOCATION)
                 }
-                else {
-                    messageCollector.report(CompilerMessageSeverity.INFO, msg.message, CompilerMessageLocation.NO_LOCATION)
-                }
-            }
 
-            if (daemon != null) {
+                reportTotalAndThreadPerf("Daemon connect", daemonOptions, messageCollector, profiler)
+            }
+            return connection
+        }
+    }
+
+    private fun tryCompileWithDaemon(compilerClassName: String,
+                                     argsArray: Array<String>,
+                                     environment: CompilerEnvironment,
+                                     messageCollector: MessageCollector,
+                                     collector: OutputItemsCollector): Boolean {
+
+        if (isDaemonEnabled()) {
+
+            val connection = getDaemonConnection(environment, messageCollector)
+
+            if (connection?.daemon != null) {
                 val compilerOut = ByteArrayOutputStream()
                 val daemonOut = ByteArrayOutputStream()
 
@@ -168,7 +177,12 @@ public object KotlinCompilerRunner {
                         incrementalCompilationComponents = environment.services.get(IncrementalCompilationComponents::class.java),
                         compilationCanceledStatus = environment.services.get(CompilationCanceledStatus::class.java))
 
-                val res = KotlinCompilerClient.incrementalCompile(daemon, argsArray, services, compilerOut, daemonOut)
+                val targetPlatform = when (compilerClassName) {
+                    K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
+                    K2JS_COMPILER -> CompileService.TargetPlatform.JS
+                    else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
+                }
+                val res = KotlinCompilerClient.incrementalCompile(connection!!.daemon!!, targetPlatform, argsArray, services, compilerOut, daemonOut)
 
                 processCompilerOutput(messageCollector, collector, compilerOut, res.toString())
                 BufferedReader(StringReader(daemonOut.toString())).forEachLine {
@@ -178,6 +192,16 @@ public object KotlinCompilerRunner {
             }
         }
         return false
+    }
+
+    private fun reportTotalAndThreadPerf(message: String, daemonOptions: DaemonOptions, messageCollector: MessageCollector, profiler: Profiler) {
+        if (daemonOptions.reportPerf) {
+            fun Long.ms() = TimeUnit.NANOSECONDS.toMillis(this)
+            val counters = profiler.getTotalCounters()
+            messageCollector.report(INFO,
+                                    "PERF: $message ${counters.time.ms()} ms, thread ${counters.threadTime.ms()}",
+                                    CompilerMessageLocation.NO_LOCATION)
+        }
     }
 
     private fun getReturnCodeFromObject(rc: Any?): String {

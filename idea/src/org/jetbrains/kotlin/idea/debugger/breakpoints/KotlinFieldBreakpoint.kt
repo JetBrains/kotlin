@@ -265,7 +265,10 @@ class KotlinFieldBreakpoint(
             location.sourceName()
         }
         catch (e: AbsentInformationException) {
-            getFileName()
+            fileName
+        }
+        catch (e: InternalError) {
+            fileName
         }
 
         val locationLine = location.lineNumber()

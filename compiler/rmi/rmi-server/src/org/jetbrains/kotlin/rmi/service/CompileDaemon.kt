@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.rmi.service
 
+import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.rmi.*
 import java.io.File
@@ -133,8 +135,15 @@ public object CompileDaemon {
             }
             runFile.deleteOnExit()
 
-            val compiler = K2JVMCompiler()
-            val compilerService = CompileServiceImpl(registry, compiler, compilerId, port)
+            val compilerSelector = object : CompilerSelector {
+                private val jvm by lazy { K2JVMCompiler() }
+                private val js by lazy { K2JSCompiler() }
+                override fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*> = when (targetPlatform) {
+                    CompileService.TargetPlatform.JVM -> jvm
+                    CompileService.TargetPlatform.JS -> js
+                }
+            }
+            val compilerService = CompileServiceImpl(registry, compilerSelector, compilerId, daemonOptions, port)
 
             if (daemonOptions.runFilesPath.isNotEmpty())
                 println(daemonOptions.runFilesPath)

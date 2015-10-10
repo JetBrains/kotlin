@@ -7,8 +7,8 @@ open class Foo {
 }
 
 class Bar: Foo() {
-    fun foo(): Nested? = null
+    protected fun foo(): Nested? = null
 }
 
-fun foo(): <!INVISIBLE_REFERENCE!>Nested<!>? = null
-fun bar(): p.Foo.<!INVISIBLE_REFERENCE!>Nested<!>? = null
+private fun foo(): <!INVISIBLE_REFERENCE!>Nested<!>? = null
+private fun bar(): p.Foo.<!INVISIBLE_REFERENCE!>Nested<!>? = null

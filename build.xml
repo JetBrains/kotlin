@@ -592,11 +592,13 @@
                 <pathelement path="${bootstrap.runtime}"/>
                 <pathelement path="${bootstrap.reflect}"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                <pathelement path="${dependencies.dir}/native-platform-uberjar.jar"/>
             </classpath>
         </kotlinc>
 
         <jar destfile="${kotlin-home}/lib/kotlinr.jar">
             <fileset dir="${output}/classes/kotlinr"/>
+            <zipfileset src="${dependencies.dir}/native-platform-uberjar.jar" includes="**" />
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
         </jar>
     </target>

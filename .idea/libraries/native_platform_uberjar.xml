@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="native-platform-uberjar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/native-platform-uberjar.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

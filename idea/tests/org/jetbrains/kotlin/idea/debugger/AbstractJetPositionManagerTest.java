@@ -28,23 +28,27 @@ import com.intellij.debugger.jdi.VirtualMachineProxyImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.testFramework.PsiTestUtil;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
-import kotlin.KotlinPackage;
+import kotlin.SequencesKt;
+import kotlin.StringsKt;
+import kotlin.Unit;
+import kotlin.io.FilesKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -52,7 +56,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractJetPositionManagerTest extends KotlinMultiFileTestCase {
+public abstract class AbstractJetPositionManagerTest extends JetLightCodeInsightFixtureTestCase {
     // Breakpoint is given as a line comment on a specific line, containing the regexp to match the name of the class where that line
     // can be found. This pattern matches against these line comments and saves the class name in the first group
     private static final Pattern BREAKPOINT_PATTERN = Pattern.compile("^.*//\\s*(.+)\\s*$");
@@ -60,15 +64,21 @@ public abstract class AbstractJetPositionManagerTest extends KotlinMultiFileTest
     @NotNull
     @Override
     protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase();
+        return PluginTestCaseBase.getTestDataPathBase() + "/debugger/positionManager/";
+    }
+
+    @Override
+    public void setUp() {
+        super.setUp();
+        myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase());
     }
 
     private DebugProcessImpl debugProcess;
 
     @NotNull
     @Override
-    protected String getTestRoot() {
-        return "/debugger/positionManager/";
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     @NotNull
@@ -89,16 +99,28 @@ public abstract class AbstractJetPositionManagerTest extends KotlinMultiFileTest
 
     protected void doTest(@NotNull String fileName) throws Exception {
         if (fileName.endsWith(".kt")) {
-            String path = KotlinPackage.substringAfter(fileName, PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE.substring(1), fileName);
-            configureByFile(path);
+            String path = getPath(fileName);
+            myFixture.configureByFile(path);
         }
         else {
-            VirtualFile rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, fileName, myFilesToDelete, false);
-            prepareProject(rootDir);
-            PsiDocumentManager.getInstance(myProject).commitAllDocuments();
+            String path = getPath(fileName);
+            SequencesKt.forEach(FilesKt.walkTopDown(new File(path)), new Function1<File, Unit>() {
+                @Override
+                public Unit invoke(File file) {
+                    String fileName = file.getName();
+                    String path = getPath(fileName);
+                    myFixture.configureByFile(path);
+                    return null;
+                }
+            });
         }
 
         performTest();
+    }
+
+    @NotNull
+    private static String getPath(@NotNull String fileName) {
+        return StringsKt.substringAfter(fileName, PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE.substring(1), fileName);
     }
 
     private void performTest() {

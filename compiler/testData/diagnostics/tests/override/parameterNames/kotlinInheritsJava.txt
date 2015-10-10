@@ -1,8 +1,8 @@
 package
 
-public/*package*/ /*synthesized*/ fun JavaInterface(/*0*/ function: (kotlin.Int) -> kotlin.Unit): JavaInterface
+public /*synthesized*/ fun JavaInterface(/*0*/ function: (kotlin.Int) -> kotlin.Unit): JavaInterface
 
-public/*package*/ interface JavaInterface {
+public interface JavaInterface {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

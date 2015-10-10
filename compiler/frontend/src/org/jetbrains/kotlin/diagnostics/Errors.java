@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.diagnostics;
 import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
@@ -71,6 +72,15 @@ public interface Errors {
     DiagnosticFactory3<JetSimpleNameExpression, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_REFERENCE =
             DiagnosticFactory3.create(ERROR);
     DiagnosticFactory3<PsiElement, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_MEMBER = DiagnosticFactory3.create(ERROR, CALL_ELEMENT);
+
+    // Exposed visibility group
+    DiagnosticFactory2<JetProperty, EffectiveVisibility, EffectiveVisibility> EXPOSED_PROPERTY_TYPE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, EffectiveVisibility, EffectiveVisibility> EXPOSED_FUNCTION_RETURN_TYPE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<JetParameter, EffectiveVisibility, EffectiveVisibility> EXPOSED_PARAMETER_TYPE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<JetTypeReference, EffectiveVisibility, EffectiveVisibility> EXPOSED_RECEIVER_TYPE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<JetTypeParameter, EffectiveVisibility, EffectiveVisibility> EXPOSED_TYPE_PARAMETER_BOUND = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<JetDelegationSpecifier, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_CLASS = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<JetDelegationSpecifier, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_INTERFACE = DiagnosticFactory2.create(WARNING);
 
     DiagnosticFactory1<JetElement, Collection<ClassDescriptor>> PLATFORM_CLASS_MAPPED_TO_KOTLIN = DiagnosticFactory1.create(WARNING);
 

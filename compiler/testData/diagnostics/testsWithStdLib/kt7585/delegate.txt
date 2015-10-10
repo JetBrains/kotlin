@@ -1,13 +1,13 @@
 package
 
-public/*package*/ interface Base {
+public interface Base {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public/*package*/ final class Derived</*0*/ T : kotlin.Any!> : Base, Other {
-    public/*package*/ constructor Derived</*0*/ T : kotlin.Any!>()
+public final class Derived</*0*/ T : kotlin.Any!> : Base, Other {
+    public constructor Derived</*0*/ T : kotlin.Any!>()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
@@ -21,7 +21,7 @@ public final class DerivedWrapper : Wrapper<Derived<*>> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public/*package*/ final class Exotic : Base, Other {
+public final class Exotic : Base, Other {
     public/*package*/ constructor Exotic(/*0*/ x: kotlin.Int)
     public/*package*/ final var x: kotlin.Int
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -57,7 +57,7 @@ public object MyBase {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public/*package*/ interface Other {
+public interface Other {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

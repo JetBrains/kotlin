@@ -112,6 +112,14 @@ public class DefaultErrorMessages {
         MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
         MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
 
+        MAP.put(EXPOSED_PROPERTY_TYPE, "Deprecated: property effective visibility ''{0}'' should not be better than its type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_FUNCTION_RETURN_TYPE, "Deprecated: function effective visibility ''{0}'' should not be better that its return type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_PARAMETER_TYPE, "Deprecated: function effective visibility ''{0}'' should not be better than its parameter type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_RECEIVER_TYPE, "Deprecated: member effective visibility ''{0}'' should not be better that its receiver type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_TYPE_PARAMETER_BOUND, "Deprecated: generic effective visibility ''{0}'' should not be better than its type parameter bound effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_SUPER_CLASS, "Deprecated: subclass effective visibility ''{0}'' should not be better that its superclass effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_SUPER_INTERFACE, "Deprecated: sub-interface effective visibility ''{0}'' should not be better that its super-interface effective visibility ''{1}''", TO_STRING, TO_STRING);
+
         MAP.put(REDECLARATION, "Redeclaration: {0}", STRING);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
         MAP.put(ACCESSOR_PARAMETER_NAME_SHADOWING, "Accessor parameter name 'field' is shadowed by backing field variable");

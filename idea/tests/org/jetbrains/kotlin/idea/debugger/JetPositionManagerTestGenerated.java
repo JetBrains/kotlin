@@ -91,6 +91,12 @@ public class JetPositionManagerTestGenerated extends AbstractJetPositionManagerT
             doTest(fileName);
         }
 
+        @TestMetadata("JvmNameAnnotation.kt")
+        public void testJvmNameAnnotation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/positionManager/JvmNameAnnotation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/positionManager/localFunction.kt");
