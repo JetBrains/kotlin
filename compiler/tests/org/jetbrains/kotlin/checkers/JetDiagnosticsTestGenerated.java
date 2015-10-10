@@ -12899,6 +12899,48 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/VisibilityInheritModifier.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/scopes/inheritance")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Inheritance extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInInheritance() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Statics extends AbstractJetDiagnosticsTest {
+                    public void testAllFilesPresentInStatics() throws Exception {
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance/statics"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+
+                    @TestMetadata("hidePrivateByPublic.kt")
+                    public void testHidePrivateByPublic() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/hidePrivateByPublic.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("jjkj.kt")
+                    public void testJjkj() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/jjkj.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("kjk.kt")
+                    public void testKjk() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/kjk.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("oneInterfaceManyTimes.kt")
+                    public void testOneInterfaceManyTimes() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/oneInterfaceManyTimes.kt");
+                        doTest(fileName);
+                    }
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/sealed")

@@ -16,8 +16,13 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
@@ -25,8 +30,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyJavaStaticClassScope(
@@ -66,6 +72,9 @@ public class LazyJavaStaticClassScope(
         val nestedClassesScope = getContainingDeclaration().getUnsubstitutedInnerClassesScope()
         result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, nestedClassesScope))
 
+        val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, getContainingDeclaration())
+        result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter))
+
         if (jClass.isEnum()) {
             when (name) {
                 DescriptorUtils.ENUM_VALUE_OF -> result.add(createEnumValueOfMethod(getContainingDeclaration()))
@@ -74,5 +83,35 @@ public class LazyJavaStaticClassScope(
         }
     }
 
+    override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
+        val propertiesFromSupertypes = getStaticPropertiesFromJavaSupertypes(name, getContainingDeclaration())
+        result.addAll(DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter))
+    }
+
     override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyJavaClassDescriptor
+
+    private fun getStaticFunctionsFromJavaSuperClasses(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
+        val superClassDescriptor = descriptor.getSuperClassNotAny() ?: return emptySet()
+
+        val staticScope = superClassDescriptor.staticScope
+
+        if (staticScope !is LazyJavaStaticClassScope) return getStaticFunctionsFromJavaSuperClasses(name, superClassDescriptor)
+
+        return staticScope.getFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it as SimpleFunctionDescriptor }.toSet()
+    }
+
+    private fun getStaticPropertiesFromJavaSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
+
+        fun getStaticProperties(supertype: JetType): Iterable<PropertyDescriptor> {
+            val superTypeDescriptor = supertype.constructor.declarationDescriptor as? ClassDescriptor ?: return emptyList()
+
+            val staticScope = superTypeDescriptor.staticScope
+
+            if (staticScope !is LazyJavaStaticClassScope) return getStaticPropertiesFromJavaSupertypes(name, superTypeDescriptor)
+
+            return staticScope.getProperties(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it as PropertyDescriptor }
+        }
+
+        return descriptor.typeConstructor.supertypes.flatMap(::getStaticProperties).toSet()
+    }
 }

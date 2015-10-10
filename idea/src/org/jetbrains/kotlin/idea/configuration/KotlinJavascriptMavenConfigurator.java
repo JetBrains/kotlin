@@ -30,7 +30,7 @@ public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
     private static final String JS_GOAL = "js";
     private static final String JS_TEST_GOAL = "test-js";
     private static final String JS_EXECUTION_ID = "js";
-    private static final String PRESENTABLE_TEXT = "JavaScript Maven";
+    private static final String PRESENTABLE_TEXT = "JavaScript Maven - experimental";
 
     public KotlinJavascriptMavenConfigurator() {
         super(STD_LIB_ID, NAME, PRESENTABLE_TEXT);

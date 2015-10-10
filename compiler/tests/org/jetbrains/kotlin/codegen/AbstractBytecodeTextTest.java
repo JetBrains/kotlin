@@ -71,6 +71,7 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
 
     public void doTestMultiFile(@NotNull String folderName) throws Exception {
         final List<String> files = new ArrayList<String>(2);
+
         FileUtil.processFilesRecursively(new File(folderName), new Processor<File>() {
             @Override
             public boolean process(File file) {
@@ -81,11 +82,11 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
             }
         });
 
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, new File(folderName));
         doTestMultiFile(files);
     }
 
-    public void doTestMultiFile(@NotNull List<String> filenames) throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
+    private void doTestMultiFile(@NotNull List<String> filenames) throws Exception {
         Collections.sort(filenames);
         String[] sortedFilenames = ArrayUtil.toStringArray(filenames);
         loadFiles(sortedFilenames);

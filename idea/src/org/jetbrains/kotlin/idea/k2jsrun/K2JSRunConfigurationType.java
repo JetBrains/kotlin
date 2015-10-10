@@ -26,7 +26,7 @@ public final class K2JSRunConfigurationType extends ConfigurationTypeBase {
     }
 
     public K2JSRunConfigurationType() {
-        super("K2JSConfigurationType", "Kotlin (JavaScript)", "Kotlin to JavaScript configuration", JetIcons.LAUNCH);
+        super("K2JSConfigurationType", "Kotlin (JavaScript - experimental)", "Kotlin to JavaScript configuration", JetIcons.LAUNCH);
         addFactory(new K2JSConfigurationFactory());
     }
 

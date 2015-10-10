@@ -20,15 +20,19 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.util.SmartList;
 import kotlin.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.tree.ClassNode;
@@ -47,12 +51,15 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
+import static org.jetbrains.kotlin.test.JetTestUtils.compilerConfigurationForTests;
+import static org.jetbrains.kotlin.test.JetTestUtils.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends UsefulTestCase {
 
@@ -64,11 +71,19 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected GeneratedClassLoader initializedClassLoader;
     protected ConfigurationKind configurationKind;
 
-    protected void createEnvironmentWithMockJdkAndIdeaAnnotations(@NotNull ConfigurationKind configurationKind) {
+    final protected void createEnvironmentWithMockJdkAndIdeaAnnotations(@NotNull ConfigurationKind configurationKind, File... javaSourceRoot) {
         if (myEnvironment != null) {
             throw new IllegalStateException("must not set up myEnvironment twice");
         }
-        myEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(), configurationKind);
+
+        CompilerConfiguration configuration =
+                compilerConfigurationForTests(configurationKind, TestJdkKind.MOCK_JDK,
+                                              Collections.singletonList(getAnnotationsJar()), new SmartList<File>(javaSourceRoot));
+
+        myEnvironment = KotlinCoreEnvironment.createForTests(
+                getTestRootDisposable(),
+                configuration,
+                EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     @Override
