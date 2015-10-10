@@ -54,7 +54,7 @@ public class LazyScriptDescriptor(
         jetScript.toSourceElement()
 ) {
     init {
-        resolveSession.getTrace().record(BindingContext.SCRIPT, jetScript, this)
+        resolveSession.trace.record(BindingContext.SCRIPT, jetScript, this)
     }
 
     private val implicitReceiver = ReceiverParameterDescriptorImpl(this, ScriptReceiver(this))
@@ -67,7 +67,7 @@ public class LazyScriptDescriptor(
 
     override fun getScriptResultProperty(): PropertyDescriptor = getClassDescriptor().getUnsubstitutedMemberScope().getScriptResultProperty()
 
-    private val scriptCodeDescriptor = resolveSession.getStorageManager().createLazyValue {
+    private val scriptCodeDescriptor = resolveSession.storageManager.createLazyValue {
         val result = ScriptCodeDescriptor(this)
 
         val file = jetScript.getContainingJetFile()
@@ -81,8 +81,8 @@ public class LazyScriptDescriptor(
                             false, null, SourceElement.NO_SOURCE
                     )
                 },
-                DeferredType.create(resolveSession.getStorageManager(), resolveSession.getTrace()) {
-                    scriptBodyResolver.resolveScriptReturnType(jetScript, this, resolveSession.getTrace())
+                DeferredType.create(resolveSession.storageManager, resolveSession.trace) {
+                    scriptBodyResolver.resolveScriptReturnType(jetScript, this, resolveSession.trace)
                 }
         )
         result

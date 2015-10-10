@@ -38,7 +38,7 @@ public class LazyScriptClassMemberScope protected constructor(
         trace: BindingTrace)
 : LazyClassMemberScope(resolveSession, declarationProvider, thisClass, trace) {
 
-    private val scriptResultProperty: NotNullLazyValue<PropertyDescriptor> = resolveSession.getStorageManager().createLazyValue {
+    private val scriptResultProperty: NotNullLazyValue<PropertyDescriptor> = resolveSession.storageManager.createLazyValue {
         val scriptInfo = declarationProvider.getOwnerInfo() as JetScriptInfo
         createScriptResultProperty(resolveSession.getScriptDescriptor(scriptInfo.script))
     }
