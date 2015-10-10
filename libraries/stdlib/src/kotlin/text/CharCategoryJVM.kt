@@ -1,7 +1,5 @@
 package kotlin
 
-import kotlin.properties.Delegates
-
 /**
  * Represents the character general category in the Unicode specification.
  */
@@ -158,7 +156,7 @@ public enum class CharCategory(public val value: Int, public val code: String) {
 
 
     public companion object {
-        private val categoryMap by Delegates.lazy { CharCategory.values().toMap { it.value } }
+        private val categoryMap by lazy { CharCategory.values().toMap { it.value } }
 
         public fun valueOf(category: Int): CharCategory = categoryMap[category] ?: throw IllegalArgumentException("Category #$category is not defined.")
     }

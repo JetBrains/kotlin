@@ -48,7 +48,7 @@ public class AddNameToArgumentFix(argument: JetValueArgument) : JetIntentionActi
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         val possibleNames = calculatePossibleArgumentNames()
-        assert(possibleNames.isNotEmpty(), "isAvailable() should be checked before invoke()")
+        assert(possibleNames.isNotEmpty()) { "isAvailable() should be checked before invoke()" }
         if (possibleNames.size() == 1 || editor == null || !editor.component.isShowing) {
             addName(project, element, possibleNames.first())
         }

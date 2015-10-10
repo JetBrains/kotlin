@@ -328,7 +328,7 @@ public class TaskPrioritizer(
         // For 'a.foo()' where foo has function type,
         // a is explicitReceiver, foo is variableReceiver.
         val variableReceiver = c.context.call.getDispatchReceiver()
-        assert(variableReceiver.exists(), "'Invoke' call hasn't got variable receiver")
+        assert(variableReceiver.exists()) { "'Invoke' call hasn't got variable receiver" }
 
         // For invocation a.foo() explicit receiver 'a'
         // can be a receiver for 'foo' variable

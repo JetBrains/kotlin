@@ -38,7 +38,8 @@ import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
+import kotlin.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -719,7 +720,7 @@ public class JetTestUtils {
 
     @NotNull
     public static String getLastCommentInFile(@NotNull JetFile file) {
-        return KotlinPackage.first(getLastCommentsInFile(file, CommentType.ALL, true));
+        return CollectionsKt.first(getLastCommentsInFile(file, CommentType.ALL, true));
     }
 
     @NotNull
@@ -821,7 +822,7 @@ public class JetTestUtils {
         File rootFile = new File(rootPath);
 
         Set<String> filePaths = collectPathsMetadata(testCaseClass);
-        Set<String> exclude = KotlinPackage.setOf(excludeDirs);
+        Set<String> exclude = SetsKt.setOf(excludeDirs);
 
         File[] files = testDataDir.listFiles();
         if (files != null) {

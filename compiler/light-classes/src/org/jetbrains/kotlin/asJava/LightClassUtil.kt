@@ -248,7 +248,7 @@ public object LightClassUtil {
 
         if (declaration is JetPropertyAccessor) {
             val propertyParent = declaration.parent
-            assert(propertyParent is JetProperty, "JetProperty is expected to be parent of accessor")
+            assert(propertyParent is JetProperty) { "JetProperty is expected to be parent of accessor" }
 
             declaration = propertyParent as JetProperty
         }

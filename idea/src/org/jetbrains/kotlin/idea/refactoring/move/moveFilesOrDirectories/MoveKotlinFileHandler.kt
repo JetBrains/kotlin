@@ -128,7 +128,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         val newDirectory = file.parent ?: return
         val packageNameInfo = file.getPackageNameInfo(newDirectory, true) ?: return
         val newPackageName = packageNameInfo.newPackageName
-        assert(newPackageName.isSafe, newPackageName)
+        assert(newPackageName.isSafe) { newPackageName }
         file.packageDirective?.fqName = newPackageName.toSafe()
     }
 

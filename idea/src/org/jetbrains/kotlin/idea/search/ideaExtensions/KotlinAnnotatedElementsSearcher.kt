@@ -61,7 +61,7 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
         private val LOG = Logger.getInstance("#com.intellij.psi.impl.search.AnnotatedMembersSearcher")
 
         public fun processAnnotatedMembers(annClass: PsiClass, useScope: SearchScope, consumer: (JetDeclaration) -> Boolean): Boolean {
-            assert(annClass.isAnnotationType(), "Annotation type should be passed to annotated members search")
+            assert(annClass.isAnnotationType()) { "Annotation type should be passed to annotated members search" }
 
             val annotationFQN = annClass.getQualifiedName()
             assert(annotationFQN != null)

@@ -308,7 +308,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     private fun loadTestDirectivesPairs(fileContent: String, directivePrefix: String, expectedPrefix: String): List<Pair<String, String>> {
         val directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, directivePrefix)
         val expected = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, expectedPrefix)
-        assert(directives.size() == expected.size(), "Sizes of test directives are different")
+        assert(directives.size() == expected.size()) { "Sizes of test directives are different" }
         return directives.zip(expected)
     }
 
@@ -328,7 +328,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
             val markupMap = hashMapOf<com.sun.jdi.Value, ValueMarkup>()
             for (labelAsText in labelsAsText) {
-                val labelParts = labelAsText.splitBy("=")
+                val labelParts = labelAsText.split("=")
                 assert(labelParts.size() == 2) { "Wrong format for DEBUG_LABEL directive: // DEBUG_LABEL: {localVariableName} = {labelText}"}
                 val localVariableName = labelParts[0].trim()
                 val labelName = labelParts[1].trim()

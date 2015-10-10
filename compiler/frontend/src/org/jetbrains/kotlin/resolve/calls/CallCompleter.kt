@@ -312,7 +312,7 @@ public class CallCompleter(
         }
 
         var shouldBeMadeNullable: Boolean = false
-        expressions.reverse().forEach { expression ->
+        expressions.asReversed().forEach { expression ->
             if (!(expression is JetParenthesizedExpression || expression is JetLabeledExpression || expression is JetAnnotatedExpression)) {
                 shouldBeMadeNullable = hasNecessarySafeCall(expression, trace)
             }

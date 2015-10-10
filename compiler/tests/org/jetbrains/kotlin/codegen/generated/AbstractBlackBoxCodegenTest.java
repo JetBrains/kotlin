@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import kotlin.Charsets;
-import kotlin.io.IoPackage;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -68,7 +68,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
     public void doTestWithStdlib(@NotNull String filename) {
         configurationKind = InTextDirectivesUtils.isDirectiveDefined(
-                IoPackage.readText(new File(filename), Charsets.UTF_8), "NO_KOTLIN_REFLECT"
+                FilesKt.readText(new File(filename), Charsets.UTF_8), "NO_KOTLIN_REFLECT"
         ) ? ConfigurationKind.NO_KOTLIN_REFLECT : ConfigurationKind.ALL;
 
         myEnvironment = JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
@@ -108,7 +108,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         }
 
         return InTextDirectivesUtils.isDirectiveDefined(
-                IoPackage.readText(new File(sourcePath), Charsets.UTF_8), "FULL_JDK"
+                FilesKt.readText(new File(sourcePath), Charsets.UTF_8), "FULL_JDK"
         ) ? TestJdkKind.FULL_JDK : TestJdkKind.MOCK_JDK;
     }
 

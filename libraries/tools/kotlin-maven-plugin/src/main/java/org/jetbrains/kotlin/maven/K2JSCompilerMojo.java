@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.maven;
 
 import com.intellij.util.ArrayUtil;
+import kotlin.StringsKt;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.utils.LibraryUtils;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 import org.jetbrains.kotlin.js.JavaScript;
-import kotlin.KotlinPackage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -87,7 +87,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         }
         if (metaInfo) {
             String output = com.google.common.base.Objects.firstNonNull(outputFile, ""); // fqname here because of J8 compatibility issues
-            String metaFile = KotlinPackage.substringBeforeLast(output, JavaScript.DOT_EXTENSION, output) + KotlinJavascriptMetadataUtils.META_JS_SUFFIX;
+            String metaFile = StringsKt.substringBeforeLast(output, JavaScript.DOT_EXTENSION, output) + KotlinJavascriptMetadataUtils.META_JS_SUFFIX;
             collector.add(new File(metaFile).getParent());
         }
     }

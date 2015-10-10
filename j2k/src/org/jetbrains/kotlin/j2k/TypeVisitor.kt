@@ -58,7 +58,7 @@ class TypeVisitor(
     }
 
     override fun visitClassType(classType: PsiClassType): Type {
-        val mutability = if (classType identityEquals topLevelType) topLevelTypeMutability else Mutability.Default
+        val mutability = if (classType === topLevelType) topLevelTypeMutability else Mutability.Default
         val refElement = constructReferenceElement(classType, mutability)
         return ClassType(refElement, Nullability.Default, converter.settings)
     }

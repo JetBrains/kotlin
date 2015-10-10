@@ -32,7 +32,8 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.indexing.ScalarIndexExtension;
-import kotlin.KotlinPackage;
+import kotlin.ArraysKt;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -278,11 +279,11 @@ public class KotlinRuntimeLibraryUtil {
 
         Module[] modules = ModuleManager.getInstance(project).getModules();
 
-        List<Module> modulesToCheck = KotlinPackage.filter(modules, checkModule);
+        List<Module> modulesToCheck = ArraysKt.filter(modules, checkModule);
         if (modulesToCheck.isEmpty()) return Collections.emptyList();
 
         Collection<BinaryVersion> versions = collectAllKeys(id, modulesToCheck);
-        Set<BinaryVersion> badVersions = Sets.newHashSet(KotlinPackage.filter(versions, checkVersion));
+        Set<BinaryVersion> badVersions = Sets.newHashSet(CollectionsKt.filter(versions, checkVersion));
         Set<VirtualFile> badRoots = Sets.newHashSet();
         ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(project);
 

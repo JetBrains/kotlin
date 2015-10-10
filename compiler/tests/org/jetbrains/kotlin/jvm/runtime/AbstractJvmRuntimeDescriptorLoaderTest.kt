@@ -141,7 +141,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         val packageScopes = arrayListOf<JetScope>()
         val classes = arrayListOf<ClassDescriptor>()
         for (classFile in allClassFiles) {
-            val className = tmpdir.relativePath(classFile).substringBeforeLast(".class").replace('/', '.').replace('\\', '.')
+            val className = classFile.relativeTo(tmpdir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.')
 
             val klass = classLoader.loadClass(className).sure { "Couldn't load class $className" }
             val header = ReflectKotlinClass.create(klass)?.getClassHeader()

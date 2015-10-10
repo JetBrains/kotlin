@@ -26,7 +26,7 @@ import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.KotlinPackage;
+import kotlin.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -252,7 +252,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
                                                           JetStubElementTypes.MODIFIER_LIST,
                                                           JetStubElementTypes.MODIFIER_LIST.getArrayFactory()
                                                   );
-        return KotlinPackage.flatMap(
+        return ArraysKt.flatMap(
                 danglingModifierLists,
                 new Function1<JetModifierList, Iterable<JetAnnotationEntry>>() {
                     @Override

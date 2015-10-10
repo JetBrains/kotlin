@@ -33,7 +33,7 @@ data class DataForConversion private constructor(
         fun prepare(copiedCode: CopiedJavaCode, project: Project): DataForConversion  {
             val startOffsets = copiedCode.startOffsets.clone()
             val endOffsets = copiedCode.endOffsets.clone()
-            assert(startOffsets.size() == endOffsets.size(), "Must have the same size")
+            assert(startOffsets.size() == endOffsets.size()) { "Must have the same size" }
 
             var fileText = copiedCode.fileText
             var file = PsiFileFactory.getInstance(project).createFileFromText(JavaLanguage.INSTANCE, fileText) as PsiJavaFile
@@ -55,7 +55,7 @@ data class DataForConversion private constructor(
         }
 
         private fun clipTextIfNeeded(file: PsiJavaFile, fileText: String, startOffsets: IntArray, endOffsets: IntArray): String? {
-            val ranges = startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }.sortBy { it.start }
+            val ranges = startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }.sortedBy { it.start }
 
             fun canDropRange(range: TextRange) = ranges.all { range !in it }
 
@@ -109,7 +109,7 @@ data class DataForConversion private constructor(
             }.toString()
 
             fun IntArray.update() {
-                for (range in rangesToDrop.reverse()) {
+                for (range in rangesToDrop.asReversed()) {
                     for (i in indices) {
                         val offset = this[i]
                         if (offset >= range.end) {

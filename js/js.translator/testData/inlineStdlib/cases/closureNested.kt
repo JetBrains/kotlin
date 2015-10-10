@@ -8,7 +8,7 @@ internal fun test(a: Int, b: Int): Int {
     with (a + b) {
         val t = this
 
-        t.times {
+        repeat(t) {
             res += t - b
         }
     }

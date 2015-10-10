@@ -34,7 +34,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import junit.framework.ComparisonFailure;
-import kotlin.KotlinPackage;
+import kotlin.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
@@ -142,7 +142,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
                 List<String> testFiles = new ArrayList<String>();
                 testFiles.add(beforeFileName);
-                KotlinPackage.mapTo(
+                ArraysKt.mapTo(
                         extraFiles,
                         testFiles,
                         new Function1<File, String>() {

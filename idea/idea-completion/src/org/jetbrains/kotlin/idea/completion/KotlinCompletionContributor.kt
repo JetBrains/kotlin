@@ -193,7 +193,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
             if (tokenType in declarationKeywords) {
                 val balance = ltCount - gtCount
                 if (balance < 0) return null
-                builder.append(token.getText()!!.reverse())
+                builder.append(token.getText()!!.reversed())
                 builder.reverse()
 
                 var tail = "X" + ">".repeat(balance) + ".f"
@@ -212,7 +212,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
             if (tokenType !in declarationTokens) return null
             if (tokenType == JetTokens.LT) ltCount++
             if (tokenType == JetTokens.GT) gtCount++
-            builder.append(token.getText()!!.reverse())
+            builder.append(token.getText()!!.reversed())
             token = PsiTreeUtil.prevLeaf(token) ?: return null
         }
     }

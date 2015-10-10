@@ -38,7 +38,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.containers.MultiMap;
-import kotlin.KotlinPackage;
+import kotlin.*;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -109,7 +109,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
     @Nullable
     private static OriginalJavaMethodDescriptorWrapper getOriginalJavaMethodDescriptorWrapper(@NotNull UsageInfo[] usages) {
-        return KotlinPackage.firstOrNull(KotlinPackage.filterIsInstance(usages, OriginalJavaMethodDescriptorWrapper.class));
+        return CollectionsKt.firstOrNull(ArraysKt.filterIsInstance(usages, OriginalJavaMethodDescriptorWrapper.class));
     }
 
     // It's here to prevent O(usage_count^2) performance
@@ -190,7 +190,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         }
 
         JetElement body = ChangeSignaturePackage.getDeclarationBody(element);
-        final Set<String> newParameterNames = KotlinPackage.mapTo(
+        final Set<String> newParameterNames = CollectionsKt.mapTo(
                 changeInfo.getNonReceiverParameters(),
                 new HashSet<String>(),
                 new Function1<JetParameterInfo, String>() {
@@ -588,7 +588,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         // Delete OverriderUsageInfo and CallerUsageInfo for Kotlin declarations since they can't be processed correctly
         // TODO (OverriderUsageInfo only): Drop when OverriderUsageInfo.getElement() gets deleted
         UsageInfo[] usageInfos = refUsages.get();
-        List<UsageInfo> adjustedUsages = KotlinPackage.filterNot(
+        List<UsageInfo> adjustedUsages = ArraysKt.filterNot(
                 usageInfos,
                 new Function1<UsageInfo, Boolean>() {
                     @Override
@@ -694,7 +694,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             DeclarationDescriptor callerDescriptor
     ) {
         List<JetParameter> valueParameters = PsiUtilPackage.getValueParameters(caller);
-        Map<String, JetParameter> existingParameters = KotlinPackage.toMap(
+        Map<String, JetParameter> existingParameters = CollectionsKt.toMap(
                 valueParameters,
                 new Function1<JetParameter, String>() {
                     @Override
@@ -796,7 +796,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             JetParameterInfo newReceiverInfo
     ) {
         if (newReceiverInfo != null && (callable instanceof JetNamedFunction) && ((JetNamedFunction) callable).getBodyExpression() != null) {
-            Map<JetReferenceExpression, BindingContext> noReceiverRefToContext = KotlinPackage.filter(
+            Map<JetReferenceExpression, BindingContext> noReceiverRefToContext = MapsKt.filter(
                     JetFileReferencesResolver.INSTANCE$.resolve((JetNamedFunction) callable, true, true),
                     new Function1<Map.Entry<? extends JetReferenceExpression, ? extends BindingContext>, Boolean>() {
                         @Override
@@ -848,7 +848,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     String prefix = declaration != null ? RefactoringUIUtil.getDescription(declaration, true) : originalRef.getText();
                     result.putValue(
                             originalRef,
-                            KotlinPackage.capitalize(prefix + " will no longer be accessible after signature change")
+                            StringsKt.capitalize(prefix + " will no longer be accessible after signature change")
                     );
                 }
             }

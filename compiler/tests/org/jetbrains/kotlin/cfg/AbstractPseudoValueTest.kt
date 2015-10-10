@@ -69,7 +69,7 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
                 .map { (it as? InstructionWithValue)?.outputValue }
                 .filterNotNull()
                 .filter { it.element == null }
-                .toSortedListBy { it.debugName }
+                .sortedBy { it.debugName }
         val allValues = elementToValues.values() + unboundValues
         if (allValues.isEmpty()) return
 

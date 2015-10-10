@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.*;
@@ -138,7 +138,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
     @NotNull
     private static <Psi, Java> List<Java> convert(@NotNull Iterable<Psi> elements, @NotNull final Factory<Psi, Java> factory) {
         if (!elements.iterator().hasNext()) return Collections.emptyList();
-        return KotlinPackage.map(elements, new Function1<Psi, Java>() {
+        return CollectionsKt.map(elements, new Function1<Psi, Java>() {
             @Override
             public Java invoke(Psi psi) {
                 return factory.create(psi);

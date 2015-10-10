@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cli.common.messages;
 
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.LineSeparator;
-import kotlin.KotlinPackage;
+import kotlin.StringsKt;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.internal.CLibrary;
 import org.jetbrains.annotations.NotNull;
@@ -100,7 +100,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
             result.append(LINE_SEPARATOR);
             result.append(lineContent);
             result.append(LINE_SEPARATOR);
-            result.append(KotlinPackage.repeat(" ", column - 1));
+            result.append(StringsKt.repeat(" ", column - 1));
             result.append("^");
         }
 
@@ -120,7 +120,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
             return message;
         }
 
-        return KotlinPackage.decapitalize(message);
+        return StringsKt.decapitalize(message);
     }
 
     @NotNull

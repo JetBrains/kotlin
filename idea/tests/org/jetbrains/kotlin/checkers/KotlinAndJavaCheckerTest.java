@@ -25,7 +25,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.siyeh.ig.bugs.StaticCallOnSubclassInspection;
 import com.siyeh.ig.bugs.StaticFieldReferenceOnSubclassInspection;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
@@ -78,7 +78,7 @@ public class KotlinAndJavaCheckerTest extends KotlinDaemonAnalyzerTestCase {
 
         List<String> toolsStrings = InTextDirectivesUtils.findListWithPrefixes(configFileText, "TOOL:");
 
-        return ArrayUtil.toObjectArray(KotlinPackage.map(toolsStrings, new Function1<String, LocalInspectionTool>() {
+        return ArrayUtil.toObjectArray(CollectionsKt.map(toolsStrings, new Function1<String, LocalInspectionTool>() {
             @Override
             public LocalInspectionTool invoke(String toolString) {
                 return mapStringToTool(toolString);

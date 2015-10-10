@@ -234,7 +234,7 @@ private fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(
             }
         }
     }
-    return declarations.sortBy { it.getTextRange()!!.getStartOffset() }
+    return declarations.sortedBy { it.getTextRange()!!.getStartOffset() }
 }
 
 private fun ExtractionData.analyzeControlFlow(
@@ -314,12 +314,12 @@ private fun ExtractionData.analyzeControlFlow(
     }
 
     if (declarationsToReport.isNotEmpty()) {
-        val localVarStr = declarationsToReport.map { it.renderForMessage(bindingContext)!! }.distinct().sort()
+        val localVarStr = declarationsToReport.map { it.renderForMessage(bindingContext)!! }.distinct().sorted()
         return controlFlow to ErrorMessage.DECLARATIONS_ARE_USED_OUTSIDE.addAdditionalInfo(localVarStr)
     }
 
     val outParameters =
-            parameters.filter { it.mirrorVarName != null && modifiedVarDescriptors[it.originalDescriptor] != null }.sortBy { it.nameForRef }
+            parameters.filter { it.mirrorVarName != null && modifiedVarDescriptors[it.originalDescriptor] != null }.sortedBy { it.nameForRef }
     val outDeclarations =
             declarationsToCopy.filter { modifiedVarDescriptors[bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]] != null }
     val modifiedValueCount = outParameters.size() + outDeclarations.size()
@@ -363,7 +363,7 @@ private fun ExtractionData.analyzeControlFlow(
                 if (!options.enableListBoxing) {
                     val outValuesStr =
                             (outParameters.map { it.originalDescriptor.renderForMessage() }
-                             + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sort()
+                             + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sorted()
                     return controlFlow to ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr)
                 }
                 OutputValueBoxer::AsList
@@ -837,7 +837,7 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(
     )
 
     if (declarationsOutOfScope.isNotEmpty()) {
-        val declStr = declarationsOutOfScope.map { it.renderForMessage(bindingContext)!! }.sort()
+        val declStr = declarationsOutOfScope.map { it.renderForMessage(bindingContext)!! }.sorted()
         return ErrorMessage.DECLARATIONS_OUT_OF_SCOPE.addAdditionalInfo(declStr)
     }
 
@@ -909,7 +909,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     returnType.processTypeIfExtractable(paramsInfo.typeParameters, paramsInfo.nonDenotableTypes, options, targetScope)
 
     if (paramsInfo.nonDenotableTypes.isNotEmpty()) {
-        val typeStr = paramsInfo.nonDenotableTypes.map {it.renderForMessage()}.sort()
+        val typeStr = paramsInfo.nonDenotableTypes.map {it.renderForMessage()}.sorted()
         return AnalysisResult(
                 null,
                 Status.CRITICAL_ERROR,
@@ -939,9 +939,9 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     bindingContext,
                     suggestFunctionNames(returnType),
                     getDefaultVisibility(),
-                    adjustedParameters.sortBy { it.name },
+                    adjustedParameters.sortedBy { it.name },
                     receiverParameter,
-                    paramsInfo.typeParameters.sortBy { it.originalDeclaration.getName()!! },
+                    paramsInfo.typeParameters.sortedBy { it.originalDeclaration.getName()!! },
                     paramsInfo.replacementMap,
                     if (messages.isEmpty()) controlFlow else controlFlow.toDefault(),
                     returnType

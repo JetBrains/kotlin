@@ -241,7 +241,7 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
 ): List<NonCodeUsageInfo> {
     fun counterpart(e: PsiElement) = oldToNewElementsMapping[e] ?: e
 
-    val sortedUsages = usages.sortBy(
+    val sortedUsages = usages.sortedWith(
             object : Comparator<UsageInfo> {
                 override fun compare(o1: UsageInfo, o2: UsageInfo): Int {
                     val file1 = o1.getVirtualFile()

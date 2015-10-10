@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.intellij.psi.PsiElement;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
@@ -56,7 +56,7 @@ public class LazyTopDownAnalyzerForTopLevel {
             provider = codeAnalyzer.getPackageFragmentProvider();
         }
         else {
-            provider = new CompositePackageFragmentProvider(KotlinPackage.plus(
+            provider = new CompositePackageFragmentProvider(CollectionsKt.plus(
                     Arrays.asList(codeAnalyzer.getPackageFragmentProvider()),
                     additionalProviders));
         }

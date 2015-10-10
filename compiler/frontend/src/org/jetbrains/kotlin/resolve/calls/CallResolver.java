@@ -280,6 +280,15 @@ public class CallResolver {
     public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(@NotNull BasicCallResolutionContext context) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
+        Call.CallType callType = context.call.getCallType();
+        if (callType == Call.CallType.ARRAY_GET_METHOD || callType == Call.CallType.ARRAY_SET_METHOD) {
+            Name name = Name.identifier(callType == Call.CallType.ARRAY_GET_METHOD ? "get" : "set");
+            JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) context.call.getCallElement();
+            return computeTasksAndResolveCall(
+                    context, name, arrayAccessExpression,
+                    CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
+        }
+
         JetExpression calleeExpression = context.call.getCalleeExpression();
         if (calleeExpression instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
@@ -287,8 +296,15 @@ public class CallResolver {
                     context, expression.getReferencedNameAsName(), expression,
                     CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
         }
-        if (calleeExpression instanceof JetConstructorCalleeExpression) {
+        else if (calleeExpression instanceof JetConstructorCalleeExpression) {
             return resolveCallForConstructor(context, (JetConstructorCalleeExpression) calleeExpression);
+        }
+        else if (calleeExpression instanceof JetConstructorDelegationReferenceExpression) {
+            JetConstructorDelegationCall delegationCall = (JetConstructorDelegationCall) context.call.getCallElement();
+            DeclarationDescriptor container = context.scope.getOwnerDescriptor();
+            assert container instanceof ConstructorDescriptor : "Trying to resolve JetConstructorDelegationCall not in constructor. scope.ownerDescriptor = " + container;
+            return resolveConstructorDelegationCall(context, delegationCall, (JetConstructorDelegationReferenceExpression) calleeExpression,
+                                                    (ConstructorDescriptor) container);
         }
         else if (calleeExpression == null) {
             return checkArgumentTypesAndFail(context);
@@ -319,6 +335,8 @@ public class CallResolver {
     ) {
         assert !context.call.getExplicitReceiver().exists() :
                 "Constructor can't be invoked with explicit receiver: " + context.call.getCallElement().getText();
+
+        context.trace.record(BindingContext.LEXICAL_SCOPE, context.call.getCallElement(), context.scope);
 
         JetReferenceExpression functionReference = expression.getConstructorReferenceExpression();
         JetTypeReference typeReference = expression.getTypeReference();
@@ -384,6 +402,8 @@ public class CallResolver {
             @NotNull JetConstructorDelegationReferenceExpression calleeExpression,
             @NotNull ConstructorDescriptor calleeConstructor
     ) {
+        context.trace.record(BindingContext.LEXICAL_SCOPE, call, context.scope);
+
         ClassDescriptor currentClassDescriptor = calleeConstructor.getContainingDeclaration();
 
         boolean isThisCall = calleeExpression.isThis();
@@ -596,14 +616,15 @@ public class CallResolver {
             @NotNull ResolutionTask<D, F> task,
             @NotNull CallTransformer<D, F> callTransformer
     ) {
-        List<CallCandidateResolutionContext<D>> contexts = collectCallCandidateContext(task, callTransformer, EXIT_ON_FIRST_ERROR);
+        CandidateResolveMode mode = task.collectAllCandidates ? FULLY : EXIT_ON_FIRST_ERROR;
+        List<CallCandidateResolutionContext<D>> contexts = collectCallCandidateContext(task, callTransformer, mode);
         boolean isSuccess = ContainerUtil.exists(contexts, new Condition<CallCandidateResolutionContext<D>>() {
             @Override
             public boolean value(CallCandidateResolutionContext<D> context) {
                 return context.candidateCall.getStatus().possibleTransformToSuccess();
             }
         });
-        if (!isSuccess) {
+        if (!isSuccess && mode == EXIT_ON_FIRST_ERROR) {
             contexts = collectCallCandidateContext(task, callTransformer, FULLY);
         }
 

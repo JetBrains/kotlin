@@ -59,7 +59,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
     }
 
     private fun initialize() {
-        assert(moduleDescriptor == null, "Attempt to initialize twice")
+        assert(moduleDescriptor == null) { "Attempt to initialize twice" }
 
         val jetBuiltInsFiles = getJetBuiltInsFiles()
 

@@ -342,14 +342,6 @@ public inline fun String.takeWhile(predicate: (Char) -> Boolean): String {
 }
 
 /**
- * Returns a list with elements in reversed order.
- */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun String.reverse(): String {
-    return reversed()
-}
-
-/**
  * Returns a string with characters in reversed order.
  */
 public fun String.reversed(): String {
@@ -511,15 +503,6 @@ public inline fun <R, C : MutableCollection<in R>> String.mapTo(destination: C, 
  */
 public fun String.withIndex(): Iterable<IndexedValue<Char>> {
     return IndexingIterable { iterator() }
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun String.withIndices(): List<Pair<Int, Char>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, Char>>(), { index++ to it })
 }
 
 /**
@@ -769,13 +752,5 @@ public fun String.asSequence(): Sequence<Char> {
             return this@asSequence.iterator()
         }
     }
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun String.sequence(): Sequence<Char> {
-    return asSequence()
 }
 

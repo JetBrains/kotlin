@@ -237,13 +237,13 @@ public open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val p
 /*Source Mapping*/
 class SMAP(val fileMappings: List<FileMapping>) {
     init {
-        assert(fileMappings.isNotEmpty(), "File Mappings shouldn't be empty")
+        assert(fileMappings.isNotEmpty()) { "File Mappings shouldn't be empty" }
     }
 
     val default: FileMapping
         get() = fileMappings.first()
 
-    val intervals = fileMappings.flatMap { it.lineMappings }.sortBy(RangeMapping.Comparator)
+    val intervals = fileMappings.flatMap { it.lineMappings }.sortedWith(RangeMapping.Comparator)
 
     val sourceInfo: SourceInfo
     init {
@@ -275,7 +275,7 @@ class RawFileMapping(val name: String, val path: String) {
     }
 
     fun initRange(start: Int, end: Int) {
-        assert(lineMappings.isEmpty(), "initRange should only be called for empty mapping")
+        assert(lineMappings.isEmpty()) { "initRange should only be called for empty mapping" }
         for (index in start..end) {
             lineMappings.put(index, index)
         }

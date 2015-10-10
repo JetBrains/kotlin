@@ -15,7 +15,7 @@ fun box(): String {
 
     val props = klass.memberProperties
 
-    val names = props.map { it.name }.toSortedList()
+    val names = props.map { it.name }.sorted()
     assert(names == listOf("anyVar", "int", "string")) { "Fail names: $props" }
 
     val stringProp = props.firstOrNull { it.name == "string" } ?: return "Fail, string not found: $props"

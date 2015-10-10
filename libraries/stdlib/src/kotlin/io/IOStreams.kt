@@ -4,8 +4,6 @@ package kotlin.io
 
 import java.io.*
 import java.nio.charset.Charset
-import java.nio.charset.CharsetDecoder
-import java.nio.charset.CharsetEncoder
 import java.util.NoSuchElementException
 
 /** Returns an [Iterator] of bytes in this input stream. */

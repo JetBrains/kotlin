@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.smart.TypesWithContainsDetector
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
+import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
@@ -32,25 +32,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
-import org.jetbrains.kotlin.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.calls.callUtil.allArgumentsMapped
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
-import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
-import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -61,6 +51,7 @@ import java.util.*
 enum class Tail {
     COMMA,
     RPARENTH,
+    RBRACKET,
     ELSE,
     RBRACE
 }
@@ -132,15 +123,16 @@ class ExpectedInfo(
 val ExpectedInfo.fuzzyType: FuzzyType?
     get() = (this.filter as? ByExpectedTypeFilter)?.fuzzyType
 
-sealed class ArgumentPositionData(val function: FunctionDescriptor) : ExpectedInfo.AdditionalData {
+sealed class ArgumentPositionData(val function: FunctionDescriptor, val callType: Call.CallType) : ExpectedInfo.AdditionalData {
     class Positional(
             function: FunctionDescriptor,
+            callType: Call.CallType,
             val argumentIndex: Int,
             val isFunctionLiteralArgument: Boolean,
             val namedArgumentCandidates: Collection<ParameterDescriptor>
-    ) : ArgumentPositionData(function)
+    ) : ArgumentPositionData(function, callType)
 
-    class Named(function: FunctionDescriptor, val argumentName: Name) : ArgumentPositionData(function)
+    class Named(function: FunctionDescriptor, callType: Call.CallType, val argumentName: Name) : ArgumentPositionData(function, callType)
 }
 
 class ReturnValueAdditionalData(val callable: CallableDescriptor) : ExpectedInfo.AdditionalData
@@ -158,6 +150,7 @@ class ExpectedInfos(
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo> {
         val expectedInfos = calculateForArgument(expressionWithType)
                             ?: calculateForFunctionLiteralArgument(expressionWithType)
+                            ?: calculateForIndexingArgument(expressionWithType)
                             ?: calculateForEqAndAssignment(expressionWithType)
                             ?: calculateForIf(expressionWithType)
                             ?: calculateForElvis(expressionWithType)
@@ -187,6 +180,15 @@ class ExpectedInfos(
         val literalArgument = callExpression.getFunctionLiteralArguments().firstOrNull() ?: return null
         if (literalArgument.getArgumentExpression() != expressionWithType) return null
         return calculateForArgument(callExpression, literalArgument)
+    }
+
+    private fun calculateForIndexingArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val containerNode = expressionWithType.parent as? JetContainerNode ?: return null
+        val arrayAccessExpression = containerNode.parent as? JetArrayAccessExpression ?: return null
+        if (containerNode != arrayAccessExpression.indicesNode) return null
+        val call = arrayAccessExpression.getCall(bindingContext) ?: return null
+        val argument = call.valueArguments.firstOrNull { it.getArgumentExpression() == expressionWithType } ?: return null
+        return calculateForArgument(call, argument)
     }
 
     private fun calculateForArgument(callElement: JetCallElement, argument: ValueArgument): Collection<ExpectedInfo>? {
@@ -235,27 +237,18 @@ class ExpectedInfos(
             override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
             override fun getValueArgumentList() = null
         }
-        val resolutionScope = bindingContext[BindingContext.LEXICAL_SCOPE, call.calleeExpression] ?: return emptyList() //TODO: discuss it
-        val inDescriptor = resolutionScope.ownerDescriptor
 
-        val dataFlowInfo = bindingContext.getDataFlowInfo(call.calleeExpression)
-        val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
-        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, truncatedCall, callExpectedType, dataFlowInfo,
-                                                        ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                        CallChecker.DoNothing, false)
-        val callResolutionContext = context.replaceCollectAllCandidates(true)
-        val callResolver = resolutionFacade.frontendService<CallResolver>()
-        val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
+        val candidates = truncatedCall.resolveCandidates(bindingContext, resolutionFacade, callExpectedType)
 
         val expectedInfos = ArrayList<ExpectedInfo>()
 
-        for (candidate in results.allCandidates!!) {
-            expectedInfos.addExpectedInfoForCandidate(candidate, call, argument, argumentIndex, inDescriptor, checkPrevArgumentsMatched = true)
+        for (candidate in candidates) {
+            expectedInfos.addExpectedInfoForCandidate(candidate, call, argument, argumentIndex, checkPrevArgumentsMatched = true)
         }
 
         if (expectedInfos.isEmpty()) { // if no candidates have previous arguments matched, try with no type checking for them
-            for (candidate in results.allCandidates!!) {
-                expectedInfos.addExpectedInfoForCandidate(candidate, call, argument, argumentIndex, inDescriptor, checkPrevArgumentsMatched = false)
+            for (candidate in candidates) {
+                expectedInfos.addExpectedInfoForCandidate(candidate, call, argument, argumentIndex, checkPrevArgumentsMatched = false)
             }
         }
 
@@ -267,12 +260,8 @@ class ExpectedInfos(
             call: Call,
             argument: ValueArgument,
             argumentIndex: Int,
-            inDescriptor: DeclarationDescriptor,
             checkPrevArgumentsMatched: Boolean
     ) {
-        val status = candidate.getStatus()
-        if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) return
-
         // check that all arguments before the current has mappings to parameters
         if (!candidate.allArgumentsMapped()) return
 
@@ -281,9 +270,6 @@ class ExpectedInfos(
 
         var descriptor = candidate.getResultingDescriptor()
         if (descriptor.valueParameters.isEmpty()) return
-
-        val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), bindingContext)
-        if (!Visibilities.isVisible(thisReceiver, descriptor, inDescriptor)) return
 
         var argumentToParameter = call.mapArgumentsToParameters(descriptor)
         var parameter = argumentToParameter[argument]
@@ -298,18 +284,30 @@ class ExpectedInfos(
         val argumentName = argument.getArgumentName()?.asName
         val isFunctionLiteralArgument = argument is FunctionLiteralArgument
 
+        val callType = call.callType
+        val isArrayAccess = callType == Call.CallType.ARRAY_GET_METHOD || callType == Call.CallType.ARRAY_SET_METHOD
+        val rparenthTail = if (isArrayAccess) Tail.RBRACKET else Tail.RPARENTH
+
         val argumentPositionData = if (argumentName != null) {
-            ArgumentPositionData.Named(descriptor, argumentName)
+            ArgumentPositionData.Named(descriptor, callType, argumentName)
         }
         else {
-            val namedArgumentCandidates = if (!isFunctionLiteralArgument && descriptor.hasStableParameterNames()) {
+            val namedArgumentCandidates = if (!isFunctionLiteralArgument && !isArrayAccess && descriptor.hasStableParameterNames()) {
                 val usedParameters = argumentToParameter.filter { it.key != argument }.map { it.value }.toSet()
                 descriptor.valueParameters.filter { it !in usedParameters }
             }
             else {
                 emptyList()
             }
-            ArgumentPositionData.Positional(descriptor, argumentIndex, isFunctionLiteralArgument, namedArgumentCandidates)
+            ArgumentPositionData.Positional(descriptor, callType, argumentIndex, isFunctionLiteralArgument, namedArgumentCandidates)
+        }
+
+        var parameters = descriptor.valueParameters
+        if (callType == Call.CallType.ARRAY_SET_METHOD) { // last parameter in set is used for value assigned
+            if (parameter == parameters.last()) {
+                parameter = null
+            }
+            parameters = parameters.dropLast(1)
         }
 
         if (parameter == null) {
@@ -321,19 +319,17 @@ class ExpectedInfos(
 
         val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
 
-        val parameters = descriptor.valueParameters
-
         fun needCommaForParameter(parameter: ValueParameterDescriptor): Boolean {
             if (parameter.hasDefaultValue()) return false // parameter is optional
             if (parameter.getVarargElementType() != null) return false // vararg arguments list can be empty
             // last parameter of functional type can be placed outside parenthesis:
-            if (parameter == parameters.last() && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.getType())) return false
+            if (!isArrayAccess && parameter == parameters.last() && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.getType())) return false
             return true
         }
 
         val tail = if (argumentName == null) {
             if (parameter == parameters.last())
-                Tail.RPARENTH //TODO: support square brackets
+                rparenthTail
             else if (parameters.dropWhile { it != parameter }.drop(1).any(::needCommaForParameter))
                 Tail.COMMA
             else
@@ -349,7 +345,7 @@ class ExpectedInfos(
         if (varargElementType != null) {
             if (isFunctionLiteralArgument) return
 
-            val varargTail = if (argumentName == null && tail == Tail.RPARENTH)
+            val varargTail = if (argumentName == null && tail == rparenthTail)
                 null /* even if it's the last parameter, there can be more arguments for the same parameter */
             else
                 tail
@@ -381,9 +377,6 @@ class ExpectedInfos(
         }
     }
 
-    private fun <D : CallableDescriptor> ResolvedCall<D>.allArgumentsMapped()
-            = call.valueArguments.all { argument -> getArgumentMapping(argument) is ArgumentMatch }
-
     private fun <D : CallableDescriptor> ResolvedCall<D>.allArgumentsMatched()
             = call.valueArguments.none { argument -> getArgumentMapping(argument).isError() && !argument.hasError() /* ignore arguments that has error type */ }
 
@@ -394,7 +387,7 @@ class ExpectedInfos(
         val usedParameterNames = (argumentToParameter.values().map { it.getName() } + listOf(argumentName)).toSet()
         val notUsedParameters = descriptor.getValueParameters().filter { it.getName() !in usedParameterNames }
         return if (notUsedParameters.isEmpty())
-            Tail.RPARENTH
+            Tail.RPARENTH // named arguments no supported for []
         else if (notUsedParameters.all { it.hasDefaultValue() })
             null
         else

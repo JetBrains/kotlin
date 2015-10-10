@@ -42,7 +42,7 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.refactoring.util.RefactoringMessageDialog;
 import com.intellij.util.Function;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Pair;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -139,7 +139,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         final String typeArgumentsForCall = getTypeArgumentsStringForCall(initializer);
         final String parametersForFunctionLiteral = getParametersForFunctionLiteral(initializer);
 
-        final boolean canHighlight = KotlinPackage.all(
+        final boolean canHighlight = CollectionsKt.all(
                 referenceExpressions,
                 new Function1<JetExpression, Boolean>() {
                     @Override

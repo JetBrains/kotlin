@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -283,7 +283,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
         Type[] myParameterTypes = bridge.getArgumentTypes();
 
-        List<ParameterDescriptor> calleeParameters = KotlinPackage.plus(
+        List<ParameterDescriptor> calleeParameters = CollectionsKt.plus(
                 UtilsPackage.<ParameterDescriptor>singletonOrEmptyList(funDescriptor.getExtensionReceiverParameter()),
                 funDescriptor.getValueParameters()
         );

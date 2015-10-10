@@ -109,7 +109,7 @@ class CollectionJVMTest {
     }
 
     @test fun lastException() {
-        fails { linkedListOf<String>().last() }
+        assertFails { linkedListOf<String>().last() }
     }
 
     @test fun contains() {

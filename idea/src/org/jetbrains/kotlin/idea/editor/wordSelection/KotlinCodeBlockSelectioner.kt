@@ -64,7 +64,7 @@ public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
     private fun findBlockContentEnd(block: PsiElement): Int {
         val element = block.allChildren
                            .toList()
-                           .reverse()
+                           .asReversed()
                            .asSequence()
                            .dropWhile { it.getNode().getElementType() != JetTokens.RBRACE } // search for '}'
                            .drop(1) // skip it

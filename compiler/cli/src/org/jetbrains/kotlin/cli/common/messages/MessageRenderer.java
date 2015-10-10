@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.messages;
 
-import kotlin.io.IoPackage;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +49,7 @@ public interface MessageRenderer {
         @Override
         protected String getPath(@NotNull CompilerMessageLocation location) {
             String path = location.getPath();
-            return cwd == null || path == null ? path : IoPackage.relativePath(cwd, new File(path));
+            return cwd == null || path == null ? path : FilesKt.relativePath(cwd, new File(path));
         }
     };
 

@@ -53,7 +53,7 @@ public class AddGenericUpperBoundFix(
     }
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        assert(element.extendsBound == null, "Don't know what to do with existing bounds")
+        assert(element.extendsBound == null) { "Don't know what to do with existing bounds" }
 
         val typeReference = JetPsiFactory(project).createType(renderedUpperBound)
         val insertedTypeReference = element.setExtendsBound(typeReference)!!

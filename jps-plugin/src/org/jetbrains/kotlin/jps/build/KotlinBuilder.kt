@@ -158,7 +158,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val lookupTracker =
                 project.container.getChild(LOOKUP_TRACKER)?.let {
-                    assert("true".equals(System.getProperty("kotlin.jps.tests"), ignoreCase = true), "LOOKUP_TRACKER allowed only for jps tests")
+                    assert("true".equals(System.getProperty("kotlin.jps.tests"), ignoreCase = true)) { "LOOKUP_TRACKER allowed only for jps tests" }
                     it.data
                 } ?: LookupTracker.DO_NOTHING
 

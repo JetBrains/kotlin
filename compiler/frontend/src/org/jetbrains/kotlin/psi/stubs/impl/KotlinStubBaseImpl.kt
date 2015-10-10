@@ -40,7 +40,7 @@ public open class KotlinStubBaseImpl<T : JetElementImplStub<*>>(parent: StubElem
     }
 
     private fun renderPropertyValues(stubInterface: Class<out Any?>): List<String> {
-        return collectProperties(stubInterface).map { property -> renderProperty(property) }.filterNotNull().sort()
+        return collectProperties(stubInterface).map { property -> renderProperty(property) }.filterNotNull().sorted()
     }
 
     private fun collectProperties(stubInterface: Class<*>): Collection<Method> {

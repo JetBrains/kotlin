@@ -135,7 +135,7 @@ internal class DescriptorRendererImpl(
                 }
                 while (current is ClassDescriptor)
 
-                return renderFqName(qualifiedNameElements.reverse())
+                return renderFqName(qualifiedNameElements.asReversed())
             }
 
             NameShortness.FULLY_QUALIFIED -> return renderFqName(DescriptorUtils.getFqName(klass))
@@ -383,15 +383,14 @@ internal class DescriptorRendererImpl(
         } ?: emptyList()
         val defaultList = parameterDescriptorsWithDefaultValue.filter { !allValueArguments.containsKey(it) }.map {
             "${it.getName().asString()} = ..."
-        }.sort()
+        }
         val argumentList = allValueArguments.entrySet()
                 .map { entry ->
                     val name = entry.key.getName().asString()
                     val value = if (!parameterDescriptorsWithDefaultValue.contains(entry.key)) renderConstant(entry.value) else "..."
                     "$name = $value"
                 }
-                .sort()
-        return (defaultList + argumentList).sort()
+        return (defaultList + argumentList).sorted()
     }
 
     private fun renderConstant(value: ConstantValue<*>): String {

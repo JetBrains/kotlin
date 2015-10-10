@@ -1,6 +1,6 @@
 import kotlin.properties.*
 
-fun f(keyMissin<caret>)
+fun f(readonlypr<caret>)
 
-// EXIST: { lookupString: "keyMissingException", itemText: "keyMissingException: KeyMissingException", tailText: " (kotlin.properties)" }
+// EXIST: { lookupString: "readOnlyProperty", itemText: "readOnlyProperty: ReadOnlyProperty", tailText: "<R, T> (kotlin.properties)" }
 // NUMBER: 1

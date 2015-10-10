@@ -31,7 +31,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -480,7 +480,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                             PsiTreeUtil.getParentOfType(replace, JetFunctionLiteralArgument.class);
                     JetCallExpression newCallExpression = CorePackage
                             .moveInsideParenthesesAndReplaceWith(functionLiteralArgument, replacement, bindingContext);
-                    result = KotlinPackage.last(newCallExpression.getValueArguments()).getArgumentExpression();
+                    result = CollectionsKt.last(newCallExpression.getValueArguments()).getArgumentExpression();
                 }
                 else {
                     result = (JetExpression)replace.replace(replacement);
@@ -528,7 +528,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
     }
 
     private static List<JetExpression> findOccurrences(PsiElement occurrenceContainer, @NotNull JetExpression originalExpression) {
-        return KotlinPackage.map(
+        return CollectionsKt.map(
                 PatternMatchingPackage.toRange(originalExpression).match(occurrenceContainer, JetPsiUnifier.DEFAULT),
                 new Function1<JetPsiRange.Match, JetExpression>() {
                     @Override

@@ -61,12 +61,6 @@ public fun Char.isJavaIdentifierPart(): Boolean = Character.isJavaIdentifierPart
  */
 public fun Char.isJavaIdentifierStart(): Boolean = Character.isJavaIdentifierStart(this)
 
-@Deprecated("Please use Char.isJavaIdentifierStart() instead")
-public fun Char.isJavaLetter(): Boolean = Character.isJavaLetter(this)
-
-@Deprecated("Please use Char.isJavaIdentifierPart() instead")
-public fun Char.isJavaLetterOrDigit(): Boolean = Character.isJavaLetterOrDigit(this)
-
 /**
  * Determines whether a character is whitespace according to the Unicode standard.
  * Returns `true` if the character is whitespace.

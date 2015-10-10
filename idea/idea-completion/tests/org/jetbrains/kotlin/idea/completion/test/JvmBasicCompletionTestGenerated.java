@@ -1503,6 +1503,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("NotInBrackets.kt")
+            public void testNotInBrackets() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NotInBrackets.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NotInElse.kt")
             public void testNotInElse() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NotInElse.kt");

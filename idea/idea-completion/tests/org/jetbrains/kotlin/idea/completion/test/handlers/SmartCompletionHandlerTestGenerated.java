@@ -389,6 +389,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("GetWithBrackets.kt")
+    public void testGetWithBrackets() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/GetWithBrackets.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("IfCondition.kt")
     public void testIfCondition() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/IfCondition.kt");
@@ -563,6 +569,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("MultipleArgsIntoBrackets.kt")
+    public void testMultipleArgsIntoBrackets() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/MultipleArgsIntoBrackets.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("MultipleArgsItem.kt")
     public void testMultipleArgsItem() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/MultipleArgsItem.kt");
@@ -692,6 +704,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("SecondVararg.kt")
     public void testSecondVararg() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/SecondVararg.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SetWithBrackets.kt")
+    public void testSetWithBrackets() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/SetWithBrackets.kt");
         doTest(fileName);
     }
 

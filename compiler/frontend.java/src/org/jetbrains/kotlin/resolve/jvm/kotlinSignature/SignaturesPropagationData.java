@@ -21,7 +21,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -274,7 +274,7 @@ public class SignaturesPropagationData {
             }
         }
 
-        boolean hasStableParameterNames = KotlinPackage.any(superFunctions, new Function1<FunctionDescriptor, Boolean>() {
+        boolean hasStableParameterNames = CollectionsKt.any(superFunctions, new Function1<FunctionDescriptor, Boolean>() {
             @Override
             public Boolean invoke(FunctionDescriptor descriptor) {
                 return descriptor.hasStableParameterNames();
@@ -286,7 +286,7 @@ public class SignaturesPropagationData {
 
     @NotNull
     private static List<TypeAndVariance> convertToTypeVarianceList(@NotNull List<TypeAndName> list) {
-        return KotlinPackage.map(list, new Function1<TypeAndName, TypeAndVariance>() {
+        return CollectionsKt.map(list, new Function1<TypeAndName, TypeAndVariance>() {
             @Override
             public TypeAndVariance invoke(TypeAndName tvn) {
                 return new TypeAndVariance(tvn.type, INVARIANT);

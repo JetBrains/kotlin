@@ -30,12 +30,12 @@ public object DirectiveBasedActionUtils {
             return
         }
 
-        val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ERROR:").sort()
+        val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ERROR:").sorted()
 
         val actualErrors = file.analyzeFully().getDiagnostics()
                 .filter { it.getSeverity() == Severity.ERROR }
                 .map {  IdeErrorMessages.render(it) }
-                .sort()
+                .sorted()
 
         UsefulTestCase.assertOrderedEquals("All actual errors should be mentioned in test data with // ERROR: directive. But no unnecessary errors should be me mentioned",
                                            actualErrors,
@@ -43,12 +43,12 @@ public object DirectiveBasedActionUtils {
     }
 
     public fun checkAvailableActionsAreExpected(file: JetFile, availableActions: Collection<IntentionAction>) {
-        val expectedActions = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ACTION:").sort()
+        val expectedActions = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ACTION:").sorted()
 
         UsefulTestCase.assertEmpty("Irrelevant actions should not be specified in ACTION directive for they are not checked anyway",
                                    expectedActions.filter { isIrrelevantAction(it) })
 
-        val actualActions = availableActions.map { it.getText() }.sort()
+        val actualActions = availableActions.map { it.getText() }.sorted()
 
         UsefulTestCase.assertOrderedEquals("Some unexpected actions available at current position. Use // ACTION: directive",
                                            filterOutIrrelevantActions(actualActions),

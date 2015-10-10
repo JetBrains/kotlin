@@ -36,8 +36,8 @@ class CoercionTest {
             assertTrue((value coerceIn range) in range)
         }
 
-        fails { 1.coerceIn(1, 0) }
-        fails { 1.coerceIn(1..0) }
+        assertFails { 1.coerceIn(1, 0) }
+        assertFails { 1.coerceIn(1..0) }
     }
 
     @Test
@@ -59,8 +59,8 @@ class CoercionTest {
             assertTrue((value coerceIn range) in range)
         }
 
-        fails { 1L.coerceIn(1L, 0L) }
-        fails { 1L.coerceIn(1L..0L) }
+        assertFails { 1L.coerceIn(1L, 0L) }
+        assertFails { 1L.coerceIn(1L..0L) }
 
     }
 
@@ -83,8 +83,8 @@ class CoercionTest {
             assertTrue((value coerceIn range) in range)
         }
 
-        fails { 1.0.coerceIn(1.0, 0.0) }
-        fails { 1.0.coerceIn(1.0..0.0) }
+        assertFails { 1.0.coerceIn(1.0, 0.0) }
+        assertFails { 1.0.coerceIn(1.0..0.0) }
     }
 
     @Test
@@ -111,8 +111,8 @@ class CoercionTest {
             assertTrue((value coerceIn range) in range)
         }
 
-        fails { v[1].coerceIn(v[1], v[0]) }
-        fails { v[1].coerceIn(v[1]..v[0]) }
+        assertFails { v[1].coerceIn(v[1], v[0]) }
+        assertFails { v[1].coerceIn(v[1]..v[0]) }
     }
 }
 

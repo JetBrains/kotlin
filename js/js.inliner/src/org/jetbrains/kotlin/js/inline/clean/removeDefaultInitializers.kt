@@ -101,7 +101,7 @@ private fun isNameInitialized(
     if (!op.isAssignment()) return false
 
     val arg1 = expr.getArg1()
-    if (arg1 is HasName && arg1.getName() identityEquals name) return true
+    if (arg1 is HasName && arg1.getName() === name) return true
 
     return false
 }

@@ -467,6 +467,24 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("SuperConstructorArgument.kt")
+    public void testSuperConstructorArgument() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SuperConstructorArgument.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SuperConstructorArgumentInClassHeader.kt")
+    public void testSuperConstructorArgumentInClassHeader() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SuperConstructorArgumentInClassHeader.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ThisConstructorArgument.kt")
+    public void testThisConstructorArgument() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ThisConstructorArgument.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("UnresolvedExpectedType.kt")
     public void testUnresolvedExpectedType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/UnresolvedExpectedType.kt");
@@ -1012,6 +1030,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("GetWithBrackets.kt")
+        public void testGetWithBrackets() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/GetWithBrackets.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InOperator.kt")
         public void testInOperator() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/InOperator.kt");
@@ -1349,6 +1373,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         public void testAllFilesPresentInMultipleArgsItem() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/multipleArgsItem"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("CallWithBrackets.kt")
+        public void testCallWithBrackets() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/CallWithBrackets.kt");
+            doTest(fileName);
         }
     }
 

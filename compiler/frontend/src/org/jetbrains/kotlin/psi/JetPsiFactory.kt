@@ -266,8 +266,8 @@ public class JetPsiFactory(private val project: Project) {
         val function = createFunction("fun foo() { when(12) { " + entryText + " } }")
         val whenEntry = PsiTreeUtil.findChildOfType(function, javaClass<JetWhenEntry>())
 
-        assert(whenEntry != null, "Couldn't generate when entry")
-        assert(entryText == whenEntry!!.getText(), "Generate when entry text differs from the given text")
+        assert(whenEntry != null) { "Couldn't generate when entry" }
+        assert(entryText == whenEntry!!.text) { "Generate when entry text differs from the given text" }
 
         return whenEntry
     }

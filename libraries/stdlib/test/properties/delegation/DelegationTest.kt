@@ -22,29 +22,6 @@ private class NotNullVarTestGeneric<T : Any>(val a1: String, val b1: T) {
     }
 }
 
-class ObservablePropertyInChangeSupportTest: ChangeSupport() {
-
-    var b by property(init = 2)
-    var c by property(3)
-
-    @test fun doTest() {
-        var result = false
-        addChangeListener("b", object: ChangeListener {
-            public override fun onPropertyChange(event: ChangeEvent) {
-                result = true
-            }
-        })
-        addChangeListener("c", object: ChangeListener {
-            public override fun onPropertyChange(event: ChangeEvent) {
-                result = false
-            }
-        })
-        b = 4
-        assertTrue(b == 4, "fail: b != 4")
-        assertTrue(result, "fail: result should be true")
-    }
-}
-
 class ObservablePropertyTest {
     var result = false
 

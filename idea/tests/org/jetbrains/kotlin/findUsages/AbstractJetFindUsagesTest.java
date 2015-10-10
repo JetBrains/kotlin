@@ -48,7 +48,7 @@ import com.intellij.usages.rules.UsageFilteringRule;
 import com.intellij.usages.rules.UsageGroupingRule;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.CommonProcessors;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -383,8 +383,8 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
 
         Collection<UsageInfo2UsageAdapter> filteredUsages = getUsageAdapters(filteringRules, usageInfos);
 
-        List<String> usageFiles = KotlinPackage.distinct(
-                KotlinPackage.map(
+        List<String> usageFiles = CollectionsKt.distinct(
+                CollectionsKt.map(
                         filteredUsages,
                         new Function1<UsageInfo2UsageAdapter, String>() {
                             @Override
@@ -402,7 +402,7 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
                 assert usageAdapter != null;
 
                 String groupAsString = Joiner.on(", ").join(
-                        KotlinPackage.map(
+                        CollectionsKt.map(
                                 groupingRules,
                                 new Function1<UsageGroupingRule, String>() {
                                     @Override

@@ -7,6 +7,6 @@ open class A(x: Int) {
     }
 }
 /*
-Text: (<highlight>[x: Int]</highlight>), Disabled: false, Strikeout: false, Green: false
 Text: (<highlight>[y: Boolean = true]</highlight>, [x: Int], [z: Long = 12345678901234], [u: String = "abc\n"], [u0: String = "" + "123"], [uu: String = "$u"], [v: Char = '\u0000'], [vv: String = "..."]), Disabled: false, Strikeout: false, Green: true
+Text: ([x: Int]), Disabled: true, Strikeout: false, Green: false
 */

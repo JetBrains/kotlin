@@ -1,10 +1,6 @@
 @file:kotlin.jvm.JvmName("MapAccessorsKt")
 package kotlin.properties
 
-import java.io.Serializable
-import java.util.NoSuchElementException
-import kotlin.platform.platformName
-
 // extensions for Map and MutableMap
 
 /**
@@ -25,7 +21,7 @@ public fun <V> Map<in String, *>.get(thisRef: Any?, property: PropertyMetadata):
  *
  * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [withDefault]).
  */
-@platformName("getVar")
+@kotlin.jvm.JvmName("getVar")
 public fun <V> MutableMap<in String, in V>.get(thisRef: Any?, property: PropertyMetadata): V = getOrImplicitDefault(property.name) as V
 
 /**

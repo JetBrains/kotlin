@@ -216,7 +216,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
 
         var block = converterForBody.convertBlock(tryBlock)
         var expression: Expression = Expression.Empty
-        for (variable in resourceVariables.reverse()) {
+        for (variable in resourceVariables.asReversed()) {
             val parameter = LambdaParameter(Identifier(variable.name!!).assignNoPrototype(), null).assignNoPrototype()
             val parameterList = ParameterList(listOf(parameter)).assignNoPrototype()
             val lambda = LambdaExpression(parameterList, block)

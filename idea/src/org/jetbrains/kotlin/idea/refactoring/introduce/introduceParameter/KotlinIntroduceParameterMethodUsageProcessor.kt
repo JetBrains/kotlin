@@ -65,7 +65,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
         val changeSignatureData = JetChangeSignatureData(psiMethodDescriptor, method, Collections.singletonList(psiMethodDescriptor))
         val changeInfo = JetChangeInfo(methodDescriptor = changeSignatureData, context = method)
 
-        data.getParametersToRemove().toNativeArray().toList().sortDescending().forEach { changeInfo.removeParameter(it) }
+        data.getParametersToRemove().toNativeArray().sortedDescending().forEach { changeInfo.removeParameter(it) }
 
         // Temporarily assume that the new parameter is of Any type. Actual type is substituted during the signature update phase
         val defaultValueForCall = (data.getParameterInitializer().getExpression()!! as? PsiExpression)?.let { it.j2k() }

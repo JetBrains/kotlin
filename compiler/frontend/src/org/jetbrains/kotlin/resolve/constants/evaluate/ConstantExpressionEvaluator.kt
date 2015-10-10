@@ -453,8 +453,8 @@ private class ConstantExpressionEvaluatorVisitor(
         if (check == emptyUnaryFun) {
             return result
         }
-        assert (isIntegerType(receiver.value), "Only integer constants should be checked for overflow")
-        assert (name == "minus", "Only negation should be checked for overflow")
+        assert(isIntegerType(receiver.value)) { "Only integer constants should be checked for overflow" }
+        assert(name == "minus") { "Only negation should be checked for overflow" }
 
         if (receiver.value == result) {
             trace.report(Errors.INTEGER_OVERFLOW.on(callExpression.getStrictParentOfType<JetExpression>() ?: callExpression))
@@ -790,13 +790,13 @@ private fun parseBoolean(text: String): Boolean {
 
 private fun createCompileTimeConstantForEquals(result: Any?, operationReference: JetExpression, factory: ConstantValueFactory): ConstantValue<*>? {
     if (result is Boolean) {
-        assert(operationReference is JetSimpleNameExpression, "This method should be called only for equals operations")
+        assert(operationReference is JetSimpleNameExpression) { "This method should be called only for equals operations" }
         val operationToken = (operationReference as JetSimpleNameExpression).getReferencedNameElementType()
         val value: Boolean = when (operationToken) {
             JetTokens.EQEQ -> result
             JetTokens.EXCLEQ -> !result
             JetTokens.IDENTIFIER -> {
-                assert (operationReference.getReferencedNameAsName() == OperatorConventions.EQUALS, "This method should be called only for equals operations")
+                assert(operationReference.getReferencedNameAsName() == OperatorConventions.EQUALS) { "This method should be called only for equals operations" }
                 result
             }
             else -> throw IllegalStateException("Unknown equals operation token: $operationToken ${operationReference.getText()}")
@@ -808,7 +808,7 @@ private fun createCompileTimeConstantForEquals(result: Any?, operationReference:
 
 private fun createCompileTimeConstantForCompareTo(result: Any?, operationReference: JetExpression, factory: ConstantValueFactory): ConstantValue<*>? {
     if (result is Int) {
-        assert(operationReference is JetSimpleNameExpression, "This method should be called only for compareTo operations")
+        assert(operationReference is JetSimpleNameExpression) { "This method should be called only for compareTo operations" }
         val operationToken = (operationReference as JetSimpleNameExpression).getReferencedNameElementType()
         return when (operationToken) {
             JetTokens.LT -> factory.createBooleanValue(result < 0)
@@ -816,7 +816,7 @@ private fun createCompileTimeConstantForCompareTo(result: Any?, operationReferen
             JetTokens.GT -> factory.createBooleanValue(result > 0)
             JetTokens.GTEQ -> factory.createBooleanValue(result >= 0)
             JetTokens.IDENTIFIER -> {
-                assert (operationReference.getReferencedNameAsName() == OperatorConventions.COMPARE_TO, "This method should be called only for compareTo operations")
+                assert(operationReference.getReferencedNameAsName() == OperatorConventions.COMPARE_TO) { "This method should be called only for compareTo operations" }
                 return factory.createIntValue(result)
             }
             else -> throw IllegalStateException("Unknown compareTo operation token: $operationToken")

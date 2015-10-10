@@ -60,7 +60,7 @@ object SuperDeclarationMarkerTooltip: Function<JetDeclaration, String> {
             "${if (!isAbstract && isBaseAbstract) "Implements" else "Overrides"} $memberKind in '${renderer.render(declaration)}'"
         }
 
-        return containingStrings.sort().join(separator = "<br/>")
+        return containingStrings.sorted().join(separator = "<br/>")
     }
 }
 

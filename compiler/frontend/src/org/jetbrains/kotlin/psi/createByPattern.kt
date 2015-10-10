@@ -142,7 +142,7 @@ public fun <TElement : JetElement> createByPattern(pattern: String, vararg args:
             .flatMap { it.value }
             .map { it.range }
             .filterNot { it.isEmpty() }
-            .sortBy { -it.getStartOffset() }
+            .sortedByDescending { it.startOffset }
 
     // reformat whole text except for String arguments (as they can contain user's formatting to be preserved)
     if (stringPlaceholderRanges.none()) {

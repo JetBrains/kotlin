@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 
 public object ModifierMaskUtils {
     init {
-        assert(MODIFIER_KEYWORDS_ARRAY.size() <= 32, "Current implementation depends on the ability to represent modifier list as bit mask")
+        assert(MODIFIER_KEYWORDS_ARRAY.size() <= 32) { "Current implementation depends on the ability to represent modifier list as bit mask" }
     }
 
     @JvmStatic
@@ -43,7 +43,7 @@ public object ModifierMaskUtils {
     @JvmStatic
     public fun maskHasModifier(mask: Int, modifierToken: JetModifierKeywordToken): Boolean {
         val index = MODIFIER_KEYWORDS_ARRAY.indexOf(modifierToken)
-        assert(index >= 0, "All JetModifierKeywordTokens should be present in MODIFIER_KEYWORDS_ARRAY")
+        assert(index >= 0) { "All JetModifierKeywordTokens should be present in MODIFIER_KEYWORDS_ARRAY" }
         return (mask and (1 shl index)) != 0
     }
 

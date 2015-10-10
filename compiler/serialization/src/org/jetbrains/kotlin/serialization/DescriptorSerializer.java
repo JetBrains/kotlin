@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.serialization;
 
 import com.google.protobuf.MessageLite;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -474,7 +474,7 @@ public class DescriptorSerializer {
         }
 
         Set<JetType> upperBounds = typeParameter.getUpperBounds();
-        if (upperBounds.size() == 1 && KotlinBuiltIns.isDefaultBound(KotlinPackage.single(upperBounds))) return builder;
+        if (upperBounds.size() == 1 && KotlinBuiltIns.isDefaultBound(CollectionsKt.single(upperBounds))) return builder;
 
         for (JetType upperBound : upperBounds) {
             builder.addUpperBound(type(upperBound));

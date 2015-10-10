@@ -20,7 +20,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
+import kotlin.SetsKt;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -351,7 +352,7 @@ public class DescriptorResolver {
         if (modifierList != null) {
             if (valueParameter.hasValOrVar()) {
                 AnnotationSplitter annotationSplitter = AnnotationSplitter.create(
-                        storageManager, allAnnotations, KotlinPackage.setOf(CONSTRUCTOR_PARAMETER));
+                        storageManager, allAnnotations, SetsKt.setOf(CONSTRUCTOR_PARAMETER));
                 valueParameterAnnotations = annotationSplitter.getAnnotationsForTarget(CONSTRUCTOR_PARAMETER);
             }
             else {
@@ -736,7 +737,7 @@ public class DescriptorResolver {
             }
         });
 
-        Annotations propertyAnnotations = new CompositeAnnotations(KotlinPackage.listOf(
+        Annotations propertyAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
                 annotationSplitter.getAnnotationsForTargets(PROPERTY, FIELD),
                 annotationSplitter.getOtherAnnotations()));
 
@@ -987,7 +988,7 @@ public class DescriptorResolver {
         JetPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptorImpl setterDescriptor = null;
         if (setter != null) {
-            Annotations annotations = new CompositeAnnotations(KotlinPackage.listOf(
+            Annotations annotations = new CompositeAnnotations(CollectionsKt.listOf(
                     annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER),
                     annotationResolver.resolveAnnotationsWithoutArguments(scope, setter.getModifierList(), trace)));
             JetParameter parameter = setter.getParameter();
@@ -1057,7 +1058,7 @@ public class DescriptorResolver {
         PropertyGetterDescriptorImpl getterDescriptor;
         JetPropertyAccessor getter = property.getGetter();
         if (getter != null) {
-            Annotations getterAnnotations = new CompositeAnnotations(KotlinPackage.listOf(
+            Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
                     annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER),
                     annotationSplitter.getOtherAnnotations(),
                     annotationResolver.resolveAnnotationsWithoutArguments(scope, getter.getModifierList(), trace)));
@@ -1137,7 +1138,7 @@ public class DescriptorResolver {
                                    getDispatchReceiverParameterIfNeeded(classDescriptor), (ReceiverParameterDescriptor) null);
 
         Annotations setterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
-        Annotations getterAnnotations = new CompositeAnnotations(KotlinPackage.listOf(
+        Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
                 annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER)));
 
         PropertyGetterDescriptorImpl getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, getterAnnotations);

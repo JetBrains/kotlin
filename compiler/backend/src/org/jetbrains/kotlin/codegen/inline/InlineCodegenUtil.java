@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import kotlin.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -44,9 +45,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -59,7 +57,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ListIterator;
 
-import static kotlin.KotlinPackage.substringAfterLast;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 
@@ -157,7 +154,7 @@ public class InlineCodegenUtil {
     @Nullable
     public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull String internalClassName) {
         FqName packageFqName = JvmClassName.byInternalName(internalClassName).getPackageFqName();
-        String classNameWithDollars = substringAfterLast(internalClassName, "/", internalClassName);
+        String classNameWithDollars = StringsKt.substringAfterLast(internalClassName, "/", internalClassName);
         JvmVirtualFileFinder fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project);
         //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
         // we construct valid.package.name/RelativeClassNameAsSingleName that should work in compiler, but fails for inner classes in IDE

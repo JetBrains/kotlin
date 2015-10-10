@@ -88,6 +88,7 @@ class WithTailInsertHandler(val tailText: String,
     companion object {
         fun commaTail() = WithTailInsertHandler(",", spaceBefore = false, spaceAfter = true /*TODO: use code style option*/)
         fun rparenthTail() = WithTailInsertHandler(")", spaceBefore = false, spaceAfter = false)
+        fun rbracketTail() = WithTailInsertHandler("]", spaceBefore = false, spaceAfter = false)
         fun rbraceTail() = WithTailInsertHandler("}", spaceBefore = true, spaceAfter = false)
         fun elseTail() = WithTailInsertHandler("else", spaceBefore = true, spaceAfter = true)
         fun eqTail() = WithTailInsertHandler("=", spaceBefore = true, spaceAfter = true) /*TODO: use code style options*/

@@ -63,7 +63,7 @@ public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
             if (result == 0) {
                 result = instructionIndex(t1.startLabel) - instructionIndex(t2.startLabel)
                 if (result == 0) {
-                    assert(false, "Error: support multicatch finallies: ${t1.handler}, ${t2.handler}")
+                    assert(false) { "Error: support multicatch finallies: ${t1.handler}, ${t2.handler}" }
                     result = instructionIndex(t1.endLabel) - instructionIndex(t2.endLabel)
                 }
             }
@@ -131,12 +131,12 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
     fun processCurrent(curIns: LabelNode, directOrder: Boolean) {
         getInterval(curIns, directOrder).forEach {
             val added = currentIntervals.add(it)
-            assert(added, "Wrong interval structure: $curIns, $it")
+            assert(added) { "Wrong interval structure: $curIns, $it" }
         }
 
         getInterval(curIns, !directOrder).forEach {
             val removed = currentIntervals.remove(it)
-            assert(removed, "Wrong interval structure: $curIns, $it")
+            assert(removed) { "Wrong interval structure: $curIns, $it" }
         }
     }
 

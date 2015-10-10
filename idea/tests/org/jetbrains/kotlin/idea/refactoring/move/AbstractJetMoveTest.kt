@@ -95,7 +95,7 @@ public abstract class AbstractJetMoveTest : KotlinMultiFileTestCase() {
                 assert(!conflictFile.exists())
             }
             catch(e: ConflictsInTestsException) {
-                JetTestUtils.assertEqualsToFile(conflictFile, e.getMessages().sort().joinToString("\n"))
+                JetTestUtils.assertEqualsToFile(conflictFile, e.getMessages().sorted().joinToString("\n"))
             }
             finally {
                 PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()

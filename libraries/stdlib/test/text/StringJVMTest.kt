@@ -68,13 +68,13 @@ class StringJVMTest {
         // deprecation replacement equivalence
         assertEquals("\\d".toPattern().split(s).toList(), s.split("\\d".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().toList())
 
-        fails {
+        assertFails {
             s.split(isDigit, -1)
         }
     }
 
     @test fun repeat() {
-        fails{ "foo".repeat(-1) }
+        assertFails { "foo".repeat(-1) }
         assertEquals("", "foo".repeat(0))
         assertEquals("foo", "foo".repeat(1))
         assertEquals("foofoo", "foo".repeat(2))
@@ -101,9 +101,9 @@ class StringJVMTest {
     @test fun all() {
         val data = "AbCd"
         assertTrue {
-            data.all { it.isJavaLetter() }
+            data.all { it.isJavaIdentifierPart() }
         }
-        assertNot {
+        assertFalse {
             data.all { it.isUpperCase() }
         }
     }
@@ -113,7 +113,7 @@ class StringJVMTest {
         assertTrue {
             data.any() { it.isDigit() }
         }
-        assertNot {
+        assertFalse {
             data.any() { it.isUpperCase() }
         }
     }
@@ -134,7 +134,7 @@ class StringJVMTest {
     @test fun findNot() {
         val data = "1a2b3c"
         assertEquals('a', data.filterNot { it.isDigit() }.firstOrNull())
-        assertNull(data.filterNot { it.isJavaLetterOrDigit() }.firstOrNull())
+        assertNull(data.filterNot { it.isJavaIdentifierPart() }.firstOrNull())
     }
 
     @test fun partition() {
@@ -261,7 +261,7 @@ class StringJVMTest {
 
     @test fun dropWhile() {
         val data = "ab1cd2"
-        assertEquals("1cd2", data.dropWhile { it.isJavaLetter() })
+        assertEquals("1cd2", data.dropWhile { it.isJavaIdentifierStart() })
         assertEquals("", data.dropWhile { true })
         assertEquals("ab1cd2", data.dropWhile { false })
     }
@@ -269,7 +269,7 @@ class StringJVMTest {
     @test fun drop() {
         val data = "abcd1234"
         assertEquals("d1234", data.drop(3))
-        fails {
+        assertFails {
             data.drop(-2)
         }
         assertEquals("", data.drop(data.length() + 5))
@@ -277,7 +277,7 @@ class StringJVMTest {
 
     @test fun takeWhile() {
         val data = "ab1cd2"
-        assertEquals("ab", data.takeWhile { it.isJavaLetter() })
+        assertEquals("ab", data.takeWhile { it.isJavaIdentifierStart() })
         assertEquals("", data.takeWhile { false })
         assertEquals("ab1cd2", data.takeWhile { true })
     }
@@ -285,7 +285,7 @@ class StringJVMTest {
     @test fun take() {
         val data = "abcd1234"
         assertEquals("abc", data.take(3))
-        fails {
+        assertFails {
             data.take(-7)
         }
         assertEquals(data, data.take(data.length() + 42))
@@ -351,10 +351,10 @@ class StringJVMTest {
         assertEquals("baD", builder.slice(5 downTo 3))
         assertEquals("aDAB", builder.slice(iter))
 
-        fails {
+        assertFails {
             "abc".slice(listOf(1,4))
         }
-        fails {
+        assertFails {
             builder.slice(listOf(10))
         }
     }
@@ -362,7 +362,7 @@ class StringJVMTest {
 
     @test fun orderIgnoringCase() {
         val list = listOf("Beast", "Ast", "asterisk")
-        assertEquals(listOf("Ast", "Beast", "asterisk"), list.sort())
-        assertEquals(listOf("Ast", "asterisk", "Beast"), list.sortBy(String.CASE_INSENSITIVE_ORDER))
+        assertEquals(listOf("Ast", "Beast", "asterisk"), list.sorted())
+        assertEquals(listOf("Ast", "asterisk", "Beast"), list.sortedWith(String.CASE_INSENSITIVE_ORDER))
     }
 }

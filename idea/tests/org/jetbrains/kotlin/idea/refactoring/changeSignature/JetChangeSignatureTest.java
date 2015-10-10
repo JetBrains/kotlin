@@ -32,7 +32,9 @@ import com.intellij.refactoring.util.CanonicalTypes;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.VisibilityUtil;
-import kotlin.KotlinPackage;
+import kotlin.ArraysKt;
+import kotlin.CollectionsKt;
+import kotlin.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.AsJavaPackage;
@@ -1112,7 +1114,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetClassOrObject classA =
                 JetFullClassNameIndex.getInstance().get("A", getProject(), GlobalSearchScope.allScope(getProject()))
                         .iterator().next();
-        JetDeclaration functionBar = KotlinPackage.first(
+        JetDeclaration functionBar = CollectionsKt.first(
                 classA.getDeclarations(),
                 new Function1<JetDeclaration, Boolean>() {
                     @Override
@@ -1148,7 +1150,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                     @NotNull
                     @Override
                     Set<PsiMethod> getParameterPropagationTargets(@NotNull PsiMethod method) {
-                        PsiClass classA = KotlinPackage.first(
+                        PsiClass classA = CollectionsKt.first(
                                 JavaFullClassNameIndex.getInstance()
                                         .get("A".hashCode(), getProject(), GlobalSearchScope.allScope(getProject())),
                                 new Function1<PsiClass, Boolean>() {
@@ -1158,7 +1160,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                                     }
                                 }
                         );
-                        PsiMethod methodBar = KotlinPackage.first(
+                        PsiMethod methodBar = ArraysKt.first(
                                 classA.getMethods(),
                                 new Function1<PsiMethod, Boolean>() {
                                     @Override
@@ -1171,7 +1173,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                                 JetTopLevelFunctionFqnNameIndex.getInstance().get("test", getProject(), GlobalSearchScope.allScope(getProject()))
                                         .iterator().next();
 
-                        return KotlinPackage.setOf(methodBar, AsJavaPackage.getRepresentativeLightMethod(functionTest));
+                        return SetsKt.setOf(methodBar, AsJavaPackage.getRepresentativeLightMethod(functionTest));
                     }
                 }
         );
@@ -1222,7 +1224,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetClassOrObject classA =
                 JetFullClassNameIndex.getInstance().get("A", getProject(), GlobalSearchScope.allScope(getProject()))
                         .iterator().next();
-        JetDeclaration functionBar = KotlinPackage.first(
+        JetDeclaration functionBar = CollectionsKt.first(
                 classA.getDeclarations(),
                 new Function1<JetDeclaration, Boolean>() {
                     @Override

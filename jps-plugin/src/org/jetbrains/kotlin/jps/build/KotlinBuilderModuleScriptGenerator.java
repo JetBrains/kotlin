@@ -21,8 +21,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import kotlin.KotlinPackage;
-import kotlin.io.IoPackage;
+import kotlin.CollectionsKt;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.ModuleChunk;
@@ -123,7 +123,7 @@ public class KotlinBuilderModuleScriptGenerator {
             @Override
             public boolean value(File file) {
                 if (!file.exists()) {
-                    String extension = IoPackage.getExtension(file);
+                    String extension = FilesKt.getExtension(file);
 
                     // Don't filter out files, we want to report warnings about absence through the common place
                     if (!(extension.equals("class") || extension.equals("jar"))) {
@@ -173,7 +173,7 @@ public class KotlinBuilderModuleScriptGenerator {
             }
         }
 
-        return KotlinPackage.toList(annotationRootFiles);
+        return CollectionsKt.toList(annotationRootFiles);
     }
 
     @NotNull

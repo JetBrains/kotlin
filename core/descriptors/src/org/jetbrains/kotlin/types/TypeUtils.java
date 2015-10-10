@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.types;
 
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,6 +104,7 @@ public class TypeUtils {
         }
     }
 
+    @NotNull
     public static final JetType NO_EXPECTED_TYPE = new SpecialType("NO_EXPECTED_TYPE");
 
     public static final JetType UNIT_EXPECTED_TYPE = new SpecialType("UNIT_EXPECTED_TYPE");
@@ -362,7 +363,7 @@ public class TypeUtils {
 
     @NotNull
     public static JetType substituteParameters(@NotNull ClassDescriptor clazz, @NotNull List<JetType> typeArguments) {
-        List<TypeProjection> projections = KotlinPackage.map(typeArguments, new Function1<JetType, TypeProjection>() {
+        List<TypeProjection> projections = CollectionsKt.map(typeArguments, new Function1<JetType, TypeProjection>() {
             @Override
             public TypeProjection invoke(JetType type) {
                 return new TypeProjectionImpl(type);
@@ -394,7 +395,7 @@ public class TypeUtils {
     }
 
     public static boolean dependsOnTypeParameters(@NotNull JetType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {
-        return dependsOnTypeConstructors(type, KotlinPackage.map(
+        return dependsOnTypeConstructors(type, CollectionsKt.map(
                 typeParameters,
                 new Function1<TypeParameterDescriptor, TypeConstructor>() {
                     @Override

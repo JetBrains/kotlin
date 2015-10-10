@@ -404,27 +404,6 @@ public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T>
 }
 
 /**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use asIterable().sorted() instead.", ReplaceWith("asIterable().sorted()"))
-public fun <T : Comparable<T>> Sequence<T>.toSortedList(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use asIterable().sortedBy(order) instead.", ReplaceWith("asIterable().sortedBy(order)"))
-public fun <T, V : Comparable<V>> Sequence<T>.toSortedListBy(order: (T) -> V): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
  * Returns an [ArrayList] of all elements.
  */
 public fun <T> Sequence<T>.toArrayList(): ArrayList<T> {
@@ -599,15 +578,6 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapTo(destinat
  */
 public fun <T> Sequence<T>.withIndex(): Sequence<IndexedValue<T>> {
     return IndexingSequence(this)
-}
-
-/**
- * Returns a sequence containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun <T> Sequence<T>.withIndices(): Sequence<Pair<Int, T>> {
-    var index = 0
-    return TransformingSequence(this, { index++ to it })
 }
 
 /**
@@ -986,14 +956,6 @@ public fun <T> Sequence<T>.joinToString(separator: String = ", ", prefix: String
  * Returns a sequence from the given collection.
  */
 public fun <T> Sequence<T>.asSequence(): Sequence<T> {
-    return this
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun <T> Sequence<T>.sequence(): Sequence<T> {
     return this
 }
 

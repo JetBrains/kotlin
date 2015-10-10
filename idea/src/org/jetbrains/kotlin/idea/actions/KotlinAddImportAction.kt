@@ -72,7 +72,7 @@ public class KotlinAddImportAction(
         val descriptorToImport: DeclarationDescriptor
             get() {
                 return descriptors.singleOrNull()
-                       ?: descriptors.sortBy { if (it is ClassDescriptor) 0 else 1 }.first()
+                       ?: descriptors.sortedBy { if (it is ClassDescriptor) 0 else 1 }.first()
             }
 
         val declarationToImport = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptorToImport)
@@ -81,7 +81,7 @@ public class KotlinAddImportAction(
     private val variants = candidates
             .groupBy { it.importableFqName!! }
             .map { Variant(it.key, it.value) }
-            .sortBy { it.priority }
+            .sortedBy { it.priority }
 
     public val highestPriorityFqName: FqName
         get() = variants.first().fqName

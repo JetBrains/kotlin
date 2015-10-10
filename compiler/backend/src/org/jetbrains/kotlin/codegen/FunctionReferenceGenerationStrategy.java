@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -149,7 +149,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         int receivers = (referencedFunction.getDispatchReceiverParameter() != null ? 1 : 0) +
                         (referencedFunction.getExtensionReceiverParameter() != null ? 1 : 0);
 
-        List<ValueParameterDescriptor> parameters = KotlinPackage.drop(callableDescriptor.getValueParameters(), receivers);
+        List<ValueParameterDescriptor> parameters = CollectionsKt.drop(callableDescriptor.getValueParameters(), receivers);
         for (int i = 0; i < parameters.size(); i++) {
             ValueParameterDescriptor parameter = parameters.get(i);
             ValueArgument fakeArgument = fakeArguments.get(i);

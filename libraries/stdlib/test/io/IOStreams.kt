@@ -4,7 +4,6 @@ import org.junit.Test as test
 import kotlin.test.*
 import java.io.Writer
 import java.io.BufferedReader
-import java.io.File
 
 class IOStreamsTest {
     @test fun testGetStreamOfFile() {

@@ -2,7 +2,7 @@ package test.dataclass
 
 import org.junit.Test
 import kotlin.test.*
-import java.io.Serializable
+
 
 /**
  */

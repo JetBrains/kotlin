@@ -5,27 +5,6 @@ import templates.Family.*
 fun mapping(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-    templates add f("withIndices()") {
-        deprecate { "Use withIndex() instead." }
-        doc { "Returns a list containing pairs of each element of the original collection and their index." }
-        returns("List<Pair<Int, T>>")
-        body {
-            """
-            var index = 0
-            return mapTo(ArrayList<Pair<Int, T>>(), { index++ to it })
-            """
-        }
-
-        returns(Sequences) { "Sequence<Pair<Int, T>>" }
-        doc(Sequences) { "Returns a sequence containing pairs of each element of the original collection and their index." }
-        body(Sequences) {
-            """
-            var index = 0
-            return TransformingSequence(this, { index++ to it })
-            """
-        }
-    }
-
     templates add f("withIndex()") {
         doc { "Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection." }
         returns("Iterable<IndexedValue<T>>")

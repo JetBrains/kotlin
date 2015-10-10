@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
 import org.jetbrains.kotlin.idea.completion.Tail
 import org.jetbrains.kotlin.idea.util.getVariableFromImplicitReceivers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -47,16 +48,21 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
 
         val added = HashSet<String>()
         for (expectedInfo in expectedInfos) {
-            if (expectedInfo.additionalData is ArgumentPositionData.Positional && expectedInfo.additionalData.argumentIndex == 0) {
-                val parameters = expectedInfo.additionalData.function.valueParameters
+            val additionalData = expectedInfo.additionalData
+            if (additionalData is ArgumentPositionData.Positional && additionalData.argumentIndex == 0) {
+                val parameters = additionalData.function.valueParameters
                 if (parameters.size() > 1) {
+                    val tail = when (additionalData.callType) {
+                        Call.CallType.ARRAY_GET_METHOD, Call.CallType.ARRAY_SET_METHOD -> Tail.RBRACKET
+                        else -> Tail.RPARENTH
+                    }
                     val variables = ArrayList<VariableDescriptor>()
                     for ((i, parameter) in parameters.withIndex()) {
                         val variable = variableInScope(parameter, resolutionScope) ?: break
                         variables.add(variable) // TODO: cannot inline variable because of KT-5890
 
                         if (i > 0 && parameters.asSequence().drop(i + 1).all { it.hasDefaultValue() }) { // this is the last parameter or all others have default values
-                            val lookupElement = createParametersLookupElement(variables)
+                            val lookupElement = createParametersLookupElement(variables, tail)
                             if (added.add(lookupElement.getLookupString())) { // check that we don't already have item with the same text
                                 collection.add(lookupElement)
                             }
@@ -67,7 +73,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
         }
     }
 
-    private fun createParametersLookupElement(variables: List<VariableDescriptor>): LookupElement {
+    private fun createParametersLookupElement(variables: List<VariableDescriptor>, tail: Tail): LookupElement {
         val compoundIcon = LayeredIcon(2)
         val firstIcon = JetDescriptorIconProvider.getIcon(variables.first(), null, 0)
         val lastIcon = JetDescriptorIconProvider.getIcon(variables.last(), null, 0)
@@ -86,7 +92,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
 
                 }
                 .withIcon(compoundIcon)
-                .addTail(Tail.RPARENTH) //TODO: support square brackets
+                .addTail(tail)
                 .assignSmartCompletionPriority(SmartCompletionItemPriority.MULTIPLE_ARGUMENTS_ITEM)
     }
 

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 
-import static kotlin.KotlinPackage.firstOrNull;
+import static kotlin.CollectionsKt.firstOrNull;
 
 public class InlineUtil {
     public static boolean isInlineLambdaParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {

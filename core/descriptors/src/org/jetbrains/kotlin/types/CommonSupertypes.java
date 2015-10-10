@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.types;
 
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +68,7 @@ public class CommonSupertypes {
     }
 
     private static int depth(@NotNull final JetType type) {
-        return 1 + maxDepth(KotlinPackage.map(type.getArguments(), new Function1<TypeProjection, JetType>() {
+        return 1 + maxDepth(CollectionsKt.map(type.getArguments(), new Function1<TypeProjection, JetType>() {
             @Override
             public JetType invoke(TypeProjection projection) {
                 if (projection.isStarProjection()) {
@@ -105,7 +105,7 @@ public class CommonSupertypes {
         return DelegatingFlexibleType.create(
                 commonSuperTypeForInflexible(lower, recursionDepth, maxDepth),
                 commonSuperTypeForInflexible(upper, recursionDepth, maxDepth),
-                KotlinPackage.single(capabilities) // mixing different capabilities is not supported
+                CollectionsKt.single(capabilities) // mixing different capabilities is not supported
         );
     }
 

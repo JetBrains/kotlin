@@ -79,7 +79,7 @@ import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoImplementationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
-import org.jetbrains.kotlin.idea.parameterInfo.AbstractFunctionParameterInfoTest
+import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
 import org.jetbrains.kotlin.idea.refactoring.inline.AbstractInlineTest
@@ -392,8 +392,8 @@ fun main(args: Array<String>) {
             model("navigation/gotoSuper", extension = "test")
         }
 
-        testClass<AbstractFunctionParameterInfoTest>() {
-            model("parameterInfo/functionParameterInfo")
+        testClass<AbstractParameterInfoTest>() {
+            model("parameterInfo", recursive = true)
         }
 
         testClass<AbstractKotlinGotoTest>() {

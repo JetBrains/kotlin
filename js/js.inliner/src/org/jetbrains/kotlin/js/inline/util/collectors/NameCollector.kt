@@ -42,7 +42,7 @@ class NameCollector(private val scope: JsScope) : RecursiveJsVisitor() {
         if (name == null || ident == null) return
 
         val nameCollected = names.get(ident)
-        assert(nameCollected == null || nameCollected identityEquals name) { "ambiguous identifier for $hasName" }
+        assert(nameCollected == null || nameCollected === name) { "ambiguous identifier for $hasName" }
         assert(scope.hasOwnName(ident)) { "non-local name was added $hasName" }
 
         names.put(ident, name)

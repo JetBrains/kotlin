@@ -27,7 +27,7 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
         loadFileByFullPath(filename)
         val ktFile = File(filename)
-        val txtFile = File(ktFile.parent, ktFile.nameWithoutExtension + ".txt")
+        val txtFile = File(ktFile.parentFile, ktFile.nameWithoutExtension + ".txt")
         val generatedFiles = CodegenTestUtil.generateFiles(myEnvironment, myFiles)
                 .getClassFiles()
                 .sortedBy { it.relativePath }
