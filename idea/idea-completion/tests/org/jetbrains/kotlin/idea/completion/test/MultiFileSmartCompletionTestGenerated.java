@@ -41,6 +41,12 @@ public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmar
         doTest(fileName);
     }
 
+    @TestMetadata("CallableReferenceNotImported")
+    public void testCallableReferenceNotImported() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/CallableReferenceNotImported/");
+        doTest(fileName);
+    }
+
     @TestMetadata("CallablesInExcludedPackage")
     public void testCallablesInExcludedPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/CallablesInExcludedPackage/");

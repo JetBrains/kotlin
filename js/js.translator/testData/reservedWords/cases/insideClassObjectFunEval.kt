@@ -7,7 +7,7 @@ class TestClass {
         fun eval() { eval() }
 
         fun test() {
-            testNotRenamed("eval", { ::eval })
+            testNotRenamed("eval", { eval() })
         }
     }
 }

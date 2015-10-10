@@ -6,7 +6,7 @@ class A {
     fun k(k: Int) = k
 }
 
-fun A.bar() = (::o)(this) + (A::k)(this, 222)
+fun A.bar() = (A::o)(this) + (A::k)(this, 222)
 
 fun box(): String {
     val result = A().bar()

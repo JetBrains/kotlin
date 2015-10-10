@@ -61,7 +61,7 @@ public class LazyJavaPackageScope(
                 KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                     val partName = kotlinClass.classId.shortClassName.asString()
                     val facadeName = header.multifileClassName ?: continue@kotlinClasses
-                    result[partName] = facadeName
+                    result[partName] = facadeName.substringAfterLast('/')
                 }
                 KotlinClassHeader.Kind.FILE_FACADE -> {
                     val fileFacadeName = kotlinClass.classId.shortClassName.asString()

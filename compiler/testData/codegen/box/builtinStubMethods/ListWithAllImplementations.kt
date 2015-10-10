@@ -26,7 +26,7 @@ class MyList<T>(val v: T): List<T> {
 }
 
 fun box(): String {
-    val list = MyList<String>("") as MutableList<String>
+    val list = MyList<String>("") as java.util.List<String>
 
     list.add("")
     list.remove("")

@@ -8,8 +8,8 @@ class A {
     }
 
     fun foo() {
-        <selection>::bar</selection>
-        ::baz
+        <selection>A::bar</selection>
+        A::baz
         A::bar
         A::baz
     }

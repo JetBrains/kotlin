@@ -76,17 +76,13 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun assertHasAnnotationData(clazz: Class<*>) {
-        @Suppress("UNCHECKED_CAST")
-        val annotation = clazz.getAnnotation(
+        checkNotNull(clazz.getAnnotation(
                 clazz.classLoader.loadClass(JvmAnnotationNames.KOTLIN_CLASS.asString()) as Class<Annotation>
-        )
-        assert(annotation != null) { "KotlinClass annotation is not found for class $clazz" }
-
-        val kindMethod = annotation.annotationType().getDeclaredMethod("kind")
-        val kind = kindMethod(annotation)
-        assert(kind.toString() != JvmAnnotationNames.KotlinClass.Kind.CLASS.toString()) {
-            "'kind' should not be CLASS: $clazz (was $kind)"
-        }
+        )) { "KotlinClass annotation is not found for class $clazz" }
+        checkNotNull(clazz.getAnnotation(
+                clazz.classLoader.loadClass(JvmAnnotationNames.KOTLIN_LOCAL_CLASS.asString()) as Class<Annotation>
+        )) { "KotlinLocalClass annotation is not found for class $clazz" }
     }
 }

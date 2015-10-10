@@ -20,6 +20,8 @@ import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.context.MethodContext
+import org.jetbrains.kotlin.codegen.intrinsics.CheckCast
+import org.jetbrains.kotlin.codegen.intrinsics.InstanceOf
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -36,13 +38,15 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     companion object {
         public val NEW_ARRAY_MARKER_METHOD_NAME: String = "reifyNewArray"
         public val CHECKCAST_MARKER_METHOD_NAME: String = "reifyCheckcast"
+        public val SAFE_CHECKCAST_MARKER_METHOD_NAME: String = "reifySafeCheckcast"
         public val INSTANCEOF_MARKER_METHOD_NAME: String = "reifyInstanceof"
         public val JAVA_CLASS_MARKER_METHOD_NAME: String = "reifyJavaClass"
         public val CLASS_LITERAL_MARKER_METHOD_NAME: String = "reifyClassLiteral"
         public val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME: String = "needClassReification"
 
         private val PARAMETRISED_MARKERS = ImmutableSet.of(
-                NEW_ARRAY_MARKER_METHOD_NAME, CHECKCAST_MARKER_METHOD_NAME,
+                NEW_ARRAY_MARKER_METHOD_NAME,
+                CHECKCAST_MARKER_METHOD_NAME, SAFE_CHECKCAST_MARKER_METHOD_NAME,
                 INSTANCEOF_MARKER_METHOD_NAME, JAVA_CLASS_MARKER_METHOD_NAME,
                 CLASS_LITERAL_MARKER_METHOD_NAME
         )
@@ -134,15 +138,18 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
 
         val asmType = mapping.asmType
         if (asmType != null) {
+            val jetType = mapping.type ?: return null
+
             // process* methods return false if marker should be reified further
             // or it's invalid (may be emitted explicitly in code)
             // they return true if instruction is reified and marker can be deleted
             if (when (insn.name) {
                 NEW_ARRAY_MARKER_METHOD_NAME -> processNewArray(insn, asmType)
-                CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, asmType)
-                INSTANCEOF_MARKER_METHOD_NAME -> processInstanceof(insn, asmType)
+                CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, instructions, jetType, asmType, safe = false)
+                SAFE_CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, instructions, jetType, asmType, safe = true)
+                INSTANCEOF_MARKER_METHOD_NAME -> processInstanceof(insn, instructions, jetType, asmType)
                 JAVA_CLASS_MARKER_METHOD_NAME -> processJavaClass(insn, asmType)
-                CLASS_LITERAL_MARKER_METHOD_NAME -> processClassLiteral(insn, asmType, instructions, mapping.type!!)
+                CLASS_LITERAL_MARKER_METHOD_NAME -> processClassLiteral(insn, instructions, jetType, asmType)
                 else -> false
             }) {
                 instructions.remove(insn.getPrevious()!!)
@@ -159,11 +166,29 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     private fun processNewArray(insn: MethodInsnNode, parameter: Type) =
             processNextTypeInsn(insn, parameter, Opcodes.ANEWARRAY)
 
-    private fun processCheckcast(insn: MethodInsnNode, parameter: Type) =
-            processNextTypeInsn(insn, parameter, Opcodes.CHECKCAST)
+    private fun processCheckcast(insn: MethodInsnNode, instructions: InsnList, jetType: JetType, asmType: Type, safe: Boolean) =
+            rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { instanceofInsn: AbstractInsnNode ->
+                if (instanceofInsn !is TypeInsnNode) return false
+                CheckCast.checkcast(instanceofInsn, instructions, jetType, asmType, safe)
+                return true
+            }
 
-    private fun processInstanceof(insn: MethodInsnNode, parameter: Type) =
-            processNextTypeInsn(insn, parameter, Opcodes.INSTANCEOF)
+    private fun processInstanceof(insn: MethodInsnNode, instructions: InsnList, jetType: JetType, asmType: Type) =
+            rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { instanceofInsn: AbstractInsnNode ->
+                if (instanceofInsn !is TypeInsnNode) return false
+                InstanceOf.instanceOf(instanceofInsn, instructions, jetType, asmType)
+                return true
+            }
+
+    inline private fun rewriteNextTypeInsn(
+            marker: MethodInsnNode,
+            expectedNextOpcode: Int,
+            rewrite: (AbstractInsnNode) -> Boolean
+    ): Boolean {
+        val next = marker.next ?: return false
+        if (next.opcode != expectedNextOpcode) return false
+        return rewrite(next)
+    }
 
     private fun processNextTypeInsn(insn: MethodInsnNode, parameter: Type, expectedNextOpcode: Int): Boolean {
         if (insn.getNext()?.getOpcode() != expectedNextOpcode) return false
@@ -178,7 +203,7 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         return true
     }
 
-    private fun processClassLiteral(insn: MethodInsnNode, parameter: Type, instructions: InsnList, type: JetType): Boolean {
+    private fun processClassLiteral(insn: MethodInsnNode, instructions: InsnList, type: JetType, parameter: Type): Boolean {
         val next = insn.next
         if (next !is FieldInsnNode || next.opcode != Opcodes.GETSTATIC) return false
         val descriptor = type.constructor.declarationDescriptor!!

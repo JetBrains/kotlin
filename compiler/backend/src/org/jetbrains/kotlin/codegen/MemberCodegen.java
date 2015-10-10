@@ -117,7 +117,9 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
         generateSyntheticParts();
 
-        generateKotlinAnnotation();
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            generateKotlinAnnotation();
+        }
 
         done();
     }

@@ -25,10 +25,11 @@ import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.serialization.Flags
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.FUN
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAL
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAR
+import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind.FUN
+import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind.VAL
+import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind.VAR
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
@@ -50,18 +51,18 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
                 Deserialization.modality(Flags.MODALITY.get(flags)),
                 Deserialization.visibility(Flags.VISIBILITY.get(flags)),
-                Flags.CALLABLE_KIND.get(flags) == Callable.CallableKind.VAR,
+                Flags.CALLABLE_KIND.get(flags) == ProtoBuf.CallableKind.VAR,
                 c.nameResolver.getName(proto.getName()),
                 Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)),
                 proto,
                 c.nameResolver,
-                Flags.LATE_INIT.get(flags),
-                Flags.IS_CONST.get(flags)
+                Flags.OLD_LATE_INIT.get(flags),
+                Flags.OLD_IS_CONST.get(flags)
         )
 
         val local = c.childContext(property, proto.getTypeParameterList())
 
-        val hasGetter = Flags.HAS_GETTER.get(flags)
+        val hasGetter = Flags.OLD_HAS_GETTER.get(flags)
         val receiverAnnotations = if (hasGetter)
             getReceiverParameterAnnotations(proto, AnnotatedCallableKind.PROPERTY_GETTER)
         else
@@ -98,7 +99,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             null
         }
 
-        val setter = if (Flags.HAS_SETTER.get(flags)) {
+        val setter = if (Flags.OLD_HAS_SETTER.get(flags)) {
             val setterFlags = proto.getSetterFlags()
             val isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags)
             if (isNotDefault) {
@@ -124,11 +125,11 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             null
         }
 
-        if (Flags.HAS_CONSTANT.get(flags)) {
+        if (Flags.OLD_HAS_CONSTANT.get(flags)) {
             property.setCompileTimeInitializer(
                     c.storageManager.createNullableLazyValue {
                         val container = c.containingDeclaration.asProtoContainer()!!
-                        c.components.annotationAndConstantLoader.loadPropertyConstant(container, proto, c.nameResolver, property.getReturnType())
+                        c.components.annotationAndConstantLoader.loadPropertyConstant(container, proto, property.returnType)
                     }
             )
         }
@@ -151,8 +152,8 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 local.typeDeserializer.type(proto.returnType),
                 Deserialization.modality(Flags.MODALITY.get(proto.flags)),
                 Deserialization.visibility(Flags.VISIBILITY.get(proto.flags)),
-                Flags.IS_OPERATOR.get(proto.flags),
-                Flags.IS_INFIX.get(proto.flags)
+                Flags.OLD_IS_OPERATOR.get(proto.flags),
+                Flags.OLD_IS_INFIX.get(proto.flags)
         )
         return function
     }
@@ -183,9 +184,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         }
         return DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
             c.containingDeclaration.asProtoContainer()?.let {
-                c.components.annotationAndConstantLoader.loadCallableAnnotations(
-                        it, proto, c.nameResolver, kind
-                )
+                c.components.annotationAndConstantLoader.loadCallableAnnotations(it, proto, kind)
             }.orEmpty()
         }
     }
@@ -199,7 +198,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             if (proto.hasReceiverType()) {
                 c.containingDeclaration.asProtoContainer()?.let {
                     c.components.annotationAndConstantLoader
-                            .loadExtensionReceiverParameterAnnotations(it, proto, c.nameResolver, receiverTargetedKind)
+                            .loadExtensionReceiverParameterAnnotations(it, proto, receiverTargetedKind)
                             .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
                 }.orEmpty()
             }
@@ -230,18 +229,16 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             callable: Callable,
             kind: AnnotatedCallableKind,
             index: Int,
-            valueParameter: Callable.ValueParameter
+            valueParameter: ProtoBuf.ValueParameter
     ): Annotations {
         return DeserializedAnnotations(c.storageManager) {
-            c.components.annotationAndConstantLoader.loadValueParameterAnnotations(
-                    container, callable, c.nameResolver, kind, index, valueParameter
-            )
+            c.components.annotationAndConstantLoader.loadValueParameterAnnotations(container, callable, kind, index, valueParameter)
         }
     }
 
     private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer? = when(this) {
-        is PackageFragmentDescriptor -> ProtoContainer(null, fqName)
-        is DeserializedClassDescriptor -> ProtoContainer(classProto, null)
+        is PackageFragmentDescriptor -> ProtoContainer(null, fqName, c.nameResolver)
+        is DeserializedClassDescriptor -> ProtoContainer(classProto, null, c.nameResolver)
         else -> null // TODO: support annotations on lambdas and their parameters
     }
 }

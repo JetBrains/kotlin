@@ -352,10 +352,10 @@ fun testRenamed(reference: String = "$KEYWORD_MARKER") = "testRenamed(\"$KEYWORD
 fun testNotRenamed(reference: String = "$KEYWORD_MARKER") = "testNotRenamed(\"$KEYWORD_MARKER\", { $reference })"
 
 val testRenamedByName = testRenamed()
-val testRenamedByRef = testRenamed("::$KEYWORD_MARKER")
+val testRenamedByRef = testRenamed("$KEYWORD_MARKER()")
 
 val testNotRenamedByName = testNotRenamed()
-val testNotRenamedByRef = testNotRenamed("::$KEYWORD_MARKER")
+val testNotRenamedByRef = testNotRenamed("$KEYWORD_MARKER()")
 
 // KEYWORDS
 

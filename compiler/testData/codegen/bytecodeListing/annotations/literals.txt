@@ -20,7 +20,7 @@
     method <init>(p0: int): void
 }
 
-@kotlin.jvm.internal.KotlinClass LiteralsKt$foo$3 {
+@kotlin.jvm.internal.KotlinLocalClass @kotlin.jvm.internal.KotlinClass LiteralsKt$foo$3 {
     inner class LiteralsKt$foo$3
     field $kotlinClass: kotlin.reflect.KClass
     method <clinit>(): void

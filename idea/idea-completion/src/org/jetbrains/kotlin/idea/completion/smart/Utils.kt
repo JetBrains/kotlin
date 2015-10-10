@@ -23,19 +23,21 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.resolve.callableReferences.getReflectionTypeForCandidateDescriptor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 class ArtificialElementInsertHandler(
@@ -116,7 +118,7 @@ fun LookupElement.addTailAndNameSimilarity(
     return lookupElement
 }
 
-class ExpectedInfoClassification
+class ExpectedInfoMatch
 private constructor(
         val substitutor: TypeSubstitutor?,
         val makeNotNullable: Boolean
@@ -124,35 +126,35 @@ private constructor(
     fun isMatch() = substitutor != null && !makeNotNullable
 
     companion object {
-        val noMatch = ExpectedInfoClassification(null, false)
-        fun match(substitutor: TypeSubstitutor) = ExpectedInfoClassification(substitutor, false)
-        fun ifNotNullMatch(substitutor: TypeSubstitutor) = ExpectedInfoClassification(substitutor, true)
+        val noMatch = ExpectedInfoMatch(null, false)
+        fun match(substitutor: TypeSubstitutor) = ExpectedInfoMatch(substitutor, false)
+        fun ifNotNullMatch(substitutor: TypeSubstitutor) = ExpectedInfoMatch(substitutor, true)
     }
 }
 
-fun Collection<FuzzyType>.classifyExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoClassification {
+fun Collection<FuzzyType>.matchExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoMatch {
     val sequence = asSequence()
     val substitutor = sequence.map { expectedInfo.matchingSubstitutor(it) }.firstOrNull()
     if (substitutor != null) {
-        return ExpectedInfoClassification.match(substitutor)
+        return ExpectedInfoMatch.match(substitutor)
     }
 
     if (sequence.any { it.nullability() == TypeNullability.NULLABLE }) {
         val substitutor2 = sequence.map { expectedInfo.matchingSubstitutor(it.makeNotNullable()) }.firstOrNull()
         if (substitutor2 != null) {
-            return ExpectedInfoClassification.ifNotNullMatch(substitutor2)
+            return ExpectedInfoMatch.ifNotNullMatch(substitutor2)
         }
     }
 
-    return ExpectedInfoClassification.noMatch
+    return ExpectedInfoMatch.noMatch
 }
 
-fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo) = listOf(this).classifyExpectedInfo(expectedInfo)
+fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo) = listOf(this).matchExpectedInfo(expectedInfo)
 
 fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLookupElements(
         descriptor: TDescriptor,
         expectedInfos: Collection<ExpectedInfo>,
-        infoClassifier: (ExpectedInfo) -> ExpectedInfoClassification,
+        infoMatcher: (ExpectedInfo) -> ExpectedInfoMatch,
         noNameSimilarityForReturnItself: Boolean = false,
         lookupElementFactory: (TDescriptor) -> Collection<LookupElement>
 ) {
@@ -167,7 +169,7 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
     val matchedInfos = HashMap<ItemData, MutableList<ExpectedInfo>>()
     val makeNullableInfos = HashMap<ItemData, MutableList<ExpectedInfo>>()
     for (info in expectedInfos) {
-        val classification = infoClassifier(info)
+        val classification = infoMatcher(info)
         if (classification.substitutor != null) {
             @Suppress("UNCHECKED_CAST")
             val substitutedDescriptor = descriptor.substituteFixed(classification.substitutor)
@@ -235,30 +237,10 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
     }
 }
 
-fun functionType(function: FunctionDescriptor): JetType? {
-    val extensionReceiverType = function.getExtensionReceiverParameter()?.getType()
-    val memberReceiverType = if (function is ConstructorDescriptor) {
-        val classDescriptor = function.getContainingDeclaration()
-        if (classDescriptor.isInner()) {
-            (classDescriptor.getContainingDeclaration() as? ClassifierDescriptor)?.getDefaultType()
-        }
-        else {
-            null
-        }
-    }
-    else {
-        (function.getContainingDeclaration() as? ClassifierDescriptor)?.getDefaultType()
-    }
-    //TODO: this is to be changed when references to member extensions supported
-    val receiverType = if (extensionReceiverType != null && memberReceiverType != null)
-        null
-    else
-        extensionReceiverType ?: memberReceiverType
-    return function.builtIns.getFunctionType(
-            function.getAnnotations(), receiverType,
-            function.getValueParameters().map { it.getType() },
-            function.getReturnType() ?: return null
-    )
+fun CallableDescriptor.callableReferenceType(resolutionFacade: ResolutionFacade): FuzzyType? {
+    if (!CallType.CALLABLE_REFERENCE.descriptorKindFilter.accepts(this)) return null // not supported by callable references
+    val type = getReflectionTypeForCandidateDescriptor(this, resolutionFacade.getFrontendService(ReflectionTypes::class.java)) ?: return null
+    return FuzzyType(type, emptyList())
 }
 
 fun LookupElementFactory.createLookupElementsInSmartCompletion(
@@ -286,6 +268,7 @@ enum class SmartCompletionItemPriority {
     IT,
     TRUE,
     FALSE,
+    CLASS_LITERAL,
     THIS,
     DEFAULT,
     NULLABLE,
@@ -306,7 +289,15 @@ fun LookupElement.assignSmartCompletionPriority(priority: SmartCompletionItemPri
     return this
 }
 
-fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(smartCastCalculator: SmartCastCalculator): Collection<FuzzyType> {
+fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
+        smartCastCalculator: SmartCastCalculator,
+        callType: CallType<*>,
+        resolutionFacade: ResolutionFacade
+): Collection<FuzzyType> {
+    if (callType == CallType.CALLABLE_REFERENCE) {
+        return (this as? CallableDescriptor)?.callableReferenceType(resolutionFacade).singletonOrEmptyList()
+    }
+
     if (this is CallableDescriptor) {
         var returnType = fuzzyReturnType() ?: return emptyList()
         // skip declarations of type Nothing or of generic parameter type which has no real bounds
@@ -329,4 +320,7 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(smartCastCalculator: Smar
 
 fun Collection<ExpectedInfo>.filterFunctionExpected()
         = filter { it.fuzzyType != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.fuzzyType!!.type) }
+
+fun Collection<ExpectedInfo>.filterCallableExpected()
+        = filter { it.fuzzyType != null && ReflectionTypes.isCallableType(it.fuzzyType!!.type) }
 

@@ -834,14 +834,9 @@ public class AsmUtil {
         }
     }
 
-    public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v, @NotNull KotlinSyntheticClass.Kind kind) {
+    public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v) {
         AnnotationVisitor av = v.newAnnotation(Type.getObjectType(KotlinSyntheticClass.CLASS_NAME.getInternalName()).getDescriptor(), true);
         JvmCodegenUtil.writeAbiVersion(av);
-        av.visitEnum(
-                JvmAnnotationNames.KIND_FIELD_NAME,
-                Type.getObjectType(KotlinSyntheticClass.KIND_INTERNAL_NAME).getDescriptor(),
-                kind.toString()
-        );
         av.visitEnd();
     }
 

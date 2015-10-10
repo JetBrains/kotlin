@@ -65,6 +65,18 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("callableReferenceExtension.before.Main.kt")
+        public void testCallableReferenceExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/callableReferenceExtension.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("callableReferenceTopLevel.before.Main.kt")
+        public void testCallableReferenceTopLevel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/callableReferenceTopLevel.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("classImport.before.Main.kt")
         public void testClassImport() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/classImport.before.Main.kt");

@@ -5,7 +5,7 @@ package foo
 fun box(): String {
     fun private() { private() }
 
-    testRenamed("private", { ::private })
+    testRenamed("private", { private() })
 
     return "OK"
 }

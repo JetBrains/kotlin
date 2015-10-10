@@ -145,6 +145,10 @@ sealed class ArgumentPositionData(val function: FunctionDescriptor) : ExpectedIn
 
 class ReturnValueAdditionalData(val callable: CallableDescriptor) : ExpectedInfo.AdditionalData
 
+class WhenEntryAdditionalData(val whenWithSubject: Boolean) : ExpectedInfo.AdditionalData
+
+object IfConditionAdditionalData : ExpectedInfo.AdditionalData
+
 class ExpectedInfos(
         val bindingContext: BindingContext,
         val resolutionFacade: ResolutionFacade,
@@ -421,7 +425,7 @@ class ExpectedInfos(
     private fun calculateForIf(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val ifExpression = (expressionWithType.getParent() as? JetContainerNode)?.getParent() as? JetIfExpression ?: return null
         return when (expressionWithType) {
-            ifExpression.getCondition() -> listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, Tail.RPARENTH))
+            ifExpression.getCondition() -> listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, Tail.RPARENTH, additionalData = IfConditionAdditionalData))
 
             ifExpression.getThen() -> calculate(ifExpression).map { ExpectedInfo(it.filter, it.expectedName, Tail.ELSE) }
 
@@ -489,10 +493,10 @@ class ExpectedInfos(
         val subject = whenExpression.getSubjectExpression()
         if (subject != null) {
             val subjectType = bindingContext.getType(subject) ?: return null
-            return listOf(ExpectedInfo(subjectType, null, null))
+            return listOf(ExpectedInfo(subjectType, null, null, additionalData = WhenEntryAdditionalData(whenWithSubject = true)))
         }
         else {
-            return listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, null))
+            return listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, null, additionalData = WhenEntryAdditionalData(whenWithSubject = false)))
         }
     }
 

@@ -24,6 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.idea.decompiler.KotlinClsFileBase;
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope;
 import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil;
@@ -37,11 +38,8 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptPackageFragment;
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
@@ -129,11 +127,8 @@ public final class DecompiledNavigationUtils {
             FqName packageFQN = ((PackageFragmentDescriptor) containerDescriptor).getFqName();
 
             if (referencedDescriptor instanceof DeserializedCallableMemberDescriptor) {
-                DeserializedCallableMemberDescriptor deserializedDescriptor = (DeserializedCallableMemberDescriptor) referencedDescriptor;
-                ProtoBuf.Callable proto = deserializedDescriptor.getProto();
-                NameResolver nameResolver = deserializedDescriptor.getNameResolver();
-                if (proto.hasExtension(JvmProtoBuf.implClassName)) {
-                    Name partClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName));
+                Name partClassName = JvmFileClassUtil.getImplClassName((DeserializedCallableMemberDescriptor) referencedDescriptor);
+                if (partClassName != null) {
                     FqName partFQN = packageFQN.child(partClassName);
                     Collection<JetFile> multifileFacadeJetFiles =
                             StaticFacadeIndexUtil.getMultifileClassForPart(partFQN, GlobalSearchScope.allScope(project), project);

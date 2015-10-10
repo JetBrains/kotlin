@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionSorter
+import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiCompiledElement
-import com.intellij.psi.PsiElement
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
@@ -33,20 +33,16 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.CallType
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.idea.util.receiverTypes
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.JetType
@@ -69,11 +65,12 @@ fun CompletionSessionConfiguration(parameters: CompletionParameters) = Completio
 abstract class CompletionSession(protected val configuration: CompletionSessionConfiguration,
                                      protected val parameters: CompletionParameters,
                                      resultSet: CompletionResultSet) {
-    protected val position: PsiElement = parameters.getPosition()
+    protected val position = parameters.getPosition()
     private val file = position.getContainingFile() as JetFile
-    protected val resolutionFacade: ResolutionFacade = file.getResolutionFacade()
-    protected val moduleDescriptor: ModuleDescriptor = resolutionFacade.moduleDescriptor
-    protected val project: Project = position.getProject()
+    protected val resolutionFacade = file.getResolutionFacade()
+    protected val moduleDescriptor = resolutionFacade.moduleDescriptor
+    protected val project = position.getProject()
+    protected val isJvmModule = !ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as JetFile)
 
     protected val nameExpression: JetSimpleNameExpression?
     protected val expression: JetExpression?
@@ -96,31 +93,19 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         }
     }
 
-    protected val bindingContext: BindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
-    protected val inDescriptor: DeclarationDescriptor = position.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
+    protected val bindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
+    protected val inDescriptor = position.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
 
-    private val kotlinIdentifierStartPattern: ElementPattern<Char>
-    private val kotlinIdentifierPartPattern: ElementPattern<Char>
+    private val kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart() andNot singleCharPattern('$')
+    private val kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart() andNot singleCharPattern('$')
 
-    init {
-        val includeDollar = position.prevLeaf()?.getNode()?.getElementType() != JetTokens.SHORT_TEMPLATE_ENTRY_START
-        if (includeDollar) {
-            kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart()
-            kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart()
-        }
-        else {
-            kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart() andNot singleCharPattern('$')
-            kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart() andNot singleCharPattern('$')
-        }
-    }
-
-    protected val prefix: String = CompletionUtil.findIdentifierPrefix(
+    protected val prefix = CompletionUtil.findIdentifierPrefix(
             parameters.getPosition().getContainingFile(),
             parameters.getOffset(),
             kotlinIdentifierPartPattern or singleCharPattern('@'),
             kotlinIdentifierStartPattern)
 
-    protected val prefixMatcher: PrefixMatcher = CamelHumpMatcher(prefix)
+    protected val prefixMatcher = CamelHumpMatcher(prefix)
 
     protected val descriptorNameFilter: (Name) -> Boolean = run {
         val nameFilter = prefixMatcher.asNameFilter()
@@ -136,46 +121,15 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it) }
 
-    protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, isVisibleFilter)
+    protected val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, isVisibleFilter)
 
-    protected val receiversData: ReferenceVariantsHelper.ReceiversData? = nameExpression?.let { referenceVariantsHelper.getReferenceVariantsReceivers(it) }
+    protected val callTypeAndReceiver: CallTypeAndReceiver<*, *>
+    protected val lookupElementFactory: LookupElementFactory
 
-    protected val lookupElementFactory: LookupElementFactory = run {
-        val contextType = if (expression?.getParent() is JetSimpleNameStringTemplateEntry)
-            LookupElementFactory.ContextType.STRING_TEMPLATE_AFTER_DOLLAR
-        else if (receiversData?.callType == CallType.INFIX)
-            LookupElementFactory.ContextType.INFIX_CALL
-        else
-            LookupElementFactory.ContextType.NORMAL
-
-        var receiverTypes = emptyList<JetType>()
-        if (receiversData != null) {
-            val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
-
-            receiverTypes = receiversData.receivers.flatMap { receiverValue ->
-                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
-                if (dataFlowValue.isPredictable) { // we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed
-                    resolutionFacade.frontendService<SmartCastManager>()
-                            .getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)
-                }
-                else {
-                    listOf(receiverValue.type)
-                }
-            }
-
-            if (receiversData.callType == CallType.SAFE) {
-                receiverTypes = receiverTypes.map { it.makeNotNullable() }
-            }
-        }
-
-        val contextVariablesProvider = {
-            nameExpression?.let {
-                referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, explicitReceiverData = null)
-                        .map { it as VariableDescriptor }
-            } ?: emptyList()
-        }
-
-        LookupElementFactory(resolutionFacade, receiverTypes, contextType, inDescriptor, InsertHandlerProvider { expectedInfos }, contextVariablesProvider)
+    init {
+        val (callTypeAndReceiver, receiverTypes) = detectCallTypeAndReceiverTypes()
+        this.callTypeAndReceiver = callTypeAndReceiver
+        this.lookupElementFactory = createLookupElementFactory(callTypeAndReceiver.callType, receiverTypes)
     }
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
@@ -335,8 +289,8 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     private fun Collection<CallableDescriptor>.filterShadowedNonImported(): Collection<CallableDescriptor> {
-        val explicitReceiverData = ReferenceVariantsHelper.getExplicitReceiverData(nameExpression!!)
-        return ShadowedDeclarationsFilter(bindingContext, resolutionFacade, nameExpression, explicitReceiverData).filterNonImported(this, referenceVariants)
+        val filter = ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, nameExpression!!, callTypeAndReceiver)
+        return if (filter != null) filter.filterNonImported(this, referenceVariants) else this
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
@@ -345,5 +299,37 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                         { descriptor -> collector.addDescriptorElements(descriptor, notImported = true) },
                         { javaClass -> collector.addElement(lookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true) }
                 )
+    }
+
+    private fun createLookupElementFactory(callType: CallType<*>?, receiverTypes: Collection<JetType>?): LookupElementFactory {
+        val contextVariablesProvider = {
+            nameExpression?.let {
+                referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, CallTypeAndReceiver.DEFAULT)
+                        .map { it as VariableDescriptor }
+            } ?: emptyList()
+        }
+
+        val insertHandlerProvider = InsertHandlerProvider(callType) { expectedInfos }
+        return LookupElementFactory(resolutionFacade, receiverTypes,
+                                    callType, expression?.parent is JetSimpleNameStringTemplateEntry,
+                                    insertHandlerProvider, contextVariablesProvider)
+    }
+
+    private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<JetType>?> {
+        if (nameExpression == null) {
+            return CallTypeAndReceiver.UNKNOWN to null
+        }
+
+        val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression)
+
+        var receiverTypes = callTypeAndReceiver.receiverTypes(
+                bindingContext, nameExpression, moduleDescriptor,
+                predictableSmartCastsOnly = true /* we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed */)
+
+        if (callTypeAndReceiver is CallTypeAndReceiver.SAFE) {
+            receiverTypes = receiverTypes!!.map { it.makeNotNullable() }
+        }
+
+        return callTypeAndReceiver to receiverTypes
     }
 }

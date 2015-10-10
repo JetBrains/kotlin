@@ -21,35 +21,52 @@ import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.*
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.types.JetType
 import java.util.*
 
-class InsertHandlerProvider(expectedInfosCalculator: () -> Collection<ExpectedInfo>) {
+class InsertHandlerProvider(
+        private val callType: CallType<*>?,
+        expectedInfosCalculator: () -> Collection<ExpectedInfo>
+) {
     private val expectedInfos by lazy(LazyThreadSafetyMode.NONE) { expectedInfosCalculator() }
 
     public fun insertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
+        if (callType == null) {
+            error("Cannot create InsertHandler when no CallType known")
+        }
+
         return when (descriptor) {
             is FunctionDescriptor -> {
-                val needTypeArguments = needTypeArguments(descriptor)
-                val parameters = descriptor.valueParameters
-                when (parameters.size()) {
-                    0 -> KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = false)
+                when (callType) {
+                    is CallType.DEFAULT, is CallType.DOT, is CallType.SAFE -> {
+                        val needTypeArguments = needTypeArguments(descriptor)
+                        val parameters = descriptor.valueParameters
+                        when (parameters.size()) {
+                            0 -> KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false)
 
-                    1 -> {
-                        val parameterType = parameters.single().getType()
-                        if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
-                            val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
-                            if (parameterCount <= 1) {
-                                // otherwise additional item with lambda template is to be added
-                                return KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
+                            1 -> {
+                                val parameterType = parameters.single().getType()
+                                if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
+                                    val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                                    if (parameterCount <= 1) {
+                                        // otherwise additional item with lambda template is to be added
+                                        return KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
+                                    }
+                                }
+                                KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = true)
                             }
+
+                            else -> KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = true)
                         }
-                        KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = true)
                     }
 
-                    else -> KotlinFunctionInsertHandler(needTypeArguments, inputValueArguments = true)
+                    is CallType.INFIX -> KotlinFunctionInsertHandler.Infix
+
+                    else -> KotlinFunctionInsertHandler.OnlyName
                 }
+
             }
 
             is PropertyDescriptor -> KotlinPropertyInsertHandler

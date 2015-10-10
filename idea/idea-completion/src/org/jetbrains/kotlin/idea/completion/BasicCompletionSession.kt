@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
@@ -32,11 +33,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -45,6 +48,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import java.util.*
 
 class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              parameters: CompletionParameters,
@@ -101,8 +105,9 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private val smartCompletion = expression?.let {
         SmartCompletion(
-                it, resolutionFacade, bindingContext, isVisibleFilter, prefixMatcher,
-                GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, forBasicCompletion = true
+                it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, prefixMatcher,
+                GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, callTypeAndReceiver,
+                isJvmModule, forBasicCompletion = true
         )
     }
 
@@ -230,43 +235,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
             collector.addDescriptorElements(referenceVariants)
 
-            val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
-            KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
-                val keyword = lookupElement.getLookupString()
-                when (keyword) {
-                // if "this" is parsed correctly in the current context - insert it and all this@xxx items
-                    "this" -> {
-                        if (expression != null) {
-                            collector.addElements(thisExpressionItems(bindingContext, expression, prefix, resolutionFacade).map { it.createLookupElement() })
-                        }
-                        else {
-                            // for completion in secondary constructor delegation call
-                            collector.addElement(lookupElement)
-                        }
-                    }
-
-                // if "return" is parsed correctly in the current context - insert it and all return@xxx items
-                    "return" -> {
-                        if (expression != null) {
-                            collector.addElements(returnExpressionItems(bindingContext, expression))
-                        }
-                    }
-
-                    "break", "continue" -> {
-                        if (expression != null) {
-                            collector.addElements(breakOrContinueExpressionItems(expression, keyword))
-                        }
-                    }
-
-                    "override" -> {
-                        collector.addElement(lookupElement)
-
-                        OverridesCompletion(collector, lookupElementFactory).complete(position)
-                    }
-
-                    else -> collector.addElement(lookupElement)
-                }
-            }
+            completeKeywords()
 
             // getting root packages from scope is very slow so we do this in alternative way
             if (isNoQualifierContext() && (descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
@@ -293,7 +262,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                     collector.advertiseSecondCompletion()
                 }
 
-                addNonImported(completionKind)
+                completeNonImported()
 
                 if (position.getContainingFile() is JetCodeFragment) {
                     flushToResultSet()
@@ -305,7 +274,75 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         NamedArgumentCompletion.complete(collector, expectedInfos)
     }
 
-    private fun addNonImported(completionKind: CompletionKind) {
+    private fun completeKeywords() {
+        val keywordsToSkip = HashSet<String>()
+
+        val keywordValueConsumer = object : KeywordValues.Consumer {
+            override fun consume(lookupString: String, expectedInfoMatcher: (ExpectedInfo) -> ExpectedInfoMatch, priority: SmartCompletionItemPriority, factory: () -> LookupElement) {
+                keywordsToSkip.add(lookupString)
+                val lookupElement = factory()
+                val matched = expectedInfos.any {
+                    val match = expectedInfoMatcher(it)
+                    assert(!match.makeNotNullable) { "Nullable keyword values not supported" }
+                    match.isMatch()
+                }
+                if (matched) {
+                    lookupElement.putUserData(SmartCompletionInBasicWeigher.KEYWORD_VALUE_MATCHED_KEY, Unit)
+                    lookupElement.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, priority)
+                }
+                collector.addElement(lookupElement)
+            }
+        }
+        KeywordValues.process(keywordValueConsumer, callTypeAndReceiver, bindingContext, resolutionFacade, moduleDescriptor, isJvmModule)
+
+        val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
+        KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
+            val keyword = lookupElement.lookupString
+            if (keyword in keywordsToSkip) return@complete
+
+            when (keyword) {
+            // if "this" is parsed correctly in the current context - insert it and all this@xxx items
+                "this" -> {
+                    if (expression != null) {
+                        collector.addElements(thisExpressionItems(bindingContext, expression, prefix, resolutionFacade).map { it.createLookupElement() })
+                    }
+                    else {
+                        // for completion in secondary constructor delegation call
+                        collector.addElement(lookupElement)
+                    }
+                }
+
+            // if "return" is parsed correctly in the current context - insert it and all return@xxx items
+                "return" -> {
+                    if (expression != null) {
+                        collector.addElements(returnExpressionItems(bindingContext, expression))
+                    }
+                }
+
+                "break", "continue" -> {
+                    if (expression != null) {
+                        collector.addElements(breakOrContinueExpressionItems(expression, keyword))
+                    }
+                }
+
+                "override" -> {
+                    collector.addElement(lookupElement)
+
+                    OverridesCompletion(collector, lookupElementFactory).complete(position)
+                }
+
+                "class" -> {
+                    if (callTypeAndReceiver !is CallTypeAndReceiver.CALLABLE_REFERENCE) { // otherwise it should be handled by KeywordValues
+                        collector.addElement(lookupElement)
+                    }
+                }
+
+                else -> collector.addElement(lookupElement)
+            }
+        }
+    }
+
+    private fun completeNonImported() {
         if (completionKind == CompletionKind.ALL) {
             collector.addDescriptorElements(getTopLevelExtensions(), notImported = true)
         }
@@ -353,7 +390,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         if (smartCompletion != null) {
-            sorter = sorter.weighBefore(KindWeigher.toString(), SmartCompletionInBasicWeigher(smartCompletion), SmartCompletionPriorityWeigher)
+            val smartCompletionInBasicWeigher = SmartCompletionInBasicWeigher(smartCompletion, callTypeAndReceiver.callType, resolutionFacade)
+            sorter = sorter.weighBefore(KindWeigher.toString(), smartCompletionInBasicWeigher, SmartCompletionPriorityWeigher)
         }
 
         return sorter

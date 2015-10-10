@@ -64,9 +64,7 @@ public object ExpectedCompletionUtils {
                     throw RuntimeException("Invalid json property '$key'")
                 }
                 val value = entry.value
-                if (value !is JsonNull) {
-                    map.put(key, value.asString)
-                }
+                map.put(key, if (value !is JsonNull) value.asString else null)
             }
         }
 

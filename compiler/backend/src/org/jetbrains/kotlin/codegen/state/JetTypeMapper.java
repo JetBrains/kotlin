@@ -64,8 +64,6 @@ import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -272,9 +270,8 @@ public class JetTypeMapper {
             return new ContainingClassesInfo(builtinsFacadeClassId, builtinsFacadeClassId);
         }
 
-        assert descriptor.getProto().hasExtension(JvmProtoBuf.implClassName)
-                : "No implClassName for " + descriptor;
         Name implClassName = JvmFileClassUtil.getImplClassName(descriptor);
+        assert implClassName != null : "No implClassName for " + descriptor;
         String implSimpleName = implClassName.asString();
 
         String facadeSimpleName;

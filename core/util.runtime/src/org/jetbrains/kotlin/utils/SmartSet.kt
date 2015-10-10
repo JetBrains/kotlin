@@ -42,11 +42,11 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
     private var size: Int = 0
 
     override fun iterator(): MutableIterator<T> = when {
-        size == 0 -> emptySet<T>().iterator()
-        size == 1 -> SingletonIterator(data as T)
-        size < ARRAY_THRESHOLD -> (data as Array<T>).iterator()
-        else -> (data as MutableSet<T>).iterator()
-    } as MutableIterator<T>
+            size == 0 -> Collections.emptySet<T>().iterator()
+            size == 1 -> SingletonIterator(data as T)
+            size < ARRAY_THRESHOLD -> ArrayIterator(data as Array<T>)
+            else -> (data as MutableSet<T>).iterator()
+        }
 
     override fun add(e: T): Boolean {
         when {
@@ -87,7 +87,7 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
         else -> o in data as Set<T>
     }
 
-    private class SingletonIterator<T>(private val element: T) : Iterator<T> {
+    private class SingletonIterator<T>(private val element: T) : MutableIterator<T> {
         private var hasNext = true
 
         override fun next(): T =
@@ -98,5 +98,15 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
                 else throw NoSuchElementException()
 
         override fun hasNext() = hasNext
+
+        override fun remove() = throw UnsupportedOperationException()
+    }
+
+    private class ArrayIterator<T>(array: Array<T>) : MutableIterator<T> {
+        private val arrayIterator = array.iterator()
+
+        override fun hasNext(): Boolean = arrayIterator.hasNext()
+        override fun next(): T = arrayIterator.next()
+        override fun remove() = throw UnsupportedOperationException()
     }
 }

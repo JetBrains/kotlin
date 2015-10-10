@@ -7,7 +7,7 @@ class TestClass {
         fun `false`() { `false`() }
 
         fun test() {
-            testNotRenamed("false", { ::`false` })
+            testNotRenamed("false", { `false`() })
         }
     }
 }

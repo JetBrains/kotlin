@@ -21,9 +21,8 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.*
-import org.jetbrains.kotlin.idea.util.CallType
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.FunctionLiteralArgument
 import org.jetbrains.kotlin.psi.JetCodeFragment
@@ -36,13 +35,21 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 : CompletionSession(configuration, parameters, resultSet) {
 
     // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
-    override val descriptorKindFilter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
+    override val descriptorKindFilter: DescriptorKindFilter
+        get() {
+            var filter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
+            if (smartCompletion?.expectedInfos?.filterFunctionExpected()?.isNotEmpty() ?: false) {
+                // if function type is expected we need classes to obtain their constructors
+                filter = filter.withKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)
+            }
+            return filter
+        }
 
     private val smartCompletion by lazy(LazyThreadSafetyMode.NONE) {
         expression?.let {
-            SmartCompletion(it, resolutionFacade,
-                            bindingContext, isVisibleFilter, prefixMatcher, originalSearchScope,
-                            toFromOriginalFileMapper, lookupElementFactory)
+            SmartCompletion(it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter,
+                            prefixMatcher, originalSearchScope, toFromOriginalFileMapper, lookupElementFactory,
+                            callTypeAndReceiver, isJvmModule)
         }
     }
 
@@ -90,30 +97,28 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     // special completion for outside parenthesis lambda argument
     private fun addFunctionLiteralArgumentCompletions() {
         if (nameExpression != null) {
-            val (receiverExpression, callType) = ReferenceVariantsHelper.getExplicitReceiverData(nameExpression) ?: return
-            if (callType == CallType.INFIX) {
-                val call = receiverExpression.getCall(bindingContext)
-                if (call != null && call.getFunctionLiteralArguments().isEmpty()) {
-                    val dummyArgument = object : FunctionLiteralArgument {
-                        override fun getFunctionLiteral() = throw UnsupportedOperationException()
-                        override fun getArgumentExpression() = throw UnsupportedOperationException()
-                        override fun getArgumentName(): ValueArgumentName? = null
-                        override fun isNamed() = false
-                        override fun asElement() = throw UnsupportedOperationException()
-                        override fun getSpreadElement(): LeafPsiElement? = null
-                        override fun isExternal() = false
-                    }
-                    val dummyArguments = call.getValueArguments() + listOf(dummyArgument)
-                    val dummyCall = object : DelegatingCall(call) {
-                        override fun getValueArguments() = dummyArguments
-                        override fun getFunctionLiteralArguments() = listOf(dummyArgument)
-                        override fun getValueArgumentList() = throw UnsupportedOperationException()
-                    }
-
-                    val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade)
-                            .calculateForArgument(dummyCall, dummyArgument)
-                    collector.addElements(LambdaItems.collect(expectedInfos))
+            val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression) as? CallTypeAndReceiver.INFIX ?: return
+            val call = callTypeAndReceiver.receiver.getCall(bindingContext)
+            if (call != null && call.getFunctionLiteralArguments().isEmpty()) {
+                val dummyArgument = object : FunctionLiteralArgument {
+                    override fun getFunctionLiteral() = throw UnsupportedOperationException()
+                    override fun getArgumentExpression() = throw UnsupportedOperationException()
+                    override fun getArgumentName(): ValueArgumentName? = null
+                    override fun isNamed() = false
+                    override fun asElement() = throw UnsupportedOperationException()
+                    override fun getSpreadElement(): LeafPsiElement? = null
+                    override fun isExternal() = false
                 }
+                val dummyArguments = call.getValueArguments() + listOf(dummyArgument)
+                val dummyCall = object : DelegatingCall(call) {
+                    override fun getValueArguments() = dummyArguments
+                    override fun getFunctionLiteralArguments() = listOf(dummyArgument)
+                    override fun getValueArgumentList() = throw UnsupportedOperationException()
+                }
+
+                val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade)
+                        .calculateForArgument(dummyCall, dummyArgument)
+                collector.addElements(LambdaItems.collect(expectedInfos))
             }
         }
     }

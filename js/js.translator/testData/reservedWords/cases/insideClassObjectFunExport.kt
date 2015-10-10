@@ -7,7 +7,7 @@ class TestClass {
         fun export() { export() }
 
         fun test() {
-            testNotRenamed("export", { ::export })
+            testNotRenamed("export", { export() })
         }
     }
 }

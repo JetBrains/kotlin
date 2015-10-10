@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -252,19 +251,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
-
-        KotlinClass.Kind kind;
-        if (isAnonymousObject(descriptor)) {
-            kind = KotlinClass.Kind.ANONYMOUS_OBJECT;
-        }
-        else if (isTopLevelOrInnerClass(descriptor)) {
-            // Default value is Kind.CLASS
-            kind = null;
-        }
-        else {
-            // LOCAL_CLASS is also written to inner classes of local classes
-            kind = KotlinClass.Kind.LOCAL_CLASS;
+        if (!isTopLevelOrInnerClass(descriptor)) {
+            AnnotationVisitor av = v.getVisitor().visitAnnotation(
+                    asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_LOCAL_CLASS), true
+            );
+            av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmAbi.VERSION.toArray());
+            av.visitEnd();
         }
 
         DescriptorSerializer serializer =
@@ -274,13 +266,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
         writeAnnotationData(av, serializer, classProto);
-        if (kind != null) {
-            av.visitEnum(
-                    JvmAnnotationNames.KIND_FIELD_NAME,
-                    Type.getObjectType(KotlinClass.KIND_INTERNAL_NAME).getDescriptor(),
-                    kind.toString()
-            );
-        }
         av.visitEnd();
     }
 
@@ -294,6 +279,27 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isAnonymousObject(descriptor) || !(descriptor.getContainingDeclaration() instanceof ClassOrPackageFragmentDescriptor)) {
             writeOuterClassAndEnclosingMethod();
         }
+    }
+
+    private static Map<String, String> KOTLIN_MARKER_INTERFACES = new HashMap<String, String>();
+    static {
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Iterator", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Iterable", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Collection", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.List", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.ListIterator", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Set", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Map", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.Map.Entry", "kotlin/jvm/internal/markers/KMappedMarker");
+
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableIterator", "kotlin/jvm/internal/markers/KMutableIterator");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableIterable", "kotlin/jvm/internal/markers/KMutableIterable");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableCollection", "kotlin/jvm/internal/markers/KMutableCollection");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableList", "kotlin/jvm/internal/markers/KMutableList");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableListIterator", "kotlin/jvm/internal/markers/KMutableListIterator");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableSet", "kotlin/jvm/internal/markers/KMutableSet");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableMap", "kotlin/jvm/internal/markers/KMutableMap");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableMap.MutableEntry", "kotlin/jvm/internal/markers/KMutableMap$Entry");
     }
 
     @NotNull
@@ -313,15 +319,31 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         sw.writeSuperclassEnd();
 
         LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
+        Set<String> kotlinMarkerInterfaces = new LinkedHashSet<String>();
 
         for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             if (isJvmInterface(supertype.getConstructor().getDeclarationDescriptor())) {
                 sw.writeInterface();
-                Type jvmName = typeMapper.mapSupertype(supertype, sw);
+                Type jvmInterfaceType = typeMapper.mapSupertype(supertype, sw);
                 sw.writeInterfaceEnd();
-                superInterfaces.add(jvmName.getInternalName());
+                String jvmInterfaceInternalName = jvmInterfaceType.getInternalName();
+                superInterfaces.add(jvmInterfaceInternalName);
+
+                String kotlinInterfaceName = DescriptorUtils.getFqName(supertype.getConstructor().getDeclarationDescriptor()).asString();
+                String kotlinMarkerInterfaceInternalName = KOTLIN_MARKER_INTERFACES.get(kotlinInterfaceName);
+                if (kotlinMarkerInterfaceInternalName != null) {
+                    kotlinMarkerInterfaces.add(kotlinMarkerInterfaceInternalName);
+                }
             }
         }
+        
+        for (String kotlinMarkerInterface : kotlinMarkerInterfaces) {
+            sw.writeInterface();
+            sw.writeAsmType(Type.getObjectType(kotlinMarkerInterface));
+            sw.writeInterfaceEnd();
+        }
+
+        superInterfaces.addAll(kotlinMarkerInterfaces);
 
         return new JvmClassSignature(classAsmType.getInternalName(), superClassAsmType.getInternalName(),
                                      new ArrayList<String>(superInterfaces), sw.makeJavaGenericSignature());

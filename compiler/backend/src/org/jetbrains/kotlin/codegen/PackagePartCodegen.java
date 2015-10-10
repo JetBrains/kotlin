@@ -107,10 +107,6 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
 
     @Override
     protected void generateKotlinAnnotation() {
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) {
-            return;
-        }
-
         List<DeclarationDescriptor> members = new ArrayList<DeclarationDescriptor>();
         for (JetDeclaration declaration : element.getDeclarations()) {
             if (declaration instanceof JetNamedFunction) {

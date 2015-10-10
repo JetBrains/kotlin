@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.idea.decompiler.isKotlinInternalCompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedDataFinder
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
@@ -82,7 +81,7 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
                 createPackageFacadeStub(packageProto, packageFqName, context)
             }
             header.isCompatibleClassKind() -> {
-                if (header.classKind != JvmAnnotationNames.KotlinClass.Kind.CLASS) return null
+                if (header.isLocalClass) return null
                 val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName)
                 createTopLevelClassStub(classId, classProto, context)

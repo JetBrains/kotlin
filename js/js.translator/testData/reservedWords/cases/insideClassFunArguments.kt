@@ -6,7 +6,7 @@ class TestClass {
     fun arguments() { arguments() }
 
     fun test() {
-        testNotRenamed("arguments", { ::arguments })
+        testNotRenamed("arguments", { arguments() })
     }
 }
 

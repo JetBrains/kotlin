@@ -17,7 +17,7 @@ fun expectUoe(block: () -> Any) {
 }
 
 fun box(): String {
-    val a = A<Int, Int, Int>() as MutableSet<Int>
+    val a = A<Int, Int, Int>() as java.util.Set<Int>
 
     a.iterator()
 

@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.types.Variance
 
 object Deserialization {
     @JvmStatic
-    fun memberKind(memberKind: ProtoBuf.Callable.MemberKind) = when (memberKind) {
-        ProtoBuf.Callable.MemberKind.DECLARATION -> CallableMemberDescriptor.Kind.DECLARATION
-        ProtoBuf.Callable.MemberKind.FAKE_OVERRIDE -> CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-        ProtoBuf.Callable.MemberKind.DELEGATION -> CallableMemberDescriptor.Kind.DELEGATION
-        ProtoBuf.Callable.MemberKind.SYNTHESIZED -> CallableMemberDescriptor.Kind.SYNTHESIZED
+    fun memberKind(memberKind: ProtoBuf.MemberKind) = when (memberKind) {
+        ProtoBuf.MemberKind.DECLARATION -> CallableMemberDescriptor.Kind.DECLARATION
+        ProtoBuf.MemberKind.FAKE_OVERRIDE -> CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+        ProtoBuf.MemberKind.DELEGATION -> CallableMemberDescriptor.Kind.DELEGATION
+        ProtoBuf.MemberKind.SYNTHESIZED -> CallableMemberDescriptor.Kind.SYNTHESIZED
     }
 
     @JvmStatic

@@ -29,8 +29,10 @@ public @interface KotlinSyntheticClass {
 
     int[] version() default {};
 
-    Kind kind();
+    @Deprecated
+    Kind kind() default Kind.LOCAL_FUNCTION;
 
+    @Deprecated
     enum Kind {
         PACKAGE_PART,
         TRAIT_IMPL,

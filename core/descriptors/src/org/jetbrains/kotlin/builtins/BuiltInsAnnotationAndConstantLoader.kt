@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.builtins
 
+import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
@@ -40,30 +41,29 @@ class BuiltInsAnnotationAndConstantLoader(
 
     override fun loadCallableAnnotations(
             container: ProtoContainer,
-            proto: ProtoBuf.Callable,
-            nameResolver: NameResolver,
+            proto: MessageLite,
             kind: AnnotatedCallableKind
     ): List<AnnotationWithTarget> {
-        val annotations = proto.getExtension(BuiltInsProtoBuf.callableAnnotation).orEmpty()
-        return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, nameResolver), null) }
+        proto as ProtoBuf.Callable // TODO
+
+        val annotations = proto.getExtension(BuiltInsProtoBuf.oldCallableAnnotation).orEmpty()
+        return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, container.nameResolver), null) }
     }
 
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
-            callable: ProtoBuf.Callable,
-            nameResolver: NameResolver,
+            message: MessageLite,
             kind: AnnotatedCallableKind,
             parameterIndex: Int,
-            proto: ProtoBuf.Callable.ValueParameter
+            proto: ProtoBuf.ValueParameter
     ): List<AnnotationDescriptor> {
         val annotations = proto.getExtension(BuiltInsProtoBuf.parameterAnnotation).orEmpty()
-        return annotations.map { proto -> deserializer.deserializeAnnotation(proto, nameResolver) }
+        return annotations.map { proto -> deserializer.deserializeAnnotation(proto, container.nameResolver) }
     }
 
     override fun loadExtensionReceiverParameterAnnotations(
             container: ProtoContainer,
-            callable: ProtoBuf.Callable,
-            nameResolver: NameResolver,
+            message: MessageLite,
             kind: AnnotatedCallableKind
     ): List<AnnotationDescriptor> = emptyList()
 
@@ -75,10 +75,9 @@ class BuiltInsAnnotationAndConstantLoader(
     override fun loadPropertyConstant(
             container: ProtoContainer,
             proto: ProtoBuf.Callable,
-            nameResolver: NameResolver,
             expectedType: JetType
     ): ConstantValue<*>? {
-        val value = proto.getExtension(BuiltInsProtoBuf.compileTimeValue)
-        return deserializer.resolveValue(expectedType, value, nameResolver)
+        val value = proto.getExtension(BuiltInsProtoBuf.oldCompileTimeValue)
+        return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }
 }

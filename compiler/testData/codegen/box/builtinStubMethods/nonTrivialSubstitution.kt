@@ -9,7 +9,7 @@ class MyCollection<T> : Collection<List<Iterator<T>>> {
 }
 
 fun box(): String {
-    val c = MyCollection<String>() as MutableCollection<List<Iterator<String>>>
+    val c = MyCollection<String>() as java.util.Collection<List<Iterator<String>>>
     try {
         c.add(ArrayList())
         return "Fail"

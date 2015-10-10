@@ -1,0 +1,5 @@
+import dependency.myExtFun
+
+fun foo() {
+    val v = String::myExtFun<caret>
+}

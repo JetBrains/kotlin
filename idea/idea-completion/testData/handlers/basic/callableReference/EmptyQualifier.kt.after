@@ -1,0 +1,9 @@
+fun globalFun(p: Int) {}
+
+class C {
+    fun foo() {
+        val v = ::globalFun<caret>
+    }
+}
+
+// ELEMENT: globalFun

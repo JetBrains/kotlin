@@ -41,7 +41,6 @@ public interface Primitives {
 
     double getDouble();
 
-    @kotlin.jvm.internal.KotlinSyntheticClass(version = {0, 27, 0}, abiVersion = 27, kind = kotlin.jvm.internal.KotlinSyntheticClass.Kind.TRAIT_IMPL)
     static final class DefaultImpls {
     }
 }

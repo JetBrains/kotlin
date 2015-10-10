@@ -79,7 +79,6 @@ import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPEN
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory.createDataFlowValue;
 import static org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
-import static org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage.asJetScope;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
@@ -702,6 +701,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
         }
         if (descriptor == null) return null;
+
+        if (expression.getTypeReference() == null &&
+            (descriptor.getDispatchReceiverParameter() != null || descriptor.getExtensionReceiverParameter() != null)) {
+            context.trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(reference));
+        }
 
         return CallableReferencesPackage.createReflectionTypeForResolvedCallableReference(expression, descriptor, context, components.reflectionTypes);
     }

@@ -6,7 +6,7 @@ class TestClass {
     fun NaN() { NaN() }
 
     fun test() {
-        testNotRenamed("NaN", { ::NaN })
+        testNotRenamed("NaN", { NaN() })
     }
 }
 

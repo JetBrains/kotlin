@@ -143,6 +143,8 @@ public class DescriptorKindFilter(
         return DescriptorKindFilter(mask, excludes)
     }
 
+    public fun intersect(other: DescriptorKindFilter) = DescriptorKindFilter(kindMask and other.kindMask, excludes + other.excludes)
+
     override fun toString(): String {
         val predefinedFilterName = DEBUG_PREDEFINED_FILTERS_MASK_NAMES.firstOrNull { it.mask == kindMask } ?.name
         val kindString = predefinedFilterName ?: DEBUG_MASK_BIT_NAMES

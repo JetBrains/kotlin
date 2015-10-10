@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -56,7 +55,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
-
 
 public class MultifileClassCodegen(
         private val state: GenerationState,
@@ -200,7 +198,7 @@ public class MultifileClassCodegen(
 
         val builder = state.factory.newVisitor(MultifileClassPart(file, packageFragment, facadeFqName), partType, file)
 
-        MultifileClassPartCodegen(builder, file, partType, facadeFqName, partContext, state).generate()
+        MultifileClassPartCodegen(builder, file, partType, facadeClassType, partContext, state).generate()
 
         val facadeContext = state.rootContext.intoMultifileClass(packageFragment, facadeClassType, partType)
         val memberCodegen = createCodegenForPartOfMultifileFacade(facadeContext)
@@ -280,12 +278,12 @@ public class MultifileClassCodegen(
         val av = classBuilder.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS), true)
         JvmCodegenUtil.writeAbiVersion(av)
 
-        val shortNames = partFqNames.map { it.shortName().asString() }.sorted()
-        val filePartClassNamesArray = av.visitArray(JvmAnnotationNames.FILE_PART_CLASS_NAMES_FIELD_NAME)
-        for (shortName in shortNames) {
-            filePartClassNamesArray.visit(null, shortName)
+        val partInternalNames = partFqNames.map { JvmClassName.byFqNameWithoutInnerClasses(it).internalName }.sorted()
+        val arv = av.visitArray(JvmAnnotationNames.FILE_PART_CLASS_NAMES_FIELD_NAME)
+        for (internalName in partInternalNames) {
+            arv.visit(null, internalName)
         }
-        filePartClassNamesArray.visitEnd()
+        arv.visitEnd()
 
         av.visitEnd()
     }

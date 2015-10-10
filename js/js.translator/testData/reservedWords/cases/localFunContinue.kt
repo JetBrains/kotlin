@@ -5,7 +5,7 @@ package foo
 fun box(): String {
     fun `continue`() { `continue`() }
 
-    testRenamed("continue", { ::`continue` })
+    testRenamed("continue", { `continue`() })
 
     return "OK"
 }

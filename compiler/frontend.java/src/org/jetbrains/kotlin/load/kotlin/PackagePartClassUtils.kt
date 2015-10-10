@@ -19,15 +19,12 @@ package org.jetbrains.kotlin.load.kotlin
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.util.*
 
 public object PackagePartClassUtils {
@@ -74,13 +71,6 @@ public object PackagePartClassUtils {
     @JvmStatic
     public fun getPackagePartFqName(file: JetFile): FqName =
             getPackagePartFqName(file.packageFqName, file.name)
-
-    @JvmStatic
-    public fun getPackagePartFqName(callable: DeserializedCallableMemberDescriptor): FqName {
-        val implClassName = callable.nameResolver.getName(callable.proto.getExtension(JvmProtoBuf.implClassName))
-        val packageFqName = (callable.containingDeclaration as PackageFragmentDescriptor).fqName
-        return packageFqName.child(implClassName)
-    }
 
     @JvmStatic
     public fun getFilesWithCallables(files: Collection<JetFile>): List<JetFile> =

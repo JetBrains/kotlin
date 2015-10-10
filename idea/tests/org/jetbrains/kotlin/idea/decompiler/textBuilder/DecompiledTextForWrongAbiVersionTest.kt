@@ -16,19 +16,17 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import com.intellij.testFramework.LightProjectDescriptor
-import com.intellij.psi.PsiManager
-import org.junit.Assert
-import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
-import java.io.File
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.ANONYMOUS_FUNCTION
+import com.intellij.psi.PsiManager
+import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.decompiler.AbstractInternalCompiledClassesTest
-import org.jetbrains.kotlin.idea.decompiler.stubBuilder.findClassFileByName
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile
+import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.findClassFileByName
+import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.JetTestUtils
+import org.junit.Assert
+import java.io.File
 
 public class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClassesTest() {
 
@@ -36,9 +34,7 @@ public class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClas
         return JetJdkAndLibraryProjectDescriptor(File(JetTestUtils.getTestDataPathBase() + "/cli/jvm/wrongAbiVersionLib/bin"))
     }
 
-    fun testPackagePartIsInvisibleWrongAbiVersion() = doTestNoPsiFilesAreBuiltForSyntheticClass(PACKAGE_PART)
-
-    fun testAnonymousFunctionIsInvisibleWrongAbiVersion() = doTestNoPsiFilesAreBuiltForSyntheticClass(ANONYMOUS_FUNCTION)
+    fun testSyntheticClassIsInvisibleWrongAbiVersion() = doTestNoPsiFilesAreBuiltForSyntheticClasses()
 
     fun testClassWithWrongAbiVersion() = doTest("ClassWithWrongAbiVersion")
 

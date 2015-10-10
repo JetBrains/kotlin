@@ -22,7 +22,6 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import com.intellij.psi.PsiClass
-import com.intellij.util.PlatformIcons
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -30,14 +29,11 @@ import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
@@ -48,9 +44,9 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
-        private val receiverTypes: Collection<JetType>,
-        private val contextType: LookupElementFactory.ContextType,
-        private val inDescriptor: DeclarationDescriptor?,
+        private val receiverTypes: Collection<JetType>?,
+        private val callType: CallType<*>?,
+        private val isInStringTemplateAfterDollar: Boolean,
         public val insertHandlerProvider: InsertHandlerProvider,
         contextVariablesProvider: () -> Collection<VariableDescriptor>
 ) {
@@ -60,34 +56,20 @@ class LookupElementFactory(
         contextVariablesProvider().filter { KotlinBuiltIns.isFunctionOrExtensionFunctionType(it.type) }
     }
 
-    public enum class ContextType {
-        NORMAL,
-        STRING_TEMPLATE_AFTER_DOLLAR,
-        INFIX_CALL
-    }
-
     public fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
         val result = SmartList<LookupElement>()
 
-        var lookupElement = createLookupElement(descriptor, useReceiverTypes)
-        if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
+        val isNormalCall = callType == CallType.DEFAULT || callType == CallType.DOT || callType == CallType.SAFE
+
+        var lookupElement = createLookupElement(descriptor, useReceiverTypes, parametersAndTypeGrayed = !isNormalCall && callType != CallType.INFIX)
+        if (isInStringTemplateAfterDollar && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
             lookupElement = lookupElement.withBracesSurrounding()
         }
         result.add(lookupElement)
 
         // add special item for function with one argument of function type with more than one parameter
-        if (contextType != ContextType.INFIX_CALL && descriptor is FunctionDescriptor) {
+        if (descriptor is FunctionDescriptor && isNormalCall) {
             result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
-        }
-
-        if (descriptor is PropertyDescriptor && inDescriptor != null) {
-            var backingFieldElement = createBackingFieldLookupElement(descriptor, useReceiverTypes)
-            if (backingFieldElement != null) {
-                if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR) {
-                    backingFieldElement = backingFieldElement.withBracesSurrounding()
-                }
-                result.add(backingFieldElement)
-            }
         }
 
         return result
@@ -124,7 +106,7 @@ class LookupElementFactory(
 
     private fun createFunctionCallElementWithLambda(descriptor: FunctionDescriptor, parameterType: JetType, explicitLambdaParameters: Boolean, useReceiverTypes: Boolean): LookupElement {
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
-        val inputTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler).inputTypeArguments
+        val inputTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal).inputTypeArguments
         val lambdaInfo = GenerateLambdaInfo(parameterType, explicitLambdaParameters)
         val lambdaPresentation = lambdaPresentation(if (explicitLambdaParameters) parameterType else null)
 
@@ -152,11 +134,11 @@ class LookupElementFactory(
             }
 
             override fun handleInsert(context: InsertionContext) {
-                KotlinFunctionInsertHandler(inputTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
+                KotlinFunctionInsertHandler.Normal(inputTypeArguments, inputValueArguments = false, lambdaInfo = lambdaInfo).handleInsert(context, this)
             }
         }
 
-        if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR) {
+        if (isInStringTemplateAfterDollar) {
             lookupElement = lookupElement.withBracesSurrounding()
         }
 
@@ -166,10 +148,10 @@ class LookupElementFactory(
     private fun createFunctionCallElementWithArgument(descriptor: FunctionDescriptor, argumentText: String, useReceiverTypes: Boolean): LookupElement {
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
 
-        val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler).inputTypeArguments
+        val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal).inputTypeArguments
         lookupElement = FunctionCallWithArgumentLookupElement(lookupElement, descriptor, argumentText, needTypeArguments)
 
-        if (contextType == ContextType.STRING_TEMPLATE_AFTER_DOLLAR) {
+        if (isInStringTemplateAfterDollar) {
             lookupElement = lookupElement.withBracesSurrounding()
         }
 
@@ -195,46 +177,18 @@ class LookupElementFactory(
         }
 
         override fun handleInsert(context: InsertionContext) {
-            KotlinFunctionInsertHandler(inputTypeArguments = needTypeArguments, inputValueArguments = false, argumentText = argumentText).handleInsert(context, this)
+            KotlinFunctionInsertHandler.Normal(inputTypeArguments = needTypeArguments, inputValueArguments = false, argumentText = argumentText).handleInsert(context, this)
         }
-    }
-
-    private fun createBackingFieldLookupElement(property: PropertyDescriptor, useReceiverTypes: Boolean): LookupElement? {
-        if (inDescriptor == null) return null
-        val insideAccessor = inDescriptor is PropertyAccessorDescriptor && inDescriptor.getCorrespondingProperty() == property
-        if (!insideAccessor) {
-            val container = property.getContainingDeclaration()
-            if (container !is ClassDescriptor || !DescriptorUtils.isAncestor(container, inDescriptor, false)) return null // backing field not accessible
-        }
-
-        val declaration = (DescriptorToSourceUtils.descriptorToDeclaration(property) as? JetProperty) ?: return null
-
-        val accessors = declaration.getAccessors()
-        if (accessors.all { it.getBodyExpression() == null }) return null // makes no sense to access backing field - it's the same as accessing property directly
-
-        val bindingContext = resolutionFacade.analyze(declaration)
-        if (!bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property]!!) return null
-
-        val lookupElement = createLookupElement(property, useReceiverTypes)
-        return object : LookupElementDecorator<LookupElement>(lookupElement) {
-            override fun getLookupString() = "$" + super.getLookupString()
-            override fun getAllLookupStrings() = setOf(getLookupString())
-
-            override fun renderElement(presentation: LookupElementPresentation) {
-                super.renderElement(presentation)
-                presentation.setItemText("$" + presentation.getItemText())
-                presentation.setIcon(PlatformIcons.FIELD_ICON) //TODO: special icon
-            }
-        }.assignPriority(ItemPriority.BACKING_FIELD)
     }
 
     public fun createLookupElement(
             descriptor: DeclarationDescriptor,
             useReceiverTypes: Boolean,
             qualifyNestedClasses: Boolean = false,
-            includeClassTypeArguments: Boolean = true
+            includeClassTypeArguments: Boolean = true,
+            parametersAndTypeGrayed: Boolean = false
     ): LookupElement {
-        var element = basicFactory.createLookupElement(descriptor, qualifyNestedClasses, includeClassTypeArguments)
+        var element = basicFactory.createLookupElement(descriptor, qualifyNestedClasses, includeClassTypeArguments, parametersAndTypeGrayed)
 
         if (useReceiverTypes) {
             val weight = callableWeight(descriptor)
@@ -284,6 +238,7 @@ class LookupElementFactory(
     }
 
     private fun callableWeight(descriptor: DeclarationDescriptor): CallableWeight? {
+        if (receiverTypes == null) return null
         if (descriptor !is CallableDescriptor) return null
 
         val overridden = descriptor.overriddenDescriptors

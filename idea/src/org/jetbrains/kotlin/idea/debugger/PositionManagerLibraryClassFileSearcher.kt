@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 
 private val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.debugger")
 
@@ -80,10 +80,9 @@ fun findPackagePartInternalNameForLibraryFile(topLevelDeclaration: JetDeclaratio
         return null
     }
 
-    val proto = deserializedDescriptor.proto
-    if (proto.hasExtension(JvmProtoBuf.implClassName)) {
-        val name = deserializedDescriptor.nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName)!!)
-        return JvmClassName.byFqNameWithoutInnerClasses(packageFqName.child(name)).getInternalName()
+    val implClassName = JvmFileClassUtil.getImplClassName(deserializedDescriptor)
+    if (implClassName != null) {
+        return JvmClassName.byFqNameWithoutInnerClasses(packageFqName.child(implClassName)).getInternalName()
     }
 
     return null

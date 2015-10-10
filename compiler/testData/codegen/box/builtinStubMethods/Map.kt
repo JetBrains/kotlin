@@ -18,11 +18,12 @@ fun expectUoe(block: () -> Unit) {
 }
 
 fun box(): String {
-    val map = MyMap<String, Int>() as MutableMap<String, Int>
+    val myMap = MyMap<String, Int>()
+    val map = myMap as java.util.Map<String, Int>
 
     expectUoe { map.put("", 1) }
     expectUoe { map.remove("") }
-    expectUoe { map.putAll(map) }
+    expectUoe { map.putAll(myMap) }
     expectUoe { map.clear() }
 
     return "OK"

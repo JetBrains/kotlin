@@ -4,7 +4,7 @@ class A {
         val k = 222
     }
     
-    fun result() = (A::Inner)(this).o + (::Inner)(this).k
+    fun result() = (A::Inner)(this).o + (A::Inner)(this).k
 }
 
 fun box(): String {

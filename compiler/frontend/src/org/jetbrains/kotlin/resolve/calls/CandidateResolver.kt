@@ -164,7 +164,7 @@ public class CandidateResolver(
             = check {
                 if (!noExpectedType(expectedType)) {
                     val candidate = candidateCall.getCandidateDescriptor()
-                    val candidateReflectionType = getReflectionTypeForCandidateDescriptor(candidate, this, reflectionTypes);
+                    val candidateReflectionType = getReflectionTypeForCandidateDescriptor(candidate, reflectionTypes);
                     if (candidateReflectionType != null) {
                         if (!JetTypeChecker.DEFAULT.isSubtypeOf(candidateReflectionType, expectedType)) {
                             candidateCall.addStatus(OTHER_ERROR)
