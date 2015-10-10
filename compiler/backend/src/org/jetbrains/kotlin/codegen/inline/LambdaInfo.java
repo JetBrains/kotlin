@@ -24,12 +24,11 @@ import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 
@@ -152,22 +151,9 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     @NotNull
     public Parameters addAllParameters(FieldRemapper remapper) {
-        ParametersBuilder builder = ParametersBuilder.newBuilder();
-        //add skipped this cause inlined lambda doesn't have it
-        builder.addThis(AsmTypes.OBJECT_TYPE, true).setLambda(this);
-
-        FunctionDescriptor lambdaDescriptor = getFunctionDescriptor();
-        ReceiverParameterDescriptor extensionParameter = lambdaDescriptor.getExtensionReceiverParameter();
-        if (extensionParameter != null) {
-            Type type = typeMapper.mapType(extensionParameter.getType());
-            builder.addNextParameter(type, false, null);
-        }
-
-        List<ValueParameterDescriptor> valueParameters = lambdaDescriptor.getValueParameters();
-        for (ValueParameterDescriptor parameter : valueParameters) {
-            Type type = typeMapper.mapType(parameter.getType());
-            builder.addNextParameter(type, false, null);
-        }
+        JvmMethodSignature signature = typeMapper.mapSignature(getFunctionDescriptor());
+        ParametersBuilder builder =
+                ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, signature.getAsmMethod().getDescriptor(), this);
 
         for (CapturedParamDesc info : getCapturedVars()) {
             CapturedParamInfo field = remapper.findField(new FieldInsnNode(0, info.getContainingLambdaName(), info.getFieldName(), ""));

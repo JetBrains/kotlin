@@ -1650,7 +1650,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         @Override
         public void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-            pushDefaultValueOnStack(parameters.get(i).getAsmType(), iv);
+            Type type = parameters.get(i).getAsmType();
+            pushDefaultValueOnStack(type, iv);
         }
 
         @Override
@@ -1662,6 +1663,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Type type = parameters.get(i).getAsmType();
             iv.load(offset, type);
             offset += type.getSize();
+        }
+
+        @Override
+        protected void reorderArgumentsIfNeeded(@NotNull List<? extends ArgumentAndDeclIndex> args) {
+
         }
     }
 
