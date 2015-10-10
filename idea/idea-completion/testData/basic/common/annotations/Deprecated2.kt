@@ -1,4 +1,4 @@
-@Dep<caret>
+@Deprecate<caret>
 fun foo() { }
 
 // INVOCATION_COUNT: 2

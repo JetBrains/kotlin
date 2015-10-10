@@ -1,6 +1,6 @@
 import java.lang.annotation.*
 
-Retention(RetentionPolicy.<caret>
+@Retention(RetentionPolicy.<caret>
 
 // INVOCATION_COUNT: 0
 // EXIST_JAVA_ONLY: SOURCE

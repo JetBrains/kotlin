@@ -84,7 +84,6 @@ public class KotlinCompletionContributor : CompletionContributor() {
             else -> specialLambdaSignatureDummyIdentifier(tokenBefore)
                     ?: specialExtensionReceiverDummyIdentifier(tokenBefore)
                     ?: specialInTypeArgsDummyIdentifier(tokenBefore)
-                    ?: specialInParameterListDummyIdentifier(tokenBefore)
                     ?: specialInArgumentListDummyIdentifier(tokenBefore)
                     ?: DEFAULT_DUMMY_IDENTIFIER
         }
@@ -387,22 +386,6 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             current = current.prevLeaf(skipEmptyElements = true) ?: return null
         }
-    }
-
-    private fun specialInParameterListDummyIdentifier(tokenBefore: PsiElement?): String? {
-        if (tokenBefore == null) return null
-        var parent = tokenBefore.getParent()
-        while (parent != null) {
-            if (parent is JetParameterList) {
-                val balance = countParenthesisBalance(tokenBefore, parent)
-                val count = if (balance > 1) balance - 1 else 0
-                return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ")".repeat(count) + " a: B"
-            }
-            if (parent is JetTypeElement) return null
-            if (parent is JetAnnotationEntry) return null
-            parent = parent.getParent()
-        }
-        return null
     }
 
     private fun specialInArgumentListDummyIdentifier(tokenBefore: PsiElement?): String? {

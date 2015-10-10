@@ -1,5 +1,5 @@
 class MyClassA
-Deprecated class MyClassB
+@Deprecated class MyClassB
 class MyClassC
 
 fun foo(myCla<caret>)
