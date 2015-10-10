@@ -115,10 +115,12 @@ public fun CallableMemberDescriptor.getJvmMethodNameIfSpecial(): String? {
 private fun CallableMemberDescriptor.getBuiltinOverriddenThatAffectsJvmName(): CallableMemberDescriptor? {
     val overriddenBuiltin = getBuiltinSpecialOverridden() ?: return null
 
-    if (isFromJava || isFromBuiltins()) return overriddenBuiltin
+    if (isFromJavaOrBuiltins()) return overriddenBuiltin
 
     return null
 }
+
+fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
 
 private fun CallableMemberDescriptor.specialJvmName(): Name? {
     return BuiltinSpecialMethods.FQ_NAMES_TO_JVM_MAP[fqNameOrNull() ?: return null]

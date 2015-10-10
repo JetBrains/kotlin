@@ -934,6 +934,7 @@ public class JetTypeMapper {
             }
 
             for (ValueParameterDescriptor parameter : valueParameters) {
+                if (writeCustomParameter(f, parameter, sw)) continue;
                 writeParameter(sw, parameter.getType());
             }
 
@@ -955,6 +956,23 @@ public class JetTypeMapper {
         }
 
         return signature;
+    }
+
+    private boolean writeCustomParameter(
+            @NotNull FunctionDescriptor f,
+            @NotNull ValueParameterDescriptor parameter,
+            @NotNull  BothSignatureWriter sw
+    ) {
+        FunctionDescriptor overridden = BuiltinsPropertiesUtilKt.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f);
+        if (overridden == null) return false;
+        if (BuiltinsPropertiesUtilKt.isFromJavaOrBuiltins(f)) return false;
+
+        if (overridden.getName().asString().equals("remove") && mapType(parameter.getType()).getSort() == Type.INT) {
+            writeParameter(sw, TypeUtils.makeNullable(parameter.getType()));
+            return true;
+        }
+
+        return false;
     }
 
     @NotNull
