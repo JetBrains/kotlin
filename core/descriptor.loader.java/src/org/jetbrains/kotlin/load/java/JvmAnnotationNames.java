@@ -52,6 +52,7 @@ public final class JvmAnnotationNames {
     public static final String DATA_FIELD_NAME = "data";
     public static final String STRINGS_FIELD_NAME = "strings";
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
+    public static final Name DEPRECATED_ANNOTATION_MESSAGE = Name.identifier("message");
     public static final Name TARGET_ANNOTATION_MEMBER_NAME = Name.identifier("allowedTargets");
 
     public static final FqName TARGET_ANNOTATION = new FqName("java.lang.annotation.Target");

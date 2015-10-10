@@ -64,7 +64,7 @@ class ListSpecificTest {
         }
 
         assertEquals(3, list.size())
-        assertEquals("beverage,location,name", list.join(","))
+        assertEquals("beverage,location,name", list.joinToString(","))
     }
 
     @Test

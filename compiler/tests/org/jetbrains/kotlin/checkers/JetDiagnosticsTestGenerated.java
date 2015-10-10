@@ -6327,6 +6327,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("genericsInType.kt")
+            public void testGenericsInType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/genericsInType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt1575-Class.kt")
             public void testKt1575_Class() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/kt1575-Class.kt");
@@ -12840,6 +12846,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt9430.kt")
+            public void testKt9430() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/kt9430.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoAmbiguityBetweenRootAndPackage.kt")
             public void testNoAmbiguityBetweenRootAndPackage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/NoAmbiguityBetweenRootAndPackage.kt");
@@ -15525,6 +15537,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("deprecatedSyntax.kt")
             public void testDeprecatedSyntax() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typeParameters/deprecatedSyntax.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("misplacedConstraints.kt")
+            public void testMisplacedConstraints() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typeParameters/misplacedConstraints.kt");
                 doTest(fileName);
             }
 

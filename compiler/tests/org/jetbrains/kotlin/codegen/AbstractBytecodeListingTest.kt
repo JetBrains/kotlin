@@ -48,9 +48,22 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         private val classAnnotations = arrayListOf<String>()
         private var className = ""
 
-        private fun addAnnotation(desc: String) {
+        private fun addAnnotation(desc: String, list: MutableList<String> = declarationsInsideClass.last().annotations) {
             val name = Type.getType(desc).className
-            declarationsInsideClass.last().annotations.add("@$name ")
+            list.add("@$name ")
+        }
+
+        private fun addModifier(text: String, list: MutableList<String>) {
+            list.add("$text ")
+        }
+
+        private fun handleModifiers(access: Int, list: MutableList<String> = declarationsInsideClass.last().annotations) {
+            if ((access and Opcodes.ACC_PUBLIC) != 0) addModifier("public", list)
+            if ((access and Opcodes.ACC_PROTECTED) != 0) addModifier("protected", list)
+            if ((access and Opcodes.ACC_PRIVATE) != 0) addModifier("private", list)
+
+            if ((access and Opcodes.ACC_SYNTHETIC) != 0) addModifier("synthetic", list)
+            if ((access and Opcodes.ACC_DEPRECATED) != 0) addModifier("deprecated", list)
         }
 
         public val text: String
@@ -77,6 +90,8 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
             val parameterTypes = Type.getArgumentTypes(desc).map { it.className }
             val methodAnnotations = arrayListOf<String>()
             val parameterAnnotations = hashMapOf<Int, MutableList<String>>()
+
+            handleModifiers(access, methodAnnotations)
 
             return object : MethodVisitor(Opcodes.ASM5) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
@@ -105,6 +120,8 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
             val type = Type.getType(desc).className
             declarationsInsideClass.add(Declaration("field $name: $type"))
+            handleModifiers(access)
+
             return object : FieldVisitor(Opcodes.ASM5) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                     addAnnotation(desc)

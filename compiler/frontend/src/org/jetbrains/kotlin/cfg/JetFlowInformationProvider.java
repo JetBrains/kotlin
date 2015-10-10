@@ -376,7 +376,8 @@ public class JetFlowInformationProvider {
         boolean isDefinitelyInitialized = ctxt.exitInitState.definitelyInitialized();
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
         if (variableDescriptor instanceof PropertyDescriptor) {
-            if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
+            if (propertyDescriptor.isLateInit() || !trace.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                 isDefinitelyInitialized = true;
             }
         }

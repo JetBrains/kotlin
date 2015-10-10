@@ -970,18 +970,17 @@ JetFile: ControlStructures.kt
         BODY
           BLOCK
             PsiElement(LBRACE)('{')
-            PsiElement(SEMICOLON)(';')
-            PsiElement(SEMICOLON)(';')
+            PsiErrorElement:Expecting an element
+              PsiElement(DOUBLE_SEMICOLON)(';;')
             PsiElement(SEMICOLON)(';')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo')
             PsiElement(SEMICOLON)(';')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('bar')
-            PsiElement(SEMICOLON)(';')
-            PsiElement(SEMICOLON)(';')
-            PsiElement(SEMICOLON)(';')
-            PsiElement(SEMICOLON)(';')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(DOUBLE_SEMICOLON)(';;')
+              PsiElement(DOUBLE_SEMICOLON)(';;')
             PsiWhiteSpace(' ')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace(' ')

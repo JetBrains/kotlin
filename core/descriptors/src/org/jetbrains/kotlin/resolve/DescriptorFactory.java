@@ -103,7 +103,7 @@ public class DescriptorFactory {
         return values.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType()),
-                                 Modality.FINAL, Visibilities.PUBLIC, false, false);
+                                 Modality.FINAL, Visibilities.PUBLIC);
     }
 
     @NotNull
@@ -117,7 +117,7 @@ public class DescriptorFactory {
         );
         return valueOf.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                                   Collections.singletonList(parameterDescriptor), enumClass.getDefaultType(),
-                                  Modality.FINAL, Visibilities.PUBLIC, false, false);
+                                  Modality.FINAL, Visibilities.PUBLIC);
     }
 
     @Nullable

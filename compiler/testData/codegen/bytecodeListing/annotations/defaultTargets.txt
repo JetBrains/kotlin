@@ -1,13 +1,13 @@
 @kotlin.jvm.internal.KotlinClass A {
-    field $kotlinClass: kotlin.reflect.KClass
-    @AnnField @AnnParameterField @AnnTypeField field a: int
-    @AnnField @AnnTypeField field x: int
+    public synthetic field $kotlinClass: kotlin.reflect.KClass
+    private @AnnField @AnnParameterField @AnnTypeField field a: int
+    private @AnnField @AnnTypeField field x: int
     method <clinit>(): void
-    @AnnProperty @AnnFieldProperty @AnnParameterProperty method a$annotations(): void
-    method getA(): int
-    @AnnProperty @AnnFieldProperty method x$annotations(): void
-    method getX(): int
-    method <init>(@AnnParameterProperty @AnnParameterField p0: int): void
+    private synthetic deprecated @AnnProperty @AnnFieldProperty @AnnParameterProperty method a$annotations(): void
+    public method getA(): int
+    private synthetic deprecated @AnnProperty @AnnFieldProperty method x$annotations(): void
+    public method getX(): int
+    public method <init>(@AnnParameterProperty @AnnParameterField p0: int): void
 }
 
 @kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnField

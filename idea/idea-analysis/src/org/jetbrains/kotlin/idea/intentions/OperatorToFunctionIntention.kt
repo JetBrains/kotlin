@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Replace overloaded operator with function call") {
     companion object {
@@ -72,9 +72,9 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
 
             val resolvedCall = element.getResolvedCall(element.analyze())
             val descriptor = resolvedCall?.getResultingDescriptor()
-            if (descriptor is FunctionDescriptor && descriptor.getName() == OperatorConventions.INVOKE) {
+            if (descriptor is FunctionDescriptor && descriptor.getName() == OperatorNameConventions.INVOKE) {
                 if (element.getParent() is JetDotQualifiedExpression &&
-                    element.getCalleeExpression()?.getText() == OperatorConventions.INVOKE.asString()) return false
+                    element.getCalleeExpression()?.getText() == OperatorNameConventions.INVOKE.asString()) return false
                 return element.getValueArgumentList() != null || element.getFunctionLiteralArguments().isNotEmpty()
             }
             return false
@@ -189,7 +189,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
             val argumentString = arguments?.getText()?.removeSurrounding("(", ")")
             val funcLitArgs = element.getFunctionLiteralArguments()
             val calleeText = callee.getText()
-            val transformation = "$calleeText.${OperatorConventions.INVOKE.asString()}" +
+            val transformation = "$calleeText.${OperatorNameConventions.INVOKE.asString()}" +
                                  (if (argumentString == null) "" else "($argumentString)")
             val transformed = JetPsiFactory(element).createExpression(transformation)
             funcLitArgs.forEach { transformed.add(it) }

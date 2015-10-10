@@ -60,7 +60,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
             @NotNull Visibility visibility
     ) {
         super.initialize(null, calculateDispatchReceiverParameter(), typeParameters, unsubstitutedValueParameters, null,
-                         Modality.FINAL, visibility, false, false);
+                         Modality.FINAL, visibility);
         return this;
     }
 

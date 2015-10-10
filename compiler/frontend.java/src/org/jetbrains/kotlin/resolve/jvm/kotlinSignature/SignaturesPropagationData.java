@@ -116,9 +116,7 @@ public class SignaturesPropagationData {
                 autoValueParameters,
                 autoReturnType,
                 Modality.OPEN,
-                Visibilities.PUBLIC,
-                false,
-                false
+                Visibilities.PUBLIC
         );
         return autoMethodDescriptor;
     }

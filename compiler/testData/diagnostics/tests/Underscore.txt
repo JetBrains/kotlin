@@ -3,7 +3,7 @@ package
 public val ______: _<kotlin.Int>
 public fun __(/*0*/ ___: kotlin.Int, /*1*/ y: _<kotlin.Int>?): kotlin.Int
 
-@kotlin.Deprecated(value = "") @kotlin.data() public final class Pair {
+@kotlin.Deprecated(message = "") @kotlin.data() public final class Pair {
     public constructor Pair(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
     public final val x: kotlin.Int
     public final val y: kotlin.Int

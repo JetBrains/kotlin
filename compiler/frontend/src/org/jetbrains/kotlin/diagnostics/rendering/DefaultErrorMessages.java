@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.renderer.MultiRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.MappedExtensionProvider;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -112,13 +112,13 @@ public class DefaultErrorMessages {
         MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
         MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
 
-        MAP.put(EXPOSED_PROPERTY_TYPE, "Deprecated: property effective visibility ''{0}'' should not be better than its type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_FUNCTION_RETURN_TYPE, "Deprecated: function effective visibility ''{0}'' should not be better that its return type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_PARAMETER_TYPE, "Deprecated: function effective visibility ''{0}'' should not be better than its parameter type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_RECEIVER_TYPE, "Deprecated: member effective visibility ''{0}'' should not be better that its receiver type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_TYPE_PARAMETER_BOUND, "Deprecated: generic effective visibility ''{0}'' should not be better than its type parameter bound effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_SUPER_CLASS, "Deprecated: subclass effective visibility ''{0}'' should not be better that its superclass effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_SUPER_INTERFACE, "Deprecated: sub-interface effective visibility ''{0}'' should not be better that its super-interface effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_PROPERTY_TYPE, "Deprecated: property effective visibility ''{0}'' should be the same or less permissive than its type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_FUNCTION_RETURN_TYPE, "Deprecated: function effective visibility ''{0}'' should be the same or less permissive than its return type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_PARAMETER_TYPE, "Deprecated: function effective visibility ''{0}'' should be the same or less permissive than its parameter type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_RECEIVER_TYPE, "Deprecated: member effective visibility ''{0}'' should be the same or less permissive than its receiver type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_TYPE_PARAMETER_BOUND, "Deprecated: generic effective visibility ''{0}'' should be the same or less permissive than its type parameter bound effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_SUPER_CLASS, "Deprecated: subclass effective visibility ''{0}'' should be the same or less permissive than its superclass effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_SUPER_INTERFACE, "Deprecated: sub-interface effective visibility ''{0}'' should be the same or less permissive than its super-interface effective visibility ''{1}''", TO_STRING, TO_STRING);
 
         MAP.put(REDECLARATION, "Redeclaration: {0}", STRING);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
@@ -218,6 +218,7 @@ public class DefaultErrorMessages {
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_ABSTRACT_PROPERTY, "''lateinit'' modifier is not allowed on abstract properties");
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_PRIMARY_CONSTRUCTOR_PARAMETER, "''lateinit'' modifier is not allowed on primary constructor parameters");
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE, "''lateinit'' modifier is not allowed on nullable properties");
+        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE, "''lateinit'' modifier is not allowed on primitive type properties");
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
         MAP.put(BACKING_FIELD_IN_TRAIT, "Property in an interface cannot have a backing field");
@@ -339,6 +340,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, "Type parameter ''{0}'' is not an expression", NAME);
         MAP.put(TYPE_PARAMETER_ON_LHS_OF_DOT, "Type parameter ''{0}'' cannot have or inherit a companion object, so it cannot be on the left hand side of dot", NAME);
         MAP.put(NO_GENERICS_IN_SUPERTYPE_SPECIFIER, "Generic arguments of the base type must be specified");
+        MAP.put(GENERICS_IN_CONTAINING_TYPE_NOT_ALLOWED, "Generic arguments in containing types are not allowed");
         MAP.put(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE, "Nested {0} accessed via instance reference", RENDER_CLASS_OR_OBJECT_NAME);
         MAP.put(NESTED_CLASS_SHOULD_BE_QUALIFIED, "Nested {0} should be qualified as ''{1}''", RENDER_CLASS_OR_OBJECT_NAME, TO_STRING);
 
@@ -496,6 +498,8 @@ public class DefaultErrorMessages {
 
         MAP.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Placing function type parameters after the function name is deprecated");
 
+        MAP.put(MISPLACED_TYPE_PARAMETER_CONSTRAINTS, "If a type parameter has multiple constraints, they all need to be placed in the 'where' clause");
+
         MAP.put(TYPE_VARIANCE_CONFLICT, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
                 new MultiRenderer<VarianceConflictDiagnosticData>() {
                     @NotNull
@@ -557,7 +561,7 @@ public class DefaultErrorMessages {
         MAP.put(CONFLICTING_OVERLOADS, "''{0}'' is already defined in {1}", COMPACT_WITH_MODIFIERS, STRING);
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
-                                   "The function '" + OperatorConventions.INVOKE.asString() + "()' is not found",
+                                   "The function '" + OperatorNameConventions.INVOKE.asString() + "()' is not found",
                 ELEMENT_TEXT, new Renderer<JetType>() {
                     @NotNull
                     @Override

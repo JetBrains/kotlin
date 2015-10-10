@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
 import java.util.List;
@@ -62,7 +62,7 @@ public final class JsDescriptorUtils {
     }
 
     public static boolean isCompareTo(@NotNull CallableDescriptor descriptor) {
-        return descriptor.getName().equals(OperatorConventions.COMPARE_TO);
+        return descriptor.getName().equals(OperatorNameConventions.COMPARE_TO);
     }
 
     @Nullable

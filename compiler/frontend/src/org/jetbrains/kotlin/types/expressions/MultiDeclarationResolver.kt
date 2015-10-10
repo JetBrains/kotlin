@@ -57,7 +57,7 @@ public class MultiDeclarationResolver(
                 context.trace.record(BindingContext.COMPONENT_RESOLVED_CALL, entry, results.getResultingCall())
 
                 val functionDescriptor = results.getResultingDescriptor()
-                symbolUsageValidator.validateCall(functionDescriptor, context.trace, entry)
+                symbolUsageValidator.validateCall(null, functionDescriptor, context.trace, entry)
 
                 componentType = functionDescriptor.getReturnType()
                 if (componentType != null && !TypeUtils.noExpectedType(expectedType) && !JetTypeChecker.DEFAULT.isSubtypeOf(componentType, expectedType)) {

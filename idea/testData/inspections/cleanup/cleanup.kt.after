@@ -62,3 +62,6 @@ class C {
 
 fun <T> typed() {
 }
+
+fun <T> withTypeParameters() where T : Cloneable, T : Comparable<T> {
+}

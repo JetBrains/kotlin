@@ -14,13 +14,13 @@ class CollectionTest {
         assertEquals("{foo-bar}", buffer.toString())
     }
 
-    @test fun join() {
+    @test fun joinToString() {
         val data = listOf("foo", "bar")
-        val text = data.join("-", "<", ">")
+        val text = data.joinToString("-", "<", ">")
         assertEquals("<foo-bar>", text)
 
         val big = listOf("a", "b", "c", "d", "e", "f")
-        val text2 = big.join(limit = 3, truncated = "*")
+        val text2 = big.joinToString(limit = 3, truncated = "*")
         assertEquals("a, b, c, *", text2)
     }
 
@@ -134,9 +134,9 @@ class CollectionTest {
     }
 
     @test
-    fun merge() {
+    fun zipTransform() {
         expect(listOf("ab", "bc", "cd")) {
-            listOf("a", "b", "c").merge(listOf("b", "c", "d")) { a, b -> a + b }
+            listOf("a", "b", "c").zip(listOf("b", "c", "d")) { a, b -> a + b }
         }
     }
 

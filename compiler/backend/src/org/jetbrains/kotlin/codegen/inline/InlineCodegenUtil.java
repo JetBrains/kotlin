@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.tree.*;
@@ -235,7 +236,7 @@ public class InlineCodegenUtil {
     }
 
     public static boolean isInvokeOnLambda(@NotNull String owner, @NotNull String name) {
-        return OperatorConventions.INVOKE.asString().equals(name) &&
+        return OperatorNameConventions.INVOKE.asString().equals(name) &&
                owner.startsWith(NUMBERED_FUNCTION_PREFIX) &&
                isInteger(owner.substring(NUMBERED_FUNCTION_PREFIX.length()));
     }

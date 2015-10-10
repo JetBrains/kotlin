@@ -16,7 +16,7 @@ public interface ReturnInnerSubclassOfSupersInner {
 
         public/*package*/ open inner class Inner {
             public/*package*/ constructor Inner()
-            public/*package*/ open fun get(): test.ReturnInnerSubclassOfSupersInner.Super<A!>!
+            public/*package*/ open operator fun get(): test.ReturnInnerSubclassOfSupersInner.Super<A!>!
         }
     }
 }

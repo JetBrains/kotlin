@@ -311,7 +311,7 @@ JetFile: SoftKeywords.kt
       PROPERTY
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('sparam')
+        PsiElement(IDENTIFIER)('setparam')
       PsiWhiteSpace('\n    ')
       PROPERTY
         PsiElement(val)('val')
@@ -796,7 +796,7 @@ JetFile: SoftKeywords.kt
       FUN
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('sparam')
+        PsiElement(IDENTIFIER)('setparam')
         PsiWhiteSpace('  ')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
@@ -807,7 +807,7 @@ JetFile: SoftKeywords.kt
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('sparam')
+              PsiElement(IDENTIFIER)('setparam')
       PsiWhiteSpace('\n    ')
       FUN
         PsiElement(fun)('fun')
@@ -1146,7 +1146,7 @@ JetFile: SoftKeywords.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace('\n        ')
           VALUE_PARAMETER
-            PsiElement(IDENTIFIER)('sparam')
+            PsiElement(IDENTIFIER)('setparam')
             PsiWhiteSpace('    ')
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
@@ -1543,7 +1543,7 @@ JetFile: SoftKeywords.kt
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('sparam')
+          PsiElement(IDENTIFIER)('setparam')
           PsiWhiteSpace('    ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')

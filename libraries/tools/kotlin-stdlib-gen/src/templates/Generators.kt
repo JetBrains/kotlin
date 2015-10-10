@@ -445,6 +445,17 @@ fun generators(): List<GenericFunction> {
 
     templates add f("merge(other: Iterable<R>, transform: (T, R) -> V)") {
         exclude(Sequences, Strings)
+        typeParam("R")
+        typeParam("V")
+        returns("List<V>")
+        inline(true)
+        deprecate("Use zip() with transform instead.")
+        deprecateReplacement("zip(other, transform)")
+        body { """return ${deprecateReplacement.default}""" }
+    }
+
+    templates add f("zip(other: Iterable<R>, transform: (T, R) -> V)") {
+        exclude(Sequences, Strings)
         doc {
             """
             Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
@@ -481,6 +492,17 @@ fun generators(): List<GenericFunction> {
 
     templates add f("merge(array: Array<out R>, transform: (T, R) -> V)") {
         exclude(Sequences, Strings)
+        typeParam("R")
+        typeParam("V")
+        returns("List<V>")
+        inline(true)
+        deprecate("Use zip() with transform instead.")
+        deprecateReplacement("zip(array, transform)")
+        body { """return ${deprecateReplacement.default}""" }
+    }
+
+    templates add f("zip(array: Array<out R>, transform: (T, R) -> V)") {
+        exclude(Sequences, Strings)
         doc {
             """
             Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
@@ -515,8 +537,17 @@ fun generators(): List<GenericFunction> {
 
     }
 
-
     templates add f("merge(array: SELF, transform: (T, T) -> V)") {
+        only(ArraysOfPrimitives)
+        typeParam("V")
+        returns("List<V>")
+        inline(true)
+        deprecate("Use zip() with transform instead.")
+        deprecateReplacement("zip(array, transform)")
+        body { """return ${deprecateReplacement.default}""" }
+    }
+
+    templates add f("zip(array: SELF, transform: (T, T) -> V)") {
         only(ArraysOfPrimitives)
         doc {
             """
@@ -538,8 +569,17 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-
     templates add f("merge(sequence: Sequence<R>, transform: (T, R) -> V)") {
+        only(Sequences)
+        typeParam("R")
+        typeParam("V")
+        returns("Sequence<V>")
+        deprecate("Use zip() with transform instead.")
+        deprecateReplacement("zip(sequence, transform)")
+        body { """return ${deprecateReplacement.default}""" }
+    }
+
+    templates add f("zip(sequence: Sequence<R>, transform: (T, R) -> V)") {
         only(Sequences)
         doc {
             """
@@ -556,6 +596,29 @@ fun generators(): List<GenericFunction> {
         }
     }
 
+    templates add f("zip(other: String, transform: (Char, Char) -> V)") {
+        only(Strings)
+        doc {
+            """
+            Returns a list of values built from characters of both strings with same indexes using provided [transform]. List has length of shortest string.
+            """
+        }
+        typeParam("V")
+        returns("List<V>")
+        inline(true)
+        body {
+            """
+            val length = Math.min(this.length(), other.length())
+
+            val list = ArrayList<V>(length)
+            for (i in 0..length-1) {
+                list.add(transform(this[i], other[i]))
+            }
+            return list
+            """
+        }
+    }
+
 
     templates add f("zip(other: Iterable<R>)") {
         exclude(Sequences, Strings)
@@ -568,7 +631,7 @@ fun generators(): List<GenericFunction> {
         returns("List<Pair<T, R>>")
         body {
             """
-            return merge(other) { t1, t2 -> t1 to t2 }
+            return zip(other) { t1, t2 -> t1 to t2 }
             """
         }
     }
@@ -583,13 +646,7 @@ fun generators(): List<GenericFunction> {
         returns("List<Pair<Char, Char>>")
         body {
             """
-            val first = iterator()
-            val second = other.iterator()
-            val list = ArrayList<Pair<Char, Char>>(length())
-            while (first.hasNext() && second.hasNext()) {
-                list.add(first.next() to second.next())
-            }
-            return list
+            return zip(other) { c1, c2 -> c1 to c2 }
             """
         }
     }
@@ -605,7 +662,7 @@ fun generators(): List<GenericFunction> {
         returns("List<Pair<T, R>>")
         body {
             """
-            return merge(array) { t1, t2 -> t1 to t2 }
+            return zip(array) { t1, t2 -> t1 to t2 }
             """
         }
     }
@@ -620,7 +677,7 @@ fun generators(): List<GenericFunction> {
         returns("List<Pair<T, T>>")
         body {
             """
-            return merge(array) { t1, t2 -> t1 to t2 }
+            return zip(array) { t1, t2 -> t1 to t2 }
             """
         }
     }

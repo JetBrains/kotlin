@@ -10,7 +10,7 @@ public open class J {
     @org.jetbrains.annotations.NotNull() public final var nn: J
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open fun set(/*0*/ @org.jetbrains.annotations.NotNull() nn: J, /*1*/ @org.jetbrains.annotations.Nullable() n: J?, /*2*/ j: J!): kotlin.Unit
+    public open operator fun set(/*0*/ @org.jetbrains.annotations.NotNull() nn: J, /*1*/ @org.jetbrains.annotations.Nullable() n: J?, /*2*/ j: J!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members

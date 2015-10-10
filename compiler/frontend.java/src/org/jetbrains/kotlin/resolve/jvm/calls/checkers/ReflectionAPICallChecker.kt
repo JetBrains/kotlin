@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleD
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.storage.get
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * If there's no Kotlin reflection implementation found in the classpath, checks that there are no usages
@@ -58,7 +59,7 @@ class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageMana
         // - 'get'/'set' on properties
         val name = descriptor.getName()
         when {
-            name == OperatorConventions.INVOKE -> return
+            name == OperatorNameConventions.INVOKE -> return
             name.asString() == "name" -> return
             (name.asString() == "get" || name.asString() == "set") &&
             kPropertyClasses.any { kProperty -> DescriptorUtils.isSubclass(containingClass, kProperty) } -> return

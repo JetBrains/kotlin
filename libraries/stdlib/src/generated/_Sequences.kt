@@ -441,16 +441,9 @@ public fun <T> Sequence<T>.toList(): List<T> {
     return this.toArrayList()
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <T, K> Sequence<T>.toMap(selector: (T) -> K): Map<K, T> {
-    val result = LinkedHashMap<K, T>()
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
 /**
@@ -461,6 +454,18 @@ public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T)
     val result = LinkedHashMap<K, V>()
     for (element in this) {
         result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <T, K> Sequence<T>.toMapBy(selector: (T) -> K): Map<K, T> {
+    val result = LinkedHashMap<K, T>()
+    for (element in this) {
+        result.put(selector(element), element)
     }
     return result
 }
@@ -795,11 +800,9 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
     return map { it ?: throw IllegalArgumentException("null element found in $this.") }
 }
 
-/**
- * Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(sequence, transform)"))
 public fun <T, R, V> Sequence<T>.merge(sequence: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
-    return MergingSequence(this, sequence, transform)
+    return zip(sequence, transform)
 }
 
 /**
@@ -921,6 +924,13 @@ public operator fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
  */
 public fun <T, R> Sequence<T>.zip(sequence: Sequence<R>): Sequence<Pair<T, R>> {
     return MergingSequence(this, sequence) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
+ */
+public fun <T, R, V> Sequence<T>.zip(sequence: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
+    return MergingSequence(this, sequence, transform)
 }
 
 /**

@@ -6,32 +6,32 @@
 
 @kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$1 {
     inner class LiteralsKt$foo$1
-    field $arg: int
-    method invoke(): java.lang.Object
-    @FunAnn method invoke(): int
+    synthetic field $arg: int
+    public method invoke(): java.lang.Object
+    public @FunAnn method invoke(): int
     method <init>(p0: int): void
 }
 
 @kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$2 {
     inner class LiteralsKt$foo$2
-    field $arg: int
-    method invoke(): java.lang.Object
-    method invoke(): int
+    synthetic field $arg: int
+    public method invoke(): java.lang.Object
+    public method invoke(): int
     method <init>(p0: int): void
 }
 
 @kotlin.jvm.internal.KotlinLocalClass @kotlin.jvm.internal.KotlinClass LiteralsKt$foo$3 {
     inner class LiteralsKt$foo$3
-    field $kotlinClass: kotlin.reflect.KClass
+    public synthetic field $kotlinClass: kotlin.reflect.KClass
     method <clinit>(): void
     method <init>(): void
 }
 
 @kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$x$1 {
     inner class LiteralsKt$foo$x$1
-    field $arg: int
-    method invoke(): java.lang.Object
-    @FunAnn method invoke(): int
+    synthetic field $arg: int
+    public method invoke(): java.lang.Object
+    public @FunAnn method invoke(): int
     method <init>(p0: int): void
 }
 
@@ -40,20 +40,20 @@
     inner class LiteralsKt$foo$2
     inner class LiteralsKt$foo$x$1
     inner class LiteralsKt$foo$3
-    method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
-    @org.jetbrains.annotations.NotNull method foo(p0: int): My
+    public method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
+    public @org.jetbrains.annotations.NotNull method foo(p0: int): My
 }
 
 @kotlin.jvm.internal.KotlinClass My {
-    field $kotlinClass: kotlin.reflect.KClass
+    public synthetic field $kotlinClass: kotlin.reflect.KClass
     method <clinit>(): void
-    method <init>(): void
+    public method <init>(): void
 }
 
 @java.lang.Deprecated @kotlin.jvm.internal.KotlinPackage _DefaultPackage {
-    field $kotlinPackage: kotlin.reflect.KPackage
-    field $moduleName: java.lang.String
+    public synthetic field $kotlinPackage: kotlin.reflect.KPackage
+    public synthetic field $moduleName: java.lang.String
     method <clinit>(): void
-    @kotlin.jvm.internal.KotlinDelegatedMethod method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
-    @kotlin.jvm.internal.KotlinDelegatedMethod @org.jetbrains.annotations.NotNull method foo(p0: int): My
+    public @kotlin.jvm.internal.KotlinDelegatedMethod method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
+    public @kotlin.jvm.internal.KotlinDelegatedMethod @org.jetbrains.annotations.NotNull method foo(p0: int): My
 }

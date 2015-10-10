@@ -176,6 +176,8 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> GENERICS_IN_CONTAINING_TYPE_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory0<JetTypeReference> MANY_CLASSES_IN_SUPERTYPE_LIST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> SUPERTYPE_APPEARS_TWICE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory3<JetDelegationSpecifierList, TypeParameterDescriptor, ClassDescriptor, Collection<JetType>>
@@ -268,6 +270,8 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> CYCLIC_GENERIC_UPPER_BOUND = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<JetTypeParameter> MISPLACED_TYPE_PARAMETER_CONSTRAINTS = DiagnosticFactory0.create(WARNING);
+
     // Members
 
     DiagnosticFactory2<JetDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS =
@@ -350,6 +354,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_ABSTRACT_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_PRIMARY_CONSTRUCTOR_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<JetModifierListOwner, String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = DiagnosticFactory2.create(ERROR, ABSTRACT_MODIFIER);
 

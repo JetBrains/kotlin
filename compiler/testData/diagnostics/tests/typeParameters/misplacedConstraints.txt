@@ -1,0 +1,17 @@
+package
+
+public final class Bar</*0*/ T : kotlin.Cloneable, /*1*/ U : kotlin.Comparable<T>> {
+    public constructor Bar</*0*/ T : kotlin.Cloneable, /*1*/ U : kotlin.Comparable<T>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo</*0*/ T : kotlin.Cloneable> where T : kotlin.Comparable<T> {
+    public constructor Foo</*0*/ T : kotlin.Cloneable>() where T : kotlin.Comparable<T>
+    public final val </*0*/ U : kotlin.Cloneable> U.foo: U? where U : kotlin.Comparable<U>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun </*0*/ U : kotlin.Cloneable> foo(/*0*/ u: U): U where U : kotlin.Comparable<U>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

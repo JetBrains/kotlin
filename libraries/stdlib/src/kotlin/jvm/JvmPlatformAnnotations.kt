@@ -61,6 +61,10 @@ public annotation class JvmName(public val name: String)
 @MustBeDocumented
 public annotation class JvmMultifileClass
 
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.SOURCE)
+public annotation class JvmSynthetic
+
 /**
  * Instructs the Kotlin compiler to generate a public backing field for this property.
  */

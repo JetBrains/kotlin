@@ -14,14 +14,14 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.Deprecated(value = "text") @kotlin.annotation.annotation() public final class obsolete : kotlin.Annotation {
+@kotlin.Deprecated(message = "text") @kotlin.annotation.annotation() public final class obsolete : kotlin.Annotation {
     public constructor obsolete()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.Deprecated(value = "text") @kotlin.annotation.annotation() public final class obsoleteWithParam : kotlin.Annotation {
+@kotlin.Deprecated(message = "text") @kotlin.annotation.annotation() public final class obsoleteWithParam : kotlin.Annotation {
     public constructor obsoleteWithParam(/*0*/ text: kotlin.String)
     public final val text: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

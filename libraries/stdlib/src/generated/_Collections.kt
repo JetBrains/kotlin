@@ -894,17 +894,9 @@ public fun <T> Iterable<T>.toList(): List<T> {
     return this.toArrayList()
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
-    val capacity = (collectionSizeOrDefault(10)/.75f) + 1
-    val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
 /**
@@ -916,6 +908,19 @@ public inline fun <T, K, V> Iterable<T>.toMap(selector: (T) -> K, transform: (T)
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <T, K> Iterable<T>.toMapBy(selector: (T) -> K): Map<K, T> {
+    val capacity = (collectionSizeOrDefault(10)/.75f) + 1
+    val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
     }
     return result
 }
@@ -1334,31 +1339,14 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
     return this as List<T>
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <T, R, V> Iterable<T>.merge(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val arraySize = array.size()
-    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
-    var i = 0
-    for (element in this) {
-        if (i >= arraySize) break
-        list.add(transform(element, array[i++]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
 public inline fun <T, R, V> Iterable<T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
-    }
-    return list
+    return zip(other, transform)
 }
 
 /**
@@ -1510,14 +1498,41 @@ public operator fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Iterable<T>.zip(array: Array<out R>): List<Pair<T, R>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <T, R, V> Iterable<T>.zip(array: Array<out R>, transform: (T, R) -> V): List<V> {
+    val arraySize = array.size()
+    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in this) {
+        if (i >= arraySize) break
+        list.add(transform(element, array[i++]))
+    }
+    return list
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
-    return merge(other) { t1, t2 -> t1 to t2 }
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
 }
 
 /**

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import javax.swing.Icon
 
 public class KotlinLambdaSmartStepTarget(
@@ -40,7 +40,7 @@ public class KotlinLambdaSmartStepTarget(
 
     companion object {
         fun calcLabel(descriptor: DeclarationDescriptor, paramName: Name): String {
-            return "${descriptor.getName().asString()}: ${paramName.asString()}.${OperatorConventions.INVOKE.asString()}()"
+            return "${descriptor.getName().asString()}: ${paramName.asString()}.${OperatorNameConventions.INVOKE.asString()}()"
         }
     }
 }

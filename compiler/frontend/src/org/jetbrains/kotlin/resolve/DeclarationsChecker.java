@@ -207,16 +207,40 @@ public class DeclarationsChecker {
     }
 
     private void checkClassExposedType(@NotNull JetClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
+        checkExposedSupertypes(klass, classDescriptor);
+        checkExposedParameterBounds(klass, classDescriptor);
+
+        if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null && klass.getPrimaryConstructor() != null) {
+            checkFunctionExposedType(klass.getPrimaryConstructor(), classDescriptor.getUnsubstitutedPrimaryConstructor());
+        }
+    }
+
+    private void checkExposedParameterBounds(@NotNull JetClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
+        EffectiveVisibility classVisibility = EffectiveVisibility.Companion.forClass(classDescriptor);
+        List<JetTypeParameter> typeParameterList = klass.getTypeParameters();
+        int i = 0;
+        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
+            if (i >= typeParameterList.size()) return;
+            for (JetType upperBound : typeParameterDescriptor.getUpperBounds()) {
+                EffectiveVisibility upperBoundVisibility = EffectiveVisibility.Companion.forType(upperBound);
+                if (!upperBoundVisibility.sameOrMorePermissive(classVisibility)) {
+                    JetTypeParameter typeParameter = typeParameterList.get(i);
+                    trace.report(EXPOSED_TYPE_PARAMETER_BOUND.on(typeParameter, classVisibility, upperBoundVisibility));
+                    break;
+                }
+            }
+            i++;
+        }
+    }
+
+    private void checkExposedSupertypes(@NotNull JetClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
         EffectiveVisibility classVisibility = EffectiveVisibility.Companion.forClass(classDescriptor);
         boolean isInterface = classDescriptor.getKind() == ClassKind.INTERFACE;
         List<JetDelegationSpecifier> delegationList = klass.getDelegationSpecifiers();
         int i = -1;
-        // Encapsulate
         for (JetType superType : classDescriptor.getTypeConstructor().getSupertypes()) {
             i++;
-            if (i >= delegationList.size()) {
-                break;
-            }
+            if (i >= delegationList.size()) return;
             ClassDescriptor superDescriptor = TypeUtils.getClassDescriptor(superType);
             if (superDescriptor == null) {
                 continue;
@@ -234,26 +258,6 @@ public class DeclarationsChecker {
                     trace.report(EXPOSED_SUPER_CLASS.on(delegationList.get(i), classVisibility, superTypeVisibility));
                 }
             }
-        }
-        // Encapsulate
-        List<JetTypeParameter> typeParameterList = klass.getTypeParameters();
-        int j = 0;
-        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
-            if (j >= typeParameterList.size()) {
-                break;
-            }
-            for (JetType upperBound : typeParameterDescriptor.getUpperBounds()) {
-                EffectiveVisibility upperBoundVisibility = EffectiveVisibility.Companion.forType(upperBound);
-                if (!upperBoundVisibility.sameOrMorePermissive(classVisibility)) {
-                    JetTypeParameter typeParameter = typeParameterList.get(i);
-                    trace.report(EXPOSED_TYPE_PARAMETER_BOUND.on(typeParameter, classVisibility, upperBoundVisibility));
-                    break;
-                }
-            }
-            j++;
-        }
-        if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null && klass.getPrimaryConstructor() != null) {
-            checkFunctionExposedType(klass.getPrimaryConstructor(), classDescriptor.getUnsubstitutedPrimaryConstructor());
         }
     }
 
@@ -279,6 +283,7 @@ public class DeclarationsChecker {
     private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
         checkTypeParameters(aClass);
+        checkTypeParameterConstraints(aClass);
 
         if (aClass.isInterface()) {
             checkConstructorInTrait(aClass);
@@ -336,6 +341,27 @@ public class DeclarationsChecker {
         }
     }
 
+    private void checkTypeParameterConstraints(JetTypeParameterListOwner typeParameterListOwner) {
+        List<JetTypeConstraint> constraints = typeParameterListOwner.getTypeConstraints();
+        if (!constraints.isEmpty()) {
+            for (JetTypeParameter typeParameter : typeParameterListOwner.getTypeParameters()) {
+                if (typeParameter.getExtendsBound() != null && hasConstraints(typeParameter, constraints)) {
+                    trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAINTS.on(typeParameter));
+                }
+            }
+        }
+    }
+
+    private static boolean hasConstraints(JetTypeParameter typeParameter, List<JetTypeConstraint> constraints) {
+        for (JetTypeConstraint constraint : constraints) {
+            JetSimpleNameExpression parameterName = constraint.getSubjectTypeParameterName();
+            if (parameterName != null && parameterName.getText().equals(typeParameter.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void checkConstructorInTrait(JetClass klass) {
         JetPrimaryConstructor primaryConstructor = klass.getPrimaryConstructor();
         if (primaryConstructor != null) {
@@ -377,6 +403,7 @@ public class DeclarationsChecker {
         checkPropertyLateInit(property, propertyDescriptor);
         checkPropertyInitializer(property, propertyDescriptor);
         checkAccessors(property, propertyDescriptor);
+        checkTypeParameterConstraints(property);
         checkPropertyExposedType(property, propertyDescriptor);
     }
 
@@ -402,6 +429,11 @@ public class DeclarationsChecker {
 
         if (returnTypeIsNullable) {
             trace.report(INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE.on(modifier));
+            return;
+        }
+
+        if (returnTypeIsPrimitive) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE.on(modifier));
             return;
         }
 
@@ -436,7 +468,7 @@ public class DeclarationsChecker {
         }
 
         if (!hasBackingField || hasDelegateOrInitializer || customGetterOrSetter
-                || returnTypeIsPrimitive || propertyDescriptor.getExtensionReceiverParameter() != null) {
+                || propertyDescriptor.getExtensionReceiverParameter() != null) {
             trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier));
         }
     }
@@ -572,6 +604,7 @@ public class DeclarationsChecker {
             typeParameterList.getTextRange().getStartOffset() > nameIdentifier.getTextRange().getStartOffset()) {
             trace.report(DEPRECATED_TYPE_PARAMETER_SYNTAX.on(typeParameterList));
         }
+        checkTypeParameterConstraints(function);
 
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
         boolean hasAbstractModifier = function.hasModifier(JetTokens.ABSTRACT_KEYWORD);

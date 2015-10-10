@@ -499,9 +499,7 @@ public class ErrorUtils {
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
                 Modality.OPEN,
-                Visibilities.INTERNAL,
-                false,
-                false
+                Visibilities.INTERNAL
         );
         return function;
     }

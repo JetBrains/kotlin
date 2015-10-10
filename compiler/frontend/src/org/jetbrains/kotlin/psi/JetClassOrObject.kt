@@ -108,7 +108,7 @@ abstract public class JetClassOrObject :
 
     public fun getSecondaryConstructors(): List<JetSecondaryConstructor> = getBody()?.getSecondaryConstructors().orEmpty()
 
-    @Deprecated(value = "It's no more possible to determine it exactly using AST. Use ClassDescriptor.getKind() instead")
+    @Deprecated("It's no more possible to determine it exactly using AST. Use ClassDescriptor.getKind() instead")
     public fun isAnnotation(): Boolean =
             getAnnotation(KotlinBuiltIns.FQ_NAMES.annotation.shortName().asString()) != null || hasModifier(JetTokens.ANNOTATION_KEYWORD)
 
