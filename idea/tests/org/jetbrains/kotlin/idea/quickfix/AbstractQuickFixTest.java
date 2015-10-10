@@ -95,8 +95,10 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "CallToPrintStackTrace"})
             @Override
             public void run() {
+                String fileText = "";
                 try {
-                    String contents = StringUtil.convertLineSeparators(FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET));
+                    fileText = FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET);
+                    String contents = StringUtil.convertLineSeparators(fileText);
                     quickFixTestCase.configureFromFileText(testFile.getName(), contents);
                     quickFixTestCase.bringRealEditorBack();
 
@@ -110,6 +112,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                 catch (Throwable e) {
                     e.printStackTrace();
                     fail(testName);
+                } finally {
+                    ConfigLibraryUtil.unconfigureLibrariesByDirective(getModule(), fileText);
                 }
             }
         }, "", "");

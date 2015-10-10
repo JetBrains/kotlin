@@ -47,4 +47,12 @@
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
     <description>Class 'B' is never used</description>
   </problem>
+  <problem>
+    <file>BadCodeNoExceptions.kt</file>
+    <line>2</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/badCodeNoExceptions.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
+    <description>Property 'id' is never used</description>
+  </problem>
 </problems>

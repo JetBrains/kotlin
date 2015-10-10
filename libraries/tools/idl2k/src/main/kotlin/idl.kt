@@ -87,7 +87,7 @@ class ExtendedAttributeParser(private val namespace: String) : WebIDLBaseVisitor
     override fun defaultResult(): ExtendedAttribute = ExtendedAttribute(name, call, arguments)
 
     override fun visitExtendedAttribute(ctx: WebIDLParser.ExtendedAttributeContext): ExtendedAttribute {
-        call = ctx.children.filterIdentifiers().firstOrNull()?.getText() ?: ""
+        call = ctx.children.filterIdentifiers().firstOrNull()?.text ?: ""
 
         visitChildren(ctx)
         return defaultResult()
@@ -101,8 +101,8 @@ class ExtendedAttributeParser(private val namespace: String) : WebIDLBaseVisitor
     override fun visitIdentifierList(ctx: IdentifierListContext): ExtendedAttribute {
         object : WebIDLBaseVisitor<Unit>() {
             override fun visitTerminal(node: TerminalNode) {
-                if (node.getSymbol().getType() == WebIDLLexer.IDENTIFIER_WEBIDL) {
-                    arguments.add(Attribute(node.getText(), AnyType(), true, vararg = false, static = false))
+                if (node.symbol.type == WebIDLLexer.IDENTIFIER_WEBIDL) {
+                    arguments.add(Attribute(node.text, AnyType(), true, vararg = false, static = false))
                 }
             }
         }.visitChildren(ctx)
@@ -134,7 +134,7 @@ class TypeVisitor(val namespace: String) : WebIDLBaseVisitor<Type>() {
     override fun defaultResult() = type
 
     override fun visitNonAnyType(ctx: WebIDLParser.NonAnyTypeContext): Type {
-        type = SimpleType(ctx.getText(), false)
+        type = SimpleType(ctx.text, false)
         return type
     }
 
@@ -144,7 +144,7 @@ class TypeVisitor(val namespace: String) : WebIDLBaseVisitor<Type>() {
     }
 
     override fun visitTypeSuffix(ctx: TypeSuffixContext): Type {
-        when (ctx.getText()?.trim()) {
+        when (ctx.text?.trim()) {
             "?" -> type = type.toNullable()
             "[]" -> type = ArrayType(type, false)
             "[]?" -> type = ArrayType(type, true)
@@ -155,7 +155,7 @@ class TypeVisitor(val namespace: String) : WebIDLBaseVisitor<Type>() {
     }
 
     override fun visitTerminal(node: TerminalNode): Type {
-        type = SimpleType(node.getText(), false)
+        type = SimpleType(node.text, false)
         return type
     }
 }
@@ -169,13 +169,13 @@ class OperationVisitor(private val attributes: List<ExtendedAttribute>, private 
     override fun defaultResult() = Operation(name, returnType, parameters, attributes + exts, static)
 
     override fun visitOptionalIdentifier(ctx: OptionalIdentifierContext): Operation {
-        name = ctx.getText()
+        name = ctx.text
         return defaultResult()
     }
 
     override fun visitSpecial(ctx: WebIDLParser.SpecialContext): Operation {
         if (ctx.children != null) {
-            exts.add(ExtendedAttribute(call = ctx.getText(), name = null, arguments = emptyList()))
+            exts.add(ExtendedAttribute(call = ctx.text, name = null, arguments = emptyList()))
         }
 
         return defaultResult()
@@ -211,29 +211,29 @@ class AttributeVisitor(private val readOnly: Boolean = false, private val static
     }
 
     override fun visitOptionalOrRequiredArgument(ctx: WebIDLParser.OptionalOrRequiredArgumentContext): Attribute {
-        if (ctx.children?.any { it is TerminalNode && it.getText() == "optional" } ?: false) {
+        if (ctx.children?.any { it is TerminalNode && it.text == "optional" } ?: false) {
             defaultValue = "noImpl"
         }
         return visitChildren(ctx)
     }
 
     override fun visitAttributeRest(ctx: WebIDLParser.AttributeRestContext): Attribute {
-        name = getNameOrNull(ctx) ?: ctx.children.filter { it is TerminalNode }.filter { it.getText() != ";" }.last().getText()
+        name = getNameOrNull(ctx) ?: ctx.children.filter { it is TerminalNode }.filter { it.text != ";" }.last().text
         return defaultResult()
     }
 
     override fun visitArgumentName(ctx: WebIDLParser.ArgumentNameContext): Attribute {
-        name = getNameOrNull(ctx) ?: ctx.getText()
+        name = getNameOrNull(ctx) ?: ctx.text
         return defaultResult()
     }
 
     override fun visitDefaultValue(ctx: WebIDLParser.DefaultValueContext): Attribute {
-        defaultValue = ctx.getText()
+        defaultValue = ctx.text
         return defaultResult()
     }
 
     override fun visitEllipsis(ctx: WebIDLParser.EllipsisContext): Attribute {
-        vararg = vararg || "..." in ctx.getText()
+        vararg = vararg || "..." in ctx.text
         return defaultResult()
     }
 }
@@ -252,12 +252,12 @@ class ConstantVisitor : WebIDLBaseVisitor<Constant>() {
     }
 
     override fun visitConstType(ctx: WebIDLParser.ConstTypeContext): Constant {
-        type = SimpleType(ctx.getText(), false)
+        type = SimpleType(ctx.text, false)
         return defaultResult()
     }
 
     override fun visitConstValue(ctx: WebIDLParser.ConstValueContext): Constant {
-        value = ctx.getText()
+        value = ctx.text
         return defaultResult()
     }
 }
@@ -363,8 +363,8 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
     override fun visitDictionaryMember(ctx: DictionaryMemberContext): Definition {
         val name = ctx.children
                 .filterIdentifiers()
-                .firstOrNull { it.getText() != "" }
-                ?.getText()
+                .firstOrNull { it.text != "" }
+                ?.text
 
         val type = TypeVisitor(namespace).visit(ctx.children.first { it is TypeContext })
         val defaultValue = object : WebIDLBaseVisitor<String?>() {
@@ -373,7 +373,7 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
             override fun defaultResult() = value
 
             override fun visitDefaultValue(ctx2: DefaultValueContext): String? {
-                value = ctx2.getText()
+                value = ctx2.text
                 return value
             }
         }.visit(ctx)
@@ -384,9 +384,9 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
     }
 
     override fun visitImplementsStatement(ctx: ImplementsStatementContext): Definition {
-        val identifiers = ctx.children.filterIdentifiers().map { it.getText() }
+        val identifiers = ctx.children.filterIdentifiers().map { it.text }
 
-        if (identifiers.size() == 2) {
+        if (identifiers.size == 2) {
             kind = DefinitionKind.EXTENSION_INTERFACE
             name = identifiers[0]
             implements = identifiers[1]
@@ -408,7 +408,7 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
 
     override fun visitInheritance(ctx: WebIDLParser.InheritanceContext): Definition {
         if (ctx.children != null) {
-            inherited.addAll(ctx.children.filterIdentifiers().map { it.getText().trim() }.filter { it != "" })
+            inherited.addAll(ctx.children.filterIdentifiers().map { it.text.trim() }.filter { it != "" })
         }
         return defaultResult()
     }
@@ -488,13 +488,13 @@ class ModuleVisitor(val declarations: MutableList<Definition>, var namespace: St
     }
 
     override fun visitNamespaceRest(ctx: NamespaceRestContext) {
-        this.namespace = ctx.getText()
+        this.namespace = ctx.text
     }
 }
 
-private fun List<ParseTree>?.filterIdentifiers(): List<ParseTree> = this?.filter { it is TerminalNode && it.getSymbol().getType() == WebIDLLexer.IDENTIFIER_WEBIDL } ?: emptyList()
-private fun getName(ctx: ParserRuleContext) = ctx.children.filterIdentifiers().first().getText()
-private fun getNameOrNull(ctx: ParserRuleContext) = ctx.children.filterIdentifiers().firstOrNull()?.getText()
+private fun List<ParseTree>?.filterIdentifiers(): List<ParseTree> = this?.filter { it is TerminalNode && it.symbol.type == WebIDLLexer.IDENTIFIER_WEBIDL } ?: emptyList()
+private fun getName(ctx: ParserRuleContext) = ctx.children.filterIdentifiers().first().text
+private fun getNameOrNull(ctx: ParserRuleContext) = ctx.children.filterIdentifiers().firstOrNull()?.text
 
 fun parseIDL(reader: CharStream): Repository {
     val ll = WebIDLLexer(reader)

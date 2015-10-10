@@ -138,7 +138,7 @@ private fun generateFunction(project: Project, descriptor: FunctionDescriptor, b
     return JetPsiFactory(project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body)
 }
 
-private fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, bodyType: OverrideMemberChooserObject.BodyType): String {
+public fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, bodyType: OverrideMemberChooserObject.BodyType): String {
     if (bodyType == OverrideMemberChooserObject.BodyType.EMPTY) {
         return "throw UnsupportedOperationException()"
     }

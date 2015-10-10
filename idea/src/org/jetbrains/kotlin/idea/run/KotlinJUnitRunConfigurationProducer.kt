@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.idea.run
 
 import com.intellij.execution.*
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.configurations.ModuleBasedConfiguration
-import com.intellij.execution.junit.JUnitConfiguration
-import com.intellij.execution.junit.JUnitConfigurationType
-import com.intellij.execution.junit.JUnitUtil
-import com.intellij.execution.junit.PatternConfigurationProducer
+import com.intellij.execution.junit.*
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
@@ -114,6 +112,26 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
         return false
     }
 
+    override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
+        val leaf = fromContext.sourceElement
+        getTestClass(leaf)?.let { testClass ->
+            val fromContextSubstitute = object : ConfigurationFromContext() {
+                override fun getConfigurationSettings() = fromContext.configurationSettings
+
+                override fun setConfigurationSettings(configurationSettings: RunnerAndConfigurationSettings) {
+                    fromContext.configurationSettings = configurationSettings
+                }
+
+                override fun getSourceElement() = testClass
+            }
+            // TODO: use TestClassConfigurationProducer when constructor becomes public
+            return object : AbstractTestClassConfigurationProducer(JUnitConfigurationType.getInstance()){}
+                    .onFirstRun(fromContextSubstitute, context, performRunnable)
+        }
+
+        super.onFirstRun(fromContext, context, performRunnable)
+    }
+
     private fun getTestMethodLocation(leaf: PsiElement): Location<PsiMethod>? {
         val function = leaf.getParentOfType<JetNamedFunction>(false) ?: return null
         val owner = PsiTreeUtil.getParentOfType(function, javaClass<JetFunction>(), javaClass<JetClass>())
@@ -142,7 +160,7 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
     }
 
     private fun JetClass?.isJUnitTestClass() =
-            LightClassUtil.getPsiClass(this)?.let { JUnitUtil.isTestClass(it) } ?: false
+            LightClassUtil.getPsiClass(this)?.let { JUnitUtil.isTestClass(it, false, true) } ?: false
 
     private fun getTestClassInFile(jetFile: JetFile) =
             jetFile.getDeclarations().filterIsInstance<JetClass>().singleOrNull { it.isJUnitTestClass() }

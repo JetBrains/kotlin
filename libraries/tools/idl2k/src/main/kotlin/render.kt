@@ -71,8 +71,8 @@ private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: 
     indent(commented, level)
 
     when (f.nativeGetterOrSetter) {
-        NativeGetterOrSetter.GETTER -> append("@nativeGetter ")
-        NativeGetterOrSetter.SETTER -> append("@nativeSetter ")
+        NativeGetterOrSetter.GETTER -> append("operator @nativeGetter ")
+        NativeGetterOrSetter.SETTER -> append("operator @nativeSetter ")
         NativeGetterOrSetter.NONE -> {}
     }
 
@@ -92,7 +92,7 @@ private fun List<GenerateAttribute>.hasNoVars() = none { it.isVar }
 
 private fun GenerateAttribute.isCommented(parent: String) = "$parent.$name" in commentOutDeclarations || "$parent.$name: ${type.render()}" in commentOutDeclarations
 private fun GenerateFunction.isCommented(parent: String) =
-        "$parent.$name" in commentOutDeclarations || "$parent.$name(${arguments.size()})" in commentOutDeclarations
+        "$parent.$name" in commentOutDeclarations || "$parent.$name(${arguments.size})" in commentOutDeclarations
 private fun GenerateAttribute.isRequiredFunctionArgument(owner: String, functionName: String) = "$owner.$functionName.$name" in requiredArguments
 private fun GenerateFunction.fixRequiredArguments(parent: String) = copy(arguments = arguments.map { arg -> arg.copy(initializer = if (arg.isRequiredFunctionArgument(parent, name)) null else arg.initializer) })
 

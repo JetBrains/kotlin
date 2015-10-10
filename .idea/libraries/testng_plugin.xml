@@ -6,6 +6,8 @@
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/testng/lib/testng-plugin.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/testng/lib/testng.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/testng/lib/jcommander.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/testng/lib/resources_en.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

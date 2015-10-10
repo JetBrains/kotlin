@@ -1,8 +1,5 @@
 package org.jetbrains.idl2k
 
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ
-import java.util.*
-
 private fun Operation.getterOrSetter() = this.attributes.map { it.call }.toSet().let { attributes ->
     when {
         "getter" in attributes -> NativeGetterOrSetter.GETTER
@@ -45,7 +42,7 @@ fun generateFunctions(repository: Repository, function: Operation): List<Generat
         val interfaceType = repository.interfaces[parameterType?.type]
         when {
             interfaceType == null -> it
-            interfaceType.operations.size() != 1 -> it
+            interfaceType.operations.size != 1 -> it
             interfaceType.callback -> interfaceType.operations.single().let { callbackFunction ->
                 it.copy(type = FunctionType(callbackFunction.parameters.map { it.copy(type = mapType(repository, it.type)) }, mapType(repository, callbackFunction.returnType), parameterType?.nullable ?: false))
             }
@@ -92,7 +89,7 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
             .filterNotNull()
             .filter { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS }
 
-    assert(superClasses.size() <= 1) { "Type ${iface.name} should have one or zero super classes but found ${superClasses.map { it.name }}" }
+    assert(superClasses.size <= 1) { "Type ${iface.name} should have one or zero super classes but found ${superClasses.map { it.name }}" }
     val superClass = superClasses.singleOrNull()
     val superConstructor = superClass?.findConstructors()?.firstOrNull() ?: EMPTY_CONSTRUCTOR
 
@@ -101,7 +98,7 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
     val extensions = repository.externals[iface.name]?.map { repository.interfaces[it] }?.filterNotNull() ?: emptyList()
 
     val primaryConstructor = when {
-        declaredConstructors.size() == 1 -> declaredConstructors.single()
+        declaredConstructors.size == 1 -> declaredConstructors.single()
         declaredConstructors.isEmpty() && entityKind == GenerateDefinitionKind.CLASS -> EMPTY_CONSTRUCTOR
         else -> declaredConstructors.firstOrNull { it.arguments.isEmpty() }
     }

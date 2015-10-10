@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForRe
 import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
 import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.codeInsight.*
+import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateActionTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractCodeMoverTest
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
@@ -722,6 +723,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractKDocTypingTest>() {
             model("kdoc/typing")
+        }
+
+        testClass<AbstractGenerateActionTest>() {
+            model("codeInsight/generate")
         }
     }
 

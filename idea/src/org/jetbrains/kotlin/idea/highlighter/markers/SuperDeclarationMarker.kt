@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.JetFunctionPsiElementCellRenderer
 import org.jetbrains.kotlin.psi.JetDeclaration
@@ -112,8 +113,7 @@ public data class ResolveWithParentsResult(
         val overriddenDescriptors: Collection<CallableMemberDescriptor>)
 
 public fun resolveDeclarationWithParents(element: JetDeclaration): ResolveWithParentsResult {
-    val bindingContext = element.analyze()
-    val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
+    val descriptor = element.resolveToDescriptorIfAny()
 
     if (descriptor !is CallableMemberDescriptor) return ResolveWithParentsResult(null, listOf())
 
