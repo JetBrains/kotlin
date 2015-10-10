@@ -129,27 +129,17 @@ fun ranges(): List<GenericFunction> {
     fun contains(rangeType: PrimitiveType, itemType: PrimitiveType) = f("contains(item: $itemType)") {
         operator(true)
 
-        val meaningless = (rangeType.isNumeric() != itemType.isNumeric())
-        if (!meaningless) {
-            only(Ranges)
-            onlyPrimitives(Ranges, rangeType)
-            platformName("${rangeType.name.decapitalize()}RangeContains")
-            returns("Boolean")
-            doc { "Checks if the specified [item] belongs to this range." }
-            body { "return start <= item && item <= end" }
-        }
-        else {
-            only(RangesOfPrimitives)
-            only(rangeType)
-            returns("Nothing")
-            annotations("""@Deprecated("The 'contains' operation for a range of $rangeType and $itemType item is not supported and should not be used.")""")
-            body { """throw UnsupportedOperationException()""" }
-        }
+        assert(rangeType.isNumeric() != itemType.isNumeric())
+        only(Ranges)
+        onlyPrimitives(Ranges, rangeType)
+        platformName("${rangeType.name.decapitalize()}RangeContains")
+        returns("Boolean")
+        doc { "Checks if the specified [item] belongs to this range." }
+        body { "return start <= item && item <= end" }
     }
 
-    val allPermutations = (numericPrimitives + PrimitiveType.Char).let { it.flatMap { from -> it.map { to -> from to to } }}
 
-    templates addAll allPermutations.filter { it.first != it.second }.map { contains(it.first, it.second) }
+    templates addAll numericPermutations.filter { it.first != it.second }.map { contains(it.first, it.second) }
 
     return templates
 }
