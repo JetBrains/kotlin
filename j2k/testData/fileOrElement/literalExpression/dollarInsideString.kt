@@ -3,7 +3,7 @@ package demo
 internal class Test {
     fun test() {
         var name = "$$$$"
-        name = name.replaceAll("\\$[0-9]+", "\\$")
+        name = name.replace("\\$[0-9]+".toRegex(), "\\$")
 
         val c = '$'
         println(c)

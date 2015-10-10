@@ -284,7 +284,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected fun getTopLevelExtensions(): Collection<CallableDescriptor> {
-        return indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, nameExpression!!, bindingContext)
+        return indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, callTypeAndReceiver, expression!!, bindingContext)
                 .filterShadowedNonImported()
     }
 

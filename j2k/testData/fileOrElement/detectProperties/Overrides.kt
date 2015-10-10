@@ -26,17 +26,17 @@ internal open class B {
 
     open var fromB2: String
         get() = ""
-        set(value: String) {
+        set(value) {
         }
 
     open var fromB3: String
         get() = ""
-        set(value: String) {
+        set(value) {
         }
 
     open var fromB4: String
         get() = ""
-        set(value: String) {
+        set(value) {
         }
 
     open fun setFromB5(value: String) {
@@ -51,7 +51,7 @@ internal abstract class C(override val something1: Int) : B(), I {
 
     override var something3: Int
         get() = 0
-        set(value: Int) {
+        set(value) {
         }
 
     override var something4: Int
@@ -62,7 +62,7 @@ internal abstract class C(override val something1: Int) : B(), I {
 
     override var something5: Int
         get() = super.something5
-        set(value: Int) {
+        set(value) {
 
         }
 
@@ -79,7 +79,7 @@ internal abstract class C(override val something1: Int) : B(), I {
 
     override var fromB2: String
         get() = super.fromB2
-        set(value: String) {
+        set(value) {
             super.fromB2 = value
         }
 
@@ -91,7 +91,7 @@ internal abstract class C(override val something1: Int) : B(), I {
 
     override var fromB4: String
         get() = super.fromB4
-        set(value: String) {
+        set(value) {
             super.fromB4 = value
         }
 

@@ -81,7 +81,7 @@ class PropertyInfo(
 class PropertyDetectionCache(private val converter: Converter) {
     private val cache = HashMap<PsiClass, Map<PsiMember, PropertyInfo>>()
 
-    fun get(psiClass: PsiClass): Map<PsiMember, PropertyInfo> {
+    operator fun get(psiClass: PsiClass): Map<PsiMember, PropertyInfo> {
         cache[psiClass]?.let { return it }
 
         assert(converter.inConversionScope(psiClass))
@@ -149,7 +149,7 @@ private class PropertyDetector(
             else
                 field != null && field.isVar(converter.referenceSearcher)
 
-            val type = field?.type ?: getterInfo?.method?.returnType ?: setterInfo!!.method.parameterList.parameters.single()?.type!!
+            val type = getterInfo?.method?.returnType ?: setterInfo!!.method.parameterList.parameters.single()?.type!!
 
             val isOverride = getterInfo?.superProperty != null || setterInfo?.superProperty != null
 

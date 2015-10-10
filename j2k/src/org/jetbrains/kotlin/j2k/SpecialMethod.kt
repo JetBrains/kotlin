@@ -71,6 +71,15 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = MethodCallExpression.build(null, "setOf", listOf(codeConverter.convertExpression(arguments.single())), typeArgumentsConverted, false)
     },
 
+    STRING_REPLACE_ALL("java.lang.String", "replaceAll", 2) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = MethodCallExpression.build(codeConverter.convertExpression(qualifier), "replace",
+                                             listOf(
+                                                 codeConverter.convertToRegex(arguments[0]),
+                                                 codeConverter.convertExpression(arguments[1])
+                                             ), emptyList(), false)
+    },
+
     SYSTEM_OUT_PRINTLN("java.io.PrintStream", "println", null) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = convertSystemOutMethodCall(methodName, qualifier, arguments, typeArgumentsConverted, codeConverter)
@@ -104,3 +113,6 @@ private fun convertSystemOutMethodCall(
     if (typeArgumentsConverted.isNotEmpty()) return null
     return MethodCallExpression.build(null, methodName, arguments.map { codeConverter.convertExpression(it) }, emptyList(), false)
 }
+
+private fun CodeConverter.convertToRegex(expression: PsiExpression?): Expression
+        = MethodCallExpression.build(convertExpression(expression), "toRegex", emptyList(), emptyList(), false).assignNoPrototype()

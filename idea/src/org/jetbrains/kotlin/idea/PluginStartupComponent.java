@@ -19,6 +19,12 @@ package org.jetbrains.kotlin.idea;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.event.DocumentAdapter;
+import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.updateSettings.impl.UpdateChecker;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager;
 import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
@@ -53,6 +59,17 @@ public class PluginStartupComponent implements ApplicationComponent {
         BuiltInsReferenceResolver.Companion.refreshBuiltIns();
 
         DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
+
+        UpdateChecker.getDisabledToUpdatePlugins().add("org.jetbrains.kotlin");
+        EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentAdapter() {
+            @Override
+            public void documentChanged(DocumentEvent e) {
+                VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(e.getDocument());
+                if (virtualFile != null && virtualFile.getFileType() == JetFileType.INSTANCE) {
+                    KotlinPluginUpdater.Companion.getInstance().kotlinFileEdited();
+                }
+            }
+        });
     }
 
     private static void registerPathVariable() {

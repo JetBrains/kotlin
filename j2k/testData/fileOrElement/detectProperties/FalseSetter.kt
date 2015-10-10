@@ -1,6 +1,6 @@
 class AAA {
     var x = 42
-        set(x: Int) {
+        set(x) {
             this.x += x
         }
 }

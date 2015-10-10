@@ -1497,6 +1497,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("NotInElse.kt")
+            public void testNotInElse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NotInElse.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NotOnlyNamedArguments.kt")
             public void testNotOnlyNamedArguments() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NotOnlyNamedArguments.kt");
@@ -1599,9 +1605,21 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("InConstructorParameters2.kt")
+            public void testInConstructorParameters2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/override/InConstructorParameters2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/override/Simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TypeFunctionName.kt")
+            public void testTypeFunctionName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/override/TypeFunctionName.kt");
                 doTest(fileName);
             }
         }

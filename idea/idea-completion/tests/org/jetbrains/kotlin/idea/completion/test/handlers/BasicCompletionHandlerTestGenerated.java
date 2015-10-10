@@ -406,6 +406,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("TypeFunctionName.kt")
+        public void testTypeFunctionName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/TypeFunctionName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TypeNameInConstructorParameter.kt")
+        public void testTypeNameInConstructorParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/TypeNameInConstructorParameter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ValInConstructorParameter.kt")
         public void testValInConstructorParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/ValInConstructorParameter.kt");

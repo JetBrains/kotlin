@@ -1,4 +1,4 @@
-// "class com.intellij.codeInsight.daemon.impl.quickfix.ImportClassFixBase" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.AutoImportFix" "false"
 // ACTION: Create class 'SomeTest'
 // ERROR: Unresolved reference: SomeTest
 

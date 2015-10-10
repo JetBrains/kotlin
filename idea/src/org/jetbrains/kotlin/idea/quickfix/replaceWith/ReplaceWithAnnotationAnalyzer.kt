@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -85,7 +86,7 @@ object ReplaceWithAnnotationAnalyzer {
         var expression = try {
             psiFactory.createExpression(annotation.pattern)
         }
-        catch(e: Exception) {
+        catch(t: Throwable) {
             return null
         }
 
@@ -132,7 +133,7 @@ object ReplaceWithAnnotationAnalyzer {
                 }
 
                 val resolvedCall = expression.getResolvedCall(bindingContext)
-                if (resolvedCall != null && resolvedCall.status.isSuccess) {
+                if (resolvedCall != null && resolvedCall.isReallySuccess()) {
                     val receiver = if (resolvedCall.resultingDescriptor.isExtension)
                         resolvedCall.extensionReceiver
                     else

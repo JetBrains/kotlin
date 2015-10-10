@@ -21,22 +21,22 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
-import org.jetbrains.kotlin.idea.refactoring.fqName.changeQualifiedName
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class JetSimpleNameReference(expression: JetSimpleNameExpression) : JetSimpleReference<JetSimpleNameExpression>(expression) {
@@ -125,9 +125,13 @@ class JetSimpleNameReference(expression: JetSimpleNameExpression) : JetSimpleRef
             element.getKotlinFqName()?.let { fqName -> bindToFqName(fqName, shorteningMode) } ?: expression
 
     fun bindToFqName(fqName: FqName, shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING): PsiElement {
-        if (fqName.isRoot()) return expression
+        val expression = expression
+        if (fqName.isRoot) return expression
 
-        val newExpression = expression.changeQualifiedName(fqName).getQualifiedElementSelector() as JetSimpleNameExpression
+        // not supported for infix calls and operators
+        if (expression !is JetNameReferenceExpression) return expression
+
+        val newExpression = expression.changeQualifiedName(fqName).getQualifiedElementSelector() as JetNameReferenceExpression
         val newQualifiedElement = newExpression.getQualifiedElement()
 
         if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
@@ -144,6 +148,33 @@ class JetSimpleNameReference(expression: JetSimpleNameExpression) : JetSimpleRef
         }
 
         return newExpression
+    }
+
+    /**
+     * Replace [[JetNameReferenceExpression]] (and its enclosing qualifier) with qualified element given by FqName
+     * Result is either the same as original element, or [[JetQualifiedExpression]], or [[JetUserType]]
+     * Note that FqName may not be empty
+     */
+    private fun JetNameReferenceExpression.changeQualifiedName(fqName: FqName): JetElement {
+        assert(!fqName.isRoot()) { "Can't set empty FqName for element $this" }
+
+        val shortName = fqName.shortName().asString()
+        val psiFactory = JetPsiFactory(this)
+        val fqNameBase = (getParent() as? JetCallExpression)?.let { parent ->
+            val callCopy = parent.copy() as JetCallExpression
+            callCopy.getCalleeExpression()!!.replace(psiFactory.createSimpleName(shortName)).getParent()!!.getText()
+        } ?: shortName
+
+        val text = if (!fqName.isOneSegmentFQN()) "${fqName.parent().asString()}.$fqNameBase" else fqNameBase
+
+        val elementToReplace = getQualifiedElement()
+        return when (elementToReplace) {
+            is JetUserType -> {
+                val typeText = "$text${elementToReplace.getTypeArgumentList()?.getText() ?: ""}"
+                elementToReplace.replace(psiFactory.createType(typeText).getTypeElement()!!)
+            }
+            else -> elementToReplace.replace(psiFactory.createExpression(text))
+        } as JetElement
     }
 
     override fun getCanonicalText(): String = expression.getText()

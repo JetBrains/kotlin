@@ -119,7 +119,7 @@ public class ReferenceVariantsHelper(
             is CallTypeAndReceiver.DOT -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.SAFE -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.INFIX -> receiverExpression = callTypeAndReceiver.receiver
-            is CallTypeAndReceiver.UNARY -> receiverExpression = null // can it happen at all?
+            is CallTypeAndReceiver.OPERATOR -> return emptyList()
             is CallTypeAndReceiver.UNKNOWN -> return emptyList()
             else -> throw RuntimeException() //TODO: see KT-9394
         }

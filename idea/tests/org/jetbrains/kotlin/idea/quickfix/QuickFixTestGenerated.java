@@ -406,6 +406,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("infixCallAndObject.kt")
+        public void testInfixCallAndObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/infixCallAndObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("libraryPropertyJsRuntime.kt")
         public void testLibraryPropertyJsRuntime() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/libraryPropertyJsRuntime.kt");
@@ -469,6 +475,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("noImportForIndex.kt")
         public void testNoImportForIndex() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportForIndex.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notForThisLabel.kt")
+        public void testNotForThisLabel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/notForThisLabel.kt");
             doTest(fileName);
         }
 
@@ -3127,6 +3139,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/localFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mailformedExpression.kt")
+        public void testMailformedExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/mailformedExpression.kt");
             doTest(fileName);
         }
 

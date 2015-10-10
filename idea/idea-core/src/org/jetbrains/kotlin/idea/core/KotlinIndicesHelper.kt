@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.idea.util.receiverTypes
 import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
@@ -89,9 +89,13 @@ public class KotlinIndicesHelper(
                 .flatMap { findTopLevelCallables(it).filter(descriptorFilter) }
     }
 
-    public fun getCallableTopLevelExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression, bindingContext: BindingContext): Collection<CallableDescriptor> {
-        val callTypeAndReceiver = CallTypeAndReceiver.detect(expression)
-        val receiverTypes = callTypeAndReceiver.receiverTypes(bindingContext, expression, moduleDescriptor, predictableSmartCastsOnly = false)
+    public fun getCallableTopLevelExtensions(
+            nameFilter: (String) -> Boolean,
+            callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+            position: JetExpression,
+            bindingContext: BindingContext
+    ): Collection<CallableDescriptor> {
+        val receiverTypes = callTypeAndReceiver.receiverTypes(bindingContext, position, moduleDescriptor, predictableSmartCastsOnly = false)
         if (receiverTypes == null || receiverTypes.isEmpty()) return emptyList()
 
         val receiverTypeNames = HashSet<String>()

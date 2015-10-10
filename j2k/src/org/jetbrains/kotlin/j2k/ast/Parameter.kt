@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.CodeBuilder
 
 abstract class Parameter(val identifier: Identifier, val type: Type?) : Element()
 
 class FunctionParameter(identifier: Identifier,
-                        type: Type,
+                        type: Type?,
                         val varVal: FunctionParameter.VarValModifier,
                         val annotations: Annotations,
                         val modifiers: Modifiers,
@@ -45,7 +45,11 @@ class FunctionParameter(identifier: Identifier,
             VarValModifier.Val -> builder.append("val ")
         }
 
-        builder append identifier append ":" append type!!
+        builder.append(identifier)
+
+        if (type != null) {
+            builder append ":" append type
+        }
 
         if (defaultValue != null) {
             builder append " = " append defaultValue

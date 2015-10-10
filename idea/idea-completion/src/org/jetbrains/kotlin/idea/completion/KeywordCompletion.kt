@@ -27,6 +27,7 @@ import com.intellij.psi.filters.*
 import com.intellij.psi.filters.position.LeftNeighbour
 import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
 import org.jetbrains.kotlin.lexer.JetKeywordToken
@@ -51,6 +52,8 @@ object KeywordCompletion {
             FILE_KEYWORD to ":"
     )
 
+    private val KEYWORDS_TO_IGNORE_PREFIX = TokenSet.create(OVERRIDE_KEYWORD /* it's needed to complete overrides that should be work by member name too */)
+
     public fun complete(position: PsiElement, prefix: String, consumer: (LookupElement) -> Unit) {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
 
@@ -70,15 +73,18 @@ object KeywordCompletion {
                 }
             }
 
-            if (keyword.startsWith(prefix)/* use simple matching by prefix, not prefix matcher from completion*/ && parserFilter(keywordToken)) {
-                val element = LookupElementBuilder.create(KeywordLookupObject(), keyword)
-                        .bold()
-                        .withInsertHandler(if (keywordToken !in FUNCTION_KEYWORDS)
-                                               KotlinKeywordInsertHandler
-                                           else
-                                               KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false))
-                consumer(element)
-            }
+            // we use simple matching by prefix, not prefix matcher from completion
+            if (!keyword.startsWith(prefix) && keywordToken !in KEYWORDS_TO_IGNORE_PREFIX) continue
+
+            if (!parserFilter(keywordToken)) continue
+
+            val element = LookupElementBuilder.create(KeywordLookupObject(), keyword)
+                    .bold()
+                    .withInsertHandler(if (keywordToken !in FUNCTION_KEYWORDS)
+                                           KotlinKeywordInsertHandler
+                                       else
+                                           KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false))
+            consumer(element)
         }
     }
 

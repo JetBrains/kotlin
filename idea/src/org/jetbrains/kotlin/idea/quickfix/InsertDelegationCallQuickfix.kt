@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetSecondaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 
 
 public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecondaryConstructor) : JetIntentionAction<JetSecondaryConstructor>(element) {
@@ -48,7 +49,7 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
         val descriptor = element.resolveToDescriptor()
 
         // if empty call is ok and it's resolved to another constructor, do not move caret
-        if (resolvedCall?.getStatus()?.isSuccess() ?: false && resolvedCall!!.getCandidateDescriptor().getOriginal() != descriptor) return
+        if (resolvedCall?.isReallySuccess() ?: false && resolvedCall!!.getCandidateDescriptor().getOriginal() != descriptor) return
 
         val leftParOffset = newDelegationCall.getValueArgumentList()!!.getLeftParenthesis()!!.getTextOffset()
 

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.getFileScope
@@ -155,7 +156,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
             val bindingContext = functionCall.analyze(BodyResolveMode.PARTIAL)
             val functionResolvedCall = functionCall.getResolvedCall(bindingContext) ?: return emptyList()
-            if (!functionResolvedCall.status.isSuccess) return emptyList()
+            if (!functionResolvedCall.isReallySuccess()) return emptyList()
 
             val samConstructorCalls = functionCall.valueArguments.map {
                 (it.getArgumentExpression() as? JetCallExpression)

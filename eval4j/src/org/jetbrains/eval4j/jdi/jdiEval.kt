@@ -17,21 +17,18 @@
 package org.jetbrains.eval4j.jdi
 
 import com.sun.jdi.*
-import com.sun.jdi.Value as jdi_Value
-import com.sun.jdi.Type as jdi_Type
-import com.sun.jdi.ClassNotLoadedException
-import com.sun.jdi.Method
-import com.sun.jdi.ObjectReference
 import org.jetbrains.eval4j.*
 import org.jetbrains.eval4j.Value
 import org.jetbrains.org.objectweb.asm.Type
+import com.sun.jdi.Type as jdi_Type
+import com.sun.jdi.Value as jdi_Value
 
 val CLASS = Type.getType(javaClass<Class<*>>())
 val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
 
 public class JDIEval(
         private val vm: VirtualMachine,
-        private val classLoader: ClassLoaderReference?,
+        private val defaultClassLoader: ClassLoaderReference?,
         private val thread: ThreadReference,
         private val invokePolicy: Int
 ) : Eval {
@@ -48,6 +45,10 @@ public class JDIEval(
     )
 
     override fun loadClass(classType: Type): Value {
+        return loadClass(classType, defaultClassLoader)
+    }
+
+    fun loadClass(classType: Type, classLoader: ClassLoaderReference?): Value {
         val loadedClasses = vm.classesByName(classType.getInternalName())
         if (!loadedClasses.isEmpty()) {
             val loadedClass = loadedClasses[0]
@@ -106,8 +107,8 @@ public class JDIEval(
                 listOf(value)).boolean
     }
 
-    fun Type.asReferenceType(): ReferenceType = loadClass(this).jdiClass!!.reflectedType()
-    fun Type.asArrayType(): ArrayType = asReferenceType() as ArrayType
+    fun Type.asReferenceType(classLoader: ClassLoaderReference? = this@JDIEval.defaultClassLoader): ReferenceType = loadClass(this, classLoader).jdiClass!!.reflectedType()
+    fun Type.asArrayType(classLoader: ClassLoaderReference? = this@JDIEval.defaultClassLoader): ArrayType = asReferenceType(classLoader) as ArrayType
 
     override fun newArray(arrayType: Type, size: Int): Value {
         val jdiArrayType = arrayType.asArrayType()
@@ -331,12 +332,12 @@ public class JDIEval(
                 val dimensions = name.count { it == '[' }
                 val baseTypeName = if (dimensions > 0) name.substring(0, name.indexOf('[')) else name
 
-                val baseType = primitiveTypes[baseTypeName] ?: Type.getType("L$baseTypeName;").asReferenceType()
+                val baseType = primitiveTypes[baseTypeName] ?: Type.getType("L$baseTypeName;").asReferenceType(declaringType().classLoader())
 
                 if (dimensions == 0)
                     baseType
                 else
-                    Type.getType("[".repeat(dimensions) + baseType.asType().getDescriptor()).asReferenceType()
+                    Type.getType("[".repeat(dimensions) + baseType.asType().getDescriptor()).asReferenceType(declaringType().classLoader())
             }
         }
     }

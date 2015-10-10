@@ -487,6 +487,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SafeCallOnSuperReceiver.kt")
+        public void testSafeCallOnSuperReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/SafeCallOnSuperReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SelfTypesUnsupported.kt")
         public void testSelfTypesUnsupported() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/SelfTypesUnsupported.kt");
