@@ -6627,6 +6627,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ImportFromCompanionObject.kt")
+            public void testImportFromCompanionObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportFromCompanionObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ImportFromCurrentWithDifferentName.kt")
             public void testImportFromCurrentWithDifferentName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportFromCurrentWithDifferentName.kt");
@@ -15397,6 +15403,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         public static class TypeParameters extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInTypeParameters() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/typeParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("deprecatedSyntax.kt")
+            public void testDeprecatedSyntax() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typeParameters/deprecatedSyntax.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("upperBoundCannotBeArray.kt")

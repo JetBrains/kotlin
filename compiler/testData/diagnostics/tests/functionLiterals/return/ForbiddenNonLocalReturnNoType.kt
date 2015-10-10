@@ -15,4 +15,4 @@ fun test3() {
     }
 }
 
-fun run<T>(f: () -> T): T { return f() }
+fun <T> run(f: () -> T): T { return f() }

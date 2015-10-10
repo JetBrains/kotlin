@@ -41,8 +41,6 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsPackage;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
-import org.jetbrains.kotlin.codegen.intrinsics.CheckCast;
-import org.jetbrains.kotlin.codegen.intrinsics.InstanceOf;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
@@ -3820,7 +3818,7 @@ The "returned" value of try expression with no finally is either the last expres
     private void generateInstanceOfInstruction(@NotNull JetType jetType) {
         Type type = boxType(asmType(jetType));
         putReifierMarkerIfTypeIsReifiedParameter(jetType, ReifiedTypeInliner.INSTANCEOF_MARKER_METHOD_NAME);
-        InstanceOf.instanceOf(v, jetType, type);
+        TypeIntrinsics.instanceOf(v, jetType, type);
     }
 
     @NotNull
@@ -3829,7 +3827,7 @@ The "returned" value of try expression with no finally is either the last expres
         putReifierMarkerIfTypeIsReifiedParameter(jetType,
                                                  safeAs ? ReifiedTypeInliner.SAFE_CHECKCAST_MARKER_METHOD_NAME
                                                         : ReifiedTypeInliner.CHECKCAST_MARKER_METHOD_NAME);
-        CheckCast.checkcast(v, jetType, type, safeAs);
+        TypeIntrinsics.checkcast(v, jetType, type, safeAs);
         return StackValue.onStack(type);
     }
 

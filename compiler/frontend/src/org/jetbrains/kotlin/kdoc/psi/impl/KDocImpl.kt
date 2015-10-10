@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.kdoc.psi.impl
 import com.intellij.lang.Language
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 
 public class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocTokens.KDOC, buffer), KDoc {
 
-    override fun getLanguage(): Language = JetLanguage.INSTANCE
+    override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
     override fun toString(): String = getNode().getElementType().toString()
 

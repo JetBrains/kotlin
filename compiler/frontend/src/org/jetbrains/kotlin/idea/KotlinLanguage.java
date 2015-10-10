@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.idea;
 import com.intellij.lang.Language;
 import org.jetbrains.annotations.NotNull;
 
-public class JetLanguage extends Language {
-    public static final JetLanguage INSTANCE = new JetLanguage();
+public class KotlinLanguage extends Language {
+    public static final KotlinLanguage INSTANCE = new KotlinLanguage();
     public static final String NAME = "Kotlin";
 
-    private JetLanguage() {
-        super("jet");
+    private KotlinLanguage() {
+        super("kotlin");
     }
 
     @NotNull

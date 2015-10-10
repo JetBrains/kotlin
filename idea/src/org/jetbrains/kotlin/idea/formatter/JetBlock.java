@@ -29,7 +29,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes;
@@ -251,7 +251,7 @@ public class JetBlock extends AbstractBlock {
 
     @NotNull
     private WrappingStrategy getWrappingStrategy() {
-        CommonCodeStyleSettings commonSettings = mySettings.getCommonSettings(JetLanguage.INSTANCE);
+        CommonCodeStyleSettings commonSettings = mySettings.getCommonSettings(KotlinLanguage.INSTANCE);
         IElementType elementType = myNode.getElementType();
 
         if (elementType == VALUE_ARGUMENT_LIST) {
@@ -268,7 +268,7 @@ public class JetBlock extends AbstractBlock {
     }
 
     private NodeAlignmentStrategy getChildrenAlignmentStrategy() {
-        final CommonCodeStyleSettings jetCommonSettings = mySettings.getCommonSettings(JetLanguage.INSTANCE);
+        final CommonCodeStyleSettings jetCommonSettings = mySettings.getCommonSettings(KotlinLanguage.INSTANCE);
         JetCodeStyleSettings jetSettings = mySettings.getCustomSettings(JetCodeStyleSettings.class);
 
         // Redefine list of strategies for some special elements

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
@@ -154,6 +155,10 @@ public class PropertyReferenceCodegen(
                 val fakeCodegen = ExpressionCodegen(
                         this, FrameMap(), OBJECT_TYPE, context.intoFunction(fakeDescriptor), state, this@PropertyReferenceCodegen
                 )
+                if (target is PropertyImportedFromObject) {
+                    val containingObject = target.containingObject
+                    StackValue.singleton(containingObject, typeMapper).put(typeMapper.mapClass(containingObject), this)
+                }
 
                 val receiver =
                         if (receiverType != null) StackValue.coercion(StackValue.local(1, OBJECT_TYPE), typeMapper.mapType(receiverType))

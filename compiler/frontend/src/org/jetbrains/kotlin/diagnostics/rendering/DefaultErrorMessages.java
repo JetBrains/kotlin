@@ -147,8 +147,8 @@ public class DefaultErrorMessages {
         MAP.put(LABEL_NAME_CLASH, "There is more than one label with such a name in this scope");
         MAP.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but a package name found");
 
-        MAP.put(CANNOT_IMPORT_MEMBERS_FROM_SINGLETON, "Cannot import members from object ''{0}''", NAME);
-        MAP.put(CANNOT_BE_IMPORTED, "Cannot import ''{0}'', functions and properties can be imported only from packages", TO_STRING);
+        MAP.put(CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON, "Cannot import-on-demand from object ''{0}''", NAME);
+        MAP.put(CANNOT_BE_IMPORTED, "Cannot import ''{0}'', functions and properties can be imported only from packages or objects", TO_STRING);
         MAP.put(PACKAGE_CANNOT_BE_IMPORTED, "Packages cannot be imported");
         MAP.put(CONFLICTING_IMPORT, "Conflicting import, imported name ''{0}'' is ambiguous", STRING);
         MAP.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", CLASSES_OR_SEPARATED);
@@ -483,6 +483,9 @@ public class DefaultErrorMessages {
         MAP.put(MISSING_CONSTRUCTOR_KEYWORD, "Use 'constructor' keyword after modifiers of primary constructor");
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, "Variance annotations are only allowed for type parameters of classes and interfaces");
+
+        MAP.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Placing function type parameters after the function name is deprecated");
+
         MAP.put(TYPE_VARIANCE_CONFLICT, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
                 new MultiRenderer<VarianceConflictDiagnosticData>() {
                     @NotNull

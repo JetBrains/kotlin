@@ -7,7 +7,7 @@ class Delegate {
     fun propertyDelegated(a: Int) { inner = "fail" }
     fun propertyDelegated(a: String) { inner = "fail" }
     fun propertyDelegated(p: PropertyMetadata, a: Int) { inner = "fail" }
-    fun propertyDelegated<T>(p: PropertyMetadata, s: String = "") { inner = "fail" }
+    fun <T> propertyDelegated(p: PropertyMetadata, s: String = "") { inner = "fail" }
 }
 
 val prop by Delegate()

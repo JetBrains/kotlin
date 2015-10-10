@@ -21,7 +21,7 @@ class Functions<T>() {
   fun f(a : Int) : Int {}
   fun f(a : T) : Any {}
   fun f(a : Pair<Int, Int>) : T {}
-  fun f<E>(a : E) : T {}
+  fun <E> f(a : E) : T {}
 }
 class WithPredicate() {
   fun isValid() : Boolean
@@ -36,7 +36,7 @@ open class ArrayList<E>() : Any, AbstractList<E?>, InvList<E?>
 fun f() : Unit {}
 fun f(a : Int) : Int {a}
 fun f(a : Float, b : Int) : Float {a}
-fun f<T>(a : Float) : T {a}
+fun <T> f(a : Float) : T {a}
 
 interface Parent
 interface A: Parent

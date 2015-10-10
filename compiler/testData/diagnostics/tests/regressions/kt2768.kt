@@ -1,4 +1,4 @@
-fun assertEquals<T>(a: T, b: T) {
+fun <T> assertEquals(a: T, b: T) {
     if (a != b) throw AssertionError("$a != $b")
 }
 

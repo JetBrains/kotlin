@@ -37,6 +37,6 @@ fun test() {
     1.buzz<<!UPPER_BOUND_VIOLATED!>Double<!>>()
 }
 
-fun foo<T : Any>() {}
-fun bar<T : Int?>() {}
+fun <T : Any> foo() {}
+fun <T : Int?> bar() {}
 fun <T : <!FINAL_UPPER_BOUND!>Int<!>> Int.buzz() : Unit {}

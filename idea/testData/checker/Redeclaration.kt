@@ -23,7 +23,7 @@ object B {
     <error>class <error>C</error></error>
 }
 
-fun PairParam<<error>T</error>, <error>T</error>>() {}
+fun <<error>T</error>, <error>T</error>> PairParam() {}
 class PParam<<error>T</error>, <error>T</error>> {}
 
 val <<error>T</error>, <error>T</error>> T.fooParam : Int get() = 1

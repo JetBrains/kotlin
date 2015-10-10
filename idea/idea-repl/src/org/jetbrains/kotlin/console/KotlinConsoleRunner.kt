@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.console.highlight.KotlinHistoryHighlighter
 import org.jetbrains.kotlin.console.highlight.KotlinReplOutputHighlighter
 import org.jetbrains.kotlin.console.highlight.ReplColors
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.completion.doNotComplete
 import org.jetbrains.kotlin.psi.JetFile
 import java.awt.Color
@@ -85,7 +85,7 @@ public class KotlinConsoleRunner(
     override fun createConsoleView(): LanguageConsoleView? {
         val consoleView = LanguageConsoleBuilder()
                 .gutterContentProvider(KotlinConsoleGutterContentProvider())
-                .build(project, JetLanguage.INSTANCE)
+                .build(project, KotlinLanguage.INSTANCE)
 
         consoleView.prompt = null
 

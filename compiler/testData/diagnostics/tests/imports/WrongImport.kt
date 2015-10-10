@@ -61,9 +61,9 @@ import a.B.<!UNRESOLVED_REFERENCE!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!
 import a.B.<!CANNOT_BE_IMPORTED!>bar<!>
 import a.B.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
 
-import a.C.<!CANNOT_IMPORT_MEMBERS_FROM_SINGLETON!>foo<!>
+import a.C.foo
 import a.C.<!UNRESOLVED_REFERENCE!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>
-import a.C.<!CANNOT_IMPORT_MEMBERS_FROM_SINGLETON!>bar<!>
+import a.C.bar
 import a.C.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
 import a.C.Nested
 
@@ -72,7 +72,7 @@ import a.D.<!UNRESOLVED_REFERENCE!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!
 import a.D.<!UNRESOLVED_REFERENCE!>bar<!>
 import a.D.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
 
-import a.D.Companion.<!CANNOT_IMPORT_MEMBERS_FROM_SINGLETON!>foo<!>
+import a.D.Companion.foo
 import a.D.Companion.<!UNRESOLVED_REFERENCE!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>
-import a.D.Companion.<!CANNOT_IMPORT_MEMBERS_FROM_SINGLETON!>bar<!>
+import a.D.Companion.bar
 import a.D.Companion.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>

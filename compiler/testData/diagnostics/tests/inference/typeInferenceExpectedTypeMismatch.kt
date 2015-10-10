@@ -7,7 +7,7 @@ fun test() {
     use(s)
 }
 
-fun newList<S>() : ArrayList<S> {
+fun <S> newList() : ArrayList<S> {
     return ArrayList<S>()
 }
 

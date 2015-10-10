@@ -385,6 +385,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PropertyTypeParameterList.after.kt")
+        public void testPropertyTypeParameterList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/PropertyTypeParameterList.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PropertyWithInference.after.kt")
         public void testPropertyWithInference() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/PropertyWithInference.after.kt");

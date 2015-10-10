@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -66,7 +66,7 @@ public open class KotlinLightClassForExplicitDeclaration(
             var createWrapper = forceMethodWrapping
             // Use PsiClass wrapper instead of package light class to avoid names like "FooPackage" in Type Hierarchy and related views
             if (containingClass is KotlinLightClassForFacade) {
-                containingClass = object : LightClass(containingClass as KotlinLightClassForFacade, JetLanguage.INSTANCE) {
+                containingClass = object : LightClass(containingClass as KotlinLightClassForFacade, KotlinLanguage.INSTANCE) {
                     override fun getName(): String? {
                         return currentFileName
                     }
@@ -75,7 +75,7 @@ public open class KotlinLightClassForExplicitDeclaration(
             }
 
             if (createWrapper) {
-                return object : LightMethod(myManager, method, containingClass!!, JetLanguage.INSTANCE) {
+                return object : LightMethod(myManager, method, containingClass!!, KotlinLanguage.INSTANCE) {
                     override fun getParent(): PsiElement {
                         return getContainingClass()!!
                     }

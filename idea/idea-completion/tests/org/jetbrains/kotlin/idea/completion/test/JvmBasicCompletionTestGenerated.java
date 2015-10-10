@@ -223,6 +223,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("ImportedMemberFromObject.kt")
+        public void testImportedMemberFromObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ImportedMemberFromObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InCallExpression.kt")
         public void testInCallExpression() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InCallExpression.kt");

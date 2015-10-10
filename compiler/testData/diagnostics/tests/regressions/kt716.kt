@@ -9,7 +9,7 @@ fun <T> TypeInfo<T>.getJavaClass() : java.lang.Class<T> {
     return <!UNCHECKED_CAST!>t.getClass() as java.lang.Class<T><!> // inferred type is Object but Serializable was expected
 }
 
-fun getJavaClass<T>() = typeinfo<T>().getJavaClass()
+fun <T> getJavaClass() = typeinfo<T>().getJavaClass()
 
 fun main(args : Array<String>) {
     System.out.println(getJavaClass<String>())

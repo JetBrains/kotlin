@@ -20,9 +20,8 @@ import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.context.MethodContext
-import org.jetbrains.kotlin.codegen.intrinsics.CheckCast
-import org.jetbrains.kotlin.codegen.intrinsics.InstanceOf
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.JetType
@@ -169,14 +168,14 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     private fun processCheckcast(insn: MethodInsnNode, instructions: InsnList, jetType: JetType, asmType: Type, safe: Boolean) =
             rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { instanceofInsn: AbstractInsnNode ->
                 if (instanceofInsn !is TypeInsnNode) return false
-                CheckCast.checkcast(instanceofInsn, instructions, jetType, asmType, safe)
+                TypeIntrinsics.checkcast(instanceofInsn, instructions, jetType, asmType, safe)
                 return true
             }
 
     private fun processInstanceof(insn: MethodInsnNode, instructions: InsnList, jetType: JetType, asmType: Type) =
             rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { instanceofInsn: AbstractInsnNode ->
                 if (instanceofInsn !is TypeInsnNode) return false
-                InstanceOf.instanceOf(instanceofInsn, instructions, jetType, asmType)
+                TypeIntrinsics.instanceOf(instanceofInsn, instructions, jetType, asmType)
                 return true
             }
 

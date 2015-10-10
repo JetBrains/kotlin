@@ -558,6 +558,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("memberImportedFromObject.kt")
+            public void testMemberImportedFromObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/memberImportedFromObject.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("nestedConstructorFromClass.kt")
             public void testNestedConstructorFromClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/nestedConstructorFromClass.kt");
@@ -852,6 +858,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("memberImportedFromObject.kt")
+            public void testMemberImportedFromObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/memberImportedFromObject.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("overriddenInSubclass.kt")
             public void testOverriddenInSubclass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/overriddenInSubclass.kt");
@@ -916,6 +928,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/casts"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("asFunKBig.kt")
+        public void testAsFunKBig() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/asFunKBig.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("asFunKSmall.kt")
+        public void testAsFunKSmall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/asFunKSmall.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("asWithGeneric.kt")
         public void testAsWithGeneric() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/asWithGeneric.kt");
@@ -928,9 +952,33 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("isFunKBig.kt")
+        public void testIsFunKBig() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/isFunKBig.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("isFunKSmall.kt")
+        public void testIsFunKSmall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/isFunKSmall.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("isWithMutable.kt")
         public void testIsWithMutable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/isWithMutable.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("reifiedAsFunKBig.kt")
+        public void testReifiedAsFunKBig() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/reifiedAsFunKBig.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("reifiedAsFunKSmall.kt")
+        public void testReifiedAsFunKSmall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/reifiedAsFunKSmall.kt");
             doTestWithStdlib(fileName);
         }
 
@@ -940,15 +988,51 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("reifiedIsFunKBig.kt")
+        public void testReifiedIsFunKBig() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/reifiedIsFunKBig.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("reifiedIsFunKSmall.kt")
+        public void testReifiedIsFunKSmall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/reifiedIsFunKSmall.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("reifiedIsWithMutable.kt")
         public void testReifiedIsWithMutable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/reifiedIsWithMutable.kt");
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("reifiedSafeAsFunKBig.kt")
+        public void testReifiedSafeAsFunKBig() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/reifiedSafeAsFunKBig.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("reifiedSafeAsFunKSmall.kt")
+        public void testReifiedSafeAsFunKSmall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/reifiedSafeAsFunKSmall.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("reifiedSafeAsWithMutable.kt")
         public void testReifiedSafeAsWithMutable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/reifiedSafeAsWithMutable.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("safeAsFunKBig.kt")
+        public void testSafeAsFunKBig() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/safeAsFunKBig.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("safeAsFunKSmall.kt")
+        public void testSafeAsFunKSmall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/casts/safeAsFunKSmall.kt");
             doTestWithStdlib(fileName);
         }
 
@@ -2398,6 +2482,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("funAccess.kt")
         public void testFunAccess() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/funAccess.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("importStaticMemberFromObject.kt")
+        public void testImportStaticMemberFromObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/importStaticMemberFromObject.kt");
             doTestWithStdlib(fileName);
         }
 

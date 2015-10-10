@@ -60,3 +60,6 @@ class C {
 
     fun bar() = ::foo
 }
+
+fun typed<T>() {
+}

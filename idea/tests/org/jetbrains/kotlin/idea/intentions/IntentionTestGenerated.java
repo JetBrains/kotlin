@@ -5268,6 +5268,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("semicolon.kt")
+        public void testSemicolon() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/semicolon.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleVal.kt")
         public void testSimpleVal() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/introduceBackingProperty/simpleVal.kt");

@@ -15,7 +15,7 @@ fun foo(s: String, f: (String, String)->Int) = f(s, s)
 //appropriate function
 fun foo(i: Int, f: (Int)->Int) = f(i)
 
-fun id<T>(t: T) = t
+fun <T> id(t: T) = t
 
 fun test() {
     foo(1, id { x1 ->

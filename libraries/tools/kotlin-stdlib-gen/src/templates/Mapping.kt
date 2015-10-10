@@ -96,6 +96,8 @@ fun mapping(): List<GenericFunction> {
         inline(true)
         exclude(Strings, ArraysOfPrimitives)
         doc { "Returns a list containing the results of applying the given [transform] function to each non-null element of the original collection." }
+        deprecate("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().map {} instead.")
+        deprecateReplacement("filterNotNull().map(transform)")
         typeParam("T : Any")
         typeParam("R")
         returns("List<R>")
@@ -172,6 +174,8 @@ fun mapping(): List<GenericFunction> {
             to the given [destination].
             """
         }
+        deprecate("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().mapTo(destination) {} instead.")
+        deprecateReplacement("filterNotNull().mapTo(destination, transform)")
         typeParam("T : Any")
         typeParam("R")
         typeParam("C : MutableCollection<in R>")

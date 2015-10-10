@@ -29,13 +29,13 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.FormattingDocumentModelImpl;
 import com.intellij.psi.formatter.PsiBasedFormattingModel;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 
 public class JetFormattingModelBuilder implements FormattingModelBuilder {
     @NotNull
     @Override
     public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
-        PsiFile containingFile = element.getContainingFile().getViewProvider().getPsi(JetLanguage.INSTANCE);
+        PsiFile containingFile = element.getContainingFile().getViewProvider().getPsi(KotlinLanguage.INSTANCE);
         JetBlock block = new JetBlock(
                 containingFile.getNode(), NodeAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
                 FormatterPackage.createSpacingBuilder(settings));

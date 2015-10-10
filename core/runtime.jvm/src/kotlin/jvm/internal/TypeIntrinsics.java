@@ -16,16 +16,21 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.Function;
+import kotlin.jvm.functions.*;
 import kotlin.jvm.internal.markers.*;
 
 import java.util.*;
 
 @SuppressWarnings("unused")
 public class TypeIntrinsics {
+    private static <T extends Throwable> T sanitizeStackTrace(T throwable) {
+        return Intrinsics.sanitizeStackTrace(throwable, TypeIntrinsics.class.getName());
+    }
+
     public static void throwCce(Object argument, String requestedClassName) {
         String argumentClassName = argument == null ? "null" : argument.getClass().getName();
-        ClassCastException classCastException = new ClassCastException(argumentClassName + " cannot be cast to " + requestedClassName);
-        throw Intrinsics.sanitizeStackTrace(classCastException, TypeIntrinsics.class.getName());
+        throw sanitizeStackTrace(new ClassCastException(argumentClassName + " cannot be cast to " + requestedClassName));
     }
 
     public static void throwCce(ClassCastException e) {
@@ -182,5 +187,103 @@ public class TypeIntrinsics {
             throwCce(obj, "kotlin.MutableMap.MutableEntry");
         }
         return result;
+    }
+
+    public static int getFunctionArity(Object obj) {
+        if (obj instanceof FunctionImpl) {
+            return ((FunctionImpl) obj).getArity();
+        }
+        else if (obj instanceof Function0) {
+            return 0;
+        }
+        else if (obj instanceof Function1) {
+            return 1;
+        }
+        else if (obj instanceof Function2) {
+            return 2;
+        }
+        else if (obj instanceof Function3) {
+            return 3;
+        }
+        else if (obj instanceof Function4) {
+            return 4;
+        }
+        else if (obj instanceof Function5) {
+            return 5;
+        }
+        else if (obj instanceof Function6) {
+            return 6;
+        }
+        else if (obj instanceof Function7) {
+            return 7;
+        }
+        else if (obj instanceof Function8) {
+            return 8;
+        }
+        else if (obj instanceof Function9) {
+            return 9;
+        }
+        else if (obj instanceof Function10) {
+            return 10;
+        }
+        else if (obj instanceof Function11) {
+            return 11;
+        }
+        else if (obj instanceof Function12) {
+            return 12;
+        }
+        else if (obj instanceof Function13) {
+            return 13;
+        }
+        else if (obj instanceof Function14) {
+            return 14;
+        }
+        else if (obj instanceof Function15) {
+            return 15;
+        }
+        else if (obj instanceof Function16) {
+            return 16;
+        }
+        else if (obj instanceof Function17) {
+            return 17;
+        }
+        else if (obj instanceof Function18) {
+            return 18;
+        }
+        else if (obj instanceof Function19) {
+            return 19;
+        }
+        else if (obj instanceof Function20) {
+            return 20;
+        }
+        else if (obj instanceof Function21) {
+            return 21;
+        }
+        else if (obj instanceof Function22) {
+            return 22;
+        }
+        else {
+            return -1;
+        }
+    }
+
+    public static boolean isFunctionOfArity(Object obj, int arity) {
+        return obj instanceof Function && getFunctionArity(obj) == arity;
+    }
+
+    public static Object beforeCheckcastToFunctionOfArity(Object obj, int arity) {
+        // TODO should we instead inline bytecode for this in TypeIntrinsics.kt?
+        if (obj != null && !isFunctionOfArity(obj, arity)) {
+            throwCce(obj, "kotlin.jvm.functions.Function" + arity);
+        }
+        return obj;
+    }
+
+    public static Object beforeSafeCheckcastToFunctionOfArity(Object obj, int arity) {
+        // TODO should we instead inline bytecode for this in TypeIntrinsics.kt?
+        if (obj == null || !isFunctionOfArity(obj, arity)) {
+            return null;
+        }
+        return obj;
     }
 }

@@ -1,4 +1,4 @@
-fun foo<T>(t: T) {
+fun <T> foo(t: T) {
 }
 
 fun box(): String {

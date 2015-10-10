@@ -1,4 +1,4 @@
-fun foo<T>(t: T) = t
+fun <T> foo(t: T) = t
 
 fun test(map: MutableMap<Int, Int>, t: Int) {
     map [t] = foo(t) // t was marked with black square

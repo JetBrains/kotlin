@@ -45,7 +45,7 @@ public class JetTopLevelPropertyFqnNameIndex extends StringStubIndexExtension<Je
 
     @NotNull
     @Override
-    public Collection<JetProperty> get(String s, Project project, @NotNull GlobalSearchScope scope) {
+    public Collection<JetProperty> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
         return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
     }
 }

@@ -18,12 +18,12 @@ package org.jetbrains.kotlin;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
 public interface JetNodeTypes {
-    IFileElementType JET_FILE = new IFileElementType(JetLanguage.INSTANCE);
+    IFileElementType JET_FILE = new IFileElementType(KotlinLanguage.INSTANCE);
 
     IElementType CLASS     = JetStubElementTypes.CLASS;
     IElementType FUN       = JetStubElementTypes.FUNCTION;

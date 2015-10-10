@@ -26,7 +26,7 @@ fun box(): String {
     return "OK"
 }
 
-fun check<T>(param: T, f: (T) -> Unit): String {
+fun <T> check(param: T, f: (T) -> Unit): String {
     try {
         f(param)
     }

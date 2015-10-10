@@ -32,7 +32,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.JetNodeType;
 import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.kdoc.parser.KDocElementType;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink;
@@ -55,7 +55,7 @@ public class JetParserDefinition implements ParserDefinition {
 
     @NotNull
     public static JetParserDefinition getInstance() {
-        return (JetParserDefinition)LanguageParserDefinitions.INSTANCE.forLanguage(JetLanguage.INSTANCE);
+        return (JetParserDefinition)LanguageParserDefinitions.INSTANCE.forLanguage(KotlinLanguage.INSTANCE);
     }
 
     @Override

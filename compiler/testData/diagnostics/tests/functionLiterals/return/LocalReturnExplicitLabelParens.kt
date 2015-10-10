@@ -11,4 +11,4 @@ fun test1() {
     checkSubtype<Int>(x)
 }
 
-fun run<T>(f: () -> T): T { return f() }
+fun <T> run(f: () -> T): T { return f() }

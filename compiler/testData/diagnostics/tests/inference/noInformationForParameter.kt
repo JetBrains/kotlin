@@ -9,6 +9,6 @@ fun test() {
     val <!UNUSED_VARIABLE!>n1<!> : List<String> = newList()
 }
 
-fun newList<S>() : ArrayList<S> {
+fun <S> newList() : ArrayList<S> {
     return ArrayList<S>()
 }

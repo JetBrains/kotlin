@@ -5697,6 +5697,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/useAnonymousObjectAsIterator.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("useImportedMember.kt")
+        public void testUseImportedMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/useImportedMember.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("useImportedMemberFromCompanion.kt")
+        public void testUseImportedMemberFromCompanion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/useImportedMemberFromCompanion.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/operatorConventions")

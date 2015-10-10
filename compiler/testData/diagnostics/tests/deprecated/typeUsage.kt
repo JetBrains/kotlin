@@ -33,7 +33,7 @@ fun funcParamReceiver(param: <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>.()->U
 fun funcParamParam(param: (<!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>)->Unit) { param(<!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()) }
 fun funcParamRetVal(param: ()-><!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>) { param() }
 
-fun constraint<T: <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>>() {}
+fun <T: <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>> constraint() {}
 
 fun <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>.receiver() {}
 

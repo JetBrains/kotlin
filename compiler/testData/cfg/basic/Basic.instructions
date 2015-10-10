@@ -108,7 +108,7 @@ sink:
     <SINK>                                          PREV:[<ERROR>, <END>]
 =====================
 == genfun ==
-fun genfun<T>() : Unit {}
+fun <T> genfun() : Unit {}
 ---------------------
 L0:
   1 <START>

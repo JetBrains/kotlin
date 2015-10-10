@@ -12,7 +12,7 @@ fun <R> elem(t: List<R>): R = t.get(0)
 
 fun <R> elemAndList(<!UNUSED_PARAMETER!>r<!>: R, t: List<R>): R = t.get(0)
 
-fun both<T>(t1: T, <!UNUSED_PARAMETER!>t2<!>: T) : T = t1
+fun <T> both(t1: T, <!UNUSED_PARAMETER!>t2<!>: T) : T = t1
 
 fun test1() {
     val a = elem(list(2))
@@ -42,12 +42,12 @@ fun test1() {
     checkSubtype<Any>(j)
 }
 
-fun list<T>(value: T) : ArrayList<T> {
+fun <T> list(value: T) : ArrayList<T> {
     val list = ArrayList<T>()
     list.add(value)
     return list
 }
 
-fun newList<S>() : ArrayList<S> {
+fun <S> newList() : ArrayList<S> {
     return ArrayList<S>()
 }

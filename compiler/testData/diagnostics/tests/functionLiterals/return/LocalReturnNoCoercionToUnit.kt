@@ -5,4 +5,4 @@ fun test(a: Int) {
     }
 }
 
-fun run<T>(f: () -> T): T { return f() }
+fun <T> run(f: () -> T): T { return f() }

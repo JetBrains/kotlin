@@ -1,5 +1,5 @@
-fun test1<T>() = null as T
-fun test2<T>(): T {
+fun <T> test1() = null as T
+fun <T> test2(): T {
    val a : Any? = null
    return a as T
 }

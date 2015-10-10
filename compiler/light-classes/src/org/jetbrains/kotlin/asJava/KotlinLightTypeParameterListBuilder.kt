@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.ResolveState
 import com.intellij.psi.PsiElement
 
-public class KotlinLightTypeParameterListBuilder(manager: PsiManager): LightTypeParameterListBuilder(manager, JetLanguage.INSTANCE) {
+public class KotlinLightTypeParameterListBuilder(manager: PsiManager): LightTypeParameterListBuilder(manager, KotlinLanguage.INSTANCE) {
     override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement): Boolean {
         return getTypeParameters().all { processor.execute(it, state) }
     }

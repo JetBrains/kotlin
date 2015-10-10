@@ -23,11 +23,11 @@ import com.intellij.psi.impl.light.LightModifierList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 
 public abstract class KotlinLightModifierList extends LightModifierList {
     public KotlinLightModifierList(PsiManager psiManager, @NotNull String[] modifiers) {
-        super(psiManager, JetLanguage.INSTANCE, modifiers);
+        super(psiManager, KotlinLanguage.INSTANCE, modifiers);
     }
 
     public abstract PsiAnnotationOwner getDelegate();

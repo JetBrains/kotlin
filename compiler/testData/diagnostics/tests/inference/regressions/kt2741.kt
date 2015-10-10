@@ -2,7 +2,7 @@
 package a
 
 fun <T, R: Comparable<R>> Iterable<T>._sortBy(<!UNUSED_PARAMETER!>f<!>: (T) -> R): List<T> = throw Exception()
-fun _arrayList<T>(vararg <!UNUSED_PARAMETER!>values<!>: T) : List<T> = throw Exception()
+fun <T> _arrayList(vararg <!UNUSED_PARAMETER!>values<!>: T) : List<T> = throw Exception()
 
 class _Pair<A>(val a: A)
 

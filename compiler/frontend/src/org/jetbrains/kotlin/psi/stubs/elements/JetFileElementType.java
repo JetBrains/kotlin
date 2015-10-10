@@ -27,7 +27,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.psi.tree.IStubFileElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.parsing.JetParser;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 
@@ -39,11 +39,11 @@ public class JetFileElementType extends IStubFileElementType<KotlinFileStub> {
     private static final String NAME = "kotlin.FILE";
 
     public JetFileElementType() {
-        super(NAME, JetLanguage.INSTANCE);
+        super(NAME, KotlinLanguage.INSTANCE);
     }
 
     protected JetFileElementType(@NonNls String debugName) {
-        super(debugName, JetLanguage.INSTANCE);
+        super(debugName, KotlinLanguage.INSTANCE);
     }
 
     @Override

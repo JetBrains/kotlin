@@ -1,6 +1,6 @@
 package n
 
-fun foo<T>(<!UNUSED_PARAMETER!>t<!>: T, <!UNUSED_PARAMETER!>t1<!>: T) {}
+fun <T> foo(<!UNUSED_PARAMETER!>t<!>: T, <!UNUSED_PARAMETER!>t1<!>: T) {}
 
 fun test() {
     //no type inference error

@@ -27,7 +27,7 @@ import com.intellij.util.ArrayFactory;
 import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetElementImplStub;
 import org.jetbrains.kotlin.psi.JetFunction;
@@ -48,7 +48,7 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
     private final ArrayFactory<PsiT> arrayFactory;
 
     public JetStubElementType(@NotNull @NonNls String debugName, @NotNull final Class<PsiT> psiClass, @NotNull Class<?> stubClass) {
-        super(debugName, JetLanguage.INSTANCE);
+        super(debugName, KotlinLanguage.INSTANCE);
         try {
             byNodeConstructor = psiClass.getConstructor(ASTNode.class);
             byStubConstructor = psiClass.getConstructor(stubClass);

@@ -9,7 +9,7 @@ class D {
 val cTopLevel: Int by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>IncorrectThis<A>()<!>
 
 class IncorrectThis<T> {
-    fun get<R>(t: Any?, p: PropertyMetadata): Int {
+    fun <R> get(t: Any?, p: PropertyMetadata): Int {
         return 1
     }
 }

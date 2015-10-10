@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.idea.JetFileType;
-import org.jetbrains.kotlin.idea.JetLanguage;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetPlaceHolderStubElementType;
@@ -47,7 +47,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     private final boolean isCompiled;
 
     public JetFile(FileViewProvider viewProvider, boolean compiled) {
-        super(viewProvider, JetLanguage.INSTANCE);
+        super(viewProvider, KotlinLanguage.INSTANCE);
         this.isCompiled = compiled;
     }
 

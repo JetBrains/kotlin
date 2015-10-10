@@ -1,6 +1,6 @@
 // KT-2739 Error type inferred for hashSet(Pair, Pair, Pair)
 
-fun foo<T>(vararg ts: T): T? = null
+fun <T> foo(vararg ts: T): T? = null
 
 class Pair<A>(a: A)
 

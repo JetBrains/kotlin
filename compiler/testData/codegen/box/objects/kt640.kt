@@ -15,7 +15,7 @@ public open class Identifier<T>(myName : T?, myHasDollar : Boolean) {
     }
 
     companion object {
-        open public fun init<T>(name : T?) : Identifier<T> {
+        open public fun <T> init(name : T?) : Identifier<T> {
             val __ = Identifier<T>(name, false)
             return __
         }

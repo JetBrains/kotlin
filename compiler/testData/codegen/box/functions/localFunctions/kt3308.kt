@@ -1,5 +1,5 @@
 fun box(): String {
-    fun foo<T>(t: T) = t
+    fun <T> foo(t: T) = t
 
     return foo("OK")
 }

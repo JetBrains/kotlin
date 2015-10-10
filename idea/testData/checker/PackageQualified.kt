@@ -5,7 +5,7 @@ package a
 
 /////////////////////////////////////////////////////////////////////////
 
-fun done<O>(result : O) : Iteratee<Any?, O> = StrangeIterateeImpl<Any?, O>(result)
+fun <O> done(result : O) : Iteratee<Any?, O> = StrangeIterateeImpl<Any?, O>(result)
 
 abstract class Iteratee<in I, out O> {
   abstract fun process(item : I) : Iteratee<I, O>
@@ -31,7 +31,7 @@ abstract class Sum() : Iteratee<Int, Int>() {
 }
 
 abstract class Collection<E> : Iterable<E> {
-  fun iterate<O>(iteratee : Iteratee<E, O>) : O {
+  fun <O> iterate(iteratee : Iteratee<E, O>) : O {
       var current = iteratee
       for (x in this) {
         val it = current.process(x)

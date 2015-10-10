@@ -3,7 +3,7 @@
 
 class Bar<T>
 
-fun bar<T>(): Bar<T> = null!!
+fun <T> bar(): Bar<T> = null!!
 
 class Foo {
     fun <R> add(bar: Bar<R>): Foo {return this}

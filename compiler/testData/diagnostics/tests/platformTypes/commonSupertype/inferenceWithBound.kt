@@ -38,4 +38,4 @@ fun test() {
 }
 
 fun <T: Super> Collection<T>.foo(): T = null!!
-fun listOf<T>(t: T): List<T> = null!!
+fun <T> listOf(t: T): List<T> = null!!

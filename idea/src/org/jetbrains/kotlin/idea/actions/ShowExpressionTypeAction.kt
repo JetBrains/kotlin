@@ -24,7 +24,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.psi.JetExpression
@@ -45,7 +45,7 @@ public class ShowExpressionTypeAction : AnAction() {
         val type = if (editor.getSelectionModel().hasSelection()) {
             val startOffset = editor.getSelectionModel().getSelectionStart()
             val endOffset = editor.getSelectionModel().getSelectionEnd()
-            val expression = CodeInsightUtilCore.findElementInRange<JetExpression>(psiFile, startOffset, endOffset, javaClass<JetExpression>(), JetLanguage.INSTANCE) ?: return
+            val expression = CodeInsightUtilCore.findElementInRange<JetExpression>(psiFile, startOffset, endOffset, javaClass<JetExpression>(), KotlinLanguage.INSTANCE) ?: return
             typeByExpression(expression)
         }
         else {

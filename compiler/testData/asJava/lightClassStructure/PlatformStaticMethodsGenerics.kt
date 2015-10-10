@@ -5,9 +5,9 @@ import kotlin.platform.platformStatic
 class PlatformStaticClass {
     companion object {
         @platformStatic
-        fun inClassObject<T>() {}
+        fun <T> inClassObject() {}
     }
 
-    fun inClass<T>() {}
+    fun <T> inClass() {}
 }
 
