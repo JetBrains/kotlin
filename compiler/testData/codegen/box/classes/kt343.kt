@@ -20,5 +20,5 @@ fun box(): String {
     }
     bar()
 
-    return if (list.size() == 2 && list.get(0) == 2 && list.get(1) == 3) "OK" else "fail"
+    return if (list.size == 2 && list.get(0) == 2 && list.get(1) == 3) "OK" else "fail"
 }

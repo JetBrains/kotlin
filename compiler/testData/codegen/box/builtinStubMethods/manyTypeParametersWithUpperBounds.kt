@@ -1,7 +1,7 @@
 import java.util.Collections
 
 class A<U : Number, V : U, W : V> : Set<W> {
-    override fun size(): Int = 0
+    override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
     override fun contains(o: Any?): Boolean = false
     override fun iterator(): Iterator<W> = Collections.emptySet<W>().iterator()

@@ -3,6 +3,11 @@
 
 package kotlin
 
+@Deprecated("Use property `size` instead", ReplaceWith("this.size"))
+public inline fun Collection<*>.size() = size
+@Deprecated("Use property `size` instead", ReplaceWith("this.size"))
+public inline fun Map<*, *>.size() = size
+
 /**
  * Adds the specified [element] to this mutable collection.
  */

@@ -43,4 +43,4 @@ fun <T, C: MutableCollection<in T>> Array<T>.toCollection(result: C) : C {
 }
 
 val Collection<*>.size : Int
-    get() = size()
+    get() = size

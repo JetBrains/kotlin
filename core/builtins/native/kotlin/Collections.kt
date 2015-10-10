@@ -49,7 +49,7 @@ public interface Collection<out E> : Iterable<E> {
     /**
      * Returns the size of the collection.
      */
-    public fun size(): Int
+    public val size: Int
 
     /**
      * Returns `true` if the collection is empty (contains no elements), `false` otherwise.
@@ -128,7 +128,7 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
  */
 public interface List<out E> : Collection<E> {
     // Query Operations
-    override fun size(): Int
+    override val size: Int
     override fun isEmpty(): Boolean
     override fun contains(o: Any?): Boolean
     override fun iterator(): Iterator<E>
@@ -232,7 +232,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
  */
 public interface Set<out E> : Collection<E> {
     // Query Operations
-    override fun size(): Int
+    override val size: Int
     override fun isEmpty(): Boolean
     override fun contains(o: Any?): Boolean
     override fun iterator(): Iterator<E>
@@ -274,7 +274,7 @@ public interface Map<K, out V> {
     /**
      * Returns the number of key/value pairs in the map.
      */
-    public fun size(): Int
+    public val size: Int
 
     /**
      * Returns `true` if the map is empty (contains no elements), `false` otherwise.

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
+import org.jetbrains.kotlin.load.java.BuiltinsPropertiesUtilKt;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.FqName;
@@ -513,20 +514,53 @@ public class FunctionCodegen {
         // If the function doesn't have a physical declaration among super-functions, it's a SAM adapter or alike and doesn't need bridges
         if (CallResolverUtilPackage.isOrOverridesSynthesized(descriptor)) return;
 
-        Set<Bridge<Method>> bridgesToGenerate = BridgesPackage.generateBridgesForFunctionDescriptor(
-                descriptor,
-                new Function1<FunctionDescriptor, Method>() {
-                    @Override
-                    public Method invoke(FunctionDescriptor descriptor) {
-                        return typeMapper.mapSignature(descriptor).getAsmMethod();
-                    }
-                }
-        );
+        boolean isSpecial = BuiltinsPropertiesUtilKt.overridesBuiltinSpecialDeclaration(descriptor);
 
-        if (!bridgesToGenerate.isEmpty()) {
-            PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
-            for (Bridge<Method> bridge : bridgesToGenerate) {
-                generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo());
+        Set<Bridge<Method>> bridgesToGenerate;
+        if (!isSpecial) {
+            bridgesToGenerate = BridgesPackage.generateBridgesForFunctionDescriptor(
+                    descriptor,
+                    new Function1<FunctionDescriptor, Method>() {
+                        @Override
+                        public Method invoke(FunctionDescriptor descriptor) {
+                            return typeMapper.mapSignature(descriptor).getAsmMethod();
+                        }
+                    }
+            );
+            if (!bridgesToGenerate.isEmpty()) {
+                PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
+                for (Bridge<Method> bridge : bridgesToGenerate) {
+                    generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo(), false, false);
+                }
+            }
+        }
+        else {
+            Set<BridgeForBuiltinSpecial<Method>> specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
+                    descriptor,
+                    new Function1<FunctionDescriptor, Method>() {
+                        @Override
+                        public Method invoke(FunctionDescriptor descriptor) {
+                            return typeMapper.mapSignature(descriptor).getAsmMethod();
+                        }
+                    }
+            );
+
+            if (!specials.isEmpty()) {
+                PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
+                for (BridgeForBuiltinSpecial<Method> bridge : specials) {
+                    generateBridge(
+                            origin, descriptor, bridge.getFrom(), bridge.getTo(),
+                            bridge.isSpecial(), bridge.isDelegateToSuper());
+                }
+            }
+
+            if (!descriptor.getKind().isReal() && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION)) {
+                CallableDescriptor overridden = BuiltinsPropertiesUtilKt.getBuiltinSpecialOverridden(descriptor);
+                assert overridden != null;
+
+                Method method = typeMapper.mapSignature(descriptor).getAsmMethod();
+                int flags = ACC_ABSTRACT | getVisibilityAccessFlag(descriptor);
+                v.newMethod(OtherOrigin(overridden), flags, method.getName(), method.getDescriptor(), null, null);
             }
         }
     }
@@ -760,9 +794,11 @@ public class FunctionCodegen {
             @Nullable PsiElement origin,
             @NotNull FunctionDescriptor descriptor,
             @NotNull Method bridge,
-            @NotNull Method delegateTo
+            @NotNull Method delegateTo,
+            boolean isSpecialBridge,
+            boolean superCallNeeded
     ) {
-        int flags = ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC; // TODO.
+        int flags = ACC_PUBLIC | ACC_BRIDGE | (!isSpecialBridge ? ACC_SYNTHETIC : 0) | (isSpecialBridge ? ACC_FINAL : 0); // TODO.
 
         MethodVisitor mv =
                 v.newMethod(DiagnosticsPackage.Bridge(descriptor, origin), flags, bridge.getName(), bridge.getDescriptor(), null, null);
@@ -783,7 +819,16 @@ public class FunctionCodegen {
             reg += argTypes[i].getSize();
         }
 
-        iv.invokevirtual(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
+
+        if (superCallNeeded) {
+            ClassDescriptor parentClass = getSuperClassDescriptor((ClassDescriptor) descriptor.getContainingDeclaration());
+            assert parentClass != null;
+            String parentInternalName = typeMapper.mapClass(parentClass).getInternalName();
+            iv.invokespecial(parentInternalName, delegateTo.getName(), delegateTo.getDescriptor());
+        }
+        else {
+            iv.invokevirtual(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
+        }
 
         StackValue.coerce(delegateTo.getReturnType(), bridge.getReturnType(), iv);
         iv.areturn(bridge.getReturnType());

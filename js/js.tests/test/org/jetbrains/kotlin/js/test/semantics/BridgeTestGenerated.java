@@ -131,6 +131,12 @@ public class BridgeTestGenerated extends AbstractBridgeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("genericProperty.kt")
+    public void testGenericProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/genericProperty.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("kt1939.kt")
     public void testKt1939() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/kt1939.kt");

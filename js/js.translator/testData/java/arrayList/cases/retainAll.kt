@@ -3,7 +3,7 @@ package foo
 import java.util.ArrayList;
 
 fun test<T>(a: List<T>, b: List<T>, removed: Boolean, expected: List<T>): String? {
-    val t = ArrayList<T>(a.size())
+    val t = ArrayList<T>(a.size)
     t.addAll(a)
 
     if (t.retainAll(b) != removed) return "$a.retainAll($b) != $removed, result list: $t"

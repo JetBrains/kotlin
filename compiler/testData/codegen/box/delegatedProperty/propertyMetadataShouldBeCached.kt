@@ -39,7 +39,7 @@ fun box(): String {
     A.bar = baz + a.foo
     baz + A.bar
 
-    if (metadatas.keySet().size() != 3)
+    if (metadatas.keySet().size != 3)
         return "Fail: only three instances of PropertyMetadata should have been created\n${metadatas.keySet()}"
 
     return "OK"

@@ -20,11 +20,31 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
 
-public data open class AnalysisResult protected constructor(
+public open class AnalysisResult protected constructor(
         public val bindingContext: BindingContext,
         public val moduleDescriptor: ModuleDescriptor,
         public val shouldGenerateCode: Boolean = true
 ) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return (other is AnalysisResult && bindingContext == other.bindingContext &&
+                moduleDescriptor == other.moduleDescriptor && shouldGenerateCode == other.shouldGenerateCode)
+    }
+
+    override fun hashCode(): Int {
+        var result = 17
+        result = 29 * result + bindingContext.hashCode()
+        result = 29 * result + moduleDescriptor.hashCode()
+        result = 29 * result + shouldGenerateCode.hashCode()
+        return result
+    }
+
+    operator fun component1() = bindingContext
+
+    operator fun component2() = moduleDescriptor
+
+    operator fun component3() = shouldGenerateCode
 
     public val error: Throwable
         get() = if (this is Error) this.exception else throw IllegalStateException("Should only be called for error analysis result")

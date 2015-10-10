@@ -366,6 +366,18 @@ public class DescriptorUtils {
         return getBuiltIns(classDescriptor).getAnyType();
     }
 
+    @Nullable
+    public static ClassDescriptor getSuperClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
+        Collection<JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
+        for (JetType type : superclassTypes) {
+            ClassDescriptor superClassDescriptor = getClassDescriptorForType(type);
+            if (superClassDescriptor.getKind() != ClassKind.INTERFACE) {
+                return superClassDescriptor;
+            }
+        }
+        return null;
+    }
+
     @NotNull
     public static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
         return getClassDescriptorForTypeConstructor(type.getConstructor());

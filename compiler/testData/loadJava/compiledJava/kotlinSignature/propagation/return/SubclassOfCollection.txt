@@ -1,6 +1,7 @@
 package test
 
 public interface SubclassOfCollection</*0*/ E : kotlin.Any!> : kotlin.MutableCollection<E!> {
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e: E!): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<E!>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
@@ -11,5 +12,4 @@ public interface SubclassOfCollection</*0*/ E : kotlin.Any!> : kotlin.MutableCol
     public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun size(): kotlin.Int
 }

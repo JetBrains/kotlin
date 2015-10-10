@@ -142,7 +142,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         val foo = data.filter { it.startsWith("f") }
         expect(true) { foo is List<String> }
         expect(true) { foo.all { it.startsWith("f") } }
-        expect(1) { foo.size() }
+        expect(1) { foo.size }
         assertEquals(listOf("foo"), foo)
     }
 
@@ -151,7 +151,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         val foo = data.drop(1)
         expect(true) { foo is List<String> }
         expect(true) { foo.all { it.startsWith("b") } }
-        expect(1) { foo.size() }
+        expect(1) { foo.size }
         assertEquals(listOf("bar"), foo)
     }
 
@@ -160,7 +160,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         val foo = data.dropWhile { it[0] == 'f' }
         expect(true) { foo is List<String> }
         expect(true) { foo.all { it.startsWith("b") } }
-        expect(1) { foo.size() }
+        expect(1) { foo.size }
         assertEquals(listOf("bar"), foo)
     }
 
@@ -169,7 +169,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         val notFoo = data.filterNot { it.startsWith("f") }
         expect(true) { notFoo is List<String> }
         expect(true) { notFoo.none { it.startsWith("f") } }
-        expect(1) { notFoo.size() }
+        expect(1) { notFoo.size }
         assertEquals(listOf("bar"), notFoo)
     }
 
@@ -216,7 +216,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         assertTrue {
             lengths.all { it == 3 }
         }
-        assertEquals(2, lengths.size())
+        assertEquals(2, lengths.size)
         assertEquals(listOf(3, 3), lengths)
     }
 
@@ -228,14 +228,14 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     @Test
     fun mapIndexed() {
         val shortened = data.mapIndexed { index, value -> value.substring(0..index) }
-        assertEquals(2, shortened.size())
+        assertEquals(2, shortened.size)
         assertEquals(listOf("f", "ba"), shortened)
     }
 
     @Test
     fun withIndex() {
         val indexed = data.withIndex().map { it.value.substring(0..it.index) }
-        assertEquals(2, indexed.size())
+        assertEquals(2, indexed.size)
         assertEquals(listOf("f", "ba"), indexed)
     }
 

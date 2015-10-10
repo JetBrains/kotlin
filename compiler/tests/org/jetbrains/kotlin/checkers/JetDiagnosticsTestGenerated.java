@@ -8694,6 +8694,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("fieldOverridesField.kt")
+            public void testFieldOverridesField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/fieldOverridesField.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("fieldOverridesNothing.kt")
+            public void testFieldOverridesNothing() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/fieldOverridesNothing.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("finalCollectionSize.kt")
+            public void testFinalCollectionSize() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/finalCollectionSize.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("GenericsInSupertypes.kt")
             public void testGenericsInSupertypes() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/GenericsInSupertypes.kt");
@@ -8856,6 +8874,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("privateFieldOverridesNothing.kt")
+            public void testPrivateFieldOverridesNothing() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/privateFieldOverridesNothing.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("privateNestedClassStaticMember.kt")
             public void testPrivateNestedClassStaticMember() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/privateNestedClassStaticMember.kt");
@@ -8889,6 +8913,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/Simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("specialBridges.kt")
+            public void testSpecialBridges() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/specialBridges.kt");
                 doTest(fileName);
             }
 
@@ -9159,6 +9189,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("privateInInterface.kt")
             public void testPrivateInInterface() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/privateInInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("protected.kt")
+            public void testProtected() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/protected.kt");
                 doTest(fileName);
             }
 

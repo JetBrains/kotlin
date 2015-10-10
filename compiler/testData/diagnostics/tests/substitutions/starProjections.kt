@@ -19,6 +19,6 @@ fun testB(b: B<*, *>) {
     b.r().checkType { _<Any?>() }
     b.t().checkType { _<B<List<*>, *>>() }
 
-    b.t().r().size()
+    b.t().r().size
 }
 

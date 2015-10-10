@@ -20,7 +20,7 @@ internal object EmptyList : List<Nothing>, Serializable {
     override fun hashCode(): Int = 1
     override fun toString(): String = "[]"
 
-    override fun size(): Int = 0
+    override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
     override fun contains(o: Any?): Boolean = false
     override fun containsAll(c: Collection<Any?>): Boolean = c.isEmpty()
