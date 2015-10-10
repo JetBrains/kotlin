@@ -55,7 +55,7 @@ public class ShadowedDeclarationsFilter private constructor(
                 is CallTypeAndReceiver.DOT -> callTypeAndReceiver.receiver
                 is CallTypeAndReceiver.SAFE -> callTypeAndReceiver.receiver
                 is CallTypeAndReceiver.INFIX -> callTypeAndReceiver.receiver
-                is CallTypeAndReceiver.TYPE -> null // need filtering of classes with the same FQ-name
+                is CallTypeAndReceiver.TYPE, is CallTypeAndReceiver.ANNOTATION -> null // need filtering of classes with the same FQ-name
                 else -> return null // TODO: support shadowed declarations filtering for callable references
             }
 
