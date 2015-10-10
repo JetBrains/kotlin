@@ -9085,6 +9085,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/containsAndOverload.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("getCharSequence.kt")
+                public void testGetCharSequence() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/getCharSequence.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("removeAt.kt")
+                public void testRemoveAt() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/removeAt.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("removeAtInt.kt")
+                public void testRemoveAtInt() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/removeAtInt.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/j+k/properties")

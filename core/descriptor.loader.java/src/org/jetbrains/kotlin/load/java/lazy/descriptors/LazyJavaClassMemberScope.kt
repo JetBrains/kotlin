@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
-import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -36,12 +35,15 @@ import org.jetbrains.kotlin.load.java.lazy.child
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.RawSubstitution
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
@@ -99,7 +101,34 @@ public class LazyJavaClassMemberScope(
             return !doesClassOverrideAnyProperty(getPropertiesFromSupertypes(name))
         }
 
+        val javaMethod = (source as? JavaSourceElement)?.javaElement as? JavaMethod
+        if (javaMethod?.doesOverrideRenamedBuiltins() ?: false) {
+            return false
+        }
+
         return true
+    }
+
+    private fun JavaMethod.doesOverrideRenamedBuiltins(): Boolean {
+        return getSpecialBuiltinFunctionsByJvmName(name).any {
+            builtinName ->
+            val builtinSpecialFromSuperTypes =
+                    getFunctionsFromSupertypes(builtinName).filter { it.overridesBuiltinSpecialDeclaration() }
+            if (builtinSpecialFromSuperTypes.isEmpty()) return@any false
+
+            val methodDescriptor = resolveMethodToFunctionDescriptorWithName(this, builtinName)
+
+            builtinSpecialFromSuperTypes.any { isOverridableRenamedDescriptor(it, methodDescriptor) }
+        }
+    }
+
+    private fun isOverridableRenamedDescriptor(superDescriptor: FunctionDescriptor, subDescriptor: FunctionDescriptor): Boolean {
+        // if we check 'removeAt', get original sub-descriptor to distinct `remove(int)` and `remove(E)` in Java
+        val subDescriptorToCheck = if (superDescriptor.isRemoveAtByIndex) subDescriptor.original else subDescriptor
+
+        return OverridingUtil.DEFAULT.isOverridableByIncludingReturnType(
+                superDescriptor, subDescriptorToCheck
+        ).result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
     }
 
     private fun doesClassOverrideAnyProperty(properties: Collection<PropertyDescriptor>)
@@ -141,7 +170,33 @@ public class LazyJavaClassMemberScope(
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         val functionsFromSupertypes = getFunctionsFromSupertypes(name)
 
+        if (name.sameAsRenamedInJvmBuiltin) {
+            addOverriddenBuiltinMethods(result, name, functionsFromSupertypes)
+        }
+
         result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter))
+    }
+
+    private fun addOverriddenBuiltinMethods(
+            result: MutableCollection<SimpleFunctionDescriptor>,
+            name: Name,
+            functionsFromSupertypes: Set<SimpleFunctionDescriptor>
+    ) {
+        // Merge functions with same signatures
+        val mergedFunctionFromSuperTypes = DescriptorResolverUtils.resolveOverrides(
+                name, functionsFromSupertypes, emptyList(), getContainingDeclaration(), ErrorReporter.DO_NOTHING)
+
+        for (descriptor in mergedFunctionFromSuperTypes) {
+            val overriddenBuiltin = descriptor.getBuiltinSpecialOverridden() ?: continue
+            val nameInJava = overriddenBuiltin.getJvmMethodNameIfSpecial()!!
+            for (method in memberIndex().findMethodsByName(Name.identifier(nameInJava))) {
+                val renamedCopy = resolveMethodToFunctionDescriptorWithName(method, name)
+
+                if (isOverridableRenamedDescriptor(overriddenBuiltin, renamedCopy)) {
+                    result.add(renamedCopy)
+                }
+            }
+        }
     }
 
     private fun getFunctionsFromSupertypes(name: Name): Set<SimpleFunctionDescriptor> {
