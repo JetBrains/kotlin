@@ -9,8 +9,5 @@
     <classpath path="bar1"/>
     <!-- sdfgadfg -->
     <classpath path="bar2"/>
-    <externalAnnotations path="baz"/>
-    <externalAnnotations path="baz1"/>
-    <externalAnnotations path="baz2"/>
   </module>
 </modules>

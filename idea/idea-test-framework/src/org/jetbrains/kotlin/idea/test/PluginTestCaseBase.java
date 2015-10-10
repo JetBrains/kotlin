@@ -18,13 +18,7 @@ package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
-import com.intellij.openapi.roots.AnnotationOrderRootType;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
@@ -41,21 +35,17 @@ public class PluginTestCaseBase {
         return JetTestUtils.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
     }
 
+    @NotNull
     private static Sdk getSdk(String sdkHome) {
-        Sdk sdk = JavaSdk.getInstance().createJdk("JDK", sdkHome, true);
-        SdkModificator modificator = sdk.getSdkModificator();
-        JavaSdkImpl.attachJdkAnnotations(modificator);
-        VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(JetTestUtils.getJdkAnnotationsJar());
-        assert file != null;
-        modificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(file), AnnotationOrderRootType.getInstance());
-        modificator.commitChanges();
-        return sdk;
+        return JavaSdk.getInstance().createJdk("JDK", sdkHome, true);
     }
 
+    @NotNull
     public static Sdk mockJdk() {
         return getSdk("compiler/testData/mockJDK/jre");
     }
 
+    @NotNull
     public static Sdk fullJdk() {
         String javaHome = System.getProperty("java.home");
         assert new File(javaHome).isDirectory();

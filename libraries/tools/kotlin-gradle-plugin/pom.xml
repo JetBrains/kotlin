@@ -72,11 +72,6 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <version>${project.version}</version>
-                <configuration>
-                    <annotationPaths>
-                        <annotationPath>${basedir}/kotlinAnnotation</annotationPath>
-                    </annotationPaths>
-                </configuration>
 
                 <executions>
                     <execution>
@@ -107,9 +102,7 @@
                     <postBuildHookScript>verify</postBuildHookScript> <!-- no extension required -->
                     <extraArtifacts>
                         <extraArtifact>org.jetbrains.kotlin:kotlin-gradle-plugin-core:${project.version}</extraArtifact>
-                        <extraArtifact>org.jetbrains.kotlin:kotlin-jdk-annotations:${project.version}</extraArtifact>
                         <extraArtifact>org.jetbrains.kotlin:kotlin-js-library:${project.version}</extraArtifact>
-                        <extraArtifact>org.jetbrains.kotlin:kotlin-android-sdk-annotations:${project.version}</extraArtifact>
                     </extraArtifacts>
                 </configuration>
                 <executions>

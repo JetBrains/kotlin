@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.gradle.internal.initKapt
 import java.net.URL
 import java.util.jar.Manifest
 
-val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
-
 val KOTLIN_AFTER_JAVA_TASK_SUFFIX = "AfterJava"
 
 abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
@@ -239,9 +237,6 @@ abstract class AbstractKotlinPlugin @Inject constructor(val scriptHandler: Scrip
         project.getPlugins().apply(javaClass<JavaPlugin>())
 
         configureSourceSetDefaults(project as ProjectInternal, javaBasePlugin, javaPluginConvention)
-
-        val gradleUtils = GradleUtils(scriptHandler, project)
-        project.getExtensions().add(DEFAULT_ANNOTATIONS, gradleUtils.resolveKotlinPluginDependency("kotlin-jdk-annotations"))
     }
 
     open protected fun configureSourceSetDefaults(project: ProjectInternal,
@@ -332,9 +327,6 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                         ext, plugin, aptConfigurations)
             }
         }
-
-        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler, project)
-                .resolveKotlinPluginDependency("kotlin-android-sdk-annotations"))
     }
 
     private fun processVariantData(
@@ -534,8 +526,6 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
     public fun kotlinPluginArtifactCoordinates(artifact: String): String = "org.jetbrains.kotlin:${artifact}:${kotlinPluginVersion()}"
     public fun kotlinJsLibraryCoordinates(): String = kotlinPluginArtifactCoordinates("kotlin-js-library")
 
-    public fun resolveKotlinPluginDependency(artifact: String): Collection<File> =
-            resolveDependencies(kotlinPluginArtifactCoordinates(artifact))
     public fun resolveJsLibrary(): File = resolveDependencies(kotlinJsLibraryCoordinates()).first()
 }
 

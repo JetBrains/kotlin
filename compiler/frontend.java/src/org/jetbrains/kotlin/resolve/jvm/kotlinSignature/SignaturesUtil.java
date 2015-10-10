@@ -19,9 +19,10 @@ package org.jetbrains.kotlin.resolve.jvm.kotlinSignature;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.load.java.components.ExternalAnnotationResolver;
-import org.jetbrains.kotlin.load.java.structure.*;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
+import org.jetbrains.kotlin.load.java.structure.JavaLiteralAnnotationArgument;
+import org.jetbrains.kotlin.load.java.structure.JavaMember;
 
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.*;
 
@@ -30,11 +31,11 @@ public class SignaturesUtil {
     }
 
     @Nullable
-    public static String getKotlinSignature(@NotNull ExternalAnnotationResolver externalAnnotationResolver, @NotNull JavaMember member) {
-        JavaAnnotation newAnnotation = findAnnotationWithExternal(externalAnnotationResolver, member, KOTLIN_SIGNATURE);
+    public static String getKotlinSignature(@NotNull JavaMember member) {
+        JavaAnnotation newAnnotation = member.findAnnotation(KOTLIN_SIGNATURE);
         if (newAnnotation != null) return extractKotlinSignatureArgument(newAnnotation);
 
-        JavaAnnotation oldAnnotation = findAnnotationWithExternal(externalAnnotationResolver, member, OLD_KOTLIN_SIGNATURE);
+        JavaAnnotation oldAnnotation = member.findAnnotation(OLD_KOTLIN_SIGNATURE);
         if (oldAnnotation != null) return extractKotlinSignatureArgument(oldAnnotation);
 
         return null;
@@ -51,15 +52,4 @@ public class SignaturesUtil {
         }
         return null;
     }
-
-    @Nullable
-    public static JavaAnnotation findAnnotationWithExternal(@NotNull ExternalAnnotationResolver externalAnnotationResolver, @NotNull JavaAnnotationOwner owner, @NotNull FqName name) {
-        JavaAnnotation annotation = owner.findAnnotation(name);
-        if (annotation != null) {
-            return annotation;
-        }
-
-        return externalAnnotationResolver.findExternalAnnotation(owner, name);
-    }
-
 }

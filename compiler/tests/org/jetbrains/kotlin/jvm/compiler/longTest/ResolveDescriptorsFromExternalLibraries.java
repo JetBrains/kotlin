@@ -165,13 +165,14 @@ public class ResolveDescriptorsFromExternalLibraries {
         if (jar != null) {
             jetCoreEnvironment = KotlinCoreEnvironment.createForTests(
                     junk,
-                    JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK,
-                                                               JetTestUtils.getAnnotationsJar(), jar),
+                    JetTestUtils.compilerConfigurationForTests(
+                            ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), jar
+                    ),
                     EnvironmentConfigFiles.JVM_CONFIG_FILES);
         }
         else {
             CompilerConfiguration configuration =
-                    JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
+                    JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
             jetCoreEnvironment = KotlinCoreEnvironment.createForTests(junk, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
             if (!findRtJar().equals(jar)) {
                 throw new RuntimeException("rt.jar mismatch: " + jar + ", " + findRtJar());

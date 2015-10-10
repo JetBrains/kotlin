@@ -1,6 +1,0 @@
-package
-
-package kotlin1 {
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
-    public fun test(/*0*/ a: kotlin.List<kotlin.Int>, /*1*/ m: kotlin.Map<kotlin.String, kotlin.Int>): kotlin.Unit
-}

@@ -1973,35 +1973,35 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         }
     }
 
-    @TestMetadata("compiler/testData/codegen/boxWithStdlib/jdkAnnotations")
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/jdk")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class JdkAnnotations extends AbstractBlackBoxCodegenTest {
-        public void testAllFilesPresentInJdkAnnotations() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/jdkAnnotations"), Pattern.compile("^(.+)\\.kt$"), true);
+    public static class Jdk extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInJdk() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/jdk"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("arrayList.kt")
         public void testArrayList() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jdkAnnotations/arrayList.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jdk/arrayList.kt");
             doTestWithStdlib(fileName);
         }
 
         @TestMetadata("hashMap.kt")
         public void testHashMap() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jdkAnnotations/hashMap.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jdk/hashMap.kt");
             doTestWithStdlib(fileName);
         }
 
         @TestMetadata("iteratingOverHashMap.kt")
         public void testIteratingOverHashMap() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jdkAnnotations/iteratingOverHashMap.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jdk/iteratingOverHashMap.kt");
             doTestWithStdlib(fileName);
         }
 
         @TestMetadata("kt1397.kt")
         public void testKt1397() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jdkAnnotations/kt1397.kt");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jdk/kt1397.kt");
             doTestWithStdlib(fileName);
         }
     }

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.JetType
 public class ReconstructTypeInCastOrIsIntention : JetSelfTargetingOffsetIndependentIntention<JetTypeReference>(javaClass(), "Replace by reconstructed type"), LowPriorityAction {
     override fun isApplicableTo(element: JetTypeReference): Boolean {
         // Only user types (like Foo) are interesting
-        val typeElement = element.getTypeElement() as? JetUserType ?: return false
+        val typeElement = element.typeElement as? JetUserType ?: return false
 
         // If there are generic arguments already, there's nothing to reconstruct
         if (typeElement.getTypeArguments().isNotEmpty()) return false

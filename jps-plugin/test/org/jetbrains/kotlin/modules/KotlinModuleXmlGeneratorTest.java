@@ -32,7 +32,6 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Arrays.asList(new File("s1"), new File("s2")),
                 Collections.singletonList(new File("java")),
                 Arrays.asList(new File("cp1"), new File("cp2")),
-                Arrays.asList(new File("a1/f1"), new File("a2")),
                 JavaModuleBuildTargetType.PRODUCTION,
                 Collections.<File>emptySet()
         ).asText().toString();
@@ -46,7 +45,6 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Arrays.asList(new File("s1"), new File("s2")),
                 Collections.<File>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
-                Arrays.asList(new File("a1/f1"), new File("a2")),
                 JavaModuleBuildTargetType.PRODUCTION,
                 Collections.singleton(new File("cp1"))
         ).asText().toString();
@@ -61,7 +59,6 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Arrays.asList(new File("s1"), new File("s2")),
                 Collections.<File>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
-                Arrays.asList(new File("a1/f1"), new File("a2")),
                 JavaModuleBuildTargetType.PRODUCTION,
                 Collections.singleton(new File("cp1"))
         );
@@ -71,7 +68,6 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Arrays.asList(new File("s12"), new File("s22")),
                 Collections.<File>emptyList(),
                 Arrays.asList(new File("cp12"), new File("cp22")),
-                Arrays.asList(new File("a12/f12"), new File("a22")),
                 JavaModuleBuildTargetType.TEST,
                 Collections.singleton(new File("cp12"))
         );

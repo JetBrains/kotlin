@@ -455,7 +455,7 @@ public class JetParsing extends AbstractJetParsing {
             if ((annotationParsingMode == PRIMARY_CONSTRUCTOR_MODIFIER_LIST || annotationParsingMode == PRIMARY_CONSTRUCTOR_MODIFIER_LIST_LOCAL) &&
                 atSet(CONSTRUCTOR_KEYWORD, WHERE_KEYWORD)) break;
 
-            if (at(AT)) {
+            if (at(AT) && annotationParsingMode.allowAnnotations) {
                 parseAnnotationOrList(annotationParsingMode);
             }
             else if (tryParseModifier(tokenConsumer)) {
@@ -2082,7 +2082,7 @@ public class JetParsing extends AbstractJetParsing {
 //            TokenSet stopAt = TokenSet.create(COMMA, COLON, GT);
 //            parseModifierListWithUnescapedAnnotations(MODIFIER_LIST, lookFor, stopAt);
             // Currently we do not allow annotations
-            parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
+            parseModifierList(NO_ANNOTATIONS);
 
             if (at(MUL)) {
                 advance(); // MUL
@@ -2331,26 +2331,31 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     enum AnnotationParsingMode {
-        FILE_ANNOTATIONS_BEFORE_PACKAGE(false, true, false),
-        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(false, true, false),
-        ONLY_ESCAPED_REGULAR_ANNOTATIONS(false, false, false),
-        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS(true, false, false),
-        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST(true, false, true),
-        PRIMARY_CONSTRUCTOR_MODIFIER_LIST(true, false, false),
-        PRIMARY_CONSTRUCTOR_MODIFIER_LIST_LOCAL(false, false, false);
+        FILE_ANNOTATIONS_BEFORE_PACKAGE(false, true, false, true),
+        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(false, true, false, true),
+        ONLY_ESCAPED_REGULAR_ANNOTATIONS(false, false, false, true),
+        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS(true, false, false, true),
+        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST(true, false, true, true),
+        PRIMARY_CONSTRUCTOR_MODIFIER_LIST(true, false, false, true),
+        PRIMARY_CONSTRUCTOR_MODIFIER_LIST_LOCAL(false, false, false, true),
+        NO_ANNOTATIONS(false, false, false, false);
+
 
         boolean allowShortAnnotations;
         boolean isFileAnnotationParsingMode;
         boolean atMemberStart;
+        boolean allowAnnotations;
 
         AnnotationParsingMode(
                 boolean allowShortAnnotations,
                 boolean isFileAnnotationParsingMode,
-                boolean atMemberStart
+                boolean atMemberStart,
+                boolean allowAnnotations
         ) {
             this.allowShortAnnotations = allowShortAnnotations;
             this.isFileAnnotationParsingMode = isFileAnnotationParsingMode;
             this.atMemberStart = atMemberStart;
+            this.allowAnnotations = allowAnnotations;
         }
     }
 }

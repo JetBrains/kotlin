@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,10 +77,10 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
     @NotNull
     protected CompilerConfiguration createCompilerConfiguration(File javaFilesDir) {
         return JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_AND_ANNOTATIONS,
+                ConfigurationKind.JDK_ONLY,
                 TestJdkKind.MOCK_JDK,
-                Arrays.asList(JetTestUtils.getAnnotationsJar()),
-                Arrays.asList(javaFilesDir)
+                Collections.singletonList(JetTestUtils.getAnnotationsJar()),
+                Collections.singletonList(javaFilesDir)
         );
     }
 

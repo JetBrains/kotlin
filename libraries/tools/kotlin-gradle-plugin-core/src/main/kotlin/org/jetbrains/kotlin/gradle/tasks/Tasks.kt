@@ -1,31 +1,32 @@
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.tasks.compile.AbstractCompile
-import java.io.File
+import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.util.io.FileUtil
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.FilenameUtils
+import org.apache.commons.lang.StringUtils
+import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
-import org.jetbrains.kotlin.cli.common.ExitCode
+import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.SourceTask
 import java.util.HashSet
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.file.SourceDirectorySet
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.gradle.api.logging.Logger
-import org.gradle.api.logging.Logging
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.io.FileUtils
-import org.gradle.api.Project
-import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.codehaus.groovy.runtime.MethodClosure
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import com.intellij.ide.highlighter.JavaFileType
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.doc.KDocArguments
+import org.jetbrains.kotlin.doc.KDocCompiler
 import org.jetbrains.kotlin.utils.LibraryUtils
 import com.intellij.openapi.util.io.FileUtil
 import org.apache.commons.io.FilenameUtils
@@ -35,6 +36,8 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.IOException
 import java.lang.ref.WeakReference
+import java.io.File
+import java.util.HashSet
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -134,16 +137,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         args.pluginOptions = pluginOptions.toTypedArray()
         getLogger().kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
 
-        val embeddedAnnotations = getAnnotations(getProject(), getLogger())
-        val userAnnotations = kotlinOptions.annotations?.split(File.pathSeparatorChar)?.toList() ?: emptyList()
-        val allAnnotations = if (kotlinOptions.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map { it.getPath() })
-        if (allAnnotations.isNotEmpty()) {
-            args.annotations = allAnnotations.join(File.pathSeparator)
-            getLogger().kotlinDebug("args.annotations = ${args.annotations}")
-        }
-
         args.noStdlib = true
-        args.noJdkAnnotations = true
         args.noInline = kotlinOptions.noInline
         args.noOptimize = kotlinOptions.noOptimize
         args.noCallAssertions = kotlinOptions.noCallAssertions
@@ -291,18 +285,6 @@ private fun <T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
     }
     catch (e: ExtraPropertiesExtension.UnknownPropertyException) {
         return null
-    }
-}
-
-fun getAnnotations(project: Project, logger: Logger): Collection<File> {
-    @Suppress("UNCHECKED_CAST")
-    val annotations = project.getExtensions().getByName(DEFAULT_ANNOTATIONS) as Collection<File>
-
-    if (!annotations.isEmpty()) {
-        logger.info("using default annontations from [${annotations.map { it.getPath() }}]")
-        return annotations
-    } else {
-        throw GradleException("Default annotations not found in Kotlin gradle plugin classpath")
     }
 }
 

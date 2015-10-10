@@ -57,7 +57,7 @@ fun setTypeReference(declaration: JetCallableDeclaration, addAfter: PsiElement?,
 }
 
 fun JetCallableDeclaration.setReceiverTypeReference(typeRef: JetTypeReference?): JetTypeReference? {
-    val needParentheses = typeRef != null && typeRef.getTypeElement() is JetFunctionType && !typeRef.hasParentheses()
+    val needParentheses = typeRef != null && typeRef.typeElement is JetFunctionType && !typeRef.hasParentheses()
     val oldTypeRef = getReceiverTypeReference()
     if (typeRef != null) {
         val newTypeRef =

@@ -563,7 +563,7 @@ class PartialBodyResolveFilter(
         private fun PsiElement.isStatement() = this is JetExpression && getParent() is JetBlockExpression
 
         private fun JetTypeReference?.containsProbablyNothing()
-                = this?.getTypeElement()?.anyDescendantOfType<JetUserType> { it.isProbablyNothing() } ?: false
+                = this?.typeElement?.anyDescendantOfType<JetUserType> { it.isProbablyNothing() } ?: false
     }
 
     private inner class StatementMarks {

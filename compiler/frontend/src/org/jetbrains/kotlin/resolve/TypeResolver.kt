@@ -107,7 +107,7 @@ public class TypeResolver(
     private fun doResolvePossiblyBareType(c: TypeResolutionContext, typeReference: JetTypeReference): PossiblyBareType {
         val annotations = annotationResolver.resolveAnnotationsWithoutArguments(c.scope, typeReference.getAnnotationEntries(), c.trace)
 
-        val typeElement = typeReference.getTypeElement()
+        val typeElement = typeReference.typeElement
 
         val type = resolveTypeElement(c, annotations, typeElement)
         c.trace.recordScope(c.scope, typeReference)

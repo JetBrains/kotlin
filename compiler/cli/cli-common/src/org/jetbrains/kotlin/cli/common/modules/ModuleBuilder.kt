@@ -27,7 +27,6 @@ public class ModuleBuilder(
     private val sourceFiles = ArrayList<String>()
     private val classpathRoots = ArrayList<String>()
     private val javaSourceRoots = ArrayList<String>()
-    private val annotationsRoots = ArrayList<String>()
 
     public fun addSourceFiles(pattern: String) {
         sourceFiles.add(pattern)
@@ -35,10 +34,6 @@ public class ModuleBuilder(
 
     public fun addClasspathEntry(name: String) {
         classpathRoots.add(name)
-    }
-
-    public fun addAnnotationsPathEntry(name: String) {
-        annotationsRoots.add(name)
     }
 
     public fun addJavaSourceRoot(name: String) {
@@ -49,7 +44,6 @@ public class ModuleBuilder(
     override fun getJavaSourceRoots(): List<String> = javaSourceRoots
     override fun getSourceFiles(): List<String> = sourceFiles
     override fun getClasspathRoots(): List<String> = classpathRoots
-    override fun getAnnotationsRoots(): List<String> = annotationsRoots
     override fun getModuleName(): String = name
     override fun getModuleType(): String = type
 }

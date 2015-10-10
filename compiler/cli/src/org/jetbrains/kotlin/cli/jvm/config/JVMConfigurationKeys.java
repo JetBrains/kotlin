@@ -22,14 +22,11 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 
-import java.io.File;
 import java.util.List;
 
 public class JVMConfigurationKeys {
     private JVMConfigurationKeys() {
     }
-
-    public static final CompilerConfigurationKey<List<File>> ANNOTATIONS_PATH_KEY = CompilerConfigurationKey.create("annotations path");
 
     public static final CompilerConfigurationKey<List<AnalyzerScriptParameter>> SCRIPT_PARAMETERS =
             CompilerConfigurationKey.create("script");

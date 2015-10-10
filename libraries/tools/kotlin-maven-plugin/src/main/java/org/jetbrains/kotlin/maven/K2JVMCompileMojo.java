@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.sampullara.cli.Args;
 import kotlin.CollectionsKt;
@@ -33,15 +32,8 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
 
@@ -52,15 +44,6 @@ import static com.intellij.openapi.util.text.StringUtil.join;
  */
 @Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArguments> {
-    /**
-     * The directories used to scan for annotation.xml files for Kotlin annotations
-     */
-    @Parameter
-    public List<String> annotationPaths;
-
-    @Parameter(defaultValue = "true")
-    public boolean scanForAnnotations;
-
     /**
      * Project classpath.
      */
@@ -114,10 +97,6 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         getLog().info("Classes directory is " + output);
         arguments.destination = output;
 
-        arguments.noJdkAnnotations = true;
-        arguments.annotations = getFullAnnotationsPath(getLog(), annotationPaths);
-        getLog().info("Using kotlin annotations from " + arguments.annotations);
-
         arguments.moduleName = moduleName;
         getLog().info("Module name is " + moduleName);
 
@@ -132,114 +111,4 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             getLog().info("Optimization is turned off");
         }
     }
-
-    protected List<String> filterClassPath(List<String> classpath) {
-        return CollectionsKt.filter(classpath, new Function1<String, Boolean>() {
-            @Override
-            public Boolean invoke(String s) {
-                return new File(s).exists() || new File(project.getBasedir(), s).exists();
-            }
-        });
-    }
-
-    protected String getFullAnnotationsPath(Log log, List<String> annotations) {
-        String jdkAnnotation = getJdkAnnotations().getPath();
-
-        List<String> list = new ArrayList<String>();
-        list.add(jdkAnnotation);
-
-        if (annotations != null) {
-            for (String annotationPath : annotations) {
-                if (new File(annotationPath).exists()) {
-                    list.add(annotationPath);
-                } else {
-                    log.info("annotation path " + annotationPath + " does not exist");
-                }
-            }
-        }
-
-        if (scanForAnnotations) {
-            for (String path : scanAnnotations(log)) {
-                if (!list.contains(path)) {
-                    list.add(path);
-                }
-            }
-        }
-
-        return join(list, File.pathSeparator);
-    }
-
-    @NotNull
-    private static File getJdkAnnotations() {
-        ClassLoader classLoader = KotlinCompileMojoBase.class.getClassLoader();
-        if (!(classLoader instanceof URLClassLoader)) {
-            throw new RuntimeException("Kotlin plugin`s class loader is not URLClassLoader");
-        }
-
-        for (URL url : ((URLClassLoader) classLoader).getURLs()) {
-            String path = url.getPath();
-            if (StringUtil.isEmpty(path)) {
-                continue;
-            }
-
-            File file = new File(path);
-            if (file.getName().startsWith("kotlin-jdk-annotations")) {
-                return file;
-            }
-        }
-
-        throw new RuntimeException("Could not get jdk annotations from Kotlin plugin`s classpath");
-    }
-
-    private List<String> scanAnnotations(Log log) {
-        List<String> annotations = new ArrayList<String>();
-
-        Set<Artifact> artifacts = project.getArtifacts();
-        for (Artifact artifact : artifacts) {
-            File file = artifact.getFile();
-            if (file.isFile() && containsAnnotations(file, log)) {
-                log.info("Discovered kotlin annotations in: " + file);
-                try {
-                    annotations.add(file.getCanonicalPath());
-                }
-                catch (IOException e) {
-                    log.warn("Error extracting canonical path from: " + file, e);
-                }
-            }
-        }
-
-        return annotations;
-    }
-
-    private static boolean containsAnnotations(File file, Log log) {
-        log.debug("Scanning for kotlin annotations in " + file);
-
-        ZipFile zipFile = null;
-        try {
-            zipFile = new ZipFile(file);
-
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while (entries.hasMoreElements()) {
-                String name = entries.nextElement().getName();
-                if (name.endsWith("/annotations.xml")) {
-                    return true;
-                }
-            }
-        }
-        catch (IOException e) {
-            log.warn("Error reading contents of jar: " + file, e);
-        }
-        finally {
-            if (zipFile != null) {
-                try {
-                    zipFile.close();
-                }
-                catch (IOException e) {
-                    log.warn("Error closing: " + zipFile, e);
-                }
-            }
-        }
-        return false;
-    }
 }
-

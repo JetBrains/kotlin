@@ -1,7 +1,0 @@
-<root>
-    <item name='org.gradle.api.tasks.SourceTask org.gradle.api.file.FileTree getSource()'>
-        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun getSource() : FileTree&quot;"/>
-        </annotation>
-    </item>
-</root>

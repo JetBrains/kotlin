@@ -27,7 +27,5 @@ public interface Module {
 
     public fun getClasspathRoots(): List<String>
 
-    public fun getAnnotationsRoots(): List<String>
-
     public fun getJavaSourceRoots(): List<String>
 }

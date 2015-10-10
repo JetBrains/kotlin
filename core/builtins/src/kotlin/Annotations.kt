@@ -118,3 +118,17 @@ public annotation class HiddenDeclaration
 @Retention(SOURCE)
 @MustBeDocumented
 private annotation class external
+
+/**
+ * Specifies that the corresponding type should be ignored during type inference.
+ */
+@Target(TYPE)
+@Retention(SOURCE)
+internal annotation class NoInfer
+
+/**
+ * Specifies that the constraint built for the type during type inference should be an equality one.
+ */
+@Target(TYPE)
+@Retention(SOURCE)
+internal annotation class Exact

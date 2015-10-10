@@ -1,3 +1,0 @@
-package
-
-public fun getMetaData(/*0*/ rs: java.sql.ResultSet): kotlin.Unit

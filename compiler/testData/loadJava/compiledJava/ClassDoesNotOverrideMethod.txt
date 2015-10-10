@@ -40,12 +40,12 @@ public abstract class ClassDoesNotOverrideMethod : java.util.Date {
     invisible_fake const final override /*1*/ /*fake_override*/ val serialVersionUID: kotlin.Long
     invisible_fake final override /*1*/ /*fake_override*/ val ttb: kotlin.IntArray!
     invisible_fake final override /*1*/ /*fake_override*/ val wtb: kotlin.Array<(out) kotlin.String!>!
-    @kotlin.Deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun UTC(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: kotlin.Int): kotlin.Long
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun UTC(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int, /*5*/ p5: kotlin.Int): kotlin.Long
     invisible_fake final override /*1*/ /*fake_override*/ fun convertToAbbr(/*0*/ p0: java.lang.StringBuilder!, /*1*/ p1: kotlin.String!): java.lang.StringBuilder!
     invisible_fake final override /*1*/ /*fake_override*/ fun getCalendarSystem(/*0*/ p0: kotlin.Int): sun.util.calendar.BaseCalendar!
     invisible_fake final override /*1*/ /*fake_override*/ fun getCalendarSystem(/*0*/ p0: kotlin.Long): sun.util.calendar.BaseCalendar!
     invisible_fake final override /*1*/ /*fake_override*/ fun getCalendarSystem(/*0*/ p0: sun.util.calendar.BaseCalendar.Date!): sun.util.calendar.BaseCalendar!
     invisible_fake final override /*1*/ /*fake_override*/ fun getJulianCalendar(): sun.util.calendar.BaseCalendar!
     invisible_fake final override /*1*/ /*fake_override*/ fun getMillisOf(/*0*/ p0: java.util.Date!): kotlin.Long
-    @kotlin.Deprecated(value = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun parse(/*0*/ p0: kotlin.String!): kotlin.Long
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun parse(/*0*/ p0: kotlin.String!): kotlin.Long
 }

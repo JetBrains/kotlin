@@ -1,8 +1,0 @@
-<root>
-    <item name='org.gradle.api.file.FileCollection org.gradle.api.file.FileCollection filter(org.gradle.api.specs.Spec&lt;? super java.io.File&gt;)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.gradle.api.file.SourceDirectorySet java.util.Set&lt;java.io.File&gt; getSrcDirs()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

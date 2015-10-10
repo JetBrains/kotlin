@@ -1,8 +1,0 @@
-<root>
-    <item name='org.gradle.api.artifacts.Configuration org.gradle.api.artifacts.ResolvedConfiguration getResolvedConfiguration()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.gradle.api.artifacts.ConfigurationContainer org.gradle.api.artifacts.Configuration detachedConfiguration(org.gradle.api.artifacts.Dependency...)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>
