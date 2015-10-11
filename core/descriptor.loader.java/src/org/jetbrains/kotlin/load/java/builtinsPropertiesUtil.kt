@@ -138,7 +138,7 @@ private val CallableMemberDescriptor.isFromJava: Boolean
 private val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
     get() = if (this is PropertyAccessorDescriptor) correspondingProperty else this
 
-val CallableMemberDescriptor.hasErasedValueParametersInJava: Boolean
+private val CallableMemberDescriptor.hasErasedValueParametersInJava: Boolean
     get() = fqNameOrNull() in BUILTIN_METHODS_ERASED_VALUE_PARAMETERS_FQ_NAMES
 
 val Name.sameAsRenamedInJvmBuiltin: Boolean
@@ -188,4 +188,9 @@ fun CallableMemberDescriptor.getSpecialSignatureInfo(): SpecialSignatureInfo? {
         in BUILTIN_METHODS_GENERIC_PARAMETERS_FQ_NAMES -> SpecialSignatureInfo.GENERIC_PARAMETER
         else -> error("Unexpected kind of special builtin: $builtinFqName")
     }
+}
+
+fun CallableMemberDescriptor.isBuiltinWithSpecialDescriptorInJvm(): Boolean {
+    if (!isFromBuiltins()) return false
+    return getSpecialSignatureInfo() == SpecialSignatureInfo.GENERIC_PARAMETER || overridesBuiltinSpecialDeclaration()
 }
