@@ -16,14 +16,9 @@
 
 package org.jetbrains.kotlin.idea.actions.generate
 
-import com.intellij.codeInsight.CodeInsightActionHandler
 import com.intellij.codeInsight.actions.CodeInsightAction
-import com.intellij.lang.ContextAwareActionHandler
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.psi.JetClassOrObject
@@ -31,21 +26,6 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 abstract class KotlinGenerateActionBase() : CodeInsightAction() {
-    override fun update(
-            presentation: Presentation,
-            project: Project,
-            editor: Editor,
-            file: PsiFile,
-            dataContext: DataContext,
-            actionPlace: String?
-    ) {
-        super.update(presentation, project, editor, file, dataContext, actionPlace)
-        val actionHandler = handler
-        if (actionHandler is ContextAwareActionHandler && presentation.isEnabled) {
-            presentation.isEnabled = actionHandler.isAvailableForQuickList(editor, file, dataContext)
-        }
-    }
-
     override fun isValidForFile(project: Project, editor: Editor, file: PsiFile): Boolean {
         if (file !is JetFile || file.isCompiled) return false
 
