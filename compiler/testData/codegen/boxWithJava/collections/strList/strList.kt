@@ -29,7 +29,7 @@ open class KList : MutableList<String> {
         throw UnsupportedOperationException()
     }
 
-    override fun remove(o: Any?): Boolean {
+    override fun remove(o: String): Boolean {
         throw UnsupportedOperationException()
     }
 
@@ -61,7 +61,7 @@ open class KList : MutableList<String> {
         throw UnsupportedOperationException()
     }
 
-    override fun remove(index: Int): String {
+    override fun removeAt(index: Int): String {
         throw UnsupportedOperationException()
     }
 

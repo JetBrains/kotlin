@@ -1,4 +1,4 @@
-fun StringBuilder.first() = this.charAt(0)
+fun StringBuilder.first() = this.get(0)
 
 fun foo() = StringBuilder("foo").first()
 

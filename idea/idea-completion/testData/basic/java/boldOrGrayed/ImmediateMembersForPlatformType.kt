@@ -11,4 +11,4 @@ class C {
 // EXIST: { itemText: "extFunForString", attributes: "bold" }
 // EXIST: { itemText: "extFunForAny", attributes: "" }
 // EXIST: { itemText: "extFunForStringNullable", attributes: "bold" }
-// EXIST: { itemText: "charAt", attributes: "" }
+// EXIST: { itemText: "get", attributes: "" }

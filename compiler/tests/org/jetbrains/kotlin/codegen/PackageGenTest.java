@@ -384,7 +384,7 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     public void testCallMethodDeclaredInSuperclass() throws Exception {
-        loadText("fun foo(sb: StringBuilder) = sb.charAt(0)");
+        loadText("fun foo(sb: StringBuilder) = sb.get(0)");
         Method main = generateFunction();
         StringBuilder sb = new StringBuilder("x");
         assertEquals('x', ((Character) main.invoke(null, sb)).charValue());

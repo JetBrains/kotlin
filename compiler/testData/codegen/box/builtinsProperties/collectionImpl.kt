@@ -22,7 +22,7 @@ class A1 : MutableCollection<String> {
         throw UnsupportedOperationException()
     }
 
-    override fun remove(o: Any?): Boolean {
+    override fun remove(o: String): Boolean {
         throw UnsupportedOperationException()
     }
 
