@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.*
-import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.isBuiltinSpecialPropertyName
-import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyAccessorName
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
 import org.jetbrains.kotlin.load.java.BuiltinSpecialMethods.sameAsRenamedInJvmBuiltin
 import org.jetbrains.kotlin.load.java.BuiltinSpecialMethods.isRemoveAtByIndex
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature.sameAsBuiltinMethodWithErasedValueParameters
@@ -86,25 +85,13 @@ public class LazyJavaClassMemberScope(
     }
 
     override fun JavaMethodDescriptor.isVisibleAsFunction(): Boolean {
-        val nameAsString = name.asString()
-
-        if (JvmAbi.isGetterName(nameAsString)) {
-            val propertyName = propertyNameByGetMethodName(name) ?: return true
-            return !doesClassOverrideAnyProperty(getPropertiesFromSupertypes(propertyName))
-        }
-
-        if (JvmAbi.isSetterName(nameAsString)) {
-            return propertyNamesBySetMethodName(name).none {
-                propertyName ->
-                getPropertiesFromSupertypes(propertyName).any {
-                    property -> property.isVar && doesClassOverridesProperty(property)
-                }
+        if (getPropertyNamesCandidatesByAccessorName(name).any {
+            propertyName ->
+            getPropertiesFromSupertypes(propertyName).any {
+                property ->
+                doesClassOverridesProperty(property) && (property.isVar || !JvmAbi.isSetterName(name.asString()))
             }
-        }
-
-        if (name.isBuiltinSpecialPropertyName) {
-            return !doesClassOverrideAnyProperty(getPropertiesFromSupertypes(name))
-        }
+        }) return false
 
         val javaMethod = (source as? JavaSourceElement)?.javaElement as? JavaMethod
         if (javaMethod?.doesOverrideRenamedBuiltins() ?: false) {
@@ -136,11 +123,8 @@ public class LazyJavaClassMemberScope(
         ).result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
     }
 
-    private fun doesClassOverrideAnyProperty(properties: Collection<PropertyDescriptor>)
-            = properties.any { property -> doesClassOverridesProperty(property) }
-
     private fun PropertyDescriptor.findGetterOverride(): JavaMethodDescriptor? {
-        val getterName = getter?.getBuiltinSpecialOverridden()?.getBuiltinSpecialPropertyAccessorName() ?: JvmAbi.getterName(name.asString())
+        val getterName = getter?.getBuiltinSpecialOverridden()?.getBuiltinSpecialPropertyGetterName() ?: JvmAbi.getterName(name.asString())
         return memberIndex().findMethodsByName(Name.identifier(getterName)).firstNotNullResult factory@{
             javaMethod ->
             val descriptor = resolveMethodToFunctionDescriptor(javaMethod)

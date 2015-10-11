@@ -28,10 +28,20 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyAccessorName
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 object BuiltinSpecialProperties {
-    private val FQ_NAMES = setOf(FqName("kotlin.Collection.size"), FqName("kotlin.Map.size"))
+    private val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf(
+            FqName("kotlin.Collection.size")           to Name.identifier("size"),
+            FqName("kotlin.Map.size")                  to Name.identifier("size"),
+            FqName("kotlin.CharSequence.length")       to Name.identifier("length")
+    )
+
+    private val GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP: Map<Name, List<Name>> =
+            PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.getInversedShortNamesMap()
+
+    private val FQ_NAMES = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keySet()
     private val SHORT_NAMES = FQ_NAMES.map { it.shortName() }.toSet()
 
     fun hasBuiltinSpecialPropertyFqName(callableMemberDescriptor: CallableMemberDescriptor): Boolean {
@@ -47,12 +57,14 @@ object BuiltinSpecialProperties {
         return overriddenDescriptors.any { hasBuiltinSpecialPropertyFqName(it) }
     }
 
-    val Name.isBuiltinSpecialPropertyName: Boolean get() = this in SHORT_NAMES
+    fun getPropertyNameCandidatesBySpecialGetterName(name1: Name): List<Name> =
+            GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP[name1] ?: emptyList()
 
-    fun CallableMemberDescriptor.getBuiltinSpecialPropertyAccessorName(): String? {
-        return propertyIfAccessor.check {
-            hasBuiltinSpecialPropertyFqName(it)
-        }?.name?.asString()
+    fun CallableMemberDescriptor.getBuiltinSpecialPropertyGetterName(): String? {
+        assert(isFromBuiltins()) { "This method is defined only for builtin members, but $this found" }
+
+        val descriptor = propertyIfAccessor.firstOverridden { hasBuiltinSpecialPropertyFqName(it) } ?: return null
+        return PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP[descriptor.fqNameSafe]?.asString()
     }
 }
 
@@ -115,11 +127,7 @@ object BuiltinSpecialMethods {
 
     val ORIGINAL_SHORT_NAMES: List<Name> = FQ_NAMES_TO_JVM_MAP.keySet().map { it.shortName() }
 
-    private val JVM_SHORT_NAME_TO_BUILTIN_FQ_NAMES_MAP: Map<Name, List<FqName>> =
-            FQ_NAMES_TO_JVM_MAP.entrySet().groupBy { it.value }.mapValues { entry -> entry.value.map { it.key } }
-
-    val JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP: Map<Name, List<Name>> =
-            JVM_SHORT_NAME_TO_BUILTIN_FQ_NAMES_MAP.mapValues { it.value.map { it.shortName() } }
+    val JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP: Map<Name, List<Name>> = FQ_NAMES_TO_JVM_MAP.getInversedShortNamesMap()
 
     val Name.sameAsRenamedInJvmBuiltin: Boolean
         get() = this in ORIGINAL_SHORT_NAMES
@@ -157,7 +165,7 @@ fun getJvmMethodNameIfSpecial(callableMemberDescriptor: CallableMemberDescriptor
     val builtinOverridden = getBuiltinOverriddenThatAffectsJvmName(callableMemberDescriptor)?.propertyIfAccessor
             ?: return null
     return when (builtinOverridden) {
-        is PropertyDescriptor -> builtinOverridden.getBuiltinSpecialPropertyAccessorName()
+        is PropertyDescriptor -> builtinOverridden.getBuiltinSpecialPropertyGetterName()
         else -> BuiltinSpecialMethods.getSpecialJvmName(builtinOverridden)?.asString()
     }
 }
@@ -209,3 +217,6 @@ private fun CallableMemberDescriptor.firstOverridden(
 }
 
 private fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
+
+private fun Map<FqName, Name>.getInversedShortNamesMap(): Map<Name, List<Name>> =
+        entrySet().groupBy { it.value }.mapValues { entry -> entry.value.map { it.key.shortName() } }

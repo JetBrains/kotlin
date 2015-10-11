@@ -31,6 +31,9 @@ public fun <E> MutableList<E>.remove(index: Int): E = removeAt(index)
 @Deprecated("Use explicit cast to MutableCollection<Any?> instead", ReplaceWith("(this as MutableCollection<Any?>).remove(o)"))
 public fun <E> MutableCollection<E>.remove(o: Any?): Boolean = remove(o as E)
 
+@Deprecated("Use 'length' property instead", ReplaceWith("this.length"))
+public fun CharSequence.length(): Int = length
+
 /**
  * Adds the specified [element] to this mutable collection.
  */
