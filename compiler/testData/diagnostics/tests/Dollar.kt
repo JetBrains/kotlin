@@ -5,10 +5,7 @@ open class `$$$$$`() {
 open class `$`() {
 }
 open class `$$`(`$$$$` : `$$$$$`?) : `$`() {
-    val `$$$` : `$$$$$`?
-    init {
-        <!BACKING_FIELD_USAGE_DEPRECATED!>$`$$$`<!> = `$$$$`
-    }
+    val `$$$` : `$$$$$`? = `$$$$`
     open public fun `$$$$$$`() : `$$$$$`? {
         return `$$$`
     }

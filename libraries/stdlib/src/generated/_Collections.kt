@@ -713,71 +713,11 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
 /**
  * Returns a list with elements in reversed order.
  */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun <T> Iterable<T>.reverse(): List<T> {
-    return reversed()
-}
-
-/**
- * Returns a list with elements in reversed order.
- */
 public fun <T> Iterable<T>.reversed(): List<T> {
     if (this is Collection && isEmpty()) return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("This method may change its behavior soon. Use sorted() instead.", ReplaceWith("sorted()"))
-public fun <T : Comparable<T>> Iterable<T>.sort(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a list of all elements, sorted by the specified [comparator].
- */
-@Deprecated("This method may change its behavior soon. Use sortedWith() instead.", ReplaceWith("sortedWith(comparator)"))
-public fun <T> Iterable<T>.sortBy(comparator: Comparator<in T>): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("This method may change its behavior soon. Use sortedBy() instead.", ReplaceWith("sortedBy(order)"))
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortBy(crossinline order: (T) -> R): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, in descending order.
- */
-@Deprecated("This method may change its behavior soon. Use sortedDescending() instead.", ReplaceWith("sortedDescending()"))
-public fun <T : Comparable<T>> Iterable<T>.sortDescending(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator { x, y -> y.compareTo(x) })
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, in descending order by results of specified [order] function.
- */
-@Deprecated("This method may change its behavior soon. Use sortedByDescending() instead.", ReplaceWith("sortedByDescending(order)"))
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortDescendingBy(crossinline order: (T) -> R): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareByDescending(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
 }
 
 /**
@@ -816,27 +756,6 @@ public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
 public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList, comparator)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
-public fun <T : Comparable<T>> Iterable<T>.toSortedList(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
-public fun <T, V : Comparable<V>> Iterable<T>.toSortedListBy(order: (T) -> V): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
 
@@ -975,17 +894,9 @@ public fun <T> Iterable<T>.toList(): List<T> {
     return this.toArrayList()
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
-    val capacity = (collectionSizeOrDefault(10)/.75f) + 1
-    val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
 /**
@@ -997,6 +908,19 @@ public inline fun <T, K, V> Iterable<T>.toMap(selector: (T) -> K, transform: (T)
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <T, K> Iterable<T>.toMapBy(selector: (T) -> K): Map<K, T> {
+    val capacity = (collectionSizeOrDefault(10)/.75f) + 1
+    val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
     }
     return result
 }
@@ -1114,15 +1038,6 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destinat
  */
 public fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>> {
     return IndexingIterable { iterator() }
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun <T> Iterable<T>.withIndices(): List<Pair<Int, T>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, T>>(), { index++ to it })
 }
 
 /**
@@ -1424,31 +1339,14 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
     return this as List<T>
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <T, R, V> Iterable<T>.merge(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val arraySize = array.size()
-    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
-    var i = 0
-    for (element in this) {
-        if (i >= arraySize) break
-        list.add(transform(element, array[i++]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
 public inline fun <T, R, V> Iterable<T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
-    }
-    return list
+    return zip(other, transform)
 }
 
 /**
@@ -1600,14 +1498,41 @@ public operator fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Iterable<T>.zip(array: Array<out R>): List<Pair<T, R>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <T, R, V> Iterable<T>.zip(array: Array<out R>, transform: (T, R) -> V): List<V> {
+    val arraySize = array.size()
+    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in this) {
+        if (i >= arraySize) break
+        list.add(transform(element, array[i++]))
+    }
+    return list
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
-    return merge(other) { t1, t2 -> t1 to t2 }
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
+    while (first.hasNext() && second.hasNext()) {
+        list.add(transform(first.next(), second.next()))
+    }
+    return list
 }
 
 /**
@@ -1648,14 +1573,6 @@ public fun <T> Iterable<T>.asSequence(): Sequence<T> {
             return this@asSequence.iterator()
         }
     }
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun <T> Iterable<T>.sequence(): Sequence<T> {
-    return asSequence()
 }
 
 /**

@@ -39,7 +39,7 @@ public object Object : Obsolete {
     public final override /*1*/ /*fake_override*/ fun use(): kotlin.Unit
 }
 
-@kotlin.Deprecated(value = "Class") public open class Obsolete {
+@kotlin.Deprecated(message = "Class") public open class Obsolete {
     public constructor Obsolete()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -47,8 +47,8 @@ public object Object : Obsolete {
     public final fun use(): kotlin.Unit
 }
 
-@kotlin.Deprecated(value = "Class") public open class Obsolete2 {
-    @kotlin.Deprecated(value = "Constructor") public constructor Obsolete2()
+@kotlin.Deprecated(message = "Class") public open class Obsolete2 {
+    @kotlin.Deprecated(message = "Constructor") public constructor Obsolete2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

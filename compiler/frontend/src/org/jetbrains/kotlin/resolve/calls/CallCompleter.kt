@@ -86,7 +86,7 @@ public class CallCompleter(
                 resolvedCall.variableCall.getCall().getCalleeExpression()
             else
                 resolvedCall.getCall().getCalleeExpression()
-            symbolUsageValidator.validateCall(resolvedCall.getResultingDescriptor(), context.trace, element!!)
+            symbolUsageValidator.validateCall(resolvedCall, resolvedCall.getResultingDescriptor(), context.trace, element!!)
         }
 
         if (results.isSingleResult() && results.getResultingCall().getStatus().isSuccess()) {
@@ -312,7 +312,7 @@ public class CallCompleter(
         }
 
         var shouldBeMadeNullable: Boolean = false
-        expressions.reverse().forEach { expression ->
+        expressions.asReversed().forEach { expression ->
             if (!(expression is JetParenthesizedExpression || expression is JetLabeledExpression || expression is JetAnnotatedExpression)) {
                 shouldBeMadeNullable = hasNecessarySafeCall(expression, trace)
             }

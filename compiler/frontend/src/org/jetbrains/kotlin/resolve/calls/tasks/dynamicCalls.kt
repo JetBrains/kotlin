@@ -131,9 +131,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
                 createValueParameters(functionDescriptor, call),
                 dynamicType,
                 Modality.FINAL,
-                Visibilities.PUBLIC,
-                false,
-                false
+                Visibilities.PUBLIC
         )
         return functionDescriptor
     }

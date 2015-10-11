@@ -1,10 +1,10 @@
-// "Create member function 'get', function 'set'" "true"
+// "Create member function 'getValue', function 'setValue'" "true"
 class F {
-    fun get(x: X, propertyMetadata: PropertyMetadata): Int {
+    fun getValue(x: X, propertyMetadata: PropertyMetadata): Int {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun set(x: X, propertyMetadata: PropertyMetadata, i: Int) {
+    fun setValue(x: X, propertyMetadata: PropertyMetadata, i: Int) {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

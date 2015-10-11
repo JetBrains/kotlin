@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.BuiltinsPropertiesUtilKt;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.SpecialSignatureInfo;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
@@ -64,7 +65,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -845,10 +846,10 @@ public class JetTypeMapper {
                 }
             }
 
-            return OperatorConventions.INVOKE.asString();
+            return OperatorNameConventions.INVOKE.asString();
         }
         else if (isLocalFunction(descriptor) || isFunctionExpression(descriptor)) {
-            return OperatorConventions.INVOKE.asString();
+            return OperatorNameConventions.INVOKE.asString();
         }
         else {
             return updateMemberNameIfInternal(descriptor.getName().asString(), descriptor);
@@ -941,7 +942,19 @@ public class JetTypeMapper {
             sw.writeReturnTypeEnd();
         }
 
-        return sw.makeJvmMethodSignature(mapFunctionName(f));
+        JvmMethodSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f));
+
+
+        if (kind != OwnerKind.DEFAULT_IMPLS) {
+            SpecialSignatureInfo specialSignatureInfo = BuiltinsPropertiesUtilKt.getSpecialSignatureInfo(f);
+
+            if (specialSignatureInfo != null) {
+                return new JvmMethodSignature(
+                        signature.getAsmMethod(), specialSignatureInfo.getSignature(), signature.getValueParameters());
+            }
+        }
+
+        return signature;
     }
 
     @NotNull

@@ -281,6 +281,12 @@ public class BridgeTestGenerated extends AbstractBridgeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("strListContains.kt")
+    public void testStrListContains() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/strListContains.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("traitImplInheritsTraitImpl.kt")
     public void testTraitImplInheritsTraitImpl() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/traitImplInheritsTraitImpl.kt");

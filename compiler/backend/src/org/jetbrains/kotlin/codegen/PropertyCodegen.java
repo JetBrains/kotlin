@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -58,6 +59,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterfaceCompanionObject;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -293,6 +295,10 @@ public class PropertyCodegen {
             modifiers |= ACC_FINAL;
         }
 
+        if (AnnotationUtilKt.hasJvmSyntheticAnnotation(propertyDescriptor)) {
+            modifiers |= ACC_SYNTHETIC;
+        }
+
         Type type = typeMapper.mapType(jetType);
 
         ClassBuilder builder = v;
@@ -387,7 +393,7 @@ public class PropertyCodegen {
     private void generateGetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable JetPropertyAccessor getter) {
         generateAccessor(p, getter, descriptor.getGetter() != null
                                     ? descriptor.getGetter()
-                                    : DescriptorFactory.createDefaultGetter(descriptor, Annotations.EMPTY));
+                                    : DescriptorFactory.createDefaultGetter(descriptor, Annotations.Companion.getEMPTY()));
     }
 
     private void generateSetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable JetPropertyAccessor setter) {
@@ -395,7 +401,7 @@ public class PropertyCodegen {
 
         generateAccessor(p, setter, descriptor.getSetter() != null
                                     ? descriptor.getSetter()
-                                    : DescriptorFactory.createDefaultSetter(descriptor, Annotations.EMPTY));
+                                    : DescriptorFactory.createDefaultSetter(descriptor, Annotations.Companion.getEMPTY()));
     }
 
     private void generateAccessor(

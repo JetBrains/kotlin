@@ -28,7 +28,7 @@ import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import kotlin.Unit;
-import kotlin.io.IoPackage;
+import kotlin.io.FilesKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -162,7 +162,7 @@ public class CompileEnvironmentUtil {
                 continue;
             }
 
-            IoPackage.recurse(new File(sourceRootPath), new Function1<File, Unit>() {
+            FilesKt.recurse(new File(sourceRootPath), new Function1<File, Unit>() {
                 @Override
                 public Unit invoke(File file) {
                     if (file.isFile()) {

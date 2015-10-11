@@ -73,7 +73,7 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
     override fun additionalJsFiles(ecmaVersion: EcmaVersion): List<String> {
         val result = super.additionalJsFiles(ecmaVersion)
         val dirName = getTestName(true)
-        assert(dependencies != null, "dependencies should not be null")
+        assert(dependencies != null) { "dependencies should not be null" }
 
         for (moduleName in dependencies!!.keySet()) {
             if (moduleName != MAIN_MODULE_NAME) {
@@ -86,14 +86,14 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
 
     private fun readModuleDependencies(testDataDir: String): Map<String, List<String>> {
         val dependenciesTxt = upsearchFile(testDataDir, "dependencies.txt")
-        assert(dependenciesTxt.isFile(), "moduleDependencies should not be null")
+        assert(dependenciesTxt.isFile()) { "moduleDependencies should not be null" }
 
         val result = LinkedHashMap<String, List<String>>()
         for (line in dependenciesTxt.readLines()) {
-            val split = line.splitBy("->")
+            val split = line.split("->")
             val module = split[0]
             val dependencies = if (split.size() > 1) split[1] else ""
-            val dependencyList = dependencies.splitBy(",").filterNot { it.isEmpty() }
+            val dependencyList = dependencies.split(",").filterNot { it.isEmpty() }
 
             result[module] = dependencyList
         }
@@ -106,7 +106,7 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
         var file = File(dir, name)
 
         while (dir != null && dir.isDirectory() && !file.isFile()) {
-            dir = dir.parent
+            dir = dir.parentFile
             file = File(dir, name)
         }
 

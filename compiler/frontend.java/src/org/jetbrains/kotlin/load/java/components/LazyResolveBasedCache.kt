@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
 
 public class LazyResolveBasedCache(private val resolveSession: ResolveSession) : JavaResolverCache {
 
-    private val trace: BindingTrace get() = resolveSession.getTrace()
+    private val trace: BindingTrace get() = resolveSession.trace
 
     override fun getClassResolvedFromSource(fqName: FqName): ClassDescriptor? {
         return trace.get(FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe()) ?: findInPackageFragments(fqName)

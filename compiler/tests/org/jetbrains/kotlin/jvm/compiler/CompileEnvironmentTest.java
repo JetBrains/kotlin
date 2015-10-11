@@ -35,15 +35,12 @@ public class CompileEnvironmentTest extends TestCase {
         try {
             File out = new File(tempDir, "out");
             File stdlib = ForTestCompileRuntime.runtimeJarForTests();
-            File jdkAnnotations = JetTestUtils.getJdkAnnotationsJar();
             ExitCode exitCode = new K2JVMCompiler().exec(
                     System.out,
                     JetTestUtils.getTestDataPathBase() + "/compiler/smoke/Smoke.kt",
                     "-d", out.getAbsolutePath(),
                     "-no-stdlib",
-                    "-classpath", stdlib.getAbsolutePath(),
-                    "-no-jdk-annotations",
-                    "-annotations", jdkAnnotations.getAbsolutePath()
+                    "-classpath", stdlib.getAbsolutePath()
             );
             Assert.assertEquals(ExitCode.OK, exitCode);
             File[] files = out.listFiles();

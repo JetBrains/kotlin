@@ -339,7 +339,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
             }
         }
         catch(e: Exception) {
-            val message = if (e is ConflictsInTestsException) e.getMessages().sort().joinToString(" ") else e.getMessage()
+            val message = if (e is ConflictsInTestsException) e.getMessages().sorted().joinToString(" ") else e.getMessage()
             JetTestUtils.assertEqualsToFile(conflictFile, message?.replace("\n", " ") ?: e.javaClass.getName())
         }
         finally {

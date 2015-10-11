@@ -28,7 +28,7 @@ class WithCPI_Dup(<warning>x</warning> : Int) {
 
 class WithCPI(x : Int) {
   val a = 1
-  val b : Int = <warning descr="[BACKING_FIELD_USAGE_DEPRECATED] Backing field usage is deprecated here, soon it will be possible only in property accessors">$a</warning>
+  val b : Int = <error>$a</error>
   val xy : Int = x
 }
 

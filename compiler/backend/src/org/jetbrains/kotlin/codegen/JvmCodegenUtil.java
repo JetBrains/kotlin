@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.psi.PsiElement;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
+import kotlin.StringsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -123,7 +124,7 @@ public class JvmCodegenUtil {
     }
 
     public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
-        return KotlinPackage.any(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors(),
+        return CollectionsKt.any(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors(),
                                  new Function1<DeclarationDescriptor, Boolean>() {
                                      @Override
                                      public Boolean invoke(DeclarationDescriptor descriptor) {
@@ -220,7 +221,7 @@ public class JvmCodegenUtil {
 
     @NotNull
     public static String getModuleName(ModuleDescriptor module) {
-        return KotlinPackage.removeSurrounding(module.getName().asString(), "<", ">");
+        return StringsKt.removeSurrounding(module.getName().asString(), "<", ">");
     }
 
     @NotNull

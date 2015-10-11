@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.List;
 
@@ -143,7 +144,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         }
 
 
-        if (JsDescriptorUtils.isBuiltin(descriptor) && descriptor.getName().equals(OperatorConventions.COMPARE_TO)) {
+        if (JsDescriptorUtils.isBuiltin(descriptor) && descriptor.getName().equals(OperatorNameConventions.COMPARE_TO)) {
             return BUILTINS_COMPARE_TO_INTRINSIC;
         }
 

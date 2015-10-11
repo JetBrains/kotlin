@@ -1,4 +1,4 @@
-fun set(key : String, value : String) {
+fun set(<warning>key</warning> : String, <warning>value</warning> : String) {
   val a : String? = ""
   when (a) {
     "" -> a.get(0)

@@ -5,7 +5,7 @@ class A1 {
 }
 
 class MyProperty1 {}
-fun MyProperty1.get(thisRef: Any?, desc: PropertyMetadata): String {
+fun MyProperty1.getValue(thisRef: Any?, desc: PropertyMetadata): String {
     throw Exception("$thisRef $desc")
 }
 
@@ -16,7 +16,7 @@ class A2 {
 }
 
 class MyProperty2<T> {}
-fun <T> MyProperty2<T>.get(thisRef: Any?, desc: PropertyMetadata): T {
+fun <T> MyProperty2<T>.getValue(thisRef: Any?, desc: PropertyMetadata): T {
     throw Exception("$thisRef $desc")
 }
 
@@ -27,7 +27,7 @@ class A3 {
 
     class MyProperty3<T> {}
 
-    fun <T> MyProperty3<T>.get(thisRef: Any?, desc: PropertyMetadata): T {
+    fun <T> MyProperty3<T>.getValue(thisRef: Any?, desc: PropertyMetadata): T {
         throw Exception("$thisRef $desc")
     }
 }

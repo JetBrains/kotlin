@@ -51,7 +51,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
         super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source);
         this.modality = modality;
 
-        this.typeConstructor = TypeConstructorImpl.createForClass(this, Annotations.EMPTY, false, getName().asString(),
+        this.typeConstructor = TypeConstructorImpl.createForClass(this, Annotations.Companion.getEMPTY(), false, getName().asString(),
                                                        Collections.<TypeParameterDescriptor>emptyList(), supertypes);
     }
 
@@ -72,7 +72,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     @NotNull
     @Override
     public Annotations getAnnotations() {
-        return Annotations.EMPTY;
+        return Annotations.Companion.getEMPTY();
     }
 
     @Override

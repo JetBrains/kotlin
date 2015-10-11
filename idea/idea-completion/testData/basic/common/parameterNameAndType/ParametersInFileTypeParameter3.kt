@@ -8,5 +8,5 @@ class X<T1> {
     }
 }
 
-// EXIST: { lookupString: "xxxValue1", itemText: "xxxValue1: T1", tailText: null }
+// EXIST: { lookupString: "xxxValue1: T1", itemText: "xxxValue1: T1", tailText: null }
 // NOTHING_ELSE

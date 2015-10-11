@@ -232,7 +232,6 @@ private class ElementListAsList(private val nodeList: NodeList) : AbstractList<E
     }
 
     override val size: Int get() = nodeList.length
-
 }
 
 /** Returns an [Iterator] over the next siblings of this node */
@@ -312,7 +311,7 @@ public fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
 
 /** Converts the collection of nodes to an XML String */
 public fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = false): String {
-    return nodes.map { it.toXmlString(xmlDeclaration) }.join()
+    return nodes.map { it.toXmlString(xmlDeclaration) }.joinToString()
 }
 
 // Syntax sugar

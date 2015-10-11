@@ -68,8 +68,7 @@ class BuiltInsAnnotationAndConstantLoader(
     ): List<AnnotationDescriptor> = emptyList()
 
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<AnnotationDescriptor> {
-        // TODO: support type annotations in built-ins
-        return listOf()
+        return proto.getExtension(BuiltInsProtoBuf.typeAnnotation).orEmpty().map { deserializer.deserializeAnnotation(it, nameResolver) }
     }
 
     override fun loadPropertyConstant(

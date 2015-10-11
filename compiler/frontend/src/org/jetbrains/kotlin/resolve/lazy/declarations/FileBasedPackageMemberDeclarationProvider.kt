@@ -35,7 +35,7 @@ public class FileBasedPackageMemberDeclarationProvider(
     override fun doCreateIndex(index: AbstractPsiBasedDeclarationProvider.Index) {
         for (file in packageFiles) {
             for (declaration in file.getDeclarations()) {
-                assert(fqName == file.getPackageFqName(), "Files declaration utils contains file with invalid package")
+                assert(fqName == file.getPackageFqName()) { "Files declaration utils contains file with invalid package" }
                 index.putToIndex(declaration)
             }
         }

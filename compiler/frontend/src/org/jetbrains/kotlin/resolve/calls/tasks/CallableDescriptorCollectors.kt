@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
 import org.jetbrains.kotlin.resolve.scopes.utils.getLocalVariable
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 public interface CallableDescriptorCollector<D : CallableDescriptor> {
@@ -97,7 +97,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
         val members = receiverScope.getFunctions(name, location)
         val constructors = getConstructors(receiverScope, name, location, { !isStaticNestedClass(it) })
 
-        if (name == OperatorConventions.INVOKE && KotlinBuiltIns.isExtensionFunctionType(receiver)) {
+        if (name == OperatorNameConventions.INVOKE && KotlinBuiltIns.isExtensionFunctionType(receiver)) {
             // If we're looking for members of an extension function type, we ignore the non-extension "invoke"s
             // that originate from the Function{n} class and only consider the synthesized "invoke" extensions.
             // Otherwise confusing errors will be reported because the non-extension here beats the extension
@@ -119,7 +119,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
         val (extensions, nonExtensions) = functions.partition { it.extensionReceiverParameter != null }
         val syntheticExtensions = scope.getSyntheticExtensionFunctions(receiverTypes, name, location)
 
-        if (name == OperatorConventions.INVOKE) {
+        if (name == OperatorNameConventions.INVOKE) {
             // Create synthesized "invoke" extensions for each non-extension "invoke" found in the scope
             return extensions + createSynthesizedInvokes(nonExtensions) + syntheticExtensions
         }

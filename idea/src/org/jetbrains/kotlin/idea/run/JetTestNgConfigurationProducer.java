@@ -20,22 +20,29 @@ import com.intellij.execution.JavaRunConfigurationExtensionManager;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.actions.ConfigurationFromContext;
+import com.intellij.execution.junit.InheritorChooser;
+import com.intellij.execution.junit2.info.MethodLocation;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiClassUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.theoryinpractice.testng.configuration.TestNGConfiguration;
 import com.theoryinpractice.testng.configuration.TestNGConfigurationProducer;
 import com.theoryinpractice.testng.util.TestNGUtil;
+import kotlin.CollectionsKt;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
+import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
+
+import java.util.List;
 
 public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer {
     @Override
@@ -67,8 +74,11 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
             return false;
         }
 
-        JetNamedFunction function = PsiTreeUtil.getParentOfType(leaf, JetNamedFunction.class, false);
-        if (function != null) {
+        JetNamedDeclaration declarationToRun = getDeclarationToRun(leaf);
+
+        if (declarationToRun instanceof JetNamedFunction) {
+            JetNamedFunction function = (JetNamedFunction) declarationToRun;
+
             @SuppressWarnings("unchecked")
             JetElement owner = PsiTreeUtil.getParentOfType(function, JetFunction.class, JetClass.class);
 
@@ -87,22 +97,86 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
             }
         }
 
+        if (declarationToRun instanceof JetClass) {
+            PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass((JetClassOrObject) declarationToRun);
+            if (!isTestNGClass(delegate)) {
+                return false;
+            }
+
+            return configure(configuration, location, context, project, delegate, null);
+        }
+
+        return false;
+    }
+
+    @Override
+    public void onFirstRun(ConfigurationFromContext configuration, ConfigurationContext context, Runnable startRunnable) {
+        JetNamedDeclaration declarationToRun = getDeclarationToRun(configuration.getSourceElement());
+        final PsiNamedElement lightElement = CollectionsKt.firstOrNull(LightClassUtilsKt.toLightElements(declarationToRun));
+
+        // Copied from TestNGInClassConfigurationProducer.onFirstRun()
+        if (lightElement instanceof PsiMethod || lightElement instanceof PsiClass) {
+            PsiMethod psiMethod;
+            PsiClass containingClass;
+
+            if (lightElement instanceof PsiMethod) {
+                psiMethod = (PsiMethod)lightElement;
+                containingClass = psiMethod.getContainingClass();
+            } else {
+                psiMethod = null;
+                containingClass = (PsiClass)lightElement;
+            }
+
+            InheritorChooser inheritorChooser = new InheritorChooser() {
+                @Override
+                protected void runForClasses(List<PsiClass> classes, PsiMethod method, ConfigurationContext context, Runnable performRunnable) {
+                    ((TestNGConfiguration)context.getConfiguration().getConfiguration()).bePatternConfiguration(classes, method);
+                    super.runForClasses(classes, method, context, performRunnable);
+                }
+
+                @Override
+                protected void runForClass(PsiClass aClass,
+                        PsiMethod psiMethod,
+                        ConfigurationContext context,
+                        Runnable performRunnable) {
+                    if (lightElement instanceof PsiMethod) {
+                        Project project = psiMethod.getProject();
+                        MethodLocation methodLocation = new MethodLocation(project, psiMethod, PsiLocation.fromPsiElement(aClass));
+                        ((TestNGConfiguration)context.getConfiguration().getConfiguration()).setMethodConfiguration(methodLocation);
+                    } else {
+                        ((TestNGConfiguration)context.getConfiguration().getConfiguration()).setClassConfiguration(aClass);
+                    }
+                    super.runForClass(aClass, psiMethod, context, performRunnable);
+                }
+            };
+            if (inheritorChooser.runMethodInAbstractClass(context,
+                                                          startRunnable,
+                                                          psiMethod,
+                                                          containingClass,
+                                                          new Condition<PsiClass>() {
+                                                              @Override
+                                                              public boolean value(PsiClass aClass) {
+                                                                  return aClass.hasModifierProperty(PsiModifier.ABSTRACT) &&
+                                                                         TestNGUtil.hasTest(aClass);
+                                                              }
+                                                          })) return;
+        }
+
+        super.onFirstRun(configuration, context, startRunnable);
+    }
+
+    @Nullable
+    private static JetNamedDeclaration getDeclarationToRun(@NotNull PsiElement leaf) {
+        if (!(leaf.getContainingFile() instanceof JetFile)) return null;
+        JetFile jetFile = (JetFile) leaf.getContainingFile();
+
+        JetNamedFunction function = PsiTreeUtil.getParentOfType(leaf, JetNamedFunction.class, false);
+        if (function != null) return function;
+
         JetClass jetClass = PsiTreeUtil.getParentOfType(leaf, JetClass.class, false);
+        if (jetClass != null) return jetClass;
 
-        if (jetClass == null) {
-            jetClass = getClassDeclarationInFile(jetFile);
-        }
-
-        if (jetClass == null) {
-            return false;
-        }
-
-        PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass(jetClass);
-        if (!isTestNGClass(delegate)) {
-            return false;
-        }
-
-        return configure(configuration, location, context, project, delegate, null);
+        return getClassDeclarationInFile(jetFile);
     }
 
     private boolean configure(

@@ -1,8 +1,8 @@
 // INTENTION_TEXT: Replace with '+' operator
 fun test() {
     class Test {
-        fun plus(): Test = Test()
+        fun unaryPlus(): Test = Test()
     }
     val test = Test()
-    test.pl<caret>us()
+    test.unaryPl<caret>us()
 }

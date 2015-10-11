@@ -34,7 +34,7 @@ fun test4() {
 
 //--------------
 
-fun <T: A, R: T> emptyStrangeMap2(t: T): Map<T, R> where R: A = throw Exception("$t")
+fun <T: A, R> emptyStrangeMap2(t: T): Map<T, R> where R: T, R: A = throw Exception("$t")
 
 fun test5(a: A) {
     emptyStrangeMap2(a)

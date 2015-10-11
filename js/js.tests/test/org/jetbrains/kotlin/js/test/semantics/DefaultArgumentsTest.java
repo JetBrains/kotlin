@@ -60,10 +60,6 @@ public class DefaultArgumentsTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
-    public void testOverrideValWithDefaultValue() throws Exception {
-        checkFooBoxIsOk();
-    }
-
     public void testVirtualCallWithDefArg() throws Exception {
         checkFooBoxIsOk();
     }

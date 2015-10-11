@@ -26,7 +26,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.UsefulTestCase;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,7 +84,7 @@ public abstract class AbstractKotlinGotoTest extends JetLightCodeInsightFixtureT
         Assert.assertFalse("There's no search text in test data file given. Use '// SEARCH_TEXT:' directive",
                            searchTextList.isEmpty());
 
-        List<String> expectedReferences = KotlinPackage.map(
+        List<String> expectedReferences = CollectionsKt.map(
                 InTextDirectivesUtils.findLinesWithPrefixesRemoved(documentText, "// REF:"),
                 new Function1<String, String>() {
                     @Override

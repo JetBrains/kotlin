@@ -2,20 +2,19 @@ package org.jetbrains.idl2k
 
 import org.antlr.v4.runtime.ANTLRFileStream
 import java.io.File
-import java.io.StringReader
 import java.util.*
 
 fun main(args: Array<String>) {
     val outDir = File("../../../js/js.libraries/src/generated")
     val srcDir = File("../../idl")
     if (!srcDir.exists()) {
-        System.err?.println("Directory ${srcDir.getAbsolutePath()} doesn't exist")
+        System.err?.println("Directory ${srcDir.absolutePath} doesn't exist")
         System.exit(1)
         return
     }
 
-    val repositoryPre = srcDir.walkTopDown().filter { it.isDirectory() || it.extension == "idl" }.asSequence().filter { it.isFile() }.toList().sortBy { it.getAbsolutePath() }.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
-        val fileRepository = parseIDL(ANTLRFileStream(e.getAbsolutePath(), "UTF-8"))
+    val repositoryPre = srcDir.walkTopDown().filter { it.isDirectory || it.extension == "idl" }.asSequence().filter { it.isFile }.toList().sortedBy { it.absolutePath }.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
+        val fileRepository = parseIDL(ANTLRFileStream(e.absolutePath, "UTF-8"))
 
         Repository(
                 interfaces = acc.interfaces.mergeReduce(fileRepository.interfaces, ::merge),
@@ -37,7 +36,7 @@ fun main(args: Array<String>) {
         }
     }
     val unions = generateUnions(definitions, repository.typeDefs.values())
-    val allPackages = definitions.map { it.namespace }.distinct().sort()
+    val allPackages = definitions.map { it.namespace }.distinct().sorted()
 
     outDir.deleteRecursively()
     outDir.mkdirs()
@@ -52,11 +51,11 @@ fun main(args: Array<String>) {
             w.appendln(" */")
 
             w.appendln()
-            w.appendln("package ${pkg}")
+            w.appendln("package $pkg")
             w.appendln()
 
             allPackages.filter { it != pkg }.forEach { import ->
-                w.appendln("import ${import}.*")
+                w.appendln("import $import.*")
             }
             w.appendln()
 
@@ -65,10 +64,10 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun <K, V> Map<K, List<V>>.reduceValues(reduce: (V, V) -> V = { a, b -> b }): Map<K, V> = mapValues { it.value.reduce(reduce) }
+internal fun <K, V> Map<K, List<V>>.reduceValues(reduce: (V, V) -> V = { a, b -> b }): Map<K, V> = mapValues { it.value.reduce(reduce) }
 
-private fun <K, V> Map<K, V>.mergeReduce(other: Map<K, V>, reduce: (V, V) -> V = { a, b -> b }): Map<K, V> {
-    val result = LinkedHashMap<K, V>(this.size() + other.size())
+internal fun <K, V> Map<K, V>.mergeReduce(other: Map<K, V>, reduce: (V, V) -> V = { a, b -> b }): Map<K, V> {
+    val result = LinkedHashMap<K, V>(this.size + other.size)
     result.putAll(this)
     other.forEach { e ->
         val existing = result[e.key]
@@ -84,8 +83,8 @@ private fun <K, V> Map<K, V>.mergeReduce(other: Map<K, V>, reduce: (V, V) -> V =
     return result
 }
 
-private fun <K, V> Map<K, List<V>>.merge(other: Map<K, List<V>>): Map<K, List<V>> {
-    val result = LinkedHashMap<K, MutableList<V>>(size() + other.size())
+internal fun <K, V> Map<K, List<V>>.merge(other: Map<K, List<V>>): Map<K, List<V>> {
+    val result = LinkedHashMap<K, MutableList<V>>(size + other.size)
     this.forEach {
         result[it.key] = ArrayList(it.value)
     }

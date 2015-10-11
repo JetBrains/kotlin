@@ -97,7 +97,7 @@ public enum TopDownAnalyzerFacadeForJVM {
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles);
 
         LookupTracker lookupTracker =
-                incrementalCompilationComponents != null ? incrementalCompilationComponents.getLookupTracker() : LookupTracker.DO_NOTHING;
+                incrementalCompilationComponents != null ? incrementalCompilationComponents.getLookupTracker() : LookupTracker.Companion.getDO_NOTHING();
 
         List<TargetId> targetIds = null;
         if (modules != null) {

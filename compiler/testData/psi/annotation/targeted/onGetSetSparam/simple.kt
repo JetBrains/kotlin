@@ -2,7 +2,7 @@ class A {
 
     @get:An
     @set:An
-    @sparam:An
+    @setparam:An
     var a: String = "A"
 
 }

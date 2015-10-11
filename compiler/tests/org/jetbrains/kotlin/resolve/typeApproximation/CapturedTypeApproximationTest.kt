@@ -44,7 +44,7 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
     override fun createEnvironment(): KotlinCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
 
     public fun doTest(filePath: String, vararg substitutions: String) {
-        assert(substitutions.size() in 1..2, "Captured type approximation test requires substitutions for (T) or (T, R)")
+        assert(substitutions.size() in 1..2) { "Captured type approximation test requires substitutions for (T) or (T, R)" }
         val oneTypeVariable = substitutions.size() == 1
 
         val declarationsText = JetTestUtils.doLoadFile(File(getTestDataPath() + "/declarations.kt"))
@@ -141,7 +141,7 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
         fun addRandomVariants(vararg randomVariants: String) {
             variants.addAll(randomVariants.map { digits -> digits.map { digit -> digit - '0' } })
         }
-        assert (typePatterns.size() == 5, "Generated random variants below depend on size 5")
+        assert(typePatterns.size() == 5) { "Generated random variants below depend on size 5" }
         //From 021 the following is generated: In<Inv<Out<T>>>, where In = typePatterns[0], Inv = typePatterns[2], Out = typePatterns[1]
         addRandomVariants("021", "111", "230", "421", "322", "120", "411", "102", "401", "012")
         addRandomVariants("4243", "3103", "3043", "2003", "4442", "4143", "1440", "0303", "1302", "1332")

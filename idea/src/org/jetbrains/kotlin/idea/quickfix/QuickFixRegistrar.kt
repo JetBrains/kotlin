@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
-import org.jetbrains.kotlin.idea.inspections.OperatorModifierFixFactory
+import org.jetbrains.kotlin.idea.inspections.ModifierFixFactory
 import org.jetbrains.kotlin.idea.intentions.IntroduceBackingPropertyFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateP
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrateTypeParameterListFix
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageInWholeProjectFix
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -121,10 +122,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         REDUNDANT_MODIFIER_FOR_TARGET.registerFactory(removeModifierFactory)
         WRONG_MODIFIER_CONTAINING_DECLARATION.registerFactory(removeModifierFactory)
         REPEATED_MODIFIER.registerFactory(removeModifierFactory)
-
-        val changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory()
-        INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER.registerFactory(changeToBackingFieldFactory)
-        INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER.registerFactory(changeToBackingFieldFactory)
 
         val changeToPropertyNameFactory = ChangeToPropertyNameFix.createFactory()
         NO_BACKING_FIELD_ABSTRACT_PROPERTY.registerFactory(changeToPropertyNameFactory)
@@ -327,16 +324,21 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.registerFactory(ConstFixFactory)
 
-        BACKING_FIELD_SYNTAX_DEPRECATED.registerFactory(MigrateBackingFieldSyntaxFix)
-        BACKING_FIELD_USAGE_DEPRECATED.registerFactory(MigrateBackingFieldUsageFix)
-        BACKING_FIELD_USAGE_DEPRECATED.registerFactory(IntroduceBackingPropertyFix)
+        BACKING_FIELD_OLD_SYNTAX.registerFactory(MigrateBackingFieldSyntaxFix)
+        BACKING_FIELD_USAGE_FORBIDDEN.registerFactory(MigrateBackingFieldUsageFix)
+        BACKING_FIELD_USAGE_FORBIDDEN.registerFactory(IntroduceBackingPropertyFix)
 
-        OPERATOR_MODIFIER_REQUIRED.registerFactory(OperatorModifierFixFactory)
+        OPERATOR_MODIFIER_REQUIRED.registerFactory(ModifierFixFactory(JetTokens.OPERATOR_KEYWORD))
+        INFIX_MODIFIER_REQUIRED.registerFactory(ModifierFixFactory(JetTokens.INFIX_KEYWORD))
 
         UNDERSCORE_IS_DEPRECATED.registerFactory(RenameUnderscoreFix)
 
         CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.registerFactory(AddTypeToLHSOfCallableReferenceFix)
 
         DEPRECATED_TYPE_PARAMETER_SYNTAX.registerFactory(MigrateTypeParameterListFix)
+
+        UNRESOLVED_REFERENCE.registerFactory(KotlinAddOrderEntryActionFactory)
+
+        MISPLACED_TYPE_PARAMETER_CONSTRAINTS.registerFactory(MoveTypeParameterConstraintFix)
     }
 }

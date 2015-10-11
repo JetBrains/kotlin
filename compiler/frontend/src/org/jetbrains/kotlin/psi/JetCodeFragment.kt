@@ -27,7 +27,7 @@ import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import java.util.LinkedHashSet
+import java.util.*
 
 public abstract class JetCodeFragment(
         private val _project: Project,
@@ -48,7 +48,7 @@ public abstract class JetCodeFragment(
         getViewProvider().forceCachedPsi(this)
         init(TokenType.CODE_FRAGMENT, elementType)
         if (context != null) {
-            initImports(context, imports)
+            initImports(imports)
         }
     }
 
@@ -123,20 +123,7 @@ public abstract class JetCodeFragment(
         return true
     }
 
-    private fun initImports(context: PsiElement, imports: String?) {
-        val containingFile = context.getContainingFile()
-        if (containingFile !is JetFile) return
-
-        val importListForContextElement = containingFile.getImportList()
-        if (importListForContextElement != null) {
-            myImports.addAll(importListForContextElement.getImports().map { it.getText() })
-        }
-
-        val packageName = containingFile.getPackageDirective()?.getFqName()?.asString()
-        if (packageName != null && packageName.isNotEmpty()) {
-            myImports.add("import $packageName.*")
-        }
-
+    private fun initImports(imports: String?) {
         if (imports != null && !imports.isEmpty()) {
             myImports.addAll(imports.split(IMPORT_SEPARATOR).map { it.check { it.startsWith("import ") } ?: "import $it" })
         }

@@ -61,6 +61,10 @@ public annotation class JvmName(public val name: String)
 @MustBeDocumented
 public annotation class JvmMultifileClass
 
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.SOURCE)
+public annotation class JvmSynthetic
+
 /**
  * Instructs the Kotlin compiler to generate a public backing field for this property.
  */
@@ -88,6 +92,7 @@ public annotation class publicField
  *
  * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.SOURCE)
 public annotation class Throws(public vararg val exceptionClasses: KClass<out Throwable>)
 

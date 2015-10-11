@@ -3,7 +3,7 @@
 
 package h
 
-import util.minus
+import util.unaryMinus
 
 interface H
 

@@ -29,10 +29,6 @@ public fun <T> Iterator<T>.asSequence(): Sequence<T> {
     return iteratorSequence.constrainOnce()
 }
 
-@Deprecated("Use asSequence() instead.", ReplaceWith("asSequence()"))
-public fun <T> Iterator<T>.sequence(): Sequence<T> = asSequence()
-
-
 /**
  * Creates a sequence that returns all values from this enumeration. The sequence is constrained to be iterated only once.
  */

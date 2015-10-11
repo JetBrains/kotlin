@@ -100,7 +100,7 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
 }
 
 private fun TranslationContext.getDispatchReceiver(receiverValue: ReceiverValue): JsExpression {
-    assert(receiverValue.exists(), "receiverValue must be exist here")
+    assert(receiverValue.exists()) { "receiverValue must be exist here" }
     return getDispatchReceiver(getReceiverParameterForReceiver(receiverValue))
 }
 

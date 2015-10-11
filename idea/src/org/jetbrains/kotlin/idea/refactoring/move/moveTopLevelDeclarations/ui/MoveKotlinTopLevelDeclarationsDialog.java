@@ -55,7 +55,8 @@ import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.text.UniqueNameGenerator;
 import com.intellij.util.ui.UIUtil;
-import kotlin.KotlinPackage;
+import kotlin.ArraysKt;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -143,8 +144,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private static List<JetFile> getSourceFiles(@NotNull Collection<JetNamedDeclaration> elementsToMove) {
-        return KotlinPackage.distinct(
-                KotlinPackage.map(
+        return CollectionsKt.distinct(
+                CollectionsKt.map(
                         elementsToMove,
                         new Function1<JetNamedDeclaration, JetFile>() {
                             @Override
@@ -158,9 +159,9 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
     @NotNull
     private static PsiDirectory getSourceDirectory(@NotNull Collection<JetFile> sourceFiles) {
-        return KotlinPackage.single(
-                KotlinPackage.distinct(
-                        KotlinPackage.map(
+        return CollectionsKt.single(
+                CollectionsKt.distinct(
+                        CollectionsKt.map(
                                 sourceFiles,
                                 new Function1<JetFile, PsiDirectory>() {
                                     @Override
@@ -174,8 +175,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private static List<JetNamedDeclaration> getAllDeclarations(Collection<JetFile> sourceFiles) {
-        return KotlinPackage.filterIsInstance(
-                KotlinPackage.flatMap(
+        return CollectionsKt.filterIsInstance(
+                CollectionsKt.flatMap(
                         sourceFiles,
                         new Function1<JetFile, Iterable<?>>() {
                             @Override
@@ -199,7 +200,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             @NotNull final Set<JetNamedDeclaration> elementsToMove,
             @NotNull List<JetFile> sourceFiles
     ) {
-        final List<KotlinMemberInfo> memberInfos = KotlinPackage.map(
+        final List<KotlinMemberInfo> memberInfos = CollectionsKt.map(
                 getAllDeclarations(sourceFiles),
                 new Function1<JetNamedDeclaration, KotlinMemberInfo>() {
                     @Override
@@ -221,8 +222,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     private boolean shouldUpdateFileNameField(final Collection<KotlinMemberInfo> changedMembers) {
                         if (!tfFileNameInPackage.isEnabled()) return true;
 
-                        Collection<JetNamedDeclaration> previousDeclarations = KotlinPackage.filterNotNull(
-                                KotlinPackage.map(
+                        Collection<JetNamedDeclaration> previousDeclarations = CollectionsKt.filterNotNull(
+                                CollectionsKt.map(
                                         memberInfos,
                                         new Function1<KotlinMemberInfo, JetNamedDeclaration>() {
                                             @Override
@@ -389,7 +390,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private boolean isFullFileMove() {
-        Map<JetFile, List<? extends JetNamedDeclaration>> fileToElements = KotlinPackage.groupBy(
+        Map<JetFile, List<? extends JetNamedDeclaration>> fileToElements = CollectionsKt.groupBy(
                 getSelectedElementsToMove(),
                 new Function1<JetNamedDeclaration, JetFile>() {
                     @Override
@@ -451,7 +452,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         List<String> fileNames =
                 targetFileName != null
                 ? Collections.singletonList(targetFileName)
-                : KotlinPackage.map(
+                : CollectionsKt.map(
                         sourceFiles,
                         new Function1<JetFile, String>() {
                             @Override
@@ -461,8 +462,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                         }
                 );
 
-        return KotlinPackage.filterNotNull(
-                KotlinPackage.map(
+        return CollectionsKt.filterNotNull(
+                CollectionsKt.map(
                         fileNames,
                         new Function1<String, PsiFile>() {
                             @Override
@@ -498,7 +499,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
             List<PsiFile> filesExistingInTargetDir = getFilesExistingInTargetDir(sourceFiles, targetFileName, targetDirectory);
             if (!filesExistingInTargetDir.isEmpty()) {
-                if (!KotlinPackage.intersect(sourceFiles, filesExistingInTargetDir).isEmpty()) {
+                if (!CollectionsKt.intersect(sourceFiles, filesExistingInTargetDir).isEmpty()) {
                     setErrorText("Can't move to the original file(s)");
                     return null;
                 }
@@ -605,7 +606,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private List<JetNamedDeclaration> getSelectedElementsToMove() {
-        return KotlinPackage.map(
+        return CollectionsKt.map(
                 memberTable.getSelectedMemberInfos(),
                 new Function1<KotlinMemberInfo, JetNamedDeclaration>() {
                     @Override
@@ -698,7 +699,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                                             public void refactoringCompleted() {
                                                 try {
                                                     if (targetFileName != null) {
-                                                        KotlinPackage.single(sourceFiles).setName(targetFileName);
+                                                        CollectionsKt.single(sourceFiles).setName(targetFileName);
                                                     }
                                                 }
                                                 finally {
@@ -712,19 +713,19 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                                 ) {
                                     @Override
                                     protected String getCommandName() {
-                                        return targetFileName != null ? "Move " + KotlinPackage.single(sourceFiles).getName() : "Move";
+                                        return targetFileName != null ? "Move " + CollectionsKt.single(sourceFiles).getName() : "Move";
                                     }
 
                                     @Override
                                     protected void performRefactoring(@NotNull UsageInfo[] usages) {
                                         if (targetFileName != null) {
-                                            JetFile sourceFile = KotlinPackage.single(sourceFiles);
+                                            JetFile sourceFile = CollectionsKt.single(sourceFiles);
                                             //noinspection ConstantConditions
                                             String temporaryName = UniqueNameGenerator.generateUniqueName(
                                                     "temp",
                                                     "",
                                                     ".kt",
-                                                    KotlinPackage.map(
+                                                    ArraysKt.map(
                                                             sourceFile.getContainingDirectory().getFiles(),
                                                             new Function1<PsiFile, String>() {
                                                                 @Override

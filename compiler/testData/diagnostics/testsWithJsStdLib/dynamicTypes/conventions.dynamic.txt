@@ -1,5 +1,5 @@
-public final fun plus(): dynamic
-public final fun minus(): dynamic
+public final fun unaryPlus(): dynamic
+public final fun unaryMinus(): dynamic
 public final fun not(): dynamic
 public final fun plus(/*0*/ p0: dynamic): dynamic
 public final fun plus(/*0*/ p0: dynamic): dynamic
@@ -65,8 +65,8 @@ public final fun get(/*0*/ p0: dynamic): dynamic
 public final fun divAssign(/*0*/ p0: dynamic): dynamic
 public final fun get(/*0*/ p0: dynamic): dynamic
 public final fun modAssign(/*0*/ p0: dynamic): dynamic
-public fun get(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic
+public fun getValue(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic
 public fun propertyDelegated(/*0*/ p0: dynamic): dynamic
-public fun get(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic
-public fun set(/*0*/ p0: dynamic, /*1*/ p1: dynamic, /*2*/ p2: dynamic): dynamic
+public fun getValue(/*0*/ p0: dynamic, /*1*/ p1: dynamic): dynamic
+public fun setValue(/*0*/ p0: dynamic, /*1*/ p1: dynamic, /*2*/ p2: dynamic): dynamic
 public fun propertyDelegated(/*0*/ p0: dynamic): dynamic

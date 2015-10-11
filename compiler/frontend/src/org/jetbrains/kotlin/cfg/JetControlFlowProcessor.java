@@ -22,7 +22,8 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartFMap;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.KotlinPackage;
+import kotlin.ArraysKt;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -244,8 +245,8 @@ public class JetControlFlowProcessor {
 
         private List<PseudoValue> elementsToValues(List<? extends JetElement> from) {
             if (from.isEmpty()) return Collections.emptyList();
-            return KotlinPackage.filterNotNull(
-                    KotlinPackage.map(
+            return CollectionsKt.filterNotNull(
+                    CollectionsKt.map(
                             from,
                             new Function1<JetElement, PseudoValue>() {
                                 @Override
@@ -496,7 +497,7 @@ public class JetControlFlowProcessor {
             if (setResolvedCall == null) {
                 generateArrayAccess(lhs, null);
 
-                List<PseudoValue> arguments = KotlinPackage.filterNotNull(
+                List<PseudoValue> arguments = CollectionsKt.filterNotNull(
                         Arrays.asList(getBoundOrUnreachableValue(lhs), rhsDeferredValue.invoke())
                 );
                 builder.magic(parentExpression, parentExpression, arguments, MagicKind.UNRESOLVED_CALL);
@@ -527,7 +528,7 @@ public class JetControlFlowProcessor {
                 Function0<PseudoValue> rhsDeferredValue,
                 final ResolvedCall<FunctionDescriptor> setResolvedCall
         ) {
-            List<ValueArgument> valueArguments = KotlinPackage.flatMapTo(
+            List<ValueArgument> valueArguments = CollectionsKt.flatMapTo(
                     setResolvedCall.getResultingDescriptor().getValueParameters(),
                     new ArrayList<ValueArgument>(),
                     new Function1<ValueParameterDescriptor, Iterable<? extends ValueArgument>>() {
@@ -541,7 +542,7 @@ public class JetControlFlowProcessor {
                     }
             );
 
-            ValueArgument rhsArgument = KotlinPackage.lastOrNull(valueArguments);
+            ValueArgument rhsArgument = CollectionsKt.lastOrNull(valueArguments);
             SmartFMap<PseudoValue, ValueParameterDescriptor> argumentValues = SmartFMap.emptyMap();
             for (ValueArgument valueArgument : valueArguments) {
                 ArgumentMapping argumentMapping = setResolvedCall.getArgumentMapping(valueArgument);
@@ -1051,7 +1052,7 @@ public class JetControlFlowProcessor {
                 builder.loadUnit(expression);
             }
             else {
-                copyValue(KotlinPackage.lastOrNull(statements), expression);
+                copyValue(CollectionsKt.lastOrNull(statements), expression);
             }
             if (declareLexicalScope) {
                 builder.exitLexicalScope(expression);
@@ -1279,7 +1280,7 @@ public class JetControlFlowProcessor {
 
                 if (!isElse) {
                     nextLabel = builder.createUnboundLabel("next 'when' entry");
-                    JetWhenCondition lastCondition = KotlinPackage.lastOrNull(conditions);
+                    JetWhenCondition lastCondition = ArraysKt.lastOrNull(conditions);
                     builder.nondeterministicJump(nextLabel, expression, builder.getBoundValue(lastCondition));
                 }
 
@@ -1415,7 +1416,7 @@ public class JetControlFlowProcessor {
         private void generateCallOrMarkUnresolved(@Nullable JetCallElement call) {
             if (call == null) return;
             if (!generateCall(call)) {
-                List<JetExpression> arguments = KotlinPackage.map(
+                List<JetExpression> arguments = CollectionsKt.map(
                         call.getValueArguments(),
                         new Function1<ValueArgument, JetExpression>() {
                             @Override

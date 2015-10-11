@@ -77,8 +77,7 @@ private fun insertSaveRestoreStackMarkers(
                 doneTryStartLabels.add(tryStartLabel)
 
                 val nopNode = tryStartLabel.findNextOrNull { it.hasOpcode() }!!
-                assert(nopNode.getOpcode() == Opcodes.NOP,
-                       "${methodNode.instructions.indexOf(nopNode)}: try block should start with NOP")
+                assert(nopNode.getOpcode() == Opcodes.NOP) { "${methodNode.instructions.indexOf(nopNode)}: try block should start with NOP" }
 
                 val newTryStartLabel = LabelNode(Label())
                 newTryStartLabels[tryStartLabel] = newTryStartLabel
@@ -93,8 +92,7 @@ private fun insertSaveRestoreStackMarkers(
                     doneHandlerLabels.add(handlerStartLabel)
 
                     val storeNode = handlerStartLabel.findNextOrNull { it.hasOpcode() }!!
-                    assert(storeNode.getOpcode() == Opcodes.ASTORE,
-                           "${methodNode.instructions.indexOf(storeNode)}: handler should start with ASTORE")
+                    assert(storeNode.getOpcode() == Opcodes.ASTORE) { "${methodNode.instructions.indexOf(storeNode)}: handler should start with ASTORE" }
 
                     methodNode.instructions.insert(storeNode, PseudoInsn.RESTORE_STACK_IN_TRY_CATCH.createInsnNode())
                 }
@@ -110,8 +108,7 @@ private fun collectDecompiledTryDescriptors(
 ) {
     for (tcb in methodNode.tryCatchBlocks) {
         if (tcb.isDefaultHandlerNode()) {
-            assert(decompiledTryDescriptorForHandler.containsKey(tcb.start),
-                   "${methodNode.debugString(tcb)}: default handler should occur after some regular handler")
+            assert(decompiledTryDescriptorForHandler.containsKey(tcb.start)) { "${methodNode.debugString(tcb)}: default handler should occur after some regular handler" }
         }
 
         val decompiledTryDescriptor = decompiledTryDescriptorForHandler.getOrPut(tcb.handler) {

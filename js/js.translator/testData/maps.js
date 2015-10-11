@@ -347,9 +347,11 @@
             bucketsByHash = {};
         };
 
-        this.isEmpty = function () {
-            return !buckets.length;
-        };
+        Object.defineProperty(this, "isEmpty", {
+            get: function () {
+                return !buckets.length;
+            }
+        });
 
         var createBucketAggregator = function (bucketFuncName) {
             return function () {
@@ -562,8 +564,10 @@
             iterator: function () {
                 return new Kotlin.PrimitiveHashMapValuesIterator(this.map.map, Object.keys(this.map.map));
             },
-            isEmpty: function () {
-                return this.map.isEmpty();
+            isEmpty: {
+                get: function () {
+                    return this.map.isEmpty;
+                }
             },
             size: {
                 get: function () {
@@ -594,8 +598,10 @@
                     return this.$size;
                 }
             },
-            isEmpty: function () {
-                return this.$size === 0;
+            isEmpty: {
+                get: function () {
+                    return this.$size === 0;
+                }
             },
             containsKey_za3rmp$: function (key) {
                 // TODO: should process "__proto__" separately?
@@ -669,7 +675,7 @@
                 return this.map;
             },
             toString: function() {
-                if (this.isEmpty()) return "{}";
+                if (this.isEmpty) return "{}";
                 var map = this.map;
                 var isFirst = true;
                 var builder = "{";
@@ -1039,9 +1045,9 @@
             return hashTable.size;
         }});
 
-        this.isEmpty = function () {
-            return hashTable.isEmpty();
-        };
+        Object.defineProperty(this, "isEmpty", { get: function () {
+            return hashTable.isEmpty;
+        }});
 
         this.clone = function () {
             var h = new HashSet(hashingFunction, equalityFunction);

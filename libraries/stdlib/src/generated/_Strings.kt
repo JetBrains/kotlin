@@ -342,14 +342,6 @@ public inline fun String.takeWhile(predicate: (Char) -> Boolean): String {
 }
 
 /**
- * Returns a list with elements in reversed order.
- */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun String.reverse(): String {
-    return reversed()
-}
-
-/**
  * Returns a string with characters in reversed order.
  */
 public fun String.reversed(): String {
@@ -394,17 +386,9 @@ public fun String.toList(): List<Char> {
     return this.toArrayList()
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
-    val capacity = (length()/.75f) + 1
-    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
 /**
@@ -416,6 +400,19 @@ public inline fun <K, V> String.toMap(selector: (Char) -> K, transform: (Char) -
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K> String.toMapBy(selector: (Char) -> K): Map<K, Char> {
+    val capacity = (length()/.75f) + 1
+    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
     }
     return result
 }
@@ -511,15 +508,6 @@ public inline fun <R, C : MutableCollection<in R>> String.mapTo(destination: C, 
  */
 public fun String.withIndex(): Iterable<IndexedValue<Char>> {
     return IndexingIterable { iterator() }
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun String.withIndices(): List<Pair<Int, Char>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, Char>>(), { index++ to it })
 }
 
 /**
@@ -750,11 +738,17 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
  * Returns a list of pairs built from characters of both strings with same indexes. List has length of shortest collection.
  */
 public fun String.zip(other: String): List<Pair<Char, Char>> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<Pair<Char, Char>>(length())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(first.next() to second.next())
+    return zip(other) { c1, c2 -> c1 to c2 }
+}
+
+/**
+ * Returns a list of values built from characters of both strings with same indexes using provided [transform]. List has length of shortest string.
+ */
+public inline fun <V> String.zip(other: String, transform: (Char, Char) -> V): List<V> {
+    val length = Math.min(this.length(), other.length())
+    val list = ArrayList<V>(length)
+    for (i in 0..length-1) {
+        list.add(transform(this[i], other[i]))
     }
     return list
 }
@@ -769,13 +763,5 @@ public fun String.asSequence(): Sequence<Char> {
             return this@asSequence.iterator()
         }
     }
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun String.sequence(): Sequence<Char> {
-    return asSequence()
 }
 

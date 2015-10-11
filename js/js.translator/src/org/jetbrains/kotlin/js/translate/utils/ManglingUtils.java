@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.translate.utils;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -176,9 +176,9 @@ public class ManglingUtils {
         if (jetScope != null) {
             final String finalNameToCompare = nameToCompare;
 
-            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(DescriptorKindFilter.CALLABLES, JetScope.ALL_NAME_FILTER);
+            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(DescriptorKindFilter.CALLABLES, JetScope.Companion.getALL_NAME_FILTER());
             List<CallableDescriptor> overloadedFunctions =
-                    KotlinPackage.flatMap(declarations, new Function1<DeclarationDescriptor, Iterable<? extends CallableDescriptor>>() {
+                    CollectionsKt.flatMap(declarations, new Function1<DeclarationDescriptor, Iterable<? extends CallableDescriptor>>() {
                 @Override
                 public Iterable<? extends CallableDescriptor> invoke(DeclarationDescriptor declarationDescriptor) {
                     if (declarationDescriptor instanceof ClassDescriptor && finalNameToCompare.equals(declarationDescriptor.getName().asString())) {
@@ -187,8 +187,8 @@ public class ManglingUtils {
 
                         if (!hasPrimaryConstructor(classDescriptor)) {
                             ConstructorDescriptorImpl fakePrimaryConstructor =
-                                    ConstructorDescriptorImpl.create(classDescriptor, Annotations.EMPTY, true, SourceElement.NO_SOURCE);
-                            return KotlinPackage.plus(constructors, fakePrimaryConstructor);
+                                    ConstructorDescriptorImpl.create(classDescriptor, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
+                            return CollectionsKt.plus(constructors, fakePrimaryConstructor);
                         }
 
                         return constructors;

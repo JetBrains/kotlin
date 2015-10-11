@@ -8,8 +8,5 @@
         <!-- Classpath -->
         <classpath path="cp1"/>
         <classpath path="cp2"/>
-        <!-- External annotations -->
-        <externalAnnotations path="a1/f1"/>
-        <externalAnnotations path="a2"/>
     </module>
 </modules>

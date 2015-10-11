@@ -35,3 +35,7 @@ public interface NullableLazyValue<T : Any> : Function0<T?> {
 public fun <T : Any> NotNullLazyValue<T>.get(_this: Any?, p: PropertyMetadata): T = invoke()
 
 public fun <T : Any> NullableLazyValue<T>.get(_this: Any?, p: PropertyMetadata): T? = invoke()
+
+public fun <T : Any> NotNullLazyValue<T>.getValue(_this: Any?, p: PropertyMetadata): T = invoke()
+
+public fun <T : Any> NullableLazyValue<T>.getValue(_this: Any?, p: PropertyMetadata): T? = invoke()

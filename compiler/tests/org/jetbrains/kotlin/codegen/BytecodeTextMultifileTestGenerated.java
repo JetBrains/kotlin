@@ -35,6 +35,12 @@ public class BytecodeTextMultifileTestGenerated extends AbstractBytecodeTextTest
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeTextMultifile"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("javaStatics")
+    public void testJavaStatics() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/javaStatics/");
+        doTestMultiFile(fileName);
+    }
+
     @TestMetadata("partMembersCall")
     public void testPartMembersCall() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/partMembersCall/");

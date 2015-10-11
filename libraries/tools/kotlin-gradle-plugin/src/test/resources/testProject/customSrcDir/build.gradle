@@ -39,11 +39,6 @@ test {
     useTestNG()
 }
 
-compileKotlin {
-    kotlinOptions.annotations = "externalAnnotations"
-}
-
-
 task wrapper(type: Wrapper) {
   gradleVersion="1.4"
 }

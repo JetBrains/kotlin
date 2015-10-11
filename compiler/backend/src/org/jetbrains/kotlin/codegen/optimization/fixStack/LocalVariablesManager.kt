@@ -26,7 +26,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
                 numRestoreMarkers == 0
 
         fun markRestoreNodeEmitted() {
-            assert(numRestoreMarkers > 0, "Emitted more restore markers than expected for $savedStackDescriptor")
+            assert(numRestoreMarkers > 0) { "Emitted more restore markers than expected for $savedStackDescriptor" }
             numRestoreMarkers--
         }
     }

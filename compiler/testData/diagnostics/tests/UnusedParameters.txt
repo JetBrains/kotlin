@@ -4,9 +4,9 @@ public fun f(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Int = ...
 public fun foo(/*0*/ s: kotlin.String): kotlin.Unit
 public fun get(/*0*/ p: kotlin.Any): kotlin.Unit
 public fun set(/*0*/ p: kotlin.Any): kotlin.Unit
-public fun kotlin.Any.get(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.String
+public fun kotlin.Any.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.String
 public fun kotlin.Any.propertyDelegated(/*0*/ prop: kotlin.PropertyMetadata): kotlin.Unit
-public fun kotlin.Any.set(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.String): kotlin.Unit
+public fun kotlin.Any.setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.String): kotlin.Unit
 
 public final class C {
     public constructor C(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Int, /*3*/ d: kotlin.Int, /*4*/ e: kotlin.Int = ..., /*5*/ f: kotlin.String)

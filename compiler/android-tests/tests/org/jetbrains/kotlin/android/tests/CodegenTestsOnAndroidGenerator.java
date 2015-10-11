@@ -146,9 +146,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                    JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                            myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
                    ) :
-                   JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(
-                           myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS
-                   );
+                   JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
         }
 
         public boolean shouldWriteFilesOnDisk() {

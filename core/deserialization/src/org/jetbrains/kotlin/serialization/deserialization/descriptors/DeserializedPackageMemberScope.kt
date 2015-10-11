@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.storage.get
 import org.jetbrains.kotlin.utils.addIfNotNull
 

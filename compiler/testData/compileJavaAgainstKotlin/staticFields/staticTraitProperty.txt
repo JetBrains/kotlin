@@ -4,7 +4,7 @@ public interface Test {
 
     public companion object Companion {
         private constructor Companion()
-        public final val valProp: kotlin.Int
+        public const final val valProp: kotlin.Int
     }
 }
 

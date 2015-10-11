@@ -2,7 +2,7 @@ import ppp.MyClassB
 
 fun foo(myCla<caret>)
 
-// ORDER: myClassB
-// ORDER: myClassA
-// ORDER: myClassC
-// ORDER: myClaaa
+// ORDER: myClassB: MyClassB
+// ORDER: myClassA: MyClassA
+// ORDER: myClassC: MyClassC
+// ORDER: myClaaa: MyClaaa

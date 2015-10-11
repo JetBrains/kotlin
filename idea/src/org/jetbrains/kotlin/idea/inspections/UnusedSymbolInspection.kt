@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
@@ -53,8 +55,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -164,6 +169,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration is JetNamedFunction && isConventionalName(declaration)) return
 
                 // More expensive, resolve-based checks
+                if (declaration.resolveToDescriptorIfAny() == null) return
                 if (isEntryPoint(declaration)) return
                 if (declaration is JetProperty && declaration.isSerializationImplicitlyUsedField()) return
                 if (isCompanionObject && (declaration as JetObjectDeclaration).hasSerializationImplicitlyUsedField()) return
@@ -213,7 +219,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     private fun isConventionalName(namedDeclaration: JetNamedDeclaration): Boolean {
         val name = namedDeclaration.getNameAsName()
-        return name!!.getOperationSymbolsToSearch().isNotEmpty() || name == OperatorConventions.INVOKE
+        return name!!.getOperationSymbolsToSearch().isNotEmpty() || name == OperatorNameConventions.INVOKE
     }
 
     private fun hasNonTrivialUsages(declaration: JetNamedDeclaration): Boolean {

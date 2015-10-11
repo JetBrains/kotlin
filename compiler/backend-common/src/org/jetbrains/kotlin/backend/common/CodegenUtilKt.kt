@@ -45,8 +45,8 @@ public object CodegenUtilKt {
         return descriptor.getDefaultType().getMemberScope().getDescriptors().asSequence()
             .filterIsInstance<CallableMemberDescriptor>()
             .filter { it.getKind() == CallableMemberDescriptor.Kind.DELEGATION }
-            .toList()
-            .sortBy(MemberComparator.INSTANCE as Comparator<CallableMemberDescriptor>) // Workaround for KT-6030
+            .asIterable()
+            .sortedWith(MemberComparator.INSTANCE)
             .keysToMapExceptNulls {
                 delegatingMember ->
 

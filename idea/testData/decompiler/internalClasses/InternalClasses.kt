@@ -23,9 +23,6 @@ fun f() {
     class MyLocalClass {
     }
 
-    interface MyLocalTrait {
-    }
-
     val myAnonymousObject = object {
     }
 

@@ -1,4 +1,4 @@
-// "Create member function 'minus'" "true"
+// "Create member function 'unaryMinus'" "true"
 
 class A<T>(val n: T)
 

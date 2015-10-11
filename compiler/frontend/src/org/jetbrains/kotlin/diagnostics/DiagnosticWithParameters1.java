@@ -46,6 +46,6 @@ public class DiagnosticWithParameters1<E extends PsiElement, A> extends Abstract
 
     @Override
     public String toString() {
-        return "(a = " + a + ")";
+        return getFactory() + "(a = " + a + ")";
     }
 }

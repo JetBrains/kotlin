@@ -25,8 +25,6 @@
 
     <property name="java.target" value="1.6"/>
 
-    <property name="external.annotations.path" value="${basedir}/annotations"/>
-
     <property name="dependencies.dir" value="${basedir}/dependencies"/>
 
     <condition property="bootstrap.or.local.build" value="true">
@@ -529,7 +527,7 @@
 
         <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin externalannotations="${external.annotations.path}" modulename="kotlin-compiler"/>
+            <withKotlin modulename="kotlin-compiler"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
@@ -630,7 +628,7 @@
         <cleandir dir="${output}/classes/ant"/>
         <javac2 destdir="${output}/classes/ant" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin externalannotations="${external.annotations.path}" modulename="kotlin-ant-tools"/>
+            <withKotlin modulename="kotlin-ant-tools"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <src>
                 <dirset dir="${basedir}/ant">
@@ -960,7 +958,7 @@
 
         <javac2 destdir="${output}/classes/idea-analysis" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin externalannotations="${external.annotations.path}" modulename="kotlin-for-upsource"/>
+            <withKotlin modulename="kotlin-for-upsource"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <src>
                 <dirset dir="${basedir}/idea/ide-common" includes="src"/>

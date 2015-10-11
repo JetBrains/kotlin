@@ -4,7 +4,6 @@
 package kotlin
 
 import java.util.*
-import kotlin.platform.platformName
 
 /**
  * Returns the value for the given key, or the implicit default value for this map.
@@ -40,7 +39,7 @@ public fun <K, V> Map<K, V>.withDefault(default: (key: K) -> V): Map<K, V> =
  *
  * When this map already have an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
  */
-@platformName("withDefaultMutable")
+@kotlin.jvm.JvmName("withDefaultMutable")
 public fun <K, V> MutableMap<K, V>.withDefault(default: (key: K) -> V): MutableMap<K, V> =
         when (this) {
             is MutableMapWithDefault -> this.map.withDefault(default)
@@ -66,7 +65,7 @@ private class MapWithDefaultImpl<K, out V>(public override val map: Map<K,V>, pr
     override fun hashCode(): Int = map.hashCode()
     override fun toString(): String = map.toString()
     override val size: Int get() = map.size()
-    override fun isEmpty(): Boolean = map.isEmpty()
+    override val isEmpty: Boolean get() = map.isEmpty()
     override fun containsKey(key: Any?): Boolean = map.containsKey(key)
     override fun containsValue(value: Any?): Boolean = map.containsValue(value)
     override fun get(key: Any?): V? = map.get(key)
@@ -82,7 +81,7 @@ private class MutableMapWithDefaultImpl<K, V>(public override val map: MutableMa
     override fun hashCode(): Int = map.hashCode()
     override fun toString(): String = map.toString()
     override val size: Int get() = map.size()
-    override fun isEmpty(): Boolean = map.isEmpty()
+    override val isEmpty: Boolean get() = map.isEmpty()
     override fun containsKey(key: Any?): Boolean = map.containsKey(key)
     override fun containsValue(value: Any?): Boolean = map.containsValue(value)
     override fun get(key: Any?): V? = map.get(key)

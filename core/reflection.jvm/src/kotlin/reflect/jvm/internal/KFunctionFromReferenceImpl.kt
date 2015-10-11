@@ -28,12 +28,12 @@ internal class KFunctionFromReferenceImpl(
         val reference: FunctionReference
 ): KFunctionImpl(
         reference.getOwner() as? KDeclarationContainerImpl ?: EmptyContainerForLocal,
-        reference.getName(),
+        reference.name,
         reference.getSignature()
 ) {
     override fun getArity() = reference.getArity()
 
-    override val name = reference.getName()
+    override val name = reference.name
 
     // The rest of the class is auto-generated. Use the following script:
     // (0..22).forEach { n -> println("override fun invoke(" + (1..n).joinToString { "p$it: Any?" } + "): Any? = reference(" + (1..n).joinToString { "p$it" } + ")") }

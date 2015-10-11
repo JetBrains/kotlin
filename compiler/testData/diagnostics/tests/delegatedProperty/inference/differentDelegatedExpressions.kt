@@ -21,12 +21,12 @@ fun getMyConcreteProperty() = MyProperty<Any?, String>()
 
 class MyProperty<R, T> {
 
-    public fun get(thisRef: R, desc: PropertyMetadata): T {
+    public fun getValue(thisRef: R, desc: PropertyMetadata): T {
         println("get $thisRef ${desc.name}")
         return null as T
     }
 
-    public fun set(thisRef: R, desc: PropertyMetadata, value: T) {
+    public fun setValue(thisRef: R, desc: PropertyMetadata, value: T) {
         println("set $thisRef ${desc.name} $value")
     }
 }

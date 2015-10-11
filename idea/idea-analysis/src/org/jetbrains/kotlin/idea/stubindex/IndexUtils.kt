@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.util.aliasImportMap
 fun indexTopLevelExtension<TDeclaration : JetCallableDeclaration>(stub: KotlinCallableStubBase<TDeclaration>, sink: IndexSink) {
     if (stub.isExtension()) {
         val declaration = stub.getPsi()
-        declaration.getReceiverTypeReference()!!.getTypeElement()?.index(declaration, sink)
+        declaration.getReceiverTypeReference()!!.typeElement?.index(declaration, sink)
     }
 }
 
@@ -43,7 +43,7 @@ private fun JetTypeElement.index<TDeclaration : JetCallableDeclaration>(declarat
             if (typeParameter != null) {
                 val bound = typeParameter.getExtendsBound()
                 if (bound != null) {
-                    bound.getTypeElement()?.index(declaration, sink)
+                    bound.typeElement?.index(declaration, sink)
                 }
                 else {
                     occurrence("Any")

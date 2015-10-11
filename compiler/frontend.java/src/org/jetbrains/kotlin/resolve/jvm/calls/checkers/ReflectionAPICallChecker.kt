@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.storage.get
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * If there's no Kotlin reflection implementation found in the classpath, checks that there are no usages
@@ -58,7 +58,7 @@ class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageMana
         // - 'get'/'set' on properties
         val name = descriptor.getName()
         when {
-            name == OperatorConventions.INVOKE -> return
+            name == OperatorNameConventions.INVOKE -> return
             name.asString() == "name" -> return
             (name.asString() == "get" || name.asString() == "set") &&
             kPropertyClasses.any { kProperty -> DescriptorUtils.isSubclass(containingClass, kProperty) } -> return

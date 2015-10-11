@@ -69,8 +69,10 @@ public class JdkAnnotationsValidityTest extends AbstractSdkAnnotationsValidityTe
 
     private static KotlinCoreEnvironment createFullJdkEnvironment(Disposable parentDisposable) {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar());
-        configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File("ideaSDK/lib/jdkAnnotations.jar"));
+                ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar()
+        );
+        // TODO: move this test to idea-tests and re-implement it for ExternalAnnotationsManagerImpl
+        // configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File("ideaSDK/lib/jdkAnnotations.jar"));
         return KotlinCoreEnvironment.createForTests(parentDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 

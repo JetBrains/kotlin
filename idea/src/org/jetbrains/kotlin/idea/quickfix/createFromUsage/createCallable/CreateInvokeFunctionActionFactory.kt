@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Parame
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object CreateInvokeFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetCallExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): JetCallExpression? {
@@ -42,11 +42,11 @@ object CreateInvokeFunctionActionFactory : CreateCallableMemberFromUsageFactory<
         val parameters = element.valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
-                    it.getArgumentName()?.getReferenceExpression()?.getReferencedName()
+                    it.getArgumentName()?.referenceExpression?.getReferencedName()
             )
         }
 
         val returnType = TypeInfo(element, Variance.OUT_VARIANCE)
-        return FunctionInfo(OperatorConventions.INVOKE.asString(), receiverType, returnType, parameterInfos = parameters, isOperator = true)
+        return FunctionInfo(OperatorNameConventions.INVOKE.asString(), receiverType, returnType, parameterInfos = parameters, isOperator = true)
     }
 }

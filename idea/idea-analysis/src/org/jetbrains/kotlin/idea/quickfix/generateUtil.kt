@@ -18,15 +18,18 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.SmartPointerManager
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetWithExpressionInitializer
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.SmartList
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.utils.ifEmpty
 
 public fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement) {
     val project = element.project
@@ -95,4 +98,74 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
 public fun Editor.moveCaret(offset: Int, scrollType: ScrollType = ScrollType.RELATIVE) {
     getCaretModel().moveToOffset(offset)
     getScrollingModel().scrollToCaret(scrollType)
+}
+
+private fun findInsertAfterAnchor(editor: Editor, body: JetClassBody): PsiElement? {
+    val afterAnchor = body.lBrace ?: return null
+
+    val offset = editor.caretModel.offset
+    val offsetCursorElement = PsiTreeUtil.findFirstParent(body.containingFile.findElementAt(offset)) {
+        it.parent == body
+    }
+
+    if (offsetCursorElement is PsiWhiteSpace) {
+        return removeAfterOffset(offset, offsetCursorElement)
+    }
+
+    if (offsetCursorElement != null && offsetCursorElement != body.rBrace) {
+        return offsetCursorElement
+    }
+
+    return afterAnchor
+}
+
+private fun removeAfterOffset(offset: Int, whiteSpace: PsiWhiteSpace): PsiElement {
+    val spaceNode = whiteSpace.node
+    if (spaceNode.textRange.contains(offset)) {
+        var beforeWhiteSpaceText = spaceNode.text.substring(0, offset - spaceNode.startOffset)
+        if (!StringUtil.containsLineBreak(beforeWhiteSpaceText)) {
+            // Prevent insertion on same line
+            beforeWhiteSpaceText += "\n"
+        }
+
+        val factory = JetPsiFactory(whiteSpace.project)
+
+        val insertAfter = whiteSpace.prevSibling
+        whiteSpace.delete()
+
+        val beforeSpace = factory.createWhiteSpace(beforeWhiteSpaceText)
+        insertAfter.parent.addAfter(beforeSpace, insertAfter)
+
+        return insertAfter.nextSibling
+    }
+
+    return whiteSpace
+}
+
+public fun <T : JetDeclaration> generateMembers(
+        editor: Editor,
+        classOrObject: JetClassOrObject,
+        generators: Collection<() -> T>
+): List<T> {
+    generators.ifEmpty { return emptyList() }
+
+    return runWriteAction<List<T>> {
+        val body = classOrObject.getOrCreateBody()
+
+        var afterAnchor = findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList()
+        val insertedMembers = generators.mapTo(SmartList<T>()) {
+            @Suppress("UNCHECKED_CAST")
+            (body.addAfter(it(), afterAnchor) as T).apply { afterAnchor = this }
+        }
+
+        ShortenReferences.DEFAULT.process(insertedMembers)
+
+        moveCaretIntoGeneratedElement(editor, insertedMembers.first())
+
+        insertedMembers
+    }
+}
+
+public fun <T : JetDeclaration> generateMember(editor: Editor, classOrObject: JetClassOrObject, declaration: T): T {
+    return generateMembers(editor, classOrObject, listOf({ declaration })).single()
 }

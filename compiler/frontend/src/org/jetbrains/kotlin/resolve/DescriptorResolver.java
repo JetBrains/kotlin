@@ -20,7 +20,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
+import kotlin.SetsKt;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -228,7 +229,7 @@ public class DescriptorResolver {
 
         SimpleFunctionDescriptorImpl functionDescriptor = SimpleFunctionDescriptorImpl.create(
                 classDescriptor,
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 functionName,
                 CallableMemberDescriptor.Kind.SYNTHESIZED,
                 parameter.getSource()
@@ -241,10 +242,9 @@ public class DescriptorResolver {
                 Collections.<ValueParameterDescriptor>emptyList(),
                 returnType,
                 Modality.FINAL,
-                property.getVisibility(),
-                true,
-                false
+                property.getVisibility()
         );
+        functionDescriptor.setOperator(true);
 
         trace.record(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter, functionDescriptor);
 
@@ -261,7 +261,7 @@ public class DescriptorResolver {
 
         SimpleFunctionDescriptorImpl functionDescriptor = SimpleFunctionDescriptorImpl.create(
                 classDescriptor,
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 COPY_METHOD_NAME,
                 CallableMemberDescriptor.Kind.SYNTHESIZED,
                 classDescriptor.getSource()
@@ -291,9 +291,7 @@ public class DescriptorResolver {
                 parameterDescriptors,
                 returnType,
                 Modality.FINAL,
-                Visibilities.PUBLIC,
-                false,
-                false
+                Visibilities.PUBLIC
         );
 
         trace.record(BindingContext.DATA_CLASS_COPY_FUNCTION, classDescriptor, functionDescriptor);
@@ -346,12 +344,12 @@ public class DescriptorResolver {
 
         Annotations allAnnotations =
                 annotationResolver.resolveAnnotationsWithoutArguments(scope, valueParameter.getModifierList(), trace);
-        Annotations valueParameterAnnotations = Annotations.EMPTY;
+        Annotations valueParameterAnnotations = Annotations.Companion.getEMPTY();
 
         if (modifierList != null) {
             if (valueParameter.hasValOrVar()) {
                 AnnotationSplitter annotationSplitter = AnnotationSplitter.create(
-                        storageManager, allAnnotations, KotlinPackage.setOf(CONSTRUCTOR_PARAMETER));
+                        storageManager, allAnnotations, SetsKt.setOf(CONSTRUCTOR_PARAMETER));
                 valueParameterAnnotations = annotationSplitter.getAnnotationsForTarget(CONSTRUCTOR_PARAMETER);
             }
             else {
@@ -415,7 +413,7 @@ public class DescriptorResolver {
 
         TypeParameterDescriptorImpl typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDescriptor,
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 typeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
@@ -678,13 +676,13 @@ public class DescriptorResolver {
     private static void initializeWithDefaultGetterSetter(PropertyDescriptorImpl propertyDescriptor) {
         PropertyGetterDescriptorImpl getter = propertyDescriptor.getGetter();
         if (getter == null && !Visibilities.isPrivate(propertyDescriptor.getVisibility())) {
-            getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY);
+            getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.Companion.getEMPTY());
             getter.initialize(propertyDescriptor.getType());
         }
 
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         if (setter == null && propertyDescriptor.isVar()) {
-            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.EMPTY);
+            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.Companion.getEMPTY());
         }
         propertyDescriptor.initialize(getter, setter);
     }
@@ -736,7 +734,7 @@ public class DescriptorResolver {
             }
         });
 
-        Annotations propertyAnnotations = new CompositeAnnotations(KotlinPackage.listOf(
+        Annotations propertyAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
                 annotationSplitter.getAnnotationsForTargets(PROPERTY, FIELD),
                 annotationSplitter.getOtherAnnotations()));
 
@@ -987,7 +985,7 @@ public class DescriptorResolver {
         JetPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptorImpl setterDescriptor = null;
         if (setter != null) {
-            Annotations annotations = new CompositeAnnotations(KotlinPackage.listOf(
+            Annotations annotations = new CompositeAnnotations(CollectionsKt.listOf(
                     annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER),
                     annotationResolver.resolveAnnotationsWithoutArguments(scope, setter.getModifierList(), trace)));
             JetParameter parameter = setter.getParameter();
@@ -1057,7 +1055,7 @@ public class DescriptorResolver {
         PropertyGetterDescriptorImpl getterDescriptor;
         JetPropertyAccessor getter = property.getGetter();
         if (getter != null) {
-            Annotations getterAnnotations = new CompositeAnnotations(KotlinPackage.listOf(
+            Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
                     annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER),
                     annotationSplitter.getOtherAnnotations(),
                     annotationResolver.resolveAnnotationsWithoutArguments(scope, getter.getModifierList(), trace)));
@@ -1137,7 +1135,7 @@ public class DescriptorResolver {
                                    getDispatchReceiverParameterIfNeeded(classDescriptor), (ReceiverParameterDescriptor) null);
 
         Annotations setterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
-        Annotations getterAnnotations = new CompositeAnnotations(KotlinPackage.listOf(
+        Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
                 annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER)));
 
         PropertyGetterDescriptorImpl getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, getterAnnotations);

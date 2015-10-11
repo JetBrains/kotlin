@@ -6,4 +6,4 @@ fun f() {
     val handler = { b<caret> }
 }
 
-// ABSENT: boo
+// ABSENT: boo: Boo

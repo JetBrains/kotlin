@@ -41,7 +41,7 @@ public class KotlinStringLiteralTextEscaper(host: JetStringTemplateExpression): 
                 is JetLiteralStringTemplateEntry -> {
                     val textRange = rangeInsideHost.intersection(childRange)!!.shiftRight(-childRange.getStartOffset())
                     outChars.append(child.getText(), textRange.getStartOffset(), textRange.getEndOffset())
-                    textRange.getLength().times {
+                    repeat(textRange.length) {
                         sourceOffsetsList.add(sourceOffset++)
                     }
                 }
@@ -52,7 +52,7 @@ public class KotlinStringLiteralTextEscaper(host: JetStringTemplateExpression): 
                     }
                     val unescaped = child.getUnescapedValue()
                     outChars.append(unescaped)
-                    unescaped.length().times {
+                    repeat(unescaped.length()) {
                         sourceOffsetsList.add(sourceOffset)
                     }
                     sourceOffset += child.getTextLength()

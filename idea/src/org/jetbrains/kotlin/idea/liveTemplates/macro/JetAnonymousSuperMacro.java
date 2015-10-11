@@ -102,7 +102,7 @@ public class JetAnonymousSuperMacro extends Macro {
 
         List<PsiNamedElement> result = new ArrayList<PsiNamedElement>();
 
-        for (DeclarationDescriptor descriptor : scope.getDescriptors(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, JetScope.ALL_NAME_FILTER)) {
+        for (DeclarationDescriptor descriptor : scope.getDescriptors(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, JetScope.Companion.getALL_NAME_FILTER())) {
             if (!(descriptor instanceof ClassDescriptor)) continue;
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (!classDescriptor.getModality().isOverridable()) continue;

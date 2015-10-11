@@ -107,7 +107,7 @@ public class JetPsiFactory(private val project: Project) {
 
     //the pair contains the first and the last elements of a range
     public fun createWhitespaceAndArrow(): Pair<PsiElement, PsiElement> {
-        val functionType = createType("() -> Int").getTypeElement() as JetFunctionType
+        val functionType = createType("() -> Int").typeElement as JetFunctionType
         return Pair(functionType.findElementAt(2)!!, functionType.findElementAt(3)!!)
     }
 
@@ -266,8 +266,8 @@ public class JetPsiFactory(private val project: Project) {
         val function = createFunction("fun foo() { when(12) { " + entryText + " } }")
         val whenEntry = PsiTreeUtil.findChildOfType(function, javaClass<JetWhenEntry>())
 
-        assert(whenEntry != null, "Couldn't generate when entry")
-        assert(entryText == whenEntry!!.getText(), "Generate when entry text differs from the given text")
+        assert(whenEntry != null) { "Couldn't generate when entry" }
+        assert(entryText == whenEntry!!.text) { "Generate when entry text differs from the given text" }
 
         return whenEntry
     }

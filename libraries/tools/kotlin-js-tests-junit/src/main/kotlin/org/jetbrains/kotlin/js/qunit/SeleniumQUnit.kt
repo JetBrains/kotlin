@@ -78,7 +78,7 @@ public class SeleniumQUnit(val driver: WebDriver) {
 
             for (message in failMessages)
                 println("FAILED: $message")
-            fail(failMessages.join("\n"))
+            fail(failMessages.joinToString("\n"))
         }
     }
 

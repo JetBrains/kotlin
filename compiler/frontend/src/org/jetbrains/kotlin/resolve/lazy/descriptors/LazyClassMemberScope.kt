@@ -109,7 +109,7 @@ public open class LazyClassMemberScope(
 
             override fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent) as JetDeclaration?
-                assert(declaration != null, "fromCurrent can not be a fake override")
+                assert(declaration != null) { "fromCurrent can not be a fake override" }
                 trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()))
             }
         })

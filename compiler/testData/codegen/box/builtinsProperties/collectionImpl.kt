@@ -2,11 +2,11 @@ class A1 : MutableCollection<String> {
     override val size: Int
         get() = 56
 
-    override fun isEmpty(): Boolean {
+    override val isEmpty: Boolean get() {
         throw UnsupportedOperationException()
     }
 
-    override fun contains(o: Any?): Boolean {
+    override fun contains(o: String): Boolean {
         throw UnsupportedOperationException()
     }
 
@@ -14,7 +14,7 @@ class A1 : MutableCollection<String> {
         throw UnsupportedOperationException()
     }
 
-    override fun containsAll(c: Collection<Any?>): Boolean {
+    override fun containsAll(c: Collection<String>): Boolean {
         throw UnsupportedOperationException()
     }
 

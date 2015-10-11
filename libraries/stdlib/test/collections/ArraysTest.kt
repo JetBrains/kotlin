@@ -525,7 +525,7 @@ class ArraysTest {
         expect(0.toByte()) { byteArrayOf(3, 2, 1) reduce { a, b -> (a - b).toByte() } }
         expect(0.toShort()) { shortArrayOf(3, 2, 1) reduce { a, b -> (a - b).toShort() } }
 
-        assertTrue(fails {
+        assertTrue(assertFails {
             intArrayOf().reduce { a, b -> a + b }
         } is UnsupportedOperationException)
     }
@@ -541,7 +541,7 @@ class ArraysTest {
         expect(2.toByte()) { byteArrayOf(1, 2, 3) reduceRight { a, b -> (a - b).toByte() } }
         expect(2.toShort()) { shortArrayOf(1, 2, 3) reduceRight { a, b -> (a - b).toShort() } }
 
-        assertTrue(fails {
+        assertTrue(assertFails {
             intArrayOf().reduceRight { a, b -> a + b }
         } is UnsupportedOperationException)
     }
@@ -581,7 +581,7 @@ class ArraysTest {
         expect(listOf(false), { booleanArrayOf(true, false).drop(1) })
         expect(listOf('b'), { charArrayOf('a', 'b').drop(1) })
         expect(listOf("b"), { arrayOf("a", "b").drop(1) })
-        fails {
+        assertFails {
             listOf(2).drop(-1)
         }
     }
@@ -599,7 +599,7 @@ class ArraysTest {
         expect(listOf(true), { booleanArrayOf(true, false).dropLast(1) })
         expect(listOf('a'), { charArrayOf('a', 'b').dropLast(1) })
         expect(listOf("a"), { arrayOf("a", "b").dropLast(1) })
-        fails {
+        assertFails {
             listOf(1).dropLast(-1)
         }
     }
@@ -645,7 +645,7 @@ class ArraysTest {
         expect(listOf(true), { booleanArrayOf(true, false).take(1) })
         expect(listOf('a'), { charArrayOf('a', 'b').take(1) })
         expect(listOf("a"), { arrayOf("a", "b").take(1) })
-        fails {
+        assertFails {
             listOf(1).take(-1)
         }
     }
@@ -663,7 +663,7 @@ class ArraysTest {
         expect(listOf(false), { booleanArrayOf(true, false).takeLast(1) })
         expect(listOf('b'), { charArrayOf('a', 'b').takeLast(1) })
         expect(listOf("b"), { arrayOf("a", "b").takeLast(1) })
-        fails {
+        assertFails {
             listOf(1).takeLast(-1)
         }
     }

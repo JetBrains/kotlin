@@ -13,7 +13,7 @@ val Int.foo: String by O
 object O {
     val metadatas = HashSet<PropertyMetadata>()
 
-    fun get(t: Any?, p: PropertyMetadata): String {
+    fun getValue(t: Any?, p: PropertyMetadata): String {
         metadatas.add(p)
         return ""
     }

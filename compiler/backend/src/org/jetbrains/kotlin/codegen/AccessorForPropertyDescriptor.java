@@ -55,7 +55,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
             int index,
             @Nullable JetSuperExpression superCallExpression
     ) {
-        super(containingDeclaration, null, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
+        super(containingDeclaration, null, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
               original.isVar(), Name.identifier("access$" + getIndexedAccessorSuffix(original, index)),
               Kind.DECLARATION, SourceElement.NO_SOURCE, /* lateInit = */ false, /* isConst = */ false);
 
@@ -68,7 +68,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
 
     public static class Getter extends PropertyGetterDescriptorImpl implements AccessorForCallableDescriptor<PropertyGetterDescriptor> {
         public Getter(AccessorForPropertyDescriptor property) {
-            super(property, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
+            super(property, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
                   false, false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
             initialize(property.getType());
         }
@@ -89,7 +89,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
 
     public static class Setter extends PropertySetterDescriptorImpl implements AccessorForCallableDescriptor<PropertySetterDescriptor>{
         public Setter(AccessorForPropertyDescriptor property) {
-            super(property, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
+            super(property, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
                   false, false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
             initializeDefault();
         }

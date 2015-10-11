@@ -39,7 +39,8 @@ public class AndroidSdkAnnotationsValidityTest extends AbstractSdkAnnotationsVal
     @Override
     protected KotlinCoreEnvironment createEnvironment(Disposable parentDisposable) {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.ANDROID_API, JetTestUtils.getAnnotationsJar());
+                ConfigurationKind.JDK_ONLY, TestJdkKind.ANDROID_API, JetTestUtils.getAnnotationsJar()
+        );
         return KotlinCoreEnvironment.createForTests(parentDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 

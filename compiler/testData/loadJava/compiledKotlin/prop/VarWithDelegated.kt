@@ -6,6 +6,6 @@ class A {
 }
 
 class MyProperty<T> {
-    fun get(t: T, p: PropertyMetadata): Int = 42
-    fun set(t: T, p: PropertyMetadata, i: Int) {}
+    fun getValue(t: T, p: PropertyMetadata): Int = 42
+    fun setValue(t: T, p: PropertyMetadata, i: Int) {}
 }

@@ -3,7 +3,7 @@ package foo
 import java.util.ArrayList;
 
 fun box(): String {
-    val list = arrayListOf(3, "2", -1, null, 0, 8, 5, "3", 77, -15)
+    val list: List<Any?> = arrayListOf(3, "2", -1, null, 0, 8, 5, "3", 77, -15)
     val subset = arrayListOf(3, "2", -1, null)
     val empty = arrayListOf<Any?>()
     val withOtherElements = arrayListOf(3, 54, null)

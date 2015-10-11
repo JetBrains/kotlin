@@ -38,7 +38,7 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
     }
 
     private fun assertNotFinished() {
-        assert(internalTasks == null, "Can't add candidates after the resulting tasks were computed.")
+        assert(internalTasks == null) { "Can't add candidates after the resulting tasks were computed." }
     }
 
     public fun getTasks(): List<ResolutionTask<D, F>> {

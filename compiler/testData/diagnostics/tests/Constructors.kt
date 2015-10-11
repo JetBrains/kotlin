@@ -24,7 +24,6 @@ class WithCPI_Dup(<!UNUSED_PARAMETER!>x<!> : Int) {
 
 class WithCPI(x : Int) {
   val a = 1
-  val b : Int = <!BACKING_FIELD_USAGE_DEPRECATED!>$a<!>
   val xy : Int = x
 }
 

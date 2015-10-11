@@ -82,7 +82,8 @@ public class KotlinPullUpHandler : AbstractPullPushMembersHandler(
                         && declaration.canRefactor()) declaration as PsiNamedElement else null
                 }
                 .filterNotNull()
-                .toSortedListBy { it.qualifiedClassNameForRendering() }
+                .asIterable()
+                .sortedBy { it.qualifiedClassNameForRendering() }
 
         if (superClasses.isEmpty()) {
             val containingClass = classOrObject.getStrictParentOfType<JetClassOrObject>()

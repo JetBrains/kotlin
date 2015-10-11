@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 import org.jetbrains.kotlin.types.expressions.unqualifiedSuper.UnqualifiedSuperPackage;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
@@ -501,7 +502,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             checker.check(resolvedCall, resolutionContext);
         }
 
-        components.symbolUsageValidator.validateCall(descriptor, trace, expression);
+        components.symbolUsageValidator.validateCall(resolvedCall, descriptor, trace, expression);
     }
 
     private static boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {
@@ -518,7 +519,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType type = resolveClassLiteral(expression, c);
         if (type != null && !type.isError()) {
             return components.dataFlowAnalyzer.createCheckedTypeInfo(
-                    components.reflectionTypes.getKClassType(Annotations.EMPTY, type), c, expression
+                    components.reflectionTypes.getKClassType(Annotations.Companion.getEMPTY(), type), c, expression
             );
         }
 
@@ -574,14 +575,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     private static JetType substituteWithStarProjections(@NotNull ClassDescriptor descriptor) {
         TypeConstructor typeConstructor = descriptor.getTypeConstructor();
         List<TypeProjection> arguments =
-                KotlinPackage.map(typeConstructor.getParameters(), new Function1<TypeParameterDescriptor, TypeProjection>() {
+                CollectionsKt.map(typeConstructor.getParameters(), new Function1<TypeParameterDescriptor, TypeProjection>() {
                     @Override
                     public TypeProjection invoke(TypeParameterDescriptor descriptor) {
                         return TypeUtils.makeStarProjection(descriptor);
                     }
                 });
 
-        return JetTypeImpl.create(Annotations.EMPTY, descriptor, false, arguments);
+        return JetTypeImpl.create(Annotations.Companion.getEMPTY(), descriptor, false, arguments);
     }
 
     private static boolean isAllowedInClassLiteral(@NotNull JetType type) {
@@ -943,7 +944,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 result = false;
             } else {
                 if (setter != null) {
-                    components.symbolUsageValidator.validateCall(setter, trace, reportOn);
+                    components.symbolUsageValidator.validateCall(null, setter, trace, reportOn);
                 }
             }
         }
@@ -1066,7 +1067,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 Collections.singletonList(right)
         );
         OverloadResolutionResults<FunctionDescriptor> resolutionResults =
-                components.callResolver.resolveCallWithGivenName(newContext, call, operationSign, OperatorConventions.EQUALS);
+                components.callResolver.resolveCallWithGivenName(newContext, call, operationSign, OperatorNameConventions.EQUALS);
 
         traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
             @Override
@@ -1085,7 +1086,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         if (resolutionResults.isSuccess()) {
             FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
-            if (ensureBooleanResult(operationSign, OperatorConventions.EQUALS, equals.getReturnType(),
+            if (ensureBooleanResult(operationSign, OperatorNameConventions.EQUALS, equals.getReturnType(),
                                                                      context)) {
                 ensureNonemptyIntersectionOfOperandTypes(expression, context);
             }
@@ -1107,7 +1108,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context,
             @NotNull JetSimpleNameExpression operationSign
     ) {
-        JetTypeInfo typeInfo = getTypeInfoForBinaryCall(OperatorConventions.COMPARE_TO, context, expression);
+        JetTypeInfo typeInfo = getTypeInfoForBinaryCall(OperatorNameConventions.COMPARE_TO, context, expression);
         JetType compareToReturnType = typeInfo.getType();
         JetType type = null;
         if (compareToReturnType != null && !compareToReturnType.isError()) {
@@ -1237,9 +1238,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 contextWithDataFlow,
                 CallMaker.makeCall(callElement, receiver, null, operationSign, Collections.singletonList(leftArgument)),
                 operationSign,
-                OperatorConventions.CONTAINS);
+                OperatorNameConventions.CONTAINS);
         JetType containsType = OverloadResolutionResultsUtil.getResultingType(resolutionResult, context.contextDependency);
-        ensureBooleanResult(operationSign, OperatorConventions.CONTAINS, containsType, context);
+        ensureBooleanResult(operationSign, OperatorNameConventions.CONTAINS, containsType, context);
 
         if (left != null) {
             dataFlowInfo = facade.getTypeInfo(left, contextWithDataFlow).getDataFlowInfo().and(dataFlowInfo);

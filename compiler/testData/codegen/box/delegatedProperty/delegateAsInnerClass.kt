@@ -3,8 +3,8 @@ class A {
 
     class Delegate {
         var inner = 1
-        fun get(t: Any?, p: PropertyMetadata): Int = inner
-        fun set(t: Any?, p: PropertyMetadata, i: Int) { inner = i }
+        fun getValue(t: Any?, p: PropertyMetadata): Int = inner
+        fun setValue(t: Any?, p: PropertyMetadata, i: Int) { inner = i }
     }
 }
 

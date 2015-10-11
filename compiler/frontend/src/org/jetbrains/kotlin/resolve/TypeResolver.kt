@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
@@ -65,7 +66,7 @@ public class TypeResolver(
     }
 
     private fun resolveType(c: TypeResolutionContext, typeReference: JetTypeReference): JetType {
-        assert(!c.allowBareTypes, "Use resolvePossiblyBareType() when bare types are allowed")
+        assert(!c.allowBareTypes) { "Use resolvePossiblyBareType() when bare types are allowed" }
         return resolvePossiblyBareType(c, typeReference).getActualType()
     }
 
@@ -106,7 +107,7 @@ public class TypeResolver(
     private fun doResolvePossiblyBareType(c: TypeResolutionContext, typeReference: JetTypeReference): PossiblyBareType {
         val annotations = annotationResolver.resolveAnnotationsWithoutArguments(c.scope, typeReference.getAnnotationEntries(), c.trace)
 
-        val typeElement = typeReference.getTypeElement()
+        val typeElement = typeReference.typeElement
 
         val type = resolveTypeElement(c, annotations, typeElement)
         c.trace.recordScope(c.scope, typeReference)
@@ -136,6 +137,10 @@ public class TypeResolver(
                 if (referenceExpression == null || referencedName == null) return
 
                 c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor)
+
+                if (type.hasTypesWithTypeArgsInside()) {
+                    c.trace.report(Errors.GENERICS_IN_CONTAINING_TYPE_NOT_ALLOWED.on(type))
+                }
 
                 when (classifierDescriptor) {
                     is TypeParameterDescriptor -> {

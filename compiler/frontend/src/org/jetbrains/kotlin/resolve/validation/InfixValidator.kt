@@ -23,13 +23,19 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.ErrorUtils
 
 public class InfixValidator : SymbolUsageValidator {
 
-    override fun validateCall(targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
+    override fun validateCall(
+            resolvedCall: ResolvedCall<*>?,
+            targetDescriptor: CallableDescriptor,
+            trace: BindingTrace,
+            element: PsiElement
+    ) {
         val functionDescriptor = targetDescriptor as? FunctionDescriptor ?: return
         if (functionDescriptor.isDynamic() || ErrorUtils.isError(functionDescriptor)) return
         if (isInfixCall(element) && !functionDescriptor.isInfix) {

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cfg.pseudocode;
 
 import com.google.common.collect.*;
 import com.intellij.util.containers.BidirectionalMap;
-import kotlin.KotlinPackage;
+import kotlin.MapsKt;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -315,7 +315,7 @@ public class PseudocodeImpl implements Pseudocode {
 
     private void addValueUsage(PseudoValue value, Instruction usage) {
         if (usage instanceof MergeInstruction) return;
-        KotlinPackage.getOrPut(
+        MapsKt.getOrPut(
                 valueUsages,
                 value,
                 new Function0<List<Instruction>>() {

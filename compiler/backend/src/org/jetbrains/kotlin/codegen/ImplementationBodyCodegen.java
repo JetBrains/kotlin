@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
@@ -76,7 +76,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
-import static kotlin.KotlinPackage.firstOrNull;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
@@ -809,7 +808,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Type type = typeMapper.mapType(getBuiltIns(descriptor).getArrayType(INVARIANT, descriptor.getDefaultType()));
 
         FunctionDescriptor valuesFunction =
-                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUES, NoLookupLocation.FROM_BACKEND), new Function1<FunctionDescriptor, Boolean>() {
+                CollectionsKt.single(descriptor.getStaticScope().getFunctions(ENUM_VALUES, NoLookupLocation.FROM_BACKEND), new Function1<FunctionDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(FunctionDescriptor descriptor) {
                         return CodegenUtil.isEnumValuesMethod(descriptor);
@@ -829,7 +828,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateEnumValueOfMethod() {
         FunctionDescriptor valueOfFunction =
-                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUE_OF, NoLookupLocation.FROM_BACKEND), new Function1<FunctionDescriptor, Boolean>() {
+                CollectionsKt.single(descriptor.getStaticScope().getFunctions(ENUM_VALUE_OF, NoLookupLocation.FROM_BACKEND), new Function1<FunctionDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(FunctionDescriptor descriptor) {
                         return CodegenUtil.isEnumValueOfMethod(descriptor);
@@ -985,18 +984,30 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForSingleton() {
-        if (isEnumEntry(descriptor) || isCompanionObject(descriptor)) return;
+        if (isEnumEntry(descriptor)) return;
 
-        if (isNonCompanionObject(descriptor)) {
+        if (isObject(descriptor)) {
             StackValue.Field field = StackValue.singleton(descriptor, typeMapper);
             v.newField(OtherOrigin(myClass), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+
+            if (isNonCompanionObject(descriptor)) {
+                StackValue.Field oldField = StackValue.oldSingleton(descriptor, typeMapper);
+                v.newField(OtherOrigin(myClass), ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_DEPRECATED, oldField.name, oldField.type.getDescriptor(), null, null);
+            }
 
             if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
             // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
+            markLineNumberForSyntheticFunction(descriptor, v);
             v.anew(classAsmType);
             v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
+            if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+                //We should load containing class to initialize companion fields
+                StackValue companion = StackValue.singletonForCompanion(descriptor, typeMapper);
+                companion.put(companion.type, v);
+                AsmUtil.pop(v, companion.type);
+            }
             return;
         }
 
@@ -1005,10 +1016,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
 
-        JetObjectDeclaration companionObject = firstOrNull(((JetClass) myClass).getCompanionObjects());
+        JetObjectDeclaration companionObject = CollectionsKt.firstOrNull(((JetClass) myClass).getCompanionObjects());
         assert companionObject != null : "Companion object not found: " + myClass.getText();
 
-        StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
+        StackValue.Field field = StackValue.singletonForCompanion(companionObjectDescriptor, typeMapper);
         v.newField(OtherOrigin(companionObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
@@ -1066,13 +1077,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateCompanionObjectInitializer(@NotNull ClassDescriptor companionObject) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
-        FunctionDescriptor constructor = (FunctionDescriptor) context.accessibleDescriptor(
-                KotlinPackage.single(companionObject.getConstructors()), /* superCallExpression = */ null
-        );
-        generateMethodCallTo(constructor, null, codegen.v);
-        codegen.v.dup();
-        StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));
-        StackValue.singleton(companionObject, typeMapper).store(instance, codegen.v, true);
+        StackValue.singletonForCompanion(companionObject, typeMapper)
+                .store(StackValue.singleton(companionObject, typeMapper), codegen.v, true);
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
@@ -1139,8 +1145,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor,
                                            getDelegationConstructorCall(bindingContext, constructorDescriptor));
 
-        if (isNonCompanionObject(descriptor)) {
+        if (isObject(descriptor)) {
             StackValue.singleton(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
+            if (isNonCompanionObject(descriptor)) {
+                StackValue.oldSingleton(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
+            }
         }
 
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
@@ -1674,7 +1683,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateEnumEntries() {
         if (descriptor.getKind() != ClassKind.ENUM_CLASS) return;
 
-        List<JetEnumEntry> enumEntries = KotlinPackage.filterIsInstance(element.getDeclarations(), JetEnumEntry.class);
+        List<JetEnumEntry> enumEntries = CollectionsKt.filterIsInstance(element.getDeclarations(), JetEnumEntry.class);
 
         for (JetEnumEntry enumEntry : enumEntries) {
             ClassDescriptor descriptor = getNotNull(bindingContext, BindingContext.CLASS, enumEntry);

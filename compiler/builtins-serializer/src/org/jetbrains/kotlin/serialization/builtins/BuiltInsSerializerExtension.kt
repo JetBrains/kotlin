@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.*
+import org.jetbrains.kotlin.types.JetType
 
 public class BuiltInsSerializerExtension : SerializerExtension() {
     private val stringTable = StringTableImpl()
@@ -81,6 +82,12 @@ public class BuiltInsSerializerExtension : SerializerExtension() {
     override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
         for (annotation in descriptor.annotations) {
             proto.addExtension(BuiltInsProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
+    }
+
+    override fun serializeType(type: JetType, proto: ProtoBuf.Type.Builder) {
+        for (annotation in type.annotations) {
+            proto.addExtension(BuiltInsProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
     }
 }

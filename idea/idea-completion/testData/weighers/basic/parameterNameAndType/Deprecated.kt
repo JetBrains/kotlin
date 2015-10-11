@@ -4,6 +4,6 @@ class MyClassC
 
 fun foo(myCla<caret>)
 
-// ORDER: myClassA
-// ORDER: myClassC
-// ORDER: myClassB
+// ORDER: myClassA: MyClassA
+// ORDER: myClassC: MyClassC
+// ORDER: myClassB: MyClassB

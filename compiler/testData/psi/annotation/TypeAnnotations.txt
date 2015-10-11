@@ -79,7 +79,7 @@ JetFile: TypeAnnotations.kt
         TYPE_ARGUMENT_LIST
           PsiElement(LT)('<')
           TYPE_PROJECTION
-            MODIFIER_LIST
+            TYPE_REFERENCE
               ANNOTATION
                 PsiElement(AT)('@')
                 PsiElement(LBRACKET)('[')
@@ -90,8 +90,7 @@ JetFile: TypeAnnotations.kt
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('x')
                 PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
+              PsiWhiteSpace(' ')
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('A')

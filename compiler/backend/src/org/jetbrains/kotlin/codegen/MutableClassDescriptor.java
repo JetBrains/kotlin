@@ -66,7 +66,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     @NotNull
     @Override
     public Annotations getAnnotations() {
-        return Annotations.EMPTY;
+        return Annotations.Companion.getEMPTY();
     }
 
     public void setModality(@NotNull Modality modality) {
@@ -142,7 +142,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         assert typeConstructor == null : typeConstructor;
         this.typeConstructor = TypeConstructorImpl.createForClass(
                 this,
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 !getModality().isOverridable(),
                 getName().asString(),
                 typeParameters,

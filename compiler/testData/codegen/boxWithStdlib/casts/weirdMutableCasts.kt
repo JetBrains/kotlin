@@ -3,8 +3,8 @@ fun unsupported(): Nothing = throw UnsupportedOperationException()
 class Weird : Iterator<String>, MutableIterable<String>, MutableMap.MutableEntry<String, String> {
     override fun next(): String = unsupported()
     override fun hasNext(): Boolean = unsupported()
-    override fun getKey(): String = unsupported()
-    override fun getValue(): String = unsupported()
+    override val key: String get() = unsupported()
+    override val value: String get() = unsupported()
     override fun setValue(value: String): String = unsupported()
     override fun iterator(): MutableIterator<String> = unsupported()
 }

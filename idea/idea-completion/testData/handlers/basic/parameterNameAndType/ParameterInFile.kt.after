@@ -4,4 +4,4 @@ fun foo(xxx: ((java.io.File) -> List<String>)?)
 
 fun bar(xxx: ((File) -> List<String>)?<caret>)
 
-// ELEMENT: xxx
+// ELEMENT: xxx: ((File) -> List<String>)?

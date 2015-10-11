@@ -1,7 +1,5 @@
 $TESTDATA_DIR$/simple.kt
 -classpath
 not/existing/path
--annotations
-yet/another/not/existing/path
 -d
 $TEMP_DIR$

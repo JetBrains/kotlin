@@ -2,16 +2,16 @@ package org.jetbrains.idl2k.util
 
 import java.util.*
 
-fun List<List<*>>.mutationsCount() = if (isEmpty()) 0 else fold(1) { acc, e -> acc * e.size() }
+fun List<List<*>>.mutationsCount() = if (isEmpty()) 0 else fold(1) { acc, e -> acc * e.size }
 
 fun <T> List<List<T>>.mutations() : List<List<T>> {
-    val indices = IntArray(size())
-    val sizes = map { it.size() }
+    val indices = IntArray(size)
+    val sizes = map { it.size }
 
     fun next() : Boolean {
         var carry = 1
 
-        for (pos in size() - 1 downTo 0) {
+        for (pos in size - 1 downTo 0) {
             var index = indices[pos]
             val size = sizes[pos]
 

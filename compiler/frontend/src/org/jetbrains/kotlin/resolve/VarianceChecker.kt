@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
@@ -161,7 +162,8 @@ class VarianceChecker(private val trace: BindingTrace) {
             val classifierDescriptor = jetType.getConstructor().getDeclarationDescriptor()
             if (classifierDescriptor is TypeParameterDescriptor) {
                 val declarationVariance = classifierDescriptor.getVariance()
-                if (!declarationVariance.allowsPosition(position)) {
+                if (!declarationVariance.allowsPosition(position)
+                        && !jetType.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.unsafeVariance)) {
                     diagnosticSink.report(
                             Errors.TYPE_VARIANCE_CONFLICT.on(
                                     psiElement,

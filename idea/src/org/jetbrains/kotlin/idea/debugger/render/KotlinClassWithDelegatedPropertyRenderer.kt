@@ -90,7 +90,7 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
         }
 
         if (XDebuggerSettingsManager.getInstance()!!.getDataViewSettings().isSortValues()) {
-            children.sortBy(NodeManagerImpl.getNodeComparator())
+            children.sortedWith(NodeManagerImpl.getNodeComparator())
         }
 
         builder.setChildren(children)

@@ -54,7 +54,7 @@ public class GenerationUtils {
 
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files) {
-        return compileManyFilesGetGenerationStateForTest(project, files, PackagePartProvider.EMPTY);
+        return compileManyFilesGetGenerationStateForTest(project, files, PackagePartProvider.Companion.getEMPTY());
     }
 
     @NotNull

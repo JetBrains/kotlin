@@ -44,7 +44,7 @@ public abstract class AbstractLazyTypeParameterDescriptor extends AbstractTypePa
             int index,
             @NotNull SourceElement source
     ) {
-        super(storageManager, containingDeclaration, Annotations.EMPTY /* TODO */, name, variance, isReified, index, source);
+        super(storageManager, containingDeclaration, Annotations.Companion.getEMPTY() /* TODO */, name, variance, isReified, index, source);
     }
 
     @NotNull

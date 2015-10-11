@@ -33,7 +33,7 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
+        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
     }
 
     @Override

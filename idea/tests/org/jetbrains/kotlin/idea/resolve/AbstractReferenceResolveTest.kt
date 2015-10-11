@@ -81,7 +81,7 @@ public abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsi
                 actualResolvedTo.add(ReferenceUtils.renderAsGotoImplementation(result.getElement()!!))
             }
 
-            UsefulTestCase.assertOrderedEquals("Not matching for reference #$index", actualResolvedTo.sort(), expectedReferences.sort())
+            UsefulTestCase.assertOrderedEquals("Not matching for reference #$index", actualResolvedTo.sorted(), expectedReferences.sorted())
         }
     }
 

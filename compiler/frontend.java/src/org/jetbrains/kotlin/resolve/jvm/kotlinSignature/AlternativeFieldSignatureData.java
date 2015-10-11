@@ -21,7 +21,6 @@ import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.kotlin.load.java.components.ExternalAnnotationResolver;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.psi.JetProperty;
 import org.jetbrains.kotlin.types.JetType;
@@ -34,13 +33,12 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
     private JetType altReturnType;
 
     public AlternativeFieldSignatureData(
-            @NotNull ExternalAnnotationResolver externalAnnotationResolver,
             @NotNull JavaField field,
             @NotNull JetType originalReturnType,
             @NotNull Project project,
             boolean isVar
     ) {
-        String signature = SignaturesUtil.getKotlinSignature(externalAnnotationResolver, field);
+        String signature = SignaturesUtil.getKotlinSignature(field);
 
         if (signature == null) {
             setAnnotated(false);

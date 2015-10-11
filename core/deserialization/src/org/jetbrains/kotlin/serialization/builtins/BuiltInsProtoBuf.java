@@ -16,6 +16,7 @@ public final class BuiltInsProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.propertyAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.parameterAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.typeAnnotation);
   }
   public static final int CLASS_NAME_FIELD_NUMBER = 150;
   /**
@@ -147,6 +148,21 @@ public final class BuiltInsProtoBuf {
       java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> parameterAnnotation = com.google.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
+        null,
+        150,
+        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        false);
+  public static final int TYPE_ANNOTATION_FIELD_NUMBER = 150;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Type { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Type,
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> typeAnnotation = com.google.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         150,

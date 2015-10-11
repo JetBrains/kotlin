@@ -18,8 +18,6 @@ package test.numbers
 
 import kotlin.test.*
 
-import java.util.*
-import kotlin.test.*
 import org.junit.Test as test
 
 class CompanionObjectsExtensionsTest {

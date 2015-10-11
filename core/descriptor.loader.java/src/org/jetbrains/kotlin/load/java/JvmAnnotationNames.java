@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import kotlin.KotlinPackage;
+import kotlin.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -52,6 +52,7 @@ public final class JvmAnnotationNames {
     public static final String DATA_FIELD_NAME = "data";
     public static final String STRINGS_FIELD_NAME = "strings";
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
+    public static final Name DEPRECATED_ANNOTATION_MESSAGE = Name.identifier("message");
     public static final Name TARGET_ANNOTATION_MEMBER_NAME = Name.identifier("allowedTargets");
 
     public static final FqName TARGET_ANNOTATION = new FqName("java.lang.annotation.Target");
@@ -93,7 +94,7 @@ public final class JvmAnnotationNames {
 
     // When these annotations appear on a declaration, they are copied to the _type_ of the declaration, becoming type annotations
     // See also DescriptorRendererOptions#excludedTypeAnnotationClasses
-    public static final Set<FqName> ANNOTATIONS_COPIED_TO_TYPES = KotlinPackage.setOf(
+    public static final Set<FqName> ANNOTATIONS_COPIED_TO_TYPES = SetsKt.setOf(
             JETBRAINS_READONLY_ANNOTATION,
             JETBRAINS_MUTABLE_ANNOTATION,
             JETBRAINS_NOT_NULL_ANNOTATION,

@@ -1,6 +1,6 @@
 class K {
     fun reverse(s: String): String {
-        return s.reverse()
+        return s.reversed()
     }
 
     companion object {

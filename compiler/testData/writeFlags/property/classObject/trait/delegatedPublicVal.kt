@@ -1,5 +1,5 @@
 class TestDelegate() {
-    fun get(thisRef: Any?, desc: PropertyMetadata): Int {
+    fun getValue(thisRef: Any?, desc: PropertyMetadata): Int {
         return 10
     }
 }
@@ -20,7 +20,7 @@ interface Test {
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test$Companion, prop$delegate
-// FLAGS: ACC_FINAL, ACC_PRIVATE
+// FLAGS: ACC_FINAL, ACC_PRIVATE, ACC_STATIC
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test, prop$delegate

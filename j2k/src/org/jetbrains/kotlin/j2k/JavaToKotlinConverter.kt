@@ -189,7 +189,7 @@ public class JavaToKotlinConverter(
     private fun processUsages(refs: Collection<ReferenceInfo>) {
         for (fileRefs in refs.groupBy { it.file }.values()) { // group by file for faster sorting
             ReferenceLoop@
-            for ((reference, target, file, processings) in fileRefs.sortBy(ReferenceComparator)) {
+            for ((reference, target, file, processings) in fileRefs.sortedWith(ReferenceComparator)) {
                 val processors = when (reference.getElement().getLanguage()) {
                     JavaLanguage.INSTANCE -> processings.map { it.javaCodeProcessor }.filterNotNull()
                     KotlinLanguage.INSTANCE -> processings.map { it.kotlinCodeProcessor }.filterNotNull()

@@ -1,5 +1,0 @@
-<root>
-    <item name='org.gradle.api.artifacts.dsl.DependencyHandler org.gradle.api.artifacts.Dependency create(java.lang.Object)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

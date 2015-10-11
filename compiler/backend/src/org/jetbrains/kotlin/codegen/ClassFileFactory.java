@@ -22,7 +22,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.DataOutputStream;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -120,7 +120,7 @@ public class ClassFileFactory implements OutputFileCollection {
 
         if (builder.getPackagePartsCount() != 0) {
             state.getProgress().reportOutput(sourceFiles, new File(outputFilePath));
-            generators.put(outputFilePath, new OutAndSourceFileList(KotlinPackage.toList(sourceFiles)) {
+            generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
                 @Override
                 public byte[] asBytes(ClassBuilderFactory factory) {
                     try {

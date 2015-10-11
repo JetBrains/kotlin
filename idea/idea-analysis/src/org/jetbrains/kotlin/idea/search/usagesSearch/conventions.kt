@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
         .builder<JetToken>()
@@ -37,7 +38,9 @@ public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
         .add(JetTokens.BY_KEYWORD)
         .build()
 
-public val INDEXING_OPERATION_NAMES = setOf(GET, SET)
+public val INDEXING_OPERATION_NAMES = setOf(OperatorNameConventions.GET, OperatorNameConventions.SET)
+
+public val DELEGATE_ACCESSOR_NAMES = setOf(Name.identifier("getValue"), Name.identifier("setValue"))
 
 public val IN_OPERATIONS_TO_SEARCH = setOf(JetTokens.IN_KEYWORD)
 
@@ -45,18 +48,19 @@ public val COMPARISON_OPERATIONS_TO_SEARCH = setOf(JetTokens.LT, JetTokens.GT)
 
 public fun Name.getOperationSymbolsToSearch(): Set<JetToken> {
     when (this) {
-        COMPARE_TO -> return COMPARISON_OPERATIONS_TO_SEARCH
-        EQUALS -> return EQUALS_OPERATIONS
-        IDENTITY_EQUALS -> return IDENTITY_EQUALS_OPERATIONS
-        CONTAINS -> return IN_OPERATIONS_TO_SEARCH
-        ITERATOR -> return IN_OPERATIONS_TO_SEARCH
-        in INDEXING_OPERATION_NAMES -> return setOf(JetTokens.LBRACKET, JetTokens.BY_KEYWORD)
+        OperatorNameConventions.COMPARE_TO -> return COMPARISON_OPERATIONS_TO_SEARCH
+        OperatorNameConventions.EQUALS -> return EQUALS_OPERATIONS
+        OperatorNameConventions.IDENTITY_EQUALS -> return IDENTITY_EQUALS_OPERATIONS
+        OperatorNameConventions.CONTAINS -> return IN_OPERATIONS_TO_SEARCH
+        OperatorNameConventions.ITERATOR -> return IN_OPERATIONS_TO_SEARCH
+        in INDEXING_OPERATION_NAMES -> return setOf(JetTokens.LBRACKET)
+        in DELEGATE_ACCESSOR_NAMES -> return setOf(JetTokens.BY_KEYWORD)
         DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return setOf(JetTokens.BY_KEYWORD)
     }
 
     if (isComponentLike(this)) return setOf(JetTokens.LPAR)
 
-    val unaryOp = UNARY_OPERATION_NAMES.inverse()[this]
+    val unaryOp = UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED[this]
     if (unaryOp != null) return setOf(unaryOp)
 
     val binaryOp = BINARY_OPERATION_NAMES.inverse()[this]

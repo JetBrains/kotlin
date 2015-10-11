@@ -12,7 +12,7 @@ private object EmptyMap : Map<Any, Nothing>, Serializable {
     override fun toString(): String = "{}"
 
     override val size: Int get() = 0
-    override fun isEmpty(): Boolean = true
+    override val isEmpty: Boolean get() = true
 
     override fun containsKey(key: Any?): Boolean = false
     override fun containsValue(value: Any?): Boolean = false
@@ -102,18 +102,6 @@ public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V> = this ?: emptyMap()
  * whether an object is contained in the map.
  */
 public operator fun <K,V> Map<K,V>.contains(key : K) : Boolean = containsKey(key)
-
-/**
- * Allows to access the key of a map entry as a property. Equivalent to `getKey()`.
- */
-public val <K, V> Map.Entry<K, V>.key: K
-    get() = getKey()
-
-/**
- * Allows to access the value of a map entry as a property. Equivalent to `getValue()`.
- */
-public val <K, V> Map.Entry<K, V>.value: V
-    get() = getValue()
 
 /**
  * Returns the key component of the map entry.

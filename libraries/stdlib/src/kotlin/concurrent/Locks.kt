@@ -54,16 +54,3 @@ public inline fun <T> ReentrantReadWriteLock.write(action: () -> T): T {
         wl.unlock()
     }
 }
-
-/**
- * Executes the given [operation] and awaits for CountDownLatch.
- *
- * @return the return value of the action.
- */
-@Deprecated("Use CountDownLatch(Int) instead and await it manually.")
-public fun <T> Int.latch(operation: CountDownLatch.() -> T): T {
-    val latch = CountDownLatch(this)
-    val result = latch.operation()
-    latch.await()
-    return result
-}

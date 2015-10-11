@@ -56,9 +56,9 @@ abstract class OrderedIterableTests<T : Iterable<String>>(data: T, empty: T) : I
     fun elementAt() {
         expect("foo") { data.elementAt(0) }
         expect("bar") { data.elementAt(1) }
-        fails { data.elementAt(2) }
-        fails { data.elementAt(-1) }
-        fails { empty.elementAt(0) }
+        assertFails { data.elementAt(2) }
+        assertFails { data.elementAt(-1) }
+        assertFails { empty.elementAt(0) }
 
         expect("foo") { data.elementAtOrElse(0, {""} )}
         expect("zoo") { data.elementAtOrElse(-1, { "zoo" })}
@@ -72,10 +72,10 @@ abstract class OrderedIterableTests<T : Iterable<String>>(data: T, empty: T) : I
     @Test
     fun first() {
         expect("foo") { data.first() }
-        fails {
+        assertFails {
             data.first { it.startsWith("x") }
         }
-        fails {
+        assertFails {
             empty.first()
         }
         expect("foo") { data.first { it.startsWith("f") } }
@@ -93,10 +93,10 @@ abstract class OrderedIterableTests<T : Iterable<String>>(data: T, empty: T) : I
     @Test
     fun last() {
         assertEquals("bar", data.last())
-        fails {
+        assertFails {
             data.last { it.startsWith("x") }
         }
-        fails {
+        assertFails {
             empty.last()
         }
         expect("foo") { data.last { it.startsWith("f") } }
@@ -190,11 +190,11 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
 
     @Test
     fun single() {
-        fails { data.single() }
-        fails { empty.single() }
+        assertFails { data.single() }
+        assertFails { empty.single() }
         expect("foo") { data.single { it.startsWith("f") } }
         expect("bar") { data.single { it.startsWith("b") } }
-        fails {
+        assertFails {
             data.single { it.length() == 3 }
         }
     }

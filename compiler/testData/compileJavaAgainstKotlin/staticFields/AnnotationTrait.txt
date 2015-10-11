@@ -43,12 +43,12 @@ public interface Test {
 
     public companion object Companion {
         private constructor Companion()
-        public final val vbyte: kotlin.Byte
-        public final val vchar: kotlin.Char
-        public final val vdouble: kotlin.Double
-        public final val vfloat: kotlin.Float
-        public final val vint: kotlin.Int
-        public final val vlong: kotlin.Long
-        public final val vstring: kotlin.String
+        public const final val vbyte: kotlin.Byte
+        public const final val vchar: kotlin.Char
+        public const final val vdouble: kotlin.Double
+        public const final val vfloat: kotlin.Float
+        public const final val vint: kotlin.Int
+        public const final val vlong: kotlin.Long
+        public const final val vstring: kotlin.String
     }
 }

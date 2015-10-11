@@ -28,7 +28,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,8 +72,8 @@ public abstract class BaseDiagnosticsTest extends
     public static final String CHECK_TYPE_IMPORT = "import " + CHECK_TYPE_PACKAGE + ".*";
 
     public static final String EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE = "EXPLICIT_FLEXIBLE_TYPES";
-    public static final String EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString();
-    public static final String EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName().asString();
+    public static final String EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.Companion.getFLEXIBLE_TYPE_CLASSIFIER().getPackageFqName().asString();
+    public static final String EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.Companion.getFLEXIBLE_TYPE_CLASSIFIER().getRelativeClassName().asString();
     private static final String EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS
             = "\npackage " + EXPLICIT_FLEXIBLE_PACKAGE +
               "\npublic class " + EXPLICIT_FLEXIBLE_CLASS_NAME + "<L, U>";
@@ -96,7 +96,7 @@ public abstract class BaseDiagnosticsTest extends
     @Override
     protected void doMultiFileTest(File file, final Map<String, ModuleAndDependencies> modules, List<TestFile> testFiles) {
         for (final ModuleAndDependencies moduleAndDependencies : modules.values()) {
-            List<TestModule> dependencies = KotlinPackage.map(
+            List<TestModule> dependencies = CollectionsKt.map(
                     moduleAndDependencies.dependencies,
                     new Function1<String, TestModule>() {
                         @Override
@@ -347,7 +347,7 @@ public abstract class BaseDiagnosticsTest extends
 
             final boolean[] ok = { true };
             List<Diagnostic> diagnostics = ContainerUtil.filter(
-                    KotlinPackage.plus(CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile, markDynamicCalls, dynamicCallDescriptors),
+                    CollectionsKt.plus(CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile, markDynamicCalls, dynamicCallDescriptors),
                                        jvmSignatureDiagnostics),
                     whatDiagnosticsToConsider
             );

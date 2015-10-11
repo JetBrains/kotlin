@@ -38,10 +38,6 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-    public void testBackendField() throws Exception {
-        checkFooBoxIsOk();
-    }
-
     public void testSetter() throws Exception {
         checkFooBoxIsOk();
     }

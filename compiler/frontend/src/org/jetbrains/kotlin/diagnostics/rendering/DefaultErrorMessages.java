@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.renderer.MultiRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.MappedExtensionProvider;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -112,13 +112,13 @@ public class DefaultErrorMessages {
         MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
         MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
 
-        MAP.put(EXPOSED_PROPERTY_TYPE, "Deprecated: property effective visibility ''{0}'' should not be better than its type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_FUNCTION_RETURN_TYPE, "Deprecated: function effective visibility ''{0}'' should not be better that its return type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_PARAMETER_TYPE, "Deprecated: function effective visibility ''{0}'' should not be better than its parameter type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_RECEIVER_TYPE, "Deprecated: member effective visibility ''{0}'' should not be better that its receiver type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_TYPE_PARAMETER_BOUND, "Deprecated: generic effective visibility ''{0}'' should not be better than its type parameter bound effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_SUPER_CLASS, "Deprecated: subclass effective visibility ''{0}'' should not be better that its superclass effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_SUPER_INTERFACE, "Deprecated: sub-interface effective visibility ''{0}'' should not be better that its super-interface effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_PROPERTY_TYPE, "Deprecated: property effective visibility ''{0}'' should be the same or less permissive than its type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_FUNCTION_RETURN_TYPE, "Deprecated: function effective visibility ''{0}'' should be the same or less permissive than its return type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_PARAMETER_TYPE, "Deprecated: function effective visibility ''{0}'' should be the same or less permissive than its parameter type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_RECEIVER_TYPE, "Deprecated: member effective visibility ''{0}'' should be the same or less permissive than its receiver type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_TYPE_PARAMETER_BOUND, "Deprecated: generic effective visibility ''{0}'' should be the same or less permissive than its type parameter bound effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_SUPER_CLASS, "Deprecated: subclass effective visibility ''{0}'' should be the same or less permissive than its superclass effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_SUPER_INTERFACE, "Deprecated: sub-interface effective visibility ''{0}'' should be the same or less permissive than its super-interface effective visibility ''{1}''", TO_STRING, TO_STRING);
 
         MAP.put(REDECLARATION, "Redeclaration: {0}", STRING);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
@@ -169,8 +169,8 @@ public class DefaultErrorMessages {
         MAP.put(INACCESSIBLE_BACKING_FIELD, "The backing field is not accessible here");
         MAP.put(NOT_PROPERTY_BACKING_FIELD, "The referenced variable is not a property and doesn't have backing field");
 
-        MAP.put(BACKING_FIELD_SYNTAX_DEPRECATED, "This backing field syntax is deprecated, use 'field' instead");
-        MAP.put(BACKING_FIELD_USAGE_DEPRECATED, "Backing field usage is deprecated here, soon it will be possible only in property accessors");
+        MAP.put(BACKING_FIELD_OLD_SYNTAX, "This backing field syntax is forbidden, use 'field' instead");
+        MAP.put(BACKING_FIELD_USAGE_FORBIDDEN, "Backing field usage is forbidden here");
 
         MAP.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, "Mixing named and positioned arguments is not allowed");
         MAP.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter");
@@ -218,6 +218,7 @@ public class DefaultErrorMessages {
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_ABSTRACT_PROPERTY, "''lateinit'' modifier is not allowed on abstract properties");
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_PRIMARY_CONSTRUCTOR_PARAMETER, "''lateinit'' modifier is not allowed on primary constructor parameters");
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE, "''lateinit'' modifier is not allowed on nullable properties");
+        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE, "''lateinit'' modifier is not allowed on primitive type properties");
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
         MAP.put(BACKING_FIELD_IN_TRAIT, "Property in an interface cannot have a backing field");
@@ -279,9 +280,9 @@ public class DefaultErrorMessages {
         MAP.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING);
 
         MAP.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER,
-                "This property has a custom setter, so initialization using backing field required", NAME);
+                "This property cannot be initialized inside ''init'' block because it has a custom setter", NAME);
         MAP.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER,
-                "Setter of this property can be overridden, so initialization using backing field required", NAME);
+                "This property cannot be initialized inside ''init'' block because it has an open setter", NAME);
 
         MAP.put(UNREACHABLE_CODE, "Unreachable code", TO_STRING);
 
@@ -291,6 +292,7 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATED_SYMBOL_WITH_MESSAGE, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
+        MAP.put(LOCAL_INTERFACE_NOT_ALLOWED, "''{0}'' is an interface so it cannot be local. Try to use anonymous object or abstract class instead", NAME);
         MAP.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated");
         MAP.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated");
 
@@ -307,6 +309,8 @@ public class DefaultErrorMessages {
 
         MAP.put(NO_GET_METHOD, "No get method providing array access");
         MAP.put(NO_SET_METHOD, "No set method providing array access");
+
+        MAP.put(DEPRECATED_UNARY_PLUS_MINUS, "Deprecated convention for ''{0}''. Rename to ''{1}''", NAME, STRING);
 
         MAP.put(INC_DEC_SHOULD_NOT_RETURN_UNIT, "Functions inc(), dec() shouldn't return Unit to be used by operators ++, --");
         MAP.put(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT, "Function ''{0}'' should return Unit to be used by corresponding operator ''{1}''",
@@ -339,6 +343,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, "Type parameter ''{0}'' is not an expression", NAME);
         MAP.put(TYPE_PARAMETER_ON_LHS_OF_DOT, "Type parameter ''{0}'' cannot have or inherit a companion object, so it cannot be on the left hand side of dot", NAME);
         MAP.put(NO_GENERICS_IN_SUPERTYPE_SPECIFIER, "Generic arguments of the base type must be specified");
+        MAP.put(GENERICS_IN_CONTAINING_TYPE_NOT_ALLOWED, "Generic arguments in containing types are not allowed");
         MAP.put(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE, "Nested {0} accessed via instance reference", RENDER_CLASS_OR_OBJECT_NAME);
         MAP.put(NESTED_CLASS_SHOULD_BE_QUALIFIED, "Nested {0} should be qualified as ''{1}''", RENDER_CLASS_OR_OBJECT_NAME, TO_STRING);
 
@@ -358,6 +363,7 @@ public class DefaultErrorMessages {
         MAP.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
 
         MAP.put(DELEGATE_SPECIAL_FUNCTION_MISSING, "Missing ''{0}'' method on delegate of type ''{1}''", STRING, RENDER_TYPE);
+        MAP.put(DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION, " ''{0}'' method convention on type ''{1}'' is deprecated. Rename to ''{2}''", NAME, RENDER_TYPE, STRING);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "Overload resolution ambiguity on method ''{0}'': {1}",  STRING, AMBIGUOUS_CALLS);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, "Property delegate must have a ''{0}'' method. None of the following functions is suitable: {1}",
                 STRING, AMBIGUOUS_CALLS);
@@ -496,6 +502,8 @@ public class DefaultErrorMessages {
 
         MAP.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Placing function type parameters after the function name is deprecated");
 
+        MAP.put(MISPLACED_TYPE_PARAMETER_CONSTRAINTS, "If a type parameter has multiple constraints, they all need to be placed in the 'where' clause");
+
         MAP.put(TYPE_VARIANCE_CONFLICT, "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
                 new MultiRenderer<VarianceConflictDiagnosticData>() {
                     @NotNull
@@ -557,7 +565,7 @@ public class DefaultErrorMessages {
         MAP.put(CONFLICTING_OVERLOADS, "''{0}'' is already defined in {1}", COMPACT_WITH_MODIFIERS, STRING);
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
-                                   "The function '" + OperatorConventions.INVOKE.asString() + "()' is not found",
+                                   "The function '" + OperatorNameConventions.INVOKE.asString() + "()' is not found",
                 ELEMENT_TEXT, new Renderer<JetType>() {
                     @NotNull
                     @Override
@@ -647,6 +655,8 @@ public class DefaultErrorMessages {
                     "Names of the parameter #{1} conflict in the following members of supertypes: ''{0}''. " +
                     "This may cause problems when calling this function with named arguments.", commaSeparated(FQ_NAMES_IN_TYPES), TO_STRING);
 
+        MAP.put(NAME_FOR_AMBIGUOUS_PARAMETER, "Named argument is not allowed for a parameter with an ambiguous name");
+
         MAP.put(DATA_CLASS_WITHOUT_PARAMETERS, "Data class without primary constructor parameters are deprecated");
         MAP.put(DATA_CLASS_VARARG_PARAMETER, "Primary constructor vararg parameters are deprecated for data classes");
         MAP.put(DATA_CLASS_NOT_PROPERTY_PARAMETER, "Primary constructor parameters without val / var are deprecated for data classes");
@@ -670,7 +680,7 @@ public class DefaultErrorMessages {
         MAP.put(NOTHING_TO_INLINE, "Expected performance impact of inlining ''{0}'' can be insignificant. Inlining works best for functions with lambda parameters", SHORT_NAMES_IN_TYPES);
         MAP.put(USAGE_IS_NOT_INLINABLE, "Illegal usage of inline-parameter ''{0}'' in ''{1}''. Add ''noinline'' modifier to the parameter declaration", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         MAP.put(NULLABLE_INLINE_PARAMETER, "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Add ''noinline'' modifier to the parameter declaration or make its type not nullable", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
-        MAP.put(RECURSION_IN_INLINE, "Inline function ''{1}'' can't be recursive", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        MAP.put(RECURSION_IN_INLINE, "Inline function ''{1}'' cannot be recursive", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         //Inline non locals
         MAP.put(NON_LOCAL_RETURN_NOT_ALLOWED, "Can''t inline ''{0}'' here: it may contain non-local returns. Add ''crossinline'' modifier to parameter declaration ''{0}''", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
         MAP.put(INLINE_CALL_CYCLE, "The ''{0}'' invocation is a part of inline cycle", NAME);

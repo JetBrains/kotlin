@@ -83,7 +83,7 @@ public fun <K> Iterable<K>.mapToIndex(): Map<K, Int> {
     return map
 }
 
-public fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) body() else this
+public inline fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) body() else this
 
 public fun <T: Any> emptyOrSingletonList(item: T?): List<T> = if (item == null) listOf() else listOf(item)
 

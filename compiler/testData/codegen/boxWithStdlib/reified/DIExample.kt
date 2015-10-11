@@ -9,7 +9,7 @@ class Project {
         }
 }
 
-inline fun <reified T : Any> Project.get(t: Any?, p: PropertyMetadata): T = getInstance(javaClass<T>())
+inline fun <reified T : Any> Project.getValue(t: Any?, p: PropertyMetadata): T = getInstance(javaClass<T>())
 
 val project = Project()
 val x1: Int by project

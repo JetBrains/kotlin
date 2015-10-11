@@ -8,7 +8,7 @@ public final enum class MyEnum : kotlin.Enum<test.MyEnum> {
     enum entry ENTRY
 
     private constructor MyEnum(/*0*/ @test.AAA() kotlin.Int)
-    @kotlin.Deprecated(value = "") public final val ord: kotlin.Int
+    @kotlin.Deprecated(message = "") public final val ord: kotlin.Int
     protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.MyEnum): kotlin.Int
     public final fun f(/*0*/ @java.lang.Deprecated() kotlin.Int): kotlin.Unit

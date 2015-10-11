@@ -134,7 +134,7 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                                         parameters.indexOf(it) + if (withReceiver) 1 else 0
                                     } else 0
                                 }
-                                .sortDescending()
+                                .sortedDescending()
                                 .forEach { methodDescriptor.removeParameter(it) }
                     }
 

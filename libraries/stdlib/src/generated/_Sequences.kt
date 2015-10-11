@@ -404,27 +404,6 @@ public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T>
 }
 
 /**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use asIterable().sorted() instead.", ReplaceWith("asIterable().sorted()"))
-public fun <T : Comparable<T>> Sequence<T>.toSortedList(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use asIterable().sortedBy(order) instead.", ReplaceWith("asIterable().sortedBy(order)"))
-public fun <T, V : Comparable<V>> Sequence<T>.toSortedListBy(order: (T) -> V): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
  * Returns an [ArrayList] of all elements.
  */
 public fun <T> Sequence<T>.toArrayList(): ArrayList<T> {
@@ -462,16 +441,9 @@ public fun <T> Sequence<T>.toList(): List<T> {
     return this.toArrayList()
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <T, K> Sequence<T>.toMap(selector: (T) -> K): Map<K, T> {
-    val result = LinkedHashMap<K, T>()
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
 /**
@@ -482,6 +454,18 @@ public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T)
     val result = LinkedHashMap<K, V>()
     for (element in this) {
         result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <T, K> Sequence<T>.toMapBy(selector: (T) -> K): Map<K, T> {
+    val result = LinkedHashMap<K, T>()
+    for (element in this) {
+        result.put(selector(element), element)
     }
     return result
 }
@@ -599,15 +583,6 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapTo(destinat
  */
 public fun <T> Sequence<T>.withIndex(): Sequence<IndexedValue<T>> {
     return IndexingSequence(this)
-}
-
-/**
- * Returns a sequence containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun <T> Sequence<T>.withIndices(): Sequence<Pair<Int, T>> {
-    var index = 0
-    return TransformingSequence(this, { index++ to it })
 }
 
 /**
@@ -825,11 +800,9 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
     return map { it ?: throw IllegalArgumentException("null element found in $this.") }
 }
 
-/**
- * Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(sequence, transform)"))
 public fun <T, R, V> Sequence<T>.merge(sequence: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
-    return MergingSequence(this, sequence, transform)
+    return zip(sequence, transform)
 }
 
 /**
@@ -954,6 +927,13 @@ public fun <T, R> Sequence<T>.zip(sequence: Sequence<R>): Sequence<Pair<T, R>> {
 }
 
 /**
+ * Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
+ */
+public fun <T, R, V> Sequence<T>.zip(sequence: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
+    return MergingSequence(this, sequence, transform)
+}
+
+/**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
@@ -986,14 +966,6 @@ public fun <T> Sequence<T>.joinToString(separator: String = ", ", prefix: String
  * Returns a sequence from the given collection.
  */
 public fun <T> Sequence<T>.asSequence(): Sequence<T> {
-    return this
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun <T> Sequence<T>.sequence(): Sequence<T> {
     return this
 }
 

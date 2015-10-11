@@ -45,7 +45,7 @@ public fun topologicalSort<T>(items: Iterable<T>, dependencies: (T) -> Iterable<
     for (item in items)
         DfsVisit(item)
 
-    return result.reverse()
+    return result.reversed()
 }
 
 public class CycleInTopoSortException : Exception()

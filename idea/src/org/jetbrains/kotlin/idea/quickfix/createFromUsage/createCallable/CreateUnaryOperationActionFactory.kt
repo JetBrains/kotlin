@@ -32,7 +32,7 @@ public object CreateUnaryOperationActionFactory: CreateCallableMemberFromUsageFa
 
     override fun createCallableInfo(element: JetUnaryExpression, diagnostic: Diagnostic): CallableInfo? {
         val token = element.operationToken as JetToken
-        val operationName = OperatorConventions.getNameForOperationSymbol(token) ?: return null
+        val operationName = OperatorConventions.getNameForOperationSymbol(token, true, false) ?: return null
         val incDec = token in OperatorConventions.INCREMENT_OPERATIONS
 
         val receiverExpr = element.baseExpression ?: return null

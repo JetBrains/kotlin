@@ -51,3 +51,7 @@ extend Property {
 extend ValueParameter {
   repeated Annotation parameter_annotation = 150;
 }
+
+extend Type {
+  repeated Annotation type_annotation = 150;
+}

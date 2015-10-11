@@ -121,7 +121,7 @@ public class AnnotationResolver {
             boolean shouldResolveArguments
     ) {
         if (modifierList == null) {
-            return Annotations.EMPTY;
+            return Annotations.Companion.getEMPTY();
         }
 
         List<JetAnnotationEntry> annotationEntryElements = modifierList.getAnnotationEntries();
@@ -157,7 +157,7 @@ public class AnnotationResolver {
             @NotNull BindingTrace trace,
             boolean shouldResolveArguments
     ) {
-        if (annotationEntryElements.isEmpty()) return Annotations.EMPTY;
+        if (annotationEntryElements.isEmpty()) return Annotations.Companion.getEMPTY();
         List<AnnotationWithTarget> result = new ArrayList<AnnotationWithTarget>(0);
 
         for (JetAnnotationEntry entryElement : annotationEntryElements) {

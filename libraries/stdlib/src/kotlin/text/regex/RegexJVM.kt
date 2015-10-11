@@ -206,16 +206,6 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
 
 }
 
-/**
- * Converts this [Pattern] to an instance of [Regex].
- *
- * Provides the way to use Regex API on the instances of [Pattern].
- */
-@Deprecated("Use extension toRegex instead in kotlin package.")
-@HiddenDeclaration
-public fun Pattern.toRegex(): Regex = Regex(this)
-
-
 // implementation
 
 private fun Matcher.findNext(from: Int, input: CharSequence): MatchResult? {
@@ -231,9 +221,9 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
 
     override val groups: MatchGroupCollection = object : MatchGroupCollection {
         override val size: Int get() = matchResult.groupCount() + 1
-        override fun isEmpty(): Boolean = false
-        override fun contains(o: Any?): Boolean = o is MatchGroup? && this.any({ it == o })
-        override fun containsAll(c: Collection<Any?>): Boolean = c.all({contains(it)})
+        override val isEmpty: Boolean get() = false
+        override fun contains(o: MatchGroup?): Boolean = this.any({ it == o })
+        override fun containsAll(c: Collection<MatchGroup?>): Boolean = c.all({contains(it)})
 
         override fun iterator(): Iterator<MatchGroup?> = indices.asSequence().map { this[it] }.iterator()
         override fun get(index: Int): MatchGroup? {

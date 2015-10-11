@@ -189,8 +189,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context, parametersDescriptor)
 
             val outputFiles = classFileFactory.asList().filterClassFiles()
-                                    .filter { it.relativePath != "$packageInternalName.class" }
-                                    .sortBy { it.relativePath.length() }
+                    .filter { it.relativePath != "$packageInternalName.class" }
+                    .sortedBy { it.relativePath.length() }
 
             val funName = runReadAction { extractedFunction.name }
             if (funName == null) {
@@ -352,7 +352,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
                 val (bindingContext, moduleDescriptor, files) = jetFile.checkForErrors(true)
 
-                val generateClassFilter = object : GenerationState.GenerateClassFilter {
+                val generateClassFilter = object : GenerationState.GenerateClassFilter() {
                     override fun shouldGeneratePackagePart(file: JetFile) = file == jetFile
                     override fun shouldAnnotateClass(classOrObject: JetClassOrObject) = true
                     override fun shouldGenerateClass(classOrObject: JetClassOrObject) = classOrObject.getContainingJetFile() == jetFile
@@ -470,13 +470,21 @@ private val packageInternalName = PackageClassUtils.getPackageClassInternalName(
 private fun createFileForDebugger(codeFragment: JetCodeFragment,
                                   extractedFunction: JetNamedFunction
 ): JetFile {
-    var fileText = template.replace("!IMPORT_LIST!",
-                                    codeFragment.importsToString()
-                                            .split(JetCodeFragment.IMPORT_SEPARATOR)
-                                            .joinToString("\n"))
+    val containingContextFile = (codeFragment.context as? JetElement)?.getContainingJetFile()
+    val importsFromContextFile = containingContextFile?.importList?.let { it.text + "\n" } ?: ""
+    val packageFromContextFile = containingContextFile?.packageName?.let {
+        if (it.isNotBlank()) "import $it.*\n" else null
+    } ?: ""
+
+    var fileText = template.replace(
+            "!IMPORT_LIST!",
+            packageFromContextFile
+                    + importsFromContextFile
+                    + codeFragment.importsToString().split(JetCodeFragment.IMPORT_SEPARATOR).joinToString("\n")
+    )
 
     val extractedFunctionText = extractedFunction.text
-    assert(extractedFunctionText != null, "Text of extracted function shouldn't be null")
+    assert(extractedFunctionText != null) { "Text of extracted function shouldn't be null" }
     fileText = fileText.replace("!FUNCTION!", extractedFunction.text!!)
 
     val jetFile = codeFragment.createJetFile("debugFile.kt", fileText)

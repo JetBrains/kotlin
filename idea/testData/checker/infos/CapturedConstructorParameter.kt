@@ -5,7 +5,7 @@ class T1(<warning>t</warning>: Int): T
 
 
 class Delegate(<warning>d</warning>: Int) {
-    fun get(k: Any, m: PropertyMetadata) {}
+    fun getValue(k: Any, m: PropertyMetadata) {}
 }
 
 class A(y: Int, t: Int, d: Int): T <info>by</info> T1(t) {

@@ -18,7 +18,7 @@ interface Test {
         var prop4 : Int = 13
 
         fun incProp4() {
-            $prop4++
+            prop4++
         }
 
         public var prop5 : Int = 14

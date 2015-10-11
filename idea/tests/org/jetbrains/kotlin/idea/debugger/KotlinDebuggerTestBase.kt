@@ -134,15 +134,17 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, smartStepFilter))
     }
 
-    protected fun SuspendContextImpl.stepOut() {
-        dp.getManagerThread()!!.schedule(dp.createStepOutCommand(this))
+    protected fun SuspendContextImpl.doStepOut() {
+        val stepOutCommand = runReadAction { KotlinSteppingCommandProvider().getStepOutCommand(this, debuggerContext!!) }
+                             ?: dp.createStepOutCommand(this)
+        dp.managerThread.schedule(stepOutCommand)
     }
 
     /*
     protected fun SuspendContextImpl.doStepOver() {
-        val stepOverCommand = runReadAction { KotlinSteppingCommandProvider().getStepOverCommand(this, false, StepRequest.STEP_LINE) }
-                              ?: dp.createStepOverCommand(this, false)
-        dp.getManagerThread()!!.schedule(stepOverCommand)
+        val stepOverCommand = runReadAction { KotlinSteppingCommandProvider().getStepOverCommand(this, false, debuggerContext!!) }
+                             ?: dp.createStepOverCommand(this, false)
+        dp.managerThread.schedule(stepOverCommand)
     }
     */
 

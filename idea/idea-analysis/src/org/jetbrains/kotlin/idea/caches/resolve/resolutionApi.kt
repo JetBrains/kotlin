@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.LazyFileScope
@@ -40,6 +43,10 @@ public fun JetElement.getResolutionFacade(): ResolutionFacade {
 
 public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
     return getResolutionFacade().resolveToDescriptor(this)
+}
+
+public fun JetDeclaration.resolveToDescriptorIfAny(): DeclarationDescriptor? {
+    return analyze(BodyResolveMode.PARTIAL).get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
 }
 
 public fun JetFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {

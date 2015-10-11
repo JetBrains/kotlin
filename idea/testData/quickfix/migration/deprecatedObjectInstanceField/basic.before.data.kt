@@ -1,0 +1,4 @@
+package a
+
+object A {
+}

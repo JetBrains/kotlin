@@ -1,6 +1,6 @@
 interface Test {
   companion object {
-    var prop: Int = 0;
+    internal var prop: Int = 0;
   }
 }
 
@@ -10,4 +10,4 @@ interface Test {
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test$Companion, prop
-// FLAGS: ACC_PRIVATE
+// FLAGS: ACC_PUBLIC, ACC_STATIC, ACC_SYNTHETIC

@@ -21,7 +21,7 @@ class ComplexMapJsTest : MapJsTest() {
         doTest<String>()
     }
 
-    override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toSortedList()
+    override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.sorted()
     // hashMapOf returns ComlpexHashMap because it is Generic
     override fun emptyMutableMap(): MutableMap<String, Int> = genericHashMapOf()
     override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = genericHashMapOf()
@@ -39,7 +39,7 @@ class PrimitiveMapJsTest : MapJsTest() {
         assertEquals(VALUES.toNormalizedList(), map.values().toNormalizedList())
     }
 
-    override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toSortedList()
+    override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.sorted()
     override fun emptyMutableMap(): MutableMap<String, Int> = HashMap()
     override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = HashMap()
 

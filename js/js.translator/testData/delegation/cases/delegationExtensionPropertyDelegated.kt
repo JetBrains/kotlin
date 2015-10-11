@@ -7,9 +7,9 @@ interface Base {
 }
 
 class Delegate(val multiplier: Int) {
-    fun get(state: State, desc: PropertyMetadata): Int  = multiplier * state.value
+    fun getValue(state: State, desc: PropertyMetadata): Int  = multiplier * state.value
 
-    fun set(state: State, desc: PropertyMetadata, value: Int) {
+    fun setValue(state: State, desc: PropertyMetadata, value: Int) {
         state.value = value / multiplier
     }
 

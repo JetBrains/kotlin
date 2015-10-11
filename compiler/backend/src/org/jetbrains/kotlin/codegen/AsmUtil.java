@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
@@ -212,7 +213,9 @@ public class AsmUtil {
             flags |= ACC_ABSTRACT;
         }
 
-        if (JetTypeMapper.isAccessor(functionDescriptor) || functionDescriptor.getVisibility() == Visibilities.INTERNAL) {
+        if (JetTypeMapper.isAccessor(functionDescriptor)
+            || functionDescriptor.getVisibility() == Visibilities.INTERNAL
+            || AnnotationUtilKt.hasJvmSyntheticAnnotation(functionDescriptor)) {
             flags |= ACC_SYNTHETIC;
         }
 
@@ -362,7 +365,7 @@ public class AsmUtil {
 
         // the following code is only for PRIVATE visibility of member
         if (memberDescriptor instanceof ConstructorDescriptor) {
-            if (isNonCompanionObject(containingDeclaration) || isEnumEntry(containingDeclaration)) {
+            if (isEnumEntry(containingDeclaration)) {
                 return NO_FLAG_PACKAGE_PRIVATE;
             }
             if (isEnumClass(containingDeclaration)) {
@@ -744,7 +747,9 @@ public class AsmUtil {
             return false;
         }
 
-        return isNonCompanionObject(propertyDescriptor.getContainingDeclaration()) || isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        return isNonCompanionObject(propertyDescriptor.getContainingDeclaration()) ||
+               isPropertyWithBackingFieldInOuterClass(propertyDescriptor) ||
+               isInterfaceCompanionObject(propertyDescriptor.getContainingDeclaration());
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
@@ -774,13 +779,10 @@ public class AsmUtil {
     }
 
     public static boolean isPropertyWithBackingFieldCopyInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
-        boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
         DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
-        return !propertyDescriptor.isVar()
-               && !isExtensionProperty
-               && isCompanionObject(propertyContainer) && isInterface(propertyContainer.getContainingDeclaration())
-               && areBothAccessorDefault(propertyDescriptor)
-               && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
+        return propertyDescriptor.isConst()
+               && isInterfaceCompanionObject(propertyContainer)
+               && propertyDescriptor.getVisibility() == Visibilities.PUBLIC;
     }
 
     public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {

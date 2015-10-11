@@ -21,10 +21,6 @@ android {
     compileSdkVersion 22
     buildToolsVersion "21.1.2"
 
-    kotlinOptions {
-        annotations = "kotlinAnnotations"
-    }
-
     sourceSets {
         main.kotlin.srcDirs += 'root/kotlin'
     }

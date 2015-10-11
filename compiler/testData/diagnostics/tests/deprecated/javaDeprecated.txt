@@ -1,9 +1,9 @@
 package
 
-@kotlin.Deprecated(value = "Deprecated in Java") public open class A {
+@kotlin.Deprecated(message = "Deprecated in Java") public open class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.Deprecated(value = "Deprecated in Java") public open fun getFoo(/*0*/ text: kotlin.String!): kotlin.String!
+    @kotlin.Deprecated(message = "Deprecated in Java") public open fun getFoo(/*0*/ text: kotlin.String!): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

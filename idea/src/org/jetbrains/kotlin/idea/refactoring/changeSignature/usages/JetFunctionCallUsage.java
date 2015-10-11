@@ -24,7 +24,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntProcedure;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -432,11 +432,11 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
         List<JetFunctionLiteralArgument> lambdaArguments = element.getFunctionLiteralArguments();
         if (!lambdaArguments.isEmpty()) {
-            element.deleteChildRange(KotlinPackage.first(lambdaArguments), KotlinPackage.last(lambdaArguments));
+            element.deleteChildRange(CollectionsKt.first(lambdaArguments), CollectionsKt.last(lambdaArguments));
         }
 
         //TODO: this is not correct!
-        JetValueArgument lastArgument = KotlinPackage.lastOrNull(newArgumentList.getArguments());
+        JetValueArgument lastArgument = CollectionsKt.lastOrNull(newArgumentList.getArguments());
         boolean hasTrailingLambdaInArgumentListAfter =
                 lastArgument != null && PsiPackage.unpackFunctionLiteral(lastArgument.getArgumentExpression()) != null;
 

@@ -12,8 +12,8 @@ class ClassObject {
     }
 
     void accessToPackageObject() {
-        PackageInner.INSTANCE$.foo();
-        PackageInner.INSTANCE$.getValue();
+        PackageInner.INSTANCE.foo();
+        PackageInner.INSTANCE.getValue();
     }
 
     void accessToInnerClass() {

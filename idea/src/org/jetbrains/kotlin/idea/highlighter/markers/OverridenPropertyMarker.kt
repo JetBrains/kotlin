@@ -73,7 +73,7 @@ fun getOverriddenPropertyTooltip(property: JetProperty): String? {
         JetBundle.message("property.is.overridden.header")
 
     val pattern = "&nbsp;&nbsp;&nbsp;&nbsp;{0}"
-    return GutterIconTooltipHelper.composeText(collectedClasses.sortBy(PsiClassListCellRenderer().getComparator()), start, pattern)
+    return GutterIconTooltipHelper.composeText(collectedClasses.sortedWith(PsiClassListCellRenderer().comparator), start, pattern)
 }
 
 fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: JetProperty) {
@@ -105,7 +105,7 @@ fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: JetProper
 
     val renderer = DefaultPsiElementCellRenderer()
     val navigatingOverrides = elementProcessor.getResults()
-            .sortBy(renderer.getComparator())
+            .sortedWith(renderer.comparator)
             .filterIsInstance<NavigatablePsiElement>()
 
     PsiElementListNavigator.openTargets(e,

@@ -1063,6 +1063,27 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/deprecatedObjectInstanceField")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DeprecatedObjectInstanceField extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInDeprecatedObjectInstanceField() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/deprecatedObjectInstanceField"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
+            }
+
+            @TestMetadata("basic.before.Main.java")
+            public void testBasic() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedObjectInstanceField/basic.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("staticImport.before.Main.java")
+            public void testStaticImport() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedObjectInstanceField/staticImport.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/deprecatedPackageFacade")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

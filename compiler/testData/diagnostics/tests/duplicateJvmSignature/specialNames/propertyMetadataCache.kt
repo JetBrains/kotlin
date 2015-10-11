@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-fun Any.get(x: Any?, y: Any): Any = null!!
+fun Any.getValue(x: Any?, y: Any): Any = null!!
 
 class <!CONFLICTING_JVM_DECLARATIONS!>C<!> {
     val x by 1

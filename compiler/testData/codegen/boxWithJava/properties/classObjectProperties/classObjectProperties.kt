@@ -6,14 +6,14 @@ class Klass {
 
 interface Trait {
     companion object {
-        val NAME = "Trait"
+        const val NAME = "Trait"
     }
 }
 
 enum class Enoom {
     ;
     companion object {
-        val NAME = "Enoom"
+        const val NAME = "Enoom"
     }
 }
 

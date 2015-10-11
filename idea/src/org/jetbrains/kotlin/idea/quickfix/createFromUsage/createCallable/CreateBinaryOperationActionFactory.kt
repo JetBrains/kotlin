@@ -35,7 +35,7 @@ public object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageF
         val token = element.operationToken as JetToken
         val operationName = when (token) {
                                 JetTokens.IDENTIFIER -> element.operationReference.getReferencedName()
-                                else -> OperatorConventions.getNameForOperationSymbol(token)?.asString()
+                                else -> OperatorConventions.getNameForOperationSymbol(token, false, true)?.asString()
                             } ?: return null
         val inOperation = token in OperatorConventions.IN_OPERATIONS
         val comparisonOperation = token in OperatorConventions.COMPARISON_OPERATIONS

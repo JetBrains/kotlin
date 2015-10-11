@@ -3,11 +3,11 @@ package a
 
 interface T
 
-fun T.get(thisRef: B, desc: PropertyMetadata): Int {
+fun T.getValue(thisRef: B, desc: PropertyMetadata): Int {
     return 3
 }
 
-fun T.set(thisRef: B, desc: PropertyMetadata, value: Int) {
+fun T.setValue(thisRef: B, desc: PropertyMetadata, value: Int) {
 }
 
 class A(): T

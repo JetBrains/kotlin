@@ -171,7 +171,7 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
         }
 
 
-        val sortedRenderedTypeParameters = renderedTypeParameters.sortBy { if (it.fake) it.typeParameter.getIndex() else -1}
+        val sortedRenderedTypeParameters = renderedTypeParameters.sortedBy { if (it.fake) it.typeParameter.getIndex() else -1 }
         currentTypeParameters = sortedRenderedTypeParameters.map { it.typeParameter }
 
         return TextResult(

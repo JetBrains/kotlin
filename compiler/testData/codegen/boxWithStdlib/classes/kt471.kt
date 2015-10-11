@@ -50,7 +50,6 @@ fun test6() : Boolean {
     return true
 }
 
-// ArrayList without jdk-annotations cannot be used in these tests
 class MyArrayList<T>() {
     private var value17: T? = null
     private var value39: T? = null

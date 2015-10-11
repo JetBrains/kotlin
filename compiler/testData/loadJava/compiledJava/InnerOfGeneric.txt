@@ -23,6 +23,6 @@ public open class InnerOfGeneric {
 
     public open inner class S</*0*/ E : kotlin.Any!> {
         public constructor S</*0*/ E : kotlin.Any!>()
-        public open fun iterator(): kotlin.(Mutable)Iterator<E!>!
+        public open operator fun iterator(): kotlin.(Mutable)Iterator<E!>!
     }
 }

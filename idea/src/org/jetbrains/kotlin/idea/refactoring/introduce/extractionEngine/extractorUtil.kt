@@ -482,7 +482,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
          * Sort by descending position so that internals of value/type arguments in calls and qualified types are replaced
          * before calls/types themselves
          */
-        for ((offsetInBody, resolveResult) in descriptor.extractionData.refOffsetToDeclaration.entrySet().sortDescendingBy { it.key }) {
+        for ((offsetInBody, resolveResult) in descriptor.extractionData.refOffsetToDeclaration.entrySet().sortedByDescending { it.key }) {
             val expr = file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType<JetSimpleNameExpression>()
             assert(expr != null) { "Couldn't find expression at $offsetInBody in '${body.getText()}'" }
 

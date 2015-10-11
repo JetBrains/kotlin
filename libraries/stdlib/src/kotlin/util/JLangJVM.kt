@@ -3,7 +3,6 @@
 package kotlin
 
 import java.lang.reflect.Method
-import kotlin.jvm.internal.unsafe.*
 import kotlin.jvm.internal.Intrinsic
 import kotlin.reflect.KClass
 

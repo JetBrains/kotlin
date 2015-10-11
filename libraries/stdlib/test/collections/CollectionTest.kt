@@ -14,13 +14,13 @@ class CollectionTest {
         assertEquals("{foo-bar}", buffer.toString())
     }
 
-    @test fun join() {
+    @test fun joinToString() {
         val data = listOf("foo", "bar")
-        val text = data.join("-", "<", ">")
+        val text = data.joinToString("-", "<", ">")
         assertEquals("<foo-bar>", text)
 
         val big = listOf("a", "b", "c", "d", "e", "f")
-        val text2 = big.join(limit = 3, truncated = "*")
+        val text2 = big.joinToString(limit = 3, truncated = "*")
         assertEquals("a, b, c, *", text2)
     }
 
@@ -134,9 +134,9 @@ class CollectionTest {
     }
 
     @test
-    fun merge() {
+    fun zipTransform() {
         expect(listOf("ab", "bc", "cd")) {
-            listOf("a", "b", "c").merge(listOf("b", "c", "d")) { a, b -> a + b }
+            listOf("a", "b", "c").zip(listOf("b", "c", "d")) { a, b -> a + b }
         }
     }
 
@@ -163,7 +163,7 @@ class CollectionTest {
 
         //        TODO replace with more accurate version when KT-5987 will be fixed
         //        failsWith(javaClass<UnsupportedOperationException>()) {
-        fails {
+        assertFails {
             run { arrayListOf<Int>().reduce { a, b -> a + b } }
         }
     }
@@ -176,7 +176,7 @@ class CollectionTest {
 
         //        TODO replace with more accurate version when KT-5987 will be fixed
         //        failsWith(javaClass<UnsupportedOperationException>()) {
-        fails {
+        assertFails {
             run { arrayListOf<Int>().reduceRight { a, b -> a + b } }
         }
     }
@@ -302,7 +302,7 @@ class CollectionTest {
 
         //        TODO replace with more accurate version when KT-5987 will be fixed
         //        failsWith(javaClass<IllegalArgumentException>()) {
-        fails {
+        assertFails {
             // should throw an exception as we have a null
             hasNulls.requireNoNulls()
         }
@@ -346,7 +346,7 @@ class CollectionTest {
         assertEquals(listOf("foo", "bar"), coll.dropLast(1))
         assertEquals(listOf("foo"), coll.dropLast(2))
 
-        fails { coll.dropLast(-1) }
+        assertFails { coll.dropLast(-1) }
     }
 
     @test fun dropLastWhile() {
@@ -365,7 +365,7 @@ class CollectionTest {
         assertEquals(coll, coll.take(coll.size()))
         assertEquals(coll, coll.take(coll.size() + 1))
 
-        fails { coll.take(-1) }
+        assertFails { coll.take(-1) }
     }
 
     @test fun takeWhile() {
@@ -385,7 +385,7 @@ class CollectionTest {
         assertEquals(coll, coll.takeLast(coll.size()))
         assertEquals(coll, coll.takeLast(coll.size() + 1))
 
-        fails { coll.takeLast(-1) }
+        assertFails { coll.takeLast(-1) }
     }
 
     @test fun takeLastWhile() {
@@ -420,7 +420,7 @@ class CollectionTest {
         assertEquals("foo", data.first())
         assertEquals(15, listOf(15, 19, 20, 25).first())
         assertEquals('a', listOf('a').first())
-        fails { arrayListOf<Int>().first() }
+        assertFails { arrayListOf<Int>().first() }
     }
 
     @test fun last() {
@@ -428,7 +428,7 @@ class CollectionTest {
         assertEquals("bar", data.last())
         assertEquals(25, listOf(15, 19, 20, 25).last())
         assertEquals('a', listOf('a').last())
-        fails { arrayListOf<Int>().last() }
+        assertFails { arrayListOf<Int>().last() }
     }
 
     @test fun subscript() {
@@ -437,7 +437,7 @@ class CollectionTest {
         assertEquals("bar", list[1])
 
         // lists throw an exception if out of range
-        fails {
+        assertFails {
             assertEquals(null, list[2])
         }
 
@@ -446,7 +446,7 @@ class CollectionTest {
         list[1] = "thing"
 
         // lists don't allow you to set past the end of the list
-        fails {
+        assertFails {
             list[2] = "works"
         }
 

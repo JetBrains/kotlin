@@ -26,6 +26,8 @@ public interface Annotations : Iterable<AnnotationDescriptor> {
 
     public fun findAnnotation(fqName: FqName): AnnotationDescriptor?
 
+    public fun hasAnnotation(fqName: FqName) = findAnnotation(fqName) != null
+
     public fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor?
 
     public fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget>

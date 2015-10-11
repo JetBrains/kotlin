@@ -129,7 +129,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
                 val visibility = syntheticExtensionVisibility(sourceFunction)
 
                 descriptor.initialize(receiverType, null, typeParameters, valueParameters, returnType,
-                                      Modality.FINAL, visibility, false, false)
+                                      Modality.FINAL, visibility)
 
                 return descriptor
             }
@@ -168,7 +168,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
             }
 
             original as MyFunctionDescriptor
-            assert(original.original == original, "original in doSubstitute should have no other original")
+            assert(original.original == original) { "original in doSubstitute should have no other original" }
 
             val substitutionMap = HashMap<TypeConstructor, TypeProjection>()
             for (typeParameter in original.typeParameters) {

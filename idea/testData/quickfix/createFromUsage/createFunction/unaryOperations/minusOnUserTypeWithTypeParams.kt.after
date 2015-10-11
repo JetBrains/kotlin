@@ -1,7 +1,7 @@
-// "Create member function 'minus'" "true"
+// "Create member function 'unaryMinus'" "true"
 
 class A<T>(val n: T) {
-    operator fun minus(): A<T> {
+    operator fun unaryMinus(): A<T> {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

@@ -34,7 +34,7 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
     private static final Name RECEIVER_PARAMETER_NAME = Name.special("<this>");
 
     public AbstractReceiverParameterDescriptor() {
-        super(Annotations.EMPTY, RECEIVER_PARAMETER_NAME);
+        super(Annotations.Companion.getEMPTY(), RECEIVER_PARAMETER_NAME);
     }
 
     @Nullable

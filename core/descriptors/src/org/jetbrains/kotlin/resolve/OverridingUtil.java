@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.KotlinSignature;
 import kotlin.jvm.functions.Function1;
@@ -40,7 +40,7 @@ import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityI
 public class OverridingUtil {
 
     private static final List<ExternalOverridabilityCondition> EXTERNAL_CONDITIONS =
-            KotlinPackage.toList(ServiceLoader.load(
+            CollectionsKt.toList(ServiceLoader.load(
                     ExternalOverridabilityCondition.class,
                     ExternalOverridabilityCondition.class.getClassLoader()
             ));
@@ -364,7 +364,7 @@ public class OverridingUtil {
             @NotNull final ClassDescriptor current,
             @NotNull Collection<CallableMemberDescriptor> toFilter
     ) {
-        return KotlinPackage.filter(toFilter, new Function1<CallableMemberDescriptor, Boolean>() {
+        return CollectionsKt.filter(toFilter, new Function1<CallableMemberDescriptor, Boolean>() {
             @Override
             public Boolean invoke(CallableMemberDescriptor descriptor) {
                 //nested class could capture private member, so check for private visibility added

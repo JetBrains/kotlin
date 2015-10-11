@@ -1,4 +1,4 @@
-class Derived(): funNestedStaticGenericClass<String>.Inner<String>() {
+class Derived(): funNestedStaticGenericClass.Inner<String>() {
     fun test(): String {
         return funNestedStaticGenericClass.Inner.protectedFun()!!
     }

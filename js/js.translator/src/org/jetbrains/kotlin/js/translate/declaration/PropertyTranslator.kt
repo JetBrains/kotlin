@@ -119,7 +119,7 @@ private class PropertyTranslator(
             return generateDelegatedGetterFunction(getterDescriptor, delegatedCall)
         }
 
-        assert(!descriptor.isExtension, "Unexpected extension property $descriptor}")
+        assert(!descriptor.isExtension) { "Unexpected extension property $descriptor}" }
         val scope = context().getScopeForDescriptor(getterDescriptor.getContainingDeclaration())
         val result = backingFieldReference(context(), descriptor)
         val body = JsBlock(JsReturn(result))
@@ -157,7 +157,7 @@ private class PropertyTranslator(
         val containingScope = context().getScopeForDescriptor(setterDescriptor.getContainingDeclaration())
         val function = JsFunction(containingScope, JsBlock(), accessorDescription(setterDescriptor))
 
-        assert(setterDescriptor.getValueParameters().size() == 1, "Setter must have 1 parameter")
+        assert(setterDescriptor.getValueParameters().size() == 1) { "Setter must have 1 parameter" }
         val correspondingPropertyName = setterDescriptor.getCorrespondingProperty().getName().asString()
         val valueParameter = function.addParameter(correspondingPropertyName).getName()
         val withAliased = context().innerContextWithAliased(setterDescriptor.getValueParameters().get(0), valueParameter.makeRef())
@@ -172,7 +172,7 @@ private class PropertyTranslator(
                 (delegatedJsCall as JsInvocation).getArguments().set(0, receiver.makeRef())
             }
         } else {
-            assert(!descriptor.isExtension, "Unexpected extension property $descriptor}")
+            assert(!descriptor.isExtension) { "Unexpected extension property $descriptor}" }
             val assignment = assignmentToBackingField(withAliased, descriptor, valueParameter.makeRef())
             function.addStatement(assignment.makeStmt())
         }

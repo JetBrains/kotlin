@@ -59,7 +59,7 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
     @NotNull
     public static String toString(@NotNull DeclarationDescriptor descriptor) {
         try {
-            return DescriptorRenderer.DEBUG_TEXT.render(descriptor) +
+            return DescriptorRenderer.Companion.getDEBUG_TEXT().render(descriptor) +
                    "[" + descriptor.getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(descriptor)) + "]";
         } catch (Throwable e) {
             // DescriptionRenderer may throw if this is not yet completely initialized

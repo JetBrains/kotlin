@@ -38,7 +38,8 @@ import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
+import kotlin.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +92,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.*;
-import static org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
 import static org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys.MODULE_NAME;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
@@ -125,7 +125,7 @@ public class JetTestUtils {
                 @NotNull
                 @Override
                 public Diagnostics getDiagnostics() {
-                    return Diagnostics.EMPTY;
+                    return Diagnostics.Companion.getEMPTY();
                 }
 
                 @Override
@@ -336,24 +336,6 @@ public class JetTestUtils {
         return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
     }
 
-    @NotNull
-    public static File getJdkAnnotationsJar() {
-        File jdkAnnotations = new File(getHomeDirectory(), "dist/kotlinc/lib/kotlin-jdk-annotations.jar");
-        if (!jdkAnnotations.exists()) {
-            throw new RuntimeException("Kotlin JDK annotations jar not found; please run 'ant dist' to build it");
-        }
-        return jdkAnnotations;
-    }
-
-    @NotNull
-    public static File getAndroidSdkAnnotationsJar() {
-        File androidSdkAnnotations = new File(getHomeDirectory(), "dist/kotlinc/lib/kotlin-android-sdk-annotations.jar");
-        if (!androidSdkAnnotations.exists()) {
-            throw new RuntimeException("Kotlin Android SDK annotations jar not found; please run 'ant dist' to build it");
-        }
-        return androidSdkAnnotations;
-    }
-
     public static void mkdirs(File file) throws IOException {
         if (file.isDirectory()) {
             return;
@@ -469,15 +451,6 @@ public class JetTestUtils {
         }
 
         addJvmClasspathRoots(configuration, classpath);
-
-        if (configurationKind.getWithJdkAnnotations()) {
-            if (jdkKind == TestJdkKind.ANDROID_API) {
-                configuration.add(ANNOTATIONS_PATH_KEY, getAndroidSdkAnnotationsJar());
-            }
-            else {
-                configuration.add(ANNOTATIONS_PATH_KEY, getJdkAnnotationsJar());
-            }
-        }
 
         configuration.put(MODULE_NAME, "compilerConfigurationForTests");
 
@@ -719,7 +692,7 @@ public class JetTestUtils {
 
     @NotNull
     public static String getLastCommentInFile(@NotNull JetFile file) {
-        return KotlinPackage.first(getLastCommentsInFile(file, CommentType.ALL, true));
+        return CollectionsKt.first(getLastCommentsInFile(file, CommentType.ALL, true));
     }
 
     @NotNull
@@ -821,7 +794,7 @@ public class JetTestUtils {
         File rootFile = new File(rootPath);
 
         Set<String> filePaths = collectPathsMetadata(testCaseClass);
-        Set<String> exclude = KotlinPackage.setOf(excludeDirs);
+        Set<String> exclude = SetsKt.setOf(excludeDirs);
 
         File[] files = testDataDir.listFiles();
         if (files != null) {

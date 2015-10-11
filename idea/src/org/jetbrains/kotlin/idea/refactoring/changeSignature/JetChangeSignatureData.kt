@@ -52,7 +52,7 @@ public class JetChangeSignatureData(
     override val receiver: JetParameterInfo?
 
     init {
-        $receiver = createReceiverInfoIfNeeded()
+        receiver = createReceiverInfoIfNeeded()
 
         val valueParameters = when {
             baseDeclaration is JetFunction -> baseDeclaration.getValueParameters()

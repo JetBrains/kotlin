@@ -34,19 +34,20 @@ JetFile: Expressions_ERR.kt
           PsiWhiteSpace('\n  ')
           PsiErrorElement:Expecting an element
             PsiElement(RPAR)(')')
-          PsiElement(SEMICOLON)(';')
-          PsiElement(SEMICOLON)(';')
-          PsiElement(SEMICOLON)(';')
+          PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+            PsiElement(DOUBLE_SEMICOLON)(';;')
           PsiErrorElement:Expecting an element
+            PsiElement(SEMICOLON)(';')
+          PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
             PsiElement(RPAR)(')')
-          PsiElement(SEMICOLON)(';')
-          PsiElement(SEMICOLON)(';')
-          PsiElement(SEMICOLON)(';')
+            PsiElement(DOUBLE_SEMICOLON)(';;')
           PsiErrorElement:Expecting an element
+            PsiElement(SEMICOLON)(';')
+          PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
             PsiElement(BAD_CHARACTER)('~')
-          PsiElement(SEMICOLON)(';')
-          PsiElement(SEMICOLON)(';')
-          PsiElement(SEMICOLON)(';')
+            PsiElement(DOUBLE_SEMICOLON)(';;')
+          PsiErrorElement:Expecting an element
+            PsiElement(SEMICOLON)(';')
           PsiWhiteSpace('\n  ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('srgsdfg')

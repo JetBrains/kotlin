@@ -103,9 +103,7 @@ public class FunctionDescriptorUtil {
                                       KotlinBuiltIns.getValueParameters(functionDescriptor, functionType),
                                       KotlinBuiltIns.getReturnTypeFromFunctionType(functionType),
                                       modality,
-                                      visibility,
-                                      false,
-                                      false);
+                                      visibility);
     }
 
     public static <D extends CallableDescriptor> D alphaConvertTypeParameters(D candidate) {
@@ -157,9 +155,9 @@ public class FunctionDescriptorUtil {
                 parameters,
                 function.getReturnType(),
                 function.getModality(),
-                function.getVisibility(),
-                function.isOperator(),
-                function.isInfix());
+                function.getVisibility());
+        descriptor.setOperator(function.isOperator());
+        descriptor.setInfix(function.isInfix());
         return descriptor;
     }
 }

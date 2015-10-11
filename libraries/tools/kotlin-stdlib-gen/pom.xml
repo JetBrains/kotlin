@@ -61,7 +61,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>generators.GeneratorsPackage</mainClass>
+                    <mainClass>generators.GenerateStandardLibKt</mainClass>
                     <classpathScope>compile</classpathScope>
                     <arguments>
                         <argument>${project.parent.basedir}/..</argument>

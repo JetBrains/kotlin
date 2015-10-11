@@ -62,6 +62,6 @@ public class DiagnosticWithParameters3<E extends PsiElement, A, B, C> extends Ab
 
     @Override
     public String toString() {
-        return "(a = " + a + ", b = " + b + ", c = " + c + ")";
+        return getFactory() + "(a = " + a + ", b = " + b + ", c = " + c + ")";
     }
 }

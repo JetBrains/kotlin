@@ -4,7 +4,7 @@ package server
 
 interface Some {
     companion object {
-        val <caret>XX = 1
+        const val <caret>XX = 1
     }
 }
 

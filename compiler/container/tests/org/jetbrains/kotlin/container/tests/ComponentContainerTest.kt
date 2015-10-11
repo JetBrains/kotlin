@@ -26,7 +26,7 @@ class ComponentContainerTest {
     @Test
     fun should_throw_when_not_composed() {
         val container = StorageComponentContainer("test")
-        fails {
+        assertFails {
             container.resolve<TestComponentInterface>()
         }
     }
@@ -45,7 +45,7 @@ class ComponentContainerTest {
         assertNotNull(descriptor)
         val instance = descriptor!!.getValue() as TestComponentInterface
         assertNotNull(instance)
-        fails {
+        assertFails {
             instance.foo()
         }
     }
@@ -62,7 +62,7 @@ class ComponentContainerTest {
         val instance = descriptor!!.getValue() as TestClientComponent
         assertNotNull(instance)
         assertNotNull(instance.dep)
-        fails {
+        assertFails {
             instance.dep.foo()
         }
         assertTrue(instance.dep is ManualTestComponent)
@@ -84,7 +84,7 @@ class ComponentContainerTest {
         val instance = descriptor!!.getValue() as TestClientComponent
         assertNotNull(instance)
         assertNotNull(instance.dep)
-        fails {
+        assertFails {
             instance.dep.foo()
         }
         container.close()
@@ -208,7 +208,7 @@ class ComponentContainerTest {
             useInstance(TestComponent())
         }.use {
             assertTrue {
-                fails {
+                assertFails {
                     it.resolve<TestComponent>()
                 } is InvalidCardinalityException
             }

@@ -53,7 +53,7 @@ public class JetAnnotationUseSiteTarget : JetElementImplStub<KotlinAnnotationUse
             JetTokens.SET_KEYWORD -> AnnotationUseSiteTarget.PROPERTY_SETTER
             JetTokens.RECEIVER_KEYWORD -> AnnotationUseSiteTarget.RECEIVER
             JetTokens.PARAM_KEYWORD -> AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
-            JetTokens.SPARAM_KEYWORD -> AnnotationUseSiteTarget.SETTER_PARAMETER
+            JetTokens.SETPARAM_KEYWORD -> AnnotationUseSiteTarget.SETTER_PARAMETER
             else -> throw IllegalStateException("Unknown annotation target " + node.getText())
         }
     }

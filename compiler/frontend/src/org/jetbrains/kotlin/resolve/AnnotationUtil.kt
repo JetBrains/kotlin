@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.FqName
@@ -38,6 +39,12 @@ public fun DeclarationDescriptor.hasPlatformStaticAnnotation(): Boolean {
 
 public fun DeclarationDescriptor.findPublicFieldAnnotation(): AnnotationDescriptor? {
     return getAnnotations().findAnnotation(FqName("kotlin.jvm.publicField"))
+}
+
+public fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean {
+    val jvmSyntheticName = FqName("kotlin.jvm.JvmSynthetic")
+    return annotations.findAnnotation(jvmSyntheticName) != null ||
+           Annotations.findUseSiteTargetedAnnotation(annotations, AnnotationUseSiteTarget.FIELD, jvmSyntheticName) != null
 }
 
 public fun DeclarationDescriptor.hasIntrinsicAnnotation(): Boolean {

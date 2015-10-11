@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetModifierListOwner
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public class OperatorModifierInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -67,25 +69,26 @@ public class OperatorModifierInspection : AbstractKotlinInspection() {
         val arity = valueParameters.size()
         if (arity == 0 &&
             (name in OperatorConventions.UNARY_OPERATION_NAMES.values() ||
-             name == OperatorConventions.ITERATOR ||
+             name == OperatorNameConventions.PLUS || name == OperatorNameConventions.MINUS || // temporary
+             name == OperatorNameConventions.ITERATOR ||
              isComponentLike(name) ||
-             name == OperatorConventions.NEXT ||
-             (name == OperatorConventions.HAS_NEXT && isBooleanReturnType()))) {
+             name == OperatorNameConventions.NEXT ||
+             (name == OperatorNameConventions.HAS_NEXT && isBooleanReturnType()))) {
             return true
         }
         if (arity == 1 && (name in OperatorConventions.BINARY_OPERATION_NAMES.values() ||
                            name in OperatorConventions.ASSIGNMENT_OPERATIONS.values () ||
-                           (name == OperatorConventions.CONTAINS && isBooleanReturnType()) ||
-                           (name == OperatorConventions.COMPARE_TO && isIntReturnType()))) {
+                           (name == OperatorNameConventions.CONTAINS && isBooleanReturnType()) ||
+                           (name == OperatorNameConventions.COMPARE_TO && isIntReturnType()))) {
             return true
         }
-        if (name == OperatorConventions.INVOKE) {
+        if (name == OperatorNameConventions.INVOKE) {
             return true
         }
-        if (arity >= 1 && name == OperatorConventions.GET) {
+        if (arity >= 1 && name == OperatorNameConventions.GET) {
             return true
         }
-        if (arity >= 2 && name == OperatorConventions.SET) {
+        if (arity >= 2 && name == OperatorNameConventions.SET) {
             return true
         }
         return false
@@ -123,11 +126,11 @@ private class AddModifierLocalQuickFix() : LocalQuickFix {
     }
 }
 
-object OperatorModifierFixFactory : JetSingleIntentionActionFactory() {
+class ModifierFixFactory(val token: JetModifierKeywordToken) : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val functionDescriptor = (diagnostic as? DiagnosticWithParameters2<*, *, *>)?.a as? FunctionDescriptor ?: return null
         val target = DescriptorToSourceUtilsIde.getAnyDeclaration(diagnostic.psiFile.project, functionDescriptor)
                 as? JetModifierListOwner ?: return null
-        return object : AddModifierFix(target, JetTokens.OPERATOR_KEYWORD), CleanupFix {}
+        return object : AddModifierFix(target, token), CleanupFix {}
     }
 }

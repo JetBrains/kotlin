@@ -88,8 +88,11 @@ fun a() {
     <!OPERATOR_MODIFIER_REQUIRED!>!<!>a
     !c
 
-    <!OPERATOR_MODIFIER_REQUIRED!>a<!>()
+    <!OPERATOR_MODIFIER_REQUIRED!>a()<!>
     c()
+
+    <!OPERATOR_MODIFIER_REQUIRED!>Example()()<!>
+    Example2()()
 }
 
 abstract class Base {

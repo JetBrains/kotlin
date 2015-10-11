@@ -212,6 +212,21 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
         }
     }
 
+    @TestMetadata("compiler/testData/asJava/lightClasses/object")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Object extends AbstractKotlinLightClassTest {
+        public void testAllFilesPresentInObject() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/object"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("SimpleObject.kt")
+        public void testSimpleObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/object/SimpleObject.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/asJava/lightClasses/publicField")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

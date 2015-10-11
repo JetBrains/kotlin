@@ -1,6 +1,0 @@
-package
-
-package kotlin1 {
-    @kotlin.inline() public fun </*0*/ reified T> Array(/*0*/ n: kotlin.Int, /*1*/ block: (kotlin.Int) -> T): kotlin.Array<T>
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
-}

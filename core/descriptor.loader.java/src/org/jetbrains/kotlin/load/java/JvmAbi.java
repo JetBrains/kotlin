@@ -34,7 +34,7 @@ public final class JvmAbi {
      * - Patch version can be increased freely and is only supposed to be used for debugging. Increase the patch version when you
      *   make a change to the metadata format or the bytecode which is both forward- and backward compatible.
      */
-    public static final BinaryVersion VERSION = BinaryVersion.create(0, 28, 0);
+    public static final BinaryVersion VERSION = BinaryVersion.create(0, 29, 0);
 
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
     public static final String DEFAULT_IMPLS_SUFFIX = "$" + DEFAULT_IMPLS_CLASS_NAME;
@@ -49,7 +49,8 @@ public final class JvmAbi {
     public static final String PROPERTY_METADATA_ARRAY_NAME = "$propertyMetadata";
     public static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = "$annotations";
 
-    public static final String INSTANCE_FIELD = "INSTANCE$";
+    public static final String INSTANCE_FIELD = "INSTANCE";
+    public static final String DEPRECATED_INSTANCE_FIELD = "INSTANCE$";
 
     public static final String KOTLIN_CLASS_FIELD_NAME = "$kotlinClass";
     public static final String KOTLIN_PACKAGE_FIELD_NAME = "$kotlinPackage";

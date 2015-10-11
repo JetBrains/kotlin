@@ -327,12 +327,12 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         if (clInit == null) {
             MethodVisitor mv = v.newMethod(OtherOrigin(descriptor), ACC_STATIC, "<clinit>", "()V", null, null);
             SimpleFunctionDescriptorImpl clInit =
-                    SimpleFunctionDescriptorImpl.create(descriptor, Annotations.EMPTY, Name.special("<clinit>"), SYNTHESIZED,
+                    SimpleFunctionDescriptorImpl.create(descriptor, Annotations.Companion.getEMPTY(), Name.special("<clinit>"), SYNTHESIZED,
                                                         SourcePackage.toSourceElement(element));
             clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                               Collections.<ValueParameterDescriptor>emptyList(),
                               DescriptorUtilPackage.getModule(descriptor).getBuiltIns().getUnitType(),
-                              null, Visibilities.PRIVATE, false, false);
+                              null, Visibilities.PRIVATE);
 
             this.clInit = new ExpressionCodegen(mv, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state, this);
         }

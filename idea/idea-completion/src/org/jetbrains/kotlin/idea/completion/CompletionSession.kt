@@ -53,13 +53,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
         val completeNonAccessibleDeclarations: Boolean,
-        val filterOutJavaGettersAndSetters: Boolean
+        val filterOutJavaGettersAndSetters: Boolean,
+        val completeJavaClassesNotToBeUsed: Boolean
 )
 
 fun CompletionSessionConfiguration(parameters: CompletionParameters) = CompletionSessionConfiguration(
-        completeNonImportedDeclarations = parameters.getInvocationCount() >= 2,
-        completeNonAccessibleDeclarations = parameters.getInvocationCount() >= 2,
-        filterOutJavaGettersAndSetters = parameters.getInvocationCount() < 2
+        completeNonImportedDeclarations = parameters.invocationCount >= 2,
+        completeNonAccessibleDeclarations = parameters.invocationCount >= 2,
+        filterOutJavaGettersAndSetters = parameters.invocationCount < 2,
+        completeJavaClassesNotToBeUsed = parameters.invocationCount >= 2
 )
 
 abstract class CompletionSession(protected val configuration: CompletionSessionConfiguration,
@@ -150,7 +152,12 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val toFromOriginalFileMapper: ToFromOriginalFileMapper
             = ToFromOriginalFileMapper(parameters.originalFile as JetFile, position.containingFile as JetFile, parameters.offset)
 
-    protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
+    private fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
+        if (!configuration.completeJavaClassesNotToBeUsed && descriptor is ClassDescriptor) {
+            val classification = descriptor.importableFqName?.let { importableFqNameClassifier.classify(it, isPackage = false) }
+            if (classification == ImportableFqNameClassifier.Classification.notToBeUsedInKotlin) return false
+        }
+
         if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
 
         if (descriptor is DeclarationDescriptorWithVisibility) {
@@ -199,10 +206,10 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected abstract val expectedInfos: Collection<ExpectedInfo>
 
+    private val importableFqNameClassifier = ImportableFqNameClassifier(file)
+
     protected open fun createSorter(): CompletionSorter {
         var sorter = CompletionSorter.defaultSorter(parameters, prefixMatcher)!!
-
-        val importableFqNameClassifier = ImportableFqNameClassifier(file)
 
         sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, NotImportedWeigher(importableFqNameClassifier), KindWeigher, CallableWeigher)
 

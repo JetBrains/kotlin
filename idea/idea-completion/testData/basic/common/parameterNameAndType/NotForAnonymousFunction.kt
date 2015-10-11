@@ -6,4 +6,4 @@ fun f() {
     x(fun (b<caret>))
 }
 
-// ABSENT: boo
+// ABSENT: boo: Boo

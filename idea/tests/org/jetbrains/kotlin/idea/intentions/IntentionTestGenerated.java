@@ -5493,12 +5493,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveAssignmentToInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
-        @TestMetadata("backingField.kt")
-        public void testBackingField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/backingField.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("comment.kt")
         public void testComment() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/comment.kt");

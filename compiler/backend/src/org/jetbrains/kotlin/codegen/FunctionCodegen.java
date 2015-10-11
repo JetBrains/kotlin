@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.BridgesPackage;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
 import org.jetbrains.kotlin.codegen.context.*;
+import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics;
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -529,8 +531,11 @@ public class FunctionCodegen {
             );
             if (!bridgesToGenerate.isEmpty()) {
                 PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
+                boolean isSpecialBridge =
+                        BuiltinsPropertiesUtilKt.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) != null;
+
                 for (Bridge<Method> bridge : bridgesToGenerate) {
-                    generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo(), false, false);
+                    generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo(), isSpecialBridge, false);
                 }
             }
         }
@@ -812,13 +817,14 @@ public class FunctionCodegen {
         InstructionAdapter iv = new InstructionAdapter(mv);
         ImplementationBodyCodegen.markLineNumberForSyntheticFunction(owner.getThisDescriptor(), iv);
 
+        generateInstanceOfBarrierIfNeeded(iv, descriptor, bridge, delegateTo);
+
         iv.load(0, OBJECT_TYPE);
         for (int i = 0, reg = 1; i < argTypes.length; i++) {
             StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
             //noinspection AssignmentToForLoopParameter
             reg += argTypes[i].getSize();
         }
-
 
         if (superCallNeeded) {
             ClassDescriptor parentClass = getSuperClassDescriptor((ClassDescriptor) descriptor.getContainingDeclaration());
@@ -834,6 +840,56 @@ public class FunctionCodegen {
         iv.areturn(bridge.getReturnType());
 
         endVisit(mv, "bridge method", origin);
+    }
+
+    private static void generateInstanceOfBarrierIfNeeded(
+            @NotNull InstructionAdapter iv,
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull Method bridge,
+            @NotNull Method delegateTo
+    ) {
+        if (BuiltinsPropertiesUtilKt.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) == null) return;
+
+        assert descriptor.getValueParameters().size() == 1 : "Should be descriptor with one value parameter, but found: " + descriptor;
+
+        iv.load(1, OBJECT_TYPE);
+
+        JetType jetType = descriptor.getValueParameters().get(0).getType();
+
+        // TODO: reuse logic from ExpressionCodegen
+        if (jetType.isMarkedNullable()) {
+            Label nope = new Label();
+            Label end = new Label();
+
+            iv.dup();
+            iv.ifnull(nope);
+            TypeIntrinsics.instanceOf(
+                    iv,
+                    jetType,
+                    boxType(delegateTo.getArgumentTypes()[0])
+            );
+            iv.goTo(end);
+            iv.mark(nope);
+            iv.pop();
+            iv.iconst(1);
+            iv.mark(end);
+        }
+        else {
+            TypeIntrinsics.instanceOf(
+                    iv,
+                    jetType,
+                    boxType(delegateTo.getArgumentTypes()[0])
+            );
+        }
+
+        Label afterBarrier = new Label();
+
+        iv.ifne(afterBarrier);
+
+        StackValue.none().put(bridge.getReturnType(), iv);
+        iv.areturn(bridge.getReturnType());
+
+        iv.visitLabel(afterBarrier);
     }
 
     public void genDelegate(@NotNull FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {

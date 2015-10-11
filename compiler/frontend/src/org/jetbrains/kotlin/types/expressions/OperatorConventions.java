@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import kotlin.text.Regex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetSingleValueToken;
@@ -26,19 +26,11 @@ import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 
-public class OperatorConventions {
+import java.util.Map;
 
-    public static final Name EQUALS = Name.identifier("equals");
-    public static final Name IDENTITY_EQUALS = Name.identifier("identityEquals");
-    public static final Name COMPARE_TO = Name.identifier("compareTo");
-    public static final Name CONTAINS = Name.identifier("contains");
-    public static final Name INVOKE = Name.identifier("invoke");
-    public static final Name ITERATOR = Name.identifier("iterator");
-    public static final Name GET = Name.identifier("get");
-    public static final Name SET = Name.identifier("set");
-    public static final Name NEXT = Name.identifier("next");
-    public static final Name HAS_NEXT = Name.identifier("hasNext");
-    public static final Regex COMPONENT_REGEX = new Regex("component\\d+");
+import static org.jetbrains.kotlin.util.OperatorNameConventions.*;
+
+public class OperatorConventions {
 
     private OperatorConventions() {}
 
@@ -56,21 +48,33 @@ public class OperatorConventions {
             DOUBLE, FLOAT, LONG, INT, SHORT, BYTE, CHAR
     );
 
+    // If you add new unary, binary or assignment operators, add it to OperatorConventionNames as well
+
     public static final ImmutableBiMap<JetSingleValueToken, Name> UNARY_OPERATION_NAMES = ImmutableBiMap.<JetSingleValueToken, Name>builder()
-            .put(JetTokens.PLUSPLUS, Name.identifier("inc"))
-            .put(JetTokens.MINUSMINUS, Name.identifier("dec"))
-            .put(JetTokens.PLUS, Name.identifier("plus"))
-            .put(JetTokens.MINUS, Name.identifier("minus"))
-            .put(JetTokens.EXCL, Name.identifier("not"))
+            .put(JetTokens.PLUSPLUS, INC)
+            .put(JetTokens.MINUSMINUS, DEC)
+            .put(JetTokens.PLUS, UNARY_PLUS)
+            .put(JetTokens.MINUS, UNARY_MINUS)
+            .put(JetTokens.EXCL, NOT)
+            .build();
+
+    public static final ImmutableMap<Name, JetSingleValueToken> UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED = ImmutableMap.<Name, JetSingleValueToken>builder()
+            .put(INC, JetTokens.PLUSPLUS)
+            .put(DEC, JetTokens.MINUSMINUS)
+            .put(UNARY_PLUS, JetTokens.PLUS)
+            .put(PLUS, JetTokens.PLUS)
+            .put(UNARY_MINUS, JetTokens.MINUS)
+            .put(MINUS, JetTokens.MINUS)
+            .put(NOT, JetTokens.EXCL)
             .build();
 
     public static final ImmutableBiMap<JetSingleValueToken, Name> BINARY_OPERATION_NAMES = ImmutableBiMap.<JetSingleValueToken, Name>builder()
-            .put(JetTokens.MUL, Name.identifier("times"))
-            .put(JetTokens.PLUS, Name.identifier("plus"))
-            .put(JetTokens.MINUS, Name.identifier("minus"))
-            .put(JetTokens.DIV, Name.identifier("div"))
-            .put(JetTokens.PERC, Name.identifier("mod"))
-            .put(JetTokens.RANGE, Name.identifier("rangeTo"))
+            .put(JetTokens.MUL, TIMES)
+            .put(JetTokens.PLUS, PLUS)
+            .put(JetTokens.MINUS, MINUS)
+            .put(JetTokens.DIV, DIV)
+            .put(JetTokens.PERC, MOD)
+            .put(JetTokens.RANGE, RANGE_TO)
             .build();
 
     public static final ImmutableSet<JetSingleValueToken> NOT_OVERLOADABLE =
@@ -92,11 +96,11 @@ public class OperatorConventions {
             ImmutableSet.<JetSingleValueToken>of(JetTokens.IN_KEYWORD, JetTokens.NOT_IN);
 
     public static final ImmutableBiMap<JetSingleValueToken, Name> ASSIGNMENT_OPERATIONS = ImmutableBiMap.<JetSingleValueToken, Name>builder()
-            .put(JetTokens.MULTEQ, Name.identifier("timesAssign"))
-            .put(JetTokens.DIVEQ, Name.identifier("divAssign"))
-            .put(JetTokens.PERCEQ, Name.identifier("modAssign"))
-            .put(JetTokens.PLUSEQ, Name.identifier("plusAssign"))
-            .put(JetTokens.MINUSEQ, Name.identifier("minusAssign"))
+            .put(JetTokens.MULTEQ, TIMES_ASSIGN)
+            .put(JetTokens.DIVEQ, DIV_ASSIGN)
+            .put(JetTokens.PERCEQ, MOD_ASSIGN)
+            .put(JetTokens.PLUSEQ, PLUS_ASSIGN)
+            .put(JetTokens.MINUSEQ, MINUS_ASSIGN)
             .build();
 
     public static final ImmutableBiMap<JetSingleValueToken, JetSingleValueToken> ASSIGNMENT_OPERATION_COUNTERPARTS = ImmutableBiMap.<JetSingleValueToken, JetSingleValueToken>builder()
@@ -108,8 +112,8 @@ public class OperatorConventions {
             .build();
 
     public static final ImmutableBiMap<JetSingleValueToken, Name> BOOLEAN_OPERATIONS = ImmutableBiMap.<JetSingleValueToken, Name>builder()
-             .put(JetTokens.ANDAND, Name.identifier("and"))
-             .put(JetTokens.OROR, Name.identifier("or"))
+             .put(JetTokens.ANDAND, AND)
+             .put(JetTokens.OROR, OR)
              .build();
 
     public static final ImmutableSet<Name> CONVENTION_NAMES = ImmutableSet.<Name>builder()
@@ -121,10 +125,23 @@ public class OperatorConventions {
 
     @Nullable
     public static Name getNameForOperationSymbol(@NotNull JetToken token) {
-        Name name = UNARY_OPERATION_NAMES.get(token);
-        if (name != null) return name;
-        name = BINARY_OPERATION_NAMES.get(token);
-        if (name != null) return name;
+        return getNameForOperationSymbol(token, true, true);
+    }
+
+    @Nullable
+    public static Name getNameForOperationSymbol(@NotNull JetToken token, boolean unaryOperations, boolean binaryOperations) {
+        Name name;
+
+        if (binaryOperations) {
+            name = BINARY_OPERATION_NAMES.get(token);
+            if (name != null) return name;
+        }
+
+        if (unaryOperations) {
+            name = UNARY_OPERATION_NAMES.get(token);
+            if (name != null) return name;
+        }
+
         name = ASSIGNMENT_OPERATIONS.get(token);
         if (name != null) return name;
         if (COMPARISON_OPERATIONS.contains(token)) return COMPARE_TO;

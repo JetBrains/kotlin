@@ -28,30 +28,24 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import java.util.*
 
 class LookupElementsCollector(
-        private val defaultPrefixMatcher: PrefixMatcher,
+        private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         resultSet: CompletionResultSet,
         private val lookupElementFactory: LookupElementFactory,
         private val sorter: CompletionSorter
 ) {
 
-    private val elements = LinkedHashMap<PrefixMatcher, ArrayList<LookupElement>>()
+    private val elements = ArrayList<LookupElement>()
 
-    private val defaultResultSet = resultSet
-            .withPrefixMatcher(defaultPrefixMatcher)
+    private val resultSet = resultSet
+            .withPrefixMatcher(prefixMatcher)
             .withRelevanceSorter(sorter)
 
     private val postProcessors = ArrayList<(LookupElement) -> LookupElement>()
 
     public fun flushToResultSet() {
         if (!elements.isEmpty()) {
-            for ((prefixMatcher, elements) in elements) {
-                val resultSet = if (prefixMatcher == defaultPrefixMatcher)
-                    defaultResultSet
-                else
-                    defaultResultSet.withPrefixMatcher(prefixMatcher)
-                resultSet.addAllElements(elements)
-            }
+            resultSet.addAllElements(elements)
             elements.clear()
             isResultEmpty = false
         }
@@ -81,20 +75,20 @@ class LookupElementsCollector(
                 lookupElements = lookupElements.map { it.withReceiverCast() }
             }
 
-            addElements(lookupElements, notImported = notImported)
+            addElements(lookupElements, notImported)
         }
     }
 
-    public fun addElement(element: LookupElement, prefixMatcher: PrefixMatcher = defaultPrefixMatcher, notImported: Boolean = false) {
+    public fun addElement(element: LookupElement, notImported: Boolean = false) {
         if (!prefixMatcher.prefixMatches(element)) return
 
         if (notImported) {
             element.putUserData(NOT_IMPORTED_KEY, Unit)
             if (isResultEmpty && elements.isEmpty()) { /* without these checks we may get duplicated items */
-                addElement(element.suppressAutoInsertion(), prefixMatcher)
+                addElement(element.suppressAutoInsertion())
             }
             else {
-                addElement(element, prefixMatcher)
+                addElement(element)
             }
             return
         }
@@ -131,7 +125,7 @@ class LookupElementsCollector(
             }
         }
 
-        elements.getOrPut(prefixMatcher) { ArrayList() }.add(result)
+        elements.add(result)
     }
 
     // used to avoid insertion of spaces before/after ',', '=' on just typing
@@ -141,15 +135,15 @@ class LookupElementsCollector(
         return insertedText == element.getUserDataDeep(KotlinCompletionCharFilter.JUST_TYPING_PREFIX)
     }
 
-    public fun addElements(elements: Iterable<LookupElement>, prefixMatcher: PrefixMatcher = defaultPrefixMatcher, notImported: Boolean = false) {
-        elements.forEach { addElement(it, prefixMatcher, notImported) }
+    public fun addElements(elements: Iterable<LookupElement>, notImported: Boolean = false) {
+        elements.forEach { addElement(it, notImported) }
     }
 
     public fun advertiseSecondCompletion() {
-        JavaCompletionContributor.advertiseSecondCompletion(completionParameters.getOriginalFile().getProject(), defaultResultSet)
+        JavaCompletionContributor.advertiseSecondCompletion(completionParameters.getOriginalFile().getProject(), resultSet)
     }
 
     public fun restartCompletionOnPrefixChange(prefixCondition: ElementPattern<String>) {
-        defaultResultSet.restartCompletionOnPrefixChange(prefixCondition)
+        resultSet.restartCompletionOnPrefixChange(prefixCondition)
     }
 }

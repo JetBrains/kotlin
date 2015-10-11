@@ -66,7 +66,7 @@ public open class JetChangeInfo(
             if (value != null && value !in newParameters) {
                 newParameters.add(value)
             }
-            $receiverParameterInfo = value
+            field = value
         }
 
     private val newParameters = parameterInfos.toArrayList()
@@ -155,7 +155,7 @@ public open class JetChangeInfo(
 
     public var primaryPropagationTargets: Collection<PsiElement> = emptyList()
         set(value: Collection<PsiElement>) {
-            $primaryPropagationTargets = value
+            field = value
 
             val result = LinkedHashSet<UsageInfo>()
 

@@ -65,6 +65,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     open class SpecializedProperty<TKey: Any, TValue : Any>() {
         private val values = HashMap<TKey?, TValue>()
 
+        val default: TValue? get() = values.get(null)
+
         operator fun get(key: TKey): TValue? = values.getOrElse(key, { values.getOrElse(null, { null }) })
 
         operator fun set(keys: Collection<TKey>, value: TValue) {
@@ -384,7 +386,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
         val types = effectiveTypeParams()
         if (!types.isEmpty()) {
-            builder.append(types.join(separator = ", ", prefix = "<", postfix = "> ").renderType())
+            builder.append(types.joinToString(separator = ", ", prefix = "<", postfix = "> ").renderType())
         }
 
         val receiverType = (if (toNullableT) receiver.replace("T>", "T?>") else receiver).renderType()

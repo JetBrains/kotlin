@@ -29,7 +29,7 @@ import java.util.List;
 public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
 
     public ScriptCodeDescriptor(@NotNull ScriptDescriptor containingDeclaration) {
-        super(containingDeclaration, null, Annotations.EMPTY, Name.special("<script-code>"), Kind.DECLARATION, SourceElement.NO_SOURCE);
+        super(containingDeclaration, null, Annotations.Companion.getEMPTY(), Name.special("<script-code>"), Kind.DECLARATION, SourceElement.NO_SOURCE);
     }
 
     public void initialize(
@@ -37,7 +37,7 @@ public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull JetType returnType) {
         super.initialize(null, dispatchReceiverParameter, Collections.<TypeParameterDescriptor>emptyList(), valueParameters, returnType,
-                         Modality.FINAL, Visibilities.INTERNAL, false, false);
+                         Modality.FINAL, Visibilities.INTERNAL);
     }
 
     @NotNull

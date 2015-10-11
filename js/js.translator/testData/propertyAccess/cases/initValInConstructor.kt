@@ -11,7 +11,7 @@ class A {
     var aaR = 0
     init {
         a = 1
-        $aa = 2
+        aa = 2
 
         aR = a
         aaR = aa
@@ -29,7 +29,7 @@ class B {
     var aaR = 0
     init {
         a = 3
-        $aa = 4
+        aa = 4
 
         aR = a
         aaR = aa

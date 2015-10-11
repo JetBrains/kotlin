@@ -4,10 +4,10 @@ public val foo: [ERROR : Type from delegate]
 
 public final class ValueWrapper {
     public constructor ValueWrapper()
-    public final var value: kotlin.Int
+    public final var backingValue: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun get(): kotlin.Int
+    public final fun getValue(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun set(/*0*/ v: kotlin.Int): kotlin.Unit
+    public final fun setValue(/*0*/ v: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

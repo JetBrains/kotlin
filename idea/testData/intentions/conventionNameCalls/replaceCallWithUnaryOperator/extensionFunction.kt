@@ -1,8 +1,8 @@
 fun test() {
     class Test()
 
-    fun Test.plus(): Test = Test()
+    fun Test.unaryPlus(): Test = Test()
 
     val test = Test()
-    test.pl<caret>us()
+    test.unaryPl<caret>us()
 }

@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public class ReplaceInvokeIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'invoke' with direct call"), HighPriorityAction {
     override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
-        if (element.calleeName != OperatorConventions.INVOKE.asString()) return null
+        if (element.calleeName != OperatorNameConventions.INVOKE.asString()) return null
         return element.callExpression!!.getCalleeExpression()!!.getTextRange()
     }
 

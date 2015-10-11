@@ -44,8 +44,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static kotlin.KotlinPackage.emptyList;
-import static kotlin.KotlinPackage.joinToString;
+import static kotlin.CollectionsKt.emptyList;
+import static kotlin.CollectionsKt.joinToString;
 
 public class ErrorUtils {
 
@@ -67,7 +67,7 @@ public class ErrorUtils {
             @NotNull
             @Override
             public Annotations getAnnotations() {
-                return Annotations.EMPTY;
+                return Annotations.Companion.getEMPTY();
             }
 
             @NotNull
@@ -404,7 +404,7 @@ public class ErrorUtils {
             super(getErrorModule(), Name.special(name == null ? "<ERROR CLASS>" : "<ERROR CLASS: " + name + ">"),
                   Modality.OPEN, Collections.<JetType>emptyList(), SourceElement.NO_SOURCE);
 
-            ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE);
+            ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
             errorConstructor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                                         Visibilities.INTERNAL);
             JetScope memberScope = createErrorScope(getName().asString());
@@ -470,7 +470,7 @@ public class ErrorUtils {
     private static PropertyDescriptorImpl createErrorProperty() {
         PropertyDescriptorImpl descriptor = PropertyDescriptorImpl.create(
                 ERROR_CLASS,
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 Modality.OPEN,
                 Visibilities.INTERNAL,
                 true,
@@ -499,9 +499,7 @@ public class ErrorUtils {
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
                 Modality.OPEN,
-                Visibilities.INTERNAL,
-                false,
-                false
+                Visibilities.INTERNAL
         );
         return function;
     }
@@ -578,7 +576,7 @@ public class ErrorUtils {
             @NotNull
             @Override
             public Annotations getAnnotations() {
-                return Annotations.EMPTY;
+                return Annotations.Companion.getEMPTY();
             }
 
             @Override
@@ -609,7 +607,7 @@ public class ErrorUtils {
     public static TypeParameterDescriptor createErrorTypeParameter(int index, @NotNull String debugMessage) {
         return TypeParameterDescriptorImpl.createWithDefaultBound(
                 ERROR_CLASS,
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 false,
                 Variance.INVARIANT,
                 Name.special("<ERROR: " + debugMessage + ">"),
@@ -673,7 +671,7 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Annotations getAnnotations() {
-            return Annotations.EMPTY;
+            return Annotations.Companion.getEMPTY();
         }
 
         @Nullable

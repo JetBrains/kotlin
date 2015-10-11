@@ -58,7 +58,7 @@ ref
     val property
     val receiver
     val param
-    val sparam
+    val setparam
     val lateinit
     val const
       get() = a
@@ -93,7 +93,7 @@ ref
     fun property  () : property
     fun receiver  () : receiver
     fun param  () : param
-    fun sparam  () : sparam
+    fun setparam  () : setparam
     fun lateinit  () : lateinit
     fun const  () : const
 
@@ -125,7 +125,7 @@ ref
         property  : t,
         receiver  : t,
         param     : t,
-        sparam    : t,
+        setparam    : t,
         lateinit  : t,
         const     : t,
     public protected private internal abstract
@@ -174,7 +174,7 @@ class F(val foo : bar,
         property  : t,
         receiver  : t,
         param     : t,
-        sparam    : t,
+        setparam    : t,
         lateinit  : t,
         const     : t,
     public protected private internal abstract

@@ -2,7 +2,6 @@ package
 
 package unused_variables {
     public fun doSmth(/*0*/ i: kotlin.Int): kotlin.Unit
-    public fun testBackingFieldsNotMarked(): kotlin.Unit
     public fun testFunctionLiterals(): kotlin.Unit
     public fun testInnerFunctions(): kotlin.Unit
     public fun testObject(): unused_variables.Trait

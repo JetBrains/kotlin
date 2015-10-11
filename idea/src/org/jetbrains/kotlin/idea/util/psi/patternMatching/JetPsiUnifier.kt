@@ -382,7 +382,7 @@ public class JetPsiUnifier(
         }
 
         private fun matchTypes(types1: Collection<JetType>, types2: Collection<JetType>): Boolean {
-            fun sortTypes(types: Collection<JetType>) = types.sortBy{ DescriptorRenderer.DEBUG_TEXT.renderType(it) }
+            fun sortTypes(types: Collection<JetType>) = types.sortedBy { DescriptorRenderer.DEBUG_TEXT.renderType(it) }
 
             if (types1.size() != types2.size()) return false
             return (sortTypes(types1) zip sortTypes(types2)).all { matchTypes(it.first, it.second) == MATCHED }
@@ -591,11 +591,11 @@ public class JetPsiUnifier(
             fun resolveAndSortDeclarationsByDescriptor(declarations: List<JetDeclaration>): List<Pair<JetDeclaration, DeclarationDescriptor?>> {
                 return declarations
                         .map { it to it.bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] }
-                        .sortBy { it.second?.let { IdeDescriptorRenderers.SOURCE_CODE.render(it) } ?: "" }
+                        .sortedBy { it.second?.let { IdeDescriptorRenderers.SOURCE_CODE.render(it) } ?: "" }
             }
 
             fun sortDeclarationsByElementType(declarations: List<JetDeclaration>): List<JetDeclaration> {
-                return declarations.sortBy { it.getNode()?.getElementType()?.getIndex() ?: -1 }
+                return declarations.sortedBy { it.getNode()?.getElementType()?.getIndex() ?: -1 }
             }
 
             if (desc1.getKind() != desc2.getKind()) return UNMATCHED

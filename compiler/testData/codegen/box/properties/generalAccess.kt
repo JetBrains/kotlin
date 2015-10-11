@@ -38,7 +38,7 @@ open class B(init: String) : A("1") {
     }
 
     fun getWithBackingFieldProperty(): String {
-        return $property
+        return property
     }
 }
 

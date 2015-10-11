@@ -78,7 +78,7 @@ public class JvmRuntimeTypes {
 
         //noinspection ConstantConditions
         JetType functionType = getBuiltIns(descriptor).getFunctionType(
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 receiverParameter == null ? null : receiverParameter.getType(),
                 ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType()
@@ -97,7 +97,7 @@ public class JvmRuntimeTypes {
 
         //noinspection ConstantConditions
         JetType functionType = getBuiltIns(descriptor).getFunctionType(
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 receiverType,
                 ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType()

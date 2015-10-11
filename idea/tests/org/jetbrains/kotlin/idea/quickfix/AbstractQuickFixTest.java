@@ -39,7 +39,7 @@ import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.util.indexing.FileBasedIndex;
-import kotlin.KotlinPackage;
+import kotlin.StringsKt;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -108,15 +108,17 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     private static QuickFixTestCase myWrapper;
 
     private void doTestFor(final String testName, final QuickFixTestCase quickFixTestCase) {
-        String relativePath = notNull(quickFixTestCase.getBasePath(), "") + "/" + KotlinPackage.decapitalize(testName);
+        String relativePath = notNull(quickFixTestCase.getBasePath(), "") + "/" + StringsKt.decapitalize(testName);
         final String testFullPath = quickFixTestCase.getTestDataPath().replace(File.separatorChar, '/') + relativePath;
         final File testFile = new File(testFullPath);
         CommandProcessor.getInstance().executeCommand(quickFixTestCase.getProject(), new Runnable() {
             @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "CallToPrintStackTrace"})
             @Override
             public void run() {
+                String fileText = "";
                 try {
-                    String contents = StringUtil.convertLineSeparators(FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET));
+                    fileText = FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET);
+                    String contents = StringUtil.convertLineSeparators(fileText);
                     quickFixTestCase.configureFromFileText(testFile.getName(), contents);
                     quickFixTestCase.bringRealEditorBack();
 
@@ -130,6 +132,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                 catch (Throwable e) {
                     e.printStackTrace();
                     fail(testName);
+                } finally {
+                    ConfigLibraryUtil.unconfigureLibrariesByDirective(getModule(), fileText);
                 }
             }
         }, "", "");
@@ -163,7 +167,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
         File file = new File(filePath);
         String afterFileName = file.getName();
         assert afterFileName.startsWith(AFTER_PREFIX);
-        String newAfterFileName = KotlinPackage.decapitalize(afterFileName.substring(AFTER_PREFIX.length())) + ".after";
+        String newAfterFileName = StringsKt.decapitalize(afterFileName.substring(AFTER_PREFIX.length())) + ".after";
 
         super.checkResultByFile(message, new File(file.getParent(), newAfterFileName).getPath(), ignoreTrailingSpaces);
     }

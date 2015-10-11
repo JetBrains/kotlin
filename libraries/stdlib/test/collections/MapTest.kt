@@ -1,10 +1,7 @@
 package test.collections
 
 import java.util.*
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import kotlin.test.fails
+import kotlin.test.*
 import org.junit.Test as test
 
 class MapTest {
@@ -25,7 +22,7 @@ class MapTest {
 
     @test fun getOrImplicitDefault() {
         val data: MutableMap<String, Int> = hashMapOf("bar" to 1)
-        assertTrue(fails { data.getOrImplicitDefault("foo") } is NoSuchElementException)
+        assertTrue(assertFails { data.getOrImplicitDefault("foo") } is NoSuchElementException)
         assertEquals(1, data.getOrImplicitDefault("bar"))
 
         val mutableWithDefault = data.withDefault { 42 }
@@ -86,7 +83,7 @@ class MapTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
     }
 
     @test fun stream() {
@@ -104,7 +101,7 @@ class MapTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
     }
 
     @test fun iterateWithExtraction() {
@@ -116,7 +113,7 @@ class MapTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
     }
 
     @test fun contains() {
@@ -163,7 +160,7 @@ class MapTest {
     }
 
     @test fun createWithSelector() {
-        val map = listOf("a", "bb", "ccc").toMap { it.length() }
+        val map = listOf("a", "bb", "ccc").toMapBy { it.length() }
         assertEquals(3, map.size())
         assertEquals("a", map.get(1))
         assertEquals("bb", map.get(2))
@@ -171,7 +168,7 @@ class MapTest {
     }
 
     @test fun createWithSelectorAndOverwrite() {
-        val map = listOf("aa", "bb", "ccc").toMap { it.length() }
+        val map = listOf("aa", "bb", "ccc").toMapBy { it.length() }
         assertEquals(2, map.size())
         assertEquals("bb", map.get(2))
         assertEquals("ccc", map.get(3))

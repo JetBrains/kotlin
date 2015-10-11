@@ -4077,6 +4077,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/libraries")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Libraries extends AbstractQuickFixTest {
+        public void testAllFilesPresentInLibraries() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/libraries"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("junit.kt")
+        public void testJunit() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/libraries/junit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("testNG.kt")
+        public void testTestNG() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/libraries/testNG.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/migration")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -4373,6 +4394,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("illegalEnumAnnotation2.kt")
         public void testIllegalEnumAnnotation2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/illegalEnumAnnotation2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("infixModifier.kt")
+        public void testInfixModifier() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/infixModifier.kt");
             doTest(fileName);
         }
 
@@ -6523,6 +6550,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/typeParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeParameters extends AbstractQuickFixTest {
+        public void testAllFilesPresentInTypeParameters() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("misplacedClassTypeParameter.kt")
+        public void testMisplacedClassTypeParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeParameters/misplacedClassTypeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("misplacedFunctionTypeParameter.kt")
+        public void testMisplacedFunctionTypeParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeParameters/misplacedFunctionTypeParameter.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/typeProjection")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -6635,27 +6683,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("valWithSetter.kt")
             public void testValWithSetter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeMutability/valWithSetter.kt");
-                doTest(fileName);
-            }
-        }
-
-        @TestMetadata("idea/testData/quickfix/variables/changeToBackingField")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ChangeToBackingField extends AbstractQuickFixTest {
-            public void testAllFilesPresentInChangeToBackingField() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeToBackingField"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-
-            @TestMetadata("bFRequired.kt")
-            public void testBFRequired() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToBackingField/bFRequired.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt510.kt")
-            public void testKt510() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToBackingField/kt510.kt");
                 doTest(fileName);
             }
         }

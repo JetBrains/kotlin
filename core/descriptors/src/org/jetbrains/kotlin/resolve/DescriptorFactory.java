@@ -34,7 +34,7 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.
 public class DescriptorFactory {
     private static class DefaultConstructorDescriptor extends ConstructorDescriptorImpl {
         public DefaultConstructorDescriptor(@NotNull ClassDescriptor containingClass, @NotNull SourceElement source) {
-            super(containingClass, null, Annotations.EMPTY, true, Kind.DECLARATION, source);
+            super(containingClass, null, Annotations.Companion.getEMPTY(), true, Kind.DECLARATION, source);
             initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                        getDefaultConstructorVisibility(containingClass));
         }
@@ -57,9 +57,19 @@ public class DescriptorFactory {
             @NotNull Annotations annotations,
             boolean isDefault
     ) {
+        return createSetter(propertyDescriptor, annotations, isDefault, propertyDescriptor.getVisibility());
+    }
+
+    @NotNull
+    public static PropertySetterDescriptorImpl createSetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations,
+            boolean isDefault,
+            @NotNull Visibility visibility
+    ) {
         PropertySetterDescriptorImpl setterDescriptor =
                 new PropertySetterDescriptorImpl(propertyDescriptor, annotations, propertyDescriptor.getModality(),
-                                                 propertyDescriptor.getVisibility(), !isDefault, isDefault,
+                                                 visibility, !isDefault, isDefault,
                                                  CallableMemberDescriptor.Kind.DECLARATION, null, propertyDescriptor.getSource());
         setterDescriptor.initializeDefault();
         return setterDescriptor;
@@ -78,9 +88,18 @@ public class DescriptorFactory {
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations,
             boolean isDefault) {
+        return createGetter(propertyDescriptor, annotations, isDefault, propertyDescriptor.getSource());
+    }
+
+    @NotNull
+    public static PropertyGetterDescriptorImpl createGetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations,
+            boolean isDefault,
+            @NotNull SourceElement sourceElement) {
         return new PropertyGetterDescriptorImpl(propertyDescriptor, annotations, propertyDescriptor.getModality(),
                                                 propertyDescriptor.getVisibility(), !isDefault, isDefault,
-                                                CallableMemberDescriptor.Kind.DECLARATION, null, propertyDescriptor.getSource());
+                                                CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement);
     }
 
     @NotNull
@@ -98,26 +117,26 @@ public class DescriptorFactory {
     @NotNull
     public static SimpleFunctionDescriptor createEnumValuesMethod(@NotNull ClassDescriptor enumClass) {
         SimpleFunctionDescriptorImpl values =
-                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.EMPTY, DescriptorUtils.ENUM_VALUES,
+                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.Companion.getEMPTY(), DescriptorUtils.ENUM_VALUES,
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
         return values.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType()),
-                                 Modality.FINAL, Visibilities.PUBLIC, false, false);
+                                 Modality.FINAL, Visibilities.PUBLIC);
     }
 
     @NotNull
     public static SimpleFunctionDescriptor createEnumValueOfMethod(@NotNull ClassDescriptor enumClass) {
         SimpleFunctionDescriptorImpl valueOf =
-                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.EMPTY, DescriptorUtils.ENUM_VALUE_OF,
+                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.Companion.getEMPTY(), DescriptorUtils.ENUM_VALUE_OF,
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
-                valueOf, null, 0, Annotations.EMPTY, Name.identifier("value"), getBuiltIns(enumClass).getStringType(), false, null,
+                valueOf, null, 0, Annotations.Companion.getEMPTY(), Name.identifier("value"), getBuiltIns(enumClass).getStringType(), false, null,
                 enumClass.getSource()
         );
         return valueOf.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                                   Collections.singletonList(parameterDescriptor), enumClass.getDefaultType(),
-                                  Modality.FINAL, Visibilities.PUBLIC, false, false);
+                                  Modality.FINAL, Visibilities.PUBLIC);
     }
 
     @Nullable

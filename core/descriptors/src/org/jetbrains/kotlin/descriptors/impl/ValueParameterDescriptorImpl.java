@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,7 +122,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @NotNull
     @Override
     public Collection<? extends ValueParameterDescriptor> getOverriddenDescriptors() {
-        return KotlinPackage.map(
+        return CollectionsKt.map(
                 getContainingDeclaration().getOverriddenDescriptors(),
                 new Function1<CallableDescriptor, ValueParameterDescriptor>() {
                     @Override

@@ -17,18 +17,18 @@ val metadatas = IdentityHashMap<PropertyMetadata, Unit>()
 fun record(p: PropertyMetadata) = metadatas.put(p, Unit)
 
 object IntHandler {
-    fun get(t: Any?, p: PropertyMetadata): Int { record(p); return 42 }
-    fun set(t: Any?, p: PropertyMetadata, value: Int) { record(p) }
+    fun getValue(t: Any?, p: PropertyMetadata): Int { record(p); return 42 }
+    fun setValue(t: Any?, p: PropertyMetadata, value: Int) { record(p) }
 }
 
 object AnyHandler {
-    fun get(t: Any?, p: PropertyMetadata): Any? { record(p); return 3.14 }
-    fun set(t: Any?, p: PropertyMetadata, value: Any?) { record(p) }
+    fun getValue(t: Any?, p: PropertyMetadata): Any? { record(p); return 3.14 }
+    fun setValue(t: Any?, p: PropertyMetadata, value: Any?) { record(p) }
 }
 
 object StringHandler {
-    fun get(t: Any?, p: PropertyMetadata): String { record(p); return p.name }
-    fun set(t: Any?, p: PropertyMetadata, value: String) { record(p) }
+    fun getValue(t: Any?, p: PropertyMetadata): String { record(p); return p.name }
+    fun setValue(t: Any?, p: PropertyMetadata, value: String) { record(p) }
 }
 
 fun box(): String {

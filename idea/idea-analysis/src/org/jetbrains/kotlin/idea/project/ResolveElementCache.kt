@@ -272,7 +272,7 @@ public class ResolveElementCache(
             is JetImportList -> {
                 val scope = resolveSession.getFileScopeProvider().getFileScope(resolveElement.getContainingJetFile())
                 scope.forceResolveAllImports()
-                resolveSession.getTrace()
+                resolveSession.trace
             }
 
             is JetAnnotationEntry -> annotationAdditionalResolve(resolveSession, resolveElement)
@@ -333,7 +333,7 @@ public class ResolveElementCache(
             ForceResolveUtil.forceResolveAllContents<TypeParameterDescriptor>(parameterDescriptor)
         }
 
-        return resolveSession.getTrace()
+        return resolveSession.trace
     }
 
     private fun codeFragmentAdditionalResolve(resolveSession: ResolveSession, codeFragment: JetCodeFragment, bodyResolveMode: BodyResolveMode): BindingTrace {
@@ -364,7 +364,7 @@ public class ResolveElementCache(
             }
         }
 
-        return resolveSession.getTrace()
+        return resolveSession.trace
     }
 
     private fun doResolveAnnotations(annotations: Annotations) {
@@ -391,7 +391,7 @@ public class ResolveElementCache(
         val descriptor = analyzer.resolveToDescriptor(typeParameter)
         ForceResolveUtil.forceResolveAllContents(descriptor)
 
-        return resolveSession.getTrace()
+        return resolveSession.trace
     }
 
     private fun delegationSpecifierAdditionalResolve(resolveSession: ResolveSession, jetElement: JetElement, classOrObject: JetClassOrObject, file: JetFile): BindingTrace {
@@ -502,7 +502,7 @@ public class ResolveElementCache(
             file: JetFile,
             statementFilter: StatementFilter
     ): BodyResolver {
-        val globalContext = SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker())
+        val globalContext = SimpleGlobalContext(resolveSession.storageManager, resolveSession.getExceptionTracker())
         val module = resolveSession.getModuleDescriptor()
         return createContainerForBodyResolve(
                 globalContext.withProject(file.getProject()).withModule(module),
@@ -514,7 +514,7 @@ public class ResolveElementCache(
 
     // All additional resolve should be done to separate trace
     private fun createDelegatingTrace(resolveElement: JetElement): BindingTrace {
-        return resolveSession.getStorageManager().createSafeTrace(
+        return resolveSession.storageManager.createSafeTrace(
                 DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", resolveElement))
     }
 

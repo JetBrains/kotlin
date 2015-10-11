@@ -30,7 +30,7 @@ fun test(ab_c: c) {
     ab_c3.ab_c()
 }
 
-fun test2(a_bc: a.b<Int>.c) {
+fun test2(a_bc: a.b.c) {
     a_bc.<!UNRESOLVED_REFERENCE!>a_bc<!>() // todo
     a_bc.ab_c() // todo
 }
@@ -69,7 +69,7 @@ fun test(a_b: b) {
     _ab2.<!UNRESOLVED_REFERENCE!>_ab<!>() // todo
 }
 
-fun test2(_ab: a<Int>.b) {
+fun test2(_ab: a.b) {
     _ab._ab()
     _ab.<!UNRESOLVED_REFERENCE!>a_b<!>()
 }

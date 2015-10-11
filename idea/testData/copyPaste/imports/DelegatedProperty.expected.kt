@@ -1,8 +1,8 @@
 package to
 
 import a.A
-import a.get
-import a.set
+import a.getValue
+import a.setValue
 
 class B {
     var v by A()

@@ -6,6 +6,6 @@ class Xaa
 
 fun foo(zzzYyyX<caret>)
 
-// ORDER: zzzYyyXxx
-// ORDER: YyyXoo
-// ORDER: Xaa
+// ORDER: zzzYyyXxx: ZzzYyyXxx
+// ORDER: zzzYyyXoo: YyyXoo
+// ORDER: zzzYyyXaa: Xaa

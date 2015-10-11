@@ -25,7 +25,7 @@ JetFile: inWrongPlace.kt
     ANNOTATION_ENTRY
       PsiElement(AT)('@')
       ANNOTATION_TARGET
-        PsiElement(sparam)('sparam')
+        PsiElement(setparam)('setparam')
       PsiElement(COLON)(':')
       CONSTRUCTOR_CALLEE
         TYPE_REFERENCE
@@ -58,7 +58,7 @@ JetFile: inWrongPlace.kt
     ANNOTATION_ENTRY
       PsiElement(AT)('@')
       ANNOTATION_TARGET
-        PsiElement(sparam)('sparam')
+        PsiElement(setparam)('setparam')
       PsiElement(COLON)(':')
       CONSTRUCTOR_CALLEE
         TYPE_REFERENCE
@@ -101,7 +101,7 @@ JetFile: inWrongPlace.kt
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
         ANNOTATION_TARGET
-          PsiElement(sparam)('sparam')
+          PsiElement(setparam)('setparam')
         PsiElement(COLON)(':')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -140,7 +140,7 @@ JetFile: inWrongPlace.kt
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
         ANNOTATION_TARGET
-          PsiElement(sparam)('sparam')
+          PsiElement(setparam)('setparam')
         PsiElement(COLON)(':')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -179,7 +179,7 @@ JetFile: inWrongPlace.kt
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
         ANNOTATION_TARGET
-          PsiElement(sparam)('sparam')
+          PsiElement(setparam)('setparam')
         PsiElement(COLON)(':')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -221,7 +221,7 @@ JetFile: inWrongPlace.kt
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
         ANNOTATION_TARGET
-          PsiElement(sparam)('sparam')
+          PsiElement(setparam)('setparam')
         PsiElement(COLON)(':')
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.builtins;
 
-import kotlin.KotlinPackage;
+import kotlin.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,8 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import java.io.InputStream;
 import java.util.*;
 
-import static kotlin.KotlinPackage.*;
+import static kotlin.CollectionsKt.*;
+import static kotlin.SetsKt.*;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
@@ -150,6 +151,7 @@ public abstract class KotlinBuiltIns {
         public final FqName retention = annotationName("Retention");
         public final FqName repeatable = annotationName("Repeatable");
         public final FqName mustBeDocumented = annotationName("MustBeDocumented");
+        public final FqName unsafeVariance = fqName("UnsafeVariance");
 
         public final FqName mutableList = fqName("MutableList");
         public final FqName mutableSet = fqName("MutableSet");
@@ -305,7 +307,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public Set<DeclarationDescriptor> getIntegralRanges() {
-        return KotlinPackage.<DeclarationDescriptor>setOf(
+        return SetsKt.<DeclarationDescriptor>setOf(
                 getBuiltInClassByName("ByteRange"),
                 getBuiltInClassByName("ShortRange"),
                 getBuiltInClassByName("CharRange"),
@@ -671,7 +673,7 @@ public abstract class KotlinBuiltIns {
     public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return JetTypeImpl.create(
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 getArray(),
                 false,
                 types
@@ -683,7 +685,7 @@ public abstract class KotlinBuiltIns {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return JetTypeImpl.create(
-                Annotations.EMPTY,
+                Annotations.Companion.getEMPTY(),
                 getEnum(),
                 false,
                 types
@@ -855,7 +857,7 @@ public abstract class KotlinBuiltIns {
         for (int i = 0; i < parameterTypes.size(); i++) {
             TypeProjection parameterType = parameterTypes.get(i);
             ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
-                    functionDescriptor, null, i, Annotations.EMPTY,
+                    functionDescriptor, null, i, Annotations.Companion.getEMPTY(),
                     Name.identifier("p" + (i + 1)), parameterType.getType(), false, null, SourceElement.NO_SOURCE
             );
             valueParameters.add(valueParameterDescriptor);
@@ -1081,7 +1083,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public FunctionDescriptor getIdentityEquals() {
-        return KotlinPackage.first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"),
+        return first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"),
                                                                                               NoLookupLocation.FROM_BUILTINS));
     }
 }

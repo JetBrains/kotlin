@@ -130,13 +130,4 @@ fun testObject() : Trait {
     return o
 }
 
-fun testBackingFieldsNotMarked() {
-    val <!UNUSED_VARIABLE!>a<!> = object {
-        val x : Int
-        init {
-            <!BACKING_FIELD_USAGE_DEPRECATED!>$x<!> = 1
-        }
-    }
-}
-
 fun doSmth(<!UNUSED_PARAMETER!>i<!> : Int) {}

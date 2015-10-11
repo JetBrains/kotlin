@@ -23,18 +23,10 @@ import java.io.File.pathSeparator
 public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
     override val compilerFqName = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
 
-    public var externalAnnotations: Path? = null
     public var includeRuntime: Boolean = true
     public var moduleName: String? = null
 
     private var compileClasspath: Path? = null
-
-    public fun createExternalAnnotations(): Path {
-        if (externalAnnotations == null) {
-            externalAnnotations = Path(getProject())
-        }
-        return externalAnnotations!!.createPath()
-    }
 
     public fun setClasspath(classpath: Path) {
         if (compileClasspath == null) {
@@ -62,11 +54,6 @@ public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
 
         compileClasspath?.let {
             args.add("-classpath")
-            args.add(it.list().join(pathSeparator))
-        }
-
-        externalAnnotations?.let {
-            args.add("-annotations")
             args.add(it.list().join(pathSeparator))
         }
 

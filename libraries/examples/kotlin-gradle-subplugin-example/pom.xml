@@ -63,11 +63,6 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <version>${project.version}</version>
-                <configuration>
-                    <annotationPaths>
-                        <annotationPath>${basedir}/kotlinAnnotation</annotationPath>
-                    </annotationPaths>
-                </configuration>
 
                 <executions>
                     <execution>

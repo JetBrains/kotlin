@@ -371,6 +371,10 @@ public class JetPsiUtil {
             IElementType elementType = firstChild.getNode().getElementType();
             if (elementType instanceof JetToken) {
                 JetToken jetToken = (JetToken) elementType;
+                boolean isPrefixExpression = simpleNameExpression.getParent() instanceof JetPrefixExpression;
+                if (isPrefixExpression) {
+                    return OperatorConventions.getNameForOperationSymbol(jetToken, true, false);
+                }
                 return OperatorConventions.getNameForOperationSymbol(jetToken);
             }
         }

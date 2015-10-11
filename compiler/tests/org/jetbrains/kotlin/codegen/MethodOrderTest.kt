@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.test.ConfigurationKind
+import junit.framework.TestCase
 import org.jetbrains.asm4.ClassReader
 import org.jetbrains.asm4.ClassVisitor
-import org.jetbrains.asm4.Opcodes
 import org.jetbrains.asm4.MethodVisitor
+import org.jetbrains.asm4.Opcodes
+import org.jetbrains.kotlin.test.ConfigurationKind
 import java.util.ArrayList
-import junit.framework.TestCase
 
 public class MethodOrderTest: CodegenTestCase() {
     public fun testDelegatedMethod() {
@@ -109,7 +109,7 @@ public class MethodOrderTest: CodegenTestCase() {
     }
 
     private fun doTest(sourceText: String, classSuffix: String, expectedOrder: List<String>) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS)
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY)
         myFiles = CodegenTestFiles.create("file.kt", sourceText, myEnvironment!!.project)
 
         val classFileForObject = generateClassesInFile().asList().first { it.relativePath.endsWith("$classSuffix.class") }

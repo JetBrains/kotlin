@@ -1,0 +1,24 @@
+package
+
+public fun requireInt(/*0*/ n: kotlin.Int): kotlin.Unit
+public fun requireString(/*0*/ s: kotlin.String): kotlin.Unit
+public fun test(): kotlin.Unit
+public operator fun kotlin.String.plus(): kotlin.String
+public operator fun kotlin.String.unaryPlus(): kotlin.Int
+
+public final class Example {
+    public constructor Example()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun plus(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final operator fun unaryPlus(): kotlin.Int
+}
+
+public final class ExampleDeprecated {
+    public constructor ExampleDeprecated()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun plus(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

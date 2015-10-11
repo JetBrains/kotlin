@@ -21,8 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import kotlin.KotlinPackage;
-import kotlin.io.IoPackage;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.ModuleChunk;
@@ -33,14 +32,6 @@ import org.jetbrains.jps.builders.logging.ProjectBuilderLogger;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.incremental.ProjectBuildException;
-import org.jetbrains.jps.model.java.JpsAnnotationRootType;
-import org.jetbrains.jps.model.java.JpsJavaSdkType;
-import org.jetbrains.jps.model.library.JpsLibrary;
-import org.jetbrains.jps.model.library.sdk.JpsSdk;
-import org.jetbrains.jps.model.library.sdk.JpsSdkType;
-import org.jetbrains.jps.model.module.JpsDependencyElement;
-import org.jetbrains.jps.model.module.JpsModule;
-import org.jetbrains.jps.model.module.JpsSdkDependency;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder;
 
@@ -92,7 +83,6 @@ public class KotlinBuilderModuleScriptGenerator {
                     moduleSources,
                     findSourceRoots(context, target),
                     findClassPathRoots(target),
-                    findAnnotationRoots(target),
                     (JavaModuleBuildTargetType) targetType,
                     // this excludes the output directories from the class path, to be removed for true incremental compilation
                     outputDirs
@@ -123,7 +113,7 @@ public class KotlinBuilderModuleScriptGenerator {
             @Override
             public boolean value(File file) {
                 if (!file.exists()) {
-                    String extension = IoPackage.getExtension(file);
+                    String extension = FilesKt.getExtension(file);
 
                     // Don't filter out files, we want to report warnings about absence through the common place
                     if (!(extension.equals("class") || extension.equals("jar"))) {
@@ -147,43 +137,6 @@ public class KotlinBuilderModuleScriptGenerator {
             }
         }
         return result;
-    }
-
-    @NotNull
-    private static List<File> findAnnotationRoots(@NotNull ModuleBuildTarget target) {
-        LinkedHashSet<File> annotationRootFiles = new LinkedHashSet<File>();
-
-        JpsModule module = target.getModule();
-        JpsSdk sdk = module.getSdk(getSdkType(module));
-        if (sdk != null) {
-            annotationRootFiles.addAll(sdk.getParent().getFiles(JpsAnnotationRootType.INSTANCE));
-        }
-
-        for (JpsLibrary library : getAllDependencies(target).getLibraries()) {
-            annotationRootFiles.addAll(library.getFiles(JpsAnnotationRootType.INSTANCE));
-        }
-
-        // JDK is stored locally on user's machine, so its configuration, including external annotation paths
-        // is not available on TeamCity. When running on TeamCity, one has to provide extra path to JDK annotations
-        String extraAnnotationsPaths = System.getProperty("jps.kotlin.extra.annotation.paths");
-        if (extraAnnotationsPaths != null) {
-            String[] paths = extraAnnotationsPaths.split(";");
-            for (String path : paths) {
-                annotationRootFiles.add(new File(path));
-            }
-        }
-
-        return KotlinPackage.toList(annotationRootFiles);
-    }
-
-    @NotNull
-    private static JpsSdkType getSdkType(@NotNull JpsModule module) {
-        for (JpsDependencyElement dependency : module.getDependenciesList().getDependencies()) {
-            if (dependency instanceof JpsSdkDependency) {
-                return ((JpsSdkDependency) dependency).getSdkType();
-            }
-        }
-        return JpsJavaSdkType.INSTANCE;
     }
 
     private KotlinBuilderModuleScriptGenerator() {}

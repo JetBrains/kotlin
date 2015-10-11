@@ -1,8 +1,9 @@
 package test.collections
 
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
+import kotlin.test.expect
 import org.junit.Test as test
 
 class MapJVMTest {
@@ -43,7 +44,7 @@ class MapJVMTest {
     @test fun getOrPutFailsOnConcurrentMap() {
         val map = ConcurrentHashMap<String, Int>()
 
-        fails {
+        assertFails {
             map.getOrPut("x") { 1 }
         }
         expect(1) {

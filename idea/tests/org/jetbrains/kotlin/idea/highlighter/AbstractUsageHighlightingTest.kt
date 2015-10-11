@@ -37,7 +37,7 @@ public abstract class AbstractUsageHighlightingTest: JetLightCodeInsightFixtureT
         data.init()
 
         val caret = document.getText().indexOf(CARET_TAG)
-        assert(caret != -1, "Caret marker '$CARET_TAG' expected")
+        assert(caret != -1) { "Caret marker '$CARET_TAG' expected" }
 
         WriteCommandAction.runWriteCommandAction(myFixture.getProject()) {
             document.deleteString(caret, caret + CARET_TAG.length())

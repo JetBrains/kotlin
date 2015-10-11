@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.android.synthetic.res
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 
 public data class AndroidModuleInfo(val applicationPackage: String, resDirectories: List<String>) {
-    val resDirectories = resDirectories.sort()
+    val resDirectories = resDirectories.sorted()
 }
 
 public abstract class AndroidResource(val id: String) {

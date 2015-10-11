@@ -220,7 +220,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             //TODO: drop unused aliases?
             aliasImports.mapTo(importsToGenerate) { ImportPath(it.getValue(), false, it.getKey())}
 
-            val sortedImportsToGenerate = importsToGenerate.sortBy(importInsertHelper.importSortComparator)
+            val sortedImportsToGenerate = importsToGenerate.sortedWith(importInsertHelper.importSortComparator)
 
             // check if no changes to imports required
             val oldImports = file.importDirectives

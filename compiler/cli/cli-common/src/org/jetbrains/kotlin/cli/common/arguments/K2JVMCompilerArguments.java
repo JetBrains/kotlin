@@ -28,10 +28,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String classpath;
 
-    @Argument(value = "annotations", description = "Paths to external annotations")
-    @ValueDescription("<path>")
-    public String annotations;
-
     @Argument(value = "include-runtime", description = "Include Kotlin runtime in to resulting .jar")
     public boolean includeRuntime;
 
@@ -41,9 +37,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "no-stdlib", description = "Don't include Kotlin runtime into classpath")
     public boolean noStdlib;
 
-    @Argument(value = "no-jdk-annotations", description = "Don't include JDK external annotations into classpath")
-    public boolean noJdkAnnotations;
-
     @Argument(value = "module", description = "Path to the module file to compile")
     @ValueDescription("<path>")
     public String module;
@@ -51,7 +44,7 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "script", description = "Evaluate the script file")
     public boolean script;
 
-    @Argument(value = "kotlin-home", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
+    @Argument(value = "kotlin-home", description = "Path to Kotlin compiler home directory, used for runtime libraries discovery")
     @ValueDescription("<path>")
     public String kotlinHome;
 

@@ -28,7 +28,7 @@ fun box(): Boolean {
         return false
     }
 
-    if (a.isEmpty() || !ArrayList<Int>().isEmpty()) {
+    if (a.isEmpty || !ArrayList<Int>().isEmpty) {
         return false
     }
 
@@ -39,7 +39,7 @@ fun box(): Boolean {
     assertEquals(a, b, "a == b")
 
     a.clear()
-    assertEquals(true, a.isEmpty(), "a.isEmpty()")
+    assertEquals(true, a.isEmpty, "a.isEmpty")
 
 
     assertEquals(arrayOf(1, 500, 2, 3), list.toTypedArray(), "list.toTypedArray()")

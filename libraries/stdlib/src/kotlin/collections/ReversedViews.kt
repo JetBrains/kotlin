@@ -19,7 +19,6 @@
 package kotlin
 
 import java.util.AbstractList
-import kotlin.platform.platformName
 
 private open class ReversedListReadOnly<T>(protected open val delegate: List<T>) : AbstractList<T>() {
     override val size: Int get() = delegate.size()
@@ -49,6 +48,6 @@ public fun <T> List<T>.asReversed(): List<T> = ReversedListReadOnly(this)
  * Returns a reversed mutable view of the original mutable List.
  * All changes made in the original list will be reflected in the reversed one and vice versa.
  */
-@platformName("asReversedMutable")
+@kotlin.jvm.JvmName("asReversedMutable")
 public fun <T> MutableList<T>.asReversed(): MutableList<T> = ReversedList(this)
 

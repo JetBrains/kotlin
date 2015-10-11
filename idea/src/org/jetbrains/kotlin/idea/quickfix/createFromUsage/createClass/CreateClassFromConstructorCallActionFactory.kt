@@ -86,7 +86,7 @@ public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageF
         val parameterInfos = valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
-                    it.getArgumentName()?.getReferenceExpression()?.getReferencedName() ?: defaultParamName
+                    it.getArgumentName()?.referenceExpression?.getReferencedName() ?: defaultParamName
             )
         }
 

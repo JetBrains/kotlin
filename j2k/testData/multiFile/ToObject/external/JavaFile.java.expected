@@ -2,8 +2,8 @@ package test;
 
 class C {
     void foo() {
-        Utils.INSTANCE$.foo1(Utils.staticField);
-        Utils.staticField += Utils.INSTANCE$.foo2();
-        PureUtils.INSTANCE$.foo1(PureUtils.INSTANCE$.foo2())
+        Utils.INSTANCE.foo1(Utils.staticField);
+        Utils.staticField += Utils.INSTANCE.foo2();
+        PureUtils.INSTANCE.foo1(PureUtils.INSTANCE.foo2())
     }
 }

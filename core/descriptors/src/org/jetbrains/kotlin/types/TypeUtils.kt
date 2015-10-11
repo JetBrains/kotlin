@@ -112,7 +112,7 @@ fun JetType.replaceAnnotations(newAnnotations: Annotations): JetType {
 }
 
 public fun JetTypeChecker.equalTypesOrNulls(type1: JetType?, type2: JetType?): Boolean {
-    if (type1 identityEquals type2) return true
+    if (type1 === type2) return true
     if (type1 == null || type2 == null) return false
     return equalTypes(type1, type2)
 }

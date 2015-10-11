@@ -171,7 +171,7 @@ class JetSimpleNameReference(expression: JetSimpleNameExpression) : JetSimpleRef
         return when (elementToReplace) {
             is JetUserType -> {
                 val typeText = "$text${elementToReplace.getTypeArgumentList()?.getText() ?: ""}"
-                elementToReplace.replace(psiFactory.createType(typeText).getTypeElement()!!)
+                elementToReplace.replace(psiFactory.createType(typeText).typeElement!!)
             }
             else -> elementToReplace.replace(psiFactory.createExpression(text))
         } as JetElement

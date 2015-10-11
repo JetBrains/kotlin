@@ -25,7 +25,7 @@ import com.intellij.ui.table.JBTable;
 import com.intellij.util.Function;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.EditableModel;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -108,9 +108,9 @@ public class KotlinParameterTablePanel extends JPanel {
     }
 
     public void init(@Nullable Parameter receiver, @NotNull List<Parameter> parameters) {
-        parameterInfos = KotlinPackage.mapTo(
+        parameterInfos = CollectionsKt.mapTo(
                 parameters,
-                receiver != null ? KotlinPackage.arrayListOf(new ParameterInfo(receiver, true)) : new ArrayList<ParameterInfo>(),
+                receiver != null ? CollectionsKt.arrayListOf(new ParameterInfo(receiver, true)) : new ArrayList<ParameterInfo>(),
                 new Function1<Parameter, ParameterInfo>() {
                     @Override
                     public ParameterInfo invoke(Parameter parameter) {
@@ -386,7 +386,7 @@ public class KotlinParameterTablePanel extends JPanel {
 
     @Nullable
     public ParameterInfo getReceiverInfo() {
-        return KotlinPackage.singleOrNull(
+        return CollectionsKt.singleOrNull(
                 parameterInfos,
                 new Function1<ParameterInfo, Boolean>() {
                     @Override
@@ -399,7 +399,7 @@ public class KotlinParameterTablePanel extends JPanel {
 
     @NotNull
     public List<ParameterInfo> getParameterInfos() {
-        return KotlinPackage.filter(
+        return CollectionsKt.filter(
                 parameterInfos,
                 new Function1<ParameterInfo, Boolean>() {
                     @Override

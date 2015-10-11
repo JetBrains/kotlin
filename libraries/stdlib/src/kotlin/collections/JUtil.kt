@@ -21,9 +21,9 @@ internal object EmptyList : List<Nothing>, Serializable {
     override fun toString(): String = "[]"
 
     override val size: Int get() = 0
-    override fun isEmpty(): Boolean = true
-    override fun contains(o: Any?): Boolean = false
-    override fun containsAll(c: Collection<Any?>): Boolean = c.isEmpty()
+    override val isEmpty: Boolean get() = true
+    override fun contains(o: Nothing): Boolean = false
+    override fun containsAll(c: Collection<Nothing>): Boolean = c.isEmpty()
 
     override fun get(index: Int): Nothing = throw IndexOutOfBoundsException("Index $index is out of bound of empty list.")
     override fun indexOf(o: Any?): Int = -1
@@ -79,13 +79,6 @@ public fun <T : Any> listOfNotNull(vararg values: T?): List<T> = values.filterNo
  */
 public val Collection<*>.indices: IntRange
     get() = 0..size() - 1
-
-/**
- * Returns an [IntRange] that starts with zero and ends at the value of this number but does not include it.
- */
-@Deprecated("Use 0..n-1 range instead.", ReplaceWith("0..this - 1"))
-public val Int.indices: IntRange
-    get() = 0..this - 1
 
 /**
  * Returns the index of the last item in the list or -1 if the list is empty.

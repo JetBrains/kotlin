@@ -5,9 +5,9 @@ var a: Int by Delegate()
   <!ACCESSOR_FOR_DELEGATED_PROPERTY!>set(i) {}<!>
 
 class Delegate {
-  fun get(t: Any?, p: PropertyMetadata): Int {
+  fun getValue(t: Any?, p: PropertyMetadata): Int {
     return 1
   }
 
-  fun set(t: Any?, p: PropertyMetadata, i: Int) {}
+  fun setValue(t: Any?, p: PropertyMetadata, i: Int) {}
 }

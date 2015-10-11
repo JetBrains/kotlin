@@ -1,6 +1,6 @@
 class Delegate {
     var name = ""
-    fun get(t: A, p: PropertyMetadata): String = name
+    fun getValue(t: A, p: PropertyMetadata): String = name
     fun propertyDelegated(p: PropertyMetadata) { name = p.name }
 }
 

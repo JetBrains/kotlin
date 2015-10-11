@@ -80,7 +80,7 @@ public fun getOverriddenMethodTooltip(method: PsiMethod): String? {
 
     val comparator = MethodCellRenderer(false).getComparator()
 
-    val overridingJavaMethods = processor.getCollection().filter { it !is KotlinLightMethodForTraitFakeOverride } sortBy(comparator)
+    val overridingJavaMethods = processor.getCollection().filter { it !is KotlinLightMethodForTraitFakeOverride } sortedWith (comparator)
     if (overridingJavaMethods.isEmpty()) return null
 
     val start = if (isAbstract) DaemonBundle.message("method.is.implemented.header") else DaemonBundle.message("method.is.overriden.header")
@@ -109,7 +109,7 @@ public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
     val showMethodNames = !PsiUtil.allMethodsHaveSameSignature(overridingJavaMethods.toTypedArray())
 
     val renderer = MethodCellRenderer(showMethodNames)
-    overridingJavaMethods = overridingJavaMethods.sortBy(renderer.getComparator())
+    overridingJavaMethods = overridingJavaMethods.sortedWith(renderer.comparator)
 
     val methodsUpdater = OverridingMethodsUpdater(method, renderer)
     PsiElementListNavigator.openTargets(

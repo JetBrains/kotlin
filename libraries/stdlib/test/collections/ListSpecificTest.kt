@@ -35,9 +35,9 @@ class ListSpecificTest {
     fun getOr() {
         expect("foo") { data.get(0) }
         expect("bar") { data.get(1) }
-        fails { data.get(2) }
-        fails { data.get(-1) }
-        fails { empty.get(0) }
+        assertFails { data.get(2) }
+        assertFails { data.get(-1) }
+        assertFails { empty.get(0) }
 
         expect("foo") { data.getOrElse(0, {""} )}
         expect("zoo") { data.getOrElse(-1, { "zoo" })}
@@ -64,7 +64,7 @@ class ListSpecificTest {
         }
 
         assertEquals(3, list.size())
-        assertEquals("beverage,location,name", list.join(","))
+        assertEquals("beverage,location,name", list.joinToString(","))
     }
 
     @Test

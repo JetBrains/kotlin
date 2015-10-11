@@ -125,7 +125,7 @@ public class DescriptorKindFilter(
     public fun acceptsKinds(kinds: Int): Boolean
             = kindMask and kinds != 0
 
-    public fun exclude(exclude: DescriptorKindExclude): DescriptorKindFilter
+    public infix fun exclude(exclude: DescriptorKindExclude): DescriptorKindFilter
             = DescriptorKindFilter(kindMask, excludes + listOf(exclude))
 
     public fun withoutKinds(kinds: Int): DescriptorKindFilter

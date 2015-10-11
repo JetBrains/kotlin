@@ -1,6 +1,6 @@
 class Delegate {
     var count = 0
-    fun get(t: Any?, p: PropertyMetadata) {}
+    fun getValue(t: Any?, p: PropertyMetadata) {}
     fun propertyDelegated(vararg p: PropertyMetadata) { count++ }
 }
 

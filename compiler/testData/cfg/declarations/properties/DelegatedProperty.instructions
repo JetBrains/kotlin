@@ -1,6 +1,6 @@
 == Delegate ==
 class Delegate {
-    fun get(_this: Nothing?, p: PropertyMetadata): Int = 0
+    fun getValue(_this: Nothing?, p: PropertyMetadata): Int = 0
 }
 ---------------------
 L0:
@@ -12,8 +12,8 @@ error:
 sink:
     <SINK>     PREV:[<ERROR>, <END>]
 =====================
-== get ==
-fun get(_this: Nothing?, p: PropertyMetadata): Int = 0
+== getValue ==
+fun getValue(_this: Nothing?, p: PropertyMetadata): Int = 0
 ---------------------
 L0:
   1 <START>

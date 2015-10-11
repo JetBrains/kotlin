@@ -33,7 +33,7 @@ public class RangeTest {
         assertTrue(9 in openRange)
         assertFalse(10 in openRange)
 
-        assertTrue(fails { 1 until Int.MIN_VALUE } is IllegalArgumentException)
+        assertTrue(assertFails { 1 until Int.MIN_VALUE } is IllegalArgumentException)
     }
 
     @test fun byteRange() {
@@ -66,7 +66,7 @@ public class RangeTest {
         assertTrue(9.toByte() in openRange)
         assertFalse(10.toByte() in openRange)
 
-        assertTrue(fails { 0.toByte() until Byte.MIN_VALUE } is IllegalArgumentException)
+        assertTrue(assertFails { 0.toByte() until Byte.MIN_VALUE } is IllegalArgumentException)
 
     }
 
@@ -99,7 +99,7 @@ public class RangeTest {
         assertTrue(9.toShort() in openRange)
         assertFalse(10.toShort() in openRange)
 
-        assertTrue(fails { 0.toShort() until Short.MIN_VALUE } is IllegalArgumentException)
+        assertTrue(assertFails { 0.toShort() until Short.MIN_VALUE } is IllegalArgumentException)
     }
 
     @test fun longRange() {
@@ -131,7 +131,7 @@ public class RangeTest {
         assertTrue(9L in openRange)
         assertFalse(10L in openRange)
 
-        assertTrue(fails { 0L until Long.MIN_VALUE } is IllegalArgumentException)
+        assertTrue(assertFails { 0L until Long.MIN_VALUE } is IllegalArgumentException)
 
     }
 
@@ -156,7 +156,7 @@ public class RangeTest {
         assertTrue('Y' in openRange)
         assertFalse('Z' in openRange)
 
-        assertTrue(fails { 'A' until '\u0000' } is IllegalArgumentException)
+        assertTrue(assertFails { 'A' until '\u0000' } is IllegalArgumentException)
     }
 
     @test fun doubleRange() {

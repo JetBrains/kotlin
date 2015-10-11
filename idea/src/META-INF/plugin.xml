@@ -54,12 +54,6 @@
     </component>
   </application-components>
 
-  <module-components>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.project.K2JSModuleComponent</implementation-class>
-    </component>
-  </module-components>
-
   <actions>
     <action id="Kotlin.NewFile" class="org.jetbrains.kotlin.idea.actions.NewKotlinFileAction">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
@@ -93,7 +87,7 @@
     </action>
 
     <action id="ConfigureKotlinJsInProject" class="org.jetbrains.kotlin.idea.actions.ConfigureKotlinJsInProjectAction"
-            text="Configure Kotlin (JavaScript) in Project">
+            text="Configure Kotlin (JavaScript - experimental) in Project">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
@@ -161,6 +155,23 @@
             description="Execute Kotlin code in console">
       <keyboard-shortcut first-keystroke="control ENTER" keymap="$default"/>
     </action>
+
+    <group id="KotlinGenerateGroup">
+      <action id="KotlinGenerateSetUpMethod"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$SetUp"
+              text="SetUp Function" />
+      <action id="KotlinGenerateTestMethod"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Test"
+              text="Test Function" />
+      <action id="KotlinGenerateDataMethod"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Data"
+              text="Parameters Function" />
+      <action id="KotlinGenerateTearDownMethod"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$TearDown"
+              text="TearDown Function" />
+
+      <add-to-group group-id="GenerateGroup" anchor="first"/>
+    </group>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -340,7 +351,8 @@
 
     <qualifiedNameProvider implementation="org.jetbrains.kotlin.idea.actions.KotlinQualifiedNameProvider"/>
 
-    <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.JetFunctionParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinFunctionParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinArrayAccessParameterInfoHandler"/>
 
     <codeInsight.gotoSuper language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.GotoSuperActionHandler"/>
     <typeDeclarationProvider implementation="org.jetbrains.kotlin.idea.codeInsight.JetTypeDeclarationProvider"/>
@@ -591,6 +603,8 @@
         implementationClass="org.jetbrains.kotlin.idea.refactoring.pullUp.JavaToKotlinPullUpHelperFactory"/>
 
     <problemFileHighlightFilter implementation="org.jetbrains.kotlin.idea.projectView.KotlinProblemFileHighlightFilter"/>
+
+    <codeInsight.typeInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinExpressionTypeProvider"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention</className>
@@ -1214,6 +1228,14 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedFacadeUsageInspection"
                      displayName="Usage of deprecated Kotlin package facade"
+                     groupName="Kotlin"
+                     language="JAVA"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedObjectInstanceFieldReferenceInspection"
+                     displayName="Usage of deprecated 'INSTANCE$' field"
                      groupName="Kotlin"
                      language="JAVA"
                      enabledByDefault="true"

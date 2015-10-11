@@ -74,6 +74,9 @@ public fun lazy<T>(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLazy
  * This extension allows to use instances of Lazy for property delegation:
  * `val property: String by lazy { initializer }`
  */
+public fun <T> Lazy<T>.getValue(thisRef: Any?, property: PropertyMetadata): T = value
+
+@Deprecated("Use getValue() instead")
 public fun <T> Lazy<T>.get(thisRef: Any?, property: PropertyMetadata): T = value
 
 /**

@@ -49,7 +49,7 @@ public abstract class AbstractDataFlowValueRenderingTest: JetLightCodeInsightFix
         val info = expression.analyze().getDataFlowInfo(expression)
 
         val allValues = (info.getCompleteTypeInfo().keySet() + info.getCompleteNullabilityInfo().keySet()).toSet()
-        val actual = allValues.map { renderDataFlowValue(it) }.filterNotNull().sort().joinToString("\n")
+        val actual = allValues.map { renderDataFlowValue(it) }.filterNotNull().sorted().joinToString("\n")
 
         JetTestUtils.assertEqualsToFile(File(FileUtil.getNameWithoutExtension(fileName) + ".txt"), actual)
     }

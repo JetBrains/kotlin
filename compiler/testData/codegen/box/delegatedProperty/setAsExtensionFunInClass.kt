@@ -1,10 +1,10 @@
 class Delegate {
     var inner = 1
-    fun get(t: Any?, p: PropertyMetadata): Int = inner
+    fun getValue(t: Any?, p: PropertyMetadata): Int = inner
 }
 
 class A {
-  fun Delegate.set(t: Any?, p: PropertyMetadata, i: Int) { inner = i }
+  fun Delegate.setValue(t: Any?, p: PropertyMetadata, i: Int) { inner = i }
 
   var prop: Int by Delegate()
 }

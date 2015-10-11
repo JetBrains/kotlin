@@ -193,7 +193,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
             if (tokenType in declarationKeywords) {
                 val balance = ltCount - gtCount
                 if (balance < 0) return null
-                builder.append(token.getText()!!.reverse())
+                builder.append(token.getText()!!.reversed())
                 builder.reverse()
 
                 var tail = "X" + ">".repeat(balance) + ".f"
@@ -212,7 +212,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
             if (tokenType !in declarationTokens) return null
             if (tokenType == JetTokens.LT) ltCount++
             if (tokenType == JetTokens.GT) gtCount++
-            builder.append(token.getText()!!.reverse())
+            builder.append(token.getText()!!.reversed())
             token = PsiTreeUtil.prevLeaf(token) ?: return null
         }
     }
@@ -261,9 +261,11 @@ public class KotlinCompletionContributor : CompletionContributor() {
                 val somethingAdded = session.complete()
                 if (!somethingAdded && parameters.getInvocationCount() < 2) {
                     // Rerun completion if nothing was found
-                    val newConfiguration = CompletionSessionConfiguration(completeNonImportedDeclarations = true,
-                                                                          completeNonAccessibleDeclarations = false,
-                                                                          filterOutJavaGettersAndSetters = false)
+                    val newConfiguration = CompletionSessionConfiguration(
+                            completeNonImportedDeclarations = true,
+                            completeNonAccessibleDeclarations = false,
+                            filterOutJavaGettersAndSetters = false,
+                            completeJavaClassesNotToBeUsed = false)
                     BasicCompletionSession(newConfiguration, parameters, result).complete()
                 }
             }
@@ -304,7 +306,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
         val nameRef = position.getParent() as? JetNameReferenceExpression ?: return null
         val userType = nameRef.getParent() as? JetUserType ?: return null
         val typeRef = userType.getParent() as? JetTypeReference ?: return null
-        if (userType != typeRef.getTypeElement()) return null
+        if (userType != typeRef.typeElement) return null
         val parent = typeRef.getParent()
         return when (parent) {
             is JetNamedFunction -> parent.check { typeRef == it.receiverTypeReference }

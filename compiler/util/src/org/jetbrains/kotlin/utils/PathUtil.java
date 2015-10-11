@@ -18,9 +18,6 @@ package org.jetbrains.kotlin.utils;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.java.impl.JavaSdkUtil;
 
@@ -142,22 +139,6 @@ public class PathUtil {
             throw new IllegalStateException("Resource not found: " + path);
         }
         return new File(resourceRoot).getAbsoluteFile();
-    }
-
-    @NotNull
-    public static VirtualFile jarFileOrDirectoryToVirtualFile(@NotNull File file) {
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                return VirtualFileManager.getInstance()
-                        .findFileByUrl("file://" + FileUtil.toSystemIndependentName(file.getAbsolutePath()));
-            }
-            else {
-                return VirtualFileManager.getInstance().findFileByUrl("jar://" + FileUtil.toSystemIndependentName(file.getAbsolutePath()) + "!/");
-            }
-        }
-        else {
-            throw new IllegalStateException("Path " + file + " does not exist.");
-        }
     }
 
     @NotNull

@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
@@ -285,6 +287,11 @@ public class ConstraintSystemImpl : ConstraintSystem {
         val constraintPosition = constraintContext.position
         if (isErrorOrSpecialType(subType, constraintPosition) || isErrorOrSpecialType(superType, constraintPosition)) return
         if (subType == null || superType == null) return
+
+        if (subType.hasNoInferAnnotation() || superType.hasNoInferAnnotation()) return
+        if ((subType.hasExactAnnotation() || superType.hasExactAnnotation()) && (constraintKind != EQUAL)) {
+            return doAddConstraint(EQUAL, subType, superType, constraintContext, typeCheckingProcedure)
+        }
 
         assert(!superType.isFunctionPlaceholder) {
             "The type for " + constraintPosition + " shouldn't be a placeholder for function type"

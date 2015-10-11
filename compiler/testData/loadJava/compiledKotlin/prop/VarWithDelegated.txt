@@ -9,6 +9,6 @@ public final class A {
 
 public final class MyProperty</*0*/ T> {
     /*primary*/ public constructor MyProperty</*0*/ T>()
-    public final fun get(/*0*/ t: T, /*1*/ p: kotlin.PropertyMetadata): kotlin.Int
-    public final fun set(/*0*/ t: T, /*1*/ p: kotlin.PropertyMetadata, /*2*/ i: kotlin.Int): kotlin.Unit
+    public final fun getValue(/*0*/ t: T, /*1*/ p: kotlin.PropertyMetadata): kotlin.Int
+    public final fun setValue(/*0*/ t: T, /*1*/ p: kotlin.PropertyMetadata, /*2*/ i: kotlin.Int): kotlin.Unit
 }

@@ -77,8 +77,7 @@ public class FixStackMethodTransformer : MethodTransformer() {
             val expectedStackSize = analyzer.frames[labelIndex]?.getStackSize() ?: DEAD_CODE
 
             if (actualStackSize != DEAD_CODE && expectedStackSize != DEAD_CODE) {
-                assert(expectedStackSize <= actualStackSize,
-                       "Label at $labelIndex, jump at $gotoIndex: stack underflow: $expectedStackSize > $actualStackSize")
+                assert(expectedStackSize <= actualStackSize) { "Label at $labelIndex, jump at $gotoIndex: stack underflow: $expectedStackSize > $actualStackSize" }
                 val frame = analyzer.frames[gotoIndex]!!
                 actions.add({ replaceMarkerWithPops(methodNode, gotoNode.getPrevious(), expectedStackSize, frame) })
             }
@@ -154,7 +153,7 @@ public class FixStackMethodTransformer : MethodTransformer() {
         val savedStackDescriptor = localVariablesManager.getBeforeInlineDescriptor(inlineMarker)
         val afterInlineFrame = analyzer.getFrame(inlineMarker) as FixStackAnalyzer.FixStackFrame?
         if (afterInlineFrame != null && savedStackDescriptor.isNotEmpty()) {
-            assert(afterInlineFrame.getStackSize() <= 1, "Inline method should not leave more than 1 value on stack")
+            assert(afterInlineFrame.getStackSize() <= 1) { "Inline method should not leave more than 1 value on stack" }
             if (afterInlineFrame.getStackSize() == 1) {
                 val afterInlineStackValues = afterInlineFrame.getStackContent()
                 val returnValue = afterInlineStackValues.last()

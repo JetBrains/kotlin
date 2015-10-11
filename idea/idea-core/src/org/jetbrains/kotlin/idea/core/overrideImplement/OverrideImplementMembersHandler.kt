@@ -22,20 +22,14 @@ import com.intellij.lang.LanguageCodeInsightActionHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.quickfix.moveCaretIntoGeneratedElement
-import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.idea.quickfix.generateMembers
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import java.util.*
 
 public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
 
@@ -95,75 +89,8 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
 
     companion object {
         public fun generateMembers(editor: Editor, classOrObject: JetClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
-            runWriteAction {
-                if (selectedElements.isEmpty()) return@runWriteAction
-
-                val body = classOrObject.getOrCreateBody()
-
-                var afterAnchor = findInsertAfterAnchor(editor, body) ?: return@runWriteAction
-
-                var firstGenerated: PsiElement? = null
-
-                val project = classOrObject.project
-                val insertedMembers = ArrayList<JetCallableDeclaration>()
-                for (memberObject in selectedElements) {
-                    val member = memberObject.generateMember(project)
-                    val added = body.addAfter(member, afterAnchor) as JetCallableDeclaration
-
-                    if (firstGenerated == null) {
-                        firstGenerated = added
-                    }
-
-                    afterAnchor = added
-                    insertedMembers.add(added)
-                }
-
-                ShortenReferences.DEFAULT.process(insertedMembers)
-
-                moveCaretIntoGeneratedElement(editor, firstGenerated!!)
-            }
-        }
-
-        private fun findInsertAfterAnchor(editor: Editor, body: JetClassBody): PsiElement? {
-            val afterAnchor = body.lBrace ?: return null
-
-            val offset = editor.caretModel.offset
-            val offsetCursorElement = PsiTreeUtil.findFirstParent(body.containingFile.findElementAt(offset)) {
-                it.parent == body
-            }
-
-            if (offsetCursorElement is PsiWhiteSpace) {
-                return removeAfterOffset(offset, offsetCursorElement)
-            }
-
-            if (offsetCursorElement != null && offsetCursorElement != body.rBrace) {
-                return offsetCursorElement
-            }
-
-            return afterAnchor
-        }
-
-        private fun removeAfterOffset(offset: Int, whiteSpace: PsiWhiteSpace): PsiElement {
-            val spaceNode = whiteSpace.node
-            if (spaceNode.textRange.contains(offset)) {
-                var beforeWhiteSpaceText = spaceNode.text.substring(0, offset - spaceNode.startOffset)
-                if (!StringUtil.containsLineBreak(beforeWhiteSpaceText)) {
-                    // Prevent insertion on same line
-                    beforeWhiteSpaceText += "\n"
-                }
-
-                val factory = JetPsiFactory(whiteSpace.project)
-
-                val insertAfter = whiteSpace.prevSibling
-                whiteSpace.delete()
-
-                val beforeSpace = factory.createWhiteSpace(beforeWhiteSpaceText)
-                insertAfter.parent.addAfter(beforeSpace, insertAfter)
-
-                return insertAfter.nextSibling
-            }
-
-            return whiteSpace
+            val project = classOrObject.project
+            generateMembers(editor, classOrObject, selectedElements.map { chooser -> { chooser.generateMember(project) } })
         }
     }
 }

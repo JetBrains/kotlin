@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.KotlinPackage;
+import kotlin.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -51,7 +51,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
 
 public class CompileTimeConstantUtils {
 
-    private final static Set<String> ARRAY_CALL_NAMES = KotlinPackage.hashSetOf(
+    private final static Set<String> ARRAY_CALL_NAMES = SetsKt.hashSetOf(
             "kotlin.arrayOf", "kotlin.doubleArrayOf", "kotlin.floatArrayOf", "kotlin.longArrayOf", "kotlin.intArrayOf", "kotlin.charArrayOf",
             "kotlin.shortArrayOf", "kotlin.byteArrayOf", "kotlin.booleanArrayOf"
     );

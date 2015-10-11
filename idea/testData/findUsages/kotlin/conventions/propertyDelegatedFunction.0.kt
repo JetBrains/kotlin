@@ -2,8 +2,8 @@
 // OPTIONS: usages
 
 class Delegate() {
-    fun get(thisRef: Any?, propertyMetadata: PropertyMetadata): String = ":)"
-    fun set(thisRef: Any?, propertyMetadata: PropertyMetadata, value: String) {
+    fun getValue(thisRef: Any?, propertyMetadata: PropertyMetadata): String = ":)"
+    fun setValue(thisRef: Any?, propertyMetadata: PropertyMetadata, value: String) {
     }
 
     fun <caret>propertyDelegated(propertyMetadata: PropertyMetadata) {

@@ -319,6 +319,7 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 ">"          { return JetTokens.GT        ; }
 "?"          { return JetTokens.QUEST     ; }
 ":"          { return JetTokens.COLON     ; }
+";;"          { return JetTokens.DOUBLE_SEMICOLON;}
 ";"          { return JetTokens.SEMICOLON ; }
 "="          { return JetTokens.EQ        ; }
 ","          { return JetTokens.COMMA     ; }

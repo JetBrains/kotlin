@@ -376,7 +376,8 @@ public class JetFlowInformationProvider {
         boolean isDefinitelyInitialized = ctxt.exitInitState.definitelyInitialized();
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
         if (variableDescriptor instanceof PropertyDescriptor) {
-            if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
+            if (propertyDescriptor.isLateInit() || !trace.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                 isDefinitelyInitialized = true;
             }
         }
@@ -555,7 +556,7 @@ public class JetFlowInformationProvider {
         if ((containingDeclaration instanceof ClassDescriptor)
                 && DescriptorUtils.isAncestor(containingDeclaration, declarationDescriptor, false)) {
             if (element instanceof JetSimpleNameExpression) {
-                report(Errors.BACKING_FIELD_USAGE_DEPRECATED.on((JetSimpleNameExpression) element), cxtx);
+                report(Errors.BACKING_FIELD_USAGE_FORBIDDEN.on((JetSimpleNameExpression) element), cxtx);
             }
             return false;
         }
@@ -683,7 +684,8 @@ public class JetFlowInformationProvider {
                                         if (isMain
                                             || functionDescriptor.getModality().isOverridable()
                                             || !functionDescriptor.getOverriddenDescriptors().isEmpty()
-                                            || "get".equals(functionName) || "set".equals(functionName) || "propertyDelegated".equals(functionName)
+                                            || "getValue".equals(functionName) || "setValue".equals(functionName)
+                                            || "propertyDelegated".equals(functionName)
                                                 ) {
                                             return;
                                         }

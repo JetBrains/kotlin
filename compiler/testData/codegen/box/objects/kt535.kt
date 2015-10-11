@@ -10,7 +10,7 @@ class Identifier<T>(t : T?, myHasDollar : Boolean) {
         }
     }
     init {
-        $myT = t
+        myT = t
     }
 }
 

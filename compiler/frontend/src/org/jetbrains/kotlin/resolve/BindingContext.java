@@ -54,7 +54,7 @@ public interface BindingContext {
         @NotNull
         @Override
         public Diagnostics getDiagnostics() {
-            return Diagnostics.EMPTY;
+            return Diagnostics.Companion.getEMPTY();
         }
 
         @Override

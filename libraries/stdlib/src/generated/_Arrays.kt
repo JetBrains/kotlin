@@ -4087,78 +4087,6 @@ public inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Shor
 /**
  * Returns a list with elements in reversed order.
  */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun <T> Array<out T>.reverse(): List<T> {
-    return reversed()
-}
-
-/**
- * Returns a list with elements in reversed order.
- */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun BooleanArray.reverse(): List<Boolean> {
-    return reversed()
-}
-
-/**
- * Returns a list with elements in reversed order.
- */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun ByteArray.reverse(): List<Byte> {
-    return reversed()
-}
-
-/**
- * Returns a list with elements in reversed order.
- */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun CharArray.reverse(): List<Char> {
-    return reversed()
-}
-
-/**
- * Returns a list with elements in reversed order.
- */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun DoubleArray.reverse(): List<Double> {
-    return reversed()
-}
-
-/**
- * Returns a list with elements in reversed order.
- */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun FloatArray.reverse(): List<Float> {
-    return reversed()
-}
-
-/**
- * Returns a list with elements in reversed order.
- */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun IntArray.reverse(): List<Int> {
-    return reversed()
-}
-
-/**
- * Returns a list with elements in reversed order.
- */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun LongArray.reverse(): List<Long> {
-    return reversed()
-}
-
-/**
- * Returns a list with elements in reversed order.
- */
-@Deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
-public fun ShortArray.reverse(): List<Short> {
-    return reversed()
-}
-
-/**
- * Returns a list with elements in reversed order.
- */
 public fun <T> Array<out T>.reversed(): List<T> {
     if (isEmpty()) return emptyList()
     val list = toArrayList()
@@ -4352,38 +4280,6 @@ public fun ShortArray.reversedArray(): ShortArray {
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
     return result
-}
-
-/**
- * Returns a list of all elements, sorted by the specified [comparator].
- */
-@Deprecated("This method may change its behavior soon. Use sortedWith() instead.", ReplaceWith("sortedWith(comparator)"))
-public fun <T> Array<out T>.sortBy(comparator: Comparator<in T>): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("This method may change its behavior soon. Use sortedBy() instead.", ReplaceWith("sortedBy(order)"))
-public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline order: (T) -> R): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, in descending order by results of specified [order] function.
- */
-@Deprecated("This method may change its behavior soon. Use sortedByDescending() instead.", ReplaceWith("sortedByDescending(order)"))
-public inline fun <T, R : Comparable<R>> Array<out T>.sortDescendingBy(crossinline order: (T) -> R): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareByDescending(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
 }
 
 /**
@@ -4862,195 +4758,6 @@ public fun LongArray.sortedWith(comparator: Comparator<in Long>): List<Long> {
 public fun ShortArray.sortedWith(comparator: Comparator<in Short>): List<Short> {
     val sortedList = toArrayList()
     java.util.Collections.sort(sortedList, comparator)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
-public fun <T : Comparable<T>> Array<out T>.toSortedList(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
-public fun BooleanArray.toSortedList(): List<Boolean> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
-public fun ByteArray.toSortedList(): List<Byte> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
-public fun CharArray.toSortedList(): List<Char> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
-public fun DoubleArray.toSortedList(): List<Double> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
-public fun FloatArray.toSortedList(): List<Float> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
-public fun IntArray.toSortedList(): List<Int> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
-public fun LongArray.toSortedList(): List<Long> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements.
- */
-@Deprecated("Use sorted() instead.", ReplaceWith("sorted()"))
-public fun ShortArray.toSortedList(): List<Short> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
-public fun <T, V : Comparable<V>> Array<out T>.toSortedListBy(order: (T) -> V): List<T> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<T> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
-public fun <V : Comparable<V>> BooleanArray.toSortedListBy(order: (Boolean) -> V): List<Boolean> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<Boolean> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
-public fun <V : Comparable<V>> ByteArray.toSortedListBy(order: (Byte) -> V): List<Byte> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<Byte> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
-public fun <V : Comparable<V>> CharArray.toSortedListBy(order: (Char) -> V): List<Char> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<Char> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
-public fun <V : Comparable<V>> DoubleArray.toSortedListBy(order: (Double) -> V): List<Double> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<Double> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
-public fun <V : Comparable<V>> FloatArray.toSortedListBy(order: (Float) -> V): List<Float> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<Float> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
-public fun <V : Comparable<V>> IntArray.toSortedListBy(order: (Int) -> V): List<Int> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<Int> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
-public fun <V : Comparable<V>> LongArray.toSortedListBy(order: (Long) -> V): List<Long> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<Long> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Returns a sorted list of all elements, ordered by results of specified [order] function.
- */
-@Deprecated("Use sortedBy(order) instead.", ReplaceWith("sortedBy(order)"))
-public fun <V : Comparable<V>> ShortArray.toSortedListBy(order: (Short) -> V): List<Short> {
-    val sortedList = toArrayList()
-    val sortBy: Comparator<Short> = compareBy(order)
-    java.util.Collections.sort(sortedList, sortBy)
     return sortedList
 }
 
@@ -5807,121 +5514,49 @@ public fun ShortArray.toList(): List<Short> {
     return this.toArrayList()
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <T, K> Array<out T>.toMap(selector: (T) -> K): Map<K, T> {
-    val capacity = (size()/.75f) + 1
-    val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <K> BooleanArray.toMap(selector: (Boolean) -> K): Map<K, Boolean> {
-    val capacity = (size()/.75f) + 1
-    val result = LinkedHashMap<K, Boolean>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <K> ByteArray.toMap(selector: (Byte) -> K): Map<K, Byte> {
-    val capacity = (size()/.75f) + 1
-    val result = LinkedHashMap<K, Byte>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <K> CharArray.toMap(selector: (Char) -> K): Map<K, Char> {
-    val capacity = (size()/.75f) + 1
-    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <K> DoubleArray.toMap(selector: (Double) -> K): Map<K, Double> {
-    val capacity = (size()/.75f) + 1
-    val result = LinkedHashMap<K, Double>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <K> FloatArray.toMap(selector: (Float) -> K): Map<K, Float> {
-    val capacity = (size()/.75f) + 1
-    val result = LinkedHashMap<K, Float>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <K> IntArray.toMap(selector: (Int) -> K): Map<K, Int> {
-    val capacity = (size()/.75f) + 1
-    val result = LinkedHashMap<K, Int>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <K> LongArray.toMap(selector: (Long) -> K): Map<K, Long> {
-    val capacity = (size()/.75f) + 1
-    val result = LinkedHashMap<K, Long>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
-/**
- * Returns Map containing the values from the given collection indexed by [selector].
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
 public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
-    val capacity = (size()/.75f) + 1
-    val result = LinkedHashMap<K, Short>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return toMapBy(selector)
 }
 
 /**
@@ -6037,6 +5672,123 @@ public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Sh
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <T, K> Array<out T>.toMapBy(selector: (T) -> K): Map<K, T> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K> BooleanArray.toMapBy(selector: (Boolean) -> K): Map<K, Boolean> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Boolean>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K> ByteArray.toMapBy(selector: (Byte) -> K): Map<K, Byte> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Byte>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K> CharArray.toMapBy(selector: (Char) -> K): Map<K, Char> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K> DoubleArray.toMapBy(selector: (Double) -> K): Map<K, Double> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Double>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K> FloatArray.toMapBy(selector: (Float) -> K): Map<K, Float> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Float>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K> IntArray.toMapBy(selector: (Int) -> K): Map<K, Int> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Int>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K> LongArray.toMapBy(selector: (Long) -> K): Map<K, Long> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Long>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K> ShortArray.toMapBy(selector: (Short) -> K): Map<K, Short> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Short>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), element)
     }
     return result
 }
@@ -6898,87 +6650,6 @@ public fun LongArray.withIndex(): Iterable<IndexedValue<Long>> {
  */
 public fun ShortArray.withIndex(): Iterable<IndexedValue<Short>> {
     return IndexingIterable { iterator() }
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun <T> Array<out T>.withIndices(): List<Pair<Int, T>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, T>>(), { index++ to it })
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun BooleanArray.withIndices(): List<Pair<Int, Boolean>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, Boolean>>(), { index++ to it })
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun ByteArray.withIndices(): List<Pair<Int, Byte>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, Byte>>(), { index++ to it })
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun CharArray.withIndices(): List<Pair<Int, Char>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, Char>>(), { index++ to it })
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun DoubleArray.withIndices(): List<Pair<Int, Double>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, Double>>(), { index++ to it })
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun FloatArray.withIndices(): List<Pair<Int, Float>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, Float>>(), { index++ to it })
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun IntArray.withIndices(): List<Pair<Int, Int>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, Int>>(), { index++ to it })
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun LongArray.withIndices(): List<Pair<Int, Long>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, Long>>(), { index++ to it })
-}
-
-/**
- * Returns a list containing pairs of each element of the original collection and their index.
- */
-@Deprecated("Use withIndex() instead.")
-public fun ShortArray.withIndices(): List<Pair<Int, Short>> {
-    var index = 0
-    return mapTo(ArrayList<Pair<Int, Short>>(), { index++ to it })
 }
 
 /**
@@ -9316,334 +8987,134 @@ public fun <T : Any> Array<out T?>.requireNoNulls(): Array<out T> {
     return this as Array<out T>
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <T, R, V> Array<out T>.merge(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <R, V> BooleanArray.merge(array: Array<out R>, transform: (Boolean, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <R, V> ByteArray.merge(array: Array<out R>, transform: (Byte, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <R, V> CharArray.merge(array: Array<out R>, transform: (Char, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <R, V> DoubleArray.merge(array: Array<out R>, transform: (Double, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <R, V> FloatArray.merge(array: Array<out R>, transform: (Float, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <R, V> IntArray.merge(array: Array<out R>, transform: (Int, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <R, V> LongArray.merge(array: Array<out R>, transform: (Long, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <R, V> ShortArray.merge(array: Array<out R>, transform: (Short, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <V> BooleanArray.merge(array: BooleanArray, transform: (Boolean, Boolean) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <V> ByteArray.merge(array: ByteArray, transform: (Byte, Byte) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <V> CharArray.merge(array: CharArray, transform: (Char, Char) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <V> DoubleArray.merge(array: DoubleArray, transform: (Double, Double) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <V> FloatArray.merge(array: FloatArray, transform: (Float, Float) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <V> IntArray.merge(array: IntArray, transform: (Int, Int) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <V> LongArray.merge(array: LongArray, transform: (Long, Long) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
 public inline fun <V> ShortArray.merge(array: ShortArray, transform: (Short, Short) -> V): List<V> {
-    val size = Math.min(size(), array.size())
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
+    return zip(array, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
 public inline fun <T, R, V> Array<out T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
-    val arraySize = size()
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
-    var i = 0
-    for (element in other) {
-        if (i >= arraySize) break
-        list.add(transform(this[i++], element))
-    }
-    return list
+    return zip(other, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
 public inline fun <R, V> BooleanArray.merge(other: Iterable<R>, transform: (Boolean, R) -> V): List<V> {
-    val arraySize = size()
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
-    var i = 0
-    for (element in other) {
-        if (i >= arraySize) break
-        list.add(transform(this[i++], element))
-    }
-    return list
+    return zip(other, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
 public inline fun <R, V> ByteArray.merge(other: Iterable<R>, transform: (Byte, R) -> V): List<V> {
-    val arraySize = size()
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
-    var i = 0
-    for (element in other) {
-        if (i >= arraySize) break
-        list.add(transform(this[i++], element))
-    }
-    return list
+    return zip(other, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
 public inline fun <R, V> CharArray.merge(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
-    val arraySize = size()
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
-    var i = 0
-    for (element in other) {
-        if (i >= arraySize) break
-        list.add(transform(this[i++], element))
-    }
-    return list
+    return zip(other, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
 public inline fun <R, V> DoubleArray.merge(other: Iterable<R>, transform: (Double, R) -> V): List<V> {
-    val arraySize = size()
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
-    var i = 0
-    for (element in other) {
-        if (i >= arraySize) break
-        list.add(transform(this[i++], element))
-    }
-    return list
+    return zip(other, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
 public inline fun <R, V> FloatArray.merge(other: Iterable<R>, transform: (Float, R) -> V): List<V> {
-    val arraySize = size()
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
-    var i = 0
-    for (element in other) {
-        if (i >= arraySize) break
-        list.add(transform(this[i++], element))
-    }
-    return list
+    return zip(other, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
 public inline fun <R, V> IntArray.merge(other: Iterable<R>, transform: (Int, R) -> V): List<V> {
-    val arraySize = size()
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
-    var i = 0
-    for (element in other) {
-        if (i >= arraySize) break
-        list.add(transform(this[i++], element))
-    }
-    return list
+    return zip(other, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
 public inline fun <R, V> LongArray.merge(other: Iterable<R>, transform: (Long, R) -> V): List<V> {
-    val arraySize = size()
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
-    var i = 0
-    for (element in other) {
-        if (i >= arraySize) break
-        list.add(transform(this[i++], element))
-    }
-    return list
+    return zip(other, transform)
 }
 
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
+@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
 public inline fun <R, V> ShortArray.merge(other: Iterable<R>, transform: (Short, R) -> V): List<V> {
-    val arraySize = size()
-    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
-    var i = 0
-    for (element in other) {
-        if (i >= arraySize) break
-        list.add(transform(this[i++], element))
-    }
-    return list
+    return zip(other, transform)
 }
 
 /**
@@ -9812,182 +9283,512 @@ public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Array<out T>.zip(array: Array<out R>): List<Pair<T, R>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> BooleanArray.zip(array: Array<out R>): List<Pair<Boolean, R>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ByteArray.zip(array: Array<out R>): List<Pair<Byte, R>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> CharArray.zip(array: Array<out R>): List<Pair<Char, R>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> DoubleArray.zip(array: Array<out R>): List<Pair<Double, R>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> FloatArray.zip(array: Array<out R>): List<Pair<Float, R>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> IntArray.zip(array: Array<out R>): List<Pair<Int, R>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> LongArray.zip(array: Array<out R>): List<Pair<Long, R>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ShortArray.zip(array: Array<out R>): List<Pair<Short, R>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <T, R, V> Array<out T>.zip(array: Array<out R>, transform: (T, R) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> BooleanArray.zip(array: Array<out R>, transform: (Boolean, R) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> ByteArray.zip(array: Array<out R>, transform: (Byte, R) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> CharArray.zip(array: Array<out R>, transform: (Char, R) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> DoubleArray.zip(array: Array<out R>, transform: (Double, R) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> FloatArray.zip(array: Array<out R>, transform: (Float, R) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> IntArray.zip(array: Array<out R>, transform: (Int, R) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> LongArray.zip(array: Array<out R>, transform: (Long, R) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> ShortArray.zip(array: Array<out R>, transform: (Short, R) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun BooleanArray.zip(array: BooleanArray): List<Pair<Boolean, Boolean>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun ByteArray.zip(array: ByteArray): List<Pair<Byte, Byte>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun CharArray.zip(array: CharArray): List<Pair<Char, Char>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun DoubleArray.zip(array: DoubleArray): List<Pair<Double, Double>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun FloatArray.zip(array: FloatArray): List<Pair<Float, Float>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun IntArray.zip(array: IntArray): List<Pair<Int, Int>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun LongArray.zip(array: LongArray): List<Pair<Long, Long>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun ShortArray.zip(array: ShortArray): List<Pair<Short, Short>> {
-    return merge(array) { t1, t2 -> t1 to t2 }
+    return zip(array) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> BooleanArray.zip(array: BooleanArray, transform: (Boolean, Boolean) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> ByteArray.zip(array: ByteArray, transform: (Byte, Byte) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> CharArray.zip(array: CharArray, transform: (Char, Char) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> DoubleArray.zip(array: DoubleArray, transform: (Double, Double) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> FloatArray.zip(array: FloatArray, transform: (Float, Float) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> IntArray.zip(array: IntArray, transform: (Int, Int) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> LongArray.zip(array: LongArray, transform: (Long, Long) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> ShortArray.zip(array: ShortArray, transform: (Short, Short) -> V): List<V> {
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
+    }
+    return list
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <T, R> Array<out T>.zip(other: Iterable<R>): List<Pair<T, R>> {
-    return merge(other) { t1, t2 -> t1 to t2 }
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> BooleanArray.zip(other: Iterable<R>): List<Pair<Boolean, R>> {
-    return merge(other) { t1, t2 -> t1 to t2 }
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ByteArray.zip(other: Iterable<R>): List<Pair<Byte, R>> {
-    return merge(other) { t1, t2 -> t1 to t2 }
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R>> {
-    return merge(other) { t1, t2 -> t1 to t2 }
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> DoubleArray.zip(other: Iterable<R>): List<Pair<Double, R>> {
-    return merge(other) { t1, t2 -> t1 to t2 }
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> FloatArray.zip(other: Iterable<R>): List<Pair<Float, R>> {
-    return merge(other) { t1, t2 -> t1 to t2 }
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> IntArray.zip(other: Iterable<R>): List<Pair<Int, R>> {
-    return merge(other) { t1, t2 -> t1 to t2 }
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> LongArray.zip(other: Iterable<R>): List<Pair<Long, R>> {
-    return merge(other) { t1, t2 -> t1 to t2 }
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
 public fun <R> ShortArray.zip(other: Iterable<R>): List<Pair<Short, R>> {
-    return merge(other) { t1, t2 -> t1 to t2 }
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (Boolean, R) -> V): List<V> {
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (Byte, R) -> V): List<V> {
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (Double, R) -> V): List<V> {
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (Float, R) -> V): List<V> {
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (Int, R) -> V): List<V> {
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (Long, R) -> V): List<V> {
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (Short, R) -> V): List<V> {
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
+    }
+    return list
 }
 
 /**
@@ -10360,78 +10161,6 @@ public fun ShortArray.asSequence(): Sequence<Short> {
 }
 
 /**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun <T> Array<out T>.sequence(): Sequence<T> {
-    return asSequence()
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun BooleanArray.sequence(): Sequence<Boolean> {
-    return asSequence()
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun ByteArray.sequence(): Sequence<Byte> {
-    return asSequence()
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun CharArray.sequence(): Sequence<Char> {
-    return asSequence()
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun DoubleArray.sequence(): Sequence<Double> {
-    return asSequence()
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun FloatArray.sequence(): Sequence<Float> {
-    return asSequence()
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun IntArray.sequence(): Sequence<Int> {
-    return asSequence()
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun LongArray.sequence(): Sequence<Long> {
-    return asSequence()
-}
-
-/**
- * Returns a sequence from the given collection
- */
-@Deprecated("Use asSequence() instead", ReplaceWith("asSequence()"))
-public fun ShortArray.sequence(): Sequence<Short> {
-    return asSequence()
-}
-
-/**
  * Returns a [List] that wraps the original array.
  */
 @kotlin.jvm.JvmVersion
@@ -10446,8 +10175,8 @@ public fun <T> Array<out T>.asList(): List<T> {
 public fun BooleanArray.asList(): List<Boolean> {
     return object : AbstractList<Boolean>(), RandomAccess {
         override val size: Int get() = this@asList.size()
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Boolean)
+        override val isEmpty: Boolean get() = this@asList.isEmpty()
+        override fun contains(o: Boolean): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Boolean> = this@asList.iterator() as MutableIterator<Boolean>
         override fun get(index: Int): Boolean = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Boolean)
@@ -10462,8 +10191,8 @@ public fun BooleanArray.asList(): List<Boolean> {
 public fun ByteArray.asList(): List<Byte> {
     return object : AbstractList<Byte>(), RandomAccess {
         override val size: Int get() = this@asList.size()
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Byte)
+        override val isEmpty: Boolean get() = this@asList.isEmpty()
+        override fun contains(o: Byte): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Byte> = this@asList.iterator() as MutableIterator<Byte>
         override fun get(index: Int): Byte = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Byte)
@@ -10478,8 +10207,8 @@ public fun ByteArray.asList(): List<Byte> {
 public fun CharArray.asList(): List<Char> {
     return object : AbstractList<Char>(), RandomAccess {
         override val size: Int get() = this@asList.size()
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Char)
+        override val isEmpty: Boolean get() = this@asList.isEmpty()
+        override fun contains(o: Char): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Char> = this@asList.iterator() as MutableIterator<Char>
         override fun get(index: Int): Char = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Char)
@@ -10494,8 +10223,8 @@ public fun CharArray.asList(): List<Char> {
 public fun DoubleArray.asList(): List<Double> {
     return object : AbstractList<Double>(), RandomAccess {
         override val size: Int get() = this@asList.size()
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Double)
+        override val isEmpty: Boolean get() = this@asList.isEmpty()
+        override fun contains(o: Double): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Double> = this@asList.iterator() as MutableIterator<Double>
         override fun get(index: Int): Double = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Double)
@@ -10510,8 +10239,8 @@ public fun DoubleArray.asList(): List<Double> {
 public fun FloatArray.asList(): List<Float> {
     return object : AbstractList<Float>(), RandomAccess {
         override val size: Int get() = this@asList.size()
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Float)
+        override val isEmpty: Boolean get() = this@asList.isEmpty()
+        override fun contains(o: Float): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Float> = this@asList.iterator() as MutableIterator<Float>
         override fun get(index: Int): Float = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Float)
@@ -10526,8 +10255,8 @@ public fun FloatArray.asList(): List<Float> {
 public fun IntArray.asList(): List<Int> {
     return object : AbstractList<Int>(), RandomAccess {
         override val size: Int get() = this@asList.size()
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Int)
+        override val isEmpty: Boolean get() = this@asList.isEmpty()
+        override fun contains(o: Int): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Int> = this@asList.iterator() as MutableIterator<Int>
         override fun get(index: Int): Int = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Int)
@@ -10542,8 +10271,8 @@ public fun IntArray.asList(): List<Int> {
 public fun LongArray.asList(): List<Long> {
     return object : AbstractList<Long>(), RandomAccess {
         override val size: Int get() = this@asList.size()
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Long)
+        override val isEmpty: Boolean get() = this@asList.isEmpty()
+        override fun contains(o: Long): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Long> = this@asList.iterator() as MutableIterator<Long>
         override fun get(index: Int): Long = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Long)
@@ -10558,8 +10287,8 @@ public fun LongArray.asList(): List<Long> {
 public fun ShortArray.asList(): List<Short> {
     return object : AbstractList<Short>(), RandomAccess {
         override val size: Int get() = this@asList.size()
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Any?): Boolean = this@asList.contains(o as Short)
+        override val isEmpty: Boolean get() = this@asList.isEmpty()
+        override fun contains(o: Short): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Short> = this@asList.iterator() as MutableIterator<Short>
         override fun get(index: Int): Short = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Short)

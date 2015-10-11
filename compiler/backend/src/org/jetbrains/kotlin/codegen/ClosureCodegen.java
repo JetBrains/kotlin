@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
-import kotlin.KotlinPackage;
+import kotlin.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -194,7 +194,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             descriptorForBridges
                     .initialize(null, erasedInterfaceFunction.getDispatchReceiverParameter(), erasedInterfaceFunction.getTypeParameters(),
                                 erasedInterfaceFunction.getValueParameters(), erasedInterfaceFunction.getReturnType(),
-                                Modality.OPEN, erasedInterfaceFunction.getVisibility(), false, false);
+                                Modality.OPEN, erasedInterfaceFunction.getVisibility());
 
             descriptorForBridges.addOverriddenDescriptor(erasedInterfaceFunction);
             functionCodegen.generateBridges(descriptorForBridges);
@@ -283,7 +283,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
         Type[] myParameterTypes = bridge.getArgumentTypes();
 
-        List<ParameterDescriptor> calleeParameters = KotlinPackage.plus(
+        List<ParameterDescriptor> calleeParameters = CollectionsKt.plus(
                 UtilsPackage.<ParameterDescriptor>singletonOrEmptyList(funDescriptor.getExtensionReceiverParameter()),
                 funDescriptor.getValueParameters()
         );
@@ -465,6 +465,6 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
                                    ? getBuiltIns(elementDescriptor).getFunction(arity)
                                    : getBuiltIns(elementDescriptor).getExtensionFunction(arity);
         JetScope scope = elementClass.getDefaultType().getMemberScope();
-        return scope.getFunctions(OperatorConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
+        return scope.getFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
     }
 }

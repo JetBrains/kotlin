@@ -109,9 +109,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
                 DescriptorsPackage.createEnhancedValueParameters(enhancedValueParametersTypes, getValueParameters(), enhanced),
                 enhancedReturnType,
                 getModality(),
-                getVisibility(),
-                false,
-                false
+                getVisibility()
         );
 
         return enhanced;

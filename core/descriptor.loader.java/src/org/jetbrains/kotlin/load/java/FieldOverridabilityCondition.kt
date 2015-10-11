@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 
 class FieldOverridabilityCondition : ExternalOverridabilityCondition {
@@ -26,8 +27,4 @@ class FieldOverridabilityCondition : ExternalOverridabilityCondition {
 
         return subDescriptor.isJavaField == superDescriptor.isJavaField
     }
-
-    // Currently getter is null iff it's loaded from Java field
-    private val PropertyDescriptor.isJavaField: Boolean
-        get() = getter == null
 }

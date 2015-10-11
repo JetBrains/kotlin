@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForRe
 import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
 import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.codeInsight.*
+import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateActionTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractCodeMoverTest
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
@@ -79,7 +80,7 @@ import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
 import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoImplementationTest
 import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
-import org.jetbrains.kotlin.idea.parameterInfo.AbstractFunctionParameterInfoTest
+import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
 import org.jetbrains.kotlin.idea.refactoring.inline.AbstractInlineTest
@@ -392,8 +393,8 @@ fun main(args: Array<String>) {
             model("navigation/gotoSuper", extension = "test")
         }
 
-        testClass<AbstractFunctionParameterInfoTest>() {
-            model("parameterInfo/functionParameterInfo")
+        testClass<AbstractParameterInfoTest>() {
+            model("parameterInfo", recursive = true)
         }
 
         testClass<AbstractKotlinGotoTest>() {
@@ -721,6 +722,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractKDocTypingTest>() {
             model("kdoc/typing")
+        }
+
+        testClass<AbstractGenerateActionTest>() {
+            model("codeInsight/generate")
         }
     }
 

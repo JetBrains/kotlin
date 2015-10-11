@@ -162,13 +162,13 @@ public val Node.innerHTML: String
  * Returns the HTML representation of the nodes
  */
 public val NodeList.outerHTML: String
-    get() = toList().map { it.innerHTML }.join("")
+    get() = toList().map { it.innerHTML }.joinToString("")
 
 /** Returns an [Iterator] of all the next [Element] siblings */
-public fun Node.nextElements(): List<Element> = nextSiblings().filterIsInstance(javaClass<Element>())
+public fun Node.nextElements(): List<Element> = nextSiblings().filterIsInstance<Element>()
 
 /** Returns an [Iterator] of all the previous [Element] siblings */
-public fun Node.previousElements(): List<Element> = previousSiblings().filterIsInstance(javaClass<Element>())
+public fun Node.previousElements(): List<Element> = previousSiblings().filterIsInstance<Element>()
 
 
 public var Element.classSet: MutableSet<String>
@@ -183,7 +183,7 @@ public var Element.classSet: MutableSet<String>
         return answer
     }
     set(value) {
-        this.classes = value.join(" ")
+        this.classes = value.joinToString(" ")
     }
 
 

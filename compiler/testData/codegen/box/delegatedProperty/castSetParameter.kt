@@ -1,10 +1,10 @@
 class Delegate {
     var inner = Derived()
-    fun get(t: Any?, p: PropertyMetadata): Derived {
+    fun getValue(t: Any?, p: PropertyMetadata): Derived {
         inner = Derived(inner.a + "-get")
         return inner
     }
-    fun set(t: Any?, p: PropertyMetadata, i: Base) { inner = Derived(inner.a + "-" + i.a + "-set") }
+    fun setValue(t: Any?, p: PropertyMetadata, i: Base) { inner = Derived(inner.a + "-" + i.a + "-set") }
 }
 
 class A {
