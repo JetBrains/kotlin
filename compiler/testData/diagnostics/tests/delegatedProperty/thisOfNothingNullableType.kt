@@ -5,11 +5,11 @@ class A {
 var aTopLevel: Int by Delegate()
 
 class Delegate {
-  fun getValue(t: Nothing?, p: PropertyMetadata): Int {
+  operator fun getValue(t: Nothing?, p: PropertyMetadata): Int {
     p.equals(null) // to avoid UNUSED_PARAMETER warning
     return 1
   }
-  fun setValue(t: Nothing?, p: PropertyMetadata, a: Int) {
+  operator fun setValue(t: Nothing?, p: PropertyMetadata, a: Int) {
     p.equals(a) // to avoid UNUSED_PARAMETER warning
   }
 }

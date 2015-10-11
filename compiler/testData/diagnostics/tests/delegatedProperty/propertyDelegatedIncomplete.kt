@@ -3,7 +3,7 @@
 val a: Int by  <!DELEGATE_PD_METHOD_NONE_APPLICABLE!>Delegate()<!>
 
 class Delegate {
-    fun getValue(t: Any?, p: PropertyMetadata): Int {
+    operator fun getValue(t: Any?, p: PropertyMetadata): Int {
         return 1
     }
 

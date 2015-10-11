@@ -4,7 +4,7 @@ val a: Int by Delegate()
     get
 
 class Delegate {
-    fun getValue(t: Any?, p: PropertyMetadata): Int {
+    operator fun getValue(t: Any?, p: PropertyMetadata): Int {
         return 1
     }
 }

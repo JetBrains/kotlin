@@ -3,7 +3,7 @@ class A3 {
 
     class MyProperty<T> {}
 
-    fun <T> MyProperty<T>.getValue(thisRef: Any?, desc: PropertyMetadata): T {
+    operator fun <T> MyProperty<T>.getValue(thisRef: Any?, desc: PropertyMetadata): T {
         throw Exception("$thisRef $desc")
     }
 }

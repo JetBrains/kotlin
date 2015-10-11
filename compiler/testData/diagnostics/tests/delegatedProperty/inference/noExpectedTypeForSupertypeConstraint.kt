@@ -4,11 +4,11 @@ class A {
 
 class MyProperty<T, R> {
 
-    public fun getValue(thisRef: R, desc: PropertyMetadata): T {
+    operator fun getValue(thisRef: R, desc: PropertyMetadata): T {
         throw Exception("$thisRef $desc")
     }
 
-    public fun setValue(thisRef: R, desc: PropertyMetadata, t: T) {
+    operator fun setValue(thisRef: R, desc: PropertyMetadata, t: T) {
         throw Exception("$thisRef $desc $t")
     }
 }

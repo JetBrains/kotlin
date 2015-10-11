@@ -69,7 +69,7 @@ const val nonConstInitializer = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>foo()<!>
 
 // ------------------
 class Delegate {
-    fun getValue(thisRef: Any?, prop: PropertyMetadata): Int = 1
+    operator fun getValue(thisRef: Any?, prop: PropertyMetadata): Int = 1
 
-    fun setValue(thisRef: Any?, prop: PropertyMetadata, value: Int) = Unit
+    operator fun setValue(thisRef: Any?, prop: PropertyMetadata, value: Int) = Unit
 }

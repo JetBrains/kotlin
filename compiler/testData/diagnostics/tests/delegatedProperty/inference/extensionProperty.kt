@@ -13,7 +13,7 @@ class B {
 }
 
 class MyProperty<R : A, T> {
-    public fun getValue(thisRef: R, desc: PropertyMetadata): T {
+    operator fun getValue(thisRef: R, desc: PropertyMetadata): T {
         throw Exception("$thisRef $desc")
     }
 }

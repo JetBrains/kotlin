@@ -14,7 +14,7 @@ class C {
 val cTopLevel: Int by Delegate<Nothing?>()
 
 class Delegate<T> {
-  fun getValue(t: T, p: PropertyMetadata): Int {
+  operator fun getValue(t: T, p: PropertyMetadata): Int {
     return 1
   }
 }

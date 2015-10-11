@@ -3,8 +3,8 @@ interface Out<out T>
 interface Inv<T>
 
 class Delegate<T> {
-    fun getValue(t: Any, p: PropertyMetadata): T = null!!
-    fun setValue(t: Any, p: PropertyMetadata, value: T) {}
+    operator fun getValue(t: Any, p: PropertyMetadata): T = null!!
+    operator fun setValue(t: Any, p: PropertyMetadata, value: T) {}
 }
 
 fun <T> getT(): T = null!!

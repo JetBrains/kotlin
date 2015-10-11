@@ -1,8 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 
 class UsefulClass(val param: Int = 2) {
-    fun getValue(instance: Any, property: PropertyMetadata) : Int = 1
-    fun setValue(instance: Any, property: PropertyMetadata, value: Int) {}
+    operator fun getValue(instance: Any, property: PropertyMetadata) : Int = 1
+    operator fun setValue(instance: Any, property: PropertyMetadata, value: Int) {}
 
     @Deprecated("message")
     fun member() {}
