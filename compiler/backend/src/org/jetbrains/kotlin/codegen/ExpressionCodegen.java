@@ -104,6 +104,7 @@ import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getRes
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.TraitImpl;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -2211,14 +2212,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superExpression);
 
                 PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-                if (getter != null) {
+                if (getter != null && !hasJvmFieldAnnotation(propertyDescriptor)) {
                     callableGetter = typeMapper.mapToCallableMethod(getter, isSuper);
                 }
             }
 
             if (propertyDescriptor.isVar()) {
                 PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-                if (setter != null && !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context)) {
+                if (setter != null &&
+                    !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context) &&
+                    !hasJvmFieldAnnotation(propertyDescriptor)) {
                     callableSetter = typeMapper.mapToCallableMethod(setter, isSuper);
                 }
             }

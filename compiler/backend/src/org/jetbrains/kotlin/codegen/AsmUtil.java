@@ -69,6 +69,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -239,9 +240,13 @@ public class AsmUtil {
         if (specialCase != null) {
             return specialCase;
         }
-        Integer defaultMapping = visibilityToAccessFlag.get(descriptor.getVisibility());
+        return getDefaultVisibilityFlag(descriptor.getVisibility());
+    }
+
+    public static int getDefaultVisibilityFlag(@NotNull Visibility visibility) {
+        Integer defaultMapping = visibilityToAccessFlag.get(visibility);
         if (defaultMapping == null) {
-            throw new IllegalStateException(descriptor.getVisibility() + " is not a valid visibility in backend: " + descriptor);
+            throw new IllegalStateException(visibility + " is not a valid visibility in backend");
         }
         return defaultMapping;
     }
@@ -374,7 +379,10 @@ public class AsmUtil {
             }
         }
 
-        if (memberDescriptor instanceof PropertyDescriptor && ((PropertyDescriptor) memberDescriptor).isConst()) return null;
+        if (memberDescriptor instanceof PropertyDescriptor &&
+            ((PropertyDescriptor) memberDescriptor).isConst() || hasJvmFieldAnnotation(memberDescriptor)) {
+            return null;
+        }
 
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
             return ACC_PUBLIC;

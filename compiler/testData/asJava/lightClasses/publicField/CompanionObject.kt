@@ -2,6 +2,6 @@
 
 class C {
     companion object {
-        @[kotlin.jvm.JvmField] private val foo: String = "A"
+        @[kotlin.jvm.JvmField] public val foo: String = "A"
     }
 }
