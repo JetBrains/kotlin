@@ -67,13 +67,11 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
             val annotationFQN = annClass.getQualifiedName()
             assert(annotationFQN != null)
 
-            val useScope = p.getScope()
-
             for (elt in getJetAnnotationCandidates(annClass, useScope)) {
                 if (notJetAnnotationEntry(elt)) continue
 
                 val result = runReadAction(fun(): Boolean {
-                    val parentOfType = elt.getStrictParentOfType<JetDeclaration>() ?: return true
+                    val declaration = elt.getStrictParentOfType<JetDeclaration>() ?: return true
 
                     val annotationEntry = elt as JetAnnotationEntry
 
@@ -83,14 +81,8 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
                     val descriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor() ?: return true
                     if (!(DescriptorUtils.getFqName(descriptor).asString() == annotationFQN)) return true
 
-                    if (parentOfType is JetClass) {
-                        val lightClass = LightClassUtil.getPsiClass(parentOfType as JetClass?)
-                        if (!consumer.process(lightClass)) return false
-                    }
-                    else if (parentOfType is JetNamedFunction || parentOfType is JetSecondaryConstructor) {
-                        val wrappedMethod = LightClassUtil.getLightClassMethod(parentOfType as JetFunction)
-                        if (!consumer.process(wrappedMethod)) return false
-                    }
+                    if (!consumer(declaration)) return false
+
                     return true
                 })
                 if (!result) return false
