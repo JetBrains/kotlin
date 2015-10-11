@@ -15,7 +15,7 @@ public fun foo(): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     @java.lang.Override() public open override /*2*/ fun iterator(): kotlin.MutableIterator<T>
-    public open override /*2*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun remove(/*0*/ o: T): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!

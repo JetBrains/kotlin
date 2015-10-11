@@ -24,9 +24,9 @@ public abstract class Mine</*0*/ T> : java.util.AbstractList<T> {
     public open /*fake_override*/ fun listIterator(/*0*/ kotlin.Int): kotlin.MutableListIterator<T!>
     invisible_fake open /*fake_override*/ fun outOfBoundsMsg(/*0*/ kotlin.Int): kotlin.String!
     invisible_fake open /*fake_override*/ fun rangeCheckForAdd(/*0*/ kotlin.Int): kotlin.Unit
-    public open /*fake_override*/ fun remove(/*0*/ kotlin.Any?): kotlin.Boolean
-    public open /*fake_override*/ fun remove(/*0*/ kotlin.Int): T!
+    public open /*fake_override*/ fun remove(/*0*/ T!): kotlin.Boolean
     public open /*fake_override*/ fun removeAll(/*0*/ kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public open /*fake_override*/ fun removeAt(/*0*/ kotlin.Int): T!
     protected/*protected and package*/ open /*fake_override*/ fun removeRange(/*0*/ kotlin.Int, /*1*/ kotlin.Int): kotlin.Unit
     public open /*fake_override*/ fun retainAll(/*0*/ kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public open /*fake_override*/ fun set(/*0*/ kotlin.Int, /*1*/ T!): T!
