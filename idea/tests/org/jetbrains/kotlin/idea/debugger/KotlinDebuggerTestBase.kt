@@ -134,10 +134,9 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, smartStepFilter))
     }
 
+
     protected fun SuspendContextImpl.doStepOut() {
-        val stepOutCommand = runReadAction { KotlinSteppingCommandProvider().getStepOutCommand(this, debuggerContext!!) }
-                             ?: dp.createStepOutCommand(this)
-        dp.managerThread.schedule(stepOutCommand)
+        dp.getManagerThread()!!.schedule(dp.createStepOutCommand(this))
     }
 
     /*
@@ -165,7 +164,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
         when {
             line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { doStepInto(false, null) }
-            line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { stepOut() }
+            line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { doStepOut() }
             line.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { doSmartStepInto(InTextDirectivesUtils.getPrefixedInt(line, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
             line.startsWith("// SMART_STEP_INTO: ") -> repeat("// SMART_STEP_INTO: ") { doSmartStepInto() }
             line.startsWith("// RESUME: ") -> repeat("// RESUME: ") { resume(this) }
