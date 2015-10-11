@@ -260,8 +260,6 @@ public abstract class MapVar<T, K, V>() : MapVal<T, K, V>(), ReadWriteProperty<T
         map.put(key(property), value)
     }
 
-    override fun get(thisRef: T, property: PropertyMetadata) = getValue(thisRef, property)
-
     override fun getValue(thisRef: T, property: PropertyMetadata): V {
         return super<MapVal>.getValue(thisRef, property)
     }

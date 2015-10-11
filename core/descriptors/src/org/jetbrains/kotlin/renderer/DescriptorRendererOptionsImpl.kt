@@ -40,7 +40,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
             if (field.getModifiers().and(Modifier.STATIC) != 0) continue
             field.setAccessible(true)
             val property = field.get(this) as? ObservableProperty<*> ?: continue
-            val value = property.get(this, PropertyMetadataImpl("")/* not used*/)
+            val value = property.getValue(this, PropertyMetadataImpl("")/* not used*/)
             field.set(copy, copy.property(value as Any))
         }
 

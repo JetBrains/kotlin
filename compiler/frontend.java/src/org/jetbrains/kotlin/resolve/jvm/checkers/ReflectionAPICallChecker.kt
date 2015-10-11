@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.storage.get
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**

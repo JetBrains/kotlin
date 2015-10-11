@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.storage.get
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 

@@ -13,9 +13,6 @@ package kotlin.properties
  */
 public fun <V> Map<in String, *>.getValue(thisRef: Any?, property: PropertyMetadata): V = getOrImplicitDefault(property.name) as V
 
-@Deprecated("Use getValue() instead")
-public fun <V> Map<in String, *>.get(thisRef: Any?, property: PropertyMetadata): V = getOrImplicitDefault(property.name) as V
-
 /**
  * Returns the value of the property for the given object from this mutable map.
  * @param thisRef the object for which the value is requested (not used).
@@ -27,10 +24,6 @@ public fun <V> Map<in String, *>.get(thisRef: Any?, property: PropertyMetadata):
 @kotlin.jvm.JvmName("getVar")
 public fun <V> MutableMap<in String, in V>.getValue(thisRef: Any?, property: PropertyMetadata): V = getOrImplicitDefault(property.name) as V
 
-@Deprecated("Use getValue() instead")
-@kotlin.jvm.JvmName("getVarDeprecated")
-public fun <V> MutableMap<in String, in V>.get(thisRef: Any?, property: PropertyMetadata): V = getOrImplicitDefault(property.name) as V
-
 /**
  * Stores the value of the property for the given object in this mutable map.
  * @param thisRef the object for which the value is requested (not used).
@@ -38,10 +31,5 @@ public fun <V> MutableMap<in String, in V>.get(thisRef: Any?, property: Property
  * @param value the value to set.
  */
 public fun <V> MutableMap<in String, in V>.setValue(thisRef: Any?, property: PropertyMetadata, value: V) {
-    this.put(property.name, value)
-}
-
-@Deprecated("Use setValue() instead")
-public fun <V> MutableMap<in String, in V>.set(thisRef: Any?, property: PropertyMetadata, value: V) {
     this.put(property.name, value)
 }

@@ -76,9 +76,6 @@ public fun lazy<T>(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLazy
  */
 public fun <T> Lazy<T>.getValue(thisRef: Any?, property: PropertyMetadata): T = value
 
-@Deprecated("Use getValue() instead")
-public fun <T> Lazy<T>.get(thisRef: Any?, property: PropertyMetadata): T = value
-
 /**
  * Specifies how a [Lazy] instance synchronizes access among multiple threads.
  */
