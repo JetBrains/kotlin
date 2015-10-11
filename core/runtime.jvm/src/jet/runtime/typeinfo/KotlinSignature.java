@@ -19,6 +19,10 @@ package jet.runtime.typeinfo;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
+/**
+ * @deprecated This annotation is no longer supported by the Kotlin compiler and will be removed in 1.0
+ */
+@Deprecated
 @Target({ElementType.METHOD, ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.FIELD})
 public @interface KotlinSignature {
     String value();
