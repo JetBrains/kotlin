@@ -28,7 +28,7 @@ public interface CharSequence {
     /**
      * Returns the character at the specified [index] in the sequence.
      */
-    public fun charAt(index: Int): Char
+    public operator fun get(index: Int): Char
 
     /**
      * Returns a subsequence of this sequence.

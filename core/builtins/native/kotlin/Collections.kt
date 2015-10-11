@@ -91,7 +91,7 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
      *
      * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
      */
-    public fun remove(o: Any?): Boolean
+    public fun remove(o: E): Boolean
 
     // Bulk Modification Operations
     /**
@@ -181,7 +181,7 @@ public interface List<out E> : Collection<E> {
 public interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
     override fun add(e: E): Boolean
-    override fun remove(o: Any?): Boolean
+    override fun remove(o: E): Boolean
 
     // Bulk Modification Operations
     override fun addAll(c: Collection<E>): Boolean
@@ -214,7 +214,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @return the element that has been removed.
      */
-    public fun remove(index: Int): E
+    public fun removeAt(index: Int): E
 
     // List Iterators
     override fun listIterator(): MutableListIterator<E>
@@ -252,7 +252,7 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
 
     // Modification Operations
     override fun add(e: E): Boolean
-    override fun remove(o: Any?): Boolean
+    override fun remove(o: E): Boolean
 
     // Bulk Modification Operations
     override fun addAll(c: Collection<E>): Boolean
