@@ -18,7 +18,7 @@ public abstract class AbstractCollection<E>() : MutableCollection<E> {
     override fun iterator(): MutableIterator<E> = noImpl
 
     override fun add(e: E): Boolean = noImpl
-    override fun remove(o: Any?): Boolean = noImpl
+    override fun remove(o: E): Boolean = noImpl
 
     override fun addAll(c: Collection<E>): Boolean = noImpl
     override fun containsAll(c: Collection<E>): Boolean = noImpl
@@ -41,7 +41,7 @@ public abstract class AbstractList<E>() : AbstractCollection<E>(), MutableList<E
     override fun add(index: Int, element: E): Unit = noImpl
     override fun addAll(index: Int, c: Collection<E>): Boolean = noImpl
 
-    override fun remove(index: Int): E = noImpl
+    override fun removeAt(index: Int): E = noImpl
 
     override fun indexOf(o: Any?): Int = noImpl
     override fun lastIndexOf(o: Any?): Int = noImpl
