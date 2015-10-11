@@ -103,7 +103,13 @@ public val Method.kotlinFunction: KFunction<*>?
         if (isSynthetic) return null
 
         if (Modifier.isStatic(modifiers)) {
-            // TODO: support file facades & multifile classes
+            // TODO: support multifile classes
+
+            val fileFacade = declaringClass.getAnnotation(KotlinFileFacade::class.java)
+            if (fileFacade != null) {
+                val kotlinPackage = Reflection.getOrCreateKotlinPackage(declaringClass, fileFacade.moduleName)
+                return kotlinPackage.functions.firstOrNull { it.javaMethod == this }
+            }
 
             // For static bridge method generated for a jvmStatic function in the companion object, also try to find the latter
             val companion = declaringClass.kotlin.companionObject

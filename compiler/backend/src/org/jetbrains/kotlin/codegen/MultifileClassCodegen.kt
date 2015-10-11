@@ -262,6 +262,7 @@ public class MultifileClassCodegen(
 
         val av = classBuilder.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS), true)
         JvmCodegenUtil.writeAbiVersion(av)
+        JvmCodegenUtil.writeModuleName(av, state)
 
         val partInternalNames = partFqNames.map { JvmClassName.byFqNameWithoutInnerClasses(it).internalName }.sorted()
         val arv = av.visitArray(JvmAnnotationNames.FILE_PART_CLASS_NAMES_FIELD_NAME)

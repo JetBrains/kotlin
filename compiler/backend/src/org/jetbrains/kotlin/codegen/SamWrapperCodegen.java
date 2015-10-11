@@ -93,7 +93,7 @@ public class SamWrapperCodegen {
         );
         cv.visitSource(file.getName(), null);
 
-        writeKotlinSyntheticClassAnnotation(cv);
+        writeKotlinSyntheticClassAnnotation(cv, state);
 
         // e.g. ASM type for Function2
         Type functionAsmType = typeMapper.mapType(functionType);

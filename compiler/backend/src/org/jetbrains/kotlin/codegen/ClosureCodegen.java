@@ -57,6 +57,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.ExpressionCodegen.generateClassLiteralReference;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeModuleName;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
@@ -218,7 +219,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
     @Override
     protected void generateKotlinAnnotation() {
-        writeKotlinSyntheticClassAnnotation(v);
+        writeKotlinSyntheticClassAnnotation(v, state);
 
         DescriptorSerializer serializer =
                 DescriptorSerializer.createTopLevel(new JvmSerializerExtension(v.getSerializationBindings(), typeMapper));
@@ -227,6 +228,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CALLABLE), true);
         writeAnnotationData(av, serializer, functionProto);
+        writeModuleName(av, state);
         av.visitEnd();
     }
 

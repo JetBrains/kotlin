@@ -836,9 +836,10 @@ public class AsmUtil {
         }
     }
 
-    public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v) {
+    public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v, @NotNull GenerationState state) {
         AnnotationVisitor av = v.newAnnotation(Type.getObjectType(KotlinSyntheticClass.CLASS_NAME.getInternalName()).getDescriptor(), true);
         JvmCodegenUtil.writeAbiVersion(av);
+        JvmCodegenUtil.writeModuleName(av, state);
         av.visitEnd();
     }
 

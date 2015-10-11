@@ -29,11 +29,9 @@ import kotlin.reflect.KPackage
 
 internal class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl(), KPackage {
     val descriptor by ReflectProperties.lazySoft {
-        val moduleData = jClass.getOrCreateModule()
+        val moduleData = moduleData
         moduleData.packageFacadeProvider.registerModule(moduleName)
-        val fqName = jClass.classId.getPackageFqName()
-
-        moduleData.module.getPackage(fqName)
+        moduleData.module.getPackage(jClass.classId.packageFqName)
     }
 
     internal val scope: JetScope get() = descriptor.memberScope
