@@ -87,10 +87,8 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
 
         if (data.isAnnotated() && !data.hasErrors()) {
             if (JvmPackage.getPLATFORM_TYPES()) {
-                // We only take parameter names from the @KotlinSignature
-                return new AlternativeMethodSignature(returnType, receiverType,
-                                                      AlternativeMethodSignatureData.updateNames(valueParameters, data.getValueParameters()),
-                                                      typeParameters, Collections.<String>emptyList(), true);
+                return new AlternativeMethodSignature(returnType, receiverType, valueParameters,
+                                                      typeParameters, Collections.<String>emptyList(), hasStableParameterNames);
             }
             return new AlternativeMethodSignature(data.getReturnType(), receiverType, data.getValueParameters(), data.getTypeParameters(),
                                                   Collections.<String>emptyList(), true);

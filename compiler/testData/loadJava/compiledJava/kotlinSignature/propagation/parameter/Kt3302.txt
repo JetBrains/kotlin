@@ -9,11 +9,11 @@ public interface Kt3302 {
 
     public interface BasicBSONObject : test.Kt3302.LinkedHashMap<kotlin.String!, kotlin.Any!>, test.Kt3302.BSONObject {
         public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        public abstract override /*2*/ fun put(/*0*/ key: kotlin.String, /*1*/ value: kotlin.Any): kotlin.Any!
+        public abstract override /*2*/ fun put(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Any): kotlin.Any!
     }
 
     public interface LinkedHashMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun put(/*0*/ key: K!, /*1*/ value: V!): V!
+        public abstract fun put(/*0*/ p0: K!, /*1*/ p1: V!): V!
     }
 }

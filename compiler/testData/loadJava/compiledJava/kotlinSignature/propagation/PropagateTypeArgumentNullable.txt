@@ -4,19 +4,19 @@ public interface PropagateTypeArgumentNullable {
 
     public interface Sub : test.PropagateTypeArgumentNullable.Super {
         public abstract override /*1*/ fun invOutR(): kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!
-        public abstract override /*1*/ fun invOutS(/*0*/ p: kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!): kotlin.Unit
+        public abstract override /*1*/ fun invOutS(/*0*/ p0: kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!): kotlin.Unit
         public abstract override /*1*/ fun invR(): kotlin.(Mutable)List<kotlin.String!>!
-        public abstract override /*1*/ fun outOutS(/*0*/ p: kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!): kotlin.Unit
+        public abstract override /*1*/ fun outOutS(/*0*/ p0: kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!): kotlin.Unit
         public abstract override /*1*/ fun outR(): kotlin.(Mutable)List<kotlin.String!>!
-        public abstract override /*1*/ fun outS(/*0*/ p: kotlin.(Mutable)List<kotlin.String!>!): kotlin.Unit
+        public abstract override /*1*/ fun outS(/*0*/ p0: kotlin.(Mutable)List<kotlin.String!>!): kotlin.Unit
     }
 
     public interface Super {
         public abstract fun invOutR(): kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!
-        public abstract fun invOutS(/*0*/ p: kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!): kotlin.Unit
+        public abstract fun invOutS(/*0*/ p0: kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!): kotlin.Unit
         public abstract fun invR(): kotlin.(Mutable)List<kotlin.String!>!
-        public abstract fun outOutS(/*0*/ p: kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!): kotlin.Unit
+        public abstract fun outOutS(/*0*/ p0: kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.String!>!>!): kotlin.Unit
         public abstract fun outR(): kotlin.(Mutable)List<kotlin.String!>!
-        public abstract fun outS(/*0*/ p: kotlin.(Mutable)List<kotlin.String!>!): kotlin.Unit
+        public abstract fun outS(/*0*/ p0: kotlin.(Mutable)List<kotlin.String!>!): kotlin.Unit
     }
 }
