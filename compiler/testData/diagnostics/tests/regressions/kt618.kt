@@ -1,19 +1,19 @@
 package lol
 
 class B() {
-    operator fun plusAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plusAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
-    operator fun minusAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun minusAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
-    operator fun modAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun modAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
-    operator fun divAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun divAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
-    operator fun timesAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun timesAssign(<!UNUSED_PARAMETER!>other<!> : B) : String {
         return "s"
     }
 }

@@ -43,20 +43,10 @@ public class InfixModifierChecker : DeclarationChecker {
 
     private fun isApplicable(descriptor: FunctionDescriptor): Boolean {
         if (descriptor.dispatchReceiverParameter == null && descriptor.extensionReceiverParameter == null) return false
-        val paramCount = descriptor.valueParameters.size()
-        return when (paramCount) {
-            0 -> false
-            1 -> true
-            else -> {
-                val params = descriptor.valueParameters
-                for (i in 1..params.lastIndex) {
-                    if (!params[i].hasDefaultValue()) {
-                        return false
-                    }
-                }
-                true
-            }
-        }
+        if (descriptor.valueParameters.size != 1) return false
+
+        val singleParameter = descriptor.valueParameters.first()
+        return !singleParameter.hasDefaultValue() && singleParameter.varargElementType == null
     }
 
 }

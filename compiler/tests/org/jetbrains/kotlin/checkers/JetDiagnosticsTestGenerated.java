@@ -397,6 +397,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("OperatorChecks.kt")
+        public void testOperatorChecks() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/OperatorChecks.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Operators.kt")
         public void testOperators() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Operators.kt");
@@ -9284,6 +9290,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/java8Overrides/singleRelevantDefault.kt");
                 doTest(fileName);
             }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/jdk-annotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Jdk_annotations extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInJdk_annotations() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/jdk-annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/labels")

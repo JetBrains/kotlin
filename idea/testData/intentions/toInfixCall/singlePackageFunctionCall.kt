@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 // IS_APPLICABLE: false
-// ERROR: 'infix' modifier is inapplicable on this function
+// WARNING: 'infix' modifier is inapplicable on this function
 
 package demo
 

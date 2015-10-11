@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class C {
-    operator fun compareTo(c: C): Int? = null
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun compareTo(c: C): Int? = null
 }
 
 fun test(c: C) {

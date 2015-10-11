@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.OperatorChecks
 
 public class OperatorModifierChecker : DeclarationChecker {
     override fun check(
@@ -51,7 +51,7 @@ public class OperatorModifierChecker : DeclarationChecker {
         if (!functionDescriptor.isOperator) return
         val modifier = declaration.modifierList?.getModifier(JetTokens.OPERATOR_KEYWORD) ?: return
 
-        if (!OperatorNameConventions.canBeOperator(functionDescriptor)) {
+        if (!OperatorChecks.canBeOperator(functionDescriptor)) {
             diagnosticHolder.report(Errors.INAPPLICABLE_OPERATOR_MODIFIER.on(modifier))
         }
     }

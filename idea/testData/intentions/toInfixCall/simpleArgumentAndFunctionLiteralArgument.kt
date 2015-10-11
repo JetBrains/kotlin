@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-// ERROR: 'infix' modifier is inapplicable on this function
+// WARNING: 'infix' modifier is inapplicable on this function
 
 fun foo(x: Foo) {
     x.<caret>foo(1) { it * 2 }
