@@ -192,6 +192,15 @@ public val String.lastIndex: Int
     get() = this.length() - 1
 
 /**
+ * Returns a character at the given index in a [CharSequence]. Allows to use the
+ * index operator for working with character sequences:
+ * ```
+ * val c = charSequence[5]
+ * ```
+ */
+public operator fun CharSequence.get(index: Int): Char = this.get(index)
+
+/**
  * Returns `true` if this CharSequence has Unicode surrogate pair at the specified [index].
  */
 public fun CharSequence.hasSurrogatePairAt(index: Int): Boolean {
