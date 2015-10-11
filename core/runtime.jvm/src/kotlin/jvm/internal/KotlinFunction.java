@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface KotlinCallable {
+public @interface KotlinFunction {
     @Deprecated
     int abiVersion();
 
