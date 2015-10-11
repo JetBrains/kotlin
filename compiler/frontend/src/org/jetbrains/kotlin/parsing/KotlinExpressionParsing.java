@@ -1484,7 +1484,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
         thenBranch.done(THEN);
 
-        if (at(ELSE_KEYWORD)) {
+        // lookahead for arrow is needed to prevent capturing of whenEntry like "else -> "
+        if (at(ELSE_KEYWORD) && lookahead(1) != ARROW) {
             advance(); // ELSE_KEYWORD
 
             PsiBuilder.Marker elseBranch = mark();
