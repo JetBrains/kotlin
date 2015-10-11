@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import com.google.protobuf.MessageLite
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.*
@@ -42,12 +41,12 @@ fun createCallableStubs(
 ) {
     for (propertyProto in propertyProtos) {
         if (!shouldSkip(propertyProto.flags, outerContext.nameResolver.getName(propertyProto.name))) {
-            CallableClsStubBuilder(parentStub, propertyProto, outerContext, protoContainer).build()
+            PropertyClsStubBuilder(parentStub, outerContext, protoContainer, propertyProto).build()
         }
     }
     for (functionProto in functionProtos) {
         if (!shouldSkip(functionProto.flags, outerContext.nameResolver.getName(functionProto.name))) {
-            CallableClsStubBuilder(parentStub, functionProto, outerContext, protoContainer).build()
+            FunctionClsStubBuilder(parentStub, outerContext, protoContainer, functionProto).build()
         }
     }
 }
@@ -58,7 +57,7 @@ fun createConstructorStub(
         outerContext: ClsStubBuilderContext,
         protoContainer: ProtoContainer
 ) {
-    ConstructorClsStubBuilder(parentStub, constructorProto, outerContext, protoContainer).build()
+    ConstructorClsStubBuilder(parentStub, outerContext, protoContainer, constructorProto).build()
 }
 
 private fun shouldSkip(flags: Int, name: Name): Boolean {
@@ -70,155 +69,160 @@ private fun shouldSkip(flags: Int, name: Name): Boolean {
     }
 }
 
-private class CallableClsStubBuilder private constructor(
-        private val parent: StubElement<out PsiElement>,
-        private val callableProto: MessageLite,
+abstract class CallableClsStubBuilder(
+        parent: StubElement<out PsiElement>,
         outerContext: ClsStubBuilderContext,
-        private val protoContainer: ProtoContainer,
-        private val callableKind: CallableClsStubBuilder.CallableKind,
-        private val nameIndex: Int,
-        private val typeParameterList: List<ProtoBuf.TypeParameter>,
-        private val valueParameterList: List<ProtoBuf.ValueParameter>,
-        private val receiverType: ProtoBuf.Type?,
-        private val returnType: ProtoBuf.Type?,
-        private val flags: Int
+        protected val protoContainer: ProtoContainer,
+        private val typeParameters: List<ProtoBuf.TypeParameter>
 ) {
-    private val c = outerContext.child(typeParameterList)
-    private val typeStubBuilder = TypeClsStubBuilder(c)
-    private val isTopLevel: Boolean get() = protoContainer.packageFqName != null
-    private val callableStub = doCreateCallableStub()
-
-    enum class CallableKind {
-        FUN, VAL, VAR
-    }
-
-    constructor(
-            parent: StubElement<out PsiElement>,
-            functionProto: ProtoBuf.Function,
-            outerContext: ClsStubBuilderContext,
-            protoContainer: ProtoContainer
-    ) : this(
-            parent, functionProto, outerContext, protoContainer, CallableKind.FUN,
-            functionProto.name, functionProto.typeParameterList, functionProto.valueParameterList,
-            if (functionProto.hasReceiverType()) functionProto.receiverType else null,
-            if (functionProto.hasReturnType()) functionProto.returnType else null,
-            functionProto.flags
-    )
-
-    constructor(
-            parent: StubElement<out PsiElement>,
-            propertyProto: ProtoBuf.Property,
-            outerContext: ClsStubBuilderContext,
-            protoContainer: ProtoContainer
-    ) : this(
-            parent, propertyProto, outerContext, protoContainer,
-            if (Flags.IS_VAR.get(propertyProto.flags)) CallableKind.VAR else CallableKind.VAL,
-            propertyProto.name, propertyProto.typeParameterList, emptyList(),
-            if (propertyProto.hasReceiverType()) propertyProto.receiverType else null,
-            if (propertyProto.hasReturnType()) propertyProto.returnType else null,
-            propertyProto.flags
-    )
+    protected val c = outerContext.child(typeParameters)
+    protected val typeStubBuilder = TypeClsStubBuilder(c)
+    protected val isTopLevel: Boolean get() = protoContainer.packageFqName != null
+    protected val callableStub: StubElement<out PsiElement> by lazy(LazyThreadSafetyMode.NONE) { doCreateCallableStub(parent) }
 
     fun build() {
         createModifierListStub()
-        val typeConstraintListData = typeStubBuilder.createTypeParameterListStub(callableStub, typeParameterList)
+        val typeConstraintListData = typeStubBuilder.createTypeParameterListStub(callableStub, typeParameters)
         createReceiverTypeReferenceStub()
         createValueParameterList()
         createReturnTypeStub()
         typeStubBuilder.createTypeConstraintListStub(callableStub, typeConstraintListData)
     }
 
-    private fun createValueParameterList() {
-        if (callableKind == CallableKind.FUN) {
-            typeStubBuilder.createValueParameterListStub(callableStub, callableProto, valueParameterList, protoContainer)
-        }
-    }
+    abstract val receiverType: ProtoBuf.Type?
+    abstract val returnType: ProtoBuf.Type?
 
     private fun createReceiverTypeReferenceStub() {
-        if (receiverType != null) {
-            typeStubBuilder.createTypeReferenceStub(callableStub, receiverType)
+        receiverType?.let {
+            typeStubBuilder.createTypeReferenceStub(callableStub, it)
         }
     }
 
     private fun createReturnTypeStub() {
-        if (returnType != null) {
-            typeStubBuilder.createTypeReferenceStub(callableStub, returnType)
+        returnType?.let {
+            typeStubBuilder.createTypeReferenceStub(callableStub, it)
         }
     }
 
-    private fun createModifierListStub() {
-        val modalityModifiers = if (isTopLevel) listOf() else listOf(MODALITY)
-        val constModifiers = if (callableKind == CallableKind.VAL) listOf(CONST) else listOf()
+    abstract fun createModifierListStub()
 
-        val additionalModifiers = when (callableKind) {
-            CallableKind.FUN -> arrayOf(OPERATOR, INFIX)
-            CallableKind.VAL, CallableKind.VAR -> arrayOf(LATEINIT)
-            else -> emptyArray<FlagsToModifiers>()
-        }
+    abstract fun createValueParameterList()
 
-        val relevantModifiers = listOf(VISIBILITY) + constModifiers + modalityModifiers + additionalModifiers
-        val modifierListStubImpl = createModifierListStubForDeclaration(callableStub, flags, relevantModifiers)
+    abstract fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement>
+}
 
-        val kind = callableProto.annotatedCallableKind
-        val annotationIds = c.components.annotationLoader.loadCallableAnnotations(protoContainer, callableProto, kind)
+private class FunctionClsStubBuilder(
+        parent: StubElement<out PsiElement>,
+        outerContext: ClsStubBuilderContext,
+        protoContainer: ProtoContainer,
+        private val functionProto: ProtoBuf.Function
+) : CallableClsStubBuilder(parent, outerContext, protoContainer, functionProto.typeParameterList) {
+    override val receiverType: ProtoBuf.Type?
+        get() = if (functionProto.hasReceiverType()) functionProto.receiverType else null
+
+    override val returnType: ProtoBuf.Type?
+        get() = if (functionProto.hasReturnType()) functionProto.returnType else null
+
+    override fun createValueParameterList() {
+        typeStubBuilder.createValueParameterListStub(callableStub, functionProto, functionProto.valueParameterList, protoContainer)
+    }
+
+    override fun createModifierListStub() {
+        val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
+        val modifierListStubImpl = createModifierListStubForDeclaration(
+                callableStub, functionProto.flags,
+                listOf(VISIBILITY, OPERATOR, INFIX) + modalityModifier
+        )
+
+        val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
+                protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
+        )
         createTargetedAnnotationStubs(annotationIds, modifierListStubImpl)
     }
 
-    private fun doCreateCallableStub(): StubElement<out PsiElement> {
-        val callableName = c.nameResolver.getName(nameIndex)
+    override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
+        val callableName = c.nameResolver.getName(functionProto.name)
 
-        return when (callableKind) {
-            CallableKind.FUN -> {
-                KotlinFunctionStubImpl(
-                        parent,
-                        callableName.ref(),
-                        isTopLevel,
-                        c.containerFqName.child(callableName),
-                        isExtension = receiverType != null,
-                        hasBlockBody = true,
-                        hasBody = Flags.MODALITY.get(flags) != Modality.ABSTRACT,
-                        hasTypeParameterListBeforeFunctionName = typeParameterList.isNotEmpty()
-                )
-            }
-            CallableKind.VAL, CallableKind.VAR -> {
-                KotlinPropertyStubImpl(
-                        parent,
-                        callableName.ref(),
-                        isVar = callableKind == CallableKind.VAR,
-                        isTopLevel = isTopLevel,
-                        hasDelegate = false,
-                        hasDelegateExpression = false,
-                        hasInitializer = false,
-                        isExtension = receiverType != null,
-                        hasReturnTypeRef = true,
-                        fqName = c.containerFqName.child(callableName)
-                )
-            }
-            else -> throw IllegalStateException("Unknown callable kind $callableKind")
-        }
+        return KotlinFunctionStubImpl(
+                parent,
+                callableName.ref(),
+                isTopLevel,
+                c.containerFqName.child(callableName),
+                isExtension = functionProto.hasReceiverType(),
+                hasBlockBody = true,
+                hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
+                hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty()
+        )
+    }
+}
+
+private class PropertyClsStubBuilder(
+        parent: StubElement<out PsiElement>,
+        outerContext: ClsStubBuilderContext,
+        protoContainer: ProtoContainer,
+        private val propertyProto: ProtoBuf.Property
+) : CallableClsStubBuilder(parent, outerContext, protoContainer, propertyProto.typeParameterList) {
+    private val isVar = Flags.IS_VAR.get(propertyProto.flags)
+
+    override val receiverType: ProtoBuf.Type?
+        get() = if (propertyProto.hasReceiverType()) propertyProto.receiverType else null
+
+    override val returnType: ProtoBuf.Type?
+        get() = if (propertyProto.hasReturnType()) propertyProto.returnType else null
+
+    override fun createValueParameterList() {
+    }
+
+    override fun createModifierListStub() {
+        val constModifier = if (isVar) listOf() else listOf(CONST)
+        val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
+
+        val modifierListStubImpl = createModifierListStubForDeclaration(
+                callableStub, propertyProto.flags,
+                listOf(VISIBILITY, LATEINIT) + constModifier + modalityModifier
+        )
+
+        val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
+                protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY
+        )
+        createTargetedAnnotationStubs(annotationIds, modifierListStubImpl)
+    }
+
+    override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
+        val callableName = c.nameResolver.getName(propertyProto.name)
+
+        return KotlinPropertyStubImpl(
+                parent,
+                callableName.ref(),
+                isVar,
+                isTopLevel,
+                hasDelegate = false,
+                hasDelegateExpression = false,
+                hasInitializer = false,
+                isExtension = propertyProto.hasReceiverType(),
+                hasReturnTypeRef = true,
+                fqName = c.containerFqName.child(callableName)
+        )
     }
 }
 
 private class ConstructorClsStubBuilder(
-        private val parent: StubElement<out PsiElement>,
-        private val constructorProto: ProtoBuf.Constructor,
+        parent: StubElement<out PsiElement>,
         outerContext: ClsStubBuilderContext,
-        private val protoContainer: ProtoContainer
-) {
-    private val c = outerContext.child(emptyList())
-    private val typeStubBuilder = TypeClsStubBuilder(c)
-    private val callableStub = doCreateCallableStub()
+        protoContainer: ProtoContainer,
+        private val constructorProto: ProtoBuf.Constructor
+) : CallableClsStubBuilder(parent, outerContext, protoContainer, emptyList()) {
+    override val receiverType: ProtoBuf.Type?
+        get() = null
 
-    fun build() {
-        createModifierListStub()
-        createValueParameterList()
-    }
+    override val returnType: ProtoBuf.Type?
+        get() = null
 
-    private fun createValueParameterList() {
+    override fun createValueParameterList() {
         typeStubBuilder.createValueParameterListStub(callableStub, constructorProto, constructorProto.valueParameterList, protoContainer)
     }
 
-    private fun createModifierListStub() {
+    override fun createModifierListStub() {
         val modifierListStubImpl = createModifierListStubForDeclaration(callableStub, constructorProto.flags, listOf(VISIBILITY))
 
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
@@ -227,7 +231,7 @@ private class ConstructorClsStubBuilder(
         createTargetedAnnotationStubs(annotationIds, modifierListStubImpl)
     }
 
-    private fun doCreateCallableStub(): StubElement<out PsiElement> {
+    override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
         return if (Flags.IS_SECONDARY.get(constructorProto.flags))
             KotlinPlaceHolderStubImpl(parent, JetStubElementTypes.SECONDARY_CONSTRUCTOR)
         else
