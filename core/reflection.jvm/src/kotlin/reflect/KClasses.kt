@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:JvmName("KClasses")
 package kotlin.reflect
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -56,6 +57,13 @@ public val KClass<*>.companionObjectInstance: Any?
 public val KClass<*>.defaultType: KType
     get() = KTypeImpl((this as KClassImpl<*>).descriptor.defaultType) { jClass }
 
+
+/**
+ * Returns all functions declared in this class, including all non-static methods declared in the class
+ * and the superclasses, as well as static methods declared in the class.
+ */
+public val KClass<*>.functions: Collection<KFunction<*>>
+    get() = members.filterIsInstance<KFunction<*>>()
 
 /**
  * Returns static functions declared in this class.

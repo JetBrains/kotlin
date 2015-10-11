@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:JvmName("KCallablesJvm")
 package kotlin.reflect.jvm
 
 import java.lang.reflect.AccessibleObject

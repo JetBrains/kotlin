@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package kotlin.reflect
+@file:JvmName("KClassesJvm")
+package kotlin.reflect.jvm
+
+import kotlin.reflect.KClass
+import kotlin.reflect.jvm.internal.KClassImpl
 
 /**
- * Returns all functions declared in this container.
- * If this container is a Java class, it includes all non-static methods declared in the class
- * and the superclasses, as well as static methods declared in the class.
+ * Returns the JVM name of the class represented by this [KClass] instance.
+ *
+ * @see [java.lang.Class.getName]
  */
-public val KDeclarationContainer.functions: Collection<KFunction<*>>
-    get() = members.filterIsInstance<KFunction<*>>()
-
-public val KDeclarationContainer.properties: Collection<KProperty<*>>
-    get() = members.filterIsInstance<KProperty<*>>()
+public val KClass<*>.jvmName: String
+    get() {
+        return (this as KClassImpl).jClass.getName()
+    }
