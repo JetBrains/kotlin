@@ -113,6 +113,7 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
         return false
     }
 
+    /*
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
         val leaf = fromContext.sourceElement
         getTestClass(leaf)?.let { testClass ->
@@ -132,6 +133,7 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
 
         super.onFirstRun(fromContext, context, performRunnable)
     }
+    */
 
     private fun getTestMethodLocation(leaf: PsiElement): Location<PsiMethod>? {
         val function = leaf.getParentOfType<JetNamedFunction>(false) ?: return null
