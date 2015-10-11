@@ -29,6 +29,8 @@ public @interface KotlinClass {
 
     int[] version() default {};
 
+    String moduleName() default "main";
+
     String[] data();
 
     String[] strings();

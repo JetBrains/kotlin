@@ -148,6 +148,6 @@ public class InterfaceImplBodyCodegen(
         val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(KOTLIN_INTERFACE_DEFAULT_IMPLS), true)
         av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmAbi.VERSION.toArray())
         av.visitEnd()
-        AsmUtil.writeKotlinSyntheticClassAnnotation(v)
+        AsmUtil.writeKotlinSyntheticClassAnnotation(v, state)
     }
 }

@@ -28,4 +28,6 @@ public @interface KotlinSyntheticClass {
     int abiVersion();
 
     int[] version() default {};
+
+    String moduleName() default "main";
 }

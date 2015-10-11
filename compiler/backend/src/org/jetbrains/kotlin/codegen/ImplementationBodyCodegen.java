@@ -264,6 +264,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
         writeAnnotationData(av, serializer, classProto);
+        writeModuleName(av, state);
         av.visitEnd();
     }
 
@@ -279,7 +280,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private static Map<String, String> KOTLIN_MARKER_INTERFACES = new HashMap<String, String>();
+    private static final Map<String, String> KOTLIN_MARKER_INTERFACES = new HashMap<String, String>();
     static {
         KOTLIN_MARKER_INTERFACES.put("kotlin.Iterator", "kotlin/jvm/internal/markers/KMappedMarker");
         KOTLIN_MARKER_INTERFACES.put("kotlin.Iterable", "kotlin/jvm/internal/markers/KMappedMarker");

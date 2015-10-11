@@ -43,6 +43,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.codegen.AsmUtil.writeAnnotationData;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeModuleName;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackagePartCodegen extends MemberCodegen<JetFile> {
@@ -125,6 +126,7 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
 
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FILE_FACADE), true);
         writeAnnotationData(av, serializer, packageProto);
+        writeModuleName(av, state);
         av.visitEnd();
     }
 }

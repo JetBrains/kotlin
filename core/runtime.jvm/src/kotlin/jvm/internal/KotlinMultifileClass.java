@@ -29,6 +29,8 @@ public @interface KotlinMultifileClass {
 
     int[] version() default {};
 
+    String moduleName() default "main";
+
     String[] filePartClassNames();
 
     String[] strings();

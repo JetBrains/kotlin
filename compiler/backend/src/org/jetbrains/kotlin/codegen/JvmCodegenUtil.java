@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -226,6 +227,13 @@ public class JvmCodegenUtil {
 
         // TODO: drop after some time
         av.visit(JvmAnnotationNames.OLD_ABI_VERSION_FIELD_NAME, JvmAbi.VERSION.getMinor());
+    }
+
+    public static void writeModuleName(@NotNull AnnotationVisitor av, @NotNull GenerationState state) {
+        String name = state.getModuleName();
+        if (!name.equals(JvmAbi.DEFAULT_MODULE_NAME)) {
+            av.visit(JvmAnnotationNames.MODULE_NAME_FIELD_NAME, name);
+        }
     }
 
     @NotNull
