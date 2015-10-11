@@ -25,6 +25,11 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.*
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.isBuiltinSpecialPropertyName
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyAccessorName
+import org.jetbrains.kotlin.load.java.BuiltinSpecialMethods.sameAsRenamedInJvmBuiltin
+import org.jetbrains.kotlin.load.java.BuiltinSpecialMethods.isRemoveAtByIndex
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature.sameAsBuiltinMethodWithErasedValueParameters
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
@@ -110,7 +115,7 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun JavaMethod.doesOverrideRenamedBuiltins(): Boolean {
-        return getSpecialBuiltinFunctionsByJvmName(name).any {
+        return BuiltinSpecialMethods.getSpecialBuiltinFunctionsByJvmName(name).any {
             builtinName ->
             val builtinSpecialFromSuperTypes =
                     getFunctionsFromSupertypes(builtinName).filter { it.overridesBuiltinSpecialDeclaration() }
@@ -188,7 +193,7 @@ public class LazyJavaClassMemberScope(
 
         for (descriptor in mergedFunctionFromSuperTypes) {
             val overriddenBuiltin = descriptor.getBuiltinSpecialOverridden() ?: continue
-            val nameInJava = overriddenBuiltin.getJvmMethodNameIfSpecial()!!
+            val nameInJava = getJvmMethodNameIfSpecial(overriddenBuiltin)!!
             for (method in memberIndex().findMethodsByName(Name.identifier(nameInJava))) {
                 val renamedCopy = resolveMethodToFunctionDescriptorWithName(method, name)
 
@@ -328,7 +333,9 @@ public class LazyJavaClassMemberScope(
     ): JavaMethodDescriptor? {
 
         val overriddenCandidates =
-                getFunctionsFromSupertypes(methodDescriptor.name).map { it.getOverriddenBuiltinFunctionWithErasedValueParametersInJava() }.filterNotNull()
+                getFunctionsFromSupertypes(methodDescriptor.name).map {
+                    BuiltinMethodsWithSpecialJvmSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(it)
+                }.filterNotNull()
 
         if (overriddenCandidates.isEmpty()) return null
 

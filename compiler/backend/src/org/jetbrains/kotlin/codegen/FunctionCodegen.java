@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature;
 import org.jetbrains.kotlin.load.java.BuiltinsPropertiesUtilKt;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
@@ -532,7 +533,7 @@ public class FunctionCodegen {
             if (!bridgesToGenerate.isEmpty()) {
                 PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
                 boolean isSpecialBridge =
-                        BuiltinsPropertiesUtilKt.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) != null;
+                        BuiltinMethodsWithSpecialJvmSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) != null;
 
                 for (Bridge<Method> bridge : bridgesToGenerate) {
                     generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo(), isSpecialBridge, false);
@@ -848,7 +849,7 @@ public class FunctionCodegen {
             @NotNull Method bridge,
             @NotNull Method delegateTo
     ) {
-        if (BuiltinsPropertiesUtilKt.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) == null) return;
+        if (BuiltinMethodsWithSpecialJvmSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) == null) return;
 
         assert descriptor.getValueParameters().size() == 1 : "Should be descriptor with one value parameter, but found: " + descriptor;
 

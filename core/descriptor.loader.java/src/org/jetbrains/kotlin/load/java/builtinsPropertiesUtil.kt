@@ -27,23 +27,84 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyAccessorName
 
-private val BUILTIN_SPECIAL_PROPERTIES_FQ_NAMES = setOf(FqName("kotlin.Collection.size"), FqName("kotlin.Map.size"))
-private val BUILTIN_SPECIAL_PROPERTIES_SHORT_NAMES = BUILTIN_SPECIAL_PROPERTIES_FQ_NAMES.map { it.shortName() }.toSet()
+object BuiltinSpecialProperties {
+    private val FQ_NAMES = setOf(FqName("kotlin.Collection.size"), FqName("kotlin.Map.size"))
+    private val SHORT_NAMES = FQ_NAMES.map { it.shortName() }.toSet()
 
+    fun hasBuiltinSpecialPropertyFqName(callableMemberDescriptor: CallableMemberDescriptor): Boolean {
+        if (callableMemberDescriptor.name !in SHORT_NAMES) return false
 
-private val BUILTIN_METHODS_ERASED_COLLECTION_PARAMETER_FQ_NAMES = setOf(FqName("kotlin.Collection.containsAll"))
-private val BUILTIN_METHODS_GENERIC_PARAMETERS_FQ_NAMES = setOf(
-        FqName("kotlin.Collection.contains"), FqName("kotlin.MutableCollection.remove")
-)
+        return callableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl()
+    }
 
-private val BUILTIN_METHODS_ERASED_VALUE_PARAMETERS_FQ_NAMES =
-        BUILTIN_METHODS_GENERIC_PARAMETERS_FQ_NAMES + BUILTIN_METHODS_ERASED_COLLECTION_PARAMETER_FQ_NAMES
+    fun CallableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl(): Boolean {
+        if (fqNameOrNull() in FQ_NAMES) return true
+        if (!isFromBuiltins()) return false
 
-private val BUILTIN_METHODS_ERASED_VALUE_PARAMETERS_SHORT_NAMES =
-        BUILTIN_METHODS_ERASED_VALUE_PARAMETERS_FQ_NAMES.map { it.shortName() }.toSet()
+        return overriddenDescriptors.any { hasBuiltinSpecialPropertyFqName(it) }
+    }
 
-private object BuiltinSpecialMethods {
+    val Name.isBuiltinSpecialPropertyName: Boolean get() = this in SHORT_NAMES
+
+    fun CallableMemberDescriptor.getBuiltinSpecialPropertyAccessorName(): String? {
+        return propertyIfAccessor.check {
+            hasBuiltinSpecialPropertyFqName(it)
+        }?.name?.asString()
+    }
+}
+
+object BuiltinMethodsWithSpecialJvmSignature {
+    private val ERASED_COLLECTION_PARAMETER_FQ_NAMES = setOf(FqName("kotlin.Collection.containsAll"))
+    private val GENERIC_PARAMETERS_FQ_NAMES = setOf(
+            FqName("kotlin.Collection.contains"), FqName("kotlin.MutableCollection.remove")
+    )
+
+    private val ERASED_VALUE_PARAMETERS_FQ_NAMES =
+            GENERIC_PARAMETERS_FQ_NAMES + ERASED_COLLECTION_PARAMETER_FQ_NAMES
+
+    private val ERASED_VALUE_PARAMETERS_SHORT_NAMES =
+            ERASED_VALUE_PARAMETERS_FQ_NAMES.map { it.shortName() }.toSet()
+
+    private val CallableMemberDescriptor.hasErasedValueParametersInJava: Boolean
+        get() = fqNameOrNull() in ERASED_VALUE_PARAMETERS_FQ_NAMES
+
+    @JvmStatic
+    fun getOverriddenBuiltinFunctionWithErasedValueParametersInJava(
+            functionDescriptor: FunctionDescriptor
+    ): FunctionDescriptor? {
+        if (!functionDescriptor.name.sameAsBuiltinMethodWithErasedValueParameters) return null
+        return functionDescriptor.firstOverridden { it.hasErasedValueParametersInJava } as FunctionDescriptor?
+    }
+
+    val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
+        get () = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
+
+    enum class SpecialSignatureInfo(val signature: String?) {
+        ONE_COLLECTION_PARAMETER("(Ljava/util/Collection<+Ljava/lang/Object;>;)Z"),
+        GENERIC_PARAMETER(null)
+    }
+
+    fun CallableMemberDescriptor.isBuiltinWithSpecialDescriptorInJvm(): Boolean {
+        if (!isFromBuiltins()) return false
+        return getSpecialSignatureInfo() == SpecialSignatureInfo.GENERIC_PARAMETER || overridesBuiltinSpecialDeclaration()
+    }
+
+    @JvmStatic
+    fun CallableMemberDescriptor.getSpecialSignatureInfo(): SpecialSignatureInfo? {
+        val builtinFqName = firstOverridden { it is FunctionDescriptor && it.hasErasedValueParametersInJava }?.fqNameOrNull()
+                ?: return null
+
+        return when (builtinFqName) {
+            in ERASED_COLLECTION_PARAMETER_FQ_NAMES -> SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
+            in GENERIC_PARAMETERS_FQ_NAMES -> SpecialSignatureInfo.GENERIC_PARAMETER
+            else -> error("Unexpected kind of special builtin: $builtinFqName")
+        }
+    }
+}
+
+object BuiltinSpecialMethods {
     val REMOVE_AT_FQ_NAME = FqName("kotlin.MutableList.removeAt")
 
     val FQ_NAMES_TO_JVM_MAP: Map<FqName, Name> = mapOf(
@@ -58,96 +119,71 @@ private object BuiltinSpecialMethods {
 
     val JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP: Map<Name, List<Name>> =
             JVM_SHORT_NAME_TO_BUILTIN_FQ_NAMES_MAP.mapValues { it.value.map { it.shortName() } }
-}
 
-public fun CallableMemberDescriptor.hasBuiltinSpecialPropertyFqName(): Boolean {
-    if (name !in BUILTIN_SPECIAL_PROPERTIES_SHORT_NAMES) return false
+    val Name.sameAsRenamedInJvmBuiltin: Boolean
+        get() = this in ORIGINAL_SHORT_NAMES
 
-    return hasBuiltinSpecialPropertyFqNameImpl()
-}
+    fun getSpecialJvmName(callableMemberDescriptor: CallableMemberDescriptor): Name? {
+        return FQ_NAMES_TO_JVM_MAP[callableMemberDescriptor.fqNameOrNull() ?: return null]
+    }
 
-private fun CallableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl(): Boolean {
-    if (fqNameOrNull() in BUILTIN_SPECIAL_PROPERTIES_FQ_NAMES) return true
+    fun isBuiltinFunctionWithDifferentNameInJvm(callableMemberDescriptor: CallableMemberDescriptor): Boolean {
+        if (!callableMemberDescriptor.isFromBuiltins()) return false
+        val fqName = callableMemberDescriptor.fqNameOrNull() ?: return false
+        return callableMemberDescriptor.firstOverridden { FQ_NAMES_TO_JVM_MAP.containsKey(fqName) } != null
+    }
 
-    if (!isFromBuiltins()) return false
+    fun getSpecialBuiltinFunctionsByJvmName(name: Name): List<Name> =
+            JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP[name] ?: emptyList()
 
-    return overriddenDescriptors.any(CallableMemberDescriptor::hasBuiltinSpecialPropertyFqName)
-}
 
-public fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
-    if (!(propertyIfAccessor.fqNameOrNull()?.firstSegmentIs(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) ?: false)) return false
-    return builtIns.builtInsModule == module
-}
-
-private fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it.isSafe }?.toSafe()
-
-val Name.isBuiltinSpecialPropertyName: Boolean get() = this in BUILTIN_SPECIAL_PROPERTIES_SHORT_NAMES
-
-public fun CallableMemberDescriptor.getBuiltinSpecialPropertyAccessorName(): String? {
-    return propertyIfAccessor.check { it.hasBuiltinSpecialPropertyFqName() }?.name?.asString()
+    val CallableMemberDescriptor.isRemoveAtByIndex: Boolean
+        get() = name.asString() == "removeAt" && fqNameOrNull() == REMOVE_AT_FQ_NAME
 }
 
 @Suppress("UNCHECKED_CAST")
 fun <T : CallableMemberDescriptor> T.getBuiltinSpecialOverridden(): T? {
     return when (this) {
         is PropertyDescriptor, is PropertyAccessorDescriptor ->
-            firstOverridden { it.propertyIfAccessor.hasBuiltinSpecialPropertyFqName() } as T?
-        else -> firstOverridden { it.isBuiltinFunctionWithDifferentNameInJvm() } as T?
+            firstOverridden { BuiltinSpecialProperties.hasBuiltinSpecialPropertyFqName(it.propertyIfAccessor) } as T?
+        else -> firstOverridden { BuiltinSpecialMethods.isBuiltinFunctionWithDifferentNameInJvm(it) } as T?
     }
-}
-
-private fun CallableMemberDescriptor.isBuiltinFunctionWithDifferentNameInJvm(): Boolean {
-    if (!isFromBuiltins()) return false
-    val fqName = fqNameOrNull() ?: return false
-    return firstOverridden { BuiltinSpecialMethods.FQ_NAMES_TO_JVM_MAP.containsKey(fqName) } != null
 }
 
 fun CallableMemberDescriptor.overridesBuiltinSpecialDeclaration(): Boolean = getBuiltinSpecialOverridden() != null
 
-public fun CallableMemberDescriptor.getJvmMethodNameIfSpecial(): String? {
-    val builtinOverridden = getBuiltinOverriddenThatAffectsJvmName()?.propertyIfAccessor ?: return null
+fun getJvmMethodNameIfSpecial(callableMemberDescriptor: CallableMemberDescriptor): String? {
+    val builtinOverridden = getBuiltinOverriddenThatAffectsJvmName(callableMemberDescriptor)?.propertyIfAccessor
+            ?: return null
     return when (builtinOverridden) {
         is PropertyDescriptor -> builtinOverridden.getBuiltinSpecialPropertyAccessorName()
-        else -> builtinOverridden.specialJvmName()?.asString()
+        else -> BuiltinSpecialMethods.getSpecialJvmName(builtinOverridden)?.asString()
     }
 }
 
-private fun CallableMemberDescriptor.getBuiltinOverriddenThatAffectsJvmName(): CallableMemberDescriptor? {
-    val overriddenBuiltin = getBuiltinSpecialOverridden() ?: return null
+private fun getBuiltinOverriddenThatAffectsJvmName(
+        callableMemberDescriptor: CallableMemberDescriptor
+): CallableMemberDescriptor? {
+    val overriddenBuiltin = callableMemberDescriptor.getBuiltinSpecialOverridden() ?: return null
 
-    if (isFromJavaOrBuiltins()) return overriddenBuiltin
+    if (callableMemberDescriptor.isFromJavaOrBuiltins()) return overriddenBuiltin
 
     return null
 }
 
-fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
-
-private fun CallableMemberDescriptor.specialJvmName(): Name? {
-    return BuiltinSpecialMethods.FQ_NAMES_TO_JVM_MAP[fqNameOrNull() ?: return null]
-}
-
-public fun getSpecialBuiltinFunctionsByJvmName(name: Name): List<Name> =
-        BuiltinSpecialMethods.JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP[name] ?: emptyList()
-
-public val CallableMemberDescriptor.isRemoveAtByIndex: Boolean
-    get() = name.asString() == "removeAt" && fqNameOrNull() == BuiltinSpecialMethods.REMOVE_AT_FQ_NAME
-
+// Util methods
 private val CallableMemberDescriptor.isFromJava: Boolean
     get() = propertyIfAccessor is JavaCallableMemberDescriptor && propertyIfAccessor.containingDeclaration is JavaClassDescriptor
+
+private fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
+    if (!(propertyIfAccessor.fqNameOrNull()?.firstSegmentIs(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) ?: false)) return false
+    return builtIns.builtInsModule == module
+}
 
 private val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
     get() = if (this is PropertyAccessorDescriptor) correspondingProperty else this
 
-private val CallableMemberDescriptor.hasErasedValueParametersInJava: Boolean
-    get() = fqNameOrNull() in BUILTIN_METHODS_ERASED_VALUE_PARAMETERS_FQ_NAMES
-
-val Name.sameAsRenamedInJvmBuiltin: Boolean
-    get() = this in BuiltinSpecialMethods.ORIGINAL_SHORT_NAMES
-
-fun FunctionDescriptor.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(): FunctionDescriptor? {
-    if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
-    return firstOverridden { it.hasErasedValueParametersInJava } as FunctionDescriptor?
-}
+private fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it.isSafe }?.toSafe()
 
 private fun CallableMemberDescriptor.firstOverridden(
         predicate: (CallableMemberDescriptor) -> Boolean
@@ -171,26 +207,4 @@ private fun CallableMemberDescriptor.firstOverridden(
     )
 }
 
-val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
-    get () = this in BUILTIN_METHODS_ERASED_VALUE_PARAMETERS_SHORT_NAMES
-
-enum class SpecialSignatureInfo(val signature: String?) {
-    ONE_COLLECTION_PARAMETER("(Ljava/util/Collection<+Ljava/lang/Object;>;)Z"),
-    GENERIC_PARAMETER(null)
-}
-
-fun CallableMemberDescriptor.getSpecialSignatureInfo(): SpecialSignatureInfo? {
-    val builtinFqName = firstOverridden { it is FunctionDescriptor && it.hasErasedValueParametersInJava }?.fqNameOrNull()
-            ?: return null
-
-    return when (builtinFqName) {
-        in BUILTIN_METHODS_ERASED_COLLECTION_PARAMETER_FQ_NAMES -> SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
-        in BUILTIN_METHODS_GENERIC_PARAMETERS_FQ_NAMES -> SpecialSignatureInfo.GENERIC_PARAMETER
-        else -> error("Unexpected kind of special builtin: $builtinFqName")
-    }
-}
-
-fun CallableMemberDescriptor.isBuiltinWithSpecialDescriptorInJvm(): Boolean {
-    if (!isFromBuiltins()) return false
-    return getSpecialSignatureInfo() == SpecialSignatureInfo.GENERIC_PARAMETER || overridesBuiltinSpecialDeclaration()
-}
+private fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
