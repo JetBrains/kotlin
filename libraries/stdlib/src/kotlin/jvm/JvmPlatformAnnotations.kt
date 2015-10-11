@@ -96,7 +96,7 @@ internal annotation class JvmVersion(public val minimum: Int = 6, public val max
  * Instructs the Kotlin compiler not to generate getters/setters for this property and expose it as a field.
  */
 @Target(AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 public annotation class JvmField
 
