@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import kotlin.jvm.internal.KotlinCallable
+import kotlin.jvm.internal.KotlinFunction
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.internal.EmptyContainerForLocal
 import kotlin.reflect.jvm.internal.KFunctionImpl
@@ -35,7 +35,7 @@ import kotlin.reflect.jvm.internal.getOrCreateModule
  * Not all features are currently supported, in particular [KCallable.call] and [KCallable.callBy] will fail at the moment.
  */
 public fun <R> Function<R>.reflect(): KFunction<R>? {
-    val callable = javaClass.getAnnotation(KotlinCallable::class.java) ?: return null
+    val callable = javaClass.getAnnotation(KotlinFunction::class.java) ?: return null
     val input = BitEncoding.decodeBytes(callable.data).inputStream()
     val nameResolver = JvmNameResolver(
             JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY),

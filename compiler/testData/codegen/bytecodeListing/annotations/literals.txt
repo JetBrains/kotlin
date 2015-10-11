@@ -4,7 +4,7 @@
 
 @kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass FunAnn
 
-@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$1 {
+@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinFunction LiteralsKt$foo$1 {
     inner class LiteralsKt$foo$1
     synthetic field $arg: int
     public method invoke(): java.lang.Object
@@ -12,7 +12,7 @@
     method <init>(p0: int): void
 }
 
-@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$2 {
+@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinFunction LiteralsKt$foo$2 {
     inner class LiteralsKt$foo$2
     synthetic field $arg: int
     public method invoke(): java.lang.Object
@@ -25,7 +25,7 @@
     method <init>(): void
 }
 
-@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$x$1 {
+@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinFunction LiteralsKt$foo$x$1 {
     inner class LiteralsKt$foo$x$1
     synthetic field $arg: int
     public method invoke(): java.lang.Object
