@@ -67,3 +67,10 @@ fun whenWithoutCondition(i : Int) {
     else -> 2
   }
 }
+
+fun ifDoesntCaptureElse(x : Int) {
+  when (x) {
+    2 -> if(1) 3
+    else -> 6
+  }
+}
