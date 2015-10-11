@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:JvmName("SpecialBuiltinMembers")
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns

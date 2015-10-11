@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature;
-import org.jetbrains.kotlin.load.java.BuiltinsPropertiesUtilKt;
+import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature.SpecialSignatureInfo;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
@@ -732,7 +732,7 @@ public class JetTypeMapper {
                 }
 
                 FunctionDescriptor overriddenSpecialBuiltinFunction =
-                        BuiltinsPropertiesUtilKt.<FunctionDescriptor>getBuiltinSpecialOverridden(functionDescriptor.getOriginal());
+                        SpecialBuiltinMembers.<FunctionDescriptor>getBuiltinSpecialOverridden(functionDescriptor.getOriginal());
                 FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null
                                                     ? overriddenSpecialBuiltinFunction.getOriginal()
                                                     : functionDescriptor.getOriginal();
@@ -815,7 +815,7 @@ public class JetTypeMapper {
             if (platformName != null) return platformName;
         }
 
-        String nameForSpecialFunction = BuiltinsPropertiesUtilKt.getJvmMethodNameIfSpecial(descriptor);
+        String nameForSpecialFunction = SpecialBuiltinMembers.getJvmMethodNameIfSpecial(descriptor);
         if (nameForSpecialFunction != null) return nameForSpecialFunction;
 
         if (descriptor instanceof PropertyAccessorDescriptor) {
@@ -967,7 +967,7 @@ public class JetTypeMapper {
         FunctionDescriptor overridden =
                 BuiltinMethodsWithSpecialJvmSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f);
         if (overridden == null) return false;
-        if (BuiltinsPropertiesUtilKt.isFromJavaOrBuiltins(f)) return false;
+        if (SpecialBuiltinMembers.isFromJavaOrBuiltins(f)) return false;
 
         if (overridden.getName().asString().equals("remove") && mapType(parameter.getType()).getSort() == Type.INT) {
             writeParameter(sw, TypeUtils.makeNullable(parameter.getType()));

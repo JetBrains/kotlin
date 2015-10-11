@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature;
-import org.jetbrains.kotlin.load.java.BuiltinsPropertiesUtilKt;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
@@ -517,7 +517,7 @@ public class FunctionCodegen {
         // If the function doesn't have a physical declaration among super-functions, it's a SAM adapter or alike and doesn't need bridges
         if (CallResolverUtilPackage.isOrOverridesSynthesized(descriptor)) return;
 
-        boolean isSpecial = BuiltinsPropertiesUtilKt.overridesBuiltinSpecialDeclaration(descriptor);
+        boolean isSpecial = SpecialBuiltinMembers.overridesBuiltinSpecialDeclaration(descriptor);
 
         Set<Bridge<Method>> bridgesToGenerate;
         if (!isSpecial) {
@@ -561,7 +561,7 @@ public class FunctionCodegen {
             }
 
             if (!descriptor.getKind().isReal() && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION)) {
-                CallableDescriptor overridden = BuiltinsPropertiesUtilKt.getBuiltinSpecialOverridden(descriptor);
+                CallableDescriptor overridden = SpecialBuiltinMembers.getBuiltinSpecialOverridden(descriptor);
                 assert overridden != null;
 
                 Method method = typeMapper.mapSignature(descriptor).getAsmMethod();
