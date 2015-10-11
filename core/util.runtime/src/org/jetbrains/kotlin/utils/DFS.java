@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.utils;
 
-import kotlin.jvm.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -78,17 +77,14 @@ public class DFS {
     }
 
     public interface NodeHandler<N, R> {
-        @KotlinSignature("fun beforeChildren(current: N): Boolean")
         boolean beforeChildren(N current);
 
-        @KotlinSignature("fun afterChildren(current: N): Unit")
         void afterChildren(N current);
 
         R result();
     }
 
     public interface Neighbors<N> {
-        @KotlinSignature("fun getNeighbors(current: N): Iterable<N>")
         @NotNull
         Iterable<? extends N> getNeighbors(N current);
     }

@@ -1,8 +1,0 @@
-<root>
-  <item
-      name='com.intellij.ide.hierarchy.type.TypeHierarchyBrowser void prependActions(com.intellij.openapi.actionSystem.DefaultActionGroup)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun prependActions(actionGroup: DefaultActionGroup): Unit&quot;"/>
-    </annotation>
-  </item>
-</root>

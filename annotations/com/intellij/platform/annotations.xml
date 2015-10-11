@@ -1,11 +1,5 @@
 <root>
   <item
-      name='com.intellij.platform.ProjectTemplatesFactory com.intellij.platform.ProjectTemplate[] createTemplates(java.lang.String, com.intellij.ide.util.projectWizard.WizardContext)'>
-    <annotation name='kotlin.jvm.KotlinSignature'>
-      <val name="value" val="&quot;fun createTemplates(group: String, context: WizardContext?): Array&lt;out ProjectTemplate&gt;&quot;"/>
-    </annotation>
-  </item>
-  <item
       name='com.intellij.platform.ProjectTemplatesFactory com.intellij.platform.ProjectTemplate[] createTemplates(java.lang.String, com.intellij.ide.util.projectWizard.WizardContext) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

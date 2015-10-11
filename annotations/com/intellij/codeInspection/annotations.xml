@@ -1,9 +1,4 @@
 <root>
-  <item name='com.intellij.codeInspection.InspectionToolProvider java.lang.Class[] getInspectionClasses()'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun getInspectionClasses(): Array&lt;Class&lt;out Any?&gt;&gt;&quot;"/>
-    </annotation>
-  </item>
   <item name='com.intellij.codeInspection.SuppressIntentionAction EMPTY_ARRAY'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

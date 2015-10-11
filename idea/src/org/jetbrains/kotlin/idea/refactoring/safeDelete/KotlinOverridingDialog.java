@@ -31,7 +31,6 @@ import com.intellij.ui.table.JBTable;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.UsageViewPresentation;
 import com.intellij.usages.impl.UsagePreviewPanel;
-import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -119,9 +118,9 @@ class KotlinOverridingDialog extends DialogWrapper {
         return "#org.jetbrains.kotlin.idea.refactoring.safeDelete.KotlinOverridingDialog";
     }
 
-    @KotlinSignature("fun getSelected(): ArrayList<UsageInfo>")
-    public ArrayList<UsageInfo> getSelected() {
-        ArrayList<UsageInfo> result = new ArrayList<UsageInfo>();
+    @NotNull
+    public List<UsageInfo> getSelected() {
+        List<UsageInfo> result = new ArrayList<UsageInfo>();
         for (int i = 0; i < myChecked.length; i++) {
             if (myChecked[i]) {
                 result.add(myOverridingMethods.get(i));

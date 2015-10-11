@@ -3,22 +3,7 @@
       name='com.intellij.openapi.util.Conditions com.intellij.openapi.util.Condition&lt;T&gt; or(com.intellij.openapi.util.Condition&lt;T&gt;, com.intellij.openapi.util.Condition&lt;T&gt;)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-    <item name='com.intellij.openapi.util.Key T get(com.intellij.openapi.util.UserDataHolder, T)'>
-        <annotation name='kotlin.jvm.KotlinSignature'>
-            <val name="value" val="&quot;fun get(holder: UserDataHolder?, defaultValue: T): T&quot;"/>
-        </annotation>
-    </item>
     <item name='com.intellij.openapi.util.Key com.intellij.openapi.util.Key&lt;T&gt; create(java.lang.String)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='com.intellij.openapi.util.Pair A getFirst()'>
-    <annotation name='kotlin.jvm.KotlinSignature'>
-      <val name="value" val="&quot;fun getFirst(): A&quot;"/>
-    </annotation>
-  </item>
-  <item name='com.intellij.openapi.util.Pair B getSecond()'>
-    <annotation name='kotlin.jvm.KotlinSignature'>
-      <val name="value" val="&quot;fun getSecond(): B&quot;"/>
-    </annotation>
   </item>
 </root>

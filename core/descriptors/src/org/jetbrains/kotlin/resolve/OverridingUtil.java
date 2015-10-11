@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve;
 
 import kotlin.CollectionsKt;
 import kotlin.Unit;
-import kotlin.jvm.KotlinSignature;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -499,9 +498,7 @@ public class OverridingUtil {
         return maxVisibility;
     }
 
-
     @NotNull
-    @KotlinSignature("fun getTopmostOverridenDescriptors(originalDescriptor: CallableDescriptor): List<out CallableDescriptor>")
     public static List<? extends CallableDescriptor> getTopmostOverridenDescriptors(@NotNull CallableDescriptor originalDescriptor) {
         return DFS.dfs(
                 Collections.singletonList(originalDescriptor),
@@ -520,38 +517,6 @@ public class OverridingUtil {
                         if (current.getOverriddenDescriptors().isEmpty()) {
                             result.add(current);
                         }
-                    }
-                }
-        );
-    }
-
-    public static boolean traverseOverridenDescriptors(
-            @NotNull CallableDescriptor originalDescriptor,
-            @NotNull final Function1<CallableDescriptor, Boolean> handler
-    ) {
-        return DFS.dfs(
-                Collections.singletonList(originalDescriptor),
-                new DFS.Neighbors<CallableDescriptor>() {
-                    @NotNull
-                    @Override
-                    public Iterable<? extends CallableDescriptor> getNeighbors(CallableDescriptor current) {
-                        return current.getOverriddenDescriptors();
-                    }
-                },
-                new DFS.AbstractNodeHandler<CallableDescriptor, Boolean>() {
-                    private boolean result = true;
-
-                    @Override
-                    public boolean beforeChildren(CallableDescriptor current) {
-                        if (!handler.invoke(current)) {
-                            result = false;
-                        }
-                        return result;
-                    }
-
-                    @Override
-                    public Boolean result() {
-                        return result;
                     }
                 }
         );

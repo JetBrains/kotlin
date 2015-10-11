@@ -34,7 +34,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.AsJavaPackage;
@@ -260,7 +259,6 @@ public class JetRefactoringUtil {
         return "class " + classOrObject.getName();
     }
 
-    @KotlinSignature("fun checkParametersInMethodHierarchy(parameter: PsiParameter): MutableCollection<out PsiElement>?")
     @Nullable
     public static Collection<? extends PsiElement> checkParametersInMethodHierarchy(@NotNull PsiParameter parameter) {
         PsiMethod method = (PsiMethod)parameter.getDeclarationScope();

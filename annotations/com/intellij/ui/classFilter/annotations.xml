@@ -1,8 +1,0 @@
-<root>
-    <item
-        name='com.intellij.ui.classFilter.DebuggerClassFilterProvider java.util.List&lt;com.intellij.ui.classFilter.ClassFilter&gt; getFilters()'>
-        <annotation name='kotlin.jvm.KotlinSignature'>
-            <val name="value" val="&quot;fun getFilters(): List&lt;ClassFilter&gt;?&quot;"/>
-        </annotation>
-    </item>
-</root>

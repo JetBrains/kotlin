@@ -1,8 +1,0 @@
-<root>
-  <item
-      name='com.intellij.ide.util.treeView.smartTree.NodeProvider java.util.Collection&lt;T&gt; provideNodes(com.intellij.ide.util.treeView.smartTree.TreeElement)'>
-    <annotation name='kotlin.jvm.KotlinSignature'>
-      <val name="value" val="&quot;fun provideNodes(node: TreeElement): Collection&lt;T&gt;&quot;"/>
-    </annotation>
-  </item>
-</root>

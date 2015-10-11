@@ -20,13 +20,6 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
-      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; collectTransferableData(com.intellij.psi.PsiFile, com.intellij.openapi.editor.Editor, int[], int[])'>
-    <annotation name='kotlin.jvm.KotlinSignature'>
-      <val name="value"
-           val="&quot;fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): List&lt;T&gt;&quot;"/>
-    </annotation>
-  </item>
-  <item
       name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; collectTransferableData(com.intellij.psi.PsiFile, com.intellij.openapi.editor.Editor, int[], int[]) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
@@ -41,12 +34,6 @@
   <item
       name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; collectTransferableData(com.intellij.psi.PsiFile, com.intellij.openapi.editor.Editor, int[], int[]) 3'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item
-      name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; extractTransferableData(java.awt.datatransfer.Transferable)'>
-    <annotation name='kotlin.jvm.KotlinSignature'>
-      <val name="value" val="&quot;fun extractTransferableData(content: Transferable): List&lt;T&gt;&quot;"/>
-    </annotation>
   </item>
   <item
       name='com.intellij.codeInsight.editorActions.CopyPastePostProcessor java.util.List&lt;T&gt; extractTransferableData(java.awt.datatransfer.Transferable) 0'>
@@ -172,13 +159,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item
-        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandler java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor)'>
-        <annotation name='kotlin.jvm.KotlinSignature'>
-            <val name="value"
-                 val="&quot;fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List&lt;TextRange&gt;?&quot;"/>
-        </annotation>
-    </item>
-    <item
         name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandler java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -209,13 +189,6 @@
     <item
         name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase java.util.List&lt;com.intellij.openapi.util.TextRange&gt; expandToWholeLine(java.lang.CharSequence, com.intellij.openapi.util.TextRange, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item
-        name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor)'>
-        <annotation name='kotlin.jvm.KotlinSignature'>
-            <val name="value"
-                 val="&quot;fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List&lt;TextRange&gt;?&quot;"/>
-        </annotation>
     </item>
     <item
         name='com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase java.util.List&lt;com.intellij.openapi.util.TextRange&gt; select(com.intellij.psi.PsiElement, java.lang.CharSequence, int, com.intellij.openapi.editor.Editor) 3'>

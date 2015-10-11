@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors;
 
-import kotlin.jvm.KotlinSignature;
-
 public interface DeclarationDescriptorVisitor<R, D> {
-
     R visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, D data);
 
     R visitPackageViewDescriptor(PackageViewDescriptor descriptor, D data);
@@ -32,7 +29,6 @@ public interface DeclarationDescriptorVisitor<R, D> {
 
     R visitClassDescriptor(ClassDescriptor descriptor, D data);
 
-    @KotlinSignature("fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: D): R")
     R visitModuleDeclaration(ModuleDescriptor descriptor, D data);
 
     R visitConstructorDescriptor(ConstructorDescriptor constructorDescriptor, D data);

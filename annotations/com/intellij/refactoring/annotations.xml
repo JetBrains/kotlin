@@ -1,10 +1,4 @@
 <root>
-  <item
-      name='com.intellij.refactoring.BaseRefactoringProcessor boolean preprocessUsages(com.intellij.openapi.util.Ref&lt;com.intellij.usageView.UsageInfo[]&gt;)'>
-    <annotation name='kotlin.jvm.KotlinSignature'>
-      <val name="value" val="&quot;fun preprocessUsages(refUsages: Ref&lt;Array&lt;UsageInfo&gt;&gt;): Boolean&quot;"/>
-    </annotation>
-  </item>
   <item name='com.intellij.refactoring.BaseRefactoringProcessor myProject'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

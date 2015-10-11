@@ -94,12 +94,6 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
-      name='com.intellij.codeInsight.lookup.LookupElementRenderer void renderElement(T, com.intellij.codeInsight.lookup.LookupElementPresentation)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun renderElement(element: T?, presentation: LookupElementPresentation): Unit&quot;"/>
-    </annotation>
-  </item>
-  <item
       name='com.intellij.codeInsight.lookup.LookupElementRenderer void renderElement(T, com.intellij.codeInsight.lookup.LookupElementPresentation) 1'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
