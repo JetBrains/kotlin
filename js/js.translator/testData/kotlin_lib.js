@@ -474,7 +474,7 @@
         remove_za3rmp$: function (o) {
             var index = this.indexOf_za3rmp$(o);
             if (index !== -1) {
-                this.remove_za3lpa$(index);
+                this.removeAt_za3lpa$(index);
                 return true;
             }
             return false;
@@ -546,9 +546,9 @@
                 }
                 this.list.add_vux3hl$(index + this.offset, element);
             },
-            remove_za3lpa$: function (index) {
+            removeAt_za3lpa$: function (index) {
                 this.checkRange(index);
-                var result = this.list.remove_za3lpa$(index + this.offset);
+                var result = this.list.removeAt_za3lpa$(index + this.offset);
                 this._size--;
                 return result;
 
@@ -597,7 +597,7 @@
                     this.array[i++] = it.next();
                 }
             },
-            remove_za3lpa$: function (index) {
+            removeAt_za3lpa$: function (index) {
                 this.checkRange(index);
                 return this.array.splice(index, 1)[0];
             },

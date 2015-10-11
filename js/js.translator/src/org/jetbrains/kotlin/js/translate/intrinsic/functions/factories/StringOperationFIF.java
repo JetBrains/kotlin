@@ -28,7 +28,7 @@ public final class StringOperationFIF extends CompositeFIF {
     private StringOperationFIF() {
         add(pattern("kotlin", "String", "get"), new BuiltInFunctionIntrinsic("charAt"));
         // This intrinsic is needed because charAt is a public function taking one parameter and thus its name would be mangled otherwise
-        add(pattern("kotlin", "CharSequence", "charAt").checkOverridden(), new BuiltInFunctionIntrinsic("charAt"));
+        add(pattern("kotlin", "CharSequence", "get").checkOverridden(), new BuiltInFunctionIntrinsic("charAt"));
         add(pattern("kotlin", "CharSequence", "length").checkOverridden(), LENGTH_PROPERTY_INTRINSIC);
         add(pattern("kotlin", "CharSequence", "subSequence").checkOverridden(), new BuiltInFunctionIntrinsic("substring"));
     }
