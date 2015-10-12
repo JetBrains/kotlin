@@ -21,10 +21,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions.GET
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET
@@ -35,7 +38,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
 import org.jetbrains.kotlin.util.OperatorNameConventions.HAS_NEXT
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
-import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_OPERATION_NAMES
 import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPONENT_REGEX
@@ -64,8 +66,8 @@ object OperatorChecks {
                     valueParameters.size >= 2 && lastIsOk
                 }
                 
-                GET_VALUE == name -> noDefaultsAndVarargs && valueParameters.size >= 2 && valueParameters[1].isPropertyMetadata
-                SET_VALUE == name -> noDefaultsAndVarargs && valueParameters.size >= 3 && valueParameters[1].isPropertyMetadata
+                GET_VALUE == name -> noDefaultsAndVarargs && valueParameters.size >= 2 && valueParameters[1].isKProperty
+                SET_VALUE == name -> noDefaultsAndVarargs && valueParameters.size >= 3 && valueParameters[1].isKProperty
                 
                 INVOKE == name -> isMemberOrExtension
                 CONTAINS == name -> singleValueParameter && noDefaultsAndVarargs && returnsBoolean
@@ -100,8 +102,11 @@ object OperatorChecks {
         }
     }
 
-    private val ValueParameterDescriptor.isPropertyMetadata: Boolean
-        get() = builtIns.propertyMetadata.defaultType.isSubtypeOf(type.makeNotNullable())
+    private val ValueParameterDescriptor.isKProperty: Boolean
+        get() {
+            val kProperty = module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("kotlin.reflect.KProperty")))
+            return kProperty!!.defaultType.isSubtypeOf(type.makeNotNullable())
+        }
 
     private val FunctionDescriptor.isMember: Boolean
         get() = containingDeclaration is ClassDescriptor

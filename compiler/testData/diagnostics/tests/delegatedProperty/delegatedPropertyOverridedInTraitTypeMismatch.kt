@@ -1,5 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
+import kotlin.reflect.KProperty
+
 interface A {
     val prop: Int
 }
@@ -13,7 +15,7 @@ fun foo() {
 }
 
 class Delegate {
-    operator fun getValue(t: Any?, p: PropertyMetadata): String {
+    operator fun getValue(t: Any?, p: KProperty<*>): String {
         return ""
     }
 }

@@ -1,5 +1,7 @@
 // !DIAGNOSTICS:-UNUSED_VARIABLE
 
+import kotlin.reflect.KProperty
+
 const val topLevel: Int = 0
 const val topLevelInferred = 1
 <!WRONG_MODIFIER_TARGET!>const<!> var topLeveLVar: Int = 2
@@ -69,7 +71,7 @@ const val nonConstInitializer = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>foo()<!>
 
 // ------------------
 class Delegate {
-    operator fun getValue(thisRef: Any?, prop: PropertyMetadata): Int = 1
+    operator fun getValue(thisRef: Any?, prop: KProperty<*>): Int = 1
 
-    operator fun setValue(thisRef: Any?, prop: PropertyMetadata, value: Int) = Unit
+    operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: Int) = Unit
 }

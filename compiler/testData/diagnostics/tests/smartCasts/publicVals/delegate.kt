@@ -1,5 +1,7 @@
+import kotlin.reflect.KProperty
+
 class Delegate {
-    operator fun getValue(thisRef: Any?, prop: PropertyMetadata): String? {
+    operator fun getValue(thisRef: Any?, prop: KProperty<*>): String? {
         return null
     }
 }
@@ -19,4 +21,3 @@ class Example {
         return if (r != null) <!DEBUG_INFO_SMARTCAST!>r<!> else ""
     }
 }
-

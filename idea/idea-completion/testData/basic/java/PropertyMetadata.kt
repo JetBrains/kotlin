@@ -7,4 +7,3 @@ fun firstFun() {
 
 // INVOCATION_COUNT: 1
 // EXIST: { lookupString:"PropertyMetadata", itemText:"PropertyMetadata", tailText:" (kotlin)" }
-// EXIST: { lookupString:"PropertyMetadataImpl", itemText:"PropertyMetadataImpl", tailText:" (kotlin)" }

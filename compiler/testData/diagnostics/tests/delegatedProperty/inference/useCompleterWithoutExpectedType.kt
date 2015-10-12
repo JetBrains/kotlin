@@ -1,5 +1,7 @@
 // !CHECK_TYPE
 
+import kotlin.reflect.KProperty
+
 class A {
     val a by MyProperty()
 
@@ -9,5 +11,5 @@ class A {
 }
 
 class MyProperty<R> {
-    operator fun getValue(thisRef: R, desc: PropertyMetadata): Int = throw Exception("$thisRef $desc")
+    operator fun getValue(thisRef: R, desc: KProperty<*>): Int = throw Exception("$thisRef $desc")
 }

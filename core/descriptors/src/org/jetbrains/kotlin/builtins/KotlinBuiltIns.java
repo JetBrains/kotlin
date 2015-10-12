@@ -41,7 +41,7 @@ import java.io.InputStream;
 import java.util.*;
 
 import static kotlin.CollectionsKt.*;
-import static kotlin.SetsKt.*;
+import static kotlin.SetsKt.setOf;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
@@ -700,11 +700,6 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getPropertyMetadata() {
         return getBuiltInClassByName("PropertyMetadata");
-    }
-
-    @NotNull
-    public ClassDescriptor getPropertyMetadataImpl() {
-        return getBuiltInClassByName("PropertyMetadataImpl");
     }
 
     @NotNull
