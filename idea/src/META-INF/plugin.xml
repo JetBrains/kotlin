@@ -1260,6 +1260,14 @@
                      cleanupTool="true"
                      level="WARNING"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedUsageOfStaticFieldInspection"
+                     displayName="This field will not be generated in future versions of Kotlin. Use 'const' modifier, '@JvmField' annotation or access data through corresponding object."
+                     groupName="Kotlin"
+                     language="JAVA"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"/>
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
