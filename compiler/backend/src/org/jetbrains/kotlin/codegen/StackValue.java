@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -493,10 +494,14 @@ public abstract class StackValue {
             @Nullable Callable callableMethod
     ) {
         ReceiverValue callDispatchReceiver = resolvedCall.getDispatchReceiver();
+        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+        if (descriptor instanceof SyntheticFieldDescriptor) {
+            callDispatchReceiver = ((SyntheticFieldDescriptor) descriptor).getDispatchReceiverForBackend();
+        }
+
         ReceiverValue callExtensionReceiver = resolvedCall.getExtensionReceiver();
         if (callDispatchReceiver.exists() || callExtensionReceiver.exists()
             || isLocalFunCall(callableMethod) || isCallToMemberObjectImportedByName(resolvedCall)) {
-            CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
             ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
             ReceiverParameterDescriptor extensionReceiverParameter = descriptor.getExtensionReceiverParameter();
 
