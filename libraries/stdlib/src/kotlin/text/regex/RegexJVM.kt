@@ -158,7 +158,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
      * the given function [transform] that takes [MatchResult] and returns a string to be used as a
      * replacement for that match.
      */
-    public inline fun replace(input: CharSequence, transform: (MatchResult) -> String): String {
+    public inline fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
         var match: MatchResult? = find(input) ?: return input.toString()
 
         var lastStart = 0

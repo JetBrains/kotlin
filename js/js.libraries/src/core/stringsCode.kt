@@ -43,9 +43,7 @@ public inline fun String.matches(regex : String) : Boolean {
     return result != null && result.size() > 0
 }
 
-public inline fun CharSequence.isEmpty(): Boolean = this.length() == 0
-
-public fun String.isBlank(): Boolean = length() == 0 || matches("^[\\s\\xA0]+$")
+public fun CharSequence.isBlank(): Boolean = length() == 0 || (if (this is String) this else this.toString()).matches("^[\\s\\xA0]+$")
 
 public fun String?.equals(anotherString: String?, ignoreCase: Boolean = false): Boolean =
         if (this == null)

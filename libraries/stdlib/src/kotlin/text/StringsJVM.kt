@@ -298,7 +298,7 @@ public fun String.intern(): String = (this as java.lang.String).intern()
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
  */
-public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
+public fun CharSequence.isBlank(): Boolean = length() == 0 || indices.all { this[it].isWhitespace() }
 
 /**
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
@@ -392,12 +392,7 @@ public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.S
  */
 public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
 
-/**
- * Returns a subsequence of this sequence specified by given [range].
- */
-public fun CharSequence.slice(range: IntRange): CharSequence {
-    return subSequence(range.start, range.end + 1) // inclusive
-}
+
 
 /**
  * Converts the string into a regular expression [Pattern] optionally
@@ -437,7 +432,7 @@ public fun String.repeat(n: Int): String {
     if (n < 0)
         throw IllegalArgumentException("Value should be non-negative, but was $n")
 
-    val sb = StringBuilder()
+    val sb = StringBuilder(n * length())
     for (i in 1..n) {
         sb.append(this)
     }
@@ -448,7 +443,7 @@ public fun String.repeat(n: Int): String {
  * Appends the contents of this string, excluding the first characters that satisfy the given [predicate],
  * to the given Appendable.
  */
-public inline fun <T : Appendable> String.dropWhileTo(result: T, predicate: (Char) -> Boolean): T {
+public inline fun <T : Appendable> CharSequence.dropWhileTo(result: T, predicate: (Char) -> Boolean): T {
     var start = true
     for (element in this) {
         if (start && predicate(element)) {
@@ -464,7 +459,7 @@ public inline fun <T : Appendable> String.dropWhileTo(result: T, predicate: (Cha
 /**
  * Appends the first characters from this string that satisfy the given [predicate] to the given Appendable.
  */
-public inline fun <T : Appendable> String.takeWhileTo(result: T, predicate: (Char) -> Boolean): T {
+public inline fun <T : Appendable> CharSequence.takeWhileTo(result: T, predicate: (Char) -> Boolean): T {
     for (c in this) if (predicate(c)) result.append(c) else break
     return result
 }

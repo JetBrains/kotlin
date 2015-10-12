@@ -11,7 +11,7 @@ import kotlin.text.Regex
 /**
  * Returns the string with leading and trailing characters matching the [predicate] trimmed.
  */
-inline public fun String.trim(predicate: (Char) -> Boolean): String {
+inline public fun CharSequence.trim(predicate: (Char) -> Boolean): String {
     var startIndex = 0
     var endIndex = length() - 1
     var startFound = false
@@ -40,7 +40,7 @@ inline public fun String.trim(predicate: (Char) -> Boolean): String {
 /**
  * Returns the string with leading characters matching the [predicate] trimmed.
  */
-inline public fun String.trimStart(predicate: (Char) -> Boolean): String {
+inline public fun CharSequence.trimStart(predicate: (Char) -> Boolean): String {
     for (index in this.indices)
         if (!predicate(this[index]))
             return substring(index)
@@ -51,7 +51,7 @@ inline public fun String.trimStart(predicate: (Char) -> Boolean): String {
 /**
  * Returns the string with trailing characters matching the [predicate] trimmed.
  */
-inline public fun String.trimEnd(predicate: (Char) -> Boolean): String {
+inline public fun CharSequence.trimEnd(predicate: (Char) -> Boolean): String {
     for (index in this.indices.reversed())
         if (!predicate(this[index]))
             return substring(0, index + 1)
@@ -62,32 +62,32 @@ inline public fun String.trimEnd(predicate: (Char) -> Boolean): String {
 /**
  * Returns the string with leading and trailing characters in the [chars] array trimmed.
  */
-public fun String.trim(vararg chars: Char): String = trim { it in chars }
+public fun CharSequence.trim(vararg chars: Char): String = trim { it in chars }
 
 /**
  * Returns the string with leading and trailing characters in the [chars] array trimmed.
  */
-public fun String.trimStart(vararg chars: Char): String = trimStart { it in chars }
+public fun CharSequence.trimStart(vararg chars: Char): String = trimStart { it in chars }
 
 /**
  * Returns the string with trailing characters in the [chars] array trimmed.
  */
-public fun String.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
+public fun CharSequence.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
 
 /**
  * Returns a string with leading and trailing whitespace trimmed.
  */
-public fun String.trim(): String = trim { it.isWhitespace() }
+public fun CharSequence.trim(): String = trim { it.isWhitespace() }
 
 /**
  * Returns a string with leading whitespace removed.
  */
-public fun String.trimStart(): String = trimStart { it.isWhitespace() }
+public fun CharSequence.trimStart(): String = trimStart { it.isWhitespace() }
 
 /**
  * Returns a string with trailing whitespace removed.
  */
-public fun String.trimEnd(): String = trimEnd { it.isWhitespace() }
+public fun CharSequence.trimEnd(): String = trimEnd { it.isWhitespace() }
 
 /**
  * Left pad a String with a specified character or space.
@@ -97,11 +97,11 @@ public fun String.trimEnd(): String = trimEnd { it.isWhitespace() }
  * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
  * as are necessary to reach that length.
  */
-public fun String.padStart(length: Int, padChar: Char = ' '): String {
+public fun CharSequence.padStart(length: Int, padChar: Char = ' '): String {
     if (length < 0)
         throw IllegalArgumentException("String length $length is less than zero.")
     if (length <= this.length())
-        return this
+        return this.toString()
 
     val sb = StringBuilder(length)
     for (i in 1..(length - this.length()))
@@ -118,11 +118,11 @@ public fun String.padStart(length: Int, padChar: Char = ' '): String {
  * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
  * as are necessary to reach that length.
  */
-public fun String.padEnd(length: Int, padChar: Char = ' '): String {
+public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): String {
     if (length < 0)
         throw IllegalArgumentException("String length $length is less than zero.")
     if (length <= this.length())
-        return this
+        return this.toString()
 
     val sb = StringBuilder(length)
     sb.append(this)
@@ -134,22 +134,22 @@ public fun String.padEnd(length: Int, padChar: Char = ' '): String {
 /** Returns `true` if the string is not `null` and not empty */
 @Deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.", ReplaceWith("this != null && this.isNotEmpty()"))
 @kotlin.jvm.JvmName("isNotEmptyNullable")
-public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
+public fun CharSequence?.isNotEmpty(): Boolean = this != null && this.length() > 0
 
 /**
  * Returns `true` if this nullable string is either `null` or empty.
  */
-public fun String?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
+public fun CharSequence?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
 
 /**
  * Returns `true` if this string is empty (contains no characters).
  */
-public fun String.isEmpty(): Boolean = length() == 0
+public fun CharSequence.isEmpty(): Boolean = length() == 0
 
 /**
  * Returns `true` if this string is not empty.
  */
-public fun String.isNotEmpty(): Boolean = length() > 0
+public fun CharSequence.isNotEmpty(): Boolean = length() > 0
 
 // implemented differently in JVM and JS
 //public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
@@ -158,12 +158,12 @@ public fun String.isNotEmpty(): Boolean = length() > 0
 /**
  * Returns `true` if this string is not empty and contains some characters except of whitespace characters.
  */
-public fun String.isNotBlank(): Boolean = !isBlank()
+public fun CharSequence.isNotBlank(): Boolean = !isBlank()
 
 /**
  * Returns `true` if this nullable string is either `null` or empty or consists solely of whitespace characters.
  */
-public fun String?.isNullOrBlank(): Boolean = this == null || this.isBlank()
+public fun CharSequence?.isNullOrBlank(): Boolean = this == null || this.isBlank()
 
 /**
  * Iterator for characters of given CharSequence.
@@ -182,13 +182,13 @@ public fun String?.orEmpty(): String = this ?: ""
 /**
  * Returns the range of valid character indices for this string.
  */
-public val String.indices: IntRange
+public val CharSequence.indices: IntRange
     get() = 0..length() - 1
 
 /**
  * Returns the index of the last character in the String or -1 if the String is empty.
  */
-public val String.lastIndex: Int
+public val CharSequence.lastIndex: Int
     get() = this.length() - 1
 
 /**
@@ -221,9 +221,25 @@ public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
 }
 
 /**
+ * Returns a subsequence of this sequence specified by given [range].
+ */
+public fun CharSequence.slice(range: IntRange): CharSequence {
+    return subSequence(range.start, range.end + 1) // inclusive
+}
+
+/**
  * Returns a substring specified by the given [range].
  */
 public fun String.substring(range: IntRange): String = substring(range.start, range.end + 1)
+
+/**
+ * Returns a subsequence of this sequence specified by the given [range].
+ */
+public fun CharSequence.subSequence(range: IntRange): CharSequence = subSequence(range.start, range.end + 1)
+
+public fun CharSequence.substring(start: Int, end: Int = length): String = subSequence(start, end).toString()
+
+public fun CharSequence.substring(range: IntRange): String = subSequence(range.start, range.end + 1).toString()
 
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
@@ -332,7 +348,7 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
  * @param firstIndex the index of the first character to be replaced.
  * @param lastIndex the index of the first character after the replacement to keep in the string.
  */
-public fun String.replaceRange(firstIndex: Int, lastIndex: Int, replacement: String): String {
+public fun CharSequence.replaceRange(firstIndex: Int, lastIndex: Int, replacement: CharSequence): String {
     if (lastIndex < firstIndex)
         throw IndexOutOfBoundsException("Last index ($lastIndex) is less than first index ($firstIndex)")
     val sb = StringBuilder()
@@ -347,7 +363,7 @@ public fun String.replaceRange(firstIndex: Int, lastIndex: Int, replacement: Str
  *
  * The end index of the [range] is included in the part to be replaced.
  */
-public fun String.replaceRange(range: IntRange, replacement: String): String = replaceRange(range.start, range.end + 1, replacement)
+public fun CharSequence.replaceRange(range: IntRange, replacement: CharSequence): String = replaceRange(range.start, range.end + 1, replacement)
 
 /**
  * Removes the part of a string at a given range.
@@ -356,12 +372,12 @@ public fun String.replaceRange(range: IntRange, replacement: String): String = r
 *
 *  [lastIndex] is not included in the removed part.
  */
-public fun String.removeRange(firstIndex: Int, lastIndex: Int): String {
+public fun CharSequence.removeRange(firstIndex: Int, lastIndex: Int): String {
     if (lastIndex < firstIndex)
         throw IndexOutOfBoundsException("Last index ($lastIndex) is less than first index ($firstIndex)")
 
     if (lastIndex == firstIndex)
-        return this
+        return this.toString()
 
     val sb = StringBuilder(length() - (lastIndex - firstIndex))
     sb.append(this, 0, firstIndex)
@@ -374,7 +390,7 @@ public fun String.removeRange(firstIndex: Int, lastIndex: Int): String {
  *
  * The end index of the [range] is included in the removed part.
  */
-public fun String.removeRange(range: IntRange): String = removeRange(range.start, range.end + 1)
+public fun CharSequence.removeRange(range: IntRange): String = removeRange(range.start, range.end + 1)
 
 /**
  * If this string starts with the given [prefix], returns a copy of this string
@@ -500,39 +516,39 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
  * The [replacement] can consist of any combination of literal text and $-substitutions. To treat the replacement string
  * literally escape it with the [kotlin.text.Regex.Companion.escapeReplacement] method.
  */
-public fun String.replace(regex: Regex, replacement: String): String = regex.replace(this, replacement)
+public fun CharSequence.replace(regex: Regex, replacement: String): String = regex.replace(this, replacement)
 
 /**
  * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
  * with the result of the given function [transform] that takes [MatchResult] and returns a string to be used as a
  * replacement for that match.
  */
-public fun String.replace(regex: Regex, transform: (MatchResult) -> String): String = regex.replace(this, transform)
+public fun CharSequence.replace(regex: Regex, transform: (MatchResult) -> CharSequence): String = regex.replace(this, transform)
 
 /**
  * Replaces the first occurrence of the given regular expression [regex] in this string with specified [replacement] expression.
  *
  * @param replacement A replacement expression that can include substitutions. See [Regex.replaceFirst] for details.
  */
-public fun String.replaceFirst(regex: Regex, replacement: String): String = regex.replaceFirst(this, replacement)
+public fun CharSequence.replaceFirst(regex: Regex, replacement: String): String = regex.replaceFirst(this, replacement)
 
 
 /**
  * Returns `true` if this string matches the given regular expression.
  */
-public fun String.matches(regex: Regex): Boolean = regex.matches(this)
+public fun CharSequence.matches(regex: Regex): Boolean = regex.matches(this)
 
 
 /**
  * Returns `true` if this string starts with the specified character.
  */
-public fun String.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
+public fun CharSequence.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[0].equals(char, ignoreCase)
 
 /**
  * Returns `true` if this string ends with the specified character.
  */
-public fun String.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
+public fun CharSequence.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[lastIndex].equals(char, ignoreCase)
 
 
@@ -584,8 +600,8 @@ public fun CharSequence.commonSuffixWith(other: CharSequence, ignoreCase: Boolea
 
 // indexOfAny()
 
-private fun String.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, Char>? {
-    if (!ignoreCase && chars.size() == 1) {
+private fun CharSequence.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, Char>? {
+    if (!ignoreCase && chars.size() == 1 && this is String) {
         val char = chars.single()
         val index = if (!last) nativeIndexOf(char, startIndex) else nativeLastIndexOf(char, startIndex)
         return if (index < 0) null else index to char
@@ -610,7 +626,7 @@ private fun String.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase: Bool
  * @returns An index of the first occurrence of matched character from [chars] or -1 if none of [chars] are found.
  *
  */
-public fun String.indexOfAny(chars: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
+public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
     findAnyOf(chars, startIndex, ignoreCase, last = false)?.first ?: -1
 
 /**
@@ -622,7 +638,7 @@ public fun String.indexOfAny(chars: CharArray, startIndex: Int = 0, ignoreCase: 
  * @returns An index of the last occurrence of matched character from [chars] or -1 if none of [chars] are found.
  *
  */
-public fun String.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
+public fun CharSequence.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
     findAnyOf(chars, startIndex, ignoreCase, last = true)?.first ?: -1
 
 
@@ -711,8 +727,8 @@ public fun String.lastIndexOfAny(strings: Collection<String>, startIndex: Int = 
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
  * @returns An index of the first occurrence of [char] or -1 if none is found.
  */
-public fun String.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
-    return if (ignoreCase) 
+public fun CharSequence.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
+    return if (ignoreCase || this !is String)
         indexOfAny(charArrayOf(char), startIndex, ignoreCase)
     else
         nativeIndexOf(char, startIndex)
@@ -724,7 +740,6 @@ public fun String.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean =
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
  * @returns An index of the first occurrence of [string] or -1 if none is found.
  */
-@kotlin.jvm.JvmOverloads
 public fun String.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase)
         indexOfAny(listOf(string), startIndex, ignoreCase)
@@ -739,8 +754,8 @@ public fun String.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boole
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
  * @returns An index of the first occurrence of [char] or -1 if none is found.
  */
-public fun String.lastIndexOf(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
-    return if (ignoreCase)
+public fun CharSequence.lastIndexOf(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
+    return if (ignoreCase || this !is String)
         lastIndexOfAny(charArrayOf(char), startIndex, ignoreCase)
     else
         nativeLastIndexOf(char, startIndex)
@@ -774,7 +789,7 @@ public operator fun String.contains(seq: CharSequence, ignoreCase: Boolean = fal
  *
  * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
  */
-public operator fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
+public operator fun CharSequence.contains(char: Char, ignoreCase: Boolean = false): Boolean =
         indexOf(char, ignoreCase = ignoreCase) >= 0
 
 /**
