@@ -158,6 +158,21 @@ internal abstract class FunctionCaller<out M : Member>(
         }
     }
 
+    class ClassCompanionFieldGetter(
+            field: ReflectField,
+            klass: Class<*>
+    ) : FunctionCaller<ReflectField>(
+            field,
+            field.genericType,
+            klass,
+            emptyArray()
+    ) {
+        override fun call(args: Array<*>): Any? {
+            checkArguments(args)
+            return member.get(args.first())
+        }
+    }
+
     class StaticFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull)
 
     class InstanceFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull)
@@ -166,6 +181,21 @@ internal abstract class FunctionCaller<out M : Member>(
         override fun checkArguments(args: Array<*>) {
             super.checkArguments(args)
             checkObjectInstance(args.firstOrNull())
+        }
+    }
+
+    class ClassCompanionFieldSetter(
+            field: ReflectField,
+            klass: Class<*>
+    ) : FunctionCaller<ReflectField>(
+            field,
+            Void.TYPE,
+            klass,
+            arrayOf(field.genericType)
+    ) {
+        override fun call(args: Array<*>): Any? {
+            checkArguments(args)
+            return member.set(instanceClass, args.last())
         }
     }
 }
