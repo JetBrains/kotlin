@@ -1,0 +1,3 @@
+fun file() {
+    <caret>
+}

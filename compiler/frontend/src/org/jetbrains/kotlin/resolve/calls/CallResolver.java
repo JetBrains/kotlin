@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -558,6 +559,21 @@ public class CallResolver {
         if (context.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) {
             argumentTypeResolver.analyzeArgumentsAndRecordTypes(context);
         }
+
+        List<JetTypeProjection> typeArguments = context.call.getTypeArguments();
+        for (JetTypeProjection projection : typeArguments) {
+            if (projection.getProjectionKind() != JetProjectionKind.NONE) {
+                context.trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
+                ModifierCheckerCore.INSTANCE.check(projection, context.trace, null);
+            }
+            JetType type = argumentTypeResolver.resolveTypeRefWithDefault(
+                    projection.getTypeReference(), context.scope, context.trace,
+                    null);
+            if (type != null) {
+                ForceResolveUtil.forceResolveAllContents(type);
+            }
+        }
+
         Collection<ResolvedCall<F>> allCandidates = Lists.newArrayList();
         OverloadResolutionResultsImpl<F> successfulResults = null;
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;

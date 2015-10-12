@@ -361,6 +361,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy(fileName);
         }
 
+        @TestMetadata("TypeArgForUnresolvedCall.kt")
+        public void testTypeArgForUnresolvedCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/TypeArgForUnresolvedCall.kt");
+            doTestCopy(fileName);
+        }
+
         @TestMetadata("TypeParameter.kt")
         public void testTypeParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/TypeParameter.kt");
@@ -697,6 +703,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("Trait.kt")
         public void testTrait() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Trait.kt");
+            doTestCut(fileName);
+        }
+
+        @TestMetadata("TypeArgForUnresolvedCall.kt")
+        public void testTypeArgForUnresolvedCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/imports/TypeArgForUnresolvedCall.kt");
             doTestCut(fileName);
         }
 
