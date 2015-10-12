@@ -7,4 +7,4 @@ class A {
     }
 }
 
-<caret>A(x=1.0)
+val v = <caret>A(x=1.0)

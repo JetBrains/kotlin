@@ -1,2 +1,2 @@
-java.lang.Deprecated fun foo() {
+@java.lang.Deprecated fun foo() {
 }

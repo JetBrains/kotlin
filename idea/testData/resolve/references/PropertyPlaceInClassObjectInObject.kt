@@ -2,7 +2,7 @@ package testing
 
 object Testing {
     companion object {
-        <caret>va
+        @<caret>va
     }
 }
 

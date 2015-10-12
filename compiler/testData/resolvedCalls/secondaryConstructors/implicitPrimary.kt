@@ -1,3 +1,3 @@
 class A
 
-<caret>A()
+val v = <caret>A()

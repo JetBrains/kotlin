@@ -2,7 +2,7 @@ package pkg3
 
 import kotlin.platform.platformName
 
-platformName("main")
+@platformName("main")
 fun aaa(args: Array<String>) {
     // yes
 }

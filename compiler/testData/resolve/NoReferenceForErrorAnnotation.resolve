@@ -1,4 +1,4 @@
-`!null`first object Foo {}
+@`!null`first object Foo {}
 
-`!null`second(`!null`aa, `!null`asdf) object More {
+@`!null`second(`!null`aa, `!null`asdf) object More {
 }

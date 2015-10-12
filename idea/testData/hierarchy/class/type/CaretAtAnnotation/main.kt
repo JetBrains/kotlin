@@ -1,4 +1,4 @@
-<caret>A class MyClass
+@<caret>A class MyClass
 
 annotation class A
 

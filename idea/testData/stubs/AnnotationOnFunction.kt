@@ -1,2 +1,2 @@
-Deprecated fun foo() {
+@Deprecated fun foo() {
 }

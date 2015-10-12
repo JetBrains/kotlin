@@ -1,6 +1,6 @@
 class A {
     companion object {
-        pl<caret>
+        @pl<caret>
     }
 }
 

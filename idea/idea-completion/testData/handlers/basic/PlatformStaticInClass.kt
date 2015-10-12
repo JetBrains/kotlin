@@ -1,5 +1,5 @@
 class A {
-    pl<caret>
+    @pl<caret>
 }
 
 // ELEMENT: platformStatic

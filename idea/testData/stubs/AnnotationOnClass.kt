@@ -1,2 +1,2 @@
-Deprecated class Test {
+@Deprecated class Test {
 }

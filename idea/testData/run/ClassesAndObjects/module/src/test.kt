@@ -5,7 +5,7 @@ import kotlin.platform.platformStatic
 // RUN: q.Foo
 object Foo {
     // RUN: q.Foo
-    platformStatic fun main(s: Array<String>) {
+    @platformStatic fun main(s: Array<String>) {
         println("Foo")
     }
 
@@ -13,7 +13,7 @@ object Foo {
     class InnerFoo {
         companion object {
             // RUN: q.Foo.InnerFoo
-            platformStatic fun main(s: Array<String>) {
+            @platformStatic fun main(s: Array<String>) {
                 println("InnerFoo")
             }
         }
@@ -22,7 +22,7 @@ object Foo {
     // RUN: q.Foo
     class InnerFoo2 {
         // RUN: q.Foo
-        platformStatic fun main(s: Array<String>) {
+        @platformStatic fun main(s: Array<String>) {
             println("InnerFoo")
         }
     }
@@ -40,7 +40,7 @@ object Foo2 {
 class Bar {
     companion object {
         // RUN: q.Bar
-        platformStatic fun main(s: Array<String>) {
+        @platformStatic fun main(s: Array<String>) {
             println("Bar")
         }
     }

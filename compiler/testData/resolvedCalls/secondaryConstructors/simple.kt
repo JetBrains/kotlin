@@ -4,4 +4,4 @@ class A {
     }
 }
 
-<caret>A(1)
+val v = <caret>A(1)

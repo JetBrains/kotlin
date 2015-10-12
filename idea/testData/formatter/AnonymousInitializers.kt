@@ -9,8 +9,8 @@ class A {
     fun foo2() {
 
     }
-    Ann    init       {}
-    Ann    init {}
+    @Ann    init       {}
+    @Ann    init {}
 
 
     fun foo3() {
