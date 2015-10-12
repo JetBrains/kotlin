@@ -227,6 +227,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("InPrimaryConstructorParametersList.kt")
+    public void testInPrimaryConstructorParametersList() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InPrimaryConstructorParametersList.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InPropertyInitializer.kt")
     public void testInPropertyInitializer() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InPropertyInitializer.kt");
@@ -470,6 +476,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("TopScope.kt")
     public void testTopScope() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/TopScope.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("UseSiteTargetForPrimaryConstructorParameter.kt")
+    public void testUseSiteTargetForPrimaryConstructorParameter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/UseSiteTargetForPrimaryConstructorParameter.kt");
         doTest(fileName);
     }
 }

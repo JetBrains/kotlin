@@ -122,37 +122,44 @@ object KeywordCompletion {
         var parent = position.getParent()
         var prevParent = position
         while (parent != null) {
-            val _parent = parent
-            when (_parent) {
+            when (parent) {
                 is JetBlockExpression -> {
                     return buildFilterWithContext("fun foo() { ", prevParent, position)
                 }
 
                 is JetWithExpressionInitializer -> {
-                    val initializer = _parent.getInitializer()
+                    val initializer = parent.getInitializer()
                     if (prevParent == initializer) {
                         return buildFilterWithContext("val v = ", initializer!!, position)
                     }
                 }
 
                 is JetParameter -> {
-                    val default = _parent.getDefaultValue()
+                    val default = parent.getDefaultValue()
                     if (prevParent == default) {
                         return buildFilterWithContext("val v = ", default!!, position)
                     }
                 }
             }
 
-            if (_parent is JetDeclaration) {
-                val scope = _parent.getParent()
+            if (parent is JetDeclaration) {
+                val scope = parent.parent
                 when (scope) {
-                    is JetClassOrObject -> return buildFilterWithReducedContext("class X { ", _parent, position)
-                    is JetFile -> return buildFilterWithReducedContext("", _parent, position)
+                    is JetClassOrObject -> {
+                        if (parent is JetPrimaryConstructor) {
+                            return buildFilterWithReducedContext("class X ", parent, position)
+                        }
+                        else {
+                            return buildFilterWithReducedContext("class X { ", parent, position)
+                        }
+                    }
+
+                    is JetFile -> return buildFilterWithReducedContext("", parent, position)
                 }
             }
 
-            prevParent = _parent
-            parent = _parent.getParent()
+            prevParent = parent
+            parent = parent.parent
         }
 
         return buildFilterWithReducedContext("", null, position)
@@ -193,11 +200,21 @@ object KeywordCompletion {
 
                 else -> {
                     if (elementAt.parent !is JetModifierList) return true
-                    val possibleTargets = when (elementAt.parent.parent) {
-                        is JetParameter -> listOf(VALUE_PARAMETER)
+                    val declaration = elementAt.parent.parent
+                    val possibleTargets = when (declaration) {
+                        is JetParameter -> {
+                            if (declaration.ownerFunction is JetPrimaryConstructor)
+                                listOf(VALUE_PARAMETER, MEMBER_PROPERTY)
+                            else
+                                listOf(VALUE_PARAMETER)
+                        }
+
                         is JetTypeParameter -> listOf(TYPE_PARAMETER)
+
                         is JetClassBody -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, INNER_CLASS, MEMBER_FUNCTION, MEMBER_PROPERTY, FUNCTION, PROPERTY)
+
                         is JetFile -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, FUNCTION, PROPERTY)
+
                         else -> return true
                     }
                     val modifierTargets = ModifierCheckerCore.possibleTargetMap[keywordTokenType] ?: return true
