@@ -468,6 +468,7 @@
                     <include name="kotlin/**"/>
                     <exclude name="kotlin/internal/**"/>
                 </fileset>
+                <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/cli/src" includes="META-INF/services/**"/>
@@ -858,6 +859,7 @@
 
         <pack-runtime-jar jar-dir="${output}" jar-name="kotlin-reflect-before-jarjar.jar" implementation-title="${manifest.impl.title.kotlin.jvm.reflect}">
             <jar-content>
+                <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="META-INF/services/**"/>
                 <fileset dir="${output}/classes/reflection"/>
                 <fileset dir="${output}/classes/core"/>
                 <zipfileset src="${protobuf-lite.jar}"/>
@@ -982,6 +984,7 @@
                 <include name="kotlin/**"/>
                 <exclude name="kotlin/internal/**"/>
             </fileset>
+            <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="META-INF/services/**"/>
             <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
             <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
             <fileset dir="${basedir}/compiler/cli/src" includes="META-INF/services/**"/>
