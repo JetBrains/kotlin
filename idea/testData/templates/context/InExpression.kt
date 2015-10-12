@@ -1,0 +1,1 @@
+val v = xxx<caret>
