@@ -28,9 +28,9 @@ public interface HalfSubstitutedTypeParameters {
         public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
         public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.MutableListIterator<E!>
         public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<E!>
-        public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
-        public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ index: kotlin.Int): E!
+        public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ o: E!): kotlin.Boolean
         public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+        public abstract override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): E!
         public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
         public abstract override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: E!): E!
         public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.MutableList<E!>

@@ -755,7 +755,7 @@
                 </assertions>
                 <arg value="-cp"/>
                 <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
-                <arg value="org.jetbrains.kotlin.preprocessor.PreprocessorPackage"/>
+                <arg value="org.jetbrains.kotlin.preprocessor.PreprocessorCLI"/>
                 <arg value="@{src}"/>
                 <arg value="@{output}"/>
                 <arg value="@{profile}"/>

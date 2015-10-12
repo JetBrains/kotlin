@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.valuesToMap
 import java.util.HashSet
 
@@ -38,6 +39,11 @@ object EMPTY_MEMBER_INDEX : MemberIndex {
     override fun getAllFieldNames() = listOf<Name>()
 }
 
+private val ADDITIONAL_MEMBER_NAMES_MAP = mapOf(
+        FqName("java.util.List") to listOf(Name.identifier("removeAt")),
+        FqName("java.lang.CharSequence") to listOf(Name.identifier("get"))
+)
+
 open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember) -> Boolean) : MemberIndex {
     private val methodFilter = {
         m: JavaMethod ->
@@ -48,10 +54,15 @@ open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember
     private val fields = jClass.getFields().asSequence().filter(memberFilter).valuesToMap { m -> m.getName() }
 
     override fun findMethodsByName(name: Name): Collection<JavaMethod> = methods[name] ?: listOf()
-    override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> = jClass.getAllMemberNames(methodFilter) { getMethods() }
+    override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> =
+            jClass.getAllMemberNames(methodFilter) { getMethods() }
 
     override fun findFieldByName(name: Name): JavaField? = fields[name]
     override fun getAllFieldNames(): Collection<Name> = jClass.getAllMemberNames(memberFilter) { getFields() }
+}
+
+private fun JavaClass.getNonDeclaredMethodNames(): List<Name> {
+    return ADDITIONAL_MEMBER_NAMES_MAP[this.fqName].orEmpty()
 }
 
 private fun <M : JavaMember> JavaClass.getAllMemberNames(filter: (M) -> Boolean, getMembers: JavaClass.() -> Collection<M>): Set<Name> {
@@ -70,6 +81,7 @@ private fun <M : JavaMember> JavaClass.getAllMemberNames(filter: (M) -> Boolean,
         for (supertype in getSupertypes()) {
             val classifier = supertype.getClassifier()
             if (classifier is JavaClass) {
+                result.addAll(classifier.getNonDeclaredMethodNames())
                 classifier.visit()
             }
         }

@@ -26,7 +26,7 @@ fun <T> testMutableCollection(c: MutableCollection<T>, t: T) {
 
     val <!UNUSED_VARIABLE!>mutableIterator<!>: MutableIterator<T> = c.iterator()
     c.add(t)
-    c.remove(1)
+    c.remove(<!UNCHECKED_CAST!>1 as T<!>)
     c.addAll(c)
     c.removeAll(c)
     c.retainAll(c)
@@ -52,7 +52,7 @@ fun <T> testList(l: List<T>, <!UNUSED_PARAMETER!>t<!>: T) {
 fun <T> testMutableList(l: MutableList<T>, t: T) {
     val <!UNUSED_VARIABLE!>value<!>: T = l.set(1, t)
     l.add(1, t)
-    l.remove(1)
+    l.removeAt(1)
     val <!UNUSED_VARIABLE!>mutableListIterator<!>: MutableListIterator<T> = l.listIterator()
     val <!UNUSED_VARIABLE!>mutableListIterator1<!>: MutableListIterator<T> = l.listIterator(1)
     val <!UNUSED_VARIABLE!>mutableList<!>: MutableList<T> = l.subList(1, 2)
@@ -84,7 +84,7 @@ fun <T> testMutableSet(s: MutableSet<T>, t: T) {
 
     val <!UNUSED_VARIABLE!>mutableIterator<!>: MutableIterator<T> = s.iterator()
     s.add(t)
-    s.remove(1)
+    s.remove(<!UNCHECKED_CAST!>1 as T<!>)
     s.addAll(s)
     s.removeAll(s)
     s.retainAll(s)

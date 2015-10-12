@@ -2,8 +2,8 @@ package
 
 public open class C : kotlin.CharSequence {
     public constructor C()
-    @java.lang.Override() public open override /*1*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @java.lang.Override() public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     @java.lang.Override() public open override /*1*/ fun length(): kotlin.Int
     @java.lang.Override() public open override /*1*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
@@ -12,8 +12,8 @@ public open class C : kotlin.CharSequence {
 
 public final class T : C {
     public constructor T()
-    @java.lang.Override() public open override /*1*/ /*fake_override*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @java.lang.Override() public open override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun length(): kotlin.Int
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence

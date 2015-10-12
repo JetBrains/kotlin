@@ -262,7 +262,7 @@ public final class CharRange : kotlin.Range<kotlin.Char>, kotlin.Progression<kot
 }
 
 public interface CharSequence {
-    public abstract fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
+    public abstract operator fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public abstract fun length(): kotlin.Int
     public abstract fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
 }
@@ -961,7 +961,7 @@ public interface MutableCollection</*0*/ E> : kotlin.Collection<E>, kotlin.Mutab
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: E): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*2*/ fun iterator(): kotlin.MutableIterator<E>
-    public abstract fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract fun remove(/*0*/ o: E): kotlin.Boolean
     public abstract fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
 }
@@ -994,9 +994,9 @@ public interface MutableList</*0*/ E> : kotlin.List<E>, kotlin.MutableCollection
     public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
     public abstract override /*1*/ fun listIterator(): kotlin.MutableListIterator<E>
     public abstract override /*1*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<E>
-    public abstract override /*1*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public abstract fun remove(/*0*/ index: kotlin.Int): E
+    public abstract override /*1*/ fun remove(/*0*/ o: E): kotlin.Boolean
     public abstract override /*1*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract fun removeAt(/*0*/ index: kotlin.Int): E
     public abstract override /*1*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract operator fun set(/*0*/ index: kotlin.Int, /*1*/ element: E): E
     public abstract override /*1*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.MutableList<E>
@@ -1050,7 +1050,7 @@ public interface MutableSet</*0*/ E> : kotlin.Set<E>, kotlin.MutableCollection<E
     public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: E): kotlin.Boolean
     public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*2*/ fun iterator(): kotlin.MutableIterator<E>
-    public abstract override /*1*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ fun remove(/*0*/ o: E): kotlin.Boolean
     public abstract override /*1*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract override /*1*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
 }
@@ -1255,9 +1255,8 @@ public final class ShortRange : kotlin.Range<kotlin.Short>, kotlin.Progression<k
 
 public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence {
     /*primary*/ public constructor String()
-    public open override /*1*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.String): kotlin.Int
-    public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Char
+    public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ fun length(): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Any?): kotlin.String
     public open override /*1*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence

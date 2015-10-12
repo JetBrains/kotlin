@@ -1,7 +1,7 @@
 // KT-5956 java.lang.AbstractMethodError: test.Thing.subSequence(II)Ljava/lang/CharSequence
 
 class Thing(val delegate: CharSequence) : CharSequence {
-    override fun charAt(index: Int): Char {
+    override fun get(index: Int): Char {
         throw UnsupportedOperationException()
     }
     override fun length(): Int = 0

@@ -7,7 +7,7 @@ fun box(): Boolean {
 
     val arr = ArrayList<Int>()
     try {
-        arr.remove(2)
+        arr.removeAt(2)
     }
     catch(e: IndexOutOfBoundsException) {
         threwForEmptyList = true
@@ -20,7 +20,7 @@ fun box(): Boolean {
     var threwForFilled = false
 
     try {
-        arr.remove(20)
+        arr.removeAt(20)
     }
     catch(e: IndexOutOfBoundsException) {
         threwForFilled = true

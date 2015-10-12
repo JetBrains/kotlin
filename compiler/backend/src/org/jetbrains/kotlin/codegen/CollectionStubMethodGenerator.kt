@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.codegen.MutableClassDescriptor
+import org.jetbrains.kotlin.load.java.SpecialSignatureInfo
+import org.jetbrains.kotlin.load.java.getSpecialSignatureInfo
+import org.jetbrains.kotlin.load.java.isBuiltinWithSpecialDescriptorInJvm
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -29,9 +31,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_ABSTRACT
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_SYNTHETIC
+import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.ArrayList
 import java.util.HashSet
@@ -97,8 +97,40 @@ class CollectionStubMethodGenerator(
                     // errors when compiling Java against such classes because one of them doesn't seem to override the generic method
                     // declared in the Java Collection interface (can't override generic with erased). So we maintain an additional set of
                     // methods which need to be generated with the ACC_SYNTHETIC flag
-                    val originalSignature = method.findOverriddenFromDirectSuperClass(mutableClass)!!.getOriginal().signature()
-                    if (originalSignature.getAsmMethod() != signature.getAsmMethod()) {
+                    val overriddenMethod = method.findOverriddenFromDirectSuperClass(mutableClass)!!
+                    val originalSignature = overriddenMethod.original.signature()
+                    var specialSignature: JvmMethodSignature? = null
+
+                    if (overriddenMethod.isBuiltinWithSpecialDescriptorInJvm()) {
+                        // Stubs for remove(Ljava/lang/Object;)Z and remove(I) should not be synthetic
+                        // Otherwise Javac will not see it
+                        val overriddenMethodSignature = overriddenMethod.signature()
+                        val genericSignatureInfo = overriddenMethod.getSpecialSignatureInfo()
+
+                        val specialGenericSignature =
+                                if (genericSignatureInfo != null)
+                                    genericSignatureInfo.signature
+                                else
+                                    overriddenMethodSignature.genericsSignature
+
+                        val (asmMethod, valueParameters) =
+                                // if remove(E) in Kotlin -> remove(Object) in Java
+                                // so choose original signature
+                                if (genericSignatureInfo == SpecialSignatureInfo.GENERIC_PARAMETER)
+                                    Pair(originalSignature.asmMethod, originalSignature.valueParameters)
+                                else
+                                    Pair(overriddenMethodSignature.asmMethod, overriddenMethodSignature.valueParameters)
+
+                        specialSignature = JvmMethodSignature(
+                                asmMethod,
+                                specialGenericSignature,
+                                valueParameters
+                        )
+
+                        methodStubsToGenerate.add(specialSignature)
+                    }
+
+                    if (originalSignature.asmMethod != signature.asmMethod && originalSignature.asmMethod != specialSignature?.asmMethod) {
                         syntheticStubsToGenerate.add(originalSignature)
                     }
                 }

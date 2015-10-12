@@ -30,7 +30,7 @@ private open class ReversedListReadOnly<T>(protected open val delegate: List<T>)
 
 private class ReversedList<T>(protected override val delegate: MutableList<T>) : ReversedListReadOnly<T>(delegate) {
     override fun clear() = delegate.clear()
-    override fun remove(index: Int): T = delegate.remove(index.flipIndex())
+    override fun removeAt(index: Int): T = delegate.removeAt(index.flipIndex())
 
     override fun set(index: Int, element: T): T = delegate.set(index.flipIndex(), element)
     override fun add(index: Int, element: T) {

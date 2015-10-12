@@ -1,6 +1,6 @@
 open class SetStringImpl {
     fun add(s: String): Boolean = false
-    fun remove(o: Any?): Boolean = false
+    fun remove(o: String): Boolean = false
     fun clear(): Unit {}
 }
 

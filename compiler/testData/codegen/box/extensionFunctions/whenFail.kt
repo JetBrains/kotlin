@@ -1,6 +1,6 @@
 fun StringBuilder.takeFirst(): Char {
   if (this.length() == 0) return 0.toChar()
-  val c = this.charAt(0)
+  val c = this.get(0)
   this.deleteCharAt(0)
   return c
 }

@@ -3,7 +3,7 @@ open class KList<E> : MutableList<E> {
         throw UnsupportedOperationException()
     }
 
-    override fun remove(o: Any?): Boolean {
+    override fun remove(o: E): Boolean {
         throw UnsupportedOperationException()
     }
 
@@ -35,7 +35,7 @@ open class KList<E> : MutableList<E> {
         throw UnsupportedOperationException()
     }
 
-    override fun remove(index: Int): E {
+    override fun removeAt(index: Int): E {
         throw UnsupportedOperationException()
     }
 

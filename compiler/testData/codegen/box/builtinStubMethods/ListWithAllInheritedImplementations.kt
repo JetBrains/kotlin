@@ -1,6 +1,6 @@
 open class Super<T>(val v: T) {
     public fun add(e: T): Boolean = true
-    public fun remove(o: Any?): Boolean = true
+    public fun remove(o: T): Boolean = true
     public fun addAll(c: Collection<T>): Boolean = true
     public fun addAll(index: Int, c: Collection<T>): Boolean = true
     public fun removeAll(c: Collection<Any?>): Boolean = true
@@ -8,7 +8,7 @@ open class Super<T>(val v: T) {
     public fun clear() {}
     public fun set(index: Int, element: T): T = element
     public fun add(index: Int, element: T) {}
-    public fun remove(index: Int): T = v
+    public fun removeAt(index: Int): T = v
 }
 
 class MyList<T>(v: T): Super<T>(v), List<T> {

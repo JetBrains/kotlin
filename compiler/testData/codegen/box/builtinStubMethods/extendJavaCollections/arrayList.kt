@@ -17,7 +17,7 @@ fun box(): String {
     a.add("")
     a.set(0, "")
     a.add(0, "")
-    a.remove(0)
+    a.removeAt(0)
     a.remove("")
 
     return "OK"

@@ -14,7 +14,7 @@ public abstract class A</*0*/ T : kotlin.Any!> : kotlin.MutableCollection<T!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<T!>
-    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ o: T!): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -32,7 +32,7 @@ public abstract class B : kotlin.MutableCollection<kotlin.String!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<kotlin.String!>
-    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.String!): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -49,7 +49,7 @@ public interface IC : kotlin.MutableCollection<kotlin.String!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<kotlin.String!>
-    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.String!): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -77,9 +77,9 @@ public abstract class KA</*0*/ T> : java.util.AbstractList<T> {
     public open override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<T!>
     invisible_fake open override /*1*/ /*fake_override*/ fun outOfBoundsMsg(/*0*/ p0: kotlin.Int): kotlin.String!
     invisible_fake open override /*1*/ /*fake_override*/ fun rangeCheckForAdd(/*0*/ p0: kotlin.Int): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ index: kotlin.Int): T!
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: T!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun removeAt(/*0*/ p0: kotlin.Int): T!
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun removeRange(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: T!): T!
@@ -111,9 +111,9 @@ public abstract class KB : java.util.AbstractList<kotlin.String>, IC {
     public open override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<kotlin.String!>
     invisible_fake open override /*1*/ /*fake_override*/ fun outOfBoundsMsg(/*0*/ p0: kotlin.Int): kotlin.String!
     invisible_fake open override /*1*/ /*fake_override*/ fun rangeCheckForAdd(/*0*/ p0: kotlin.Int): kotlin.Unit
-    public open override /*2*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ index: kotlin.Int): kotlin.String!
+    public open override /*2*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.String!): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun removeAt(/*0*/ p0: kotlin.Int): kotlin.String!
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun removeRange(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.String!
