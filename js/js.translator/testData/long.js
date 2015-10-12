@@ -827,11 +827,11 @@
         return this.toNumber();
     };
 
-    Kotlin.Long.prototype.plus = function() {
+    Kotlin.Long.prototype.unaryPlus = function() {
         return this;
     };
 
-    Kotlin.Long.prototype.minus = Kotlin.Long.prototype.negate;
+    Kotlin.Long.prototype.unaryMinus = Kotlin.Long.prototype.negate;
     Kotlin.Long.prototype.inv = Kotlin.Long.prototype.not;
 
     Kotlin.Long.prototype.rangeTo = function (other) {

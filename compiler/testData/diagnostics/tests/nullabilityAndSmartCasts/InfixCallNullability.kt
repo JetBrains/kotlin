@@ -12,8 +12,8 @@ fun test(x : Int?, a : A?) {
     x?.plus(1)
     x <!UNSAFE_INFIX_CALL!>+<!> 1
     <!UNSAFE_CALL!>-<!>x
-    x<!UNSAFE_CALL!>.<!>minus()
-    x?.minus()
+    x<!UNSAFE_CALL!>.<!>unaryMinus()
+    x?.unaryMinus()
 
     a<!UNSAFE_CALL!>.<!>plus(1)
     a?.plus(1)

@@ -1,4 +1,4 @@
 fun foo() {
     <selection>-1</selection>
-    1.minus()
+    1.unaryMinus()
 }

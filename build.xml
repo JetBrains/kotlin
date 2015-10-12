@@ -159,6 +159,12 @@
     <target name="init">
         <mkdir dir="${kotlin-home}"/>
         <mkdir dir="${kotlin-home}/lib"/>
+
+        <sequential unless:true="${bootstrap.or.local.build}">
+            <copy file="${basedir}/compiler/frontend/OperationsMapGenerated2.kt"
+                  tofile="${basedir}/compiler/frontend/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt"
+                  overwrite="true"/>
+        </sequential>
     </target>
 
     <target name="prepare-dist">

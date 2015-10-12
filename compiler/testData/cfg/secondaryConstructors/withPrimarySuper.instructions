@@ -67,7 +67,7 @@ L2 [after default value for parameter u]:
     v(val v = -1)
     r(1) -> <v9>
     mark(-1)
-    call(-1, minus|<v9>) -> <v10>
+    call(-1, unaryMinus|<v9>) -> <v10>
     w(v|<v10>)
   2 mark({ x = w z = 8 })
     magic[IMPLICIT_RECEIVER](x) -> <v11>

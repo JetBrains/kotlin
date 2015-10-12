@@ -132,9 +132,9 @@ public class Byte private () : Number, Comparable<Byte> {
     /** Decrements this value. */
     public operator fun dec(): Byte
     /** Returns this value. */
-    public operator fun plus(): Int
+    public operator fun unaryPlus(): Int
     /** Returns the negative of this value. */
-    public operator fun minus(): Int
+    public operator fun unaryMinus(): Int
 
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): ByteRange
@@ -272,9 +272,9 @@ public class Short private () : Number, Comparable<Short> {
     /** Decrements this value. */
     public operator fun dec(): Short
     /** Returns this value. */
-    public operator fun plus(): Int
+    public operator fun unaryPlus(): Int
     /** Returns the negative of this value. */
-    public operator fun minus(): Int
+    public operator fun unaryMinus(): Int
 
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): ShortRange
@@ -412,9 +412,9 @@ public class Int private () : Number, Comparable<Int> {
     /** Decrements this value. */
     public operator fun dec(): Int
     /** Returns this value. */
-    public operator fun plus(): Int
+    public operator fun unaryPlus(): Int
     /** Returns the negative of this value. */
-    public operator fun minus(): Int
+    public operator fun unaryMinus(): Int
 
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): IntRange
@@ -567,9 +567,9 @@ public class Long private () : Number, Comparable<Long> {
     /** Decrements this value. */
     public operator fun dec(): Long
     /** Returns this value. */
-    public operator fun plus(): Long
+    public operator fun unaryPlus(): Long
     /** Returns the negative of this value. */
-    public operator fun minus(): Long
+    public operator fun unaryMinus(): Long
 
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): LongRange
@@ -722,9 +722,9 @@ public class Float private () : Number, Comparable<Float> {
     /** Decrements this value. */
     public operator fun dec(): Float
     /** Returns this value. */
-    public operator fun plus(): Float
+    public operator fun unaryPlus(): Float
     /** Returns the negative of this value. */
-    public operator fun minus(): Float
+    public operator fun unaryMinus(): Float
 
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): FloatRange
@@ -862,9 +862,9 @@ public class Double private () : Number, Comparable<Double> {
     /** Decrements this value. */
     public operator fun dec(): Double
     /** Returns this value. */
-    public operator fun plus(): Double
+    public operator fun unaryPlus(): Double
     /** Returns the negative of this value. */
-    public operator fun minus(): Double
+    public operator fun unaryMinus(): Double
 
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): DoubleRange

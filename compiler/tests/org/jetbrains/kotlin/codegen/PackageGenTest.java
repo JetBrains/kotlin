@@ -432,7 +432,7 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     public void testExplicitCallOfUnaryMinusIntrinsic() throws Exception {
-        loadText("fun foo(a: Int) = a.minus()");
+        loadText("fun foo(a: Int) = a.unaryMinus()");
         Method main = generateFunction();
         assertEquals(-1, ((Integer) main.invoke(null, 1)).intValue());
     }

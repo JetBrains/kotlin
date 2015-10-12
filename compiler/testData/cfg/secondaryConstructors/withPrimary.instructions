@@ -36,7 +36,7 @@ L0:
     v(val v = -1)
     r(1) -> <v1>
     mark(-1)
-    call(-1, minus|<v1>) -> <v2>
+    call(-1, unaryMinus|<v1>) -> <v2>
     w(v|<v2>)
   2 mark({ x = w z = 8 })
     magic[IMPLICIT_RECEIVER](x) -> <v3>

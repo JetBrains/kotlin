@@ -31,7 +31,7 @@ class A(val w: Char) {
                   <v6>: A      NEW: magic[IMPLICIT_RECEIVER](z) -> <v6>
                   <v9>: A      NEW: magic[IMPLICIT_RECEIVER](y) -> <v9>
 1                 <v1>: Int    NEW: r(1) -> <v1>
--1                <v2>: Int    NEW: call(-1, minus|<v1>) -> <v2>
+-1                <v2>: Int    NEW: call(-1, unaryMinus|<v1>) -> <v2>
 w                 <v5>: Int    NEW: r(w|<v4>) -> <v5>
 8                 <v7>: Int    NEW: r(8) -> <v7>
 z = 8             !<v8>: *

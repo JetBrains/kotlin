@@ -62,7 +62,6 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun inc(): kotlin.Byte
-    public final operator fun minus(): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -75,7 +74,6 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun plus(): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -101,6 +99,8 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+    public final operator fun unaryMinus(): kotlin.Int
+    public final operator fun unaryPlus(): kotlin.Int
 
     public companion object Companion : kotlin.IntegerConstants<kotlin.Byte> {
         /*primary*/ private constructor Companion()
@@ -331,7 +331,6 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Double
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Double
     public final operator fun inc(): kotlin.Double
-    public final operator fun minus(): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Double
@@ -344,7 +343,6 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Double
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Double
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Double
-    public final operator fun plus(): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Double
@@ -370,6 +368,8 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+    public final operator fun unaryMinus(): kotlin.Double
+    public final operator fun unaryPlus(): kotlin.Double
 
     public companion object Companion : kotlin.FloatingPointConstants<kotlin.Double> {
         /*primary*/ private constructor Companion()
@@ -481,7 +481,6 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Float
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Float
     public final operator fun inc(): kotlin.Float
-    public final operator fun minus(): kotlin.Float
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Float
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -494,7 +493,6 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Float
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Float
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Float
-    public final operator fun plus(): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -520,6 +518,8 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+    public final operator fun unaryMinus(): kotlin.Float
+    public final operator fun unaryPlus(): kotlin.Float
 
     public companion object Companion : kotlin.FloatingPointConstants<kotlin.Float> {
         /*primary*/ private constructor Companion()
@@ -635,7 +635,6 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun inc(): kotlin.Int
     public final fun inv(): kotlin.Int
-    public final operator fun minus(): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -649,7 +648,6 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
     public final infix fun or(/*0*/ other: kotlin.Int): kotlin.Int
-    public final operator fun plus(): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -677,6 +675,8 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+    public final operator fun unaryMinus(): kotlin.Int
+    public final operator fun unaryPlus(): kotlin.Int
     public final infix fun ushr(/*0*/ bits: kotlin.Int): kotlin.Int
     public final infix fun xor(/*0*/ other: kotlin.Int): kotlin.Int
 
@@ -811,7 +811,6 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Long
     public final operator fun inc(): kotlin.Long
     public final fun inv(): kotlin.Long
-    public final operator fun minus(): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -825,7 +824,6 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Long
     public final infix fun or(/*0*/ other: kotlin.Long): kotlin.Long
-    public final operator fun plus(): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -853,6 +851,8 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+    public final operator fun unaryMinus(): kotlin.Long
+    public final operator fun unaryPlus(): kotlin.Long
     public final infix fun ushr(/*0*/ bits: kotlin.Int): kotlin.Long
     public final infix fun xor(/*0*/ other: kotlin.Long): kotlin.Long
 
@@ -1127,7 +1127,6 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun inc(): kotlin.Short
-    public final operator fun minus(): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -1140,7 +1139,6 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun plus(): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -1166,6 +1164,8 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+    public final operator fun unaryMinus(): kotlin.Int
+    public final operator fun unaryPlus(): kotlin.Int
 
     public companion object Companion : kotlin.IntegerConstants<kotlin.Short> {
         /*primary*/ private constructor Companion()
