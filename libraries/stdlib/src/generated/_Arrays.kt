@@ -8287,7 +8287,7 @@ public fun ShortArray.min(): Short? {
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>, T : Any> Array<out T>.minBy(f: (T) -> R): T? {
-    if (size() == 0) return null
+    if (isEmpty()) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -8305,7 +8305,7 @@ public inline fun <R : Comparable<R>, T : Any> Array<out T>.minBy(f: (T) -> R): 
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> BooleanArray.minBy(f: (Boolean) -> R): Boolean? {
-    if (size() == 0) return null
+    if (isEmpty()) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -8323,7 +8323,7 @@ public inline fun <R : Comparable<R>> BooleanArray.minBy(f: (Boolean) -> R): Boo
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> ByteArray.minBy(f: (Byte) -> R): Byte? {
-    if (size() == 0) return null
+    if (isEmpty()) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -8341,7 +8341,7 @@ public inline fun <R : Comparable<R>> ByteArray.minBy(f: (Byte) -> R): Byte? {
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> CharArray.minBy(f: (Char) -> R): Char? {
-    if (size() == 0) return null
+    if (isEmpty()) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -8359,7 +8359,7 @@ public inline fun <R : Comparable<R>> CharArray.minBy(f: (Char) -> R): Char? {
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> DoubleArray.minBy(f: (Double) -> R): Double? {
-    if (size() == 0) return null
+    if (isEmpty()) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -8377,7 +8377,7 @@ public inline fun <R : Comparable<R>> DoubleArray.minBy(f: (Double) -> R): Doubl
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> FloatArray.minBy(f: (Float) -> R): Float? {
-    if (size() == 0) return null
+    if (isEmpty()) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -8395,7 +8395,7 @@ public inline fun <R : Comparable<R>> FloatArray.minBy(f: (Float) -> R): Float? 
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> IntArray.minBy(f: (Int) -> R): Int? {
-    if (size() == 0) return null
+    if (isEmpty()) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -8413,7 +8413,7 @@ public inline fun <R : Comparable<R>> IntArray.minBy(f: (Int) -> R): Int? {
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> LongArray.minBy(f: (Long) -> R): Long? {
-    if (size() == 0) return null
+    if (isEmpty()) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
@@ -8431,7 +8431,7 @@ public inline fun <R : Comparable<R>> LongArray.minBy(f: (Long) -> R): Long? {
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> ShortArray.minBy(f: (Short) -> R): Short? {
-    if (size() == 0) return null
+    if (isEmpty()) return null
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {

@@ -6,6 +6,7 @@ fun mapping(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("withIndex()") {
+        include(CharSequences)
         doc { "Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection." }
         returns("Iterable<IndexedValue<T>>")
         body {
@@ -35,7 +36,7 @@ fun mapping(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives) {
             "return mapIndexedTo(ArrayList<R>(size()), transform)"
         }
-        body(Strings) {
+        body(CharSequences) {
             "return mapIndexedTo(ArrayList<R>(length()), transform)"
         }
         inline(false, Sequences)
@@ -58,7 +59,7 @@ fun mapping(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives, Maps) {
             "return mapTo(ArrayList<R>(size()), transform)"
         }
-        body(Strings) {
+        body(CharSequences) {
             "return mapTo(ArrayList<R>(length()), transform)"
         }
 
@@ -118,7 +119,7 @@ fun mapping(): List<GenericFunction> {
                 return destination
             """
         }
-        include(Maps)
+        include(Maps, CharSequences)
     }
 
     templates add f("mapIndexedTo(destination: C, transform: (Int, T) -> R)") {
@@ -142,7 +143,7 @@ fun mapping(): List<GenericFunction> {
                 return destination
             """
         }
-        include(Maps)
+        include(Maps, CharSequences)
     }
 
     /*
@@ -185,7 +186,7 @@ fun mapping(): List<GenericFunction> {
         body {
             "return flatMapTo(ArrayList<R>(), transform)"
         }
-        include(Maps)
+        include(Maps, CharSequences)
     }
 
     templates add f("flatMap(transform: (T) -> Sequence<R>)") {
@@ -214,7 +215,7 @@ fun mapping(): List<GenericFunction> {
                 return destination
             """
         }
-        include(Maps)
+        include(Maps, CharSequences)
     }
 
     templates add f("flatMapTo(destination: C, transform: (T) -> Sequence<R>)") {
@@ -239,6 +240,7 @@ fun mapping(): List<GenericFunction> {
     templates add f("groupBy(toKey: (T) -> K)") {
         inline(true)
 
+        include(CharSequences)
         doc { "Returns a map of the elements in original collection grouped by the result of given [toKey] function." }
         typeParam("K")
         returns("Map<K, List<T>>")
@@ -248,6 +250,7 @@ fun mapping(): List<GenericFunction> {
     templates add f("groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K)") {
         inline(true)
 
+        include(CharSequences)
         typeParam("K")
         doc { "Appends elements from original collection grouped by the result of given [toKey] function to the given [map]." }
         returns("Map<K, MutableList<T>>")

@@ -15,7 +15,7 @@ fun aggregates(): List<GenericFunction> {
             return true
             """
         }
-        include(Maps)
+        include(Maps, CharSequences)
     }
 
     templates add f("none(predicate: (T) -> Boolean)") {
@@ -29,7 +29,7 @@ fun aggregates(): List<GenericFunction> {
             return true
             """
         }
-        include(Maps)
+        include(Maps, CharSequences)
     }
 
     templates add f("none()") {
@@ -41,7 +41,7 @@ fun aggregates(): List<GenericFunction> {
             return true
             """
         }
-        include(Maps)
+        include(Maps, CharSequences)
     }
 
     templates add f("any(predicate: (T) -> Boolean)") {
@@ -55,7 +55,7 @@ fun aggregates(): List<GenericFunction> {
             return false
             """
         }
-        include(Maps)
+        include(Maps, CharSequences)
     }
 
     templates add f("any()") {
@@ -67,7 +67,7 @@ fun aggregates(): List<GenericFunction> {
             return false
             """
         }
-        include(Maps)
+        include(Maps, CharSequences)
     }
 
     templates add f("count(predicate: (T) -> Boolean)") {
@@ -82,7 +82,7 @@ fun aggregates(): List<GenericFunction> {
             return count
             """
         }
-        include(Maps)
+        include(Maps, CharSequences)
     }
 
     templates add f("count()") {
@@ -95,8 +95,8 @@ fun aggregates(): List<GenericFunction> {
             return count
             """
         }
-        doc(Strings) { "Returns the length of this string."}
-        body(Strings) {
+        doc(CharSequences) { "Returns the length of this string."}
+        body(CharSequences) {
             "return length()"
         }
         body(Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) {
@@ -106,8 +106,9 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("sumBy(transform: (T) -> Int)") {
         inline(true)
+        include(CharSequences)
         doc { "Returns the sum of all values produced by [transform] function from elements in the collection." }
-        doc(Strings) { "Returns the sum of all values produced by [transform] function from characters in the string." }
+        doc(CharSequences) { "Returns the sum of all values produced by [transform] function from characters in the string." }
         returns("Int")
         body {
             """
@@ -122,8 +123,9 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("sumByDouble(transform: (T) -> Double)") {
         inline(true)
+        include(CharSequences)
         doc { "Returns the sum of all values produced by [transform] function from elements in the collection." }
-        doc(Strings) { "Returns the sum of all values produced by [transform] function from characters in the string." }
+        doc(CharSequences) { "Returns the sum of all values produced by [transform] function from characters in the string." }
         returns("Double")
         body {
             """
@@ -154,7 +156,7 @@ fun aggregates(): List<GenericFunction> {
             return min
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty()) return null
             var min = this[0]
@@ -192,9 +194,9 @@ fun aggregates(): List<GenericFunction> {
             return minElem
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            if (size() == 0) return null
+            if (isEmpty()) return null
 
             var minElem = this[0]
             var minValue = f(minElem)
@@ -257,7 +259,7 @@ fun aggregates(): List<GenericFunction> {
             """
         }
 
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty()) return null
 
@@ -296,7 +298,7 @@ fun aggregates(): List<GenericFunction> {
             return maxElem
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty()) return null
 
@@ -345,6 +347,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("fold(initial: R, operation: (R, T) -> R)") {
         inline(true)
 
+        include(CharSequences)
         doc { "Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element." }
         typeParam("R")
         returns("R")
@@ -360,7 +363,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("foldRight(initial: R, operation: (T, R) -> R)") {
         inline(true)
 
-        only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
         doc { "Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value." }
         typeParam("R")
         returns("R")
@@ -379,6 +382,7 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("reduce(operation: (T, T) -> T)") {
         inline(true)
+        include(CharSequences)
         exclude(ArraysOfObjects, Iterables, Sequences)
 
         doc { "Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element." }
@@ -422,7 +426,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("reduceRight(operation: (T, T) -> T)") {
         inline(true)
 
-        only(Strings, ArraysOfPrimitives)
+        only(CharSequences, ArraysOfPrimitives)
         doc { "Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value." }
         returns("T")
         body {
@@ -473,11 +477,12 @@ fun aggregates(): List<GenericFunction> {
             for (element in this) operation(element)
             """
         }
-        include(Maps)
+        include(Maps, CharSequences)
     }
 
     templates add f("forEachIndexed(operation: (Int, T) -> Unit)") {
         inline(true)
+        include(CharSequences)
         doc { "Performs the given [operation] on each element, providing sequential index with the element." }
         returns("Unit")
         body {

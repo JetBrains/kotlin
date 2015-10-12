@@ -39,9 +39,9 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        doc(Strings) { "Returns a string with characters in reversed order." }
-        returns(Strings) { "SELF" }
-        body(Strings) {
+        doc(CharSequences) { "Returns a string with characters in reversed order." }
+        returns(CharSequences) { "String" }
+        body(CharSequences) {
             // TODO: Replace with StringBuilder(this) when JS can handle it
             """
             return StringBuilder().append(this).reverse().toString()
@@ -78,7 +78,6 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sorted()") {
-        exclude(Strings)
         exclude(PrimitiveType.Boolean)
 
         doc {
@@ -130,7 +129,6 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedDescending()") {
-        exclude(Strings)
         exclude(PrimitiveType.Boolean)
 
         doc {
@@ -188,7 +186,6 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedWith(comparator: Comparator<in T>)") {
-        exclude(Strings)
         returns("List<T>")
         doc {
             """
@@ -235,7 +232,6 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedBy(crossinline selector: (T) -> R?)") {
-        exclude(Strings)
         inline(true)
         returns("List<T>")
         typeParam("R : Comparable<R>")
@@ -257,7 +253,6 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedByDescending(crossinline selector: (T) -> R?)") {
-        exclude(Strings)
         inline(true)
         returns("List<T>")
         typeParam("R : Comparable<R>")

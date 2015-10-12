@@ -224,7 +224,7 @@ fun elements(): List<GenericFunction> {
             """
         }
 
-        body(Lists, Strings, ArraysOfPrimitives, ArraysOfObjects) {
+        body(Lists, CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
             """
             for (index in indices) {
                 if (predicate(this[index])) {
@@ -254,7 +254,7 @@ fun elements(): List<GenericFunction> {
             """
         }
 
-        body(Lists, Strings, ArraysOfPrimitives, ArraysOfObjects) {
+        body(Lists, CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
             """
             for (index in indices.reversed()) {
                 if (predicate(this[index])) {
@@ -283,7 +283,7 @@ fun elements(): List<GenericFunction> {
             return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index.") }
             """
         }
-        body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return get(index)
             """
@@ -323,8 +323,8 @@ fun elements(): List<GenericFunction> {
             return defaultValue(index)
             """
         }
-        inline(true, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
-        body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        inline(true, CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
             """
@@ -335,7 +335,7 @@ fun elements(): List<GenericFunction> {
         doc { "Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection." }
         returns("T")
         inline(true)
-        only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
         body {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
@@ -377,7 +377,7 @@ fun elements(): List<GenericFunction> {
             return null
             """
         }
-        body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else null
             """
@@ -387,7 +387,7 @@ fun elements(): List<GenericFunction> {
     templates add f("getOrNull(index: Int)") {
         doc { "Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection." }
         returns("T?")
-        only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
         body {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -400,8 +400,8 @@ fun elements(): List<GenericFunction> {
         doc { """Returns first element.
         @throws [NoSuchElementException] if the collection is empty.
         """ }
-        doc(Strings) { """Returns first character.
-        @throws [NoSuchElementException] if the string is empty.
+        doc(CharSequences) { """Returns first character.
+        @throws [NoSuchElementException] if the CharSequence is empty.
         """ }
         returns("T")
         body {
@@ -422,7 +422,7 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty())
                 throw NoSuchElementException("Collection is empty.")
@@ -440,7 +440,7 @@ fun elements(): List<GenericFunction> {
     }
     templates add f("firstOrNull()") {
         doc { "Returns the first element, or `null` if the collection is empty." }
-        doc(Strings) { "Returns the first character, or `null` if string is empty." }
+        doc(CharSequences) { "Returns the first character, or `null` if CharSequence is empty." }
         returns("T?")
         body {
             """
@@ -460,7 +460,7 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return if (isEmpty()) null else this[0]
             """
@@ -478,9 +478,10 @@ fun elements(): List<GenericFunction> {
     templates add f("first(predicate: (T) -> Boolean)") {
         inline(true)
 
+        include(CharSequences)
         doc { """Returns the first element matching the given [predicate].
         @throws [NoSuchElementException] if no such element is found.""" }
-        doc(Strings) { """Returns the first character matching the given [predicate].
+        doc(CharSequences) { """Returns the first character matching the given [predicate].
         @throws [NoSuchElementException] if no such character is found.""" }
         returns("T")
         body {
@@ -494,8 +495,9 @@ fun elements(): List<GenericFunction> {
     templates add f("firstOrNull(predicate: (T) -> Boolean)") {
         inline(true)
 
+        include(CharSequences)
         doc { "Returns the first element matching the given [predicate], or `null` if element was not found." }
-        doc(Strings) { "Returns the first character matching the given [predicate], or `null` if character was not found." }
+        doc(CharSequences) { "Returns the first character matching the given [predicate], or `null` if character was not found." }
         returns("T?")
         body {
             """
@@ -507,8 +509,9 @@ fun elements(): List<GenericFunction> {
 
     templates add f("find(predicate: (T) -> Boolean)") {
         inline(true)
+        include(CharSequences)
         doc { "Returns the first element matching the given [predicate], or `null` if element was not found." }
-        doc(Strings) { "Returns the first character matching the given [predicate], or `null` if character was not found." }
+        doc(CharSequences) { "Returns the first character matching the given [predicate], or `null` if character was not found." }
         returns("T?")
         body { "return firstOrNull(predicate)"}
     }
@@ -516,7 +519,7 @@ fun elements(): List<GenericFunction> {
     templates add f("last()") {
         doc { """Returns the last element.
         @throws [NoSuchElementException] if the collection is empty.""" }
-        doc(Strings) { """"Returns the last character.
+        doc(CharSequences) { """"Returns the last character.
         @throws [NoSuchElementException] if the string is empty.""" }
         returns("T")
         body {
@@ -551,7 +554,7 @@ fun elements(): List<GenericFunction> {
             return last
             """
         }
-        body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty())
                 throw NoSuchElementException("Collection is empty.")
@@ -562,7 +565,7 @@ fun elements(): List<GenericFunction> {
 
     templates add f("lastOrNull()") {
         doc { "Returns the last element, or `null` if the collection is empty." }
-        doc(Strings) { "Returns the last character, or `null` if the string is empty." }
+        doc(CharSequences) { "Returns the last character, or `null` if the string is empty." }
         returns("T?")
         body {
             """
@@ -591,7 +594,7 @@ fun elements(): List<GenericFunction> {
             return last
             """
         }
-        body(Strings) {
+        body(CharSequences) {
             """
             return if (isEmpty()) null else this[length() - 1]
             """
@@ -605,9 +608,11 @@ fun elements(): List<GenericFunction> {
 
     templates add f("last(predicate: (T) -> Boolean)") {
         inline(true)
+
+        include(CharSequences)
         doc { """Returns the last element matching the given [predicate].
         @throws [NoSuchElementException] if no such element is found.""" }
-        doc(Strings) { """"Returns the last character matching the given [predicate].
+        doc(CharSequences) { """"Returns the last character matching the given [predicate].
         @throws [NoSuchElementException] if no such character is found.""" }
         returns("T")
         body { f ->
@@ -644,8 +649,9 @@ fun elements(): List<GenericFunction> {
 
     templates add f("lastOrNull(predicate: (T) -> Boolean)") {
         inline(true)
+        include(CharSequences)
         doc { "Returns the last element matching the given [predicate], or `null` if no such element was found." }
-        doc(Strings) { "Returns the last character matching the given [predicate], or `null` if no such character was found." }
+        doc(CharSequences) { "Returns the last character matching the given [predicate], or `null` if no such character was found." }
         returns("T?")
         body { f ->
             (if (f == Iterables)
@@ -678,16 +684,16 @@ fun elements(): List<GenericFunction> {
 
     templates add f("findLast(predicate: (T) -> Boolean)") {
         inline(true)
-        include(Lists)
+        include(Lists, CharSequences)
         doc { "Returns the last element matching the given [predicate], or `null` if no such element was found." }
-        doc(Strings) { "Returns the last character matching the given [predicate], or `null` if no such character was found." }
+        doc(CharSequences) { "Returns the last character matching the given [predicate], or `null` if no such character was found." }
         returns("T?")
         body { "return lastOrNull(predicate)"}
     }
 
     templates add f("single()") {
         doc { "Returns the single element, or throws an exception if the collection is empty or has more than one element." }
-        doc(Strings) { "Returns the single character, or throws an exception if the string is empty or has more than one character." }
+        doc(CharSequences) { "Returns the single character, or throws an exception if the string is empty or has more than one character." }
         returns("T")
         body {
             """
@@ -720,7 +726,7 @@ fun elements(): List<GenericFunction> {
             return single
             """
         }
-        body(Strings) {
+        body(CharSequences) {
             """
             return when (length()) {
                 0 -> throw NoSuchElementException("Collection is empty.")
@@ -742,7 +748,7 @@ fun elements(): List<GenericFunction> {
 
     templates add f("singleOrNull()") {
         doc { "Returns single element, or `null` if the collection is empty or has more than one element." }
-        doc(Strings) { "Returns the single character, or `null` if the string is empty or has more than one character." }
+        doc(CharSequences) { "Returns the single character, or `null` if the string is empty or has more than one character." }
         returns("T?")
         body {
             """
@@ -771,7 +777,7 @@ fun elements(): List<GenericFunction> {
             return single
             """
         }
-        body(Strings) {
+        body(CharSequences) {
             """
             return if (length() == 1) this[0] else null
             """
@@ -785,8 +791,9 @@ fun elements(): List<GenericFunction> {
 
     templates add f("single(predicate: (T) -> Boolean)") {
         inline(true)
+        include(CharSequences)
         doc { "Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element." }
-        doc(Strings) { "Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character." }
+        doc(CharSequences) { "Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character." }
         returns("T")
         body {
             """
@@ -807,8 +814,9 @@ fun elements(): List<GenericFunction> {
 
     templates add f("singleOrNull(predicate: (T) -> Boolean)") {
         inline(true)
+        include(CharSequences)
         doc { "Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found." }
-        doc(Strings) { "Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found." }
+        doc(CharSequences) { "Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found." }
         returns("T?")
         body {
             """

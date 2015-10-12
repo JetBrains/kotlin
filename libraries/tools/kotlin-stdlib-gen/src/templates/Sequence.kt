@@ -19,9 +19,20 @@ fun sequences(): List<GenericFunction> {
             """
         }
 
-        body(ArraysOfObjects, ArraysOfPrimitives, Strings) {
+        body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty()) return emptySequence()
+            return object : Sequence<T> {
+                override fun iterator(): Iterator<T> {
+                    return this@asSequence.iterator()
+                }
+            }
+            """
+        }
+
+        body(CharSequences) {
+            """
+            if (this is String && isEmpty()) return emptySequence()
             return object : Sequence<T> {
                 override fun iterator(): Iterator<T> {
                     return this@asSequence.iterator()

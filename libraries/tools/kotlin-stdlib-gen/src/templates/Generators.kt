@@ -419,15 +419,15 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        doc(Strings) {
+        doc(CharSequences) {
             """
             Splits the original string into pair of strings,
             where *first* string contains characters for which [predicate] yielded `true`,
             while *second* string contains characters for which [predicate] yielded `false`.
             """
         }
-        returns(Strings) { "Pair<String, String>" }
-        body(Strings) {
+        returns(CharSequences) { "Pair<String, String>" }
+        body(CharSequences) {
             """
             val first = StringBuilder()
             val second = StringBuilder()
@@ -444,7 +444,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(other: Iterable<R>, transform: (T, R) -> V)") {
-        exclude(Sequences, Strings)
+        exclude(Sequences)
         doc {
             """
             Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
@@ -480,7 +480,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(array: Array<out R>, transform: (T, R) -> V)") {
-        exclude(Sequences, Strings)
+        exclude(Sequences)
         doc {
             """
             Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
@@ -555,7 +555,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(other: String, transform: (Char, Char) -> V)") {
-        only(Strings)
+        only(CharSequences)
         doc {
             """
             Returns a list of values built from characters of both strings with same indexes using provided [transform]. List has length of shortest string.
@@ -579,7 +579,7 @@ fun generators(): List<GenericFunction> {
 
 
     templates add f("zip(other: Iterable<R>)") {
-        exclude(Sequences, Strings)
+        exclude(Sequences)
         doc {
             """
             Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
@@ -595,7 +595,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(other: String)") {
-        only(Strings)
+        only(CharSequences)
         doc {
             """
             Returns a list of pairs built from characters of both strings with same indexes. List has length of shortest collection.
@@ -610,7 +610,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(array: Array<out R>)") {
-        exclude(Sequences, Strings)
+        exclude(Sequences)
         doc {
             """
             Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
