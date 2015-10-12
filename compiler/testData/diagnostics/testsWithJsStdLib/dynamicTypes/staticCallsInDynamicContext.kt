@@ -27,7 +27,7 @@ fun dynamic.test() {
     <!DEBUG_INFO_DYNAMIC!>this<!>()
 
     C() + C()
-    <!NO_VALUE_FOR_PARAMETER!>+<!>C()
+    <!DEPRECATED_UNARY_PLUS_MINUS!><!NO_VALUE_FOR_PARAMETER!>+<!>C()<!>
 
     this <!DEBUG_INFO_DYNAMIC!>+<!> C()
 

@@ -33,7 +33,7 @@ class MyProperty<R, T> {
     }
 }
 
-operator fun <R, T> MyProperty<R, T>.plus() = MyProperty<R, T>()
+operator fun <R, T> MyProperty<R, T>.unaryPlus() = MyProperty<R, T>()
 operator fun <R, T> MyProperty<R, T>.minus(<!UNUSED_PARAMETER!>i<!>: Int) = MyProperty<R, T>()
 
 object O {

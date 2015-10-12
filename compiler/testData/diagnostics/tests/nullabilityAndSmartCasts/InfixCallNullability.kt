@@ -1,6 +1,6 @@
 class A() {
   operator infix fun plus(<!UNUSED_PARAMETER!>i<!> : Int) {}
-  operator fun minus() {}
+  operator fun unaryMinus() {}
   operator infix fun contains(<!UNUSED_PARAMETER!>a<!> : Any?) : Boolean = true
 }
 
@@ -20,8 +20,8 @@ fun test(x : Int?, a : A?) {
     a <!UNSAFE_INFIX_CALL!>plus<!> 1
     a <!UNSAFE_INFIX_CALL!>+<!> 1
     <!UNSAFE_CALL!>-<!>a
-    a<!UNSAFE_CALL!>.<!>minus()
-    a?.minus()
+    a<!UNSAFE_CALL!>.<!>unaryMinus()
+    a?.unaryMinus()
 
     a<!UNSAFE_CALL!>.<!>div(1)
     a <!UNSAFE_INFIX_CALL!>/<!> 1

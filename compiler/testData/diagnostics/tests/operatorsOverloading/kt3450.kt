@@ -3,7 +3,7 @@
 public class A {
     public operator fun get(vararg attrs : Pair<String, String>) : A = this
 }
-operator fun String.plus() : A = A()
+operator fun String.unaryPlus() : A = A()
 operator fun A.div(s : String) : A = A()
 
 fun test() {

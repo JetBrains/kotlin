@@ -93,7 +93,7 @@ abstract class Tag(val name : String) : Element() {
 }
 
 abstract class TagWithText(name : String) : Tag(name) {
-  operator fun String.plus() {
+  operator fun String.unaryPlus() {
     children.add(TextElement(this))
   }
 }
