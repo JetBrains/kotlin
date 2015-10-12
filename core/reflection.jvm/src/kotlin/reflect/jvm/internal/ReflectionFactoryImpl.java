@@ -70,14 +70,12 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KProperty2 property2(PropertyReference2 p) {
-        // TODO: support member extension property references
-        return p;
+        return new KProperty2FromReferenceImpl(p);
     }
 
     @Override
     public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
-        // TODO: support member extension property references
-        return p;
+        return new KMutableProperty2FromReferenceImpl(p);
     }
 
     // Deprecated

@@ -32,14 +32,15 @@ public class AsmTypes {
 
     public static final Type UNIT_TYPE = Type.getObjectType("kotlin/Unit");
     public static final Type PROPERTY_METADATA_TYPE = Type.getObjectType("kotlin/PropertyMetadata");
-    public static final Type PROPERTY_METADATA_IMPL_TYPE = Type.getObjectType("kotlin/PropertyMetadataImpl");
 
     public static final Type LAMBDA = Type.getObjectType("kotlin/jvm/internal/Lambda");
     public static final Type FUNCTION_REFERENCE = Type.getObjectType("kotlin/jvm/internal/FunctionReference");
     public static final Type PROPERTY_REFERENCE0 = Type.getObjectType("kotlin/jvm/internal/PropertyReference0");
     public static final Type PROPERTY_REFERENCE1 = Type.getObjectType("kotlin/jvm/internal/PropertyReference1");
+    public static final Type PROPERTY_REFERENCE2 = Type.getObjectType("kotlin/jvm/internal/PropertyReference2");
     public static final Type MUTABLE_PROPERTY_REFERENCE0 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference0");
     public static final Type MUTABLE_PROPERTY_REFERENCE1 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference1");
+    public static final Type MUTABLE_PROPERTY_REFERENCE2 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference2");
 
     public static final Type K_CLASS_TYPE = reflect("KClass");
     public static final Type K_CLASS_ARRAY_TYPE = Type.getObjectType("[" + K_CLASS_TYPE.getDescriptor());
@@ -49,8 +50,10 @@ public class AsmTypes {
 
     public static final Type K_PROPERTY0_TYPE = reflect("KProperty0");
     public static final Type K_PROPERTY1_TYPE = reflect("KProperty1");
+    public static final Type K_PROPERTY2_TYPE = reflect("KProperty2");
     public static final Type K_MUTABLE_PROPERTY0_TYPE = reflect("KMutableProperty0");
     public static final Type K_MUTABLE_PROPERTY1_TYPE = reflect("KMutableProperty1");
+    public static final Type K_MUTABLE_PROPERTY2_TYPE = reflect("KMutableProperty2");
 
     public static final String REFLECTION = "kotlin/jvm/internal/Reflection";
 

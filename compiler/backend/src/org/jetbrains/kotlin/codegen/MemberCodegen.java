@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.resolve.source.SourcePackage;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -59,7 +61,6 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlag
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_IMPL_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -467,7 +468,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         }
         if (delegatedProperties.isEmpty()) return;
 
-        v.newField(NO_ORIGIN, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.PROPERTY_METADATA_ARRAY_NAME,
+        v.newField(NO_ORIGIN, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME,
                    "[" + PROPERTY_METADATA_TYPE, null, null);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
@@ -481,14 +482,21 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
             iv.dup();
             iv.iconst(i);
-            iv.anew(PROPERTY_METADATA_IMPL_TYPE);
-            iv.dup();
-            iv.visitLdcInsn(property.getName().asString());
-            iv.invokespecial(PROPERTY_METADATA_IMPL_TYPE.getInternalName(), "<init>", "(Ljava/lang/String;)V", false);
-            iv.astore(PROPERTY_METADATA_IMPL_TYPE);
+
+            ReceiverParameterDescriptor dispatchReceiver = property.getDispatchReceiverParameter();
+
+            //noinspection ConstantConditions
+            StackValue value = createOrGetClInitCodegen().generatePropertyReference(
+                    delegatedProperties.get(i).getDelegate(), property, property,
+                    dispatchReceiver != null ? new TransientReceiver(dispatchReceiver.getType()) : ReceiverValue.NO_RECEIVER
+            );
+
+            value.put(PROPERTY_METADATA_TYPE, iv);
+
+            iv.astore(PROPERTY_METADATA_TYPE);
         }
 
-        iv.putstatic(thisAsmType.getInternalName(), JvmAbi.PROPERTY_METADATA_ARRAY_NAME, "[" + PROPERTY_METADATA_TYPE);
+        iv.putstatic(thisAsmType.getInternalName(), JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, "[" + PROPERTY_METADATA_TYPE);
     }
 
     public String getClassName() {

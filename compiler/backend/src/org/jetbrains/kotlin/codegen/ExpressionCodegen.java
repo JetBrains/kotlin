@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.jvm.bindingContextSlices.BindingContextSlicesPackage;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -2774,30 +2773,31 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
         if (variableDescriptor != null) {
-            return generatePropertyReference(expression, variableDescriptor, resolvedCall);
+            return generatePropertyReference(expression, variableDescriptor, (VariableDescriptor) resolvedCall.getResultingDescriptor(),
+                                             resolvedCall.getDispatchReceiver());
         }
 
         throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
     }
 
     @NotNull
-    private StackValue generatePropertyReference(
-            @NotNull JetCallableReferenceExpression expression,
+    public StackValue generatePropertyReference(
+            @NotNull JetElement element,
             @NotNull VariableDescriptor variableDescriptor,
-            @NotNull ResolvedCall<?> resolvedCall
+            @NotNull VariableDescriptor target,
+            @NotNull ReceiverValue dispatchReceiver
     ) {
         ClassDescriptor classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor);
 
         ClassBuilder classBuilder = state.getFactory().newVisitor(
-                OtherOrigin(expression),
+                OtherOrigin(element),
                 typeMapper.mapClass(classDescriptor),
-                expression.getContainingFile()
+                element.getContainingFile()
         );
 
-        @SuppressWarnings("unchecked")
         PropertyReferenceCodegen codegen = new PropertyReferenceCodegen(
                 state, parentCodegen, context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION),
-                expression, classBuilder, classDescriptor, (ResolvedCall<VariableDescriptor>) resolvedCall
+                element, classBuilder, classDescriptor, target, dispatchReceiver
         );
         codegen.generate();
 

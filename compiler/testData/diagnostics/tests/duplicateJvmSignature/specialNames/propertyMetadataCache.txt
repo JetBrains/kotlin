@@ -1,12 +1,12 @@
 package
 
-public val `$propertyMetadata`: kotlin.Array<kotlin.PropertyMetadata>
+public val `$delegatedProperties`: kotlin.Array<kotlin.PropertyMetadata>
 public val x: kotlin.Any
 public operator fun kotlin.Any.getValue(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any): kotlin.Any
 
 public final class C {
     public constructor C()
-    public final val `$propertyMetadata`: kotlin.Array<kotlin.PropertyMetadata>
+    public final val `$delegatedProperties`: kotlin.Array<kotlin.PropertyMetadata>
     public final val x: kotlin.Any
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
