@@ -330,6 +330,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("clashWithCompanionObjectField.kt")
+            public void testClashWithCompanionObjectField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/clashWithCompanionObjectField.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inMultiFileFacade.kt")
             public void testInMultiFileFacade() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/inMultiFileFacade.kt");
