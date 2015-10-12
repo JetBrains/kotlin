@@ -92,19 +92,19 @@ fun <T> testMutableSet(s: MutableSet<T>, t: T) {
 }
 
 fun <K, V> testMap(m: Map<K, V>) {
-    val <!UNUSED_VARIABLE!>set<!>: Set<K> = m.keySet()
-    val <!UNUSED_VARIABLE!>collection<!>: Collection<V> = m.values()
-    val <!UNUSED_VARIABLE!>set1<!>: Set<Map.Entry<K, V>> = m.entrySet()
+    val <!UNUSED_VARIABLE!>set<!>: Set<K> = m.keys
+    val <!UNUSED_VARIABLE!>collection<!>: Collection<V> = m.values
+    val <!UNUSED_VARIABLE!>set1<!>: Set<Map.Entry<K, V>> = m.entries
 
-    val <!UNUSED_VARIABLE!>mutableSet<!>: MutableSet<K> = <!TYPE_MISMATCH!>m.keySet()<!>
-    val <!UNUSED_VARIABLE!>mutableCollection<!>: MutableCollection<V> = <!TYPE_MISMATCH!>m.values()<!>
-    val <!UNUSED_VARIABLE!>mutableSet1<!>: MutableSet<MutableMap.MutableEntry<K, V>> = <!TYPE_MISMATCH!>m.entrySet()<!>
+    val <!UNUSED_VARIABLE!>mutableSet<!>: MutableSet<K> = <!TYPE_MISMATCH!>m.keys<!>
+    val <!UNUSED_VARIABLE!>mutableCollection<!>: MutableCollection<V> = <!TYPE_MISMATCH!>m.values<!>
+    val <!UNUSED_VARIABLE!>mutableSet1<!>: MutableSet<MutableMap.MutableEntry<K, V>> = <!TYPE_MISMATCH!>m.entries<!>
 }
 
 fun <K, V> testMutableMap(m: MutableMap<K, V>) {
-    val <!UNUSED_VARIABLE!>mutableSet<!>: MutableSet<K> = m.keySet()
-    val <!UNUSED_VARIABLE!>mutableCollection<!>: MutableCollection<V> = m.values()
-    val <!UNUSED_VARIABLE!>mutableSet1<!>: MutableSet<MutableMap.MutableEntry<K, V>> = m.entrySet()
+    val <!UNUSED_VARIABLE!>mutableSet<!>: MutableSet<K> = m.keys
+    val <!UNUSED_VARIABLE!>mutableCollection<!>: MutableCollection<V> = m.values
+    val <!UNUSED_VARIABLE!>mutableSet1<!>: MutableSet<MutableMap.MutableEntry<K, V>> = m.entries
 }
 
 fun <T> array(vararg <!UNUSED_PARAMETER!>t<!>: T): Array<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

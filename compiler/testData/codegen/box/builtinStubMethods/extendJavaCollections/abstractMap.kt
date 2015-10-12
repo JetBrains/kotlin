@@ -2,7 +2,7 @@ import java.util.AbstractMap
 import java.util.Collections
 
 class A : AbstractMap<Int, String>() {
-    override fun entrySet(): MutableSet<MutableMap.MutableEntry<Int, String>> = Collections.emptySet()
+    override val entries: MutableSet<MutableMap.MutableEntry<Int, String>> get() = Collections.emptySet()
 }
 
 fun box(): String {
@@ -14,9 +14,9 @@ fun box(): String {
     a.putAll(b)
     a.clear()
 
-    a.keySet()
-    a.values()
-    a.entrySet()
+    a.keys
+    a.values
+    a.entries
 
     return "OK"
 }
