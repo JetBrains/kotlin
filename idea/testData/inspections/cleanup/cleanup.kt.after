@@ -36,7 +36,7 @@ const val i = 1
 
 annotation class Fancy(val param: Int)
 
-@Fancy(<caret>i) class D
+@Fancy(i) class D
 
 class Foo {
     var x: Int = 0
@@ -44,7 +44,14 @@ class Foo {
         set(value) { field = value }
 }
 
+class CustomDelegate {
+    operator fun getValue(thisRef: Any?, prop: PropertyMetadata): String = ""
+    operator fun setValue(thisRef: Any?, prop: PropertyMetadata, value: String) {}
+}
+
 class B {
+    var a: String by CustomDelegate()
+
     operator fun plus(a: A): A = A()
 }
 

@@ -4373,6 +4373,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("deprecatedDelegatesGetSetExtension.kt")
+        public void testDeprecatedDelegatesGetSetExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/deprecatedDelegatesGetSetExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deprecatedDelegatesGetSetMember.kt")
+        public void testDeprecatedDelegatesGetSetMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/deprecatedDelegatesGetSetMember.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("finalTrait.kt")
         public void testFinalTrait() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/finalTrait.kt");
