@@ -2,6 +2,6 @@
 
 interface I
 
-fun f(): List<I> {
+private fun f(): List<I> {
     return listOf(object : I { })
 }
