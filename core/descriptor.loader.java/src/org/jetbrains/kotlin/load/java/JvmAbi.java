@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java;
 
+import kotlin.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -89,6 +90,11 @@ public final class JvmAbi {
         if (name.length() == IS_PREFIX.length()) return false;
         char c = name.charAt(IS_PREFIX.length());
         return !('a' <= c && c <= 'z');
+    }
+
+    @NotNull
+    public static String sanitizeAsJavaIdentifier(@NotNull String str) {
+        return StringsKt.replace(str, StringsKt.toRegex("[^\\p{L}\\p{Digit}]"), "_");
     }
 }
 

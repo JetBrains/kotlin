@@ -120,7 +120,7 @@ internal sealed class JvmPropertySignature {
                             val sourceElement = containingDeclaration.source as KotlinJvmBinarySourceElement
                             val klass = (sourceElement.binaryClass as ReflectKotlinClass).klass
                             val moduleName = klass.getAnnotation(KotlinClass::class.java).moduleName
-                            "$" + sanitizeAsJavaIdentifier(moduleName)
+                            "$" + JvmAbi.sanitizeAsJavaIdentifier(moduleName)
                         }
                         else {
                             ""
@@ -128,9 +128,6 @@ internal sealed class JvmPropertySignature {
                 string = JvmAbi.getterName(name) + moduleSuffix + "()" + desc
             }
         }
-
-        private fun sanitizeAsJavaIdentifier(str: String): String =
-                str.replace("[^\\p{L}\\p{Digit}]".toRegex(), "_")
 
         override fun asString(): String = string
     }

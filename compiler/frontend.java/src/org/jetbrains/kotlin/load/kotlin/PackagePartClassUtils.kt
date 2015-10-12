@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
@@ -38,10 +39,7 @@ public object PackagePartClassUtils {
             if (str.isEmpty())
                 "_$PART_CLASS_NAME_SUFFIX"
             else
-                capitalizeAsJavaClassName(sanitizeAsJavaIdentifier(str)) + PART_CLASS_NAME_SUFFIX
-
-    public @JvmStatic fun sanitizeAsJavaIdentifier(str: String): String =
-            str.replace("[^\\p{L}\\p{Digit}]".toRegex(), "_")
+                capitalizeAsJavaClassName(JvmAbi.sanitizeAsJavaIdentifier(str)) + PART_CLASS_NAME_SUFFIX
 
     private @JvmStatic fun capitalizeAsJavaClassName(str: String): String =
             // NB use Locale.ENGLISH so that build is locale-independent.

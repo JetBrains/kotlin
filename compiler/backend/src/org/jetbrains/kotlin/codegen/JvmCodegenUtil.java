@@ -235,9 +235,4 @@ public class JvmCodegenUtil {
             av.visit(JvmAnnotationNames.MODULE_NAME_FIELD_NAME, name);
         }
     }
-
-    @NotNull
-    public static String sanitizeAsJavaIdentifier(@NotNull String str) {
-        return PackagePartClassUtils.sanitizeAsJavaIdentifier(str);
-    }
 }
