@@ -5,8 +5,8 @@ class MyList: List<String> {
     override fun iterator(): Iterator<String> = throw Error()
     override fun containsAll(c: Collection<String>): Boolean = false
     override fun get(index: Int): String = throw IndexOutOfBoundsException()
-    override fun indexOf(o: Any?): Int = -1
-    override fun lastIndexOf(o: Any?): Int = -1
+    override fun indexOf(o: String): Int = -1
+    override fun lastIndexOf(o: String): Int = -1
     override fun listIterator(): ListIterator<String> = throw Error()
     override fun listIterator(index: Int): ListIterator<String> = throw Error()
     override fun subList(fromIndex: Int, toIndex: Int): List<String> = this

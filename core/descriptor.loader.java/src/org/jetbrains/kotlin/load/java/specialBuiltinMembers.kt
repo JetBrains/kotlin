@@ -72,14 +72,20 @@ object BuiltinSpecialProperties {
 }
 
 object BuiltinMethodsWithSpecialJvmSignature {
-    private val ERASED_COLLECTION_PARAMETER_FQ_NAMES = setOf(FqName("kotlin.Collection.containsAll"))
+    private val ERASED_COLLECTION_PARAMETER_FQ_NAMES = setOf(
+            FqName("kotlin.Collection.containsAll"),
+            FqName("kotlin.MutableCollection.removeAll"),
+            FqName("kotlin.MutableCollection.retainAll")
+    )
     private val GENERIC_PARAMETERS_FQ_NAMES = setOf(
             FqName("kotlin.Collection.contains"),
             FqName("kotlin.MutableCollection.remove"),
             FqName("kotlin.Map.containsKey"),
             FqName("kotlin.Map.containsValue"),
             FqName("kotlin.Map.get"),
-            FqName("kotlin.MutableMap.remove")
+            FqName("kotlin.MutableMap.remove"),
+            FqName("kotlin.List.indexOf"),
+            FqName("kotlin.List.lastIndexOf")
     )
 
     private val ERASED_VALUE_PARAMETERS_FQ_NAMES =

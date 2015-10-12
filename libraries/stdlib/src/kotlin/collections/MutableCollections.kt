@@ -6,6 +6,18 @@ package kotlin
 @Deprecated("Use operator 'get' instead", ReplaceWith("this[index]"))
 public fun CharSequence.charAt(index: Int): Char = this[index]
 
+@Deprecated("Use explicit cast to MutableCollection<Any?> instead", ReplaceWith("(this as MutableCollection<Any?>).removeAll(c)"))
+public fun <E> MutableCollection<E>.removeAll(c: Collection<Any?>): Boolean = removeAll(c as Collection<E>)
+
+@Deprecated("Use explicit cast to MutableCollection<Any?> instead", ReplaceWith("(this as MutableCollection<Any?>).retainAll(c)"))
+public fun <E> MutableCollection<E>.retainAll(c: Collection<Any?>): Boolean = retainAll(c as Collection<E>)
+
+@Deprecated("Use explicit cast to List<Any?> instead", ReplaceWith("(this as List<Any?>).indexOf(o)"))
+public fun <E> List<E>.indexOf(o: Any?): Int = indexOf(o as E)
+
+@Deprecated("Use explicit cast to List<Any?> instead", ReplaceWith("(this as List<Any?>).lastIndexOf(o)"))
+public fun <E> List<E>.lastIndexOf(o: Any?): Int = lastIndexOf(o as E)
+
 /**
  * Adds the specified [element] to this mutable collection.
  */

@@ -10179,8 +10179,8 @@ public fun BooleanArray.asList(): List<Boolean> {
         override fun contains(o: Boolean): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Boolean> = this@asList.iterator() as MutableIterator<Boolean>
         override fun get(index: Int): Boolean = this@asList[index]
-        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Boolean)
-        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Boolean)
+        override fun indexOf(o: Boolean): Int = this@asList.indexOf(o)
+        override fun lastIndexOf(o: Boolean): Int = this@asList.lastIndexOf(o)
     }
 }
 
@@ -10195,8 +10195,8 @@ public fun ByteArray.asList(): List<Byte> {
         override fun contains(o: Byte): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Byte> = this@asList.iterator() as MutableIterator<Byte>
         override fun get(index: Int): Byte = this@asList[index]
-        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Byte)
-        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Byte)
+        override fun indexOf(o: Byte): Int = this@asList.indexOf(o)
+        override fun lastIndexOf(o: Byte): Int = this@asList.lastIndexOf(o)
     }
 }
 
@@ -10211,8 +10211,8 @@ public fun CharArray.asList(): List<Char> {
         override fun contains(o: Char): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Char> = this@asList.iterator() as MutableIterator<Char>
         override fun get(index: Int): Char = this@asList[index]
-        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Char)
-        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Char)
+        override fun indexOf(o: Char): Int = this@asList.indexOf(o)
+        override fun lastIndexOf(o: Char): Int = this@asList.lastIndexOf(o)
     }
 }
 
@@ -10227,8 +10227,8 @@ public fun DoubleArray.asList(): List<Double> {
         override fun contains(o: Double): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Double> = this@asList.iterator() as MutableIterator<Double>
         override fun get(index: Int): Double = this@asList[index]
-        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Double)
-        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Double)
+        override fun indexOf(o: Double): Int = this@asList.indexOf(o)
+        override fun lastIndexOf(o: Double): Int = this@asList.lastIndexOf(o)
     }
 }
 
@@ -10243,8 +10243,8 @@ public fun FloatArray.asList(): List<Float> {
         override fun contains(o: Float): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Float> = this@asList.iterator() as MutableIterator<Float>
         override fun get(index: Int): Float = this@asList[index]
-        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Float)
-        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Float)
+        override fun indexOf(o: Float): Int = this@asList.indexOf(o)
+        override fun lastIndexOf(o: Float): Int = this@asList.lastIndexOf(o)
     }
 }
 
@@ -10259,8 +10259,8 @@ public fun IntArray.asList(): List<Int> {
         override fun contains(o: Int): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Int> = this@asList.iterator() as MutableIterator<Int>
         override fun get(index: Int): Int = this@asList[index]
-        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Int)
-        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Int)
+        override fun indexOf(o: Int): Int = this@asList.indexOf(o)
+        override fun lastIndexOf(o: Int): Int = this@asList.lastIndexOf(o)
     }
 }
 
@@ -10275,8 +10275,8 @@ public fun LongArray.asList(): List<Long> {
         override fun contains(o: Long): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Long> = this@asList.iterator() as MutableIterator<Long>
         override fun get(index: Int): Long = this@asList[index]
-        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Long)
-        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Long)
+        override fun indexOf(o: Long): Int = this@asList.indexOf(o)
+        override fun lastIndexOf(o: Long): Int = this@asList.lastIndexOf(o)
     }
 }
 
@@ -10291,8 +10291,8 @@ public fun ShortArray.asList(): List<Short> {
         override fun contains(o: Short): Boolean = this@asList.contains(o)
         override fun iterator(): MutableIterator<Short> = this@asList.iterator() as MutableIterator<Short>
         override fun get(index: Int): Short = this@asList[index]
-        override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Short)
-        override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Short)
+        override fun indexOf(o: Short): Int = this@asList.indexOf(o)
+        override fun lastIndexOf(o: Short): Int = this@asList.lastIndexOf(o)
     }
 }
 

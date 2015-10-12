@@ -106,14 +106,14 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
      *
      * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
      */
-    public fun removeAll(c: Collection<Any?>): Boolean
+    public fun removeAll(c: Collection<E>): Boolean
 
     /**
      * Retains only the elements in this collection that are contained in the specified collection.
      *
      * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
      */
-    public fun retainAll(c: Collection<Any?>): Boolean
+    public fun retainAll(c: Collection<E>): Boolean
 
     /**
      * Removes all elements from this collection.
@@ -147,13 +147,13 @@ public interface List<out E> : Collection<E> {
      * Returns the index of the first occurrence of the specified element in the list, or -1 if the specified
      * element is not contained in the list.
      */
-    public fun indexOf(o: Any?): Int
+    public fun indexOf(o: @UnsafeVariance E): Int
 
     /**
      * Returns the index of the last occurrence of the specified element in the list, or -1 if the specified
      * element is not contained in the list.
      */
-    public fun lastIndexOf(o: Any?): Int
+    public fun lastIndexOf(o: @UnsafeVariance E): Int
 
     // List Iterators
     /**
@@ -192,8 +192,8 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
      * @return `true` if the list was changed as the result of the operation.
      */
     public fun addAll(index: Int, c: Collection<E>): Boolean
-    override fun removeAll(c: Collection<Any?>): Boolean
-    override fun retainAll(c: Collection<Any?>): Boolean
+    override fun removeAll(c: Collection<E>): Boolean
+    override fun retainAll(c: Collection<E>): Boolean
     override fun clear(): Unit
 
     // Positional Access Operations
@@ -256,8 +256,8 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
 
     // Bulk Modification Operations
     override fun addAll(c: Collection<E>): Boolean
-    override fun removeAll(c: Collection<Any?>): Boolean
-    override fun retainAll(c: Collection<Any?>): Boolean
+    override fun removeAll(c: Collection<E>): Boolean
+    override fun retainAll(c: Collection<E>): Boolean
     override fun clear(): Unit
 }
 

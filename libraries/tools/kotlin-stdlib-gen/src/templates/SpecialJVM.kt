@@ -233,8 +233,8 @@ fun specialJVM(): List<GenericFunction> {
                 override fun contains(o: T): Boolean = this@asList.contains(o)
                 override fun iterator(): MutableIterator<T> = this@asList.iterator() as MutableIterator<T>
                 override fun get(index: Int): T = this@asList[index]
-                override fun indexOf(o: Any?): Int = this@asList.indexOf(o as T)
-                override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as T)
+                override fun indexOf(o: T): Int = this@asList.indexOf(o)
+                override fun lastIndexOf(o: T): Int = this@asList.lastIndexOf(o)
             }
             """
         }

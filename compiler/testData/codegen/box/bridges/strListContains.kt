@@ -17,11 +17,11 @@ class StrList : List<String?> {
         throw UnsupportedOperationException()
     }
 
-    override fun indexOf(o: Any?): Int {
+    override fun indexOf(o: String?): Int {
         throw UnsupportedOperationException()
     }
 
-    override fun lastIndexOf(o: Any?): Int {
+    override fun lastIndexOf(o: String?): Int {
         throw UnsupportedOperationException()
     }
 

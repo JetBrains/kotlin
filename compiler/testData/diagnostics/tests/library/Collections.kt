@@ -35,8 +35,8 @@ fun <T> testMutableCollection(c: MutableCollection<T>, t: T) {
 
 fun <T> testList(l: List<T>, <!UNUSED_PARAMETER!>t<!>: T) {
     val <!NAME_SHADOWING!>t<!>: T = l.get(1)
-    val <!UNUSED_VARIABLE!>i<!>: Int = l.indexOf(1)
-    val <!UNUSED_VARIABLE!>i1<!>: Int = l.lastIndexOf(1)
+    val <!UNUSED_VARIABLE!>i<!>: Int = l.indexOf(t)
+    val <!UNUSED_VARIABLE!>i1<!>: Int = l.lastIndexOf(t)
     val <!UNUSED_VARIABLE!>listIterator<!>: ListIterator<T> = l.listIterator()
     val <!UNUSED_VARIABLE!>listIterator1<!>: ListIterator<T> = l.listIterator(1)
     val <!UNUSED_VARIABLE!>list<!>: List<T> = l.subList(1, 2)

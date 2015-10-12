@@ -13,11 +13,11 @@ open class KList : MutableList<String> {
         throw UnsupportedOperationException()
     }
 
-    override fun indexOf(o: Any?): Int {
+    override fun indexOf(o: String): Int {
         throw UnsupportedOperationException()
     }
 
-    override fun lastIndexOf(o: Any?): Int {
+    override fun lastIndexOf(o: String): Int {
         throw UnsupportedOperationException()
     }
 
@@ -41,11 +41,11 @@ open class KList : MutableList<String> {
         throw UnsupportedOperationException()
     }
 
-    override fun removeAll(c: Collection<Any?>): Boolean {
+    override fun removeAll(c: Collection<String>): Boolean {
         throw UnsupportedOperationException()
     }
 
-    override fun retainAll(c: Collection<Any?>): Boolean {
+    override fun retainAll(c: Collection<String>): Boolean {
         throw UnsupportedOperationException()
     }
 

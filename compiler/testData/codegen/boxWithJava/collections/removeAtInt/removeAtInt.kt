@@ -15,11 +15,11 @@ open class A : MutableList<Int> {
         throw UnsupportedOperationException()
     }
 
-    override fun indexOf(o: Any?): Int {
+    override fun indexOf(o: Int): Int {
         throw UnsupportedOperationException()
     }
 
-    override fun lastIndexOf(o: Any?): Int {
+    override fun lastIndexOf(o: Int): Int {
         throw UnsupportedOperationException()
     }
 
@@ -39,11 +39,11 @@ open class A : MutableList<Int> {
         throw UnsupportedOperationException()
     }
 
-    override fun removeAll(c: Collection<Any?>): Boolean {
+    override fun removeAll(c: Collection<Int>): Boolean {
         throw UnsupportedOperationException()
     }
 
-    override fun retainAll(c: Collection<Any?>): Boolean {
+    override fun retainAll(c: Collection<Int>): Boolean {
         throw UnsupportedOperationException()
     }
 

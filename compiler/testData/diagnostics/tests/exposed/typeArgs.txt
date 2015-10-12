@@ -13,10 +13,10 @@ public interface His : kotlin.List<My> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): My
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: My): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.Iterator<My>
-    public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: My): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.ListIterator<My>
     public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.ListIterator<My>
     public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.List<My>

@@ -30,11 +30,11 @@ class A1 : MutableCollection<String> {
         throw UnsupportedOperationException()
     }
 
-    override fun removeAll(c: Collection<Any?>): Boolean {
+    override fun removeAll(c: Collection<String>): Boolean {
         throw UnsupportedOperationException()
     }
 
-    override fun retainAll(c: Collection<Any?>): Boolean {
+    override fun retainAll(c: Collection<String>): Boolean {
         throw UnsupportedOperationException()
     }
 
