@@ -14,12 +14,12 @@ private object EmptyMap : Map<Any, Nothing>, Serializable {
     override val size: Int get() = 0
     override val isEmpty: Boolean get() = true
 
-    override fun containsKey(key: Any?): Boolean = false
-    override fun containsValue(value: Any?): Boolean = false
-    override fun get(key: Any?): Nothing? = null
-    override fun entrySet(): Set<Map.Entry<Any, Nothing>> = EmptySet
-    override fun keySet(): Set<Any> = EmptySet
-    override fun values(): Collection<Nothing> = EmptyList
+    override fun containsKey(key: Any): Boolean = false
+    override fun containsValue(value: Nothing): Boolean = false
+    override fun get(key: Any): Nothing? = null
+    override val entries: Set<Map.Entry<Any, Nothing>> get() = EmptySet
+    override val keys: Set<Any> get() = EmptySet
+    override val values: Collection<Nothing> get() = EmptyList
 
     private fun readResolve(): Any = EmptyMap
 }

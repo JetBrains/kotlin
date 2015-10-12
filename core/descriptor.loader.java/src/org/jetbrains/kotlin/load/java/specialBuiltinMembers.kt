@@ -35,7 +35,10 @@ object BuiltinSpecialProperties {
     private val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf(
             FqName("kotlin.Collection.size")           to Name.identifier("size"),
             FqName("kotlin.Map.size")                  to Name.identifier("size"),
-            FqName("kotlin.CharSequence.length")       to Name.identifier("length")
+            FqName("kotlin.CharSequence.length")       to Name.identifier("length"),
+            FqName("kotlin.Map.keys")                  to Name.identifier("keySet"),
+            FqName("kotlin.Map.values")                to Name.identifier("values"),
+            FqName("kotlin.Map.entries")               to Name.identifier("entrySet")
     )
 
     private val GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP: Map<Name, List<Name>> =
@@ -71,7 +74,12 @@ object BuiltinSpecialProperties {
 object BuiltinMethodsWithSpecialJvmSignature {
     private val ERASED_COLLECTION_PARAMETER_FQ_NAMES = setOf(FqName("kotlin.Collection.containsAll"))
     private val GENERIC_PARAMETERS_FQ_NAMES = setOf(
-            FqName("kotlin.Collection.contains"), FqName("kotlin.MutableCollection.remove")
+            FqName("kotlin.Collection.contains"),
+            FqName("kotlin.MutableCollection.remove"),
+            FqName("kotlin.Map.containsKey"),
+            FqName("kotlin.Map.containsValue"),
+            FqName("kotlin.Map.get"),
+            FqName("kotlin.MutableMap.remove")
     )
 
     private val ERASED_VALUE_PARAMETERS_FQ_NAMES =
@@ -121,7 +129,7 @@ object BuiltinSpecialMethods {
     val REMOVE_AT_FQ_NAME = FqName("kotlin.MutableList.removeAt")
 
     val FQ_NAMES_TO_JVM_MAP: Map<FqName, Name> = mapOf(
-            REMOVE_AT_FQ_NAME to Name.identifier("remove"),
+            REMOVE_AT_FQ_NAME                 to Name.identifier("remove"),
             FqName("kotlin.CharSequence.get") to Name.identifier("charAt")
     )
 

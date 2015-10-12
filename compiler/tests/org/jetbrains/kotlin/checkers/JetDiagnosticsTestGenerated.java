@@ -9185,6 +9185,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("mapGetOverride.kt")
+                public void testMapGetOverride() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/mapGetOverride.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("removeAt.kt")
                 public void testRemoveAt() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/removeAt.kt");

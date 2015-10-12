@@ -284,33 +284,33 @@ public interface Map<K, out V> {
     /**
      * Returns `true` if the map contains the specified [key].
      */
-    public fun containsKey(key: Any?): Boolean
+    public fun containsKey(key: K): Boolean
 
     /**
      * Returns `true` if the map maps one or more keys to the specified [value].
      */
-    public fun containsValue(value: Any?): Boolean
+    public fun containsValue(value: @UnsafeVariance V): Boolean
 
     /**
      * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
      */
-    public operator fun get(key: Any?): V?
+    public operator fun get(key: K): V?
 
     // Views
     /**
      * Returns a [Set] of all keys in this map.
      */
-    public fun keySet(): Set<K>
+    public val keys: Set<K>
 
     /**
      * Returns a [Collection] of all values in this map. Note that this collection may contain duplicate values.
      */
-    public fun values(): Collection<V>
+    public val values: Collection<V>
 
     /**
      * Returns a [Set] of all key/value pairs in this map.
      */
-    public fun entrySet(): Set<Map.Entry<K, V>>
+    public val entries: Set<Map.Entry<K, V>>
 
     /**
      * Represents a key/value pair held by a [Map].
@@ -348,7 +348,7 @@ public interface MutableMap<K, V> : Map<K, V> {
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
-    public fun remove(key: Any?): V?
+    public fun remove(key: K): V?
 
     // Bulk Modification Operations
     /**
@@ -362,9 +362,9 @@ public interface MutableMap<K, V> : Map<K, V> {
     public fun clear(): Unit
 
     // Views
-    override fun keySet(): MutableSet<K>
-    override fun values(): MutableCollection<V>
-    override fun entrySet(): MutableSet<MutableMap.MutableEntry<K, V>>
+    override val keys: MutableSet<K>
+    override val values: MutableCollection<V>
+    override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
 
     /**
      * Represents a key/value pair held by a [MutableMap].

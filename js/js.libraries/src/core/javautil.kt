@@ -105,18 +105,18 @@ public open class HashMap<K, V>(initialCapacity: Int = DEFAULT_INITIAL_CAPACITY,
     override val size: Int get() = noImpl
     override val isEmpty: Boolean get() = noImpl
     @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
-    override fun get(key: Any?): V? = noImpl
-    override fun containsKey(key: Any?): Boolean = noImpl
+    override fun get(key: K): V? = noImpl
+    override fun containsKey(key: K): Boolean = noImpl
     @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     override fun put(key: K, value: V): V? = noImpl
     override fun putAll(m: Map<out K, V>): Unit = noImpl
     @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
-    override fun remove(key: Any?): V? = noImpl
+    override fun remove(key: K): V? = noImpl
     override fun clear(): Unit = noImpl
-    override fun containsValue(value: Any?): Boolean = noImpl
-    override fun keySet(): MutableSet<K> = noImpl
-    override fun values(): MutableCollection<V> = noImpl
-    override fun entrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = noImpl
+    override fun containsValue(value: V): Boolean = noImpl
+    override val keys: MutableSet<K> get() = noImpl
+    override val values: MutableCollection<V> get() = noImpl
+    override val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() = noImpl
 }
 
 @library

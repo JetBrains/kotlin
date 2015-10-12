@@ -41,7 +41,8 @@ object EMPTY_MEMBER_INDEX : MemberIndex {
 
 private val ADDITIONAL_MEMBER_NAMES_MAP = mapOf(
         FqName("java.util.List") to listOf(Name.identifier("removeAt")),
-        FqName("java.lang.CharSequence") to listOf(Name.identifier("get"))
+        FqName("java.lang.CharSequence") to listOf(Name.identifier("get")),
+        FqName("java.util.Map") to listOf(Name.identifier("keys"), Name.identifier("entries"))
 )
 
 open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember) -> Boolean) : MemberIndex {
