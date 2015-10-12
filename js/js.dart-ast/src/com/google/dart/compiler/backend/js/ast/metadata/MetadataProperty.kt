@@ -17,12 +17,12 @@
 package com.google.dart.compiler.backend.js.ast.metadata
 
 internal class MetadataProperty<in T : HasMetadata, R>(val default: R) {
-    fun getValue(thisRef: T, desc: PropertyMetadata): R {
+    operator fun getValue(thisRef: T, desc: PropertyMetadata): R {
         if (!thisRef.hasData(desc.name)) return default
         return thisRef.getData<R>(desc.name)
     }
 
-    fun setValue(thisRef: T, desc: PropertyMetadata, value: R) {
+    operator fun setValue(thisRef: T, desc: PropertyMetadata, value: R) {
         thisRef.setData(desc.name, value)
     }
 }
