@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
-import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore
 
 open class KeywordLookupObject
@@ -194,7 +191,7 @@ object KeywordCompletion {
 
                 elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> return false
 
-                elementAt.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment } is PsiErrorElement -> return false
+                elementAt.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }?.parentsWithSelf?.any { it is PsiErrorElement } ?: false -> return false
 
                 keywordTokenType !is JetModifierKeywordToken -> return true
 

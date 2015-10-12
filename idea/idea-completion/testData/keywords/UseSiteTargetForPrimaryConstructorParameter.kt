@@ -9,8 +9,6 @@ class Completion(@get:Ann val p1: String, @<caret>)
 // EXIST: setparam
 // EXIST: property
 
-/*TODO: keywords below should not be here*/
-// EXIST: val
-// EXIST: var
+/*TODO: in fact is not applicable */
 // EXIST: receiver
 // NOTHING_ELSE
