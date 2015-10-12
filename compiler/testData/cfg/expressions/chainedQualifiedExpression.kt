@@ -41,7 +41,7 @@ public open class JetKeywordCompletionContributor() {
     }
 
     private inner class BunchKeywordRegister() {
-        fun add(keyword= JetToken(), vararg filters: Double): BunchKeywordRegister {
+        fun add(keyword: JetToken = JetToken(), vararg filters: Double): BunchKeywordRegister {
         }
 
         fun registerAll() {
