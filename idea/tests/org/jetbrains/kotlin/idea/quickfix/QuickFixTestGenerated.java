@@ -4356,6 +4356,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/typeParameterList/basic.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("extension.kt")
+            public void testExtension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/typeParameterList/extension.kt");
+                doTest(fileName);
+            }
         }
     }
 
