@@ -427,6 +427,17 @@ public class BodyResolver {
             JetTypeReference typeReference = entry.getKey();
             JetType supertype = entry.getValue();
 
+            JetTypeElement typeElement = typeReference.getTypeElement();
+            if (typeElement instanceof JetFunctionType) {
+                for (JetParameter parameter : ((JetFunctionType) typeElement).getParameters()) {
+                    PsiElement nameIdentifier = parameter.getNameIdentifier();
+
+                    if (nameIdentifier != null) {
+                        trace.report(Errors.UNSUPPORTED.on(nameIdentifier, "named parameter in function type in supertype position"));
+                    }
+                }
+            }
+
             boolean addSupertype = true;
 
             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);

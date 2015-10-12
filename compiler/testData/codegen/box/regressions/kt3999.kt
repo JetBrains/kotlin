@@ -11,9 +11,9 @@ fun test1() {
 }
 
 fun test2() {
-  val a: (@Extension Function2<*, *, *>).(@Extension Function2<*, *, *>)->Unit = {}
-  val b: (@Extension Function2<*, *, *>).(@Extension Function2<*, *, *>)->Unit = {"$this $it"}
-  val c: (@Extension Function2<*, *, *>).(@Extension Function2<*, *, *>)->Unit = {}
+  val a: (@Extension Function2<*, *, *>).(Function2<*, *, *>)->Unit = {}
+  val b: (@Extension Function2<*, *, *>).(Function2<*, *, *>)->Unit = {"$this $it"}
+  val c: (@Extension Function2<*, *, *>).(Function2<*, *, *>)->Unit = {}
   a.b(c)
   a b c
 }
