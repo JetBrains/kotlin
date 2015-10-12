@@ -3,7 +3,7 @@ import java.util.*
 import java.io.*
 
 fun takeFirst(expr: StringBuilder): Char {
-  val c = expr.charAt(0)
+  val c = expr.get(0)
   expr.deleteCharAt(0)
   return c
 }
@@ -31,7 +31,7 @@ fun evaluateAdd(expr: StringBuilder, numbers: ArrayList<Int>): Int {
 fun evaluate(expr: StringBuilder, numbers: ArrayList<Int>): Int {
   val lhs = evaluateAdd(expr, numbers)
   if (expr.length() > 0) {
-    val <warning>c</warning> = expr.charAt(0)
+    val <warning>c</warning> = expr.get(0)
     expr.deleteCharAt(0)
   }
   return lhs

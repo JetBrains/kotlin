@@ -29,9 +29,10 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import java.io.OutputStream
 import java.util.*
 
+// TODO: optimize by reordering records to minimize storage of 'range' fields
 class JvmStringTable(private val typeMapper: JetTypeMapper) : StringTable {
     public val strings = ArrayList<String>()
-    private val records = ArrayList<Record>()
+    private val records = ArrayList<Record.Builder>()
     private val map = HashMap<String, Int>()
     private val localNames = HashSet<Int>()
 
@@ -39,12 +40,18 @@ class JvmStringTable(private val typeMapper: JetTypeMapper) : StringTable {
             map.getOrPut(string) {
                 strings.size().apply {
                     strings.add(string)
-                    records.add(Record.newBuilder().apply {
-                        // TODO: optimize, don't always store the operation
-                        setOperation(Record.Operation.NONE)
-                    }.build())
+
+                    val lastRecord = records.lastOrNull()
+                    if (lastRecord != null && lastRecord.isTrivial()) {
+                        lastRecord.setRange(lastRecord.range + 1)
+                    }
+                    else records.add(Record.newBuilder())
                 }
             }
+
+    private fun Record.Builder.isTrivial(): Boolean {
+        return !hasPredefinedIndex() && !hasOperation() && substringIndexCount == 0 && replaceCharCount == 0
+    }
 
     override fun getFqNameIndex(descriptor: ClassDescriptor): Int {
         if (ErrorUtils.isError(descriptor)) {
@@ -81,14 +88,11 @@ class JvmStringTable(private val typeMapper: JetTypeMapper) : StringTable {
         // If the class is local or any of its outer class names contains '$', store a literal string
         if (classId.isLocal || '$' in string) {
             strings.add(string)
-            // TODO: optimize, don't always store the operation
-            record.setOperation(Record.Operation.NONE)
         }
         else {
             val predefinedIndex = JvmNameResolver.getPredefinedStringIndex(string)
             if (predefinedIndex != null) {
                 record.setPredefinedIndex(predefinedIndex)
-                record.setOperation(Record.Operation.NONE)
                 // TODO: move all records with predefined names to the end and do not write associated strings for them (since they are ignored)
                 strings.add("")
             }
@@ -98,7 +102,7 @@ class JvmStringTable(private val typeMapper: JetTypeMapper) : StringTable {
             }
         }
 
-        records.add(record.build())
+        records.add(record)
 
         map[string] = index
 
@@ -120,7 +124,7 @@ class JvmStringTable(private val typeMapper: JetTypeMapper) : StringTable {
 
     override fun serializeTo(output: OutputStream) {
         with(JvmProtoBuf.StringTableTypes.newBuilder()) {
-            addAllRecord(records)
+            addAllRecord(records.map { it.build() })
             addAllLocalName(localNames)
             build().writeDelimitedTo(output)
         }

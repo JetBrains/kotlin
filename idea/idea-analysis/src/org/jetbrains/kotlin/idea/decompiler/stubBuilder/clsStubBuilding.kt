@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
+import com.google.protobuf.MessageLite
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.ProtoBuf.CallableKind
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
@@ -51,10 +51,8 @@ fun createPackageFacadeStub(
 ): KotlinFileStubImpl {
     val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
-    val container = ProtoContainer(null, packageFqName, c.nameResolver)
-    for (callableProto in packageProto.getMemberList()) {
-        createCallableStub(fileStub, callableProto, c, container)
-    }
+    createCallableStubs(fileStub, c, ProtoContainer(null, packageFqName, c.nameResolver),
+                        packageProto.functionList, packageProto.propertyList)
     return fileStub
 }
 
@@ -66,10 +64,8 @@ fun createFileFacadeStub(
     val packageFqName = facadeFqName.parent()
     val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
-    val container = ProtoContainer(null, facadeFqName.parent(), c.nameResolver)
-    for (callableProto in packageProto.getMemberList()) {
-        createCallableStub(fileStub, callableProto, c, container)
-    }
+    createCallableStubs(fileStub, c, ProtoContainer(null, packageFqName, c.nameResolver),
+                        packageProto.functionList, packageProto.propertyList)
     return fileStub
 }
 
@@ -85,11 +81,10 @@ fun createMultifileClassStub(
     setupFileStub(fileStub, packageFqName)
     for (partFile in partFiles) {
         val partHeader = partFile.classHeader
-        val partData = JvmProtoBufUtil.readPackageDataFrom(partHeader.annotationData!!, partHeader.strings!!)
-        val partContext = components.createContext(partData.nameResolver, packageFqName)
-        for (partMember in partData.packageProto.memberList) {
-            createCallableStub(fileStub, partMember, partContext, ProtoContainer(null, packageFqName, partContext.nameResolver))
-        }
+        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(partHeader.annotationData!!, partHeader.strings!!)
+        val partContext = components.createContext(nameResolver, packageFqName)
+        createCallableStubs(fileStub, partContext, ProtoContainer(null, packageFqName, partContext.nameResolver),
+                            packageProto.functionList, packageProto.propertyList)
     }
     return fileStub
 }
@@ -181,31 +176,31 @@ enum class FlagsToModifiers {
 
     INNER {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.INNER.get(flags)) JetTokens.INNER_KEYWORD else null
+            return if (Flags.IS_INNER.get(flags)) JetTokens.INNER_KEYWORD else null
         }
     },
 
     CONST {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.OLD_IS_CONST.get(flags)) JetTokens.CONST_KEYWORD else null
+            return if (Flags.IS_CONST.get(flags)) JetTokens.CONST_KEYWORD else null
         }
     },
 
     LATEINIT {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.OLD_LATE_INIT.get(flags)) JetTokens.LATE_INIT_KEYWORD else null
+            return if (Flags.IS_LATEINIT.get(flags)) JetTokens.LATEINIT_KEYWORD else null
         }
     },
 
     OPERATOR {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.OLD_IS_OPERATOR.get(flags)) JetTokens.OPERATOR_KEYWORD else null
+            return if (Flags.IS_OPERATOR.get(flags)) JetTokens.OPERATOR_KEYWORD else null
         }
     },
 
     INFIX {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.OLD_IS_INFIX.get(flags)) JetTokens.INFIX_KEYWORD else null
+            return if (Flags.IS_INFIX.get(flags)) JetTokens.INFIX_KEYWORD else null
         }
     };
 
@@ -264,13 +259,12 @@ fun createTargetedAnnotationStubs(
     }
 }
 
-val ProtoBuf.Callable.annotatedCallableKind: AnnotatedCallableKind
+val MessageLite.annotatedCallableKind: AnnotatedCallableKind
     get()  {
-        val callableKind = Flags.CALLABLE_KIND[getFlags()]
-        return when (callableKind) {
-            CallableKind.VAL, CallableKind.VAR -> AnnotatedCallableKind.PROPERTY
-            CallableKind.FUN, CallableKind.CONSTRUCTOR -> AnnotatedCallableKind.FUNCTION
-            else -> throw IllegalStateException("Unsupported callable kind: ${callableKind}")
+        return when (this) {
+            is ProtoBuf.Property -> AnnotatedCallableKind.PROPERTY
+            is ProtoBuf.Function, is ProtoBuf.Constructor -> AnnotatedCallableKind.FUNCTION
+            else -> throw IllegalStateException("Unsupported message: $this")
         }
     }
 

@@ -35,10 +35,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     private val classIds = Interner<ClassId>()
 
     open fun checkEquals(old: ProtoBuf.Package, new: ProtoBuf.Package): Boolean {
-        if (!checkEqualsPackageMember(old, new)) return false
-
-        if (!checkEqualsPackageConstructor(old, new)) return false
-
         if (!checkEqualsPackageFunction(old, new)) return false
 
         if (!checkEqualsPackageProperty(old, new)) return false
@@ -46,18 +42,12 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         return true
     }
     public enum class ProtoBufPackageKind {
-        MEMBER_LIST,
-        CONSTRUCTOR_LIST,
         FUNCTION_LIST,
         PROPERTY_LIST
     }
 
     public fun difference(old: ProtoBuf.Package, new: ProtoBuf.Package): EnumSet<ProtoBufPackageKind> {
         val result = EnumSet.noneOf(ProtoBufPackageKind::class.java)
-
-        if (!checkEqualsPackageMember(old, new)) result.add(ProtoBufPackageKind.MEMBER_LIST)
-
-        if (!checkEqualsPackageConstructor(old, new)) result.add(ProtoBufPackageKind.CONSTRUCTOR_LIST)
 
         if (!checkEqualsPackageFunction(old, new)) result.add(ProtoBufPackageKind.FUNCTION_LIST)
 
@@ -91,16 +81,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         if (!checkEqualsClassProperty(old, new)) return false
 
-        if (!checkEqualsClassMember(old, new)) return false
-
         if (!checkEqualsClassEnumEntry(old, new)) return false
-
-        if (old.hasPrimaryConstructor() != new.hasPrimaryConstructor()) return false
-        if (old.hasPrimaryConstructor()) {
-            if (!checkEquals(old.primaryConstructor, new.primaryConstructor)) return false
-        }
-
-        if (!checkEqualsClassSecondaryConstructor(old, new)) return false
 
         if (old.getExtensionCount(JvmProtoBuf.classAnnotation) != new.getExtensionCount(JvmProtoBuf.classAnnotation)) return false
 
@@ -120,10 +101,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         CONSTRUCTOR_LIST,
         FUNCTION_LIST,
         PROPERTY_LIST,
-        MEMBER_LIST,
         ENUM_ENTRY_LIST,
-        PRIMARY_CONSTRUCTOR,
-        SECONDARY_CONSTRUCTOR_LIST,
         CLASS_ANNOTATION_LIST
     }
 
@@ -154,16 +132,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         if (!checkEqualsClassProperty(old, new)) result.add(ProtoBufClassKind.PROPERTY_LIST)
 
-        if (!checkEqualsClassMember(old, new)) result.add(ProtoBufClassKind.MEMBER_LIST)
-
         if (!checkEqualsClassEnumEntry(old, new)) result.add(ProtoBufClassKind.ENUM_ENTRY_LIST)
-
-        if (old.hasPrimaryConstructor() != new.hasPrimaryConstructor()) result.add(ProtoBufClassKind.PRIMARY_CONSTRUCTOR)
-        if (old.hasPrimaryConstructor()) {
-            if (!checkEquals(old.primaryConstructor, new.primaryConstructor)) result.add(ProtoBufClassKind.PRIMARY_CONSTRUCTOR)
-        }
-
-        if (!checkEqualsClassSecondaryConstructor(old, new)) result.add(ProtoBufClassKind.SECONDARY_CONSTRUCTOR_LIST)
 
         if (old.getExtensionCount(JvmProtoBuf.classAnnotation) != new.getExtensionCount(JvmProtoBuf.classAnnotation)) result.add(ProtoBufClassKind.CLASS_ANNOTATION_LIST)
 
@@ -172,69 +141,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         }
 
         return result
-    }
-
-    open fun checkEquals(old: ProtoBuf.Callable, new: ProtoBuf.Callable): Boolean {
-        if (old.hasFlags() != new.hasFlags()) return false
-        if (old.hasFlags()) {
-            if (old.flags != new.flags) return false
-        }
-
-        if (old.hasGetterFlags() != new.hasGetterFlags()) return false
-        if (old.hasGetterFlags()) {
-            if (old.getterFlags != new.getterFlags) return false
-        }
-
-        if (old.hasSetterFlags() != new.hasSetterFlags()) return false
-        if (old.hasSetterFlags()) {
-            if (old.setterFlags != new.setterFlags) return false
-        }
-
-        if (!checkEqualsCallableTypeParameter(old, new)) return false
-
-        if (old.hasReceiverType() != new.hasReceiverType()) return false
-        if (old.hasReceiverType()) {
-            if (!checkEquals(old.receiverType, new.receiverType)) return false
-        }
-
-        if (!checkStringEquals(old.name, new.name)) return false
-
-        if (!checkEqualsCallableValueParameter(old, new)) return false
-
-        if (!checkEquals(old.returnType, new.returnType)) return false
-
-        if (old.hasExtension(JvmProtoBuf.oldMethodSignature) != new.hasExtension(JvmProtoBuf.oldMethodSignature)) return false
-        if (old.hasExtension(JvmProtoBuf.oldMethodSignature)) {
-            if (!checkEquals(old.getExtension(JvmProtoBuf.oldMethodSignature), new.getExtension(JvmProtoBuf.oldMethodSignature))) return false
-        }
-
-        if (old.hasExtension(JvmProtoBuf.oldPropertySignature) != new.hasExtension(JvmProtoBuf.oldPropertySignature)) return false
-        if (old.hasExtension(JvmProtoBuf.oldPropertySignature)) {
-            if (!checkEquals(old.getExtension(JvmProtoBuf.oldPropertySignature), new.getExtension(JvmProtoBuf.oldPropertySignature))) return false
-        }
-
-        if (old.hasExtension(JvmProtoBuf.oldImplClassName) != new.hasExtension(JvmProtoBuf.oldImplClassName)) return false
-        if (old.hasExtension(JvmProtoBuf.oldImplClassName)) {
-            if (!checkStringEquals(old.getExtension(JvmProtoBuf.oldImplClassName), new.getExtension(JvmProtoBuf.oldImplClassName))) return false
-        }
-
-        return true
-    }
-
-    open fun checkEquals(old: ProtoBuf.Constructor, new: ProtoBuf.Constructor): Boolean {
-        if (old.hasFlags() != new.hasFlags()) return false
-        if (old.hasFlags()) {
-            if (old.flags != new.flags) return false
-        }
-
-        if (!checkEqualsConstructorValueParameter(old, new)) return false
-
-        if (old.hasExtension(JvmProtoBuf.constructorSignature) != new.hasExtension(JvmProtoBuf.constructorSignature)) return false
-        if (old.hasExtension(JvmProtoBuf.constructorSignature)) {
-            if (!checkEquals(old.getExtension(JvmProtoBuf.constructorSignature), new.getExtension(JvmProtoBuf.constructorSignature))) return false
-        }
-
-        return true
     }
 
     open fun checkEquals(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
@@ -376,10 +282,17 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         return true
     }
 
-    open fun checkEquals(old: ProtoBuf.Class.PrimaryConstructor, new: ProtoBuf.Class.PrimaryConstructor): Boolean {
-        if (old.hasData() != new.hasData()) return false
-        if (old.hasData()) {
-            if (!checkEquals(old.data, new.data)) return false
+    open fun checkEquals(old: ProtoBuf.Constructor, new: ProtoBuf.Constructor): Boolean {
+        if (old.hasFlags() != new.hasFlags()) return false
+        if (old.hasFlags()) {
+            if (old.flags != new.flags) return false
+        }
+
+        if (!checkEqualsConstructorValueParameter(old, new)) return false
+
+        if (old.hasExtension(JvmProtoBuf.constructorSignature) != new.hasExtension(JvmProtoBuf.constructorSignature)) return false
+        if (old.hasExtension(JvmProtoBuf.constructorSignature)) {
+            if (!checkEquals(old.getExtension(JvmProtoBuf.constructorSignature), new.getExtension(JvmProtoBuf.constructorSignature))) return false
         }
 
         return true
@@ -417,9 +330,15 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     }
 
     open fun checkEquals(old: JvmProtoBuf.JvmMethodSignature, new: JvmProtoBuf.JvmMethodSignature): Boolean {
-        if (!checkStringEquals(old.name, new.name)) return false
+        if (old.hasName() != new.hasName()) return false
+        if (old.hasName()) {
+            if (!checkStringEquals(old.name, new.name)) return false
+        }
 
-        if (!checkStringEquals(old.desc, new.desc)) return false
+        if (old.hasDesc() != new.hasDesc()) return false
+        if (old.hasDesc()) {
+            if (!checkStringEquals(old.desc, new.desc)) return false
+        }
 
         return true
     }
@@ -471,9 +390,15 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     }
 
     open fun checkEquals(old: JvmProtoBuf.JvmFieldSignature, new: JvmProtoBuf.JvmFieldSignature): Boolean {
-        if (!checkStringEquals(old.name, new.name)) return false
+        if (old.hasName() != new.hasName()) return false
+        if (old.hasName()) {
+            if (!checkStringEquals(old.name, new.name)) return false
+        }
 
-        if (!checkStringEquals(old.desc, new.desc)) return false
+        if (old.hasDesc() != new.hasDesc()) return false
+        if (old.hasDesc()) {
+            if (!checkStringEquals(old.desc, new.desc)) return false
+        }
 
         if (old.hasIsStaticInOuter() != new.hasIsStaticInOuter()) return false
         if (old.hasIsStaticInOuter()) {
@@ -525,26 +450,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         }
 
         if (!checkEqualsAnnotationArgumentValueArrayElement(old, new)) return false
-
-        return true
-    }
-
-    open fun checkEqualsPackageMember(old: ProtoBuf.Package, new: ProtoBuf.Package): Boolean {
-        if (old.memberCount != new.memberCount) return false
-
-        for(i in 0..old.memberCount - 1) {
-            if (!checkEquals(old.getMember(i), new.getMember(i))) return false
-        }
-
-        return true
-    }
-
-    open fun checkEqualsPackageConstructor(old: ProtoBuf.Package, new: ProtoBuf.Package): Boolean {
-        if (old.constructorCount != new.constructorCount) return false
-
-        for(i in 0..old.constructorCount - 1) {
-            if (!checkEquals(old.getConstructor(i), new.getConstructor(i))) return false
-        }
 
         return true
     }
@@ -629,61 +534,11 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         return true
     }
 
-    open fun checkEqualsClassMember(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
-        if (old.memberCount != new.memberCount) return false
-
-        for(i in 0..old.memberCount - 1) {
-            if (!checkEquals(old.getMember(i), new.getMember(i))) return false
-        }
-
-        return true
-    }
-
     open fun checkEqualsClassEnumEntry(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
         if (old.enumEntryCount != new.enumEntryCount) return false
 
         for(i in 0..old.enumEntryCount - 1) {
             if (!checkStringEquals(old.getEnumEntry(i), new.getEnumEntry(i))) return false
-        }
-
-        return true
-    }
-
-    open fun checkEqualsClassSecondaryConstructor(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
-        if (old.secondaryConstructorCount != new.secondaryConstructorCount) return false
-
-        for(i in 0..old.secondaryConstructorCount - 1) {
-            if (!checkEquals(old.getSecondaryConstructor(i), new.getSecondaryConstructor(i))) return false
-        }
-
-        return true
-    }
-
-    open fun checkEqualsCallableTypeParameter(old: ProtoBuf.Callable, new: ProtoBuf.Callable): Boolean {
-        if (old.typeParameterCount != new.typeParameterCount) return false
-
-        for(i in 0..old.typeParameterCount - 1) {
-            if (!checkEquals(old.getTypeParameter(i), new.getTypeParameter(i))) return false
-        }
-
-        return true
-    }
-
-    open fun checkEqualsCallableValueParameter(old: ProtoBuf.Callable, new: ProtoBuf.Callable): Boolean {
-        if (old.valueParameterCount != new.valueParameterCount) return false
-
-        for(i in 0..old.valueParameterCount - 1) {
-            if (!checkEquals(old.getValueParameter(i), new.getValueParameter(i))) return false
-        }
-
-        return true
-    }
-
-    open fun checkEqualsConstructorValueParameter(old: ProtoBuf.Constructor, new: ProtoBuf.Constructor): Boolean {
-        if (old.valueParameterCount != new.valueParameterCount) return false
-
-        for(i in 0..old.valueParameterCount - 1) {
-            if (!checkEquals(old.getValueParameter(i), new.getValueParameter(i))) return false
         }
 
         return true
@@ -734,6 +589,16 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         for(i in 0..old.argumentCount - 1) {
             if (!checkEquals(old.getArgument(i), new.getArgument(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsConstructorValueParameter(old: ProtoBuf.Constructor, new: ProtoBuf.Constructor): Boolean {
+        if (old.valueParameterCount != new.valueParameterCount) return false
+
+        for(i in 0..old.valueParameterCount - 1) {
+            if (!checkEquals(old.getValueParameter(i), new.getValueParameter(i))) return false
         }
 
         return true
@@ -793,14 +658,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 public fun ProtoBuf.Package.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
-    for(i in 0..memberCount - 1) {
-        hashCode = 31 * hashCode + getMember(i).hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    for(i in 0..constructorCount - 1) {
-        hashCode = 31 * hashCode + getConstructor(i).hashCode(stringIndexes, fqNameIndexes)
-    }
-
     for(i in 0..functionCount - 1) {
         hashCode = 31 * hashCode + getFunction(i).hashCode(stringIndexes, fqNameIndexes)
     }
@@ -849,88 +706,12 @@ public fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (
         hashCode = 31 * hashCode + getProperty(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
-    for(i in 0..memberCount - 1) {
-        hashCode = 31 * hashCode + getMember(i).hashCode(stringIndexes, fqNameIndexes)
-    }
-
     for(i in 0..enumEntryCount - 1) {
         hashCode = 31 * hashCode + stringIndexes(getEnumEntry(i))
     }
 
-    if (hasPrimaryConstructor()) {
-        hashCode = 31 * hashCode + primaryConstructor.hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    for(i in 0..secondaryConstructorCount - 1) {
-        hashCode = 31 * hashCode + getSecondaryConstructor(i).hashCode(stringIndexes, fqNameIndexes)
-    }
-
     for(i in 0..getExtensionCount(JvmProtoBuf.classAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.classAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    return hashCode
-}
-
-public fun ProtoBuf.Callable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
-    var hashCode = 1
-
-    if (hasFlags()) {
-        hashCode = 31 * hashCode + flags
-    }
-
-    if (hasGetterFlags()) {
-        hashCode = 31 * hashCode + getterFlags
-    }
-
-    if (hasSetterFlags()) {
-        hashCode = 31 * hashCode + setterFlags
-    }
-
-    for(i in 0..typeParameterCount - 1) {
-        hashCode = 31 * hashCode + getTypeParameter(i).hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    if (hasReceiverType()) {
-        hashCode = 31 * hashCode + receiverType.hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    hashCode = 31 * hashCode + stringIndexes(name)
-
-    for(i in 0..valueParameterCount - 1) {
-        hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    hashCode = 31 * hashCode + returnType.hashCode(stringIndexes, fqNameIndexes)
-
-    if (hasExtension(JvmProtoBuf.oldMethodSignature)) {
-        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.oldMethodSignature).hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    if (hasExtension(JvmProtoBuf.oldPropertySignature)) {
-        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.oldPropertySignature).hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    if (hasExtension(JvmProtoBuf.oldImplClassName)) {
-        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.oldImplClassName))
-    }
-
-    return hashCode
-}
-
-public fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
-    var hashCode = 1
-
-    if (hasFlags()) {
-        hashCode = 31 * hashCode + flags
-    }
-
-    for(i in 0..valueParameterCount - 1) {
-        hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    if (hasExtension(JvmProtoBuf.constructorSignature)) {
-        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.constructorSignature).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1072,11 +853,19 @@ public fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
     return hashCode
 }
 
-public fun ProtoBuf.Class.PrimaryConstructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+public fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
-    if (hasData()) {
-        hashCode = 31 * hashCode + data.hashCode(stringIndexes, fqNameIndexes)
+    if (hasFlags()) {
+        hashCode = 31 * hashCode + flags
+    }
+
+    for(i in 0..valueParameterCount - 1) {
+        hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JvmProtoBuf.constructorSignature)) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.constructorSignature).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1119,9 +908,13 @@ public fun ProtoBuf.ValueParameter.hashCode(stringIndexes: (Int) -> Int, fqNameI
 public fun JvmProtoBuf.JvmMethodSignature.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
-    hashCode = 31 * hashCode + stringIndexes(name)
+    if (hasName()) {
+        hashCode = 31 * hashCode + stringIndexes(name)
+    }
 
-    hashCode = 31 * hashCode + stringIndexes(desc)
+    if (hasDesc()) {
+        hashCode = 31 * hashCode + stringIndexes(desc)
+    }
 
     return hashCode
 }
@@ -1175,9 +968,13 @@ public fun ProtoBuf.Annotation.Argument.hashCode(stringIndexes: (Int) -> Int, fq
 public fun JvmProtoBuf.JvmFieldSignature.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
     var hashCode = 1
 
-    hashCode = 31 * hashCode + stringIndexes(name)
+    if (hasName()) {
+        hashCode = 31 * hashCode + stringIndexes(name)
+    }
 
-    hashCode = 31 * hashCode + stringIndexes(desc)
+    if (hasDesc()) {
+        hashCode = 31 * hashCode + stringIndexes(desc)
+    }
 
     if (hasIsStaticInOuter()) {
         hashCode = 31 * hashCode + isStaticInOuter.hashCode()

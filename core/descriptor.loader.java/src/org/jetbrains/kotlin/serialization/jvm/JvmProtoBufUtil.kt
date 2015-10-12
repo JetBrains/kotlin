@@ -17,10 +17,15 @@
 package org.jetbrains.kotlin.serialization.jvm
 
 import com.google.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import java.io.ByteArrayInputStream
 
 public object JvmProtoBufUtil {
@@ -52,5 +57,81 @@ public object JvmProtoBufUtil {
         val nameResolver = JvmNameResolver(JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, EXTENSION_REGISTRY), strings)
         val packageProto = ProtoBuf.Package.parseFrom(input, EXTENSION_REGISTRY)
         return PackageData(nameResolver, packageProto)
+    }
+
+    // returns JVM signature in the format: "equals(Ljava/lang/Object;)Z"
+    fun getJvmMethodSignature(proto: ProtoBuf.FunctionOrBuilder, nameResolver: NameResolver): String? {
+        val signature =
+                if (proto.hasExtension(JvmProtoBuf.methodSignature)) proto.getExtension(JvmProtoBuf.methodSignature) else null
+        val name = if (signature != null && signature.hasName()) signature.name else proto.name
+        val desc = if (signature != null && signature.hasDesc()) {
+            nameResolver.getString(signature.desc)
+        }
+        else {
+            val parameterTypes =
+                    (if (proto.hasReceiverType()) listOf(proto.receiverType) else listOf()) + proto.valueParameterList.map { it.type }
+
+            val parametersDesc = parameterTypes.map { mapTypeDefault(it, nameResolver) ?: return null }
+            val returnTypeDesc = mapTypeDefault(proto.returnType, nameResolver) ?: return null
+
+            parametersDesc.joinToString(separator = "", prefix = "(", postfix = ")") + returnTypeDesc
+        }
+        return nameResolver.getString(name) + desc
+    }
+
+    fun getJvmConstructorSignature(proto: ProtoBuf.ConstructorOrBuilder, nameResolver: NameResolver): String? {
+        val signature =
+                if (proto.hasExtension(JvmProtoBuf.constructorSignature)) proto.getExtension(JvmProtoBuf.constructorSignature) else null
+        val desc = if (signature != null && signature.hasDesc()) {
+            nameResolver.getString(signature.desc)
+        }
+        else {
+            proto.valueParameterList.map {
+                mapTypeDefault(it.type, nameResolver) ?: return null
+            }.joinToString(separator = "", prefix = "(", postfix = ")V")
+        }
+        return "<init>" + desc
+    }
+
+    fun getJvmFieldSignature(proto: ProtoBuf.Property, nameResolver: NameResolver): PropertySignature? {
+        val signature =
+                if (proto.hasExtension(JvmProtoBuf.propertySignature)) proto.getExtension(JvmProtoBuf.propertySignature) else return null
+        val field =
+                if (signature.hasField()) signature.field else null
+
+        val name = if (field != null && field.hasName()) field.name else proto.name
+        val desc =
+                if (field != null && field.hasDesc()) nameResolver.getString(field.desc)
+                else mapTypeDefault(proto.returnType, nameResolver) ?: return null
+
+        return PropertySignature(nameResolver.getString(name), desc)
+    }
+
+    data class PropertySignature(val name: String, val desc: String)
+
+    private fun mapTypeDefault(type: ProtoBuf.Type, nameResolver: NameResolver): String? {
+        return if (type.hasClassName()) mapClassIdDefault(nameResolver.getClassId(type.className)) else null
+    }
+
+    @JvmStatic
+    fun mapClassIdDefault(classId: ClassId): String {
+        val internalName = classId.asString().replace('.', '$')
+        val simpleName = internalName.removePrefix("kotlin/")
+        if (simpleName != internalName) {
+            for (jvmPrimitive in JvmPrimitiveType.values()) {
+                val primitiveType = jvmPrimitive.primitiveType
+                if (simpleName == primitiveType.typeName.asString()) return jvmPrimitive.desc
+                if (simpleName == primitiveType.arrayTypeName.asString()) return "[" + jvmPrimitive.desc
+            }
+
+            if (simpleName == KotlinBuiltIns.FQ_NAMES.unit.shortName().asString()) return "V"
+        }
+
+        val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(classId.asSingleFqName().toUnsafe())
+        if (javaClassId != null) {
+            return "L" + javaClassId.asString().replace('.', '$') + ";"
+        }
+
+        return "L$internalName;"
     }
 }

@@ -18,7 +18,6 @@ package kotlin.reflect.jvm.internal;
 
 import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 
 /**
  * @suppress
@@ -31,18 +30,13 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     }
 
     @Override
-    public KPackage createKotlinPackage(Class javaClass) {
-        return createKotlinPackage(javaClass, JvmAbi.DEFAULT_MODULE_NAME);
-    }
-
-    @Override
-    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
+    public KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
         return new KPackageImpl(javaClass, moduleName);
     }
 
     @Override
-    public KClass foreignKotlinClass(Class javaClass) {
-        return InternalPackage.foreignKotlinClass(javaClass);
+    public KClass getOrCreateKotlinClass(Class javaClass) {
+        return InternalPackage.getOrCreateKotlinClass(javaClass);
     }
 
     // Functions
@@ -84,5 +78,17 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
         // TODO: support member extension property references
         return p;
+    }
+
+    // Deprecated
+
+    @Override
+    public KClass foreignKotlinClass(Class javaClass) {
+        return getOrCreateKotlinClass(javaClass);
+    }
+
+    @Override
+    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
+        return new KPackageImpl(javaClass, moduleName);
     }
 }

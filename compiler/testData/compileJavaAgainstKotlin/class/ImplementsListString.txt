@@ -17,8 +17,8 @@ public abstract class Mine : java.util.List<kotlin.String> {
     public abstract /*fake_override*/ fun lastIndexOf(/*0*/ kotlin.Any!): kotlin.Int
     public abstract /*fake_override*/ fun listIterator(): kotlin.(Mutable)ListIterator<kotlin.String!>!
     public abstract /*fake_override*/ fun listIterator(/*0*/ kotlin.Int): kotlin.(Mutable)ListIterator<kotlin.String!>!
-    public abstract /*fake_override*/ fun remove(/*0*/ kotlin.Any?): kotlin.Boolean
     public abstract /*fake_override*/ fun remove(/*0*/ kotlin.Int): kotlin.String!
+    public abstract /*fake_override*/ fun remove(/*0*/ kotlin.String!): kotlin.Boolean
     public abstract /*fake_override*/ fun removeAll(/*0*/ kotlin.Collection<*>): kotlin.Boolean
     public abstract /*fake_override*/ fun retainAll(/*0*/ kotlin.Collection<*>): kotlin.Boolean
     public abstract /*fake_override*/ fun set(/*0*/ kotlin.Int, /*1*/ kotlin.String!): kotlin.String!

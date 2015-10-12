@@ -22,7 +22,7 @@ import org.jetbrains.asm4.ClassVisitor
 import org.jetbrains.asm4.MethodVisitor
 import org.jetbrains.asm4.Opcodes
 import org.jetbrains.kotlin.test.ConfigurationKind
-import java.util.ArrayList
+import java.util.*
 
 public class MethodOrderTest: CodegenTestCase() {
     public fun testDelegatedMethod() {
@@ -44,7 +44,7 @@ public class MethodOrderTest: CodegenTestCase() {
                     }
                 """,
                 "\$obj$1",
-                listOf("<clinit>()V", "f3()V", "<init>()V", "f0()V", "f1()V", "f2()V", "f4()V", "f5()V")
+                listOf("f3()V", "<init>()V", "f0()V", "f1()V", "f2()V", "f4()V", "f5()V")
         )
     }
 
@@ -76,7 +76,7 @@ public class MethodOrderTest: CodegenTestCase() {
                     }
                 """,
                 "\$f$1",
-                listOf("<clinit>()V", "run()V", "<init>(LKlass;Ljava/lang/Object;Ljava/lang/String;IDLjava/lang/Object;J)V")
+                listOf("run()V", "<init>(LKlass;Ljava/lang/Object;Ljava/lang/String;IDLjava/lang/Object;J)V")
         )
     }
 
@@ -97,7 +97,6 @@ public class MethodOrderTest: CodegenTestCase() {
                 """,
                 "Outer",
                 listOf(
-                        "<clinit>()V",
                         "c()V",
                         "<init>(ILjava/lang/String;)V",
                         "access\$getB$0(LOuter;)Ljava/lang/String;",

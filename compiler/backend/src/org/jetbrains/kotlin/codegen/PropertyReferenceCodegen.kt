@@ -103,7 +103,7 @@ public class PropertyReferenceCodegen(
         }
 
         generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
-            ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, typeMapper)
+            ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
         }
 
         generateMethod("property reference getName", ACC_PUBLIC, method("getName", JAVA_STRING_TYPE)) {
@@ -196,7 +196,7 @@ public class PropertyReferenceCodegen(
     }
 
     override fun generateKotlinAnnotation() {
-        writeKotlinSyntheticClassAnnotation(v)
+        writeKotlinSyntheticClassAnnotation(v, state)
     }
 
     public fun putInstanceOnStack(): StackValue =

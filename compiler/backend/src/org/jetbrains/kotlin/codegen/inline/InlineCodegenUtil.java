@@ -27,7 +27,9 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.codegen.MemberCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
-import org.jetbrains.kotlin.codegen.context.*;
+import org.jetbrains.kotlin.codegen.context.CodegenContext;
+import org.jetbrains.kotlin.codegen.context.CodegenContextUtil;
+import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -298,7 +300,7 @@ public class InlineCodegenUtil {
 
     public static boolean isCapturedFieldName(@NotNull String fieldName) {
         // TODO: improve this heuristic
-        return (fieldName.startsWith(CAPTURED_FIELD_PREFIX) && !fieldName.equals(JvmAbi.KOTLIN_CLASS_FIELD_NAME)) ||
+        return fieldName.startsWith(CAPTURED_FIELD_PREFIX) ||
                THIS$0.equals(fieldName) ||
                RECEIVER$0.equals(fieldName);
     }

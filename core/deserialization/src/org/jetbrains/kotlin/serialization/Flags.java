@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization;
 
 import com.google.protobuf.Internal;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 
 public class Flags {
@@ -25,56 +26,49 @@ public class Flags {
 
     // Common
 
-    public static final FlagField<Boolean> HAS_ANNOTATIONS = FlagField.booleanFirst();
+    public static final BooleanFlagField HAS_ANNOTATIONS = FlagField.booleanFirst();
     public static final FlagField<ProtoBuf.Visibility> VISIBILITY = FlagField.after(HAS_ANNOTATIONS, ProtoBuf.Visibility.values());
     public static final FlagField<ProtoBuf.Modality> MODALITY = FlagField.after(VISIBILITY, ProtoBuf.Modality.values());
 
     // Class
 
     public static final FlagField<ProtoBuf.Class.Kind> CLASS_KIND = FlagField.after(MODALITY, ProtoBuf.Class.Kind.values());
-    public static final FlagField<Boolean> INNER = FlagField.booleanAfter(CLASS_KIND);
+    public static final BooleanFlagField IS_INNER = FlagField.booleanAfter(CLASS_KIND);
 
     // Callables
 
-    public static final FlagField<ProtoBuf.CallableKind> CALLABLE_KIND = FlagField.after(MODALITY, ProtoBuf.CallableKind.values());
-    public static final FlagField<ProtoBuf.MemberKind> MEMBER_KIND = FlagField.after(CALLABLE_KIND, ProtoBuf.MemberKind.values());
+    // TODO: use these flags
+    public static final BooleanFlagField RESERVED_1 = FlagField.booleanAfter(MODALITY);
+    public static final BooleanFlagField RESERVED_2 = FlagField.booleanAfter(RESERVED_1);
+
+    public static final FlagField<ProtoBuf.MemberKind> MEMBER_KIND = FlagField.after(RESERVED_2, ProtoBuf.MemberKind.values());
 
     // Constructors
 
-    public static final FlagField<Boolean> IS_SECONDARY = FlagField.booleanAfter(VISIBILITY);
+    public static final BooleanFlagField IS_SECONDARY = FlagField.booleanAfter(VISIBILITY);
 
     // Functions
 
-    public static final FlagField<Boolean> IS_OPERATOR = FlagField.booleanAfter(MEMBER_KIND);
-    public static final FlagField<Boolean> IS_INFIX = FlagField.booleanAfter(IS_OPERATOR);
+    public static final BooleanFlagField IS_OPERATOR = FlagField.booleanAfter(MEMBER_KIND);
+    public static final BooleanFlagField IS_INFIX = FlagField.booleanAfter(IS_OPERATOR);
 
     // Properties
 
-    public static final FlagField<Boolean> IS_VAR = FlagField.booleanAfter(MEMBER_KIND);
-    public static final FlagField<Boolean> HAS_GETTER = FlagField.booleanAfter(IS_VAR);
-    public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
-    public static final FlagField<Boolean> IS_CONST = FlagField.booleanAfter(HAS_SETTER);
-    public static final FlagField<Boolean> LATE_INIT = FlagField.booleanAfter(IS_CONST);
-    public static final FlagField<Boolean> HAS_CONSTANT = FlagField.booleanAfter(LATE_INIT);
-
-    // Old callables. TODO: delete
-
-    public static final FlagField<Boolean> OLD_HAS_GETTER = FlagField.booleanAfter(MEMBER_KIND);
-    public static final FlagField<Boolean> OLD_HAS_SETTER = FlagField.booleanAfter(OLD_HAS_GETTER);
-    public static final FlagField<Boolean> OLD_HAS_CONSTANT = FlagField.booleanAfter(OLD_HAS_SETTER);
-    public static final FlagField<Boolean> OLD_IS_CONST = FlagField.booleanAfter(OLD_HAS_CONSTANT);
-    public static final FlagField<Boolean> OLD_LATE_INIT = FlagField.booleanAfter(OLD_IS_CONST);
-    public static final FlagField<Boolean> OLD_IS_OPERATOR = FlagField.booleanAfter(OLD_LATE_INIT);
-    public static final FlagField<Boolean> OLD_IS_INFIX = FlagField.booleanAfter(OLD_IS_OPERATOR);
+    public static final BooleanFlagField IS_VAR = FlagField.booleanAfter(MEMBER_KIND);
+    public static final BooleanFlagField HAS_GETTER = FlagField.booleanAfter(IS_VAR);
+    public static final BooleanFlagField HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
+    public static final BooleanFlagField IS_CONST = FlagField.booleanAfter(HAS_SETTER);
+    public static final BooleanFlagField IS_LATEINIT = FlagField.booleanAfter(IS_CONST);
+    public static final BooleanFlagField HAS_CONSTANT = FlagField.booleanAfter(IS_LATEINIT);
 
     // Parameters
 
-    public static final FlagField<Boolean> DECLARES_DEFAULT_VALUE = FlagField.booleanAfter(HAS_ANNOTATIONS);
+    public static final BooleanFlagField DECLARES_DEFAULT_VALUE = FlagField.booleanAfter(HAS_ANNOTATIONS);
 
     // Accessors
 
     // It's important that this flag is negated: "is NOT default" instead of "is default"
-    public static final FlagField<Boolean> IS_NOT_DEFAULT = FlagField.booleanAfter(MODALITY);
+    public static final BooleanFlagField IS_NOT_DEFAULT = FlagField.booleanAfter(MODALITY);
 
     // ---
 
@@ -99,7 +93,7 @@ public class Flags {
                | MODALITY.toFlags(modality(modality))
                | VISIBILITY.toFlags(visibility(visibility))
                | CLASS_KIND.toFlags(classKind(kind, isCompanionObject))
-               | INNER.toFlags(inner)
+               | IS_INNER.toFlags(inner)
                ;
     }
 
@@ -121,35 +115,6 @@ public class Flags {
                 return ProtoBuf.Class.Kind.OBJECT;
         }
         throw new IllegalArgumentException("Unknown class kind: " + kind);
-    }
-
-    public static int getCallableFlags(
-            boolean hasAnnotations,
-            @NotNull Visibility visibility,
-            @NotNull Modality modality,
-            @NotNull CallableMemberDescriptor.Kind memberKind,
-            @NotNull ProtoBuf.CallableKind callableKind,
-            boolean hasGetter,
-            boolean hasSetter,
-            boolean hasConstant,
-            boolean lateInit,
-            boolean isConst,
-            boolean isOperator,
-            boolean isInfix
-    ) {
-        return HAS_ANNOTATIONS.toFlags(hasAnnotations)
-               | MODALITY.toFlags(modality(modality))
-               | VISIBILITY.toFlags(visibility(visibility))
-               | MEMBER_KIND.toFlags(memberKind(memberKind))
-               | CALLABLE_KIND.toFlags(callableKind)
-               | OLD_HAS_GETTER.toFlags(hasGetter)
-               | OLD_HAS_SETTER.toFlags(hasSetter)
-               | OLD_HAS_CONSTANT.toFlags(hasConstant)
-               | OLD_LATE_INIT.toFlags(lateInit)
-               | OLD_IS_CONST.toFlags(isConst)
-               | OLD_IS_OPERATOR.toFlags(isOperator)
-               | OLD_IS_INFIX.toFlags(isInfix)
-               ;
     }
 
     public static int getConstructorFlags(
@@ -200,7 +165,7 @@ public class Flags {
                | HAS_GETTER.toFlags(hasGetter)
                | HAS_SETTER.toFlags(hasSetter)
                | IS_CONST.toFlags(isConst)
-               | LATE_INIT.toFlags(lateInit)
+               | IS_LATEINIT.toFlags(lateInit)
                | HAS_CONSTANT.toFlags(hasConstant)
                 ;
     }
@@ -289,11 +254,11 @@ public class Flags {
             return new EnumLiteFlagField<E>(0, values);
         }
 
-        public static FlagField<Boolean> booleanFirst() {
+        public static BooleanFlagField booleanFirst() {
             return new BooleanFlagField(0);
         }
 
-        public static FlagField<Boolean> booleanAfter(FlagField<?> previousField) {
+        public static BooleanFlagField booleanAfter(FlagField<?> previousField) {
             int offset = previousField.offset + previousField.bitWidth;
             return new BooleanFlagField(offset);
         }
@@ -308,6 +273,7 @@ public class Flags {
             this.values = values;
         }
 
+        @Nullable
         public E get(int flags) {
             int maskUnshifted = (1 << bitWidth) - 1;
             int mask = maskUnshifted << offset;
@@ -317,7 +283,7 @@ public class Flags {
                     return e;
                 }
             }
-            throw new IllegalStateException("Flag not found: " + value);
+            return null;
         }
 
         public int toFlags(E value) {
@@ -328,7 +294,7 @@ public class Flags {
 
     }
 
-    private static class BooleanFlagField extends FlagField<Boolean> {
+    public static class BooleanFlagField extends FlagField<Boolean> {
         private static final Boolean[] BOOLEAN = { false, true };
 
         public BooleanFlagField(int offset) {
@@ -338,6 +304,13 @@ public class Flags {
         @Override
         protected int getIntValue(Boolean value) {
             return value ? 1 : 0;
+        }
+
+        @NotNull
+        @Override
+        public Boolean get(int flags) {
+            //noinspection ConstantConditions
+            return super.get(flags);
         }
     }
 

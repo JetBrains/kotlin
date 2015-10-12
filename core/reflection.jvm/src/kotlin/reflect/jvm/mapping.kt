@@ -19,23 +19,14 @@ package kotlin.reflect.jvm
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.lang.reflect.*
 import java.util.*
+import kotlin.jvm.internal.KotlinFileFacade
+import kotlin.jvm.internal.Reflection
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KCallableImpl
-import kotlin.reflect.jvm.internal.KPackageImpl
 import kotlin.reflect.jvm.internal.KPropertyImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
 
 // Kotlin reflection -> Java reflection
-
-/**
- * Returns a Java [Class] instance that represents a Kotlin package.
- * The methods and fields of this class are generated from top level functions and properties in the Kotlin package.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#package-level-functions)
- * for more information.
- */
-public val KPackage.javaFacade: Class<*>
-    get() = (this as KPackageImpl).jClass
-
 
 /**
  * Returns a Java [Field] instance corresponding to the backing field of the given property,
@@ -88,31 +79,6 @@ public val KType.javaType: Type
 // Java reflection -> Kotlin reflection
 
 /**
- * Returns a [KPackage] instance corresponding to the Java [Class] instance.
- * The given class is generated from top level functions and properties in the Kotlin package.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#package-level-functions)
- * for more information.
- */
-@Deprecated("After dropping old package facades it would be impossible to retrieve package by java class")
-public val Class<*>.kotlinPackage: KPackage?
-    get() = if (getSimpleName().endsWith("Package") &&
-                getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) {
-        try {
-            val field = this.getField(JvmAbi.MODULE_NAME_FIELD)
-            if (field != null) {
-                KPackageImpl(this, field.get(null) as String)
-            }
-            else {
-                null
-            }
-        }
-        catch(e: NoSuchFieldException) {
-            null
-        }
-    } else null
-
-
-/**
  * Returns a [KProperty] instance corresponding to the given Java [Field] instance,
  * or `null` if this field cannot be represented by a Kotlin property
  * (for example, if it is a synthetic field).
@@ -137,8 +103,11 @@ public val Method.kotlinFunction: KFunction<*>?
         if (isSynthetic) return null
 
         if (Modifier.isStatic(modifiers)) {
-            val kotlinPackage = declaringClass.kotlinPackage
-            if (kotlinPackage != null) {
+            // TODO: support multifile classes
+
+            val fileFacade = declaringClass.getAnnotation(KotlinFileFacade::class.java)
+            if (fileFacade != null) {
+                val kotlinPackage = Reflection.getOrCreateKotlinPackage(declaringClass, fileFacade.moduleName)
                 return kotlinPackage.functions.firstOrNull { it.javaMethod == this }
             }
 

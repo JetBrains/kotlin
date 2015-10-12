@@ -367,9 +367,21 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("charSequence.kt")
+        public void testCharSequence() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/charSequence.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("contains.kt")
         public void testContains() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/contains.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeAt.kt")
+        public void testRemoveAt() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/removeAt.kt");
             doTest(fileName);
         }
 

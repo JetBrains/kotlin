@@ -1,8 +1,6 @@
 @kotlin.jvm.internal.KotlinClass A {
-    public synthetic field $kotlinClass: kotlin.reflect.KClass
     private @AnnField @AnnParameterField @AnnTypeField field a: int
     private @AnnField @AnnTypeField field x: int
-    method <clinit>(): void
     private synthetic deprecated @AnnProperty @AnnFieldProperty @AnnParameterProperty method a$annotations(): void
     public method getA(): int
     private synthetic deprecated @AnnProperty @AnnFieldProperty method x$annotations(): void

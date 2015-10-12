@@ -28,7 +28,7 @@ public class DeserializedConstructorDescriptor(
         annotations: Annotations,
         isPrimary: Boolean,
         kind: CallableMemberDescriptor.Kind,
-        override val proto: ProtoBuf.Callable,
+        override val proto: ProtoBuf.Constructor,
         override val nameResolver: NameResolver
 ) : ConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, SourceElement.NO_SOURCE),
         DeserializedCallableMemberDescriptor {

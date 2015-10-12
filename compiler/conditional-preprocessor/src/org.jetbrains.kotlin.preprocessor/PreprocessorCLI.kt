@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@file:JvmName("PreprocessorCLI")
 package org.jetbrains.kotlin.preprocessor
 
 import java.io.File
@@ -33,11 +33,4 @@ fun main(args: Array<String>) {
 
     println("Preprocessing sources in $sourcePath to $targetPath with profile ${profile.name}")
     Preprocessor().processSources(sourcePath, profile)
-
-//    val pool = Executors.newCachedThreadPool()
-//
-//    profiles.forEach { profile -> pool.submit { Preprocessor().processSources(sourcePath, profile) } }
-//
-//    pool.shutdown()
-//    pool.awaitTermination(1, TimeUnit.MINUTES)
 }

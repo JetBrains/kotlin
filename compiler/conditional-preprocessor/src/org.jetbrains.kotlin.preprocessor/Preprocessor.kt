@@ -114,7 +114,7 @@ public class Preprocessor(val logger: Logger = SystemOutLogger) {
             if (targetFile.exists() && targetFile.isDirectory)
                 targetFile.deleteRecursively()
 
-            // if no modifications — copy
+            // if no modifications ï¿½ copy
             if (result is FileProcessingResult.Copy) {
                 FileUtil.copy(sourceFile, targetFile)
             } else if (result is FileProcessingResult.Modify) {
@@ -144,45 +144,6 @@ public class Preprocessor(val logger: Logger = SystemOutLogger) {
         }
     }
 
-
-    private fun processFileMultiEvaluators(sourceFile: File, evaluators: List<Evaluator>): List<FileProcessingResult> {
-        if (sourceFile.extension != fileType.defaultExtension)
-            return evaluators map { FileProcessingResult.Copy }
-
-        val sourceText = sourceFile.readText().convertLineSeparators()
-        val psiFile = jetPsiFactory.createFile(sourceFile.name, sourceText)
-        println("$psiFile")
-
-        val results = hashMapOf<Evaluator, FileProcessingResult>()
-
-        val fileAnnotations = psiFile.parseConditionalAnnotations()
-        evaluators.forEach { evaluator ->
-            if (!evaluator(fileAnnotations))
-                results += evaluator to FileProcessingResult.Skip
-        }
-
-        val visitor = CollectModificationsVisitor(evaluators - results.keySet())
-        psiFile.accept(visitor)
-
-        for ((evaluator, list) in visitor.elementModifications) {
-            val result =
-                if (list.isNotEmpty())
-                    FileProcessingResult.Modify(sourceText, list)
-                else
-                    FileProcessingResult.Copy
-            results += evaluator to result
-        }
-        return evaluators.map { results[it]!! }
-    }
-
-    private fun processDirectoryMultiEvaluators(sourceRoot: File, targetRelativeRoot: File, profiles: List<Profile>) {
-
-        val (sourceFiles, sourceDirectories) = sourceRoot.listFiles().partition { !it.isDirectory }
-
-        // TODO: keep processed file list for each profile
-        val processedFiles = profiles.toMap({ it }, { hashSetOf<File>()})
-
-    }
 }
 
 fun String.convertLineSeparators(): String = StringUtil.convertLineSeparators(this)

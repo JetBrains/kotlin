@@ -4,7 +4,7 @@
 
 @kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass FunAnn
 
-@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$1 {
+@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinFunction LiteralsKt$foo$1 {
     inner class LiteralsKt$foo$1
     synthetic field $arg: int
     public method invoke(): java.lang.Object
@@ -12,7 +12,7 @@
     method <init>(p0: int): void
 }
 
-@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$2 {
+@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinFunction LiteralsKt$foo$2 {
     inner class LiteralsKt$foo$2
     synthetic field $arg: int
     public method invoke(): java.lang.Object
@@ -22,12 +22,10 @@
 
 @kotlin.jvm.internal.KotlinLocalClass @kotlin.jvm.internal.KotlinClass LiteralsKt$foo$3 {
     inner class LiteralsKt$foo$3
-    public synthetic field $kotlinClass: kotlin.reflect.KClass
-    method <clinit>(): void
     method <init>(): void
 }
 
-@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinCallable LiteralsKt$foo$x$1 {
+@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinFunction LiteralsKt$foo$x$1 {
     inner class LiteralsKt$foo$x$1
     synthetic field $arg: int
     public method invoke(): java.lang.Object
@@ -45,15 +43,11 @@
 }
 
 @kotlin.jvm.internal.KotlinClass My {
-    public synthetic field $kotlinClass: kotlin.reflect.KClass
-    method <clinit>(): void
     public method <init>(): void
 }
 
 @java.lang.Deprecated @kotlin.jvm.internal.KotlinPackage _DefaultPackage {
-    public synthetic field $kotlinPackage: kotlin.reflect.KPackage
     public synthetic field $moduleName: java.lang.String
-    method <clinit>(): void
     public @kotlin.jvm.internal.KotlinDelegatedMethod method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
     public @kotlin.jvm.internal.KotlinDelegatedMethod @org.jetbrains.annotations.NotNull method foo(p0: int): My
 }

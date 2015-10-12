@@ -48,7 +48,7 @@ public final class NavigationTestUtils {
         return new GotoImplementationHandler().getSourceAndTargetElements(editor, psiFile);
     }
 
-    public static void assertGotoImplementations(Editor editor, GotoTargetHandler.GotoData gotoData) {
+    public static void assertGotoDataMatching(Editor editor, GotoTargetHandler.GotoData gotoData) {
         // Get expected references from the tested document
         List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// REF:");
         Collections.sort(expectedReferences);

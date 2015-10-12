@@ -56,7 +56,7 @@ public class DeserializedClassDescriptor(
     private val kindFromProto = Flags.CLASS_KIND.get(classProto.getFlags())
     private val kind = Deserialization.classKind(kindFromProto)
     private val isCompanion = kindFromProto == ProtoBuf.Class.Kind.COMPANION_OBJECT
-    private val isInner = Flags.INNER.get(classProto.getFlags())
+    private val isInner = Flags.IS_INNER.get(classProto.getFlags())
 
     val c = outerContext.childContext(this, classProto.getTypeParameterList(), nameResolver)
 
@@ -102,16 +102,15 @@ public class DeserializedClassDescriptor(
     override fun isCompanionObject(): Boolean = isCompanion
 
     private fun computePrimaryConstructor(): ConstructorDescriptor? {
-        if (!classProto.hasPrimaryConstructor()) return null
-
-        val constructorProto = classProto.getPrimaryConstructor()
-        if (!constructorProto.hasData()) {
-            val descriptor = DescriptorFactory.createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE)
-            descriptor.setReturnType(getDefaultType())
-            return descriptor
+        if (kind.isSingleton) {
+            return DescriptorFactory.createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE).apply {
+                returnType = getDefaultType()
+            }
         }
 
-        return c.memberDeserializer.loadConstructor(constructorProto.getData(), true)
+        return classProto.constructorList.firstOrNull { !Flags.IS_SECONDARY.get(it.flags) }?.let { constructorProto ->
+            c.memberDeserializer.loadConstructor(constructorProto, true)
+        }
     }
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = primaryConstructor()
@@ -120,7 +119,7 @@ public class DeserializedClassDescriptor(
             computeSecondaryConstructors() + getUnsubstitutedPrimaryConstructor().singletonOrEmptyList()
 
     private fun computeSecondaryConstructors(): List<ConstructorDescriptor> =
-            classProto.getSecondaryConstructorList().map {
+            classProto.constructorList.filter { Flags.IS_SECONDARY.get(it.flags) }.map {
                 c.memberDeserializer.loadConstructor(it, false)
             }
 
@@ -186,7 +185,7 @@ public class DeserializedClassDescriptor(
         override fun toString() = getName().toString()
     }
 
-    private inner class DeserializedClassMemberScope : DeserializedMemberScope(c, classProto.getMemberList()) {
+    private inner class DeserializedClassMemberScope : DeserializedMemberScope(c, classProto.functionList, classProto.propertyList) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor
         private val allDescriptors = c.storageManager.createLazyValue {
             computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
@@ -323,7 +322,8 @@ public class DeserializedClassDescriptor(
             }
 
             val nameResolver = c.nameResolver
-            return classProto.getMemberList().mapTo(result) { nameResolver.getName(it.getName()) }
+            return classProto.functionList.mapTo(result) { nameResolver.getName(it.name) } +
+                   classProto.propertyList.mapTo(result) { nameResolver.getName(it.name) }
         }
 
         fun all(): Collection<ClassDescriptor> {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package jet.runtime.typeinfo;
+package kotlin.jvm.internal;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @deprecated This class is no longer used in the bytecode produced by Kotlin compiler
- * and exists in the Kotlin Java Runtime only for compatibility with the older code.
- * It will be deleted completely after M13.
- */
-@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
-public @interface JetValueParameter {
-    String name();
+@Target(ElementType.TYPE)
+public @interface KotlinFunction {
+    @Deprecated
+    int abiVersion();
 
-    String type() default "";
+    int[] version() default {};
+
+    String moduleName() default "main";
+
+    String[] data();
+
+    String[] strings();
 }

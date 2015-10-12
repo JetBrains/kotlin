@@ -39,16 +39,12 @@ public object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersion
 
     private val VERSION = 2
 
-    @Suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
     private val kotlinAnnotationsDesc = setOf(
-            OLD_JET_CLASS_ANNOTATION,
-            OLD_JET_PACKAGE_CLASS_ANNOTATION,
-            OLD_KOTLIN_CLASS,
-            OLD_KOTLIN_PACKAGE,
             KOTLIN_CLASS,
             KOTLIN_PACKAGE,
-            KOTLIN_FILE_FACADE)
-            .map { asmDescByFqNameWithoutInnerClasses(it) }
+            KOTLIN_FILE_FACADE,
+            KOTLIN_MULTIFILE_CLASS
+    ).map { asmDescByFqNameWithoutInnerClasses(it) }
 
     private val INDEXER = DataIndexer<BinaryVersion, Void, FileContent>() { inputData: FileContent ->
         var version: BinaryVersion? = null

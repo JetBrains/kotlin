@@ -12,9 +12,6 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertyImplClassName);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.oldMethodSignature);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.oldPropertySignature);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.oldImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index);
@@ -1863,19 +1860,19 @@ public final class JvmProtoBuf {
   public interface JvmMethodSignatureOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
 
-    // required int32 name = 1;
+    // optional int32 name = 1;
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     boolean hasName();
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     int getName();
 
-    // required int32 desc = 2;
+    // optional int32 desc = 2;
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -1883,7 +1880,7 @@ public final class JvmProtoBuf {
      */
     boolean hasDesc();
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -1971,27 +1968,27 @@ public final class JvmProtoBuf {
     }
 
     private int bitField0_;
-    // required int32 name = 1;
+    // optional int32 name = 1;
     public static final int NAME_FIELD_NUMBER = 1;
     private int name_;
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     public int getName() {
       return name_;
     }
 
-    // required int32 desc = 2;
+    // optional int32 desc = 2;
     public static final int DESC_FIELD_NUMBER = 2;
     private int desc_;
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -2001,7 +1998,7 @@ public final class JvmProtoBuf {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -2020,14 +2017,6 @@ public final class JvmProtoBuf {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
 
-      if (!hasName()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasDesc()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -2199,14 +2188,6 @@ public final class JvmProtoBuf {
       }
 
       public final boolean isInitialized() {
-        if (!hasName()) {
-          
-          return false;
-        }
-        if (!hasDesc()) {
-          
-          return false;
-        }
         return true;
       }
 
@@ -2229,22 +2210,22 @@ public final class JvmProtoBuf {
       }
       private int bitField0_;
 
-      // required int32 name = 1;
+      // optional int32 name = 1;
       private int name_ ;
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public int getName() {
         return name_;
       }
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public Builder setName(int value) {
         bitField0_ |= 0x00000001;
@@ -2253,7 +2234,7 @@ public final class JvmProtoBuf {
         return this;
       }
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public Builder clearName() {
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -2262,10 +2243,10 @@ public final class JvmProtoBuf {
         return this;
       }
 
-      // required int32 desc = 2;
+      // optional int32 desc = 2;
       private int desc_ ;
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -2275,7 +2256,7 @@ public final class JvmProtoBuf {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -2285,7 +2266,7 @@ public final class JvmProtoBuf {
         return desc_;
       }
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -2298,7 +2279,7 @@ public final class JvmProtoBuf {
         return this;
       }
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the method, e.g. '(Ljava/util/List;)[Ljava/lang/Object;'
@@ -2325,19 +2306,19 @@ public final class JvmProtoBuf {
   public interface JvmFieldSignatureOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
 
-    // required int32 name = 1;
+    // optional int32 name = 1;
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     boolean hasName();
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     int getName();
 
-    // required int32 desc = 2;
+    // optional int32 desc = 2;
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
@@ -2345,7 +2326,7 @@ public final class JvmProtoBuf {
      */
     boolean hasDesc();
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
@@ -2458,27 +2439,27 @@ public final class JvmProtoBuf {
     }
 
     private int bitField0_;
-    // required int32 name = 1;
+    // optional int32 name = 1;
     public static final int NAME_FIELD_NUMBER = 1;
     private int name_;
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 name = 1;</code>
+     * <code>optional int32 name = 1;</code>
      */
     public int getName() {
       return name_;
     }
 
-    // required int32 desc = 2;
+    // optional int32 desc = 2;
     public static final int DESC_FIELD_NUMBER = 2;
     private int desc_;
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
@@ -2488,7 +2469,7 @@ public final class JvmProtoBuf {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required int32 desc = 2;</code>
+     * <code>optional int32 desc = 2;</code>
      *
      * <pre>
      * JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
@@ -2534,14 +2515,6 @@ public final class JvmProtoBuf {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
 
-      if (!hasName()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasDesc()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -2729,14 +2702,6 @@ public final class JvmProtoBuf {
       }
 
       public final boolean isInitialized() {
-        if (!hasName()) {
-          
-          return false;
-        }
-        if (!hasDesc()) {
-          
-          return false;
-        }
         return true;
       }
 
@@ -2759,22 +2724,22 @@ public final class JvmProtoBuf {
       }
       private int bitField0_;
 
-      // required int32 name = 1;
+      // optional int32 name = 1;
       private int name_ ;
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public boolean hasName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public int getName() {
         return name_;
       }
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public Builder setName(int value) {
         bitField0_ |= 0x00000001;
@@ -2783,7 +2748,7 @@ public final class JvmProtoBuf {
         return this;
       }
       /**
-       * <code>required int32 name = 1;</code>
+       * <code>optional int32 name = 1;</code>
        */
       public Builder clearName() {
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -2792,10 +2757,10 @@ public final class JvmProtoBuf {
         return this;
       }
 
-      // required int32 desc = 2;
+      // optional int32 desc = 2;
       private int desc_ ;
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
@@ -2805,7 +2770,7 @@ public final class JvmProtoBuf {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
@@ -2815,7 +2780,7 @@ public final class JvmProtoBuf {
         return desc_;
       }
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
@@ -2828,7 +2793,7 @@ public final class JvmProtoBuf {
         return this;
       }
       /**
-       * <code>required int32 desc = 2;</code>
+       * <code>optional int32 desc = 2;</code>
        *
        * <pre>
        * JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
@@ -3161,30 +3126,6 @@ public final class JvmProtoBuf {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
 
-      if (hasField()) {
-        if (!getField().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      if (hasSyntheticMethod()) {
-        if (!getSyntheticMethod().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      if (hasGetter()) {
-        if (!getGetter().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      if (hasSetter()) {
-        if (!getSetter().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -3388,30 +3329,6 @@ public final class JvmProtoBuf {
       }
 
       public final boolean isInitialized() {
-        if (hasField()) {
-          if (!getField().isInitialized()) {
-            
-            return false;
-          }
-        }
-        if (hasSyntheticMethod()) {
-          if (!getSyntheticMethod().isInitialized()) {
-            
-            return false;
-          }
-        }
-        if (hasGetter()) {
-          if (!getGetter().isInitialized()) {
-            
-            return false;
-          }
-        }
-        if (hasSetter()) {
-          if (!getSetter().isInitialized()) {
-            
-            return false;
-          }
-        }
         return true;
       }
 
@@ -3787,51 +3704,6 @@ public final class JvmProtoBuf {
         null,
         null,
         101,
-        com.google.protobuf.WireFormat.FieldType.INT32);
-  public static final int OLD_METHOD_SIGNATURE_FIELD_NUMBER = 100;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature> oldMethodSignature = com.google.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature.getDefaultInstance(),
-        null,
-        100,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE);
-  public static final int OLD_PROPERTY_SIGNATURE_FIELD_NUMBER = 101;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature> oldPropertySignature = com.google.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmPropertySignature.getDefaultInstance(),
-        null,
-        101,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE);
-  public static final int OLD_IMPL_CLASS_NAME_FIELD_NUMBER = 102;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      java.lang.Integer> oldImplClassName = com.google.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
-        0,
-        null,
-        null,
-        102,
         com.google.protobuf.WireFormat.FieldType.INT32);
   public static final int TYPE_ANNOTATION_FIELD_NUMBER = 100;
   /**

@@ -34,6 +34,11 @@ data class MemberSignature private constructor(private val signature: String) {
         }
 
         @JvmStatic
+        public fun fromMethodNameAndDesc(namePlusDesc: String): MemberSignature {
+            return MemberSignature(namePlusDesc)
+        }
+
+        @JvmStatic
         public fun fromFieldNameAndDesc(name: String, desc: String): MemberSignature {
             return MemberSignature(name + "#" + desc)
         }

@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.generators.tests.generator.TestGenerator.TargetBacke
 import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForReservedWords
 import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
 import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
+import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
 import org.jetbrains.kotlin.idea.codeInsight.*
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateActionTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractCodeMoverTest
@@ -409,6 +410,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractKotlinGotoImplementationTest>() {
             model("navigation/implementations", recursive = false)
+        }
+
+        testClass<AbstractGotoTestOrCodeActionTest>() {
+            model("navigation/gotoTestOrCode", pattern = "^(.+)\\.main\\..+\$")
         }
 
         testClass<AbstractQuickFixMultiFileTest>() {

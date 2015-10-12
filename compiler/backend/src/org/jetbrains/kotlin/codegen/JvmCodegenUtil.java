@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
@@ -212,13 +212,6 @@ public class JvmCodegenUtil {
                InlineUtil.isInlinedArgument((JetFunction) declaration, bindingContext, false);
     }
 
-    public static boolean shouldUseJavaClassForClassLiteral(@NotNull ClassifierDescriptor descriptor) {
-        ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
-        return descriptor instanceof JavaClassDescriptor ||
-               module == module.getBuiltIns().getBuiltInsModule() ||
-               DescriptorUtils.isAnnotationClass(descriptor);
-    }
-
     @NotNull
     public static String getModuleName(ModuleDescriptor module) {
         return StringsKt.removeSurrounding(module.getName().asString(), "<", ">");
@@ -234,6 +227,13 @@ public class JvmCodegenUtil {
 
         // TODO: drop after some time
         av.visit(JvmAnnotationNames.OLD_ABI_VERSION_FIELD_NAME, JvmAbi.VERSION.getMinor());
+    }
+
+    public static void writeModuleName(@NotNull AnnotationVisitor av, @NotNull GenerationState state) {
+        String name = state.getModuleName();
+        if (!name.equals(JvmAbi.DEFAULT_MODULE_NAME)) {
+            av.visit(JvmAnnotationNames.MODULE_NAME_FIELD_NAME, name);
+        }
     }
 
     @NotNull

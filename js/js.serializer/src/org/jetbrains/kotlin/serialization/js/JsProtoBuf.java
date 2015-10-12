@@ -8,7 +8,9 @@ public final class JsProtoBuf {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.classAnnotation);
-    registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.callableAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.constructorAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.functionAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.propertyAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.parameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.typeAnnotation);
@@ -1477,16 +1479,46 @@ public final class JsProtoBuf {
         130,
         com.google.protobuf.WireFormat.FieldType.MESSAGE,
         false);
-  public static final int CALLABLE_ANNOTATION_FIELD_NUMBER = 130;
+  public static final int CONSTRUCTOR_ANNOTATION_FIELD_NUMBER = 130;
   /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Constructor { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> callableAnnotation = com.google.protobuf.GeneratedMessageLite
+      org.jetbrains.kotlin.serialization.ProtoBuf.Constructor,
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> constructorAnnotation = com.google.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Constructor.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
+        null,
+        130,
+        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        false);
+  public static final int FUNCTION_ANNOTATION_FIELD_NUMBER = 130;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Function { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Function,
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> functionAnnotation = com.google.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Function.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
+        null,
+        130,
+        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        false);
+  public static final int PROPERTY_ANNOTATION_FIELD_NUMBER = 130;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Property,
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> propertyAnnotation = com.google.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Property.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         130,
@@ -1494,14 +1526,14 @@ public final class JsProtoBuf {
         false);
   public static final int COMPILE_TIME_VALUE_FIELD_NUMBER = 131;
   /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Callable { ... }</code>
+   * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Callable,
+      org.jetbrains.kotlin.serialization.ProtoBuf.Property,
       org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value> compileTimeValue = com.google.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Callable.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Property.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.getDefaultInstance(),
         null,

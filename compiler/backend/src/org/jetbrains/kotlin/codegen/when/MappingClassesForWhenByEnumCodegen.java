@@ -57,7 +57,7 @@ public class MappingClassesForWhenByEnumCodegen {
         generateFields(cb, mappings);
         generateInitialization(cb, mappings);
 
-        writeKotlinSyntheticClassAnnotation(cb);
+        writeKotlinSyntheticClassAnnotation(cb, state);
 
         cb.done();
     }

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -24,19 +23,16 @@ import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.FunctionImpl
-import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.JvmFunctionSignature.BuiltInFunction
-import kotlin.reflect.jvm.internal.JvmFunctionSignature.JavaConstructor
-import kotlin.reflect.jvm.internal.JvmFunctionSignature.JavaMethod
-import kotlin.reflect.jvm.internal.JvmFunctionSignature.KotlinFunction
+import kotlin.reflect.KFunction
+import kotlin.reflect.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
 
 internal open class KFunctionImpl protected constructor(
         private val container: KDeclarationContainerImpl,
         name: String,
         signature: String,
         descriptorInitialValue: FunctionDescriptor?
-) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl(),
-        KLocalFunction<Any?>, KMemberFunction<Any, Any?>, KTopLevelExtensionFunction<Any?, Any?>, KTopLevelFunction<Any?> {
+) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl() {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(container, name, signature, null)
 
     constructor(container: KDeclarationContainerImpl, descriptor: FunctionDescriptor) : this(
@@ -54,9 +50,8 @@ internal open class KFunctionImpl protected constructor(
     override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
-            is KotlinFunction ->
-                if (name == "<init>") container.findConstructorBySignature(jvmSignature.signature, jvmSignature.nameResolver, isDeclared())
-                else container.findMethodBySignature(jvmSignature.proto, jvmSignature.signature, jvmSignature.nameResolver, isDeclared())
+            is KotlinConstructor -> container.findConstructorBySignature(jvmSignature.constructorDesc, isDeclared())
+            is KotlinFunction -> container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc, isDeclared())
             is JavaMethod -> jvmSignature.method
             is JavaConstructor -> jvmSignature.constructor
             is BuiltInFunction -> jvmSignature.getMember(container)
@@ -80,13 +75,11 @@ internal open class KFunctionImpl protected constructor(
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinFunction -> {
-                if (name == "<init>") {
-                    container.findDefaultConstructor(jvmSignature.signature, jvmSignature.nameResolver, isDeclared())
-                }
-                else {
-                    val isMember = !Modifier.isStatic(caller.member.modifiers)
-                    container.findDefaultMethod(jvmSignature.signature, jvmSignature.nameResolver, isMember, isDeclared())
-                }
+                container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc,
+                                            !Modifier.isStatic(caller.member.modifiers), isDeclared())
+            }
+            is KotlinConstructor -> {
+                container.findDefaultConstructor(jvmSignature.constructorDesc, isDeclared())
             }
             else -> {
                 // Java methods, Java constructors and built-ins don't have $default methods

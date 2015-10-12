@@ -16,19 +16,15 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 
-public class DeserializedPropertyDescriptor(
+class DeserializedPropertyDescriptor(
         containingDeclaration: DeclarationDescriptor,
         original: PropertyDescriptor?,
         annotations: Annotations,
@@ -37,8 +33,8 @@ public class DeserializedPropertyDescriptor(
         isVar: Boolean,
         name: Name,
         kind: Kind,
-        override public val proto: ProtoBuf.Callable,
-        override public val nameResolver: NameResolver,
+        override val proto: ProtoBuf.Property,
+        override val nameResolver: NameResolver,
         lateInit: Boolean,
         isConst: Boolean
 ) : DeserializedCallableMemberDescriptor,

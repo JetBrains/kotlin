@@ -243,114 +243,6 @@ public final class DebugProtoBuf {
   }
 
   /**
-   * Protobuf enum {@code org.jetbrains.kotlin.serialization.CallableKind}
-   */
-  public enum CallableKind
-      implements com.google.protobuf.ProtocolMessageEnum {
-    /**
-     * <code>FUN = 0;</code>
-     *
-     * <pre>
-     * 2 bits
-     * </pre>
-     */
-    FUN(0, 0),
-    /**
-     * <code>VAL = 1;</code>
-     */
-    VAL(1, 1),
-    /**
-     * <code>VAR = 2;</code>
-     */
-    VAR(2, 2),
-    /**
-     * <code>CONSTRUCTOR = 3;</code>
-     */
-    CONSTRUCTOR(3, 3),
-    ;
-
-    /**
-     * <code>FUN = 0;</code>
-     *
-     * <pre>
-     * 2 bits
-     * </pre>
-     */
-    public static final int FUN_VALUE = 0;
-    /**
-     * <code>VAL = 1;</code>
-     */
-    public static final int VAL_VALUE = 1;
-    /**
-     * <code>VAR = 2;</code>
-     */
-    public static final int VAR_VALUE = 2;
-    /**
-     * <code>CONSTRUCTOR = 3;</code>
-     */
-    public static final int CONSTRUCTOR_VALUE = 3;
-
-
-    public final int getNumber() { return value; }
-
-    public static CallableKind valueOf(int value) {
-      switch (value) {
-        case 0: return FUN;
-        case 1: return VAL;
-        case 2: return VAR;
-        case 3: return CONSTRUCTOR;
-        default: return null;
-      }
-    }
-
-    public static com.google.protobuf.Internal.EnumLiteMap<CallableKind>
-        internalGetValueMap() {
-      return internalValueMap;
-    }
-    private static com.google.protobuf.Internal.EnumLiteMap<CallableKind>
-        internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<CallableKind>() {
-            public CallableKind findValueByNumber(int number) {
-              return CallableKind.valueOf(number);
-            }
-          };
-
-    public final com.google.protobuf.Descriptors.EnumValueDescriptor
-        getValueDescriptor() {
-      return getDescriptor().getValues().get(index);
-    }
-    public final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptorForType() {
-      return getDescriptor();
-    }
-    public static final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptor() {
-      return org.jetbrains.kotlin.serialization.DebugProtoBuf.getDescriptor().getEnumTypes().get(2);
-    }
-
-    private static final CallableKind[] VALUES = values();
-
-    public static CallableKind valueOf(
-        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-      if (desc.getType() != getDescriptor()) {
-        throw new java.lang.IllegalArgumentException(
-          "EnumValueDescriptor is not for this type.");
-      }
-      return VALUES[desc.getIndex()];
-    }
-
-    private final int index;
-    private final int value;
-
-    private CallableKind(int index, int value) {
-      this.index = index;
-      this.value = value;
-    }
-
-    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.CallableKind)
-  }
-
-  /**
    * Protobuf enum {@code org.jetbrains.kotlin.serialization.MemberKind}
    */
   public enum MemberKind
@@ -433,7 +325,7 @@ public final class DebugProtoBuf {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return org.jetbrains.kotlin.serialization.DebugProtoBuf.getDescriptor().getEnumTypes().get(3);
+      return org.jetbrains.kotlin.serialization.DebugProtoBuf.getDescriptor().getEnumTypes().get(2);
     }
 
     private static final MemberKind[] VALUES = values();
@@ -8665,28 +8557,28 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Class> {
 
-    // optional int32 flags = 1 [default = 0];
+    // optional int32 flags = 1 [default = 6];
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
@@ -8852,31 +8744,6 @@ public final class DebugProtoBuf {
     org.jetbrains.kotlin.serialization.DebugProtoBuf.PropertyOrBuilder getPropertyOrBuilder(
         int index);
 
-    // repeated .org.jetbrains.kotlin.serialization.Callable member = 11;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-     */
-    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> 
-        getMemberList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getMember(int index);
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-     */
-    int getMemberCount();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-     */
-    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-        getMemberOrBuilderList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getMemberOrBuilder(
-        int index);
-
     // repeated int32 enum_entry = 12 [packed = true];
     /**
      * <code>repeated int32 enum_entry = 12 [packed = true];</code>
@@ -8890,57 +8757,6 @@ public final class DebugProtoBuf {
      * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     int getEnumEntry(int index);
-
-    // optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-     *
-     * <pre>
-     * This field is present if and only if the class has a primary constructor
-     * </pre>
-     */
-    boolean hasPrimaryConstructor();
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-     *
-     * <pre>
-     * This field is present if and only if the class has a primary constructor
-     * </pre>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor getPrimaryConstructor();
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-     *
-     * <pre>
-     * This field is present if and only if the class has a primary constructor
-     * </pre>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructorOrBuilder getPrimaryConstructorOrBuilder();
-
-    // repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-     */
-    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> 
-        getSecondaryConstructorList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getSecondaryConstructor(int index);
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-     */
-    int getSecondaryConstructorCount();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-     */
-    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-        getSecondaryConstructorOrBuilderList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getSecondaryConstructorOrBuilder(
-        int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Class}
@@ -9069,18 +8885,10 @@ public final class DebugProtoBuf {
               property_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.PARSER, extensionRegistry));
               break;
             }
-            case 90: {
-              if (!((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
-                member_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable>();
-                mutable_bitField0_ |= 0x00000200;
-              }
-              member_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.PARSER, extensionRegistry));
-              break;
-            }
             case 96: {
-              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+              if (!((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
                 enumEntry_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000400;
+                mutable_bitField0_ |= 0x00000200;
               }
               enumEntry_.add(input.readInt32());
               break;
@@ -9088,35 +8896,14 @@ public final class DebugProtoBuf {
             case 98: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00000200) == 0x00000200) && input.getBytesUntilLimit() > 0) {
                 enumEntry_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000400;
+                mutable_bitField0_ |= 0x00000200;
               }
               while (input.getBytesUntilLimit() > 0) {
                 enumEntry_.add(input.readInt32());
               }
               input.popLimit(limit);
-              break;
-            }
-            case 106: {
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000008) == 0x00000008)) {
-                subBuilder = primaryConstructor_.toBuilder();
-              }
-              primaryConstructor_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(primaryConstructor_);
-                primaryConstructor_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000008;
-              break;
-            }
-            case 114: {
-              if (!((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
-                secondaryConstructor_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable>();
-                mutable_bitField0_ |= 0x00001000;
-              }
-              secondaryConstructor_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.PARSER, extensionRegistry));
               break;
             }
           }
@@ -9146,13 +8933,7 @@ public final class DebugProtoBuf {
           property_ = java.util.Collections.unmodifiableList(property_);
         }
         if (((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
-          member_ = java.util.Collections.unmodifiableList(member_);
-        }
-        if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
           enumEntry_ = java.util.Collections.unmodifiableList(enumEntry_);
-        }
-        if (((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
-          secondaryConstructor_ = java.util.Collections.unmodifiableList(secondaryConstructor_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -9320,627 +9101,18 @@ public final class DebugProtoBuf {
       // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.Class.Kind)
     }
 
-    public interface PrimaryConstructorOrBuilder
-        extends com.google.protobuf.MessageOrBuilder {
-
-      // optional .org.jetbrains.kotlin.serialization.Callable data = 1;
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-       *
-       * <pre>
-       * If this field is present, it contains serialized data for the primary constructor.
-       * Otherwise it's default and can be created manually upon deserialization
-       * Note: currently only objects have default primary constructor
-       * </pre>
-       */
-      boolean hasData();
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-       *
-       * <pre>
-       * If this field is present, it contains serialized data for the primary constructor.
-       * Otherwise it's default and can be created manually upon deserialization
-       * Note: currently only objects have default primary constructor
-       * </pre>
-       */
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getData();
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-       *
-       * <pre>
-       * If this field is present, it contains serialized data for the primary constructor.
-       * Otherwise it's default and can be created manually upon deserialization
-       * Note: currently only objects have default primary constructor
-       * </pre>
-       */
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getDataOrBuilder();
-    }
-    /**
-     * Protobuf type {@code org.jetbrains.kotlin.serialization.Class.PrimaryConstructor}
-     */
-    public static final class PrimaryConstructor extends
-        com.google.protobuf.GeneratedMessage
-        implements PrimaryConstructorOrBuilder {
-      // Use PrimaryConstructor.newBuilder() to construct.
-      private PrimaryConstructor(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-        super(builder);
-        this.unknownFields = builder.getUnknownFields();
-      }
-      private PrimaryConstructor(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-      private static final PrimaryConstructor defaultInstance;
-      public static PrimaryConstructor getDefaultInstance() {
-        return defaultInstance;
-      }
-
-      public PrimaryConstructor getDefaultInstanceForType() {
-        return defaultInstance;
-      }
-
-      private final com.google.protobuf.UnknownFieldSet unknownFields;
-      @java.lang.Override
-      public final com.google.protobuf.UnknownFieldSet
-          getUnknownFields() {
-        return this.unknownFields;
-      }
-      private PrimaryConstructor(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        initFields();
-        int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!parseUnknownField(input, unknownFields,
-                                       extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-              case 10: {
-                org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder subBuilder = null;
-                if (((bitField0_ & 0x00000001) == 0x00000001)) {
-                  subBuilder = data_.toBuilder();
-                }
-                data_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.PARSER, extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(data_);
-                  data_ = subBuilder.buildPartial();
-                }
-                bitField0_ |= 0x00000001;
-                break;
-              }
-            }
-          }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
-              e.getMessage()).setUnfinishedMessage(this);
-        } finally {
-          this.unknownFields = unknownFields.build();
-          makeExtensionsImmutable();
-        }
-      }
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Class_PrimaryConstructor_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Class_PrimaryConstructor_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.Builder.class);
-      }
-
-      public static com.google.protobuf.Parser<PrimaryConstructor> PARSER =
-          new com.google.protobuf.AbstractParser<PrimaryConstructor>() {
-        public PrimaryConstructor parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return new PrimaryConstructor(input, extensionRegistry);
-        }
-      };
-
-      @java.lang.Override
-      public com.google.protobuf.Parser<PrimaryConstructor> getParserForType() {
-        return PARSER;
-      }
-
-      private int bitField0_;
-      // optional .org.jetbrains.kotlin.serialization.Callable data = 1;
-      public static final int DATA_FIELD_NUMBER = 1;
-      private org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable data_;
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-       *
-       * <pre>
-       * If this field is present, it contains serialized data for the primary constructor.
-       * Otherwise it's default and can be created manually upon deserialization
-       * Note: currently only objects have default primary constructor
-       * </pre>
-       */
-      public boolean hasData() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-       *
-       * <pre>
-       * If this field is present, it contains serialized data for the primary constructor.
-       * Otherwise it's default and can be created manually upon deserialization
-       * Note: currently only objects have default primary constructor
-       * </pre>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getData() {
-        return data_;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-       *
-       * <pre>
-       * If this field is present, it contains serialized data for the primary constructor.
-       * Otherwise it's default and can be created manually upon deserialization
-       * Note: currently only objects have default primary constructor
-       * </pre>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getDataOrBuilder() {
-        return data_;
-      }
-
-      private void initFields() {
-        data_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance();
-      }
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized != -1) return isInitialized == 1;
-
-        if (hasData()) {
-          if (!getData().isInitialized()) {
-            memoizedIsInitialized = 0;
-            return false;
-          }
-        }
-        memoizedIsInitialized = 1;
-        return true;
-      }
-
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        getSerializedSize();
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          output.writeMessage(1, data_);
-        }
-        getUnknownFields().writeTo(output);
-      }
-
-      private int memoizedSerializedSize = -1;
-      public int getSerializedSize() {
-        int size = memoizedSerializedSize;
-        if (size != -1) return size;
-
-        size = 0;
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeMessageSize(1, data_);
-        }
-        size += getUnknownFields().getSerializedSize();
-        memoizedSerializedSize = size;
-        return size;
-      }
-
-      private static final long serialVersionUID = 0L;
-      @java.lang.Override
-      protected java.lang.Object writeReplace()
-          throws java.io.ObjectStreamException {
-        return super.writeReplace();
-      }
-
-      public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor parseFrom(
-          byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input);
-      }
-      public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor parseFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input);
-      }
-      public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor parseDelimitedFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input, extensionRegistry);
-      }
-      public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor parseFrom(
-          com.google.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input);
-      }
-      public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
-      }
-
-      public static Builder newBuilder() { return Builder.create(); }
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder(org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor prototype) {
-        return newBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() { return newBuilder(this); }
-
-      @java.lang.Override
-      protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
-      }
-      /**
-       * Protobuf type {@code org.jetbrains.kotlin.serialization.Class.PrimaryConstructor}
-       */
-      public static final class Builder extends
-          com.google.protobuf.GeneratedMessage.Builder<Builder>
-         implements org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructorOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-          return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Class_PrimaryConstructor_descriptor;
-        }
-
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-            internalGetFieldAccessorTable() {
-          return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Class_PrimaryConstructor_fieldAccessorTable
-              .ensureFieldAccessorsInitialized(
-                  org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.Builder.class);
-        }
-
-        // Construct using org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-
-        private Builder(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-          super(parent);
-          maybeForceBuilderInitialization();
-        }
-        private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-            getDataFieldBuilder();
-          }
-        }
-        private static Builder create() {
-          return new Builder();
-        }
-
-        public Builder clear() {
-          super.clear();
-          if (dataBuilder_ == null) {
-            data_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance();
-          } else {
-            dataBuilder_.clear();
-          }
-          bitField0_ = (bitField0_ & ~0x00000001);
-          return this;
-        }
-
-        public Builder clone() {
-          return create().mergeFrom(buildPartial());
-        }
-
-        public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-          return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Class_PrimaryConstructor_descriptor;
-        }
-
-        public org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor getDefaultInstanceForType() {
-          return org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.getDefaultInstance();
-        }
-
-        public org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor build() {
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-
-        public org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor buildPartial() {
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor result = new org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor(this);
-          int from_bitField0_ = bitField0_;
-          int to_bitField0_ = 0;
-          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-            to_bitField0_ |= 0x00000001;
-          }
-          if (dataBuilder_ == null) {
-            result.data_ = data_;
-          } else {
-            result.data_ = dataBuilder_.build();
-          }
-          result.bitField0_ = to_bitField0_;
-          onBuilt();
-          return result;
-        }
-
-        public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor) {
-            return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor)other);
-          } else {
-            super.mergeFrom(other);
-            return this;
-          }
-        }
-
-        public Builder mergeFrom(org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor other) {
-          if (other == org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.getDefaultInstance()) return this;
-          if (other.hasData()) {
-            mergeData(other.getData());
-          }
-          this.mergeUnknownFields(other.getUnknownFields());
-          return this;
-        }
-
-        public final boolean isInitialized() {
-          if (hasData()) {
-            if (!getData().isInitialized()) {
-              
-              return false;
-            }
-          }
-          return true;
-        }
-
-        public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor parsedMessage = null;
-          try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor) e.getUnfinishedMessage();
-            throw e;
-          } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
-          return this;
-        }
-        private int bitField0_;
-
-        // optional .org.jetbrains.kotlin.serialization.Callable data = 1;
-        private org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable data_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance();
-        private com.google.protobuf.SingleFieldBuilder<
-            org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> dataBuilder_;
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-         *
-         * <pre>
-         * If this field is present, it contains serialized data for the primary constructor.
-         * Otherwise it's default and can be created manually upon deserialization
-         * Note: currently only objects have default primary constructor
-         * </pre>
-         */
-        public boolean hasData() {
-          return ((bitField0_ & 0x00000001) == 0x00000001);
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-         *
-         * <pre>
-         * If this field is present, it contains serialized data for the primary constructor.
-         * Otherwise it's default and can be created manually upon deserialization
-         * Note: currently only objects have default primary constructor
-         * </pre>
-         */
-        public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getData() {
-          if (dataBuilder_ == null) {
-            return data_;
-          } else {
-            return dataBuilder_.getMessage();
-          }
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-         *
-         * <pre>
-         * If this field is present, it contains serialized data for the primary constructor.
-         * Otherwise it's default and can be created manually upon deserialization
-         * Note: currently only objects have default primary constructor
-         * </pre>
-         */
-        public Builder setData(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
-          if (dataBuilder_ == null) {
-            if (value == null) {
-              throw new NullPointerException();
-            }
-            data_ = value;
-            onChanged();
-          } else {
-            dataBuilder_.setMessage(value);
-          }
-          bitField0_ |= 0x00000001;
-          return this;
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-         *
-         * <pre>
-         * If this field is present, it contains serialized data for the primary constructor.
-         * Otherwise it's default and can be created manually upon deserialization
-         * Note: currently only objects have default primary constructor
-         * </pre>
-         */
-        public Builder setData(
-            org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder builderForValue) {
-          if (dataBuilder_ == null) {
-            data_ = builderForValue.build();
-            onChanged();
-          } else {
-            dataBuilder_.setMessage(builderForValue.build());
-          }
-          bitField0_ |= 0x00000001;
-          return this;
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-         *
-         * <pre>
-         * If this field is present, it contains serialized data for the primary constructor.
-         * Otherwise it's default and can be created manually upon deserialization
-         * Note: currently only objects have default primary constructor
-         * </pre>
-         */
-        public Builder mergeData(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
-          if (dataBuilder_ == null) {
-            if (((bitField0_ & 0x00000001) == 0x00000001) &&
-                data_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance()) {
-              data_ =
-                org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.newBuilder(data_).mergeFrom(value).buildPartial();
-            } else {
-              data_ = value;
-            }
-            onChanged();
-          } else {
-            dataBuilder_.mergeFrom(value);
-          }
-          bitField0_ |= 0x00000001;
-          return this;
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-         *
-         * <pre>
-         * If this field is present, it contains serialized data for the primary constructor.
-         * Otherwise it's default and can be created manually upon deserialization
-         * Note: currently only objects have default primary constructor
-         * </pre>
-         */
-        public Builder clearData() {
-          if (dataBuilder_ == null) {
-            data_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance();
-            onChanged();
-          } else {
-            dataBuilder_.clear();
-          }
-          bitField0_ = (bitField0_ & ~0x00000001);
-          return this;
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-         *
-         * <pre>
-         * If this field is present, it contains serialized data for the primary constructor.
-         * Otherwise it's default and can be created manually upon deserialization
-         * Note: currently only objects have default primary constructor
-         * </pre>
-         */
-        public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder getDataBuilder() {
-          bitField0_ |= 0x00000001;
-          onChanged();
-          return getDataFieldBuilder().getBuilder();
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-         *
-         * <pre>
-         * If this field is present, it contains serialized data for the primary constructor.
-         * Otherwise it's default and can be created manually upon deserialization
-         * Note: currently only objects have default primary constructor
-         * </pre>
-         */
-        public org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getDataOrBuilder() {
-          if (dataBuilder_ != null) {
-            return dataBuilder_.getMessageOrBuilder();
-          } else {
-            return data_;
-          }
-        }
-        /**
-         * <code>optional .org.jetbrains.kotlin.serialization.Callable data = 1;</code>
-         *
-         * <pre>
-         * If this field is present, it contains serialized data for the primary constructor.
-         * Otherwise it's default and can be created manually upon deserialization
-         * Note: currently only objects have default primary constructor
-         * </pre>
-         */
-        private com.google.protobuf.SingleFieldBuilder<
-            org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-            getDataFieldBuilder() {
-          if (dataBuilder_ == null) {
-            dataBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-                org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder>(
-                    data_,
-                    getParentForChildren(),
-                    isClean());
-            data_ = null;
-          }
-          return dataBuilder_;
-        }
-
-        // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.Class.PrimaryConstructor)
-      }
-
-      static {
-        defaultInstance = new PrimaryConstructor(true);
-        defaultInstance.initFields();
-      }
-
-      // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Class.PrimaryConstructor)
-    }
-
     private int bitField0_;
-    // optional int32 flags = 1 [default = 0];
+    // optional int32 flags = 1 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
@@ -9949,13 +9121,13 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1 [default = 0];</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
+     *hasAnnotations
      *Visibility
      *Modality
-     *hasAnnotations
      *ClassKind
      *isInner
      * </pre>
@@ -10200,42 +9372,6 @@ public final class DebugProtoBuf {
       return property_.get(index);
     }
 
-    // repeated .org.jetbrains.kotlin.serialization.Callable member = 11;
-    public static final int MEMBER_FIELD_NUMBER = 11;
-    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> member_;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-     */
-    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> getMemberList() {
-      return member_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-     */
-    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-        getMemberOrBuilderList() {
-      return member_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-     */
-    public int getMemberCount() {
-      return member_.size();
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getMember(int index) {
-      return member_.get(index);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getMemberOrBuilder(
-        int index) {
-      return member_.get(index);
-    }
-
     // repeated int32 enum_entry = 12 [packed = true];
     public static final int ENUM_ENTRY_FIELD_NUMBER = 12;
     private java.util.List<java.lang.Integer> enumEntry_;
@@ -10260,78 +9396,8 @@ public final class DebugProtoBuf {
     }
     private int enumEntryMemoizedSerializedSize = -1;
 
-    // optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;
-    public static final int PRIMARY_CONSTRUCTOR_FIELD_NUMBER = 13;
-    private org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor primaryConstructor_;
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-     *
-     * <pre>
-     * This field is present if and only if the class has a primary constructor
-     * </pre>
-     */
-    public boolean hasPrimaryConstructor() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-     *
-     * <pre>
-     * This field is present if and only if the class has a primary constructor
-     * </pre>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor getPrimaryConstructor() {
-      return primaryConstructor_;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-     *
-     * <pre>
-     * This field is present if and only if the class has a primary constructor
-     * </pre>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructorOrBuilder getPrimaryConstructorOrBuilder() {
-      return primaryConstructor_;
-    }
-
-    // repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;
-    public static final int SECONDARY_CONSTRUCTOR_FIELD_NUMBER = 14;
-    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> secondaryConstructor_;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-     */
-    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> getSecondaryConstructorList() {
-      return secondaryConstructor_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-     */
-    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-        getSecondaryConstructorOrBuilderList() {
-      return secondaryConstructor_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-     */
-    public int getSecondaryConstructorCount() {
-      return secondaryConstructor_.size();
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getSecondaryConstructor(int index) {
-      return secondaryConstructor_.get(index);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getSecondaryConstructorOrBuilder(
-        int index) {
-      return secondaryConstructor_.get(index);
-    }
-
     private void initFields() {
-      flags_ = 0;
+      flags_ = 6;
       fqName_ = 0;
       companionObjectName_ = 0;
       typeParameter_ = java.util.Collections.emptyList();
@@ -10340,10 +9406,7 @@ public final class DebugProtoBuf {
       constructor_ = java.util.Collections.emptyList();
       function_ = java.util.Collections.emptyList();
       property_ = java.util.Collections.emptyList();
-      member_ = java.util.Collections.emptyList();
       enumEntry_ = java.util.Collections.emptyList();
-      primaryConstructor_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.getDefaultInstance();
-      secondaryConstructor_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -10380,24 +9443,6 @@ public final class DebugProtoBuf {
       }
       for (int i = 0; i < getPropertyCount(); i++) {
         if (!getProperty(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      for (int i = 0; i < getMemberCount(); i++) {
-        if (!getMember(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      if (hasPrimaryConstructor()) {
-        if (!getPrimaryConstructor().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      for (int i = 0; i < getSecondaryConstructorCount(); i++) {
-        if (!getSecondaryConstructor(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -10447,21 +9492,12 @@ public final class DebugProtoBuf {
       for (int i = 0; i < property_.size(); i++) {
         output.writeMessage(10, property_.get(i));
       }
-      for (int i = 0; i < member_.size(); i++) {
-        output.writeMessage(11, member_.get(i));
-      }
       if (getEnumEntryList().size() > 0) {
         output.writeRawVarint32(98);
         output.writeRawVarint32(enumEntryMemoizedSerializedSize);
       }
       for (int i = 0; i < enumEntry_.size(); i++) {
         output.writeInt32NoTag(enumEntry_.get(i));
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeMessage(13, primaryConstructor_);
-      }
-      for (int i = 0; i < secondaryConstructor_.size(); i++) {
-        output.writeMessage(14, secondaryConstructor_.get(i));
       }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
@@ -10519,10 +9555,6 @@ public final class DebugProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(10, property_.get(i));
       }
-      for (int i = 0; i < member_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(11, member_.get(i));
-      }
       {
         int dataSize = 0;
         for (int i = 0; i < enumEntry_.size(); i++) {
@@ -10536,14 +9568,6 @@ public final class DebugProtoBuf {
               .computeInt32SizeNoTag(dataSize);
         }
         enumEntryMemoizedSerializedSize = dataSize;
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(13, primaryConstructor_);
-      }
-      for (int i = 0; i < secondaryConstructor_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(14, secondaryConstructor_.get(i));
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -10659,9 +9683,6 @@ public final class DebugProtoBuf {
           getConstructorFieldBuilder();
           getFunctionFieldBuilder();
           getPropertyFieldBuilder();
-          getMemberFieldBuilder();
-          getPrimaryConstructorFieldBuilder();
-          getSecondaryConstructorFieldBuilder();
         }
       }
       private static Builder create() {
@@ -10670,7 +9691,7 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000001);
         fqName_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -10708,26 +9729,8 @@ public final class DebugProtoBuf {
         } else {
           propertyBuilder_.clear();
         }
-        if (memberBuilder_ == null) {
-          member_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000200);
-        } else {
-          memberBuilder_.clear();
-        }
         enumEntry_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000400);
-        if (primaryConstructorBuilder_ == null) {
-          primaryConstructor_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.getDefaultInstance();
-        } else {
-          primaryConstructorBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000800);
-        if (secondaryConstructorBuilder_ == null) {
-          secondaryConstructor_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00001000);
-        } else {
-          secondaryConstructorBuilder_.clear();
-        }
+        bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
 
@@ -10818,37 +9821,11 @@ public final class DebugProtoBuf {
         } else {
           result.property_ = propertyBuilder_.build();
         }
-        if (memberBuilder_ == null) {
-          if (((bitField0_ & 0x00000200) == 0x00000200)) {
-            member_ = java.util.Collections.unmodifiableList(member_);
-            bitField0_ = (bitField0_ & ~0x00000200);
-          }
-          result.member_ = member_;
-        } else {
-          result.member_ = memberBuilder_.build();
-        }
-        if (((bitField0_ & 0x00000400) == 0x00000400)) {
+        if (((bitField0_ & 0x00000200) == 0x00000200)) {
           enumEntry_ = java.util.Collections.unmodifiableList(enumEntry_);
-          bitField0_ = (bitField0_ & ~0x00000400);
+          bitField0_ = (bitField0_ & ~0x00000200);
         }
         result.enumEntry_ = enumEntry_;
-        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
-          to_bitField0_ |= 0x00000008;
-        }
-        if (primaryConstructorBuilder_ == null) {
-          result.primaryConstructor_ = primaryConstructor_;
-        } else {
-          result.primaryConstructor_ = primaryConstructorBuilder_.build();
-        }
-        if (secondaryConstructorBuilder_ == null) {
-          if (((bitField0_ & 0x00001000) == 0x00001000)) {
-            secondaryConstructor_ = java.util.Collections.unmodifiableList(secondaryConstructor_);
-            bitField0_ = (bitField0_ & ~0x00001000);
-          }
-          result.secondaryConstructor_ = secondaryConstructor_;
-        } else {
-          result.secondaryConstructor_ = secondaryConstructorBuilder_.build();
-        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -11014,70 +9991,15 @@ public final class DebugProtoBuf {
             }
           }
         }
-        if (memberBuilder_ == null) {
-          if (!other.member_.isEmpty()) {
-            if (member_.isEmpty()) {
-              member_ = other.member_;
-              bitField0_ = (bitField0_ & ~0x00000200);
-            } else {
-              ensureMemberIsMutable();
-              member_.addAll(other.member_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.member_.isEmpty()) {
-            if (memberBuilder_.isEmpty()) {
-              memberBuilder_.dispose();
-              memberBuilder_ = null;
-              member_ = other.member_;
-              bitField0_ = (bitField0_ & ~0x00000200);
-              memberBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   getMemberFieldBuilder() : null;
-            } else {
-              memberBuilder_.addAllMessages(other.member_);
-            }
-          }
-        }
         if (!other.enumEntry_.isEmpty()) {
           if (enumEntry_.isEmpty()) {
             enumEntry_ = other.enumEntry_;
-            bitField0_ = (bitField0_ & ~0x00000400);
+            bitField0_ = (bitField0_ & ~0x00000200);
           } else {
             ensureEnumEntryIsMutable();
             enumEntry_.addAll(other.enumEntry_);
           }
           onChanged();
-        }
-        if (other.hasPrimaryConstructor()) {
-          mergePrimaryConstructor(other.getPrimaryConstructor());
-        }
-        if (secondaryConstructorBuilder_ == null) {
-          if (!other.secondaryConstructor_.isEmpty()) {
-            if (secondaryConstructor_.isEmpty()) {
-              secondaryConstructor_ = other.secondaryConstructor_;
-              bitField0_ = (bitField0_ & ~0x00001000);
-            } else {
-              ensureSecondaryConstructorIsMutable();
-              secondaryConstructor_.addAll(other.secondaryConstructor_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.secondaryConstructor_.isEmpty()) {
-            if (secondaryConstructorBuilder_.isEmpty()) {
-              secondaryConstructorBuilder_.dispose();
-              secondaryConstructorBuilder_ = null;
-              secondaryConstructor_ = other.secondaryConstructor_;
-              bitField0_ = (bitField0_ & ~0x00001000);
-              secondaryConstructorBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   getSecondaryConstructorFieldBuilder() : null;
-            } else {
-              secondaryConstructorBuilder_.addAllMessages(other.secondaryConstructor_);
-            }
-          }
         }
         this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
@@ -11119,24 +10041,6 @@ public final class DebugProtoBuf {
             return false;
           }
         }
-        for (int i = 0; i < getMemberCount(); i++) {
-          if (!getMember(i).isInitialized()) {
-            
-            return false;
-          }
-        }
-        if (hasPrimaryConstructor()) {
-          if (!getPrimaryConstructor().isInitialized()) {
-            
-            return false;
-          }
-        }
-        for (int i = 0; i < getSecondaryConstructorCount(); i++) {
-          if (!getSecondaryConstructor(i).isInitialized()) {
-            
-            return false;
-          }
-        }
         if (!extensionsAreInitialized()) {
           
           return false;
@@ -11163,16 +10067,16 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1 [default = 0];
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 6];
+      private int flags_ = 6;
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
@@ -11181,13 +10085,13 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
@@ -11196,13 +10100,13 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
@@ -11214,20 +10118,20 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 0];</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
+       *hasAnnotations
        *Visibility
        *Modality
-       *hasAnnotations
        *ClassKind
        *isInner
        * </pre>
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 6;
         onChanged();
         return this;
       }
@@ -12564,252 +11468,12 @@ public final class DebugProtoBuf {
         return propertyBuilder_;
       }
 
-      // repeated .org.jetbrains.kotlin.serialization.Callable member = 11;
-      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> member_ =
-        java.util.Collections.emptyList();
-      private void ensureMemberIsMutable() {
-        if (!((bitField0_ & 0x00000200) == 0x00000200)) {
-          member_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable>(member_);
-          bitField0_ |= 0x00000200;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> memberBuilder_;
-
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> getMemberList() {
-        if (memberBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(member_);
-        } else {
-          return memberBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public int getMemberCount() {
-        if (memberBuilder_ == null) {
-          return member_.size();
-        } else {
-          return memberBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getMember(int index) {
-        if (memberBuilder_ == null) {
-          return member_.get(index);
-        } else {
-          return memberBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public Builder setMember(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
-        if (memberBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureMemberIsMutable();
-          member_.set(index, value);
-          onChanged();
-        } else {
-          memberBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public Builder setMember(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder builderForValue) {
-        if (memberBuilder_ == null) {
-          ensureMemberIsMutable();
-          member_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          memberBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public Builder addMember(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
-        if (memberBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureMemberIsMutable();
-          member_.add(value);
-          onChanged();
-        } else {
-          memberBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public Builder addMember(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
-        if (memberBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureMemberIsMutable();
-          member_.add(index, value);
-          onChanged();
-        } else {
-          memberBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public Builder addMember(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder builderForValue) {
-        if (memberBuilder_ == null) {
-          ensureMemberIsMutable();
-          member_.add(builderForValue.build());
-          onChanged();
-        } else {
-          memberBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public Builder addMember(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder builderForValue) {
-        if (memberBuilder_ == null) {
-          ensureMemberIsMutable();
-          member_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          memberBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public Builder addAllMember(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> values) {
-        if (memberBuilder_ == null) {
-          ensureMemberIsMutable();
-          super.addAll(values, member_);
-          onChanged();
-        } else {
-          memberBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public Builder clearMember() {
-        if (memberBuilder_ == null) {
-          member_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000200);
-          onChanged();
-        } else {
-          memberBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public Builder removeMember(int index) {
-        if (memberBuilder_ == null) {
-          ensureMemberIsMutable();
-          member_.remove(index);
-          onChanged();
-        } else {
-          memberBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder getMemberBuilder(
-          int index) {
-        return getMemberFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getMemberOrBuilder(
-          int index) {
-        if (memberBuilder_ == null) {
-          return member_.get(index);  } else {
-          return memberBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-           getMemberOrBuilderList() {
-        if (memberBuilder_ != null) {
-          return memberBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(member_);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder addMemberBuilder() {
-        return getMemberFieldBuilder().addBuilder(
-            org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder addMemberBuilder(
-          int index) {
-        return getMemberFieldBuilder().addBuilder(
-            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 11;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder> 
-           getMemberBuilderList() {
-        return getMemberFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-          getMemberFieldBuilder() {
-        if (memberBuilder_ == null) {
-          memberBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder>(
-                  member_,
-                  ((bitField0_ & 0x00000200) == 0x00000200),
-                  getParentForChildren(),
-                  isClean());
-          member_ = null;
-        }
-        return memberBuilder_;
-      }
-
       // repeated int32 enum_entry = 12 [packed = true];
       private java.util.List<java.lang.Integer> enumEntry_ = java.util.Collections.emptyList();
       private void ensureEnumEntryIsMutable() {
-        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
+        if (!((bitField0_ & 0x00000200) == 0x00000200)) {
           enumEntry_ = new java.util.ArrayList<java.lang.Integer>(enumEntry_);
-          bitField0_ |= 0x00000400;
+          bitField0_ |= 0x00000200;
          }
       }
       /**
@@ -12865,402 +11529,9 @@ public final class DebugProtoBuf {
        */
       public Builder clearEnumEntry() {
         enumEntry_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000400);
+        bitField0_ = (bitField0_ & ~0x00000200);
         onChanged();
         return this;
-      }
-
-      // optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;
-      private org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor primaryConstructor_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor, org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructorOrBuilder> primaryConstructorBuilder_;
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-       *
-       * <pre>
-       * This field is present if and only if the class has a primary constructor
-       * </pre>
-       */
-      public boolean hasPrimaryConstructor() {
-        return ((bitField0_ & 0x00000800) == 0x00000800);
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-       *
-       * <pre>
-       * This field is present if and only if the class has a primary constructor
-       * </pre>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor getPrimaryConstructor() {
-        if (primaryConstructorBuilder_ == null) {
-          return primaryConstructor_;
-        } else {
-          return primaryConstructorBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-       *
-       * <pre>
-       * This field is present if and only if the class has a primary constructor
-       * </pre>
-       */
-      public Builder setPrimaryConstructor(org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor value) {
-        if (primaryConstructorBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          primaryConstructor_ = value;
-          onChanged();
-        } else {
-          primaryConstructorBuilder_.setMessage(value);
-        }
-        bitField0_ |= 0x00000800;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-       *
-       * <pre>
-       * This field is present if and only if the class has a primary constructor
-       * </pre>
-       */
-      public Builder setPrimaryConstructor(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.Builder builderForValue) {
-        if (primaryConstructorBuilder_ == null) {
-          primaryConstructor_ = builderForValue.build();
-          onChanged();
-        } else {
-          primaryConstructorBuilder_.setMessage(builderForValue.build());
-        }
-        bitField0_ |= 0x00000800;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-       *
-       * <pre>
-       * This field is present if and only if the class has a primary constructor
-       * </pre>
-       */
-      public Builder mergePrimaryConstructor(org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor value) {
-        if (primaryConstructorBuilder_ == null) {
-          if (((bitField0_ & 0x00000800) == 0x00000800) &&
-              primaryConstructor_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.getDefaultInstance()) {
-            primaryConstructor_ =
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.newBuilder(primaryConstructor_).mergeFrom(value).buildPartial();
-          } else {
-            primaryConstructor_ = value;
-          }
-          onChanged();
-        } else {
-          primaryConstructorBuilder_.mergeFrom(value);
-        }
-        bitField0_ |= 0x00000800;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-       *
-       * <pre>
-       * This field is present if and only if the class has a primary constructor
-       * </pre>
-       */
-      public Builder clearPrimaryConstructor() {
-        if (primaryConstructorBuilder_ == null) {
-          primaryConstructor_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.getDefaultInstance();
-          onChanged();
-        } else {
-          primaryConstructorBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000800);
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-       *
-       * <pre>
-       * This field is present if and only if the class has a primary constructor
-       * </pre>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.Builder getPrimaryConstructorBuilder() {
-        bitField0_ |= 0x00000800;
-        onChanged();
-        return getPrimaryConstructorFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-       *
-       * <pre>
-       * This field is present if and only if the class has a primary constructor
-       * </pre>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructorOrBuilder getPrimaryConstructorOrBuilder() {
-        if (primaryConstructorBuilder_ != null) {
-          return primaryConstructorBuilder_.getMessageOrBuilder();
-        } else {
-          return primaryConstructor_;
-        }
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;</code>
-       *
-       * <pre>
-       * This field is present if and only if the class has a primary constructor
-       * </pre>
-       */
-      private com.google.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor, org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructorOrBuilder> 
-          getPrimaryConstructorFieldBuilder() {
-        if (primaryConstructorBuilder_ == null) {
-          primaryConstructorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor, org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructor.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.Class.PrimaryConstructorOrBuilder>(
-                  primaryConstructor_,
-                  getParentForChildren(),
-                  isClean());
-          primaryConstructor_ = null;
-        }
-        return primaryConstructorBuilder_;
-      }
-
-      // repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;
-      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> secondaryConstructor_ =
-        java.util.Collections.emptyList();
-      private void ensureSecondaryConstructorIsMutable() {
-        if (!((bitField0_ & 0x00001000) == 0x00001000)) {
-          secondaryConstructor_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable>(secondaryConstructor_);
-          bitField0_ |= 0x00001000;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> secondaryConstructorBuilder_;
-
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> getSecondaryConstructorList() {
-        if (secondaryConstructorBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(secondaryConstructor_);
-        } else {
-          return secondaryConstructorBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public int getSecondaryConstructorCount() {
-        if (secondaryConstructorBuilder_ == null) {
-          return secondaryConstructor_.size();
-        } else {
-          return secondaryConstructorBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getSecondaryConstructor(int index) {
-        if (secondaryConstructorBuilder_ == null) {
-          return secondaryConstructor_.get(index);
-        } else {
-          return secondaryConstructorBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public Builder setSecondaryConstructor(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
-        if (secondaryConstructorBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureSecondaryConstructorIsMutable();
-          secondaryConstructor_.set(index, value);
-          onChanged();
-        } else {
-          secondaryConstructorBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public Builder setSecondaryConstructor(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder builderForValue) {
-        if (secondaryConstructorBuilder_ == null) {
-          ensureSecondaryConstructorIsMutable();
-          secondaryConstructor_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          secondaryConstructorBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public Builder addSecondaryConstructor(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
-        if (secondaryConstructorBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureSecondaryConstructorIsMutable();
-          secondaryConstructor_.add(value);
-          onChanged();
-        } else {
-          secondaryConstructorBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public Builder addSecondaryConstructor(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
-        if (secondaryConstructorBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureSecondaryConstructorIsMutable();
-          secondaryConstructor_.add(index, value);
-          onChanged();
-        } else {
-          secondaryConstructorBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public Builder addSecondaryConstructor(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder builderForValue) {
-        if (secondaryConstructorBuilder_ == null) {
-          ensureSecondaryConstructorIsMutable();
-          secondaryConstructor_.add(builderForValue.build());
-          onChanged();
-        } else {
-          secondaryConstructorBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public Builder addSecondaryConstructor(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder builderForValue) {
-        if (secondaryConstructorBuilder_ == null) {
-          ensureSecondaryConstructorIsMutable();
-          secondaryConstructor_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          secondaryConstructorBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public Builder addAllSecondaryConstructor(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> values) {
-        if (secondaryConstructorBuilder_ == null) {
-          ensureSecondaryConstructorIsMutable();
-          super.addAll(values, secondaryConstructor_);
-          onChanged();
-        } else {
-          secondaryConstructorBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public Builder clearSecondaryConstructor() {
-        if (secondaryConstructorBuilder_ == null) {
-          secondaryConstructor_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00001000);
-          onChanged();
-        } else {
-          secondaryConstructorBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public Builder removeSecondaryConstructor(int index) {
-        if (secondaryConstructorBuilder_ == null) {
-          ensureSecondaryConstructorIsMutable();
-          secondaryConstructor_.remove(index);
-          onChanged();
-        } else {
-          secondaryConstructorBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder getSecondaryConstructorBuilder(
-          int index) {
-        return getSecondaryConstructorFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getSecondaryConstructorOrBuilder(
-          int index) {
-        if (secondaryConstructorBuilder_ == null) {
-          return secondaryConstructor_.get(index);  } else {
-          return secondaryConstructorBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-           getSecondaryConstructorOrBuilderList() {
-        if (secondaryConstructorBuilder_ != null) {
-          return secondaryConstructorBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(secondaryConstructor_);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder addSecondaryConstructorBuilder() {
-        return getSecondaryConstructorFieldBuilder().addBuilder(
-            org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder addSecondaryConstructorBuilder(
-          int index) {
-        return getSecondaryConstructorFieldBuilder().addBuilder(
-            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable secondary_constructor = 14;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder> 
-           getSecondaryConstructorBuilderList() {
-        return getSecondaryConstructorFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-          getSecondaryConstructorFieldBuilder() {
-        if (secondaryConstructorBuilder_ == null) {
-          secondaryConstructorBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder>(
-                  secondaryConstructor_,
-                  ((bitField0_ & 0x00001000) == 0x00001000),
-                  getParentForChildren(),
-                  isClean());
-          secondaryConstructor_ = null;
-        }
-        return secondaryConstructorBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.Class)
@@ -13277,56 +11548,6 @@ public final class DebugProtoBuf {
   public interface PackageOrBuilder extends
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Package> {
-
-    // repeated .org.jetbrains.kotlin.serialization.Callable member = 1;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-     */
-    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> 
-        getMemberList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getMember(int index);
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-     */
-    int getMemberCount();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-     */
-    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-        getMemberOrBuilderList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getMemberOrBuilder(
-        int index);
-
-    // repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-     */
-    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor> 
-        getConstructorList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor getConstructor(int index);
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-     */
-    int getConstructorCount();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-     */
-    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder> 
-        getConstructorOrBuilderList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder getConstructorOrBuilder(
-        int index);
 
     // repeated .org.jetbrains.kotlin.serialization.Function function = 3;
     /**
@@ -13429,34 +11650,18 @@ public final class DebugProtoBuf {
               }
               break;
             }
-            case 10: {
-              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                member_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              member_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.PARSER, extensionRegistry));
-              break;
-            }
-            case 18: {
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                constructor_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor>();
-                mutable_bitField0_ |= 0x00000002;
-              }
-              constructor_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.PARSER, extensionRegistry));
-              break;
-            }
             case 26: {
-              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
                 function_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Function>();
-                mutable_bitField0_ |= 0x00000004;
+                mutable_bitField0_ |= 0x00000001;
               }
               function_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Function.PARSER, extensionRegistry));
               break;
             }
             case 34: {
-              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
                 property_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Property>();
-                mutable_bitField0_ |= 0x00000008;
+                mutable_bitField0_ |= 0x00000002;
               }
               property_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.PARSER, extensionRegistry));
               break;
@@ -13470,15 +11675,9 @@ public final class DebugProtoBuf {
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-          member_ = java.util.Collections.unmodifiableList(member_);
-        }
-        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-          constructor_ = java.util.Collections.unmodifiableList(constructor_);
-        }
-        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
           function_ = java.util.Collections.unmodifiableList(function_);
         }
-        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
           property_ = java.util.Collections.unmodifiableList(property_);
         }
         this.unknownFields = unknownFields.build();
@@ -13510,78 +11709,6 @@ public final class DebugProtoBuf {
     @java.lang.Override
     public com.google.protobuf.Parser<Package> getParserForType() {
       return PARSER;
-    }
-
-    // repeated .org.jetbrains.kotlin.serialization.Callable member = 1;
-    public static final int MEMBER_FIELD_NUMBER = 1;
-    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> member_;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-     */
-    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> getMemberList() {
-      return member_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-     */
-    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-        getMemberOrBuilderList() {
-      return member_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-     */
-    public int getMemberCount() {
-      return member_.size();
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getMember(int index) {
-      return member_.get(index);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getMemberOrBuilder(
-        int index) {
-      return member_.get(index);
-    }
-
-    // repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;
-    public static final int CONSTRUCTOR_FIELD_NUMBER = 2;
-    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor> constructor_;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-     */
-    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor> getConstructorList() {
-      return constructor_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-     */
-    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder> 
-        getConstructorOrBuilderList() {
-      return constructor_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-     */
-    public int getConstructorCount() {
-      return constructor_.size();
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor getConstructor(int index) {
-      return constructor_.get(index);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder getConstructorOrBuilder(
-        int index) {
-      return constructor_.get(index);
     }
 
     // repeated .org.jetbrains.kotlin.serialization.Function function = 3;
@@ -13657,8 +11784,6 @@ public final class DebugProtoBuf {
     }
 
     private void initFields() {
-      member_ = java.util.Collections.emptyList();
-      constructor_ = java.util.Collections.emptyList();
       function_ = java.util.Collections.emptyList();
       property_ = java.util.Collections.emptyList();
     }
@@ -13667,18 +11792,6 @@ public final class DebugProtoBuf {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
 
-      for (int i = 0; i < getMemberCount(); i++) {
-        if (!getMember(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      for (int i = 0; i < getConstructorCount(); i++) {
-        if (!getConstructor(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       for (int i = 0; i < getFunctionCount(); i++) {
         if (!getFunction(i).isInitialized()) {
           memoizedIsInitialized = 0;
@@ -13705,12 +11818,6 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.Package>.ExtensionWriter extensionWriter =
           newExtensionWriter();
-      for (int i = 0; i < member_.size(); i++) {
-        output.writeMessage(1, member_.get(i));
-      }
-      for (int i = 0; i < constructor_.size(); i++) {
-        output.writeMessage(2, constructor_.get(i));
-      }
       for (int i = 0; i < function_.size(); i++) {
         output.writeMessage(3, function_.get(i));
       }
@@ -13727,14 +11834,6 @@ public final class DebugProtoBuf {
       if (size != -1) return size;
 
       size = 0;
-      for (int i = 0; i < member_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(1, member_.get(i));
-      }
-      for (int i = 0; i < constructor_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, constructor_.get(i));
-      }
       for (int i = 0; i < function_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, function_.get(i));
@@ -13852,8 +11951,6 @@ public final class DebugProtoBuf {
       }
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-          getMemberFieldBuilder();
-          getConstructorFieldBuilder();
           getFunctionFieldBuilder();
           getPropertyFieldBuilder();
         }
@@ -13864,27 +11961,15 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        if (memberBuilder_ == null) {
-          member_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
-        } else {
-          memberBuilder_.clear();
-        }
-        if (constructorBuilder_ == null) {
-          constructor_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
-        } else {
-          constructorBuilder_.clear();
-        }
         if (functionBuilder_ == null) {
           function_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
           functionBuilder_.clear();
         }
         if (propertyBuilder_ == null) {
           property_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000002);
         } else {
           propertyBuilder_.clear();
         }
@@ -13915,37 +12000,19 @@ public final class DebugProtoBuf {
       public org.jetbrains.kotlin.serialization.DebugProtoBuf.Package buildPartial() {
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Package result = new org.jetbrains.kotlin.serialization.DebugProtoBuf.Package(this);
         int from_bitField0_ = bitField0_;
-        if (memberBuilder_ == null) {
-          if (((bitField0_ & 0x00000001) == 0x00000001)) {
-            member_ = java.util.Collections.unmodifiableList(member_);
-            bitField0_ = (bitField0_ & ~0x00000001);
-          }
-          result.member_ = member_;
-        } else {
-          result.member_ = memberBuilder_.build();
-        }
-        if (constructorBuilder_ == null) {
-          if (((bitField0_ & 0x00000002) == 0x00000002)) {
-            constructor_ = java.util.Collections.unmodifiableList(constructor_);
-            bitField0_ = (bitField0_ & ~0x00000002);
-          }
-          result.constructor_ = constructor_;
-        } else {
-          result.constructor_ = constructorBuilder_.build();
-        }
         if (functionBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
             function_ = java.util.Collections.unmodifiableList(function_);
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000001);
           }
           result.function_ = function_;
         } else {
           result.function_ = functionBuilder_.build();
         }
         if (propertyBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          if (((bitField0_ & 0x00000002) == 0x00000002)) {
             property_ = java.util.Collections.unmodifiableList(property_);
-            bitField0_ = (bitField0_ & ~0x00000008);
+            bitField0_ = (bitField0_ & ~0x00000002);
           }
           result.property_ = property_;
         } else {
@@ -13966,63 +12033,11 @@ public final class DebugProtoBuf {
 
       public Builder mergeFrom(org.jetbrains.kotlin.serialization.DebugProtoBuf.Package other) {
         if (other == org.jetbrains.kotlin.serialization.DebugProtoBuf.Package.getDefaultInstance()) return this;
-        if (memberBuilder_ == null) {
-          if (!other.member_.isEmpty()) {
-            if (member_.isEmpty()) {
-              member_ = other.member_;
-              bitField0_ = (bitField0_ & ~0x00000001);
-            } else {
-              ensureMemberIsMutable();
-              member_.addAll(other.member_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.member_.isEmpty()) {
-            if (memberBuilder_.isEmpty()) {
-              memberBuilder_.dispose();
-              memberBuilder_ = null;
-              member_ = other.member_;
-              bitField0_ = (bitField0_ & ~0x00000001);
-              memberBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   getMemberFieldBuilder() : null;
-            } else {
-              memberBuilder_.addAllMessages(other.member_);
-            }
-          }
-        }
-        if (constructorBuilder_ == null) {
-          if (!other.constructor_.isEmpty()) {
-            if (constructor_.isEmpty()) {
-              constructor_ = other.constructor_;
-              bitField0_ = (bitField0_ & ~0x00000002);
-            } else {
-              ensureConstructorIsMutable();
-              constructor_.addAll(other.constructor_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.constructor_.isEmpty()) {
-            if (constructorBuilder_.isEmpty()) {
-              constructorBuilder_.dispose();
-              constructorBuilder_ = null;
-              constructor_ = other.constructor_;
-              bitField0_ = (bitField0_ & ~0x00000002);
-              constructorBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   getConstructorFieldBuilder() : null;
-            } else {
-              constructorBuilder_.addAllMessages(other.constructor_);
-            }
-          }
-        }
         if (functionBuilder_ == null) {
           if (!other.function_.isEmpty()) {
             if (function_.isEmpty()) {
               function_ = other.function_;
-              bitField0_ = (bitField0_ & ~0x00000004);
+              bitField0_ = (bitField0_ & ~0x00000001);
             } else {
               ensureFunctionIsMutable();
               function_.addAll(other.function_);
@@ -14035,7 +12050,7 @@ public final class DebugProtoBuf {
               functionBuilder_.dispose();
               functionBuilder_ = null;
               function_ = other.function_;
-              bitField0_ = (bitField0_ & ~0x00000004);
+              bitField0_ = (bitField0_ & ~0x00000001);
               functionBuilder_ = 
                 com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getFunctionFieldBuilder() : null;
@@ -14048,7 +12063,7 @@ public final class DebugProtoBuf {
           if (!other.property_.isEmpty()) {
             if (property_.isEmpty()) {
               property_ = other.property_;
-              bitField0_ = (bitField0_ & ~0x00000008);
+              bitField0_ = (bitField0_ & ~0x00000002);
             } else {
               ensurePropertyIsMutable();
               property_.addAll(other.property_);
@@ -14061,7 +12076,7 @@ public final class DebugProtoBuf {
               propertyBuilder_.dispose();
               propertyBuilder_ = null;
               property_ = other.property_;
-              bitField0_ = (bitField0_ & ~0x00000008);
+              bitField0_ = (bitField0_ & ~0x00000002);
               propertyBuilder_ = 
                 com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getPropertyFieldBuilder() : null;
@@ -14076,18 +12091,6 @@ public final class DebugProtoBuf {
       }
 
       public final boolean isInitialized() {
-        for (int i = 0; i < getMemberCount(); i++) {
-          if (!getMember(i).isInitialized()) {
-            
-            return false;
-          }
-        }
-        for (int i = 0; i < getConstructorCount(); i++) {
-          if (!getConstructor(i).isInitialized()) {
-            
-            return false;
-          }
-        }
         for (int i = 0; i < getFunctionCount(); i++) {
           if (!getFunction(i).isInitialized()) {
             
@@ -14126,493 +12129,13 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // repeated .org.jetbrains.kotlin.serialization.Callable member = 1;
-      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> member_ =
-        java.util.Collections.emptyList();
-      private void ensureMemberIsMutable() {
-        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-          member_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable>(member_);
-          bitField0_ |= 0x00000001;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> memberBuilder_;
-
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> getMemberList() {
-        if (memberBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(member_);
-        } else {
-          return memberBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public int getMemberCount() {
-        if (memberBuilder_ == null) {
-          return member_.size();
-        } else {
-          return memberBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getMember(int index) {
-        if (memberBuilder_ == null) {
-          return member_.get(index);
-        } else {
-          return memberBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public Builder setMember(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
-        if (memberBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureMemberIsMutable();
-          member_.set(index, value);
-          onChanged();
-        } else {
-          memberBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public Builder setMember(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder builderForValue) {
-        if (memberBuilder_ == null) {
-          ensureMemberIsMutable();
-          member_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          memberBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public Builder addMember(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
-        if (memberBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureMemberIsMutable();
-          member_.add(value);
-          onChanged();
-        } else {
-          memberBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public Builder addMember(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable value) {
-        if (memberBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureMemberIsMutable();
-          member_.add(index, value);
-          onChanged();
-        } else {
-          memberBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public Builder addMember(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder builderForValue) {
-        if (memberBuilder_ == null) {
-          ensureMemberIsMutable();
-          member_.add(builderForValue.build());
-          onChanged();
-        } else {
-          memberBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public Builder addMember(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder builderForValue) {
-        if (memberBuilder_ == null) {
-          ensureMemberIsMutable();
-          member_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          memberBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public Builder addAllMember(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable> values) {
-        if (memberBuilder_ == null) {
-          ensureMemberIsMutable();
-          super.addAll(values, member_);
-          onChanged();
-        } else {
-          memberBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public Builder clearMember() {
-        if (memberBuilder_ == null) {
-          member_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
-          onChanged();
-        } else {
-          memberBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public Builder removeMember(int index) {
-        if (memberBuilder_ == null) {
-          ensureMemberIsMutable();
-          member_.remove(index);
-          onChanged();
-        } else {
-          memberBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder getMemberBuilder(
-          int index) {
-        return getMemberFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getMemberOrBuilder(
-          int index) {
-        if (memberBuilder_ == null) {
-          return member_.get(index);  } else {
-          return memberBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-           getMemberOrBuilderList() {
-        if (memberBuilder_ != null) {
-          return memberBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(member_);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder addMemberBuilder() {
-        return getMemberFieldBuilder().addBuilder(
-            org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder addMemberBuilder(
-          int index) {
-        return getMemberFieldBuilder().addBuilder(
-            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Callable member = 1;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder> 
-           getMemberBuilderList() {
-        return getMemberFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder> 
-          getMemberFieldBuilder() {
-        if (memberBuilder_ == null) {
-          memberBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder>(
-                  member_,
-                  ((bitField0_ & 0x00000001) == 0x00000001),
-                  getParentForChildren(),
-                  isClean());
-          member_ = null;
-        }
-        return memberBuilder_;
-      }
-
-      // repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;
-      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor> constructor_ =
-        java.util.Collections.emptyList();
-      private void ensureConstructorIsMutable() {
-        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-          constructor_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor>(constructor_);
-          bitField0_ |= 0x00000002;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder> constructorBuilder_;
-
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor> getConstructorList() {
-        if (constructorBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(constructor_);
-        } else {
-          return constructorBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public int getConstructorCount() {
-        if (constructorBuilder_ == null) {
-          return constructor_.size();
-        } else {
-          return constructorBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor getConstructor(int index) {
-        if (constructorBuilder_ == null) {
-          return constructor_.get(index);
-        } else {
-          return constructorBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public Builder setConstructor(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor value) {
-        if (constructorBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureConstructorIsMutable();
-          constructor_.set(index, value);
-          onChanged();
-        } else {
-          constructorBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public Builder setConstructor(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder builderForValue) {
-        if (constructorBuilder_ == null) {
-          ensureConstructorIsMutable();
-          constructor_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          constructorBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public Builder addConstructor(org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor value) {
-        if (constructorBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureConstructorIsMutable();
-          constructor_.add(value);
-          onChanged();
-        } else {
-          constructorBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public Builder addConstructor(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor value) {
-        if (constructorBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureConstructorIsMutable();
-          constructor_.add(index, value);
-          onChanged();
-        } else {
-          constructorBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public Builder addConstructor(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder builderForValue) {
-        if (constructorBuilder_ == null) {
-          ensureConstructorIsMutable();
-          constructor_.add(builderForValue.build());
-          onChanged();
-        } else {
-          constructorBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public Builder addConstructor(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder builderForValue) {
-        if (constructorBuilder_ == null) {
-          ensureConstructorIsMutable();
-          constructor_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          constructorBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public Builder addAllConstructor(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor> values) {
-        if (constructorBuilder_ == null) {
-          ensureConstructorIsMutable();
-          super.addAll(values, constructor_);
-          onChanged();
-        } else {
-          constructorBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public Builder clearConstructor() {
-        if (constructorBuilder_ == null) {
-          constructor_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
-          onChanged();
-        } else {
-          constructorBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public Builder removeConstructor(int index) {
-        if (constructorBuilder_ == null) {
-          ensureConstructorIsMutable();
-          constructor_.remove(index);
-          onChanged();
-        } else {
-          constructorBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder getConstructorBuilder(
-          int index) {
-        return getConstructorFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder getConstructorOrBuilder(
-          int index) {
-        if (constructorBuilder_ == null) {
-          return constructor_.get(index);  } else {
-          return constructorBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder> 
-           getConstructorOrBuilderList() {
-        if (constructorBuilder_ != null) {
-          return constructorBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(constructor_);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder addConstructorBuilder() {
-        return getConstructorFieldBuilder().addBuilder(
-            org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder addConstructorBuilder(
-          int index) {
-        return getConstructorFieldBuilder().addBuilder(
-            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.Constructor constructor = 2;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder> 
-           getConstructorBuilderList() {
-        return getConstructorFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder> 
-          getConstructorFieldBuilder() {
-        if (constructorBuilder_ == null) {
-          constructorBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor, org.jetbrains.kotlin.serialization.DebugProtoBuf.Constructor.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ConstructorOrBuilder>(
-                  constructor_,
-                  ((bitField0_ & 0x00000002) == 0x00000002),
-                  getParentForChildren(),
-                  isClean());
-          constructor_ = null;
-        }
-        return constructorBuilder_;
-      }
-
       // repeated .org.jetbrains.kotlin.serialization.Function function = 3;
       private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Function> function_ =
         java.util.Collections.emptyList();
       private void ensureFunctionIsMutable() {
-        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
           function_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Function>(function_);
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000001;
          }
       }
 
@@ -14761,7 +12284,7 @@ public final class DebugProtoBuf {
       public Builder clearFunction() {
         if (functionBuilder_ == null) {
           function_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000001);
           onChanged();
         } else {
           functionBuilder_.clear();
@@ -14838,7 +12361,7 @@ public final class DebugProtoBuf {
           functionBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Function, org.jetbrains.kotlin.serialization.DebugProtoBuf.Function.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.FunctionOrBuilder>(
                   function_,
-                  ((bitField0_ & 0x00000004) == 0x00000004),
+                  ((bitField0_ & 0x00000001) == 0x00000001),
                   getParentForChildren(),
                   isClean());
           function_ = null;
@@ -14850,9 +12373,9 @@ public final class DebugProtoBuf {
       private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Property> property_ =
         java.util.Collections.emptyList();
       private void ensurePropertyIsMutable() {
-        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
           property_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.Property>(property_);
-          bitField0_ |= 0x00000008;
+          bitField0_ |= 0x00000002;
          }
       }
 
@@ -15001,7 +12524,7 @@ public final class DebugProtoBuf {
       public Builder clearProperty() {
         if (propertyBuilder_ == null) {
           property_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000002);
           onChanged();
         } else {
           propertyBuilder_.clear();
@@ -15078,7 +12601,7 @@ public final class DebugProtoBuf {
           propertyBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.serialization.DebugProtoBuf.Property, org.jetbrains.kotlin.serialization.DebugProtoBuf.Property.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.PropertyOrBuilder>(
                   property_,
-                  ((bitField0_ & 0x00000008) == 0x00000008),
+                  ((bitField0_ & 0x00000002) == 0x00000002),
                   getParentForChildren(),
                   isClean());
           property_ = null;
@@ -15101,9 +12624,9 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Constructor> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -15114,7 +12637,7 @@ public final class DebugProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -15257,11 +12780,11 @@ public final class DebugProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -15274,7 +12797,7 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -15324,7 +12847,7 @@ public final class DebugProtoBuf {
     }
 
     private void initFields() {
-      flags_ = 0;
+      flags_ = 6;
       valueParameter_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
@@ -15494,7 +13017,7 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000001);
         if (valueParameterBuilder_ == null) {
           valueParameter_ = java.util.Collections.emptyList();
@@ -15626,10 +13149,10 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 6];
+      private int flags_ = 6;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -15642,7 +13165,7 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -15655,7 +13178,7 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -15671,7 +13194,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -15682,7 +13205,7 @@ public final class DebugProtoBuf {
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 6;
         onChanged();
         return this;
       }
@@ -15942,9 +13465,9 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Function> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -15958,7 +13481,7 @@ public final class DebugProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -16209,11 +13732,11 @@ public final class DebugProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 6];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -16229,7 +13752,7 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 6];</code>
      *
      * <pre>
      *
@@ -16378,7 +13901,7 @@ public final class DebugProtoBuf {
     }
 
     private void initFields() {
-      flags_ = 0;
+      flags_ = 6;
       name_ = 0;
       returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
       typeParameter_ = java.util.Collections.emptyList();
@@ -16607,7 +14130,7 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000001);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -16847,10 +14370,10 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 6];
+      private int flags_ = 6;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -16866,7 +14389,7 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -16882,7 +14405,7 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -16901,7 +14424,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 6];</code>
        *
        * <pre>
        *
@@ -16915,7 +14438,7 @@ public final class DebugProtoBuf {
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 6;
         onChanged();
         return this;
       }
@@ -17682,9 +15205,9 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Property> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 262];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -17702,7 +15225,7 @@ public final class DebugProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -17994,11 +15517,11 @@ public final class DebugProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 262];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -18018,7 +15541,7 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 262];</code>
      *
      * <pre>
      *
@@ -18205,7 +15728,7 @@ public final class DebugProtoBuf {
     }
 
     private void initFields() {
-      flags_ = 0;
+      flags_ = 262;
       name_ = 0;
       returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
       typeParameter_ = java.util.Collections.emptyList();
@@ -18450,7 +15973,7 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 0;
+        flags_ = 262;
         bitField0_ = (bitField0_ & ~0x00000001);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -18684,10 +16207,10 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
-      private int flags_ ;
+      // optional int32 flags = 1 [default = 262];
+      private int flags_ = 262;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -18707,7 +16230,7 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -18727,7 +16250,7 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -18750,7 +16273,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 262];</code>
        *
        * <pre>
        *
@@ -18768,7 +16291,7 @@ public final class DebugProtoBuf {
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
+        flags_ = 262;
         onChanged();
         return this;
       }
@@ -19506,2139 +17029,13 @@ public final class DebugProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Property)
   }
 
-  public interface CallableOrBuilder extends
-      com.google.protobuf.GeneratedMessage.
-          ExtendableMessageOrBuilder<Callable> {
-
-    // optional int32 flags = 1;
-    /**
-     * <code>optional int32 flags = 1;</code>
-     *
-     * <pre>
-     *
-     *Visibility
-     *Modality
-     *hasAnnotations
-     *CallableKind
-     *MemberKind
-     *hasGetter
-     *hasSetter
-     *hasConstant
-     *isConst
-     *lateinit
-     *isOperator
-     *isInfix
-     * </pre>
-     */
-    boolean hasFlags();
-    /**
-     * <code>optional int32 flags = 1;</code>
-     *
-     * <pre>
-     *
-     *Visibility
-     *Modality
-     *hasAnnotations
-     *CallableKind
-     *MemberKind
-     *hasGetter
-     *hasSetter
-     *hasConstant
-     *isConst
-     *lateinit
-     *isOperator
-     *isInfix
-     * </pre>
-     */
-    int getFlags();
-
-    // optional int32 getter_flags = 9;
-    /**
-     * <code>optional int32 getter_flags = 9;</code>
-     *
-     * <pre>
-     *
-     *isNotDefault
-     *Visibility
-     *Modality
-     *hasAnnotations
-     * </pre>
-     */
-    boolean hasGetterFlags();
-    /**
-     * <code>optional int32 getter_flags = 9;</code>
-     *
-     * <pre>
-     *
-     *isNotDefault
-     *Visibility
-     *Modality
-     *hasAnnotations
-     * </pre>
-     */
-    int getGetterFlags();
-
-    // optional int32 setter_flags = 10;
-    /**
-     * <code>optional int32 setter_flags = 10;</code>
-     */
-    boolean hasSetterFlags();
-    /**
-     * <code>optional int32 setter_flags = 10;</code>
-     */
-    int getSetterFlags();
-
-    // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-     */
-    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter> 
-        getTypeParameterList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter getTypeParameter(int index);
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-     */
-    int getTypeParameterCount();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-     */
-    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder> 
-        getTypeParameterOrBuilderList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder getTypeParameterOrBuilder(
-        int index);
-
-    // optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-     */
-    boolean hasReceiverType();
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getReceiverType();
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getReceiverTypeOrBuilder();
-
-    // required int32 name = 6;
-    /**
-     * <code>required int32 name = 6;</code>
-     */
-    boolean hasName();
-    /**
-     * <code>required int32 name = 6;</code>
-     */
-    int getName();
-
-    // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-     *
-     * <pre>
-     * Value parameters for functions and constructors, or setter value parameter for properties
-     * </pre>
-     */
-    java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter> 
-        getValueParameterList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-     *
-     * <pre>
-     * Value parameters for functions and constructors, or setter value parameter for properties
-     * </pre>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter getValueParameter(int index);
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-     *
-     * <pre>
-     * Value parameters for functions and constructors, or setter value parameter for properties
-     * </pre>
-     */
-    int getValueParameterCount();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-     *
-     * <pre>
-     * Value parameters for functions and constructors, or setter value parameter for properties
-     * </pre>
-     */
-    java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder> 
-        getValueParameterOrBuilderList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-     *
-     * <pre>
-     * Value parameters for functions and constructors, or setter value parameter for properties
-     * </pre>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder getValueParameterOrBuilder(
-        int index);
-
-    // required .org.jetbrains.kotlin.serialization.Type return_type = 8;
-    /**
-     * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-     */
-    boolean hasReturnType();
-    /**
-     * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getReturnType();
-    /**
-     * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-     */
-    org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getReturnTypeOrBuilder();
-  }
-  /**
-   * Protobuf type {@code org.jetbrains.kotlin.serialization.Callable}
-   */
-  public static final class Callable extends
-      com.google.protobuf.GeneratedMessage.ExtendableMessage<
-        Callable> implements CallableOrBuilder {
-    // Use Callable.newBuilder() to construct.
-    private Callable(com.google.protobuf.GeneratedMessage.ExtendableBuilder<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, ?> builder) {
-      super(builder);
-      this.unknownFields = builder.getUnknownFields();
-    }
-    private Callable(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final Callable defaultInstance;
-    public static Callable getDefaultInstance() {
-      return defaultInstance;
-    }
-
-    public Callable getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
-      return this.unknownFields;
-    }
-    private Callable(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 8: {
-              bitField0_ |= 0x00000001;
-              flags_ = input.readInt32();
-              break;
-            }
-            case 34: {
-              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-                typeParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter>();
-                mutable_bitField0_ |= 0x00000008;
-              }
-              typeParameter_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.PARSER, extensionRegistry));
-              break;
-            }
-            case 42: {
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000008) == 0x00000008)) {
-                subBuilder = receiverType_.toBuilder();
-              }
-              receiverType_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(receiverType_);
-                receiverType_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000008;
-              break;
-            }
-            case 48: {
-              bitField0_ |= 0x00000010;
-              name_ = input.readInt32();
-              break;
-            }
-            case 58: {
-              if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
-                valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter>();
-                mutable_bitField0_ |= 0x00000040;
-              }
-              valueParameter_.add(input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.PARSER, extensionRegistry));
-              break;
-            }
-            case 66: {
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000020) == 0x00000020)) {
-                subBuilder = returnType_.toBuilder();
-              }
-              returnType_ = input.readMessage(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(returnType_);
-                returnType_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000020;
-              break;
-            }
-            case 72: {
-              bitField0_ |= 0x00000002;
-              getterFlags_ = input.readInt32();
-              break;
-            }
-            case 80: {
-              bitField0_ |= 0x00000004;
-              setterFlags_ = input.readInt32();
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
-      } finally {
-        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-          typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
-        }
-        if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
-          valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
-        }
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Callable_descriptor;
-    }
-
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Callable_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<Callable> PARSER =
-        new com.google.protobuf.AbstractParser<Callable>() {
-      public Callable parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Callable(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<Callable> getParserForType() {
-      return PARSER;
-    }
-
-    private int bitField0_;
-    // optional int32 flags = 1;
-    public static final int FLAGS_FIELD_NUMBER = 1;
-    private int flags_;
-    /**
-     * <code>optional int32 flags = 1;</code>
-     *
-     * <pre>
-     *
-     *Visibility
-     *Modality
-     *hasAnnotations
-     *CallableKind
-     *MemberKind
-     *hasGetter
-     *hasSetter
-     *hasConstant
-     *isConst
-     *lateinit
-     *isOperator
-     *isInfix
-     * </pre>
-     */
-    public boolean hasFlags() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>optional int32 flags = 1;</code>
-     *
-     * <pre>
-     *
-     *Visibility
-     *Modality
-     *hasAnnotations
-     *CallableKind
-     *MemberKind
-     *hasGetter
-     *hasSetter
-     *hasConstant
-     *isConst
-     *lateinit
-     *isOperator
-     *isInfix
-     * </pre>
-     */
-    public int getFlags() {
-      return flags_;
-    }
-
-    // optional int32 getter_flags = 9;
-    public static final int GETTER_FLAGS_FIELD_NUMBER = 9;
-    private int getterFlags_;
-    /**
-     * <code>optional int32 getter_flags = 9;</code>
-     *
-     * <pre>
-     *
-     *isNotDefault
-     *Visibility
-     *Modality
-     *hasAnnotations
-     * </pre>
-     */
-    public boolean hasGetterFlags() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>optional int32 getter_flags = 9;</code>
-     *
-     * <pre>
-     *
-     *isNotDefault
-     *Visibility
-     *Modality
-     *hasAnnotations
-     * </pre>
-     */
-    public int getGetterFlags() {
-      return getterFlags_;
-    }
-
-    // optional int32 setter_flags = 10;
-    public static final int SETTER_FLAGS_FIELD_NUMBER = 10;
-    private int setterFlags_;
-    /**
-     * <code>optional int32 setter_flags = 10;</code>
-     */
-    public boolean hasSetterFlags() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional int32 setter_flags = 10;</code>
-     */
-    public int getSetterFlags() {
-      return setterFlags_;
-    }
-
-    // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;
-    public static final int TYPE_PARAMETER_FIELD_NUMBER = 4;
-    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter> typeParameter_;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-     */
-    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter> getTypeParameterList() {
-      return typeParameter_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-     */
-    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder> 
-        getTypeParameterOrBuilderList() {
-      return typeParameter_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-     */
-    public int getTypeParameterCount() {
-      return typeParameter_.size();
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter getTypeParameter(int index) {
-      return typeParameter_.get(index);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder getTypeParameterOrBuilder(
-        int index) {
-      return typeParameter_.get(index);
-    }
-
-    // optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;
-    public static final int RECEIVER_TYPE_FIELD_NUMBER = 5;
-    private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type receiverType_;
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-     */
-    public boolean hasReceiverType() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getReceiverType() {
-      return receiverType_;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getReceiverTypeOrBuilder() {
-      return receiverType_;
-    }
-
-    // required int32 name = 6;
-    public static final int NAME_FIELD_NUMBER = 6;
-    private int name_;
-    /**
-     * <code>required int32 name = 6;</code>
-     */
-    public boolean hasName() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    /**
-     * <code>required int32 name = 6;</code>
-     */
-    public int getName() {
-      return name_;
-    }
-
-    // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;
-    public static final int VALUE_PARAMETER_FIELD_NUMBER = 7;
-    private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter> valueParameter_;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-     *
-     * <pre>
-     * Value parameters for functions and constructors, or setter value parameter for properties
-     * </pre>
-     */
-    public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter> getValueParameterList() {
-      return valueParameter_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-     *
-     * <pre>
-     * Value parameters for functions and constructors, or setter value parameter for properties
-     * </pre>
-     */
-    public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder> 
-        getValueParameterOrBuilderList() {
-      return valueParameter_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-     *
-     * <pre>
-     * Value parameters for functions and constructors, or setter value parameter for properties
-     * </pre>
-     */
-    public int getValueParameterCount() {
-      return valueParameter_.size();
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-     *
-     * <pre>
-     * Value parameters for functions and constructors, or setter value parameter for properties
-     * </pre>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter getValueParameter(int index) {
-      return valueParameter_.get(index);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-     *
-     * <pre>
-     * Value parameters for functions and constructors, or setter value parameter for properties
-     * </pre>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder getValueParameterOrBuilder(
-        int index) {
-      return valueParameter_.get(index);
-    }
-
-    // required .org.jetbrains.kotlin.serialization.Type return_type = 8;
-    public static final int RETURN_TYPE_FIELD_NUMBER = 8;
-    private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type returnType_;
-    /**
-     * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-     */
-    public boolean hasReturnType() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getReturnType() {
-      return returnType_;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-     */
-    public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getReturnTypeOrBuilder() {
-      return returnType_;
-    }
-
-    private void initFields() {
-      flags_ = 0;
-      getterFlags_ = 0;
-      setterFlags_ = 0;
-      typeParameter_ = java.util.Collections.emptyList();
-      receiverType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-      name_ = 0;
-      valueParameter_ = java.util.Collections.emptyList();
-      returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-    }
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
-
-      if (!hasName()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasReturnType()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      for (int i = 0; i < getTypeParameterCount(); i++) {
-        if (!getTypeParameter(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      if (hasReceiverType()) {
-        if (!getReceiverType().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      for (int i = 0; i < getValueParameterCount(); i++) {
-        if (!getValueParameter(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      if (!getReturnType().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!extensionsAreInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      getSerializedSize();
-      com.google.protobuf.GeneratedMessage
-        .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable>.ExtensionWriter extensionWriter =
-          newExtensionWriter();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt32(1, flags_);
-      }
-      for (int i = 0; i < typeParameter_.size(); i++) {
-        output.writeMessage(4, typeParameter_.get(i));
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeMessage(5, receiverType_);
-      }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        output.writeInt32(6, name_);
-      }
-      for (int i = 0; i < valueParameter_.size(); i++) {
-        output.writeMessage(7, valueParameter_.get(i));
-      }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        output.writeMessage(8, returnType_);
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(9, getterFlags_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt32(10, setterFlags_);
-      }
-      extensionWriter.writeUntil(200, output);
-      getUnknownFields().writeTo(output);
-    }
-
-    private int memoizedSerializedSize = -1;
-    public int getSerializedSize() {
-      int size = memoizedSerializedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, flags_);
-      }
-      for (int i = 0; i < typeParameter_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(4, typeParameter_.get(i));
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(5, receiverType_);
-      }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(6, name_);
-      }
-      for (int i = 0; i < valueParameter_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, valueParameter_.get(i));
-      }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, returnType_);
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(9, getterFlags_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(10, setterFlags_);
-      }
-      size += extensionsSerializedSize();
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
-      return size;
-    }
-
-    private static final long serialVersionUID = 0L;
-    @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
-    }
-
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
-    }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() { return Builder.create(); }
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable prototype) {
-      return newBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() { return newBuilder(this); }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code org.jetbrains.kotlin.serialization.Callable}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.ExtendableBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable, Builder> implements org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Callable_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Callable_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.class, org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.Builder.class);
-      }
-
-      // Construct using org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-          getTypeParameterFieldBuilder();
-          getReceiverTypeFieldBuilder();
-          getValueParameterFieldBuilder();
-          getReturnTypeFieldBuilder();
-        }
-      }
-      private static Builder create() {
-        return new Builder();
-      }
-
-      public Builder clear() {
-        super.clear();
-        flags_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        getterFlags_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000002);
-        setterFlags_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000004);
-        if (typeParameterBuilder_ == null) {
-          typeParameter_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
-        } else {
-          typeParameterBuilder_.clear();
-        }
-        if (receiverTypeBuilder_ == null) {
-          receiverType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-        } else {
-          receiverTypeBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000010);
-        name_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000020);
-        if (valueParameterBuilder_ == null) {
-          valueParameter_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000040);
-        } else {
-          valueParameterBuilder_.clear();
-        }
-        if (returnTypeBuilder_ == null) {
-          returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-        } else {
-          returnTypeBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000080);
-        return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
-      }
-
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.internal_static_org_jetbrains_kotlin_serialization_Callable_descriptor;
-      }
-
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable getDefaultInstanceForType() {
-        return org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance();
-      }
-
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable build() {
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable buildPartial() {
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable result = new org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
-        result.flags_ = flags_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
-        result.getterFlags_ = getterFlags_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.setterFlags_ = setterFlags_;
-        if (typeParameterBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) == 0x00000008)) {
-            typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
-            bitField0_ = (bitField0_ & ~0x00000008);
-          }
-          result.typeParameter_ = typeParameter_;
-        } else {
-          result.typeParameter_ = typeParameterBuilder_.build();
-        }
-        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-          to_bitField0_ |= 0x00000008;
-        }
-        if (receiverTypeBuilder_ == null) {
-          result.receiverType_ = receiverType_;
-        } else {
-          result.receiverType_ = receiverTypeBuilder_.build();
-        }
-        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-          to_bitField0_ |= 0x00000010;
-        }
-        result.name_ = name_;
-        if (valueParameterBuilder_ == null) {
-          if (((bitField0_ & 0x00000040) == 0x00000040)) {
-            valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
-            bitField0_ = (bitField0_ & ~0x00000040);
-          }
-          result.valueParameter_ = valueParameter_;
-        } else {
-          result.valueParameter_ = valueParameterBuilder_.build();
-        }
-        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-          to_bitField0_ |= 0x00000020;
-        }
-        if (returnTypeBuilder_ == null) {
-          result.returnType_ = returnType_;
-        } else {
-          result.returnType_ = returnTypeBuilder_.build();
-        }
-        result.bitField0_ = to_bitField0_;
-        onBuilt();
-        return result;
-      }
-
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable) {
-          return mergeFrom((org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable other) {
-        if (other == org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable.getDefaultInstance()) return this;
-        if (other.hasFlags()) {
-          setFlags(other.getFlags());
-        }
-        if (other.hasGetterFlags()) {
-          setGetterFlags(other.getGetterFlags());
-        }
-        if (other.hasSetterFlags()) {
-          setSetterFlags(other.getSetterFlags());
-        }
-        if (typeParameterBuilder_ == null) {
-          if (!other.typeParameter_.isEmpty()) {
-            if (typeParameter_.isEmpty()) {
-              typeParameter_ = other.typeParameter_;
-              bitField0_ = (bitField0_ & ~0x00000008);
-            } else {
-              ensureTypeParameterIsMutable();
-              typeParameter_.addAll(other.typeParameter_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.typeParameter_.isEmpty()) {
-            if (typeParameterBuilder_.isEmpty()) {
-              typeParameterBuilder_.dispose();
-              typeParameterBuilder_ = null;
-              typeParameter_ = other.typeParameter_;
-              bitField0_ = (bitField0_ & ~0x00000008);
-              typeParameterBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   getTypeParameterFieldBuilder() : null;
-            } else {
-              typeParameterBuilder_.addAllMessages(other.typeParameter_);
-            }
-          }
-        }
-        if (other.hasReceiverType()) {
-          mergeReceiverType(other.getReceiverType());
-        }
-        if (other.hasName()) {
-          setName(other.getName());
-        }
-        if (valueParameterBuilder_ == null) {
-          if (!other.valueParameter_.isEmpty()) {
-            if (valueParameter_.isEmpty()) {
-              valueParameter_ = other.valueParameter_;
-              bitField0_ = (bitField0_ & ~0x00000040);
-            } else {
-              ensureValueParameterIsMutable();
-              valueParameter_.addAll(other.valueParameter_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.valueParameter_.isEmpty()) {
-            if (valueParameterBuilder_.isEmpty()) {
-              valueParameterBuilder_.dispose();
-              valueParameterBuilder_ = null;
-              valueParameter_ = other.valueParameter_;
-              bitField0_ = (bitField0_ & ~0x00000040);
-              valueParameterBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   getValueParameterFieldBuilder() : null;
-            } else {
-              valueParameterBuilder_.addAllMessages(other.valueParameter_);
-            }
-          }
-        }
-        if (other.hasReturnType()) {
-          mergeReturnType(other.getReturnType());
-        }
-        this.mergeExtensionFields(other);
-        this.mergeUnknownFields(other.getUnknownFields());
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        if (!hasName()) {
-          
-          return false;
-        }
-        if (!hasReturnType()) {
-          
-          return false;
-        }
-        for (int i = 0; i < getTypeParameterCount(); i++) {
-          if (!getTypeParameter(i).isInitialized()) {
-            
-            return false;
-          }
-        }
-        if (hasReceiverType()) {
-          if (!getReceiverType().isInitialized()) {
-            
-            return false;
-          }
-        }
-        for (int i = 0; i < getValueParameterCount(); i++) {
-          if (!getValueParameter(i).isInitialized()) {
-            
-            return false;
-          }
-        }
-        if (!getReturnType().isInitialized()) {
-          
-          return false;
-        }
-        if (!extensionsAreInitialized()) {
-          
-          return false;
-        }
-        return true;
-      }
-
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.jetbrains.kotlin.serialization.DebugProtoBuf.Callable) e.getUnfinishedMessage();
-          throw e;
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-      private int bitField0_;
-
-      // optional int32 flags = 1;
-      private int flags_ ;
-      /**
-       * <code>optional int32 flags = 1;</code>
-       *
-       * <pre>
-       *
-       *Visibility
-       *Modality
-       *hasAnnotations
-       *CallableKind
-       *MemberKind
-       *hasGetter
-       *hasSetter
-       *hasConstant
-       *isConst
-       *lateinit
-       *isOperator
-       *isInfix
-       * </pre>
-       */
-      public boolean hasFlags() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>optional int32 flags = 1;</code>
-       *
-       * <pre>
-       *
-       *Visibility
-       *Modality
-       *hasAnnotations
-       *CallableKind
-       *MemberKind
-       *hasGetter
-       *hasSetter
-       *hasConstant
-       *isConst
-       *lateinit
-       *isOperator
-       *isInfix
-       * </pre>
-       */
-      public int getFlags() {
-        return flags_;
-      }
-      /**
-       * <code>optional int32 flags = 1;</code>
-       *
-       * <pre>
-       *
-       *Visibility
-       *Modality
-       *hasAnnotations
-       *CallableKind
-       *MemberKind
-       *hasGetter
-       *hasSetter
-       *hasConstant
-       *isConst
-       *lateinit
-       *isOperator
-       *isInfix
-       * </pre>
-       */
-      public Builder setFlags(int value) {
-        bitField0_ |= 0x00000001;
-        flags_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int32 flags = 1;</code>
-       *
-       * <pre>
-       *
-       *Visibility
-       *Modality
-       *hasAnnotations
-       *CallableKind
-       *MemberKind
-       *hasGetter
-       *hasSetter
-       *hasConstant
-       *isConst
-       *lateinit
-       *isOperator
-       *isInfix
-       * </pre>
-       */
-      public Builder clearFlags() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 0;
-        onChanged();
-        return this;
-      }
-
-      // optional int32 getter_flags = 9;
-      private int getterFlags_ ;
-      /**
-       * <code>optional int32 getter_flags = 9;</code>
-       *
-       * <pre>
-       *
-       *isNotDefault
-       *Visibility
-       *Modality
-       *hasAnnotations
-       * </pre>
-       */
-      public boolean hasGetterFlags() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>optional int32 getter_flags = 9;</code>
-       *
-       * <pre>
-       *
-       *isNotDefault
-       *Visibility
-       *Modality
-       *hasAnnotations
-       * </pre>
-       */
-      public int getGetterFlags() {
-        return getterFlags_;
-      }
-      /**
-       * <code>optional int32 getter_flags = 9;</code>
-       *
-       * <pre>
-       *
-       *isNotDefault
-       *Visibility
-       *Modality
-       *hasAnnotations
-       * </pre>
-       */
-      public Builder setGetterFlags(int value) {
-        bitField0_ |= 0x00000002;
-        getterFlags_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int32 getter_flags = 9;</code>
-       *
-       * <pre>
-       *
-       *isNotDefault
-       *Visibility
-       *Modality
-       *hasAnnotations
-       * </pre>
-       */
-      public Builder clearGetterFlags() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        getterFlags_ = 0;
-        onChanged();
-        return this;
-      }
-
-      // optional int32 setter_flags = 10;
-      private int setterFlags_ ;
-      /**
-       * <code>optional int32 setter_flags = 10;</code>
-       */
-      public boolean hasSetterFlags() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional int32 setter_flags = 10;</code>
-       */
-      public int getSetterFlags() {
-        return setterFlags_;
-      }
-      /**
-       * <code>optional int32 setter_flags = 10;</code>
-       */
-      public Builder setSetterFlags(int value) {
-        bitField0_ |= 0x00000004;
-        setterFlags_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int32 setter_flags = 10;</code>
-       */
-      public Builder clearSetterFlags() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        setterFlags_ = 0;
-        onChanged();
-        return this;
-      }
-
-      // repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;
-      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter> typeParameter_ =
-        java.util.Collections.emptyList();
-      private void ensureTypeParameterIsMutable() {
-        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
-          typeParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter>(typeParameter_);
-          bitField0_ |= 0x00000008;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder> typeParameterBuilder_;
-
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter> getTypeParameterList() {
-        if (typeParameterBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(typeParameter_);
-        } else {
-          return typeParameterBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public int getTypeParameterCount() {
-        if (typeParameterBuilder_ == null) {
-          return typeParameter_.size();
-        } else {
-          return typeParameterBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter getTypeParameter(int index) {
-        if (typeParameterBuilder_ == null) {
-          return typeParameter_.get(index);
-        } else {
-          return typeParameterBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public Builder setTypeParameter(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter value) {
-        if (typeParameterBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureTypeParameterIsMutable();
-          typeParameter_.set(index, value);
-          onChanged();
-        } else {
-          typeParameterBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public Builder setTypeParameter(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder builderForValue) {
-        if (typeParameterBuilder_ == null) {
-          ensureTypeParameterIsMutable();
-          typeParameter_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          typeParameterBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public Builder addTypeParameter(org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter value) {
-        if (typeParameterBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureTypeParameterIsMutable();
-          typeParameter_.add(value);
-          onChanged();
-        } else {
-          typeParameterBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public Builder addTypeParameter(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter value) {
-        if (typeParameterBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureTypeParameterIsMutable();
-          typeParameter_.add(index, value);
-          onChanged();
-        } else {
-          typeParameterBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public Builder addTypeParameter(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder builderForValue) {
-        if (typeParameterBuilder_ == null) {
-          ensureTypeParameterIsMutable();
-          typeParameter_.add(builderForValue.build());
-          onChanged();
-        } else {
-          typeParameterBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public Builder addTypeParameter(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder builderForValue) {
-        if (typeParameterBuilder_ == null) {
-          ensureTypeParameterIsMutable();
-          typeParameter_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          typeParameterBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public Builder addAllTypeParameter(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter> values) {
-        if (typeParameterBuilder_ == null) {
-          ensureTypeParameterIsMutable();
-          super.addAll(values, typeParameter_);
-          onChanged();
-        } else {
-          typeParameterBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public Builder clearTypeParameter() {
-        if (typeParameterBuilder_ == null) {
-          typeParameter_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
-          onChanged();
-        } else {
-          typeParameterBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public Builder removeTypeParameter(int index) {
-        if (typeParameterBuilder_ == null) {
-          ensureTypeParameterIsMutable();
-          typeParameter_.remove(index);
-          onChanged();
-        } else {
-          typeParameterBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder getTypeParameterBuilder(
-          int index) {
-        return getTypeParameterFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder getTypeParameterOrBuilder(
-          int index) {
-        if (typeParameterBuilder_ == null) {
-          return typeParameter_.get(index);  } else {
-          return typeParameterBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder> 
-           getTypeParameterOrBuilderList() {
-        if (typeParameterBuilder_ != null) {
-          return typeParameterBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(typeParameter_);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder addTypeParameterBuilder() {
-        return getTypeParameterFieldBuilder().addBuilder(
-            org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder addTypeParameterBuilder(
-          int index) {
-        return getTypeParameterFieldBuilder().addBuilder(
-            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.TypeParameter type_parameter = 4;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder> 
-           getTypeParameterBuilderList() {
-        return getTypeParameterFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder> 
-          getTypeParameterFieldBuilder() {
-        if (typeParameterBuilder_ == null) {
-          typeParameterBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameterOrBuilder>(
-                  typeParameter_,
-                  ((bitField0_ & 0x00000008) == 0x00000008),
-                  getParentForChildren(),
-                  isClean());
-          typeParameter_ = null;
-        }
-        return typeParameterBuilder_;
-      }
-
-      // optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;
-      private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type receiverType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> receiverTypeBuilder_;
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-       */
-      public boolean hasReceiverType() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getReceiverType() {
-        if (receiverTypeBuilder_ == null) {
-          return receiverType_;
-        } else {
-          return receiverTypeBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-       */
-      public Builder setReceiverType(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type value) {
-        if (receiverTypeBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          receiverType_ = value;
-          onChanged();
-        } else {
-          receiverTypeBuilder_.setMessage(value);
-        }
-        bitField0_ |= 0x00000010;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-       */
-      public Builder setReceiverType(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder builderForValue) {
-        if (receiverTypeBuilder_ == null) {
-          receiverType_ = builderForValue.build();
-          onChanged();
-        } else {
-          receiverTypeBuilder_.setMessage(builderForValue.build());
-        }
-        bitField0_ |= 0x00000010;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-       */
-      public Builder mergeReceiverType(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type value) {
-        if (receiverTypeBuilder_ == null) {
-          if (((bitField0_ & 0x00000010) == 0x00000010) &&
-              receiverType_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance()) {
-            receiverType_ =
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.newBuilder(receiverType_).mergeFrom(value).buildPartial();
-          } else {
-            receiverType_ = value;
-          }
-          onChanged();
-        } else {
-          receiverTypeBuilder_.mergeFrom(value);
-        }
-        bitField0_ |= 0x00000010;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-       */
-      public Builder clearReceiverType() {
-        if (receiverTypeBuilder_ == null) {
-          receiverType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-          onChanged();
-        } else {
-          receiverTypeBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000010);
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder getReceiverTypeBuilder() {
-        bitField0_ |= 0x00000010;
-        onChanged();
-        return getReceiverTypeFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getReceiverTypeOrBuilder() {
-        if (receiverTypeBuilder_ != null) {
-          return receiverTypeBuilder_.getMessageOrBuilder();
-        } else {
-          return receiverType_;
-        }
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.serialization.Type receiver_type = 5;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
-          getReceiverTypeFieldBuilder() {
-        if (receiverTypeBuilder_ == null) {
-          receiverTypeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
-                  receiverType_,
-                  getParentForChildren(),
-                  isClean());
-          receiverType_ = null;
-        }
-        return receiverTypeBuilder_;
-      }
-
-      // required int32 name = 6;
-      private int name_ ;
-      /**
-       * <code>required int32 name = 6;</code>
-       */
-      public boolean hasName() {
-        return ((bitField0_ & 0x00000020) == 0x00000020);
-      }
-      /**
-       * <code>required int32 name = 6;</code>
-       */
-      public int getName() {
-        return name_;
-      }
-      /**
-       * <code>required int32 name = 6;</code>
-       */
-      public Builder setName(int value) {
-        bitField0_ |= 0x00000020;
-        name_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required int32 name = 6;</code>
-       */
-      public Builder clearName() {
-        bitField0_ = (bitField0_ & ~0x00000020);
-        name_ = 0;
-        onChanged();
-        return this;
-      }
-
-      // repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;
-      private java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter> valueParameter_ =
-        java.util.Collections.emptyList();
-      private void ensureValueParameterIsMutable() {
-        if (!((bitField0_ & 0x00000040) == 0x00000040)) {
-          valueParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter>(valueParameter_);
-          bitField0_ |= 0x00000040;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder> valueParameterBuilder_;
-
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter> getValueParameterList() {
-        if (valueParameterBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(valueParameter_);
-        } else {
-          return valueParameterBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public int getValueParameterCount() {
-        if (valueParameterBuilder_ == null) {
-          return valueParameter_.size();
-        } else {
-          return valueParameterBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter getValueParameter(int index) {
-        if (valueParameterBuilder_ == null) {
-          return valueParameter_.get(index);
-        } else {
-          return valueParameterBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public Builder setValueParameter(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter value) {
-        if (valueParameterBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureValueParameterIsMutable();
-          valueParameter_.set(index, value);
-          onChanged();
-        } else {
-          valueParameterBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public Builder setValueParameter(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder builderForValue) {
-        if (valueParameterBuilder_ == null) {
-          ensureValueParameterIsMutable();
-          valueParameter_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          valueParameterBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public Builder addValueParameter(org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter value) {
-        if (valueParameterBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureValueParameterIsMutable();
-          valueParameter_.add(value);
-          onChanged();
-        } else {
-          valueParameterBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public Builder addValueParameter(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter value) {
-        if (valueParameterBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureValueParameterIsMutable();
-          valueParameter_.add(index, value);
-          onChanged();
-        } else {
-          valueParameterBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public Builder addValueParameter(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder builderForValue) {
-        if (valueParameterBuilder_ == null) {
-          ensureValueParameterIsMutable();
-          valueParameter_.add(builderForValue.build());
-          onChanged();
-        } else {
-          valueParameterBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public Builder addValueParameter(
-          int index, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder builderForValue) {
-        if (valueParameterBuilder_ == null) {
-          ensureValueParameterIsMutable();
-          valueParameter_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          valueParameterBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public Builder addAllValueParameter(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter> values) {
-        if (valueParameterBuilder_ == null) {
-          ensureValueParameterIsMutable();
-          super.addAll(values, valueParameter_);
-          onChanged();
-        } else {
-          valueParameterBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public Builder clearValueParameter() {
-        if (valueParameterBuilder_ == null) {
-          valueParameter_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000040);
-          onChanged();
-        } else {
-          valueParameterBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public Builder removeValueParameter(int index) {
-        if (valueParameterBuilder_ == null) {
-          ensureValueParameterIsMutable();
-          valueParameter_.remove(index);
-          onChanged();
-        } else {
-          valueParameterBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder getValueParameterBuilder(
-          int index) {
-        return getValueParameterFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder getValueParameterOrBuilder(
-          int index) {
-        if (valueParameterBuilder_ == null) {
-          return valueParameter_.get(index);  } else {
-          return valueParameterBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public java.util.List<? extends org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder> 
-           getValueParameterOrBuilderList() {
-        if (valueParameterBuilder_ != null) {
-          return valueParameterBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(valueParameter_);
-        }
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder addValueParameterBuilder() {
-        return getValueParameterFieldBuilder().addBuilder(
-            org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder addValueParameterBuilder(
-          int index) {
-        return getValueParameterFieldBuilder().addBuilder(
-            index, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.serialization.ValueParameter value_parameter = 7;</code>
-       *
-       * <pre>
-       * Value parameters for functions and constructors, or setter value parameter for properties
-       * </pre>
-       */
-      public java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder> 
-           getValueParameterBuilderList() {
-        return getValueParameterFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder> 
-          getValueParameterFieldBuilder() {
-        if (valueParameterBuilder_ == null) {
-          valueParameterBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameterOrBuilder>(
-                  valueParameter_,
-                  ((bitField0_ & 0x00000040) == 0x00000040),
-                  getParentForChildren(),
-                  isClean());
-          valueParameter_ = null;
-        }
-        return valueParameterBuilder_;
-      }
-
-      // required .org.jetbrains.kotlin.serialization.Type return_type = 8;
-      private org.jetbrains.kotlin.serialization.DebugProtoBuf.Type returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> returnTypeBuilder_;
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-       */
-      public boolean hasReturnType() {
-        return ((bitField0_ & 0x00000080) == 0x00000080);
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type getReturnType() {
-        if (returnTypeBuilder_ == null) {
-          return returnType_;
-        } else {
-          return returnTypeBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-       */
-      public Builder setReturnType(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type value) {
-        if (returnTypeBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          returnType_ = value;
-          onChanged();
-        } else {
-          returnTypeBuilder_.setMessage(value);
-        }
-        bitField0_ |= 0x00000080;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-       */
-      public Builder setReturnType(
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder builderForValue) {
-        if (returnTypeBuilder_ == null) {
-          returnType_ = builderForValue.build();
-          onChanged();
-        } else {
-          returnTypeBuilder_.setMessage(builderForValue.build());
-        }
-        bitField0_ |= 0x00000080;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-       */
-      public Builder mergeReturnType(org.jetbrains.kotlin.serialization.DebugProtoBuf.Type value) {
-        if (returnTypeBuilder_ == null) {
-          if (((bitField0_ & 0x00000080) == 0x00000080) &&
-              returnType_ != org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance()) {
-            returnType_ =
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.newBuilder(returnType_).mergeFrom(value).buildPartial();
-          } else {
-            returnType_ = value;
-          }
-          onChanged();
-        } else {
-          returnTypeBuilder_.mergeFrom(value);
-        }
-        bitField0_ |= 0x00000080;
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-       */
-      public Builder clearReturnType() {
-        if (returnTypeBuilder_ == null) {
-          returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
-          onChanged();
-        } else {
-          returnTypeBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000080);
-        return this;
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder getReturnTypeBuilder() {
-        bitField0_ |= 0x00000080;
-        onChanged();
-        return getReturnTypeFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-       */
-      public org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getReturnTypeOrBuilder() {
-        if (returnTypeBuilder_ != null) {
-          return returnTypeBuilder_.getMessageOrBuilder();
-        } else {
-          return returnType_;
-        }
-      }
-      /**
-       * <code>required .org.jetbrains.kotlin.serialization.Type return_type = 8;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder> 
-          getReturnTypeFieldBuilder() {
-        if (returnTypeBuilder_ == null) {
-          returnTypeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              org.jetbrains.kotlin.serialization.DebugProtoBuf.Type, org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder>(
-                  returnType_,
-                  getParentForChildren(),
-                  isClean());
-          returnType_ = null;
-        }
-        return returnTypeBuilder_;
-      }
-
-      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.Callable)
-    }
-
-    static {
-      defaultInstance = new Callable(true);
-      defaultInstance.initFields();
-    }
-
-    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Callable)
-  }
-
   public interface ValueParameterOrBuilder extends
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<ValueParameter> {
 
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 0];
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -21648,7 +17045,7 @@ public final class DebugProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -21823,11 +17220,11 @@ public final class DebugProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1;
+    // optional int32 flags = 1 [default = 0];
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -21839,7 +17236,7 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *
@@ -22257,10 +17654,10 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1;
+      // optional int32 flags = 1 [default = 0];
       private int flags_ ;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *
@@ -22272,7 +17669,7 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *
@@ -22284,7 +17681,7 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *
@@ -22299,7 +17696,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *
@@ -22643,11 +18040,6 @@ public final class DebugProtoBuf {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Class_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_jetbrains_kotlin_serialization_Class_PrimaryConstructor_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_org_jetbrains_kotlin_serialization_Class_PrimaryConstructor_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_Package_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -22667,11 +18059,6 @@ public final class DebugProtoBuf {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_Property_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_jetbrains_kotlin_serialization_Callable_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_org_jetbrains_kotlin_serialization_Callable_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_ValueParameter_descriptor;
   private static
@@ -22736,7 +18123,7 @@ public final class DebugProtoBuf {
       "eParameter.Variance:\003INV\022=\n\013upper_bound\030" +
       "\005 \003(\0132(.org.jetbrains.kotlin.serializati" +
       "on.Type\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003",
-      "INV\020\002\"\233\007\n\005Class\022\020\n\005flags\030\001 \001(\005:\0010\022\025\n\007fq_" +
+      "INV\020\002\"\343\004\n\005Class\022\020\n\005flags\030\001 \001(\005:\0016\022\025\n\007fq_" +
       "name\030\003 \002(\005B\004\220\265\030\001\022#\n\025companion_object_nam" +
       "e\030\004 \001(\005B\004\210\265\030\001\022I\n\016type_parameter\030\005 \003(\01321." +
       "org.jetbrains.kotlin.serialization.TypeP" +
@@ -22747,69 +18134,47 @@ public final class DebugProtoBuf {
       "on.Constructor\022>\n\010function\030\t \003(\0132,.org.j" +
       "etbrains.kotlin.serialization.Function\022>",
       "\n\010property\030\n \003(\0132,.org.jetbrains.kotlin." +
-      "serialization.Property\022<\n\006member\030\013 \003(\0132," +
-      ".org.jetbrains.kotlin.serialization.Call" +
-      "able\022\032\n\nenum_entry\030\014 \003(\005B\006\020\001\210\265\030\001\022Y\n\023prim" +
-      "ary_constructor\030\r \001(\0132<.org.jetbrains.ko" +
-      "tlin.serialization.Class.PrimaryConstruc" +
-      "tor\022K\n\025secondary_constructor\030\016 \003(\0132,.org" +
-      ".jetbrains.kotlin.serialization.Callable" +
-      "\032P\n\022PrimaryConstructor\022:\n\004data\030\001 \001(\0132,.o" +
-      "rg.jetbrains.kotlin.serialization.Callab",
-      "le\"x\n\004Kind\022\t\n\005CLASS\020\000\022\r\n\tINTERFACE\020\001\022\016\n\n" +
-      "ENUM_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOTATI" +
-      "ON_CLASS\020\004\022\n\n\006OBJECT\020\005\022\024\n\020COMPANION_OBJE" +
-      "CT\020\006*\005\010d\020\310\001\"\224\002\n\007Package\022<\n\006member\030\001 \003(\0132" +
-      ",.org.jetbrains.kotlin.serialization.Cal" +
-      "lable\022D\n\013constructor\030\002 \003(\0132/.org.jetbrai" +
-      "ns.kotlin.serialization.Constructor\022>\n\010f" +
-      "unction\030\003 \003(\0132,.org.jetbrains.kotlin.ser" +
-      "ialization.Function\022>\n\010property\030\004 \003(\0132,." +
-      "org.jetbrains.kotlin.serialization.Prope",
-      "rty*\005\010d\020\310\001\"p\n\013Constructor\022\r\n\005flags\030\001 \001(\005" +
-      "\022K\n\017value_parameter\030\002 \003(\01322.org.jetbrain" +
-      "s.kotlin.serialization.ValueParameter*\005\010" +
-      "d\020\310\001\"\314\002\n\010Function\022\r\n\005flags\030\001 \001(\005\022\022\n\004name" +
-      "\030\002 \002(\005B\004\210\265\030\001\022=\n\013return_type\030\003 \002(\0132(.org." +
-      "jetbrains.kotlin.serialization.Type\022I\n\016t" +
-      "ype_parameter\030\004 \003(\01321.org.jetbrains.kotl" +
-      "in.serialization.TypeParameter\022?\n\rreceiv" +
-      "er_type\030\005 \001(\0132(.org.jetbrains.kotlin.ser" +
-      "ialization.Type\022K\n\017value_parameter\030\006 \003(\013",
-      "22.org.jetbrains.kotlin.serialization.Va" +
-      "lueParameter*\005\010d\020\310\001\"\377\002\n\010Property\022\r\n\005flag" +
-      "s\030\001 \001(\005\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022=\n\013return_ty" +
-      "pe\030\003 \002(\0132(.org.jetbrains.kotlin.serializ" +
-      "ation.Type\022I\n\016type_parameter\030\004 \003(\01321.org" +
-      ".jetbrains.kotlin.serialization.TypePara" +
-      "meter\022?\n\rreceiver_type\030\005 \001(\0132(.org.jetbr" +
-      "ains.kotlin.serialization.Type\022R\n\026setter" +
-      "_value_parameter\030\006 \001(\01322.org.jetbrains.k" +
-      "otlin.serialization.ValueParameter\022\024\n\014ge",
-      "tter_flags\030\007 \001(\005\022\024\n\014setter_flags\030\010 \001(\005*\005" +
-      "\010d\020\310\001\"\370\002\n\010Callable\022\r\n\005flags\030\001 \001(\005\022\024\n\014get" +
-      "ter_flags\030\t \001(\005\022\024\n\014setter_flags\030\n \001(\005\022I\n" +
+      "serialization.Property\022\032\n\nenum_entry\030\014 \003" +
+      "(\005B\006\020\001\210\265\030\001\"x\n\004Kind\022\t\n\005CLASS\020\000\022\r\n\tINTERFA" +
+      "CE\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020" +
+      "ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022\024\n\020COMPAN" +
+      "ION_OBJECT\020\006*\005\010d\020\310\001\"\220\001\n\007Package\022>\n\010funct" +
+      "ion\030\003 \003(\0132,.org.jetbrains.kotlin.seriali" +
+      "zation.Function\022>\n\010property\030\004 \003(\0132,.org." +
+      "jetbrains.kotlin.serialization.Property*" +
+      "\005\010d\020\310\001\"s\n\013Constructor\022\020\n\005flags\030\001 \001(\005:\0016\022",
+      "K\n\017value_parameter\030\002 \003(\01322.org.jetbrains" +
+      ".kotlin.serialization.ValueParameter*\005\010d" +
+      "\020\310\001\"\317\002\n\010Function\022\020\n\005flags\030\001 \001(\005:\0016\022\022\n\004na" +
+      "me\030\002 \002(\005B\004\210\265\030\001\022=\n\013return_type\030\003 \002(\0132(.or" +
+      "g.jetbrains.kotlin.serialization.Type\022I\n" +
       "\016type_parameter\030\004 \003(\01321.org.jetbrains.ko" +
       "tlin.serialization.TypeParameter\022?\n\rrece" +
       "iver_type\030\005 \001(\0132(.org.jetbrains.kotlin.s" +
-      "erialization.Type\022\022\n\004name\030\006 \002(\005B\004\210\265\030\001\022K\n" +
-      "\017value_parameter\030\007 \003(\01322.org.jetbrains.k" +
-      "otlin.serialization.ValueParameter\022=\n\013re" +
-      "turn_type\030\010 \002(\0132(.org.jetbrains.kotlin.s",
-      "erialization.Type*\005\010d\020\310\001\"\271\001\n\016ValueParame" +
-      "ter\022\r\n\005flags\030\001 \001(\005\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0226" +
-      "\n\004type\030\003 \002(\0132(.org.jetbrains.kotlin.seri" +
-      "alization.Type\022E\n\023vararg_element_type\030\004 " +
-      "\001(\0132(.org.jetbrains.kotlin.serialization" +
-      ".Type*\005\010d\020\310\001*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004O" +
-      "PEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisib" +
-      "ility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROT" +
-      "ECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004" +
-      "\022\t\n\005LOCAL\020\005*:\n\014CallableKind\022\007\n\003FUN\020\000\022\007\n\003",
-      "VAL\020\001\022\007\n\003VAR\020\002\022\017\n\013CONSTRUCTOR\020\003*Q\n\nMembe" +
-      "rKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020" +
-      "\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\022B\rDe" +
-      "bugProtoBuf\210\001\000"
+      "erialization.Type\022K\n\017value_parameter\030\006 \003" +
+      "(\01322.org.jetbrains.kotlin.serialization.",
+      "ValueParameter*\005\010d\020\310\001\"\204\003\n\010Property\022\022\n\005fl" +
+      "ags\030\001 \001(\005:\003262\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022=\n\013re" +
+      "turn_type\030\003 \002(\0132(.org.jetbrains.kotlin.s" +
+      "erialization.Type\022I\n\016type_parameter\030\004 \003(" +
+      "\01321.org.jetbrains.kotlin.serialization.T" +
+      "ypeParameter\022?\n\rreceiver_type\030\005 \001(\0132(.or" +
+      "g.jetbrains.kotlin.serialization.Type\022R\n" +
+      "\026setter_value_parameter\030\006 \001(\01322.org.jetb" +
+      "rains.kotlin.serialization.ValueParamete" +
+      "r\022\024\n\014getter_flags\030\007 \001(\005\022\024\n\014setter_flags\030",
+      "\010 \001(\005*\005\010d\020\310\001\"\274\001\n\016ValueParameter\022\020\n\005flags" +
+      "\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0226\n\004type\030\003 " +
+      "\002(\0132(.org.jetbrains.kotlin.serialization" +
+      ".Type\022E\n\023vararg_element_type\030\004 \001(\0132(.org" +
+      ".jetbrains.kotlin.serialization.Type*\005\010d" +
+      "\020\310\001*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010" +
+      "ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010" +
+      "INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n" +
+      "\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL" +
+      "\020\005*Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAK",
+      "E_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESI" +
+      "ZED\020\003B\022B\rDebugProtoBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -22875,19 +18240,13 @@ public final class DebugProtoBuf {
           internal_static_org_jetbrains_kotlin_serialization_Class_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Class_descriptor,
-              new java.lang.String[] { "Flags", "FqName", "CompanionObjectName", "TypeParameter", "Supertype", "NestedClassName", "Constructor", "Function", "Property", "Member", "EnumEntry", "PrimaryConstructor", "SecondaryConstructor", });
-          internal_static_org_jetbrains_kotlin_serialization_Class_PrimaryConstructor_descriptor =
-            internal_static_org_jetbrains_kotlin_serialization_Class_descriptor.getNestedTypes().get(0);
-          internal_static_org_jetbrains_kotlin_serialization_Class_PrimaryConstructor_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_jetbrains_kotlin_serialization_Class_PrimaryConstructor_descriptor,
-              new java.lang.String[] { "Data", });
+              new java.lang.String[] { "Flags", "FqName", "CompanionObjectName", "TypeParameter", "Supertype", "NestedClassName", "Constructor", "Function", "Property", "EnumEntry", });
           internal_static_org_jetbrains_kotlin_serialization_Package_descriptor =
             getDescriptor().getMessageTypes().get(6);
           internal_static_org_jetbrains_kotlin_serialization_Package_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Package_descriptor,
-              new java.lang.String[] { "Member", "Constructor", "Function", "Property", });
+              new java.lang.String[] { "Function", "Property", });
           internal_static_org_jetbrains_kotlin_serialization_Constructor_descriptor =
             getDescriptor().getMessageTypes().get(7);
           internal_static_org_jetbrains_kotlin_serialization_Constructor_fieldAccessorTable = new
@@ -22906,14 +18265,8 @@ public final class DebugProtoBuf {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Property_descriptor,
               new java.lang.String[] { "Flags", "Name", "ReturnType", "TypeParameter", "ReceiverType", "SetterValueParameter", "GetterFlags", "SetterFlags", });
-          internal_static_org_jetbrains_kotlin_serialization_Callable_descriptor =
-            getDescriptor().getMessageTypes().get(10);
-          internal_static_org_jetbrains_kotlin_serialization_Callable_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_org_jetbrains_kotlin_serialization_Callable_descriptor,
-              new java.lang.String[] { "Flags", "GetterFlags", "SetterFlags", "TypeParameter", "ReceiverType", "Name", "ValueParameter", "ReturnType", });
           internal_static_org_jetbrains_kotlin_serialization_ValueParameter_descriptor =
-            getDescriptor().getMessageTypes().get(11);
+            getDescriptor().getMessageTypes().get(10);
           internal_static_org_jetbrains_kotlin_serialization_ValueParameter_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_ValueParameter_descriptor,
@@ -22929,7 +18282,6 @@ public final class DebugProtoBuf {
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
-          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);

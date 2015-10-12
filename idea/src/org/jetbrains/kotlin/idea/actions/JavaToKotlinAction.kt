@@ -32,67 +32,104 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.idea.core.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
+import org.jetbrains.kotlin.psi.JetFile
 import java.io.File
 import java.io.IOException
 import java.util.ArrayList
 
 public class JavaToKotlinAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-        ApplicationManager.getApplication().saveAll()
+    companion object {
+        private fun uniqueKotlinFileName(javaFile: VirtualFile): String {
+            val ioFile = File(javaFile.getPath().replace('/', File.separatorChar))
 
+            var i = 0
+            while (true) {
+                val fileName = javaFile.getNameWithoutExtension() + (if (i > 0) i else "") + ".kt"
+                if (!ioFile.resolveSibling(fileName).exists()) return fileName
+                i++
+            }
+        }
+
+        private fun saveResults(javaFiles: List<PsiJavaFile>, convertedTexts: List<String>): List<VirtualFile> {
+            val result = ArrayList<VirtualFile>()
+            for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
+                val virtualFile = psiFile.getVirtualFile()
+                val fileName = uniqueKotlinFileName(virtualFile)
+                try {
+                    virtualFile.rename(this, fileName)
+                    virtualFile.setBinaryContent(CharsetToolkit.getUtf8Bytes(text))
+                    result.add(virtualFile)
+                }
+                catch (e: IOException) {
+                    MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater()
+                }
+            }
+            return result
+        }
+
+        fun convertFiles(javaFiles: List<PsiJavaFile>, project: Project, enableExternalCodeProcessing: Boolean = true): List<JetFile> {
+            ApplicationManager.getApplication().saveAll()
+
+            var converterResult: JavaToKotlinConverter.FilesResult? = null
+            fun convert() {
+                val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
+                converterResult = converter.filesToKotlin(javaFiles, J2kPostProcessor(formatCode = true), ProgressManager.getInstance().getProgressIndicator())
+            }
+
+            val title = "Convert Java to Kotlin"
+            if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                    {
+                        runReadAction(::convert)
+                    },
+                    title,
+                    true,
+                    project)) return emptyList()
+
+
+            var externalCodeUpdate: (() -> Unit)? = null
+
+            if (enableExternalCodeProcessing && converterResult!!.externalCodeProcessing != null) {
+                val question = "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?"
+                if (Messages.showOkCancelDialog(project, question, title, Messages.getQuestionIcon()) == Messages.OK) {
+                    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                            {
+                                runReadAction {
+                                    externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(ProgressManager.getInstance().getProgressIndicator())
+                                }
+                            },
+                            title,
+                            true,
+                            project)
+                }
+            }
+
+            return project.executeWriteCommand("Convert files from Java to Kotlin", null) {
+                CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
+
+                val newFiles = saveResults(javaFiles, converterResult!!.results)
+
+                externalCodeUpdate?.invoke()
+
+                newFiles.singleOrNull()?.let {
+                    FileEditorManager.getInstance(project).openFile(it, true)
+                }
+
+                newFiles.map { it.toPsiFile(project) as JetFile }
+            }
+        }
+    }
+
+    override fun actionPerformed(e: AnActionEvent) {
         val javaFiles = selectedJavaFiles(e).toList()
         val project = CommonDataKeys.PROJECT.getData(e.getDataContext())!!
-
-        var converterResult: JavaToKotlinConverter.FilesResult? = null
-        fun convert() {
-            val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
-            converterResult = converter.filesToKotlin(javaFiles, J2kPostProcessor(formatCode = true), ProgressManager.getInstance().getProgressIndicator())
-        }
-
-        val title = "Convert Java to Kotlin"
-        if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                {
-                    runReadAction(::convert)
-                },
-                title,
-                true,
-                project)) return
-
-
-        var externalCodeUpdate: (() -> Unit)? = null
-
-        if (converterResult!!.externalCodeProcessing != null) {
-            val question = "Some code in the rest of your project may require corrections after performing this conversion. Do you want to find such code and correct it too?"
-            if (Messages.showOkCancelDialog(project, question, title, Messages.getQuestionIcon()) == Messages.OK) {
-                ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                        {
-                            runReadAction {
-                                externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(ProgressManager.getInstance().getProgressIndicator())
-                            }
-                        },
-                        title,
-                        true,
-                        project)
-            }
-        }
-
-        project.executeWriteCommand("Convert files from Java to Kotlin") {
-            CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
-
-            val newFiles = saveResults(javaFiles, converterResult!!.results)
-
-            externalCodeUpdate?.invoke()
-
-            newFiles.singleOrNull()?.let {
-                FileEditorManager.getInstance(project).openFile(it, true)
-            }
-        }
+        convertFiles(javaFiles, project)
     }
 
     override fun update(e: AnActionEvent) {
@@ -125,33 +162,5 @@ public class JavaToKotlinAction : AnAction() {
             })
         }
         return result
-    }
-
-    private fun saveResults(javaFiles: List<PsiJavaFile>, convertedTexts: List<String>): List<VirtualFile> {
-        val result = ArrayList<VirtualFile>()
-        for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
-            val virtualFile = psiFile.getVirtualFile()
-            val fileName = uniqueKotlinFileName(virtualFile)
-            try {
-                virtualFile.rename(this, fileName)
-                virtualFile.setBinaryContent(CharsetToolkit.getUtf8Bytes(text))
-                result.add(virtualFile)
-            }
-            catch (e: IOException) {
-                MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater()
-            }
-        }
-        return result
-    }
-
-    private fun uniqueKotlinFileName(javaFile: VirtualFile): String {
-        val ioFile = File(javaFile.getPath().replace('/', File.separatorChar))
-
-        var i = 0
-        while (true) {
-            val fileName = javaFile.getNameWithoutExtension() + (if (i > 0) i else "") + ".kt"
-            if (!ioFile.resolveSibling(fileName).exists()) return fileName
-            i++
-        }
     }
 }

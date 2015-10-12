@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package kotlin.jvm.internal;
+package org.jetbrains.kotlin.idea.testIntegration
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import com.intellij.testIntegration.TestCreator
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface KotlinCallable {
-    @Deprecated
-    int abiVersion();
+class KotlinTestCreator : TestCreator {
+    override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
+        return KotlinCreateTestIntention().isAvailable(project, editor, file)
+    }
 
-    int[] version() default {};
-
-    String[] data();
-
-    String[] strings();
+    override fun createTest(project: Project, editor: Editor, file: PsiFile) {
+        KotlinCreateTestIntention().invoke(project, editor, file)
+    }
 }

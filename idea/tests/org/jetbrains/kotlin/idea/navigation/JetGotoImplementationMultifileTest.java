@@ -83,7 +83,7 @@ public class JetGotoImplementationMultifileTest extends JetLightCodeInsightFixtu
     private void doMultifileTest(String ... fileNames) throws Exception {
         myFixture.configureByFiles(fileNames);
         GotoTargetHandler.GotoData gotoData = NavigationTestUtils.invokeGotoImplementations(getEditor(), getFile());
-        NavigationTestUtils.assertGotoImplementations(getEditor(), gotoData);
+        NavigationTestUtils.assertGotoDataMatching(getEditor(), gotoData);
     }
 
     @Override

@@ -39,8 +39,7 @@ public open class DeserializedPackageMemberScope(
         nameResolver: NameResolver,
         components: DeserializationComponents,
         classNames: () -> Collection<Name>
-) : DeserializedMemberScope(components.createContext(packageDescriptor, nameResolver), proto.getMemberList()) {
-
+) : DeserializedMemberScope(components.createContext(packageDescriptor, nameResolver), proto.functionList, proto.propertyList) {
     private val packageFqName = packageDescriptor.fqName
 
     internal val classNames by c.storageManager.createLazyValue { classNames().toSet() }

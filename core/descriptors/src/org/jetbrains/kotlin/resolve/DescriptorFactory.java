@@ -110,10 +110,6 @@ public class DescriptorFactory {
         return new DefaultConstructorDescriptor(containingClass, source);
     }
 
-    public static boolean isDefaultPrimaryConstructor(@NotNull ConstructorDescriptor constructor) {
-        return constructor instanceof DefaultConstructorDescriptor;
-    }
-
     @NotNull
     public static SimpleFunctionDescriptor createEnumValuesMethod(@NotNull ClassDescriptor enumClass) {
         SimpleFunctionDescriptorImpl values =

@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -32,7 +30,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.VERSION_FIELD_NAME;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.*;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     public static final FqName PACKAGE_NAME = new FqName("test");
@@ -115,11 +113,11 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     }
 
     private void doTestKotlinSyntheticClass(@NotNull String code, @NotNull String classFilePart) {
-        doTest(code, classFilePart, KotlinSyntheticClass.CLASS_NAME.getFqNameForClassNameWithoutDollars());
+        doTest(code, classFilePart, KOTLIN_SYNTHETIC_CLASS);
     }
 
     private void doTestKotlinClass(@NotNull String code, @NotNull String classFilePart) {
-        doTest(code, classFilePart, JvmAnnotationNames.KOTLIN_CLASS, JvmAnnotationNames.KOTLIN_LOCAL_CLASS);
+        doTest(code, classFilePart, KOTLIN_CLASS, KOTLIN_LOCAL_CLASS);
     }
 
     private void doTest(

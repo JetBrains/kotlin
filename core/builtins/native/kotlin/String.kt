@@ -28,14 +28,9 @@ public class String : Comparable<String>, CharSequence {
      */
     public operator fun plus(other: Any?): String
 
-    /**
-     * Returns the character at the specified [index].
-     */
-    public operator fun get(index: Int): Char
-
     public override fun length(): Int
 
-    public override fun charAt(index: Int): Char
+    public override fun get(index: Int): Char
 
     public override fun subSequence(start: Int, end: Int): CharSequence
 

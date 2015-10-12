@@ -198,7 +198,7 @@ public val String.lastIndex: Int
  * val c = charSequence[5]
  * ```
  */
-public operator fun CharSequence.get(index: Int): Char = this.charAt(index)
+public operator fun CharSequence.get(index: Int): Char = this.get(index)
 
 /**
  * Returns `true` if this CharSequence has Unicode surrogate pair at the specified [index].

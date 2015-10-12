@@ -156,13 +156,13 @@ message Class {
   }
 
   /*
+    hasAnnotations
     Visibility
     Modality
-    hasAnnotations
     ClassKind
     isInner
   */
-  optional int32 flags = 1 [default = 0 /*internal final class, no annotations*/];
+  optional int32 flags = 1 [default = 6 /* public final class, no annotations */];
 
   required int32 fq_name = 3 [(fq_name_id_in_table) = true];
 
@@ -177,28 +177,12 @@ message Class {
   repeated Function function = 9;
   repeated Property property = 10;
 
-  repeated Callable member = 11;
-
   repeated int32 enum_entry = 12 [packed = true, (name_id_in_table) = true];
-
-  message PrimaryConstructor {
-    // If this field is present, it contains serialized data for the primary constructor.
-    // Otherwise it's default and can be created manually upon deserialization
-    // Note: currently only objects have default primary constructor
-    optional Callable data = 1;
-  }
-
-  // This field is present if and only if the class has a primary constructor
-  optional PrimaryConstructor primary_constructor = 13;
-  repeated Callable secondary_constructor = 14;
 
   extensions 100 to 199;
 }
 
 message Package {
-  repeated Callable member = 1;
-
-  repeated Constructor constructor = 2;
   repeated Function function = 3;
   repeated Property property = 4;
 
@@ -211,7 +195,7 @@ message Constructor {
     Visibility
     isSecondary
   */
-  optional int32 flags = 1;
+  optional int32 flags = 1 [default = 6];
 
   repeated ValueParameter value_parameter = 2;
 
@@ -227,7 +211,7 @@ message Function {
     isOperator
     isInfix
   */
-  optional int32 flags = 1;
+  optional int32 flags = 1 [default = 6];
 
   required int32 name = 2 [(name_id_in_table) = true];
 
@@ -255,7 +239,7 @@ message Property {
     lateinit
     hasConstant
   */
-  optional int32 flags = 1;
+  optional int32 flags = 1 [default = 262 /* public (6) final property with getter (256) */];
 
   required int32 name = 2 [(name_id_in_table) = true];
 
@@ -279,52 +263,12 @@ message Property {
   extensions 100 to 199;
 }
 
-message Callable {
-  /*
-    Visibility
-    Modality
-    hasAnnotations
-    CallableKind
-    MemberKind
-    hasGetter
-    hasSetter
-    hasConstant
-    isConst
-    lateinit
-    isOperator
-    isInfix
-  */
-  optional int32 flags = 1;
-
-  /*
-    isNotDefault
-    Visibility
-    Modality
-    hasAnnotations
-  */
-  optional int32 getter_flags = 9 /* absent => same as property */;
-  optional int32 setter_flags = 10 /* absent => same as property */;
-
-  repeated TypeParameter type_parameter = 4;
-
-  optional Type receiver_type = 5;
-
-  required int32 name = 6 [(name_id_in_table) = true];
-
-  // Value parameters for functions and constructors, or setter value parameter for properties
-  repeated ValueParameter value_parameter = 7;
-
-  required Type return_type = 8;
-
-  extensions 100 to 199;
-}
-
 message ValueParameter {
   /*
     declaresDefault
     hasAnnotations
   */
-  optional int32 flags = 1;
+  optional int32 flags = 1 [default = 0];
 
   required int32 name = 2 [(name_id_in_table) = true];
 
@@ -337,28 +281,20 @@ message ValueParameter {
 
 enum Modality {
   // 2 bits
-  FINAL = 0x00;
-  OPEN = 0x01;
-  ABSTRACT = 0x02;
-  SEALED = 0x03;
+  FINAL = 0;
+  OPEN = 1;
+  ABSTRACT = 2;
+  SEALED = 3;
 }
 
 enum Visibility {
   // 3 bits
-  INTERNAL = 0x00;
-  PRIVATE = 0x01;
-  PROTECTED = 0x02;
-  PUBLIC = 0x03;
-  PRIVATE_TO_THIS = 0x04;
-  LOCAL = 0x05;
-}
-
-enum CallableKind {
-  // 2 bits
-  FUN = 0;
-  VAL = 1;
-  VAR = 2;
-  CONSTRUCTOR = 3;
+  INTERNAL = 0;
+  PRIVATE = 1;
+  PROTECTED = 2;
+  PUBLIC = 3;
+  PRIVATE_TO_THIS = 4;
+  LOCAL = 5;
 }
 
 enum MemberKind {

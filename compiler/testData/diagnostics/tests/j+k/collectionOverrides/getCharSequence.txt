@@ -1,0 +1,33 @@
+package
+
+public fun main(/*0*/ a: A, /*1*/ b: B, /*2*/ c: C): kotlin.Unit
+
+public abstract class A : kotlin.CharSequence {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun get(/*0*/ x: kotlin.Int): kotlin.Char
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun length(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class B : A, kotlin.CharSequence {
+    public constructor B()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*2*/ /*fake_override*/ fun length(): kotlin.Int
+    public abstract override /*2*/ /*fake_override*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class C : kotlin.CharSequence {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun length(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

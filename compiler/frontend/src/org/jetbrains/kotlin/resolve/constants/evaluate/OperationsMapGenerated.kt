@@ -348,7 +348,6 @@ internal val binaryOperations: HashMap<BinaryOperationKey<*, *>, Pair<Function2<
     binaryOperation(SHORT, LONG, "times", { a, b -> a.times(b) }, { a, b -> a.multiply(b) }),
     binaryOperation(SHORT, SHORT, "times", { a, b -> a.times(b) }, { a, b -> a.multiply(b) }),
     binaryOperation(SHORT, ANY, "equals", { a, b -> a.equals(b) }, emptyBinaryFun),
-    binaryOperation(STRING, INT, "charAt", { a, b -> a.charAt(b) }, emptyBinaryFun),
     binaryOperation(STRING, STRING, "compareTo", { a, b -> a.compareTo(b) }, emptyBinaryFun),
     binaryOperation(STRING, INT, "get", { a, b -> a.get(b) }, emptyBinaryFun),
     binaryOperation(STRING, ANY, "plus", { a, b -> a.plus(b) }, emptyBinaryFun),

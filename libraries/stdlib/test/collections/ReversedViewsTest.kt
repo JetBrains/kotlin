@@ -157,11 +157,11 @@ class ReversedViewsTest {
         val original = arrayListOf(1, 2, 3, 4)
         val reversed = original.asReversed()
 
-        original.remove(3)
+        original.removeAt(3)
         assertEquals(listOf(1, 2, 3), original)
         assertEquals(listOf(3, 2, 1), reversed)
 
-        reversed.remove(2)
+        reversed.removeAt(2)
         assertEquals(listOf(2, 3), original)
         assertEquals(listOf(3, 2), reversed)
     }
@@ -201,7 +201,7 @@ class ReversedViewsTest {
 
     @test fun testRemoveIOOB() {
         val success = try {
-            arrayListOf(1, 2, 3).asReversed().remove(3)
+            arrayListOf(1, 2, 3).asReversed().removeAt(3)
             true
         } catch(expected: IndexOutOfBoundsException) {
             false

@@ -254,6 +254,7 @@ public class GenerateMockJdk {
             "java/util/Properties.class",
             "java/util/Random.class",
             "java/util/RandomAccess.class",
+            "java/util/regex/Pattern.class",
             "java/util/Objects.class",
             "java/util/Set.class",
             "java/util/SortedMap.class",

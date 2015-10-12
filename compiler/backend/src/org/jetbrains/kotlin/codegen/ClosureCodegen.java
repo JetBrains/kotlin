@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -58,6 +57,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.ExpressionCodegen.generateClassLiteralReference;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeModuleName;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
@@ -219,15 +219,16 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
     @Override
     protected void generateKotlinAnnotation() {
-        writeKotlinSyntheticClassAnnotation(v);
+        writeKotlinSyntheticClassAnnotation(v, state);
 
         DescriptorSerializer serializer =
                 DescriptorSerializer.createTopLevel(new JvmSerializerExtension(v.getSerializationBindings(), typeMapper));
 
-        ProtoBuf.Callable callableProto = serializer.callableProto(funDescriptor).build();
+        ProtoBuf.Function functionProto = serializer.functionProto(funDescriptor).build();
 
-        AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CALLABLE), true);
-        writeAnnotationData(av, serializer, callableProto);
+        AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FUNCTION), true);
+        writeAnnotationData(av, serializer, functionProto);
+        writeModuleName(av, state);
         av.visitEnd();
     }
 
@@ -314,7 +315,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             if (generateBody) {
                 mv.visitCode();
                 InstructionAdapter iv = new InstructionAdapter(mv);
-                generateCallableReferenceDeclarationContainer(iv, descriptor, typeMapper);
+                generateCallableReferenceDeclarationContainer(iv, descriptor, state);
                 iv.areturn(K_DECLARATION_CONTAINER_TYPE);
                 FunctionCodegen.endVisit(iv, "function reference getOwner", element);
             }
@@ -348,24 +349,24 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     public static void generateCallableReferenceDeclarationContainer(
             @NotNull InstructionAdapter iv,
             @NotNull CallableDescriptor descriptor,
-            @NotNull JetTypeMapper typeMapper
+            @NotNull GenerationState state
     ) {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (container instanceof ClassDescriptor) {
             // TODO: getDefaultType() here is wrong and won't work for arrays
-            StackValue value = generateClassLiteralReference(typeMapper, ((ClassDescriptor) container).getDefaultType());
+            StackValue value = generateClassLiteralReference(state.getTypeMapper(), ((ClassDescriptor) container).getDefaultType());
             value.put(K_CLASS_TYPE, iv);
         }
         else if (container instanceof PackageFragmentDescriptor) {
-            String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(
-                    ((PackageFragmentDescriptor) container).getFqName()
-            );
-            iv.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_TYPE.getDescriptor());
+            iv.aconst(state.getTypeMapper().mapOwner(descriptor));
+            iv.aconst(state.getModuleName());
+            iv.invokestatic(REFLECTION, "getOrCreateKotlinPackage",
+                            Type.getMethodDescriptor(K_DECLARATION_CONTAINER_TYPE, getType(Class.class), getType(String.class)), false);
         }
         else if (container instanceof ScriptDescriptor) {
             // TODO: correct container for scripts (KScript?)
             StackValue value = generateClassLiteralReference(
-                    typeMapper, ((ScriptDescriptor) container).getClassDescriptor().getDefaultType()
+                    state.getTypeMapper(), ((ScriptDescriptor) container).getClassDescriptor().getDefaultType()
             );
             value.put(K_CLASS_TYPE, iv);
         }

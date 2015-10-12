@@ -19,4 +19,6 @@ package kotlin.reflect
 /**
  * Represents a package and provides introspection capabilities.
  */
+@Deprecated("This class will be deleted soon because reflection on packages is going to be redesigned " +
+        "after the introduction of new kinds of runtime representations of packages on JVM.")
 public interface KPackage : KDeclarationContainer

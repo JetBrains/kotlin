@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.MemberComparator;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
@@ -38,7 +37,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getSecondaryConstructors;
 
 public class DescriptorSerializer {
 
@@ -102,7 +100,9 @@ public class DescriptorSerializer {
 
         int flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.getVisibility(), classDescriptor.getModality(),
                                         classDescriptor.getKind(), classDescriptor.isInner(), classDescriptor.isCompanionObject());
-        builder.setFlags(flags);
+        if (flags != builder.getFlags()) {
+            builder.setFlags(flags);
+        }
 
         builder.setFqName(getClassId(classDescriptor));
 
@@ -117,31 +117,14 @@ public class DescriptorSerializer {
             }
         }
 
-        ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-        if (primaryConstructor != null) {
-            if (DescriptorFactory.isDefaultPrimaryConstructor(primaryConstructor)) {
-                builder.setPrimaryConstructor(ProtoBuf.Class.PrimaryConstructor.getDefaultInstance());
-            }
-            else {
-                ProtoBuf.Class.PrimaryConstructor.Builder constructorBuilder = ProtoBuf.Class.PrimaryConstructor.newBuilder();
-                constructorBuilder.setData(callableProto(primaryConstructor));
-                builder.setPrimaryConstructor(constructorBuilder);
-            }
-        }
-
         for (ConstructorDescriptor descriptor : classDescriptor.getConstructors()) {
             builder.addConstructor(constructorProto(descriptor));
-        }
-
-        for (ConstructorDescriptor constructorDescriptor : getSecondaryConstructors(classDescriptor)) {
-            builder.addSecondaryConstructor(callableProto(constructorDescriptor));
         }
 
         for (DeclarationDescriptor descriptor : sort(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
             if (descriptor instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor member = (CallableMemberDescriptor) descriptor;
                 if (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
-                builder.addMember(callableProto(member));
 
                 if (descriptor instanceof PropertyDescriptor) {
                     builder.addProperty(propertyProto((PropertyDescriptor) descriptor));
@@ -219,18 +202,13 @@ public class DescriptorSerializer {
             }
         }
 
-        builder.setFlags(Flags.getPropertyFlags(
-                hasAnnotations,
-                descriptor.getVisibility(),
-                descriptor.getModality(),
-                descriptor.getKind(),
-                descriptor.isVar(),
-                hasGetter,
-                hasSetter,
-                hasConstant,
-                isConst,
-                lateInit
-        ));
+        int flags = Flags.getPropertyFlags(
+                hasAnnotations, descriptor.getVisibility(), descriptor.getModality(), descriptor.getKind(), descriptor.isVar(),
+                hasGetter, hasSetter, hasConstant, isConst, lateInit
+        );
+        if (flags != builder.getFlags()) {
+            builder.setFlags(flags);
+        }
 
         builder.setName(getSimpleNameIndex(descriptor.getName()));
 
@@ -256,14 +234,13 @@ public class DescriptorSerializer {
 
         DescriptorSerializer local = createChildSerializer();
 
-        builder.setFlags(Flags.getFunctionFlags(
-                hasAnnotations(descriptor),
-                descriptor.getVisibility(),
-                descriptor.getModality(),
-                descriptor.getKind(),
-                descriptor.isOperator(),
-                descriptor.isInfix()
-        ));
+        int flags = Flags.getFunctionFlags(
+                hasAnnotations(descriptor), descriptor.getVisibility(), descriptor.getModality(), descriptor.getKind(),
+                descriptor.isOperator(), descriptor.isInfix()
+        );
+        if (flags != builder.getFlags()) {
+            builder.setFlags(flags);
+        }
 
         builder.setName(getSimpleNameIndex(descriptor.getName()));
 
@@ -294,119 +271,16 @@ public class DescriptorSerializer {
 
         DescriptorSerializer local = createChildSerializer();
 
-        builder.setFlags(Flags.getConstructorFlags(
-                hasAnnotations(descriptor),
-                descriptor.getVisibility(),
-                !descriptor.isPrimary()
-        ));
+        int flags = Flags.getConstructorFlags(hasAnnotations(descriptor), descriptor.getVisibility(), !descriptor.isPrimary());
+        if (flags != builder.getFlags()) {
+            builder.setFlags(flags);
+        }
 
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
         }
 
         extension.serializeConstructor(descriptor, builder);
-
-        return builder;
-    }
-
-    @NotNull
-    public ProtoBuf.Callable.Builder callableProto(@NotNull CallableMemberDescriptor descriptor) {
-        ProtoBuf.Callable.Builder builder = ProtoBuf.Callable.newBuilder();
-
-        DescriptorSerializer local = createChildSerializer();
-
-        boolean hasGetter = false;
-        boolean hasSetter = false;
-        boolean hasConstant = false;
-        boolean lateInit = false;
-        boolean isConst = false;
-        boolean isOperator = false;
-        boolean isInfix = false;
-
-        if (descriptor instanceof FunctionDescriptor) {
-            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-            isOperator = functionDescriptor.isOperator();
-            isInfix = functionDescriptor.isInfix();
-        }
-
-        if (descriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-            lateInit = propertyDescriptor.isLateInit();
-            isConst = propertyDescriptor.isConst();
-
-            int propertyFlags = Flags.getAccessorFlags(
-                    hasAnnotations(propertyDescriptor),
-                    propertyDescriptor.getVisibility(),
-                    propertyDescriptor.getModality(),
-                    false
-            );
-
-            PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-            if (getter != null) {
-                hasGetter = true;
-                int accessorFlags = getAccessorFlags(getter);
-                if (accessorFlags != propertyFlags) {
-                    builder.setGetterFlags(accessorFlags);
-                }
-            }
-
-            PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-            if (setter != null) {
-                hasSetter = true;
-                int accessorFlags = getAccessorFlags(setter);
-                if (accessorFlags != propertyFlags) {
-                    builder.setSetterFlags(accessorFlags);
-                }
-
-                if (!setter.isDefault()) {
-                    for (ValueParameterDescriptor valueParameterDescriptor : setter.getValueParameters()) {
-                        builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
-                    }
-                }
-            }
-
-            ConstantValue<?> compileTimeConstant = propertyDescriptor.getCompileTimeInitializer();
-            hasConstant = !(compileTimeConstant == null || compileTimeConstant instanceof NullValue);
-        }
-
-        boolean hasAnnotations = (descriptor instanceof PropertyDescriptor)
-                                 ? !descriptor.getAnnotations().getAllAnnotations().isEmpty()
-                                 : hasAnnotations(descriptor);
-
-        builder.setFlags(Flags.getCallableFlags(
-                hasAnnotations,
-                descriptor.getVisibility(),
-                descriptor.getModality(),
-                descriptor.getKind(),
-                callableKind(descriptor),
-                hasGetter,
-                hasSetter,
-                hasConstant,
-                lateInit,
-                isConst,
-                isOperator,
-                isInfix
-        ));
-
-        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
-            builder.addTypeParameter(local.typeParameter(typeParameterDescriptor));
-        }
-
-        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
-        if (receiverParameter != null) {
-            builder.setReceiverType(local.type(receiverParameter.getType()));
-        }
-
-        builder.setName(getSimpleNameIndex(descriptor.getName()));
-
-        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
-            builder.addValueParameter(local.valueParameter(valueParameterDescriptor));
-        }
-
-        //noinspection ConstantConditions
-        builder.setReturnType(local.type(descriptor.getReturnType()));
-
-        extension.serializeCallable(descriptor, builder);
 
         return builder;
     }
@@ -421,23 +295,11 @@ public class DescriptorSerializer {
     }
 
     @NotNull
-    private static ProtoBuf.CallableKind callableKind(@NotNull CallableMemberDescriptor descriptor) {
-        if (descriptor instanceof PropertyDescriptor) {
-            return ((PropertyDescriptor) descriptor).isVar() ? ProtoBuf.CallableKind.VAR : ProtoBuf.CallableKind.VAL;
-        }
-        if (descriptor instanceof ConstructorDescriptor) {
-            return ProtoBuf.CallableKind.CONSTRUCTOR;
-        }
-        assert descriptor instanceof FunctionDescriptor : "Unknown descriptor class: " + descriptor.getClass();
-        return ProtoBuf.CallableKind.FUN;
-    }
-
-    @NotNull
     private ProtoBuf.ValueParameter.Builder valueParameter(@NotNull ValueParameterDescriptor descriptor) {
         ProtoBuf.ValueParameter.Builder builder = ProtoBuf.ValueParameter.newBuilder();
 
         int flags = Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue());
-        if (flags != 0) {
+        if (flags != builder.getFlags()) {
             builder.setFlags(flags);
         }
 
@@ -462,14 +324,12 @@ public class DescriptorSerializer {
 
         builder.setName(getSimpleNameIndex(typeParameter.getName()));
 
-        // to avoid storing a default
-        if (typeParameter.isReified()) {
-            builder.setReified(true);
+        if (typeParameter.isReified() != builder.getReified()) {
+            builder.setReified(typeParameter.isReified());
         }
 
-        // to avoid storing a default
         ProtoBuf.TypeParameter.Variance variance = variance(typeParameter.getVariance());
-        if (variance != ProtoBuf.TypeParameter.Variance.INV) {
+        if (variance != builder.getVariance()) {
             builder.setVariance(variance);
         }
 
@@ -521,9 +381,8 @@ public class DescriptorSerializer {
             builder.addArgument(typeArgument(projection));
         }
 
-        // to avoid storing a default
-        if (type.isMarkedNullable()) {
-            builder.setNullable(true);
+        if (type.isMarkedNullable() != builder.getNullable()) {
+            builder.setNullable(type.isMarkedNullable());
         }
 
         extension.serializeType(type, builder);
@@ -541,8 +400,7 @@ public class DescriptorSerializer {
         else {
             ProtoBuf.Type.Argument.Projection projection = projection(typeProjection.getProjectionKind());
 
-            // to avoid storing a default
-            if (projection != ProtoBuf.Type.Argument.Projection.INV) {
+            if (projection != builder.getProjection()) {
                 builder.setProjection(projection);
             }
             builder.setType(type(typeProjection.getType()));
@@ -577,10 +435,6 @@ public class DescriptorSerializer {
         for (DeclarationDescriptor declaration : sort(members)) {
             if (skip != null && skip.invoke(declaration)) continue;
 
-            if (declaration instanceof PropertyDescriptor || declaration instanceof FunctionDescriptor) {
-                builder.addMember(callableProto((CallableMemberDescriptor) declaration));
-            }
-
             if (declaration instanceof PropertyDescriptor) {
                 builder.addProperty(propertyProto((PropertyDescriptor) declaration));
             }
@@ -599,10 +453,6 @@ public class DescriptorSerializer {
         ProtoBuf.Package.Builder builder = ProtoBuf.Package.newBuilder();
 
         for (DeclarationDescriptor declaration : sort(members)) {
-            if (declaration instanceof PropertyDescriptor || declaration instanceof FunctionDescriptor) {
-                builder.addMember(callableProto((CallableMemberDescriptor) declaration));
-            }
-
             if (declaration instanceof PropertyDescriptor) {
                 builder.addProperty(propertyProto((PropertyDescriptor) declaration));
             }

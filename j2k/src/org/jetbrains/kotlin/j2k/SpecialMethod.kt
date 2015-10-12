@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import com.intellij.psi.CommonClassNames.JAVA_LANG_STRING
+import com.intellij.psi.impl.PsiExpressionEvaluator
 import org.jetbrains.kotlin.j2k.ast.*
 
 enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String, val parameterCount: Int?) {
@@ -115,20 +116,51 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression?  {
             val patternArgument = codeConverter.convertToRegex(arguments[0])
             val limitArgument = codeConverter.convertExpression(arguments[1])
-            val splitArguments =
-                if (limitArgument is PrefixExpression && limitArgument.op == "-" && limitArgument.expression.let { it is LiteralExpression && it.literalText == "1" })
-                    listOf(patternArgument)
-                else if (limitArgument is LiteralExpression && limitArgument.literalText.all { it.isDigit() }) {
-                    if (limitArgument.literalText.toInt() == 0) {
+            val evaluator = PsiExpressionEvaluator()
+            val limit = evaluator.computeConstantExpression(arguments[1], /* throwExceptionOnOverflow = */ false) as? Int
+            val splitArguments = when {
+                    limit == null ->  // not a constant
+                        listOf(patternArgument, MethodCallExpression.buildNotNull(limitArgument, "coerceAtLeast", listOf(LiteralExpression("0").assignNoPrototype()), emptyList()).assignNoPrototype())
+                    limit < 0 ->      // negative, same behavior as split(regex) in kotlin
+                        listOf(patternArgument)
+                    limit == 0 ->     // zero, same replacement as for split without limit
                         return STRING_SPLIT.convertCall(qualifier, arrayOf(arguments[0]), typeArgumentsConverted, codeConverter)
-                    }
-                    listOf(patternArgument, limitArgument)
-                }
-                else
-                    listOf(patternArgument, MethodCallExpression.buildNotNull(limitArgument, "coerceAtLeast", listOf(LiteralExpression("0").assignNoPrototype()), emptyList()).assignNoPrototype())
+                    else ->           // positive, same behavior as split(regex, limit) in kotlin
+                        listOf(patternArgument, limitArgument)
+            }
 
             val splitCall = MethodCallExpression.buildNotNull(codeConverter.convertExpression(qualifier), "split", splitArguments, emptyList()).assignNoPrototype()
             return MethodCallExpression.buildNotNull(splitCall, "toTypedArray", emptyList(), emptyList())
+        }
+    },
+
+    STRING_JOIN(JAVA_LANG_STRING, "join", 2) {
+        override fun matches(method: PsiMethod)
+                = super.matches(method) && method.parameterList.parameters.last().type.canonicalText == "java.lang.Iterable<? extends java.lang.CharSequence>"
+
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression?
+                = MethodCallExpression.buildNotNull(codeConverter.convertExpression(arguments[1]), "joinToString", codeConverter.convertExpressions(arguments.take(1)), emptyList())
+    },
+
+    STRING_JOIN_VARARG(JAVA_LANG_STRING, "join", null) {
+        override fun matches(method: PsiMethod): Boolean = super.matches(method) && method.parameterList.let { it.parametersCount == 2 && it.parameters.last().isVarArgs }
+
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
+            if (arguments.size() == 2 && arguments.last().isAssignableToCharSequenceArray()) {
+                return STRING_JOIN.convertCall(qualifier, arguments, typeArgumentsConverted, codeConverter)
+            }
+            else {
+                return MethodCallExpression.buildNotNull(
+                        MethodCallExpression.buildNotNull(null, "arrayOf", codeConverter.convertExpressions(arguments.drop(1))).assignNoPrototype(),
+                        "joinToString",
+                        codeConverter.convertExpressions(arguments.take(1))
+                )
+            }
+        }
+
+        private fun PsiExpression.isAssignableToCharSequenceArray(): Boolean {
+            val charSequenceType = PsiType.getTypeByName("java.lang.CharSequence", project, resolveScope)
+            return (type as? PsiArrayType)?.componentType?.let { charSequenceType.isAssignableFrom(it) } ?: false
         }
     },
 
@@ -155,15 +187,20 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     STRING_FORMAT_WITH_LOCALE(JAVA_LANG_STRING, "format", null) {
         override fun matches(method: PsiMethod)
-                = super.matches(method) && method.parameterList.parametersCount >= 2 && method.parameterList.parameters.first().type.canonicalText == "java.util.Locale"
+                = super.matches(method) &&
+                  method.parameterList.parametersCount == 3 &&
+                  method.parameterList.parameters.let { it.first().type.canonicalText == "java.util.Locale" && it.last().isVarArgs }
 
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = MethodCallExpression.build(codeConverter.convertExpression(arguments[1]), "format", codeConverter.convertExpressions(listOf(arguments[0]) + arguments.drop(2)), emptyList(), false)
     },
 
     STRING_FORMAT(JAVA_LANG_STRING, "format", null) {
-        override fun matches(method: PsiMethod)
-                = super.matches(method) && method.parameterList.parametersCount >= 1
+        override fun matches(method: PsiMethod): Boolean {
+            return super.matches(method) &&
+                   method.parameterList.parametersCount == 2 &&
+                   method.parameterList.parameters.last().isVarArgs
+        }
 
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = MethodCallExpression.build(codeConverter.convertExpression(arguments.first()), "format", codeConverter.convertExpressions(arguments.drop(1)), emptyList(), false)

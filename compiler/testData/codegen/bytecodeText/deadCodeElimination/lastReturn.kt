@@ -17,7 +17,6 @@ fun box(): String {
 /*
     3 return's are defined in functions
     2 are from package facade
-    1 is from package clinit
 */
 
-// 6 RETURN
+// 5 RETURN

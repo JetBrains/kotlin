@@ -23,15 +23,11 @@ public class ReflectionFactory {
         return new ClassReference(javaClass);
     }
 
-    public KPackage createKotlinPackage(Class javaClass) {
+    public KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
         return null;
     }
 
-    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
-        return null;
-    }
-
-    public KClass foreignKotlinClass(Class javaClass) {
+    public KClass getOrCreateKotlinClass(Class javaClass) {
         return new ClassReference(javaClass);
     }
 
@@ -65,5 +61,17 @@ public class ReflectionFactory {
 
     public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
         return p;
+    }
+
+    // Deprecated
+
+    @Deprecated
+    public KClass foreignKotlinClass(Class javaClass) {
+        return new ClassReference(javaClass);
+    }
+
+    @Deprecated
+    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
+        return null;
     }
 }

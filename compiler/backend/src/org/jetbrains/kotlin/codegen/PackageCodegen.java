@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
@@ -65,17 +64,11 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
-import static org.jetbrains.kotlin.codegen.AsmUtil.method;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PACKAGE_TYPE;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType;
-import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackageCodegen {
@@ -256,7 +249,6 @@ public class PackageCodegen {
             @NotNull Map<CallableMemberDescriptor, Runnable> tasks,
             @NotNull List<JvmSerializationBindings> bindings
     ) {
-        generateKotlinPackageReflectionField();
         MemberCodegen.generateModuleNameField(state, v);
 
         for (CallableMemberDescriptor member : Ordering.from(MemberComparator.INSTANCE).sortedCopy(tasks.keySet())) {
@@ -266,15 +258,6 @@ public class PackageCodegen {
         bindings.add(v.getSerializationBindings());
         writeDeprecatedAnnotation();
         writeKotlinPackageAnnotationIfNeeded(JvmSerializationBindings.union(bindings));
-    }
-
-    private void generateKotlinPackageReflectionField() {
-        MethodVisitor mv = v.newMethod(NO_ORIGIN, ACC_STATIC, "<clinit>", "()V", null, null);
-        Method method = method("createKotlinPackage", K_PACKAGE_TYPE, getType(Class.class), getType(String.class));
-        InstructionAdapter iv = new InstructionAdapter(mv);
-        MemberCodegen.generateReflectionObjectField(state, packageClassType, v, method, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, iv);
-        iv.areturn(Type.VOID_TYPE);
-        FunctionCodegen.endVisit(mv, "package facade static initializer", null);
     }
 
     private void writeKotlinPackageAnnotationIfNeeded(@NotNull JvmSerializationBindings bindings) {

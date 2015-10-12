@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin.incremental
 
+import com.google.protobuf.MessageLite
 import com.intellij.util.containers.MultiMap
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -166,16 +167,28 @@ public class IncrementalPackageFragmentProvider(
                 this@IncrementalPackageFragment, packageData.packageProto, packageData.nameResolver, deserializationComponents,
                 { listOf() }
         ) {
-            override fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> {
-                fun getPackagePart(callable: ProtoBuf.Callable) =
-                        callable.getExtension(JvmProtoBuf.oldImplClassName)?.let { packageData.nameResolver.getName(it) }
+            override fun filteredFunctionProtos(protos: Collection<ProtoBuf.Function>): Collection<ProtoBuf.Function> {
+                return filteredMemberProtos(protos) {
+                    it.getExtension(JvmProtoBuf.methodImplClassName)?.let { packageData.nameResolver.getName(it) }
+                }
+            }
 
+            override fun filteredPropertyProtos(protos: Collection<ProtoBuf.Property>): Collection<ProtoBuf.Property> {
+                return filteredMemberProtos(protos) {
+                    it.getExtension(JvmProtoBuf.propertyImplClassName)?.let { packageData.nameResolver.getName(it) }
+                }
+            }
+
+            private fun <M : MessageLite> filteredMemberProtos(
+                    allMemberProtos: Collection<M>,
+                    getPackagePart: (M) -> Name?
+            ): Collection<M> {
                 fun shouldSkipPackagePart(name: Name) =
-                        JvmClassName.byFqNameWithoutInnerClasses(fqName.child(name)).getInternalName() in obsoletePackageParts
+                        JvmClassName.byFqNameWithoutInnerClasses(fqName.child(name)).internalName in obsoletePackageParts
 
-                if (LOG.isDebugEnabled()) {
+                if (LOG.isDebugEnabled) {
                     val allPackageParts = allMemberProtos
-                            .map (::getPackagePart)
+                            .map(getPackagePart)
                             .filterNotNull()
                             .toSet()
                     val skippedPackageParts = allPackageParts.filter { shouldSkipPackagePart(it) }

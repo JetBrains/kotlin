@@ -129,12 +129,11 @@ private class ClassClsStubBuilder(
     }
 
     private fun createConstructorStub() {
-        if (!isClass() || !classProto.hasPrimaryConstructor()) return
-        val primaryConstructorProto = classProto.getPrimaryConstructor()
+        if (!isClass()) return
 
-        assert(classProto.getPrimaryConstructor().hasData()) { "Primary constructor in class is always non-default, so data should not be empty" }
+        val primaryConstructorProto = classProto.constructorList.find { !Flags.IS_SECONDARY.get(it.flags) } ?: return
 
-        createCallableStub(classOrObjectStub, primaryConstructorProto.getData(), c, ProtoContainer(classProto, null, c.nameResolver))
+        createConstructorStub(classOrObjectStub, primaryConstructorProto, c, ProtoContainer(classProto, null, c.nameResolver))
     }
 
     private fun createDelegationSpecifierList() {
@@ -188,10 +187,14 @@ private class ClassClsStubBuilder(
 
     private fun createCallableMemberStubs(classBody: KotlinPlaceHolderStubImpl<JetClassBody>) {
         val container = ProtoContainer(classProto, null, c.nameResolver)
-        val allMembers = classProto.getSecondaryConstructorList() + classProto.getMemberList()
-        for (callableProto in allMembers) {
-            createCallableStub(classBody, callableProto, c, container)
+
+        for (secondaryConstructorProto in classProto.constructorList) {
+            if (Flags.IS_SECONDARY.get(secondaryConstructorProto.flags)) {
+                createConstructorStub(classBody, secondaryConstructorProto, c, container)
+            }
         }
+
+        createCallableStubs(classBody, c, container, classProto.functionList, classProto.propertyList)
     }
 
     private fun isClass(): Boolean {
