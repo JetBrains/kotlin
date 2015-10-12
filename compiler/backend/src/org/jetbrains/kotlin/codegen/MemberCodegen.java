@@ -59,7 +59,8 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlag
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_IMPL_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -444,28 +445,6 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             }
         }
         return false;
-    }
-
-    public static void generateReflectionObjectField(
-            @NotNull GenerationState state,
-            @NotNull Type thisAsmType,
-            @NotNull ClassBuilder classBuilder,
-            @NotNull Method factory,
-            @NotNull String fieldName,
-            @NotNull InstructionAdapter v
-    ) {
-        String type = factory.getReturnType().getDescriptor();
-        // TODO: generic signature
-        classBuilder.newField(NO_ORIGIN, ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, fieldName, type, null, null);
-
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
-
-        v.aconst(thisAsmType);
-        if (factory.getArgumentTypes().length == 2) {
-            v.aconst(state.getModuleName());
-        }
-        v.invokestatic(REFLECTION, factory.getName(), factory.getDescriptor(), false);
-        v.putstatic(thisAsmType.getInternalName(), fieldName, type);
     }
 
     public static void generateModuleNameField(
