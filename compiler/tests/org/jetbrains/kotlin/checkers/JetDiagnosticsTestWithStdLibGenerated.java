@@ -615,6 +615,27 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/kt4975.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AnnotationsForResolve extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInAnnotationsForResolve() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("exactAnnotation.kt")
+            public void testExactAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/exactAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noInferAnnotation.kt")
+            public void testNoInferAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/noInferAnnotation.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature")
