@@ -80,7 +80,9 @@ public class IntrinsicMethods {
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
             String typeName = type.getTypeName().asString();
             declareIntrinsicFunction(typeName, "plus", 0, UNARY_PLUS);
+            declareIntrinsicFunction(typeName, "unaryPlus", 0, UNARY_PLUS);
             declareIntrinsicFunction(typeName, "minus", 0, UNARY_MINUS);
+            declareIntrinsicFunction(typeName, "unaryMinus", 0, UNARY_MINUS);
             declareIntrinsicFunction(typeName, "inv", 0, INV);
             declareIntrinsicFunction(typeName, "rangeTo", 1, RANGE_TO);
             declareIntrinsicFunction(typeName, "inc", 0, INC);

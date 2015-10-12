@@ -129,7 +129,7 @@ fun renderCheckUnaryOperation(name: String, params: List<JetType>): String {
     }
 
     return when(name) {
-        "minus" -> "{ a -> a.$name() }"
+        "unaryMinus", "minus" -> "{ a -> a.$name() }"
         else -> "emptyUnaryFun"
     }
 }
