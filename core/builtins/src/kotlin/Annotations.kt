@@ -108,6 +108,7 @@ private annotation class tailrec
 @Target(FUNCTION, PROPERTY, CONSTRUCTOR)
 @Retention(BINARY)
 @MustBeDocumented
+@Deprecated("Use @Deprecated(\"...\", level = DeprecationLevel.HIDDEN) instead", replaceWith = ReplaceWith("@Deprecated(, level = DeprecationLevel.HIDDEN)"))
 public annotation class HiddenDeclaration
 
 /**

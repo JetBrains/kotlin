@@ -613,7 +613,7 @@ public interface FloatingPointConstants</*0*/ T> {
 public interface Function</*0*/ out R> {
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class HiddenDeclaration : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented() @kotlin.Deprecated(message = "Use @Deprecated("...", level = DeprecationLevel.HIDDEN) instead", replaceWith = kotlin.ReplaceWith(expression = "@Deprecated(, level = DeprecationLevel.HIDDEN)", imports = {})) @kotlin.annotation.annotation() public final class HiddenDeclaration : kotlin.Annotation {
     /*primary*/ public constructor HiddenDeclaration()
 }
 
