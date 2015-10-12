@@ -4,9 +4,10 @@
 // ERROR: 'ordinal' in 'E' is final and cannot be overridden
 enum class E {}
 interface X {
-    final fun ordinal() : Int = 42
+    final val ordinal : Int
+            get() = 42
 }
 
 class A : E(), X {
-    override<caret> fun ordinal() : Int = 24;
+    override<caret> val ordinal : Int = 24;
 }

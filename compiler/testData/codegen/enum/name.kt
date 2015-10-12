@@ -3,4 +3,4 @@ enum class State {
   K
 }
 
-fun box() = "${State.O.name()}${State.K.name()}"
+fun box() = "${State.O.name}${State.K.name}"

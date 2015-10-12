@@ -324,11 +324,15 @@
             this.name$ = void 0;
             this.ordinal$ = void 0;
         }, {
-            name: function () {
-                return this.name$;
+            name: {
+                get: function () {
+                    return this.name$;
+                }
             },
-            ordinal: function () {
-                return this.ordinal$;
+            ordinal: {
+                get: function () {
+                    return this.ordinal$;
+                }
             },
             equals_za3rmp$: function (o) {
                 return this === o;
@@ -340,7 +344,7 @@
                 return this.ordinal$ < o.ordinal$ ? -1 : this.ordinal$ > o.ordinal$ ? 1 : 0;
             },
             toString: function () {
-                return this.name();
+                return this.name;
             }
         }
     );

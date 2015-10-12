@@ -6,10 +6,10 @@ public open enum class EnumWithSpecializedEntry : kotlin.Enum<test.EnumWithSpeci
     enum entry E2
 
     private constructor EnumWithSpecializedEntry()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumWithSpecializedEntry!): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
 
     public/*package*/ open class Nested {
         public/*package*/ constructor Nested()

@@ -303,10 +303,12 @@ public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> 
     enum entry HIDDEN
 
     /*primary*/ private constructor DeprecationLevel()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ fun <get-name>(): kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun <get-ordinal>(): kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.DeprecationLevel): kotlin.Int
-    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
 
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.DeprecationLevel
@@ -447,10 +449,12 @@ public final class DoubleRange : kotlin.Range<kotlin.Double>, kotlin.Progression
 
 public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     /*primary*/ public constructor Enum</*0*/ E : kotlin.Enum<E>>(/*0*/ name: kotlin.String, /*1*/ ordinal: kotlin.Int)
+    public final val name: kotlin.String
+        public final fun <get-name>(): kotlin.String
+    public final val ordinal: kotlin.Int
+        public final fun <get-ordinal>(): kotlin.Int
     protected final fun clone(): kotlin.Any
     public final override /*1*/ fun compareTo(/*0*/ other: E): kotlin.Int
-    public final fun name(): kotlin.String
-    public final fun ordinal(): kotlin.Int
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
