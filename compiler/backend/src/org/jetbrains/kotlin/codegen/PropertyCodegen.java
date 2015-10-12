@@ -56,8 +56,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
@@ -326,6 +325,13 @@ public class PropertyCodegen {
                 builder = codegen.v;
                 backingFieldContext = codegen.context;
                 v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
+            }
+
+            if (isObject(propertyDescriptor.getContainingDeclaration()) &&
+                !hasJvmFieldAnnotation &&
+                !propertyDescriptor.isConst() &&
+                (modifiers & ACC_PRIVATE) == 0) {
+                modifiers |= ACC_DEPRECATED;
             }
         }
         else if (takeVisibilityFromDescriptor) {
