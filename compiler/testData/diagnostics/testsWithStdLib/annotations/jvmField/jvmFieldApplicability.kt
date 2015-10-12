@@ -35,6 +35,9 @@ abstract class C : I{
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     final override val ai = 3
+
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    private val private = 3
 }
 
 interface I {
@@ -72,3 +75,6 @@ object O {
     @JvmField
     val c = 3
 }
+
+<!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+private val private = 3

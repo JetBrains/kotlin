@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.psi.JetDeclaration
@@ -36,6 +37,7 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
     enum class Problem(val errorMessage: String) {
         NOT_A_PROPERTY("JvmField can only be applied to a property"),
         NOT_FINAL("JvmField can only be applied to final property"),
+        PRIVATE("JvmField has no effect on a private property"),
         CUSTOM_ACCESSOR("JvmField cannot be applied to a property with a custom accessor"),
         NO_BACKING_FIELD("JvmField can only be applied to a property with backing field"),
         OVERRIDES("JvmField cannot be applied to a property that overrides some other property"),
@@ -56,6 +58,7 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
         val problem = when {
             descriptor !is PropertyDescriptor -> NOT_A_PROPERTY
             descriptor.modality.isOverridable -> NOT_FINAL
+            Visibilities.isPrivate(descriptor.visibility) -> PRIVATE
             !descriptor.hasBackingField(bindingContext) -> NO_BACKING_FIELD
             descriptor.hasCustomAccessor() -> CUSTOM_ACCESSOR
             descriptor.overriddenDescriptors.isNotEmpty() -> OVERRIDES
