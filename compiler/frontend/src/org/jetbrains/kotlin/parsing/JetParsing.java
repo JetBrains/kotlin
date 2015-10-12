@@ -2084,38 +2084,6 @@ public class JetParsing extends AbstractJetParsing {
         return atGT;
     }
 
-    public void parseModifierListWithLookForStopAt(TokenSet lookFor, TokenSet stopAt) {
-        int lastId = matchTokenStreamPredicate(new LastBefore(new AtSet(lookFor), new AnnotationTargetStop(stopAt, ANNOTATION_TARGETS), false));
-        createTruncatedBuilder(lastId).parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS, null);
-    }
-
-    private class AnnotationTargetStop extends AbstractTokenStreamPredicate {
-        private final TokenSet stopAt;
-        private final TokenSet annotationTargets;
-
-        private IElementType previousToken;
-        private IElementType tokenBeforePrevious;
-
-        public AnnotationTargetStop(TokenSet stopAt, TokenSet annotationTargets) {
-            this.stopAt = stopAt;
-            this.annotationTargets = annotationTargets;
-        }
-
-        @Override
-        public boolean matching(boolean topLevel) {
-            if (atSet(stopAt)) return true;
-
-            if (at(COLON) && !(tokenBeforePrevious == AT && (previousToken == IDENTIFIER || annotationTargets.contains(previousToken)))) {
-                return true;
-            }
-
-            tokenBeforePrevious = previousToken;
-            previousToken = tt();
-
-            return false;
-        }
-    }
-
     /*
      * functionType
      *   : "(" (parameter | modifiers type){","}? ")" "->" type?

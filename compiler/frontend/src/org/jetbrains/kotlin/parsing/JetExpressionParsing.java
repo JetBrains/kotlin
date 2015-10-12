@@ -1342,7 +1342,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 PsiBuilder.Marker parameter = mark();
 
                 if (!at(IN_KEYWORD)) {
-                    myJetParsing.parseModifierListWithLookForStopAt(TokenSet.create(IDENTIFIER, LPAR), TokenSet.create(IN_KEYWORD, RPAR, COLON));
+                    myJetParsing.parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS, TokenSet.create(IN_KEYWORD, RPAR, COLON));
                 }
 
                 if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
