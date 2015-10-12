@@ -1,7 +1,7 @@
 fun t1() : Boolean {
     val s1 : String? = "sff"
     val s2 : String? = null
-    return s1?.length() == 3 && s2?.length() == null
+    return s1?.length == 3 && s2?.length == null
 }
 
 fun t2() : Boolean {

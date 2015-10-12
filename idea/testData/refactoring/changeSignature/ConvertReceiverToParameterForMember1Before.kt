@@ -1,6 +1,6 @@
 class A(val k: Int) {
     fun X.<caret>foo(s: String, k: Int): Boolean {
-        return this.k + s.length() - k + this@A.k/2 > 0
+        return this.k + s.length - k + this@A.k/2 > 0
     }
 
     fun test() {

@@ -3,7 +3,7 @@ package jet121
 fun box(): String {
     val answer = apply("OK") {
         get(0)
-        length()
+        length
     }
 
     return if (answer == 2) "OK" else "FAIL"

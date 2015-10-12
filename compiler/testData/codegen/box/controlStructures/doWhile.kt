@@ -8,7 +8,7 @@ fun box(): String {
     if (y != 5) return "Fail 2 $y"
     
     var z = ""
-    do { z += z.length() } while (z.length() < 5)
+    do { z += z.length } while (z.length < 5)
     if (z != "01234") return "Fail 3 $z"
     
     return "OK"

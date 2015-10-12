@@ -1,3 +1,3 @@
 fun String.foo() {
-    println(length())
+    println(length)
 }

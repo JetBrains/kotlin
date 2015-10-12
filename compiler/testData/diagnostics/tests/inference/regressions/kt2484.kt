@@ -8,11 +8,11 @@ fun <T> Array<T>.forEach(operation: (T) -> Unit) : Unit { for (element in this) 
 fun bar(operation: (String) -> Unit) = operation("")
 
 fun main(args: Array<String>) {
-    args.forEach { a : String -> a.length() } // Type mismatch: (String) -> Unit required, (String) -> Int found
-    args.forEach { a -> a.length() } // Type mismatch: (String) -> Unit required, (String) -> Int found
-    args.forEach { it.length() }     // This works!
+    args.forEach { a : String -> a.length } // Type mismatch: (String) -> Unit required, (String) -> Int found
+    args.forEach { a -> a.length } // Type mismatch: (String) -> Unit required, (String) -> Int found
+    args.forEach { it.length }     // This works!
 
-    bar { a: String -> a.length() }
-    bar { a -> a.length() }
-    bar { it.length() }
+    bar { a: String -> a.length }
+    bar { a -> a.length }
+    bar { it.length }
 }

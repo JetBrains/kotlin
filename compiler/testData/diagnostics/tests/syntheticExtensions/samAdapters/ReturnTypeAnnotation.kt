@@ -1,7 +1,7 @@
 // FILE: KotlinFile.kt
 fun foo(javaInterface: JavaInterface) {
     val value = javaInterface.compute { "" }
-    value<!UNSAFE_CALL!>.<!>length()
+    value<!UNSAFE_CALL!>.<!>length
 }
 
 // FILE: JavaInterface.java

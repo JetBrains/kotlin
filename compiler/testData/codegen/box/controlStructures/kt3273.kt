@@ -12,7 +12,7 @@ public fun testCoalesce() {
         else -> "Hello world"
     }
 
-    printlnMock(value.length())
+    printlnMock(value.length)
 }
 
 fun box(): String {

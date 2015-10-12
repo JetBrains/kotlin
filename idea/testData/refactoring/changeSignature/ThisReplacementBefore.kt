@@ -3,7 +3,7 @@ class C {
     fun f() {
         fun Any.<caret>local() {
             if (this is String) {
-                this.length()
+                this.length
             }
         }
     }

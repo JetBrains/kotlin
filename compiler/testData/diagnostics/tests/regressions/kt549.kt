@@ -11,7 +11,7 @@ package demo
   }
 
 fun main(args : Array<String>) {
-  for (a in filter(args, {it.length() > 1})) {
+  for (a in filter(args, {it.length > 1})) {
     System.out.println("Hello, ${a}!")
   }
 }

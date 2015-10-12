@@ -8,7 +8,7 @@ fun Int.newFun(): Int = this
 fun foo(list: List<String>): Int {
     return list
             .filter { it.isNotEmpty() }
-            .map { it.length() }
+            .map { it.length }
             .first()
             .<caret>oldFun()
 }

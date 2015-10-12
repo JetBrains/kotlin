@@ -4,7 +4,7 @@ class Thing(val delegate: CharSequence) : CharSequence {
     override fun get(index: Int): Char {
         throw UnsupportedOperationException()
     }
-    override fun length(): Int = 0
+    override val length: Int get() = 0
     override fun subSequence(start: Int, end: Int) = delegate.subSequence(start, end)
 }
 

@@ -13,7 +13,7 @@ class MyClass {
         m = create()
         // See KT-7428
         for ((k, v) in <!SMARTCAST_IMPOSSIBLE!>m<!>)
-            res += (k.length() + v.length())
+            res += (k.length + v.length)
         return res
     }
 }

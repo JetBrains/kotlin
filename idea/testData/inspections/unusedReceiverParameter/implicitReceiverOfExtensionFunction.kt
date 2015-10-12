@@ -2,4 +2,4 @@ private fun String.foo() {
     otherExt()
 }
 
-fun String.otherExt() = length()
+fun String.otherExt() = length

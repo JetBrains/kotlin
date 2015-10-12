@@ -9,7 +9,7 @@ public fun foo(xx: Any): Int {
             y = "abc"
         }
         // y!! in both branches
-        <!DEBUG_INFO_SMARTCAST!>y<!>.length()
+        <!DEBUG_INFO_SMARTCAST!>y<!>.length
     } while (!(x is String))
-    return <!DEBUG_INFO_SMARTCAST!>x<!>.length()
+    return <!DEBUG_INFO_SMARTCAST!>x<!>.length
 }

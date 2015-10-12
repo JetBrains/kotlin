@@ -60,6 +60,6 @@ public class B {
     lateinit var a: String
 
     init {
-        a.length()
+        a.length
     }
 }

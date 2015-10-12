@@ -2,5 +2,5 @@ fun doSomething<T>(a: T) {}
 
 val a: String? = "A"
 fun main(args: Array<String>) {
-    doSomething(if (a != null) a.length() else null)
+    doSomething(if (a != null) a.length else null)
 }

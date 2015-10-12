@@ -3,7 +3,7 @@ fun x(): Boolean { return true }
 public fun foo(pp: Any): Int {
     var p = pp
     while(true) {
-        (p as String).length()
+        (p as String).length
         if (x()) break
         p = 42
     }

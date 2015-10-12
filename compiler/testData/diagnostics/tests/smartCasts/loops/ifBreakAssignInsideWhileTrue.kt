@@ -6,5 +6,5 @@ public fun foo(x: String?): Int {
     // In future we can infer this initialization
     <!UNINITIALIZED_VARIABLE!>y<!>.hashCode()
     // x is null because of the break
-    return x<!UNSAFE_CALL!>.<!>length()
+    return x<!UNSAFE_CALL!>.<!>length
 }

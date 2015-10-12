@@ -3,13 +3,13 @@ public fun foo(x: String?, y: String?): Int {
         // After the check, smart cast should work
         if (x != null) {
             if (x == "abc") break
-            y!!.length()
+            y!!.length
         } else {
-            y!!.length()
+            y!!.length
         }
         // y!! in both branches
-        <!DEBUG_INFO_SMARTCAST!>y<!>.length()
+        <!DEBUG_INFO_SMARTCAST!>y<!>.length
     } while (true)
     // break is possible before so !! is necessary
-    return y!!.length()
+    return y!!.length
 }

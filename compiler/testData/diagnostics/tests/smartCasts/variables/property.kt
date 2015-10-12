@@ -1,7 +1,7 @@
 class MyClass(var p: String?)
 
 fun bar(s: String): Int {
-    return s.length()
+    return s.length
 }
 
 fun foo(m: MyClass): Int {

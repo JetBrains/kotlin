@@ -34,7 +34,7 @@ enum class D(val prop: Int) {
     };
 
     constructor(): this(1)
-    constructor(x: String): this(x.length())
+    constructor(x: String): this(x.length)
 
     abstract fun f(): Int
 }

@@ -3,5 +3,5 @@ var a: String?
     set(v) {}
 
 fun main(args: Array<String>) {
-    a?.<caret>length()
+    a?.<caret>length
 }

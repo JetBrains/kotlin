@@ -1,7 +1,7 @@
 //KT-5455 Need warning about redundant type cast
 fun foo(o: Any): Int {
     if (o is String) {
-        return (o <!USELESS_CAST!>as String<!>).length()
+        return (o <!USELESS_CAST!>as String<!>).length
     }
     return -1
 }

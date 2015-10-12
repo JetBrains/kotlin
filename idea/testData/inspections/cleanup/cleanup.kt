@@ -20,11 +20,11 @@ fun foo() {
 }
 
 fun unnecessarySafeCall(x: String) {
-    x?.length()
+    x?.length
 }
 
 fun unnecessaryExclExcl(x: String) {
-    x!!.length()
+    x!!.length
 }
 
 fun unnecessaryCast(x: String) = x as String

@@ -8,8 +8,8 @@ fun main(args: Array<String>) {
     args.size()
 }
 
-// EXPRESSION: s1.length()
+// EXPRESSION: s1.length
 // RESULT: 1: I
 
-// EXPRESSION: s2.length()
+// EXPRESSION: s2.length
 // RESULT: java.lang.NullPointerException: Ljava/lang/NullPointerException;

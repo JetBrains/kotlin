@@ -7,11 +7,11 @@ public fun foo() {
         } else if (s == null) {
             return -2
         } else {
-            return s<!UNSAFE_CALL!>.<!>length() // Here smartcast is possible, at least in principle
+            return s<!UNSAFE_CALL!>.<!>length // Here smartcast is possible, at least in principle
         }
     }
     if (s != null) {
         System.out.println(closure())
-        System.out.println(s<!UNSAFE_CALL!>.<!>length())   // Here smartcast is not possible due to a closure predecessor
+        System.out.println(s<!UNSAFE_CALL!>.<!>length)   // Here smartcast is not possible due to a closure predecessor
     }
 }

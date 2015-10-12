@@ -1,6 +1,6 @@
 class A(val k: Int) {
     fun foo(s: String, x: X, k: Int): Boolean {
-        return x.k + s.length() - k + this.k/2 > 0
+        return x.k + s.length - k + this.k/2 > 0
     }
 
     fun test() {

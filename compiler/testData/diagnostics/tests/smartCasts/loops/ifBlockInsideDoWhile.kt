@@ -5,8 +5,8 @@ public fun foo(p: String?, y: String?): Int {
             "null".toString()
             break
         }
-        <!DEBUG_INFO_SMARTCAST!>y<!>.length()
-        p!!.length()
+        <!DEBUG_INFO_SMARTCAST!>y<!>.length
+        p!!.length
     } while (true)
-    return y?.length() ?: -1
+    return y?.length ?: -1
 }

@@ -3,7 +3,7 @@ class Test {
     private val b : String get() = a
 
     fun outer() : Int {
-        return b.length()
+        return b.length
     }
 }
 

@@ -10,5 +10,5 @@ public fun foo(x: String?): Int {
     } while (bar())
     y.hashCode()
     // x is null because of the break
-    return x<!UNSAFE_CALL!>.<!>length()
+    return x<!UNSAFE_CALL!>.<!>length
 }

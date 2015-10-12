@@ -1,5 +1,5 @@
 public fun fooNotNull(s: String) {
-    System.out.println("Length of $s is ${s.length()}")
+    System.out.println("Length of $s is ${s.length}")
 }
 
 public fun foo() {

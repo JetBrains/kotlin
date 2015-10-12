@@ -664,7 +664,7 @@ ${"    "}
         """.trimIndent()
 
         assertEquals(23, deindented.lines().size())
-        val indents = deindented.lines().map { "^\\s*".toRegex().match(it)!!.value.size }
+        val indents = deindented.lines().map { "^\\s*".toRegex().match(it)!!.value.length }
         assertEquals(0, indents.min())
         assertEquals(42, indents.max())
         assertEquals(1, deindented.lines().count { it.isEmpty() })

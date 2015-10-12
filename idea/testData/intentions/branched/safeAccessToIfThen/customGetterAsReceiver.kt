@@ -9,5 +9,5 @@ class Foo {
 
 fun main(args: Array<String>) {
     val a = Foo()
-    doSomething(a.b?.<caret>length())
+    doSomething(a.b?.<caret>length)
 }

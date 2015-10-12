@@ -6,7 +6,7 @@ fun escapeChar(c : Char) : String? = when (c) {
 }
 
 fun String.escape(i : Int = 0, result : String = "") : String =
-  if (i == length()) result
+  if (i == length) result
   else escape(i + 1, result + escapeChar(get(i)))
 
 fun box() : String {
@@ -19,7 +19,7 @@ fun box() : String {
   System.out?.println("}");
   System.out?.println();
   System.out?.println("fun String.escape(i : Int = 0, result : String = \"\") : String =");
-  System.out?.println("  if (i == length()) result");
+  System.out?.println("  if (i == length) result");
   System.out?.println("  else escape(i + 1, result + escapeChar(this.get(i)))");
   System.out?.println();
   System.out?.println("fun main(args : Array<String>) {");

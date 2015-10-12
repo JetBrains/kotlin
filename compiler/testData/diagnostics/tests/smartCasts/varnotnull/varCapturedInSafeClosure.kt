@@ -10,6 +10,6 @@ public fun foo() {
     if (s != null) {
         System.out.println(closure())
         // Smart cast is possible but closure makes it harder to understand
-        System.out.println(s<!UNSAFE_CALL!>.<!>length())   
+        System.out.println(s<!UNSAFE_CALL!>.<!>length)
     }
 }

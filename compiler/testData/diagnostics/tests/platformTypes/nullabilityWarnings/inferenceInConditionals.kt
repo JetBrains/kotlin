@@ -14,7 +14,7 @@ public class J {
 // FILE: k.kt
 
 fun safeCall(c: J?) {
-  c?.nn()?.length()
+  c?.nn()?.length
 }
 
 fun ifelse(c: J): Any? {

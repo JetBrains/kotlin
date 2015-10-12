@@ -8,10 +8,10 @@ fun withLambda(block : Int.(String, String) -> Unit) {
 
 fun test() {
     withLambda { r ->
-        r.length()
+        r.length
     }
 
     withLambda { x, y ->
-        x.length() + y.length()
+        x.length + y.length
     }
 }

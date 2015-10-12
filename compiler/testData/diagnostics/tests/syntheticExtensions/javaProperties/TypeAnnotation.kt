@@ -1,7 +1,7 @@
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
-    javaClass.getSomething()<!UNSAFE_CALL!>.<!>length()
-    javaClass.something<!UNSAFE_CALL!>.<!>length()
+    javaClass.getSomething()<!UNSAFE_CALL!>.<!>length
+    javaClass.something<!UNSAFE_CALL!>.<!>length
 }
 
 // FILE: JavaClass.java

@@ -7,5 +7,5 @@ abstract class A(val s: String) {
 fun foo(o: String?): Int {
     val a = object : A(o!!){}
     a.bar()
-    return <!DEBUG_INFO_SMARTCAST!>o<!>.length()
+    return <!DEBUG_INFO_SMARTCAST!>o<!>.length
 }

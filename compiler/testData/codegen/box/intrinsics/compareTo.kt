@@ -11,6 +11,6 @@ fun box(): String {
         }
     }
     
-    if (sb.length() == 0) return "OK"
+    if (sb.length == 0) return "OK"
     return "Fail:\n$sb"
 }

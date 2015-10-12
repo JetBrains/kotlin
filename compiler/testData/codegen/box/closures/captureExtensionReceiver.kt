@@ -3,12 +3,12 @@ interface  B<T> {
 }
 
 fun String.foo() = object : B<String> {
-    override val bar: String = length().toString()
+    override val bar: String = length.toString()
 }
 
 class C {
 
-    fun String.extension() = this.length()
+    fun String.extension() = this.length
 
     fun String.fooInClass() = object : B<String> {
         override val bar: String = extension().toString()

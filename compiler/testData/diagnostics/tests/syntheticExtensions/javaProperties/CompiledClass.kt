@@ -2,5 +2,5 @@
 import java.io.File
 
 fun foo(file: File) {
-    file.absolutePath.length()
+    file.absolutePath.length
 }

@@ -2,7 +2,7 @@
 fun <T> array(vararg x: T): Array<T> = null!!
 
 open class B(x: Int) {
-    constructor(vararg y: String): this(y[0].length())
+    constructor(vararg y: String): this(y[0].length)
 }
 
 class A : B {

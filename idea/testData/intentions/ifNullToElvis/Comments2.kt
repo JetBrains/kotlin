@@ -4,5 +4,5 @@ fun foo(p: List<String?>): Int {
         // we should do something with it
         return -1 // let's return -1
     } // end of if
-    return v.length()
+    return v.length
 }

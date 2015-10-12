@@ -19,7 +19,7 @@ class SomeClass {
         get() = "A"
 }
 
-fun @receiver:Ann String.length2() = length()
+fun @receiver:Ann String.length2() = length
 
 val @receiver:Ann String.extensionProperty: String
     get() = "A"

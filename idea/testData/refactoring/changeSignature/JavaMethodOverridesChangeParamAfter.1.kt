@@ -6,13 +6,13 @@ open class X: A() {
 
 open class Y: B() {
     fun foo(x: Int): String? {
-        return x.length() * 2
+        return x.length * 2
     }
 }
 
 open class Z: X() {
     fun foo(x: Int): String? {
-        return x.length()
+        return x.length
     }
 }
 
