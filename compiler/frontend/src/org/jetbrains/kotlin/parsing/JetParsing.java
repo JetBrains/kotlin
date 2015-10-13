@@ -453,10 +453,6 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
         while (!eof()) {
-            if (annotationParsingMode.atMemberStart && atSet(SOFT_KEYWORDS_AT_MEMBER_START)) break;
-            if ((annotationParsingMode == PRIMARY_CONSTRUCTOR_MODIFIER_LIST || annotationParsingMode == PRIMARY_CONSTRUCTOR_MODIFIER_LIST_LOCAL) &&
-                atSet(CONSTRUCTOR_KEYWORD, WHERE_KEYWORD)) break;
-
             if (at(AT) && annotationParsingMode.allowAnnotations) {
                 parseAnnotationOrList(annotationParsingMode);
             }
@@ -809,10 +805,7 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker beforeConstructorModifiers = mark();
         PsiBuilder.Marker primaryConstructorMarker = mark();
-        boolean hasConstructorModifiers = parseModifierList(
-                declarationParsingMode != LOCAL ? PRIMARY_CONSTRUCTOR_MODIFIER_LIST : PRIMARY_CONSTRUCTOR_MODIFIER_LIST_LOCAL,
-                TokenSet.EMPTY
-        );
+        boolean hasConstructorModifiers = parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS, TokenSet.EMPTY);
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
         if (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON, CONSTRUCTOR_KEYWORD)) {
@@ -1058,7 +1051,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker decl = mark();
 
         ModifierDetector detector = new ModifierDetector();
-        parseModifierList(detector, ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST, TokenSet.EMPTY);
+        parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS, TokenSet.EMPTY);
 
         IElementType declType = parseMemberDeclarationRest(detector.isEnumDetected(), detector.isDefaultDetected());
 
@@ -2267,30 +2260,23 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     enum AnnotationParsingMode {
-        FILE_ANNOTATIONS_BEFORE_PACKAGE(false, true, false, true),
-        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(false, true, false, true),
-        ONLY_ESCAPED_REGULAR_ANNOTATIONS(false, false, false, true),
-        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS(true, false, false, true),
-        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST(true, false, true, true),
-        PRIMARY_CONSTRUCTOR_MODIFIER_LIST(true, false, false, true),
-        PRIMARY_CONSTRUCTOR_MODIFIER_LIST_LOCAL(false, false, false, true),
-        NO_ANNOTATIONS(false, false, false, false);
-
+        FILE_ANNOTATIONS_BEFORE_PACKAGE(false, true, true),
+        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(false, true, true),
+        ONLY_ESCAPED_REGULAR_ANNOTATIONS(false, false, true),
+        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS(true, false, true),
+        NO_ANNOTATIONS(false, false, false);
 
         boolean allowShortAnnotations;
         boolean isFileAnnotationParsingMode;
-        boolean atMemberStart;
         boolean allowAnnotations;
 
         AnnotationParsingMode(
                 boolean allowShortAnnotations,
                 boolean isFileAnnotationParsingMode,
-                boolean atMemberStart,
                 boolean allowAnnotations
         ) {
             this.allowShortAnnotations = allowShortAnnotations;
             this.isFileAnnotationParsingMode = isFileAnnotationParsingMode;
-            this.atMemberStart = atMemberStart;
             this.allowAnnotations = allowAnnotations;
         }
     }

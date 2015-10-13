@@ -209,9 +209,8 @@ JetFile: valid.kt
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
-        PsiErrorElement:Use '@' symbol before annotations
-          <empty list>
         ANNOTATION_ENTRY
+          PsiElement(AT)('@')
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

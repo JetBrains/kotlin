@@ -34,23 +34,16 @@ JetFile: EnumOldConstructorSyntax.kt
       PsiErrorElement:Expecting member declaration
         PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('My')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('13')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
       PROPERTY
-        MODIFIER_LIST
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('My')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('13')
-              PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n\n    ')
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('y')

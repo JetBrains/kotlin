@@ -4,7 +4,7 @@ class A {
 
     constructor():
 
-    ann fun foo()
+    @ann fun foo()
 
     constructor(): sup
 

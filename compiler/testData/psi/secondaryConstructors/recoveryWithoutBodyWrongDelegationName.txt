@@ -21,18 +21,14 @@ JetFile: recoveryWithoutBodyWrongDelegationName.kt
         CONSTRUCTOR_DELEGATION_CALL
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('thi')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
       PROPERTY
-        MODIFIER_LIST
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('thi')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n    ')
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('x')
@@ -56,6 +52,7 @@ JetFile: recoveryWithoutBodyWrongDelegationName.kt
       FUN
         MODIFIER_LIST
           ANNOTATION_ENTRY
+            PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -79,15 +76,10 @@ JetFile: recoveryWithoutBodyWrongDelegationName.kt
         CONSTRUCTOR_DELEGATION_CALL
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('sup')
+      PsiWhiteSpace('\n\n    ')
       SECONDARY_CONSTRUCTOR
-        MODIFIER_LIST
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('sup')
-        PsiWhiteSpace('\n\n    ')
         PsiElement(constructor)('constructor')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
@@ -97,18 +89,12 @@ JetFile: recoveryWithoutBodyWrongDelegationName.kt
         CONSTRUCTOR_DELEGATION_CALL
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('thi')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
       PsiErrorElement:Expecting member declaration
-        <empty list>
+        PsiElement(IDENTIFIER)('thi')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
