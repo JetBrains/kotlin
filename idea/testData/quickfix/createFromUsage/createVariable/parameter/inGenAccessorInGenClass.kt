@@ -5,7 +5,7 @@
 // ERROR: Unresolved reference: foo
 
 class A<T> {
-    val <T> test: T get() {
+    val <T> T.test: T get() {
         return <caret>foo
     }
 }

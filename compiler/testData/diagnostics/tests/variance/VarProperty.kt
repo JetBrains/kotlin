@@ -34,15 +34,15 @@ abstract class Test<in I, out O, P> {
     abstract var In<<!TYPE_VARIANCE_CONFLICT(I; in; out; In<I>)!>I<!>>.receiver4: Int
     abstract var In<O>.receiver5: Int
 
-    var <X : I> typeParameter1 = 8
-    var <X : <!TYPE_VARIANCE_CONFLICT(O; out; in; O)!>O<!>> typeParameter2 = 13
-    var <X : P> typeParameter3 = 21
-    var <X : In<<!TYPE_VARIANCE_CONFLICT(I; in; out; In<I>)!>I<!>>> typeParameter4 = 34
-    var <X : In<O>> typeParameter5 = 55
+    var <X : I> X.typeParameter1: Int get() = 0; set(i) {}
+    var <X : <!TYPE_VARIANCE_CONFLICT(O; out; in; O)!>O<!>> X.typeParameter2: Int get() = 0; set(i) {}
+    var <X : P> X.typeParameter3: Int get() = 0; set(i) {}
+    var <X : In<<!TYPE_VARIANCE_CONFLICT(I; in; out; In<I>)!>I<!>>> X.typeParameter4: Int get() = 0; set(i) {}
+    var <X : In<O>> X.typeParameter5: Int get() = 0; set(i) {}
 
-    var <X> typeParameter6 where X : I = 1
-    var <X> typeParameter7 where X : <!TYPE_VARIANCE_CONFLICT(O; out; in; O)!>O<!> = 1
-    var <X> typeParameter8 where X : P = 2
-    var <X> typeParameter9 where X : In<<!TYPE_VARIANCE_CONFLICT(I; in; out; In<I>)!>I<!>> = 3
-    var <X> typeParameter0 where X : In<O> = 5
+    var <X> X.typeParameter6: Int where X : I get() = 0; set(i) {}
+    var <X> X.typeParameter7: Int where X : <!TYPE_VARIANCE_CONFLICT(O; out; in; O)!>O<!> get() = 0; set(i) {}
+    var <X> X.typeParameter8: Int where X : P get() = 0; set(i) {}
+    var <X> X.typeParameter9: Int where X : In<<!TYPE_VARIANCE_CONFLICT(I; in; out; In<I>)!>I<!>> get() = 0; set(i) {}
+    var <X> X.typeParameter0: Int where X : In<O> get() = 0; set(i) {}
 }

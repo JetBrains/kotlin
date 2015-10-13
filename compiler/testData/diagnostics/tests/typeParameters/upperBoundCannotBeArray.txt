@@ -1,6 +1,6 @@
 package
 
-public val </*0*/ T : kotlin.Array<kotlin.Any?>> v: kotlin.String = ""
+public val </*0*/ T : kotlin.Array<kotlin.Any?>> T.v: kotlin.String
 public fun </*0*/ A : kotlin.Array<kotlin.Any>> f1(): kotlin.Unit
 public fun </*0*/ T, /*1*/ A : kotlin.Array<out T>> f2(): kotlin.Unit
 public fun </*0*/ S, /*1*/ T : S, /*2*/ A : kotlin.Array<out S>> f3(): kotlin.Unit where A : kotlin.Array<out T>

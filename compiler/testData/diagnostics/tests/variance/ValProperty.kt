@@ -34,15 +34,15 @@ abstract class Test<in I, out O, P> {
     abstract val In<<!TYPE_VARIANCE_CONFLICT(I; in; out; In<I>)!>I<!>>.receiver4: Int
     abstract val In<O>.receiver5: Int
 
-    val <X : I> typeParameter1 = 8
-    val <X : <!TYPE_VARIANCE_CONFLICT(O; out; in; O)!>O<!>> typeParameter2 = 13
-    val <X : P> typeParameter3 = 21
-    val <X : In<<!TYPE_VARIANCE_CONFLICT(I; in; out; In<I>)!>I<!>>> typeParameter4 = 34
-    val <X : In<O>> typeParameter5 = 55
+    val <X : I> X.typeParameter1: Int get() = 0
+    val <X : <!TYPE_VARIANCE_CONFLICT(O; out; in; O)!>O<!>> X.typeParameter2: Int get() = 0
+    val <X : P> X.typeParameter3: Int get() = 0
+    val <X : In<<!TYPE_VARIANCE_CONFLICT(I; in; out; In<I>)!>I<!>>> X.typeParameter4: Int get() = 0
+    val <X : In<O>> X.typeParameter5: Int get() = 0
 
-    val <X> typeParameter6 where X : I = 1
-    val <X> typeParameter7 where X : <!TYPE_VARIANCE_CONFLICT(O; out; in; O)!>O<!> = 1
-    val <X> typeParameter8 where X : P = 2
-    val <X> typeParameter9 where X : In<<!TYPE_VARIANCE_CONFLICT(I; in; out; In<I>)!>I<!>> = 3
-    val <X> typeParameter0 where X : In<O> = 5
+    val <X> X.typeParameter6: Int where X : I get() = 0
+    val <X> X.typeParameter7: Int where X : <!TYPE_VARIANCE_CONFLICT(O; out; in; O)!>O<!> get() = 0
+    val <X> X.typeParameter8: Int where X : P get() = 0
+    val <X> X.typeParameter9: Int where X : In<<!TYPE_VARIANCE_CONFLICT(I; in; out; In<I>)!>I<!>> get() = 0
+    val <X> X.typeParameter0: Int where X : In<O> get() = 0
 }

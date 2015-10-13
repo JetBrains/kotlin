@@ -46,21 +46,21 @@ public abstract class Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     public abstract val type3: P
     public abstract val type4: In<I>
     public abstract val type5: In<O>
-    public final val </*0*/ X : In<O>> typeParameter0: kotlin.Int = 5
-    public final val </*0*/ X : I> typeParameter1: kotlin.Int = 8
-    public final val </*0*/ X : O> typeParameter2: kotlin.Int = 13
-    public final val </*0*/ X : P> typeParameter3: kotlin.Int = 21
-    public final val </*0*/ X : In<I>> typeParameter4: kotlin.Int = 34
-    public final val </*0*/ X : In<O>> typeParameter5: kotlin.Int = 55
-    public final val </*0*/ X : I> typeParameter6: kotlin.Int = 1
-    public final val </*0*/ X : O> typeParameter7: kotlin.Int = 1
-    public final val </*0*/ X : P> typeParameter8: kotlin.Int = 2
-    public final val </*0*/ X : In<I>> typeParameter9: kotlin.Int = 3
     public abstract val I.receiver1: kotlin.Int
     public abstract val O.receiver2: kotlin.Int
     public abstract val P.receiver3: kotlin.Int
     public abstract val In<I>.receiver4: kotlin.Int
     public abstract val In<O>.receiver5: kotlin.Int
+    public final val </*0*/ X : In<O>> X.typeParameter0: kotlin.Int
+    public final val </*0*/ X : I> X.typeParameter1: kotlin.Int
+    public final val </*0*/ X : O> X.typeParameter2: kotlin.Int
+    public final val </*0*/ X : P> X.typeParameter3: kotlin.Int
+    public final val </*0*/ X : In<I>> X.typeParameter4: kotlin.Int
+    public final val </*0*/ X : In<O>> X.typeParameter5: kotlin.Int
+    public final val </*0*/ X : I> X.typeParameter6: kotlin.Int
+    public final val </*0*/ X : O> X.typeParameter7: kotlin.Int
+    public final val </*0*/ X : P> X.typeParameter8: kotlin.Int
+    public final val </*0*/ X : In<I>> X.typeParameter9: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
