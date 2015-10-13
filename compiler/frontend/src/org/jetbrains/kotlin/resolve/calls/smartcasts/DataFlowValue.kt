@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.JetType
  */
 class DataFlowValue(val id: Any?, val type: JetType, val kind: DataFlowValue.Kind, val immanentNullability: Nullability) {
 
-    enum class Kind(private val name: String) {
+    enum class Kind(private val str: String) {
         // Smart casts are completely safe
         STABLE_VALUE("stable"),
         // Smart casts are safe but possible changes in loops / closures ahead must be taken into account
@@ -35,7 +35,7 @@ class DataFlowValue(val id: Any?, val type: JetType, val kind: DataFlowValue.Kin
         UNPREDICTABLE_VARIABLE("unpredictable"),
         OTHER("other");
 
-        override fun toString() = name
+        override fun toString() = str
 
         fun isStable() = this == STABLE_VALUE
     }
