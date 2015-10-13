@@ -110,6 +110,28 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         this.dataFlowInfoForArguments = dataFlowInfoForArguments;
     }
 
+    public ResolvedCallImpl(
+            @NotNull Call call,
+            @NotNull D candidateDescriptor,
+            @NotNull ReceiverValue dispatchReceiver,
+            @NotNull ReceiverValue extensionReceiver,
+            @NotNull ExplicitReceiverKind explicitReceiverKind,
+            @Nullable TypeSubstitutor knownTypeParametersSubstitutor,
+            @NotNull DelegatingBindingTrace trace,
+            @NotNull TracingStrategy tracing,
+            @NotNull MutableDataFlowInfoForArguments dataFlowInfoForArguments
+    ) {
+        this.call = call;
+        this.candidateDescriptor = candidateDescriptor;
+        this.dispatchReceiver = dispatchReceiver;
+        this.extensionReceiver = extensionReceiver;
+        this.explicitReceiverKind = explicitReceiverKind;
+        this.knownTypeParametersSubstitutor = knownTypeParametersSubstitutor;
+        this.trace = trace;
+        this.tracing = tracing;
+        this.dataFlowInfoForArguments = dataFlowInfoForArguments;
+    }
+
     @Override
     @NotNull
     public ResolutionStatus getStatus() {
