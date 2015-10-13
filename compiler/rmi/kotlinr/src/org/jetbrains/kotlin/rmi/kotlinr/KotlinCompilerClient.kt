@@ -298,13 +298,8 @@ public object KotlinCompilerClient {
 
 
     private fun startDaemon(compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, reportingTargets: DaemonReportingTargets) {
-        val javaExecutable = File(System.getProperty("java.home"), "bin").let {
-            val javaw = File(it, "javaw.exe")
-            // TODO: doesn't seem reliable enough, consider more checks if OS is of windows flavor, etc.
-            if (javaw.exists() && javaw.isFile && javaw.canExecute()) javaw else File(it, "java")
-        }
-        // TODO add os detection to specify option more precisely
-        val platformSpecificOptions = listOf("-Djava.awt.headless=true") // hide daemon in OS X
+        val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
+        val platformSpecificOptions = listOf("-Djava.awt.headless=true") // hide daemon window
         val args = listOf(
                    javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
                    platformSpecificOptions +
