@@ -22,7 +22,7 @@ import org.jetbrains.jps.builders.BuildResult;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.kotlin.jps.build.AbstractKotlinJpsBuildTestCase;
-import org.jetbrains.kotlin.jps.build.classFilesComparison.ClassFilesComparisonPackage;
+import org.jetbrains.kotlin.jps.build.classFilesComparison.ClassFilesComparisonKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,10 +76,9 @@ public class KannotatorJpsTest extends AbstractKotlinJpsBuildTestCase {
 
             System.out.println("Checking output directories after make and rebuild");
 
-            ClassFilesComparisonPackage
+            ClassFilesComparisonKt
                     .assertEqualDirectories(new File(getOutDirAfterRebuild(), "production"), new File(getOutDir(), "production"), false);
-            ClassFilesComparisonPackage
-                    .assertEqualDirectories(new File(getOutDirAfterRebuild(), "test"), new File(getOutDir(), "test"), false);
+            ClassFilesComparisonKt.assertEqualDirectories(new File(getOutDirAfterRebuild(), "test"), new File(getOutDir(), "test"), false);
 
             System.out.println("Test successfully finished. File: " + root.getName());
             System.out.println("-----");
