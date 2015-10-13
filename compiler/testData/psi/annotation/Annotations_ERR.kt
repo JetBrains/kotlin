@@ -19,7 +19,6 @@ in
 @[sdfsdf ]
 @[s fd d, ]
 out
-ref
  class Bar<abstract
 open
 enum
@@ -35,5 +34,5 @@ public
 internal
 in
 out
-ref T> {
+T> {
 }

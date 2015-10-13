@@ -17,7 +17,6 @@ internal
 in
 @[sdfsdf]
 out
-ref
  class Bar<abstract
 open
 @[sdfsdf(1+1) a]
@@ -36,5 +35,5 @@ public
 internal
 in
 out
-ref T> {
+T> {
 }

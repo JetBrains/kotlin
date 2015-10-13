@@ -16,7 +16,6 @@ public
 internal
 in
 out
-ref
  class Bar<abstract, abstract enum : T, out open,
     public protected private internal abstract
     open
