@@ -15,7 +15,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
 /**
  * Returns `true` if [element] is found in the collection.
  */
-public operator fun <T> Sequence<T>.contains(element: T): Boolean {
+public operator fun <T> Sequence<T>.contains(element: @kotlin.internal.NoInfer T): Boolean {
     return indexOf(element) >= 0
 }
 
@@ -122,7 +122,7 @@ public inline fun <T> Sequence<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-public fun <T> Sequence<T>.indexOf(element: T): Int {
+public fun <T> Sequence<T>.indexOf(element: @kotlin.internal.NoInfer T): Int {
     var index = 0
     for (item in this) {
         if (element == item)
@@ -202,7 +202,7 @@ public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-public fun <T> Sequence<T>.lastIndexOf(element: T): Int {
+public fun <T> Sequence<T>.lastIndexOf(element: @kotlin.internal.NoInfer T): Int {
     var lastIndex = -1
     var index = 0
     for (item in this) {
