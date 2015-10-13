@@ -375,7 +375,7 @@ public inline operator fun ShortArray.component5(): Short {
 /**
  * Returns `true` if [element] is found in the collection.
  */
-public operator fun <T> Array<out T>.contains(element: T): Boolean {
+public operator fun <T> Array<out T>.contains(element: @kotlin.internal.NoInfer T): Boolean {
     return indexOf(element) >= 0
 }
 
@@ -1194,7 +1194,7 @@ public fun ShortArray.getOrNull(index: Int): Short? {
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-public fun <T> Array<out T>.indexOf(element: T): Int {
+public fun <T> Array<out T>.indexOf(element: @kotlin.internal.NoInfer T): Int {
     if (element == null) {
         for (index in indices) {
             if (this[index] == null) {
@@ -1733,7 +1733,7 @@ public inline fun ShortArray.last(predicate: (Short) -> Boolean): Short {
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-public fun <T> Array<out T>.lastIndexOf(element: T): Int {
+public fun <T> Array<out T>.lastIndexOf(element: @kotlin.internal.NoInfer T): Int {
     if (element == null) {
         for (index in indices.reversed()) {
             if (this[index] == null) {
