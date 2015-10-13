@@ -87,7 +87,7 @@ public class KotlinInplacePropertyIntroducer(
         if (availableTargets.size() > 1) {
             addPanelControl(
                     ControlWrapper {
-                        val propertyKindComboBox = with(JComboBox(availableTargets.map { it.name.capitalize() }.toTypedArray())) {
+                        val propertyKindComboBox = with(JComboBox(availableTargets.map { it.targetName.capitalize() }.toTypedArray())) {
                             addPopupMenuListener(
                                     object : PopupMenuListenerAdapter() {
                                         override fun popupMenuWillBecomeInvisible(e: PopupMenuEvent?) {

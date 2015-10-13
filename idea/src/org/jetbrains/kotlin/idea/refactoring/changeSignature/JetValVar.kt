@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetPsiFactory
 
-public enum class JetValVar(val name: String) {
+public enum class JetValVar(val keywordName: String) {
     None("none") {
         override fun createKeyword(factory: JetPsiFactory) = null
     },
@@ -31,7 +31,7 @@ public enum class JetValVar(val name: String) {
         override fun createKeyword(factory: JetPsiFactory) = factory.createVarKeyword()
     };
 
-    override fun toString(): String = name
+    override fun toString(): String = keywordName
 
     abstract fun createKeyword(factory: JetPsiFactory): PsiElement?
 }

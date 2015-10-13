@@ -66,7 +66,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
 ): String {
     val extractionTarget = generatorOptions.target
     if (!extractionTarget.isAvailable(descriptor)) {
-        throw IllegalArgumentException("Can't generate ${extractionTarget.name}: ${descriptor.extractionData.codeFragmentText}")
+        throw IllegalArgumentException("Can't generate ${extractionTarget.targetName}: ${descriptor.extractionData.codeFragmentText}")
     }
 
     val builderTarget = when (extractionTarget) {

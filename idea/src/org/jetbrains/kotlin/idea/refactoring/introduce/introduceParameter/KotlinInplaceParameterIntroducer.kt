@@ -135,7 +135,7 @@ public class KotlinInplaceParameterIntroducer(
                         val parameterName = currentName ?: parameter.getName()
                         val parameterType = currentType ?: parameter.getTypeReference()!!.getText()
                         descriptor = descriptor.copy(newParameterName = parameterName!!, newParameterTypeText = parameterType)
-                        val modifier = if (valVar != JetValVar.None) "${valVar.name} " else ""
+                        val modifier = if (valVar != JetValVar.None) "${valVar.keywordName} " else ""
                         val defaultValue = if (withDefaultValue) " = ${newArgumentValue.getText()}" else ""
 
                         "$modifier$parameterName: $parameterType$defaultValue"
