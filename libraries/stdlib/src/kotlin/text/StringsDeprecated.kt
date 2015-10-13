@@ -11,7 +11,8 @@ import kotlin.text.Regex
 /**
  * Returns the string with leading and trailing characters matching the [predicate] trimmed.
  */
-inline public fun CharSequence.trim(predicate: (Char) -> Boolean): String {
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+inline public fun String.trim(predicate: (Char) -> Boolean): String {
     var startIndex = 0
     var endIndex = length() - 1
     var startFound = false
@@ -40,7 +41,8 @@ inline public fun CharSequence.trim(predicate: (Char) -> Boolean): String {
 /**
  * Returns the string with leading characters matching the [predicate] trimmed.
  */
-inline public fun CharSequence.trimStart(predicate: (Char) -> Boolean): String {
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+inline public fun String.trimStart(predicate: (Char) -> Boolean): String {
     for (index in this.indices)
         if (!predicate(this[index]))
             return substring(index)
@@ -51,7 +53,8 @@ inline public fun CharSequence.trimStart(predicate: (Char) -> Boolean): String {
 /**
  * Returns the string with trailing characters matching the [predicate] trimmed.
  */
-inline public fun CharSequence.trimEnd(predicate: (Char) -> Boolean): String {
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+inline public fun String.trimEnd(predicate: (Char) -> Boolean): String {
     for (index in this.indices.reversed())
         if (!predicate(this[index]))
             return substring(0, index + 1)
@@ -62,32 +65,38 @@ inline public fun CharSequence.trimEnd(predicate: (Char) -> Boolean): String {
 /**
  * Returns the string with leading and trailing characters in the [chars] array trimmed.
  */
-public fun CharSequence.trim(vararg chars: Char): String = trim { it in chars }
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.trim(vararg chars: Char): String = trim { it in chars }
 
 /**
  * Returns the string with leading and trailing characters in the [chars] array trimmed.
  */
-public fun CharSequence.trimStart(vararg chars: Char): String = trimStart { it in chars }
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.trimStart(vararg chars: Char): String = trimStart { it in chars }
 
 /**
  * Returns the string with trailing characters in the [chars] array trimmed.
  */
-public fun CharSequence.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
 
 /**
  * Returns a string with leading and trailing whitespace trimmed.
  */
-public fun CharSequence.trim(): String = trim { it.isWhitespace() }
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.trim(): String = trim { it.isWhitespace() }
 
 /**
  * Returns a string with leading whitespace removed.
  */
-public fun CharSequence.trimStart(): String = trimStart { it.isWhitespace() }
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.trimStart(): String = trimStart { it.isWhitespace() }
 
 /**
  * Returns a string with trailing whitespace removed.
  */
-public fun CharSequence.trimEnd(): String = trimEnd { it.isWhitespace() }
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.trimEnd(): String = trimEnd { it.isWhitespace() }
 
 /**
  * Left pad a String with a specified character or space.
@@ -97,11 +106,12 @@ public fun CharSequence.trimEnd(): String = trimEnd { it.isWhitespace() }
  * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
  * as are necessary to reach that length.
  */
-public fun CharSequence.padStart(length: Int, padChar: Char = ' '): String {
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.padStart(length: Int, padChar: Char = ' '): String {
     if (length < 0)
         throw IllegalArgumentException("String length $length is less than zero.")
     if (length <= this.length())
-        return this.toString()
+        return this
 
     val sb = StringBuilder(length)
     for (i in 1..(length - this.length()))
@@ -118,11 +128,12 @@ public fun CharSequence.padStart(length: Int, padChar: Char = ' '): String {
  * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
  * as are necessary to reach that length.
  */
-public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): String {
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.padEnd(length: Int, padChar: Char = ' '): String {
     if (length < 0)
         throw IllegalArgumentException("String length $length is less than zero.")
     if (length <= this.length())
-        return this.toString()
+        return this
 
     val sb = StringBuilder(length)
     sb.append(this)
@@ -131,20 +142,34 @@ public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): String {
     return sb.toString()
 }
 
+/** Returns `true` if the string is not `null` and not empty */
+@Deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.", ReplaceWith("this != null && this.isNotEmpty()"), DeprecationLevel.ERROR)
+@kotlin.jvm.JvmName("isNotEmptyNullable")
+public fun CharSequence?.isNotEmpty(): Boolean = this != null && this.length() > 0
+
+
+/** Returns `true` if the string is not `null` and not empty */
+@Deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.", ReplaceWith("this != null && this.isNotEmpty()"), DeprecationLevel.HIDDEN)
+@kotlin.jvm.JvmName("isNotEmptyNullable")
+public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
+
 /**
  * Returns `true` if this nullable string is either `null` or empty.
  */
-public fun CharSequence?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
 
 /**
  * Returns `true` if this string is empty (contains no characters).
  */
-public fun CharSequence.isEmpty(): Boolean = length() == 0
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.isEmpty(): Boolean = length() == 0
 
 /**
  * Returns `true` if this string is not empty.
  */
-public fun CharSequence.isNotEmpty(): Boolean = length() > 0
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.isNotEmpty(): Boolean = length() > 0
 
 // implemented differently in JVM and JS
 //public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
@@ -153,119 +178,30 @@ public fun CharSequence.isNotEmpty(): Boolean = length() > 0
 /**
  * Returns `true` if this string is not empty and contains some characters except of whitespace characters.
  */
-public fun CharSequence.isNotBlank(): Boolean = !isBlank()
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.isNotBlank(): Boolean = !isBlank()
 
 /**
  * Returns `true` if this nullable string is either `null` or empty or consists solely of whitespace characters.
  */
-public fun CharSequence?.isNullOrBlank(): Boolean = this == null || this.isBlank()
-
-/**
- * Iterator for characters of given CharSequence.
- */
-public operator fun CharSequence.iterator(): CharIterator = object : CharIterator() {
-    private var index = 0
-
-    public override fun nextChar(): Char = get(index++)
-
-    public override fun hasNext(): Boolean = index < length()
-}
-
-/** Returns the string if it is not `null`, or the empty string otherwise. */
-public fun String?.orEmpty(): String = this ?: ""
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String?.isNullOrBlank(): Boolean = this == null || this.isBlank()
 
 /**
  * Returns the range of valid character indices for this string.
  */
-public val CharSequence.indices: IntRange
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public val String.indices: IntRange
     get() = 0..length() - 1
 
 /**
  * Returns the index of the last character in the String or -1 if the String is empty.
  */
-public val CharSequence.lastIndex: Int
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public val String.lastIndex: Int
     get() = this.length() - 1
 
-/**
- * Returns a character at the given index in a [CharSequence]. Allows to use the
- * index operator for working with character sequences:
- * ```
- * val c = charSequence[5]
- * ```
- */
-public operator fun CharSequence.get(index: Int): Char = this.get(index)
-
-/**
- * Returns `true` if this CharSequence has Unicode surrogate pair at the specified [index].
- */
-public fun CharSequence.hasSurrogatePairAt(index: Int): Boolean {
-    return index in 0..length() - 2
-            && this[index].isHighSurrogate()
-            && this[index + 1].isLowSurrogate()
-}
-
-/**
- * Returns a subsequence obtained by taking the characters at the given [indices] in this sequence.
- */
-public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
-    val sb = StringBuilder()
-    for (i in indices) {
-        sb.append(get(i))
-    }
-    return sb.toString()
-}
-
-/**
- * Returns a subsequence of this sequence specified by given [range].
- */
-public fun CharSequence.slice(range: IntRange): CharSequence {
-    return subSequence(range.start, range.end + 1) // inclusive
-}
-
-/**
- * Returns a substring specified by the given [range].
- */
-public fun String.substring(range: IntRange): String = substring(range.start, range.end + 1)
-
-/**
- * Returns a subsequence of this sequence specified by the given [range].
- */
-public fun CharSequence.subSequence(range: IntRange): CharSequence = subSequence(range.start, range.end + 1)
-
-public fun CharSequence.substring(start: Int, end: Int = length): String = subSequence(start, end).toString()
-
-public fun CharSequence.substring(range: IntRange): String = subSequence(range.start, range.end + 1).toString()
-
-/**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
- */
-@Deprecated("Use joinToString instead.", ReplaceWith("joinToString(separator, prefix, postfix, limit, truncated)"))
-public fun Iterable<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinToString(separator, prefix, postfix, limit, truncated)
-}
-
-/**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the array could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
- */
-@Deprecated("Use joinToString instead.", ReplaceWith("joinToString(separator, prefix, postfix, limit, truncated)"))
-public fun Array<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinToString(separator, prefix, postfix, limit, truncated)
-}
-
-/**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the stream could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
- */
-@Deprecated("Use joinToString instead.", ReplaceWith("joinToString(separator, prefix, postfix, limit, truncated)"))
-public fun Sequence<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinToString(separator, prefix, postfix, limit, truncated)
-}
-
+/*
 /**
  * Returns a substring before the first occurrence of [delimiter].
  * If the string does not contain the delimiter, returns [missingDelimiterValue] which defaults to the original string.
@@ -337,13 +273,15 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
     val index = lastIndexOf(delimiter)
     return if (index == -1) missingDelimiterValue else substring(index + delimiter.length(), length())
 }
+*/
 
 /**
  * Replaces the part of the string at the given range with the [replacement] string.
  * @param firstIndex the index of the first character to be replaced.
  * @param lastIndex the index of the first character after the replacement to keep in the string.
  */
-public fun CharSequence.replaceRange(firstIndex: Int, lastIndex: Int, replacement: CharSequence): String {
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.replaceRange(firstIndex: Int, lastIndex: Int, replacement: String): String {
     if (lastIndex < firstIndex)
         throw IndexOutOfBoundsException("Last index ($lastIndex) is less than first index ($firstIndex)")
     val sb = StringBuilder()
@@ -358,21 +296,23 @@ public fun CharSequence.replaceRange(firstIndex: Int, lastIndex: Int, replacemen
  *
  * The end index of the [range] is included in the part to be replaced.
  */
-public fun CharSequence.replaceRange(range: IntRange, replacement: CharSequence): String = replaceRange(range.start, range.end + 1, replacement)
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.replaceRange(range: IntRange, replacement: String): String = replaceRange(range.start, range.end + 1, replacement)
 
 /**
  * Removes the part of a string at a given range.
  * @param firstIndex the index of the first character to be removed.
  * @param lastIndex the index of the first character after the removed part to keep in the string.
-*
-*  [lastIndex] is not included in the removed part.
+ *
+ *  [lastIndex] is not included in the removed part.
  */
-public fun CharSequence.removeRange(firstIndex: Int, lastIndex: Int): String {
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.removeRange(firstIndex: Int, lastIndex: Int): String {
     if (lastIndex < firstIndex)
         throw IndexOutOfBoundsException("Last index ($lastIndex) is less than first index ($firstIndex)")
 
     if (lastIndex == firstIndex)
-        return this.toString()
+        return this
 
     val sb = StringBuilder(length() - (lastIndex - firstIndex))
     sb.append(this, 0, firstIndex)
@@ -385,8 +325,10 @@ public fun CharSequence.removeRange(firstIndex: Int, lastIndex: Int): String {
  *
  * The end index of the [range] is included in the removed part.
  */
-public fun CharSequence.removeRange(range: IntRange): String = removeRange(range.start, range.end + 1)
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.removeRange(range: IntRange): String = removeRange(range.start, range.end + 1)
 
+/*
 /**
  * If this string starts with the given [prefix], returns a copy of this string
  * with the prefix removed. Otherwise, returns this string.
@@ -499,10 +441,7 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
     val index = lastIndexOf(delimiter)
     return if (index == -1) missingDelimiterValue else replaceRange(0, index, replacement)
 }
-
-
-// public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String // JVM- and JS-specific
-// public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String // JVM- and JS-specific
+*/
 
 /**
  * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
@@ -511,92 +450,55 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
  * The [replacement] can consist of any combination of literal text and $-substitutions. To treat the replacement string
  * literally escape it with the [kotlin.text.Regex.Companion.escapeReplacement] method.
  */
-public fun CharSequence.replace(regex: Regex, replacement: String): String = regex.replace(this, replacement)
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.replace(regex: Regex, replacement: String): String = regex.replace(this, replacement)
 
 /**
  * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
  * with the result of the given function [transform] that takes [MatchResult] and returns a string to be used as a
  * replacement for that match.
  */
-public fun CharSequence.replace(regex: Regex, transform: (MatchResult) -> CharSequence): String = regex.replace(this, transform)
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.replace(regex: Regex, transform: (MatchResult) -> String): String = regex.replace(this, transform)
 
 /**
  * Replaces the first occurrence of the given regular expression [regex] in this string with specified [replacement] expression.
  *
  * @param replacement A replacement expression that can include substitutions. See [Regex.replaceFirst] for details.
  */
-public fun CharSequence.replaceFirst(regex: Regex, replacement: String): String = regex.replaceFirst(this, replacement)
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.replaceFirst(regex: Regex, replacement: String): String = regex.replaceFirst(this, replacement)
 
 
 /**
  * Returns `true` if this string matches the given regular expression.
  */
-public fun CharSequence.matches(regex: Regex): Boolean = regex.matches(this)
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.matches(regex: Regex): Boolean = regex.matches(this)
 
 
 /**
  * Returns `true` if this string starts with the specified character.
  */
-public fun CharSequence.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[0].equals(char, ignoreCase)
 
 /**
  * Returns `true` if this string ends with the specified character.
  */
-public fun CharSequence.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[lastIndex].equals(char, ignoreCase)
 
 
 
-// common prefix and suffix
-
-/**
- * Returns the longest string `prefix` such that this string and [other] string both start with this prefix,
- * taking care not to split surrogate pairs.
- * If this and [other] have no common prefix, returns the empty string.
-
- * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
- */
-public fun CharSequence.commonPrefixWith(other: CharSequence, ignoreCase: Boolean = false): String {
-    val shortestLength = Math.min(this.length(), other.length())
-
-    var i = 0
-    while (i < shortestLength && this[i].equals(other[i], ignoreCase = ignoreCase)) {
-        i++
-    }
-    if (this.hasSurrogatePairAt(i - 1) || other.hasSurrogatePairAt(i - 1)) {
-        i--
-    }
-    return subSequence(0, i).toString()
-}
-
-/**
- * Returns the longest string `suffix` such that this string and [other] string both end with this suffix,
- * taking care not to split surrogate pairs.
- * If this and [other] have no common suffix, returns the empty string.
-
- * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
- */
-public fun CharSequence.commonSuffixWith(other: CharSequence, ignoreCase: Boolean = false): String {
-    val thisLength = this.length()
-    val otherLength = other.length()
-    val shortestLength = Math.min(thisLength, otherLength)
-
-    var i = 0
-    while (i < shortestLength && this[thisLength - i - 1].equals(other[otherLength - i - 1], ignoreCase = ignoreCase)) {
-        i++
-    }
-    if (this.hasSurrogatePairAt(thisLength - i - 1) || other.hasSurrogatePairAt(otherLength - i - 1)) {
-        i--;
-    }
-    return subSequence(thisLength - i, thisLength).toString();
-}
 
 
 // indexOfAny()
 
-private fun CharSequence.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, Char>? {
-    if (!ignoreCase && chars.size() == 1 && this is String) {
+private fun String.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, Char>? {
+    if (!ignoreCase && chars.size() == 1) {
         val char = chars.single()
         val index = if (!last) nativeIndexOf(char, startIndex) else nativeLastIndexOf(char, startIndex)
         return if (index < 0) null else index to char
@@ -621,8 +523,9 @@ private fun CharSequence.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase
  * @returns An index of the first occurrence of matched character from [chars] or -1 if none of [chars] are found.
  *
  */
-public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
-    findAnyOf(chars, startIndex, ignoreCase, last = false)?.first ?: -1
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.indexOfAny(chars: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
+        findAnyOf(chars, startIndex, ignoreCase, last = false)?.first ?: -1
 
 /**
  * Finds the index of the last occurrence of any of the specified [chars] in this string, starting from the specified [startIndex] and
@@ -633,11 +536,12 @@ public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignore
  * @returns An index of the last occurrence of matched character from [chars] or -1 if none of [chars] are found.
  *
  */
-public fun CharSequence.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
-    findAnyOf(chars, startIndex, ignoreCase, last = true)?.first ?: -1
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
+        findAnyOf(chars, startIndex, ignoreCase, last = true)?.first ?: -1
 
 
-
+/*
 private fun String.findAnyOf(strings: Collection<String>, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, String>? {
     if (!ignoreCase && strings.size() == 1) {
         val string = strings.single()
@@ -667,7 +571,7 @@ private fun String.findAnyOf(strings: Collection<String>, startIndex: Int, ignor
  * that matches this string at that position.
  */
 public fun String.findAnyOf(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Pair<Int, String>? =
-    findAnyOf(strings, startIndex, ignoreCase, last = false)
+        findAnyOf(strings, startIndex, ignoreCase, last = false)
 
 /**
  * Finds the last occurrence of any of the specified [strings] in this string, starting from the specified [startIndex] and
@@ -682,7 +586,7 @@ public fun String.findAnyOf(strings: Collection<String>, startIndex: Int = 0, ig
  * that matches this string at that position.
  */
 public fun String.findLastAnyOf(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Pair<Int, String>? =
-    findAnyOf(strings, startIndex, ignoreCase, last = true)
+        findAnyOf(strings, startIndex, ignoreCase, last = true)
 
 /**
  * Finds the index of the first occurrence of any of the specified [strings] in this string, starting from the specified [startIndex] and
@@ -696,7 +600,7 @@ public fun String.findLastAnyOf(strings: Collection<String>, startIndex: Int = l
  * that matches this string at that position.
  */
 public fun String.indexOfAny(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
-    findAnyOf(strings, startIndex, ignoreCase, last = false)?.first ?: -1
+        findAnyOf(strings, startIndex, ignoreCase, last = false)?.first ?: -1
 
 /**
  * Finds the index of the last occurrence of any of the specified [strings] in this string, starting from the specified [startIndex] and
@@ -711,8 +615,8 @@ public fun String.indexOfAny(strings: Collection<String>, startIndex: Int = 0, i
  * that matches this string at that position.
  */
 public fun String.lastIndexOfAny(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
-    findAnyOf(strings, startIndex, ignoreCase, last = true)?.first ?: -1
-
+        findAnyOf(strings, startIndex, ignoreCase, last = true)?.first ?: -1
+*/
 
 // indexOf
 
@@ -722,26 +626,29 @@ public fun String.lastIndexOfAny(strings: Collection<String>, startIndex: Int = 
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
  * @returns An index of the first occurrence of [char] or -1 if none is found.
  */
-public fun CharSequence.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
-    return if (ignoreCase || this !is String)
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
+    return if (ignoreCase)
         indexOfAny(charArrayOf(char), startIndex, ignoreCase)
     else
         nativeIndexOf(char, startIndex)
 }
 
+/*
 /**
  * Returns the index within this string of the first occurrence of the specified [string], starting from the specified [startIndex].
  *
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
  * @returns An index of the first occurrence of [string] or -1 if none is found.
  */
+@kotlin.jvm.JvmOverloads
 public fun String.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase)
         indexOfAny(listOf(string), startIndex, ignoreCase)
     else
         nativeIndexOf(string, startIndex)
 }
-
+*/
 /**
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified [startIndex].
  *
@@ -749,13 +656,15 @@ public fun String.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boole
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
  * @returns An index of the first occurrence of [char] or -1 if none is found.
  */
-public fun CharSequence.lastIndexOf(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
-    return if (ignoreCase || this !is String)
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.lastIndexOf(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
+    return if (ignoreCase)
         lastIndexOfAny(charArrayOf(char), startIndex, ignoreCase)
     else
         nativeLastIndexOf(char, startIndex)
 }
 
+/*
 /**
  * Returns the index within this string of the last occurrence of the specified [string], starting from the specified [startIndex].
  *
@@ -784,18 +693,13 @@ public operator fun String.contains(seq: CharSequence, ignoreCase: Boolean = fal
  *
  * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
  */
-public operator fun CharSequence.contains(char: Char, ignoreCase: Boolean = false): Boolean =
+public operator fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
         indexOf(char, ignoreCase = ignoreCase) >= 0
-
-/**
- * Returns `true` if this string contains at least one match of the specified regular expression [regex].
- */
-public operator fun CharSequence.contains(regex: Regex): Boolean = regex.containsMatchIn(this)
-
+*/
 
 // rangesDelimitedBy
 
-
+/*
 private class DelimitedRangesSequence(private val string: String, private val startIndex: Int, private val limit: Int, private val getNextMatch: String.(Int) -> Pair<Int, Int>?): Sequence<IntRange> {
 
     override fun iterator(): Iterator<IntRange> = object : Iterator<IntRange> {
@@ -851,6 +755,7 @@ private class DelimitedRangesSequence(private val string: String, private val st
         }
     }
 }
+
 
 /**
  * Returns a sequence of index ranges of substrings in this string around occurrences of the specified [delimiters].
@@ -959,3 +864,5 @@ public fun String.lineSequence(): Sequence<String> = splitToSequence("\r\n", "\n
  * * Splits this string to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
  */
 public fun String.lines(): List<String> = lineSequence().toList()
+
+*/
