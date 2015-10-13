@@ -156,7 +156,7 @@ public class PropertyCodegen {
 
         boolean isDefaultAccessor = accessor == null || !accessor.hasBody();
 
-        // Don't generate accessors for trait properties with default accessors in TRAIT_IMPL
+        // Don't generate accessors for interface properties with default accessors in DefaultImpls
         if (kind == OwnerKind.DEFAULT_IMPLS && isDefaultAccessor) return false;
 
         if (declaration == null) return true;

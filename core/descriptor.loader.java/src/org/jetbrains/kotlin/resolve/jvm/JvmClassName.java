@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 
@@ -51,8 +50,6 @@ public class JvmClassName {
         return byFqNameWithoutInnerClasses(new FqName(fqName));
     }
 
-    private final static String TRAIT_IMPL_REPLACE_GUARD = "<trait_impl>";
-
     // Internal name:  kotlin/Map$Entry
     // FqName:         kotlin.Map.Entry
 
@@ -69,12 +66,7 @@ public class JvmClassName {
     @NotNull
     public FqName getFqNameForClassNameWithoutDollars() {
         if (fqName == null) {
-            String fqName = internalName
-                    .replace(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, TRAIT_IMPL_REPLACE_GUARD)
-                    .replace('$', '.')
-                    .replace('/', '.')
-                    .replace(TRAIT_IMPL_REPLACE_GUARD, JvmAbi.DEFAULT_IMPLS_CLASS_NAME);
-            this.fqName = new FqName(fqName);
+            this.fqName = new FqName(internalName.replace('$', '.').replace('/', '.'));
         }
         return fqName;
     }
