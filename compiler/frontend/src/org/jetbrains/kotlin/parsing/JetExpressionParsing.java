@@ -33,7 +33,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.JetNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
-import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.ONLY_ESCAPED_REGULAR_ANNOTATIONS;
+import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.DEFAULT;
 import static org.jetbrains.kotlin.parsing.JetParsing.DeclarationParsingMode.LOCAL;
 
 public class JetExpressionParsing extends AbstractJetParsing {
@@ -339,7 +339,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (at(AT)) {
             if (!parseLocalDeclaration()) {
                 PsiBuilder.Marker expression = mark();
-                myJetParsing.parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
+                myJetParsing.parseAnnotations(DEFAULT);
                 parsePrefixExpression();
                 expression.done(ANNOTATED_EXPRESSION);
             }
@@ -561,7 +561,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private boolean parseAnnotatedLambda(boolean preferBlock) {
         PsiBuilder.Marker annotated = mark();
 
-        boolean wereAnnotations = myJetParsing.parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
+        boolean wereAnnotations = myJetParsing.parseAnnotations(DEFAULT);
         PsiBuilder.Marker labeled = mark();
 
         boolean wasLabel = isAtLabelDefinitionOrMissingIdentifier();
@@ -846,7 +846,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             advanceAt(LPAR);
 
             PsiBuilder.Marker property = mark();
-            myJetParsing.parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS, TokenSet.create(EQ, RPAR));
+            myJetParsing.parseModifierList(DEFAULT, TokenSet.create(EQ, RPAR));
             if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
                 myJetParsing.parseProperty(true);
                 property.done(PROPERTY);
@@ -1034,7 +1034,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private boolean parseLocalDeclaration() {
         PsiBuilder.Marker decl = mark();
         JetParsing.ModifierDetector detector = new JetParsing.ModifierDetector();
-        myJetParsing.parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS, TokenSet.EMPTY);
+        myJetParsing.parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
 
         IElementType declType = parseLocalDeclarationRest(detector.isEnumDetected());
 
@@ -1342,7 +1342,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 PsiBuilder.Marker parameter = mark();
 
                 if (!at(IN_KEYWORD)) {
-                    myJetParsing.parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS, TokenSet.create(IN_KEYWORD, RPAR, COLON));
+                    myJetParsing.parseModifierList(DEFAULT, TokenSet.create(IN_KEYWORD, RPAR, COLON));
                 }
 
                 if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
