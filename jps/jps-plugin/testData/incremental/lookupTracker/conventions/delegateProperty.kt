@@ -1,16 +1,18 @@
 package foo.bar
 
+import kotlin.reflect.KProperty
+
 /*p:foo.bar*/class D1 {
-    fun get(t: /*c:foo.bar.D1 p:foo.bar*/Any?, p: /*c:foo.bar.D1 p:foo.bar*/PropertyMetadata) = 1
+    fun get(t: /*c:foo.bar.D1 p:foo.bar*/Any?, p: /*c:foo.bar.D1*/KProperty<*>) = 1
 }
 
-/*p:foo.bar*/fun /*p:foo.bar*/D1.set(t: /*p:foo.bar*/Any?, p: /*p:foo.bar*/PropertyMetadata, v: /*p:foo.bar*/Int) {}
+/*p:foo.bar*/fun /*p:foo.bar*/D1.set(t: /*p:foo.bar*/Any?, p: KProperty<*>, v: /*p:foo.bar*/Int) {}
 
 /*p:foo.bar(D2)*/open class D2 {
-    fun set(t: /*c:foo.bar.D2 p:foo.bar*/Any?, p: /*c:foo.bar.D2 p:foo.bar*/PropertyMetadata, v: /*c:foo.bar.D2 p:foo.bar*/Int) {}
+    fun set(t: /*c:foo.bar.D2 p:foo.bar*/Any?, p: /*c:foo.bar.D2*/KProperty<*>, v: /*c:foo.bar.D2 p:foo.bar*/Int) {}
 }
 
-/*p:foo.bar*/fun /*p:foo.bar*/D2.get(t: /*p:foo.bar*/Any?, p: /*p:foo.bar*/PropertyMetadata) = 1
+/*p:foo.bar*/fun /*p:foo.bar*/D2.get(t: /*p:foo.bar*/Any?, p: KProperty<*>) = 1
 /*p:foo.bar*/fun /*p:foo.bar*/D2.propertyDelegated(p: /*p:foo.bar*/Any?) {}
 
 /*p:foo.bar*/class D3 : /*p:foo.bar*/D2() {
