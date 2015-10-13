@@ -90,6 +90,7 @@ public val File.extension: String
  *
  * @return the pathname with system separators.
  */
+@Deprecated("Use File.separatorsToSystem instead", ReplaceWith("File(this).separatorsToSystem()", "java.io.File"))
 public fun String.separatorsToSystem(): String {
     val otherSep = if (File.separator == "/") "\\" else "/"
     return replace(otherSep, File.separator)
@@ -100,6 +101,7 @@ public fun String.separatorsToSystem(): String {
  *
  * @return the pathname with system separators.
  */
+@Deprecated("This function is deprecated")
 public fun String.pathSeparatorsToSystem(): String {
     val otherSep = if (File.pathSeparator == ":") ";" else ":"
     return replace(otherSep, File.pathSeparator)
@@ -110,6 +112,7 @@ public fun String.pathSeparatorsToSystem(): String {
  *
  * @return the pathname with system separators.
  */
+@Deprecated("This function is deprecated")
 public fun String.allSeparatorsToSystem(): String {
     return separatorsToSystem().pathSeparatorsToSystem()
 }

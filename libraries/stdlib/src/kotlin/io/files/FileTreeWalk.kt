@@ -212,12 +212,23 @@ public class FileTreeWalk(private val start: File,
     }
 
     /**
-     * Sets filter [predicate].
-     * Filter [predicate] function is called before visiting files and entering directories.
+     * Sets tree filter [predicate].
+     * Tree filter [predicate] function is called before visiting files and entering directories.
      * If it returns `false`, file is not visited, directory is not entered and all its content is also not visited.
      * If it returns `true`, everything goes in the regular way.
      */
+    @Deprecated("Use treeFilter instead", ReplaceWith("treeFilter(predicate)"))
     public fun filter(predicate: (File) -> Boolean): FileTreeWalk {
+        return FileTreeWalk(start, direction, enter, leave, fail, predicate, maxDepth)
+    }
+
+    /**
+     * Sets tree filter [predicate].
+     * Tree filter [predicate] function is called before visiting files and entering directories.
+     * If it returns `false`, file is not visited, directory is not entered and all its content is also not visited.
+     * If it returns `true`, everything goes in the regular way.
+     */
+    public fun treeFilter(predicate: (File) -> Boolean): FileTreeWalk {
         return FileTreeWalk(start, direction, enter, leave, fail, predicate, maxDepth)
     }
 
