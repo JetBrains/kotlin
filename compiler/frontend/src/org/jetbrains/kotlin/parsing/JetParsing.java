@@ -944,7 +944,7 @@ public class JetParsing extends AbstractJetParsing {
     private ParseEnumEntryResult parseEnumEntry() {
         PsiBuilder.Marker entry = mark();
 
-        parseModifierList(DEFAULT, TokenSet.create(COMMA, COLON, SEMICOLON, RBRACE));
+        parseModifierList(DEFAULT, TokenSet.create(COMMA, SEMICOLON, RBRACE));
 
         if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
             PsiBuilder.Marker nameAsDeclaration = mark();
@@ -1327,7 +1327,7 @@ public class JetParsing extends AbstractJetParsing {
                 }
                 PsiBuilder.Marker property = mark();
 
-                parseModifierList(DEFAULT, TokenSet.create(COMMA, RPAR, COLON, IN_KEYWORD, EQ));
+                parseModifierList(DEFAULT, TokenSet.create(COMMA, RPAR, COLON, EQ));
 
                 expect(IDENTIFIER, "Expecting a name", recoverySet);
 
