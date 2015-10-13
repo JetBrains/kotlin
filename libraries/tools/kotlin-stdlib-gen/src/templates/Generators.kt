@@ -419,6 +419,7 @@ fun generators(): List<GenericFunction> {
             """
         }
 
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) {
             """
             Splits the original string into pair of strings,
@@ -426,8 +427,8 @@ fun generators(): List<GenericFunction> {
             while *second* string contains characters for which [predicate] yielded `false`.
             """
         }
-        returns(CharSequences) { "Pair<String, String>" }
-        body(CharSequences) {
+        returns(CharSequences, Strings) { "Pair<String, String>" }
+        body(CharSequences, Strings) {
             """
             val first = StringBuilder()
             val second = StringBuilder()
@@ -555,7 +556,8 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(other: String, transform: (Char, Char) -> V)") {
-        only(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        only(CharSequences, Strings)
         doc {
             """
             Returns a list of values built from characters of both strings with same indexes using provided [transform]. List has length of shortest string.
@@ -595,7 +597,8 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(other: String)") {
-        only(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        only(CharSequences, Strings)
         doc {
             """
             Returns a list of pairs built from characters of both strings with same indexes. List has length of shortest collection.

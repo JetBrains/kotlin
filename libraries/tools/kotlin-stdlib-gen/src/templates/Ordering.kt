@@ -39,9 +39,10 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Returns a string with characters in reversed order." }
-        returns(CharSequences) { "String" }
-        body(CharSequences) {
+        returns(CharSequences, Strings) { "String" }
+        body(CharSequences, Strings) {
             // TODO: Replace with StringBuilder(this) when JS can handle it
             """
             return StringBuilder().append(this).reverse().toString()

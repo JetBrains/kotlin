@@ -47,9 +47,10 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Returns a string with the first [n] characters removed."}
-        body(CharSequences) { "return substring(Math.min(n, length()))" }
-        returns(CharSequences) { "String" }
+        body(CharSequences, Strings) { "return substring(Math.min(n, length()))" }
+        returns(CharSequences, Strings) { "String" }
 
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
@@ -88,14 +89,15 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter."}
-        body(CharSequences) {
+        body(CharSequences, Strings) {
             """
             require(n >= 0, { "Requested character count $n is less than zero." })
             return substring(0, Math.min(n, length()))
             """
         }
-        returns(CharSequences) { "String" }
+        returns(CharSequences, Strings) { "String" }
 
         doc(Sequences) { "Returns a sequence containing first [n] elements." }
         returns(Sequences) { "Sequence<T>" }
@@ -125,7 +127,8 @@ fun filtering(): List<GenericFunction> {
 
     templates add f("dropLast(n: Int)") {
         val n = "\$n"
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
 
         doc { "Returns a list containing all elements except last [n] elements." }
         returns("List<T>")
@@ -137,8 +140,8 @@ fun filtering(): List<GenericFunction> {
         }
 
         doc(CharSequences) { "Returns a string with the last [n] characters removed." }
-        returns("String", CharSequences)
-        body(CharSequences) {
+        returns("String", CharSequences, Strings)
+        body(CharSequences, Strings) {
             """
             require(n >= 0, { "Requested character count $n is less than zero." })
             return take((length() - n).coerceAtLeast(0))
@@ -149,18 +152,19 @@ fun filtering(): List<GenericFunction> {
     templates add f("takeLast(n: Int)") {
         val n = "\$n"
         doc { "Returns a list containing last [n] elements." }
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
         returns("List<T>")
 
         doc(CharSequences) { "Returns a string containing the last [n] characters from this string, or the entire string if this string is shorter."}
-        body(CharSequences) {
+        body(CharSequences, Strings) {
             """
             require(n >= 0, { "Requested character count $n is less than zero." })
             val length = length()
             return substring(length - Math.min(n, length), length)
             """
         }
-        returns(CharSequences) { "String" }
+        returns(CharSequences, Strings) { "String" }
 
         body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
@@ -196,9 +200,10 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Returns a string containing all characters except first characters that satisfy the given [predicate]." }
-        returns(CharSequences) { "String" }
-        body(CharSequences) {
+        returns(CharSequences, Strings) { "String" }
+        body(CharSequences, Strings) {
             """
             return trimStart(predicate)
             """
@@ -232,9 +237,10 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Returns a string containing the first characters that satisfy the given [predicate]."}
-        returns(CharSequences) { "String" }
-        body(CharSequences) {
+        returns(CharSequences, Strings) { "String" }
+        body(CharSequences, Strings) {
             """
             for (index in 0..length() - 1)
                 if (!predicate(get(index))) {
@@ -256,7 +262,8 @@ fun filtering(): List<GenericFunction> {
 
     templates add f("dropLastWhile(predicate: (T) -> Boolean)") {
         inline(true)
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
         doc { "Returns a list containing all elements except last elements that satisfy the given [predicate]." }
         returns("List<T>")
 
@@ -272,8 +279,8 @@ fun filtering(): List<GenericFunction> {
         }
 
         doc(CharSequences) { "Returns a string containing all characters except last characters that satisfy the given [predicate]." }
-        returns("String", CharSequences)
-        body(CharSequences) {
+        returns("String", CharSequences, Strings)
+        body(CharSequences, Strings) {
             """
             return trimEnd(predicate)
             """
@@ -282,7 +289,8 @@ fun filtering(): List<GenericFunction> {
 
     templates add f("takeLastWhile(predicate: (T) -> Boolean)") {
         inline(true)
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
         doc { "Returns a list containing last elements satisfying the given [predicate]."}
         returns("List<T>")
 
@@ -298,8 +306,8 @@ fun filtering(): List<GenericFunction> {
         }
 
         doc(CharSequences) { "Returns a string containing last characters that satisfy the given [predicate]." }
-        returns("String", CharSequences)
-        body(CharSequences) {
+        returns("String", CharSequences, Strings)
+        body(CharSequences, Strings) {
             """
             for (index in lastIndex downTo 0) {
                 if (!predicate(this[index])) {
@@ -322,9 +330,10 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Returns a string containing only those characters from the original string that match the given [predicate]." }
-        returns(CharSequences) { "String" }
-        body(CharSequences) {
+        returns(CharSequences, Strings) { "String" }
+        body(CharSequences, Strings) {
             """
             return filterTo(StringBuilder(), predicate).toString()
             """
@@ -354,8 +363,9 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Appends all characters matching the given [predicate] to the given [destination]." }
-        body(CharSequences) {
+        body(CharSequences, Strings) {
             """
             for (index in 0..length() - 1) {
                 val element = get(index)
@@ -377,9 +387,10 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Returns a string containing only those characters from the original string that do not match the given [predicate]." }
-        returns(CharSequences) { "String" }
-        body(CharSequences) {
+        returns(CharSequences, Strings) { "String" }
+        body(CharSequences, Strings) {
             """
             return filterNotTo(StringBuilder(), predicate).toString()
             """
@@ -409,8 +420,9 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Appends all characters not matching the given [predicate] to the given [destination]." }
-        body(CharSequences) {
+        body(CharSequences, Strings) {
             """
             for (element in this) if (!predicate(element)) destination.append(element)
             return destination

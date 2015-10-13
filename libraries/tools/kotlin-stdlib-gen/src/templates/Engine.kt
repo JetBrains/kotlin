@@ -58,6 +58,7 @@ fun PrimitiveType.isIntegral(): Boolean = this in PrimitiveType.integralPrimitiv
 fun PrimitiveType.isNumeric(): Boolean = this in PrimitiveType.numericPrimitives
 
 data class Deprecation(val message: String, val replaceWith: String? = null, val level: DeprecationLevel = DeprecationLevel.WARNING)
+val forBinaryCompatibility = Deprecation("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 
 class ConcreteFunction(val textBuilder: (Appendable) -> Unit, val sourceFile: SourceFile)
 
@@ -260,14 +261,14 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
                                   }
                                   "TCollection" -> {
                                       when (f) {
-                                          Strings, CharSequences -> "Appendable"
+                                          CharSequences, Strings -> "Appendable"
                                           else -> renderType("MutableCollection<in T>", receiver)
                                       }
                                   }
                                   "T" -> {
                                       when (f) {
                                           Generic -> "T"
-                                          Strings, CharSequences -> "Char"
+                                          CharSequences, Strings -> "Char"
                                           Maps -> "Map.Entry<K, V>"
                                           else -> primitive?.name ?: token
                                       }

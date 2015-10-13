@@ -15,7 +15,8 @@ fun aggregates(): List<GenericFunction> {
             return true
             """
         }
-        include(Maps, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("none(predicate: (T) -> Boolean)") {
@@ -29,7 +30,8 @@ fun aggregates(): List<GenericFunction> {
             return true
             """
         }
-        include(Maps, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("none()") {
@@ -41,7 +43,8 @@ fun aggregates(): List<GenericFunction> {
             return true
             """
         }
-        include(Maps, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("any(predicate: (T) -> Boolean)") {
@@ -55,7 +58,8 @@ fun aggregates(): List<GenericFunction> {
             return false
             """
         }
-        include(Maps, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("any()") {
@@ -67,7 +71,8 @@ fun aggregates(): List<GenericFunction> {
             return false
             """
         }
-        include(Maps, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("count(predicate: (T) -> Boolean)") {
@@ -82,7 +87,8 @@ fun aggregates(): List<GenericFunction> {
             return count
             """
         }
-        include(Maps, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("count()") {
@@ -95,8 +101,9 @@ fun aggregates(): List<GenericFunction> {
             return count
             """
         }
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Returns the length of this string."}
-        body(CharSequences) {
+        body(CharSequences, Strings) {
             "return length()"
         }
         body(Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) {
@@ -106,7 +113,8 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("sumBy(transform: (T) -> Int)") {
         inline(true)
-        include(CharSequences)
+        include(CharSequences, Strings)
+        deprecate(Strings) { forBinaryCompatibility }
         doc { "Returns the sum of all values produced by [transform] function from elements in the collection." }
         doc(CharSequences) { "Returns the sum of all values produced by [transform] function from characters in the string." }
         returns("Int")
@@ -123,7 +131,8 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("sumByDouble(transform: (T) -> Double)") {
         inline(true)
-        include(CharSequences)
+        include(CharSequences, Strings)
+        deprecate(Strings) { forBinaryCompatibility }
         doc { "Returns the sum of all values produced by [transform] function from elements in the collection." }
         doc(CharSequences) { "Returns the sum of all values produced by [transform] function from characters in the string." }
         returns("Double")
@@ -156,7 +165,8 @@ fun aggregates(): List<GenericFunction> {
             return min
             """
         }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty()) return null
             var min = this[0]
@@ -194,7 +204,8 @@ fun aggregates(): List<GenericFunction> {
             return minElem
             """
         }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty()) return null
 
@@ -259,7 +270,8 @@ fun aggregates(): List<GenericFunction> {
             """
         }
 
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty()) return null
 
@@ -298,7 +310,8 @@ fun aggregates(): List<GenericFunction> {
             return maxElem
             """
         }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty()) return null
 
@@ -347,7 +360,8 @@ fun aggregates(): List<GenericFunction> {
     templates add f("fold(initial: R, operation: (R, T) -> R)") {
         inline(true)
 
-        include(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
         doc { "Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element." }
         typeParam("R")
         returns("R")
@@ -363,7 +377,8 @@ fun aggregates(): List<GenericFunction> {
     templates add f("foldRight(initial: R, operation: (T, R) -> R)") {
         inline(true)
 
-        only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        deprecate(Strings) { forBinaryCompatibility }
+        only(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
         doc { "Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value." }
         typeParam("R")
         returns("R")
@@ -382,7 +397,8 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("reduce(operation: (T, T) -> T)") {
         inline(true)
-        include(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
         exclude(ArraysOfObjects, Iterables, Sequences)
 
         doc { "Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element." }
@@ -426,7 +442,8 @@ fun aggregates(): List<GenericFunction> {
     templates add f("reduceRight(operation: (T, T) -> T)") {
         inline(true)
 
-        only(CharSequences, ArraysOfPrimitives)
+        deprecate(Strings) { forBinaryCompatibility }
+        only(CharSequences, Strings, ArraysOfPrimitives)
         doc { "Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value." }
         returns("T")
         body {
@@ -477,12 +494,14 @@ fun aggregates(): List<GenericFunction> {
             for (element in this) operation(element)
             """
         }
-        include(Maps, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("forEachIndexed(operation: (Int, T) -> Unit)") {
         inline(true)
-        include(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
         doc { "Performs the given [operation] on each element, providing sequential index with the element." }
         returns("Unit")
         body {
