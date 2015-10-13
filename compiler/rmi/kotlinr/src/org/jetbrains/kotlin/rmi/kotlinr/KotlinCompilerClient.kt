@@ -271,7 +271,7 @@ public object KotlinCompilerClient {
                 }
                 .filterNotNull()
                 .toList()
-        return when (daemons.size()) {
+        return when (daemons.size) {
             0 -> null
             1 -> daemons.first()
             else -> throw IllegalStateException("Multiple daemons serving the same compiler, reset with the cleanup required")

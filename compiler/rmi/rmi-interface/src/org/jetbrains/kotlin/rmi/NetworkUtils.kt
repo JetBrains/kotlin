@@ -50,15 +50,19 @@ public object LoopbackNetworkInterface {
         }
     }
 
+    // base socket factories by default don't implement equals properly (see e.g. http://stackoverflow.com/questions/21555710/rmi-and-jmx-socket-factories)
+    // so implementing it in derived classes using the fact that they are singletons
 
-    data class ServerLoopbackSocketFactory : RMIServerSocketFactory, Serializable {
+    class ServerLoopbackSocketFactory : RMIServerSocketFactory, Serializable {
+        override fun equals(other: Any?): Boolean = other === this || super.equals(other)
 
         @Throws(IOException::class)
         override fun createServerSocket(port: Int): ServerSocket = ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(loopbackInetAddressName))
     }
 
 
-    data class ClientLoopbackSocketFactory : RMIClientSocketFactory, Serializable {
+    class ClientLoopbackSocketFactory : RMIClientSocketFactory, Serializable {
+        override fun equals(other: Any?): Boolean = other === this || super.equals(other)
 
         @Throws(IOException::class)
         override fun createSocket(host: String, port: Int): Socket = Socket(InetAddress.getByName(loopbackInetAddressName), port)
