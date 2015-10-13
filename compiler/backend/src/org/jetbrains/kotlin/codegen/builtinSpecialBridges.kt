@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.bridges.*
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.getBuiltinSpecialOverridden
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
@@ -102,8 +100,13 @@ private fun needGenerateSpecialBridge(
 
         if (superClassDescriptor !is JavaClassDescriptor) {
             // Kotlin class
-            // ?
-            if (implementsBuiltinDeclaration) return false
+            if (implementsBuiltinDeclaration) {
+                if (!functionDescriptor.modality.isOverridable) return false
+                // Generate bridges if it's built-in
+                val containingPackageFragment = DescriptorUtils.getParentOfType(superClassDescriptor, PackageFragmentDescriptor::class.java)
+                if (containingPackageFragment === superClassDescriptor.builtIns.builtInsPackageFragment) return true
+                return false
+            }
         }
         else {
             // java super class inherits builtin class and it's declaration is final
