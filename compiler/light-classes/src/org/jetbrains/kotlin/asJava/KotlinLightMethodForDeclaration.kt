@@ -39,7 +39,7 @@ open public class KotlinLightMethodForDeclaration(
         containingClass: PsiClass
 ): LightMethod(manager, delegate, containingClass), KotlinLightMethod {
 
-    private val paramsList: CachedValue<PsiParameterList> by Delegates.blockingLazy {
+    private val paramsList: CachedValue<PsiParameterList> by lazy {
         val cacheManager = CachedValuesManager.getManager(delegate.getProject())
         cacheManager.createCachedValue<PsiParameterList>({
             val parameterBuilder = LightParameterListBuilder(getManager(), KotlinLanguage.INSTANCE, this)
@@ -52,7 +52,7 @@ open public class KotlinLightMethodForDeclaration(
         }, false)
     }
 
-    private val typeParamsList: CachedValue<PsiTypeParameterList> by Delegates.blockingLazy {
+    private val typeParamsList: CachedValue<PsiTypeParameterList> by lazy {
         val cacheManager = CachedValuesManager.getManager(delegate.getProject())
         cacheManager.createCachedValue<PsiTypeParameterList>({
             val list = if (origin is JetClassOrObject) {
