@@ -146,16 +146,6 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
         myBuilder.advanceLexer();
     }
 
-    protected void advanceAtSet(IElementType... tokens) {
-        assert _atSet(tokens);
-        myBuilder.advanceLexer();
-    }
-
-    protected void advanceAtSet(TokenSet set) {
-        assert _atSet(set);
-        myBuilder.advanceLexer();
-    }
-
     protected IElementType tt() {
         return myBuilder.getTokenType();
     }
@@ -269,14 +259,6 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
         error.error(message);
     }
 
-    protected void errorUntilOffset(String mesage, int offset) {
-        PsiBuilder.Marker error = mark();
-        while (!eof() && myBuilder.getCurrentOffset() < offset) {
-            advance();
-        }
-        error.error(mesage);
-    }
-
     protected static void errorIf(PsiBuilder.Marker marker, boolean condition, String message) {
         if (condition) {
             marker.error(message);
@@ -370,21 +352,6 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
         return pattern.result();
     }
 
-    /*
-     * Looks for a the last top-level (not inside any {} [] () <>) '.' occurring before a
-     * top-level occurrence of a token from the <code>stopSet</code>
-     *
-     * Returns -1 if no occurrence is found
-     *
-     */
-    protected int findLastBefore(TokenSet lookFor, TokenSet stopAt, boolean dontStopRightAfterOccurrence) {
-        return matchTokenStreamPredicate(new LastBefore(new AtSet(lookFor), new AtSet(stopAt), dontStopRightAfterOccurrence));
-    }
-
-    protected int findLastBefore(IElementType lookFor, TokenSet stopAt, boolean dontStopRightAfterOccurrence) {
-        return matchTokenStreamPredicate(new LastBefore(new At(lookFor), new AtSet(stopAt), dontStopRightAfterOccurrence));
-    }
-
     protected boolean eol() {
         return myBuilder.newlineBeforeCurrentToken() || eof();
     }
@@ -399,21 +366,6 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
 
     protected JetParsing createTruncatedBuilder(int eofPosition) {
         return create(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
-    }
-
-    protected class AtOffset extends AbstractTokenStreamPredicate {
-
-        private final int offset;
-
-        public AtOffset(int offset) {
-            this.offset = offset;
-        }
-
-        @Override
-        public boolean matching(boolean topLevel) {
-            return myBuilder.getCurrentOffset() == offset;
-        }
-
     }
 
     protected class At extends AbstractTokenStreamPredicate {
@@ -450,38 +402,9 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
             this(lookFor, lookFor);
         }
 
-        public AtSet(IElementType... lookFor) {
-            this(TokenSet.create(lookFor), TokenSet.create(lookFor));
-        }
-
         @Override
         public boolean matching(boolean topLevel) {
             return (topLevel || !atSet(topLevelOnly)) && atSet(lookFor);
-        }
-    }
-
-    protected class AtFirstTokenOfTokens extends AbstractTokenStreamPredicate {
-
-        private final IElementType[] tokens;
-
-        public AtFirstTokenOfTokens(IElementType... tokens) {
-            assert tokens.length > 0;
-            this.tokens = tokens;
-        }
-
-        @Override
-        public boolean matching(boolean topLevel) {
-            int length = tokens.length;
-            if (!at(tokens[0])) return false;
-
-            for (int i = 1; i < length; i++) {
-                IElementType lookAhead = myBuilder.lookAhead(i);
-                if (lookAhead == null || !tokenMatches(lookAhead, tokens[i])) {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 
