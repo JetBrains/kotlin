@@ -25,7 +25,6 @@ class MouseMovedEventArgs
 // EXIST:  var
 // EXIST:  constructor
 // EXIST:  init
-/*why?*/
 // EXIST:  companion object
 // EXIST:  operator
 // EXIST:  infix
