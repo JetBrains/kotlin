@@ -58,14 +58,14 @@ enum class PrimitiveType {
 fun PrimitiveType.isIntegral(): Boolean = this in PrimitiveType.integralPrimitives
 fun PrimitiveType.isNumeric(): Boolean = this in PrimitiveType.numericPrimitives
 
+data class Deprecation(val message: String, val replaceWith: String? = null, val level: DeprecationLevel = DeprecationLevel.WARNING)
+
 class ConcreteFunction(val textBuilder: (Appendable) -> Unit, val sourceFile: SourceFile)
 
 class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     open class SpecializedProperty<TKey: Any, TValue : Any>() {
         private val values = HashMap<TKey?, TValue>()
-
-        val default: TValue? get() = values.get(null)
 
         operator fun get(key: TKey): TValue? = values.getOrElse(key, { values.getOrElse(null, { null }) })
 
@@ -79,7 +79,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
                 }
         }
 
-        operator fun invoke(vararg keys: TKey, valueBuilder: ()-> TValue) = set(keys.asList(), valueBuilder())
+        operator fun invoke(vararg keys: TKey, valueBuilder: () -> TValue) = set(keys.asList(), valueBuilder())
         operator fun invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), value)
 
         protected open fun onKeySet(key: TKey) {}
@@ -87,6 +87,11 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     open class FamilyProperty<TValue: Any>() : SpecializedProperty<Family, TValue>()
     open class PrimitiveProperty<TValue: Any>() : SpecializedProperty<PrimitiveType, TValue>()
+
+    class DeprecationProperty() : FamilyProperty<Deprecation>() {
+        operator fun invoke(value: String, vararg keys: Family) = set(keys.asList(), Deprecation(value))
+    }
+
 
 
     val defaultFamilies = Family.defaultFamilies
@@ -102,8 +107,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     val buildFamilyPrimitives = FamilyProperty<Set<PrimitiveType>>()
 
     val customSignature = FamilyProperty<String>()
-    val deprecate = FamilyProperty<String>()
-    val deprecateReplacement = FamilyProperty<String>()
+    val deprecate = DeprecationProperty()
     val doc = FamilyProperty<String>()
     val platformName = PrimitiveProperty<String>()
     val inline = FamilyProperty<Boolean>()
@@ -358,8 +362,12 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         }
 
         deprecate[f]?.let { deprecated ->
-            val replacement = deprecateReplacement[f]?.let { ", ReplaceWith(\"$it\")" } ?: ""
-            builder.append("@Deprecated(\"$deprecated\"$replacement)\n")
+            val args = listOfNotNull(
+                "\"${deprecated.message}\"",
+                deprecated.replaceWith?.let { "ReplaceWith(\"$it\")" },
+                deprecated.level.let { if (it != DeprecationLevel.WARNING) "level = DeprecationLevel.$it" else null }
+            )
+            builder.append("@Deprecated(${args.joinToString(", ")})\n")
         }
 
         if (!f.isPrimitiveSpecialization && primitive != null) {
@@ -395,7 +403,12 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         builder.append(".${(customSignature[f] ?: signature).renderType()}: ${returnType.renderType()}")
         if (keyword == "fun") builder.append(" {")
 
-        val body = (customPrimitiveBodies[f to primitive] ?: body[f] ?: throw RuntimeException("No body specified for $signature for ${f to primitive}")).trim('\n')
+        val body = (
+                customPrimitiveBodies[f to primitive] ?:
+                body[f] ?:
+                deprecate[f]?.replaceWith?.let { "return $it" } ?:
+                throw RuntimeException("No body specified for $signature for ${f to primitive}")
+        ).trim('\n')
         val indent: Int = body.takeWhile { it == ' ' }.length()
 
         builder.append('\n')
