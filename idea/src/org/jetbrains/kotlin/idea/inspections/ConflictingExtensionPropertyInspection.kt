@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
+import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -177,7 +177,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
         return fixes
     }
 
-    private class DeleteRedundantExtensionAction(property: JetProperty) : JetIntentionAction<JetProperty>(property) {
+    private class DeleteRedundantExtensionAction(property: JetProperty) : KotlinQuickFixAction<JetProperty>(property) {
         private val LOG = Logger.getInstance(DeleteRedundantExtensionAction::class.java);
 
         override fun getFamilyName() = "Delete redundant extension property"
@@ -222,7 +222,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
         }
     }
 
-    private class MarkHiddenAndDeprecatedAction(property: JetProperty) : JetIntentionAction<JetProperty>(property) {
+    private class MarkHiddenAndDeprecatedAction(property: JetProperty) : KotlinQuickFixAction<JetProperty>(property) {
         override fun getFamilyName() = "Mark as @Deprecated(..., level = DeprecationLevel.HIDDEN)"
         override fun getText() = familyName
 

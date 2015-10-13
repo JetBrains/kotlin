@@ -36,7 +36,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.lexer.JetTokens.OVERRIDE_KEYWORD;
 import static org.jetbrains.kotlin.lexer.JetTokens.PUBLIC_KEYWORD;
 
-public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<PsiElement> {
+public class AddOverrideToEqualsHashCodeToStringFix extends KotlinQuickFixAction<PsiElement> {
     public AddOverrideToEqualsHashCodeToStringFix(@NotNull PsiElement element) {
         super(element);
     }

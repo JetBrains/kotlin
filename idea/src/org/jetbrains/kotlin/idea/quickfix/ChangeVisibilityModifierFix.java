@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
-public class ChangeVisibilityModifierFix extends JetIntentionAction<JetDeclaration> {
+public class ChangeVisibilityModifierFix extends KotlinQuickFixAction<JetDeclaration> {
     public ChangeVisibilityModifierFix(@NotNull JetDeclaration element) {
         super(element);
     }
@@ -110,7 +110,7 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetDeclarati
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetDeclaration> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<JetDeclaration> createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 if (!(element instanceof JetDeclaration)) return null;
                 return new ChangeVisibilityModifierFix((JetDeclaration)element);

@@ -24,7 +24,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -55,7 +54,7 @@ import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYN
 import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH;
 import static org.jetbrains.kotlin.diagnostics.Errors.UNUSED_PARAMETER;
 
-public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiElement> {
+public abstract class ChangeFunctionSignatureFix extends KotlinQuickFixAction<PsiElement> {
     protected final PsiElement context;
     protected final FunctionDescriptor functionDescriptor;
 

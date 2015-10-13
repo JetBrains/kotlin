@@ -54,7 +54,7 @@ import static org.jetbrains.kotlin.diagnostics.Errors.COMPONENT_FUNCTION_RETURN_
 import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
-public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction> {
+public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<JetFunction> {
     private final JetType type;
     private final ChangeFunctionLiteralReturnTypeFix changeFunctionLiteralReturnTypeFix;
 

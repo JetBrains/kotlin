@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-public class CastExpressionFix extends JetIntentionAction<JetExpression> {
+public class CastExpressionFix extends KotlinQuickFixAction<JetExpression> {
     private final JetType type;
 
     public CastExpressionFix(@NotNull JetExpression element, @NotNull JetType type) {

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.utils.singletonOrEmptyList
 public class AddGenericUpperBoundFix(
         typeParameter: JetTypeParameter,
         upperBound: JetType
-) : JetIntentionAction<JetTypeParameter>(typeParameter) {
+) : KotlinQuickFixAction<JetTypeParameter>(typeParameter) {
     private val renderedUpperBound: String = IdeDescriptorRenderers.SOURCE_CODE.renderType(upperBound)
 
     override fun getText() = "Add '$renderedUpperBound' as upper bound for ${element.name}"

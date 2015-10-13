@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class AddNameToArgumentFix(argument: JetValueArgument) : JetIntentionAction<JetValueArgument>(argument) {
+public class AddNameToArgumentFix(argument: JetValueArgument) : KotlinQuickFixAction<JetValueArgument>(argument) {
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false

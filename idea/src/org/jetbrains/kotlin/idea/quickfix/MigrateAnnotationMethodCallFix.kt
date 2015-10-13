@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class MigrateAnnotationMethodCallFix(
         expression: JetCallExpression
-) : JetIntentionAction<JetCallExpression>(expression) {
+) : KotlinQuickFixAction<JetCallExpression>(expression) {
     override fun getText() = "Replace method call with property access"
     override fun getFamilyName() = getText()
 

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil;
 
-public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserType> {
+public abstract class AddStarProjectionsFix extends KotlinQuickFixAction<JetUserType> {
 
     private final int argumentCount;
 

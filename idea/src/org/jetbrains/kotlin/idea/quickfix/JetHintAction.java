@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A fix with the user information hint.
  */
-public abstract class JetHintAction<T extends PsiElement> extends JetIntentionAction<T> implements HintAction {
+public abstract class JetHintAction<T extends PsiElement> extends KotlinQuickFixAction<T> implements HintAction {
 
     public JetHintAction(@NotNull T element) {
         super(element);

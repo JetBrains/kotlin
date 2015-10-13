@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 
-public class ChangeToFunctionInvocationFix extends JetIntentionAction<JetExpression> {
+public class ChangeToFunctionInvocationFix extends KotlinQuickFixAction<JetExpression> {
 
     public ChangeToFunctionInvocationFix(@NotNull JetExpression element) {
         super(element);
@@ -53,7 +53,7 @@ public class ChangeToFunctionInvocationFix extends JetIntentionAction<JetExpress
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetExpression> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<JetExpression> createAction(Diagnostic diagnostic) {
                 if (diagnostic.getPsiElement() instanceof JetExpression) {
                     return new ChangeToFunctionInvocationFix((JetExpression) diagnostic.getPsiElement());
                 }

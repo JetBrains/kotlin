@@ -104,7 +104,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
     private class AddParenthesisFix(
             element: JetDelegatorToSuperClass,
             val putCaretIntoParenthesis: Boolean
-    ) : JetIntentionAction<JetDelegatorToSuperClass>(element), HighPriorityAction {
+    ) : KotlinQuickFixAction<JetDelegatorToSuperClass>(element), HighPriorityAction {
 
         override fun getFamilyName() = "Change to constructor invocation" //TODO?
 
@@ -130,7 +130,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
             val classDeclaration: JetClass,
             val superConstructor: ConstructorDescriptor, //TODO: do not hold descriptor!
             private val text: String
-    ) : JetIntentionAction<JetDelegatorToSuperClass>(element) {
+    ) : KotlinQuickFixAction<JetDelegatorToSuperClass>(element) {
 
         override fun getFamilyName() = "Add constructor parameters from superclass"
 

@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclaration> {
+public class ChangeVariableTypeFix extends KotlinQuickFixAction<JetVariableDeclaration> {
     private final static Logger LOG = Logger.getInstance(ChangeVariableTypeFix.class);
 
     private final JetType type;

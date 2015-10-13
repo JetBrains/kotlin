@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.*;
 
-public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> {
+public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpression> extends KotlinQuickFixAction<T> {
     private final String operation;
 
     public ReplaceOperationInBinaryExpressionFix(@NotNull T element, String operation) {

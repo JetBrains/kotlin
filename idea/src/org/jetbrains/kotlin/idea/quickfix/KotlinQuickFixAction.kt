@@ -25,7 +25,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetFile
 
-abstract class JetIntentionAction<T : PsiElement>(protected val element: T) : IntentionAction {
+abstract class KotlinQuickFixAction<T : PsiElement>(protected val element: T) : IntentionAction {
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return element.isValid && (file.manager.isInProject(file) || file is JetCodeFragment) && (file is JetFile)

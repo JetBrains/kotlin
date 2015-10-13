@@ -48,7 +48,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
 
-public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFunctionLiteralExpression> {
+public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<JetFunctionLiteralExpression> {
     private final JetType type;
     private final JetTypeReference functionLiteralReturnTypeRef;
     private IntentionAction appropriateQuickFix = null;

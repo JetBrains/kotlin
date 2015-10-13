@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
-public class RenameParameterToMatchOverriddenMethodFix extends JetIntentionAction<JetParameter>{
+public class RenameParameterToMatchOverriddenMethodFix extends KotlinQuickFixAction<JetParameter>{
     private final JetParameter parameter;
     private String parameterFromSuperclassName;
 

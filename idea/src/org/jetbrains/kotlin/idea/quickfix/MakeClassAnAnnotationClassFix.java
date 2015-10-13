@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.psi.*;
 
-public class MakeClassAnAnnotationClassFix extends JetIntentionAction<JetAnnotationEntry> {
+public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<JetAnnotationEntry> {
     private final JetAnnotationEntry annotationEntry;
     private JetClass annotationClass;
 

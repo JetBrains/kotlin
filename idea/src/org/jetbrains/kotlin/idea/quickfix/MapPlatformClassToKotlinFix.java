@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReferenceExpression> {
+public class MapPlatformClassToKotlinFix extends KotlinQuickFixAction<JetReferenceExpression> {
     private static final String PRIMARY_USAGE = "PrimaryUsage";
     private static final String OTHER_USAGE = "OtherUsage";
 

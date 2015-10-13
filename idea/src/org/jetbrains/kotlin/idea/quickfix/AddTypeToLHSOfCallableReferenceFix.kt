@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class AddTypeToLHSOfCallableReferenceFix(
         expression: JetCallableReferenceExpression
-) : JetIntentionAction<JetCallableReferenceExpression>(expression), CleanupFix {
+) : KotlinQuickFixAction<JetCallableReferenceExpression>(expression), CleanupFix {
     override fun getFamilyName() = "Add type to left-hand side"
     override fun getText() = familyName
 

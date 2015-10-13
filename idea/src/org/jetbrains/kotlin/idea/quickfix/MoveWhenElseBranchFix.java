@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.*;
 
-public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> {
+public class MoveWhenElseBranchFix extends KotlinQuickFixAction<JetWhenExpression> {
     public MoveWhenElseBranchFix(@NotNull JetWhenExpression element) {
         super(element);
     }
@@ -79,7 +79,7 @@ public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression>
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public JetIntentionAction createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 JetWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, JetWhenExpression.class, false);
                 if (whenExpression == null) return null;

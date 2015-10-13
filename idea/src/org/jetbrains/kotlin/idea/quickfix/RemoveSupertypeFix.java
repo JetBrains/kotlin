@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetDelegationSpecifier;
 import org.jetbrains.kotlin.psi.JetFile;
 
-public class RemoveSupertypeFix extends JetIntentionAction<JetDelegationSpecifier> {
+public class RemoveSupertypeFix extends KotlinQuickFixAction<JetDelegationSpecifier> {
     private final JetDelegationSpecifier superClass;
 
     public RemoveSupertypeFix(@NotNull JetDelegationSpecifier superClass) {
@@ -67,7 +67,7 @@ public class RemoveSupertypeFix extends JetIntentionAction<JetDelegationSpecifie
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetDelegationSpecifier> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<JetDelegationSpecifier> createAction(Diagnostic diagnostic) {
                 JetDelegationSpecifier superClass = QuickFixUtil.getParentElementOfType(diagnostic, JetDelegationSpecifier.class);
                 if (superClass == null) return null;
                 return new RemoveSupertypeFix(superClass);

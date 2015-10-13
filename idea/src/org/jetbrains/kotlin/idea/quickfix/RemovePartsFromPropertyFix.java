@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 
-public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> {
+public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<JetProperty> {
     private final boolean removeInitializer;
     private final boolean removeGetter;
     private final boolean removeSetter;
@@ -123,7 +123,7 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetProperty> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<JetProperty> createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 assert element instanceof JetElement;
                 JetProperty property = PsiTreeUtil.getParentOfType(element, JetProperty.class);

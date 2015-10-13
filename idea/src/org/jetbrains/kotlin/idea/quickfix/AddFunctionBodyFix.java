@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.JetFunction;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
 import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 
-public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
+public class AddFunctionBodyFix extends KotlinQuickFixAction<JetFunction> {
     public AddFunctionBodyFix(@NotNull JetFunction element) {
         super(element);
     }
@@ -71,7 +71,7 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public JetIntentionAction createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 JetFunction function = PsiTreeUtil.getParentOfType(element, JetFunction.class, false);
                 if (function == null) return null;

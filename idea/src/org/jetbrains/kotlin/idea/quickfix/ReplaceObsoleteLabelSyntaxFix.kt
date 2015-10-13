@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ReplaceObsoleteLabelSyntaxFix(element: JetAnnotationEntry) : JetIntentionAction<JetAnnotationEntry>(element), CleanupFix {
+public class ReplaceObsoleteLabelSyntaxFix(element: JetAnnotationEntry) : KotlinQuickFixAction<JetAnnotationEntry>(element), CleanupFix {
     override fun getFamilyName(): String = "Update obsolete label syntax"
     override fun getText(): String = "Replace with label ${element.getCalleeExpression()?.getText() ?: ""}@"
 

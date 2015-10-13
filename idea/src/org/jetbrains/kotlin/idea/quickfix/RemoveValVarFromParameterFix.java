@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
-public class RemoveValVarFromParameterFix extends JetIntentionAction<JetParameter> {
+public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<JetParameter> {
     private final String varOrVal;
 
     public RemoveValVarFromParameterFix(@NotNull JetParameter element) {

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 
-public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExpression> {
+public class ChangeToPropertyNameFix extends KotlinQuickFixAction<JetSimpleNameExpression> {
     public ChangeToPropertyNameFix(@NotNull JetSimpleNameExpression element) {
         super(element);
     }
@@ -61,7 +61,7 @@ public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExp
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetSimpleNameExpression> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<JetSimpleNameExpression> createAction(Diagnostic diagnostic) {
                 JetSimpleNameExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetSimpleNameExpression.class);
                 if (expression == null) {
                     PsiElement element = diagnostic.getPsiElement();

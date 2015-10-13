@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 
-public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccessor> {
+public class ChangeAccessorTypeFix extends KotlinQuickFixAction<JetPropertyAccessor> {
     private JetType type;
 
     public ChangeAccessorTypeFix(@NotNull JetPropertyAccessor element) {
@@ -87,7 +87,7 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetPropertyAccessor> createAction(@NotNull Diagnostic diagnostic) {
+            public KotlinQuickFixAction<JetPropertyAccessor> createAction(@NotNull Diagnostic diagnostic) {
                 JetPropertyAccessor accessor = QuickFixUtil.getParentElementOfType(diagnostic, JetPropertyAccessor.class);
                 if (accessor == null) return null;
                 return new ChangeAccessorTypeFix(accessor);

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.*;
 
-public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> {
+public class AddWhenElseBranchFix extends KotlinQuickFixAction<JetWhenExpression> {
     private static final String ELSE_ENTRY_TEXT = "else -> {}";
 
     public AddWhenElseBranchFix(@NotNull JetWhenExpression element) {
@@ -77,7 +77,7 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public JetIntentionAction createAction(@NotNull Diagnostic diagnostic) {
+            public KotlinQuickFixAction createAction(@NotNull Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 JetWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, JetWhenExpression.class, false);
                 if (whenExpression == null) return null;

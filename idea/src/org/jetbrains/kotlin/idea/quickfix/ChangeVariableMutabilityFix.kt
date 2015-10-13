@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.JetPropertyAccessor
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-public class ChangeVariableMutabilityFix(element: JetProperty, private val makeVar: Boolean) : JetIntentionAction<JetProperty>(element) {
+public class ChangeVariableMutabilityFix(element: JetProperty, private val makeVar: Boolean) : KotlinQuickFixAction<JetProperty>(element) {
 
     override fun getText() = if (makeVar) "Make variable mutable" else "Make variable immutable"
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPrimaryConstructor
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.addConstructorKeyword
 
-public class MissingConstructorKeywordFix(element: JetPrimaryConstructor) : JetIntentionAction<JetPrimaryConstructor>(element), CleanupFix {
+public class MissingConstructorKeywordFix(element: JetPrimaryConstructor) : KotlinQuickFixAction<JetPrimaryConstructor>(element), CleanupFix {
     override fun getFamilyName(): String = getText()
     override fun getText(): String = "Add 'constructor' keyword"
 

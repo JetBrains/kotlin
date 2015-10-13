@@ -100,7 +100,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
     private fun createAction(project: Project, editor: Editor) = KotlinAddImportAction(project, editor, element, suggestions)
 
     companion object : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): JetIntentionAction<JetSimpleNameExpression>? {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<JetSimpleNameExpression>? {
             // There could be different psi elements (i.e. JetArrayAccessExpression), but we can fix only JetSimpleNameExpression case
             val psiElement = diagnostic.getPsiElement()
             if (psiElement is JetSimpleNameExpression) {

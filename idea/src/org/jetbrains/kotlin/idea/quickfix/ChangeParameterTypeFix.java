@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 
-public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
+public class ChangeParameterTypeFix extends KotlinQuickFixAction<JetParameter> {
     private final JetType type;
     private final String containingDeclarationName;
     private final boolean isPrimaryConstructorParameter;

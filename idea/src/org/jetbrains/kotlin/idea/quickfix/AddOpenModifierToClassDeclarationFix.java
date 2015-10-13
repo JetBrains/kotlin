@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 
-public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<JetTypeReference> {
+public class AddOpenModifierToClassDeclarationFix extends KotlinQuickFixAction<JetTypeReference> {
     private JetClass classDeclaration;
 
     public AddOpenModifierToClassDeclarationFix(@NotNull JetTypeReference typeReference) {

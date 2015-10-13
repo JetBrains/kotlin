@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 
-public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> implements CleanupFix {
+public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> extends KotlinQuickFixAction<T> implements CleanupFix {
     private final String message;
     
     public RemoveRightPartOfBinaryExpressionFix(@NotNull T element, String message) {
@@ -73,7 +73,7 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
     public static JetSingleIntentionActionFactory createRemoveTypeFromBinaryExpressionFactory(final String message) {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetBinaryExpressionWithTypeRHS> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<JetBinaryExpressionWithTypeRHS> createAction(Diagnostic diagnostic) {
                 JetBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);
                 if (expression == null) return null;
                 return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpressionWithTypeRHS>(expression, message);
@@ -84,7 +84,7 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
     public static JetSingleIntentionActionFactory createRemoveElvisOperatorFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetBinaryExpression> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<JetBinaryExpression> createAction(Diagnostic diagnostic) {
                 JetBinaryExpression expression = (JetBinaryExpression) diagnostic.getPsiElement();
                 return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpression>(expression, JetBundle.message("remove.elvis.operator"));
             }

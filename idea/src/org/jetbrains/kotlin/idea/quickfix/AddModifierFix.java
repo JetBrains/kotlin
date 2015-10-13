@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.JetPropertyAccessor;
 
 import static org.jetbrains.kotlin.lexer.JetTokens.ABSTRACT_KEYWORD;
 
-public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
+public class AddModifierFix extends KotlinQuickFixAction<JetModifierListOwner> {
     @NotNull private final JetModifierKeywordToken modifier;
 
     public AddModifierFix(@NotNull JetModifierListOwner element, @NotNull JetModifierKeywordToken modifier) {
