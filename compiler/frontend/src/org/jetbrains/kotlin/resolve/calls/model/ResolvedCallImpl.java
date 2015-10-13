@@ -156,8 +156,9 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return trace;
     }
 
+    @Override
     @NotNull
-    public TracingStrategy getTracing() {
+    public TracingStrategy getTracingStrategy() {
         assertNotCompleted("TracingStrategy");
         return tracing;
     }
