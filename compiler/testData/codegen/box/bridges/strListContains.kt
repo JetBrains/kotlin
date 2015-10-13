@@ -2,7 +2,7 @@ class StrList : List<String?> {
     override val size: Int
         get() = throw UnsupportedOperationException()
 
-    override val isEmpty: Boolean get() {
+    override fun isEmpty(): Boolean {
         throw UnsupportedOperationException()
     }
 

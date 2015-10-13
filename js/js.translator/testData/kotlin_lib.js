@@ -398,10 +398,8 @@
             }
             return true;
         },
-        isEmpty: {
-            get: function () {
-                return this.size === 0;
-            }
+        isEmpty: function () {
+            return this.size === 0;
         },
         iterator: function () {
             // TODO: Do not implement mutable iterator() this way, make abstract
@@ -972,7 +970,7 @@
     });
 
     Kotlin.collectionsMax = function (c, comp) {
-        if (c.isEmpty) {
+        if (c.isEmpty()) {
             //TODO: which exception?
             throw new Error();
         }

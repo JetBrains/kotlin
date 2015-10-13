@@ -12,7 +12,7 @@ private object EmptyMap : Map<Any, Nothing>, Serializable {
     override fun toString(): String = "{}"
 
     override val size: Int get() = 0
-    override val isEmpty: Boolean get() = true
+    override fun isEmpty(): Boolean = true
 
     override fun containsKey(key: Any): Boolean = false
     override fun containsValue(value: Nothing): Boolean = false

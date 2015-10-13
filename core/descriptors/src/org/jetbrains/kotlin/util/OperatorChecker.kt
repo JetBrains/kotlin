@@ -110,7 +110,7 @@ object OperatorChecks {
         get() = isExtension || containingDeclaration is ClassDescriptor
 
     private val FunctionDescriptor.noValueParameters: Boolean
-        get() = valueParameters.isEmpty
+        get() = valueParameters.isEmpty()
 
     private val FunctionDescriptor.singleValueParameter: Boolean
         get() = valueParameters.size == 1

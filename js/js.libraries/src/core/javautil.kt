@@ -13,7 +13,7 @@ public interface Comparator<T> {
 
 @library
 public abstract class AbstractCollection<E>() : MutableCollection<E> {
-    override val isEmpty: Boolean get() = noImpl
+    override fun isEmpty(): Boolean = noImpl
     override fun contains(o: E): Boolean = noImpl
     override fun iterator(): MutableIterator<E> = noImpl
 
@@ -103,7 +103,7 @@ public open class LinkedHashSet<E>(
 @library
 public open class HashMap<K, V>(initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR) : MutableMap<K, V> {
     override val size: Int get() = noImpl
-    override val isEmpty: Boolean get() = noImpl
+    override fun isEmpty(): Boolean = noImpl
     @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     override fun get(key: K): V? = noImpl
     override fun containsKey(key: K): Boolean = noImpl

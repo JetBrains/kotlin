@@ -1,8 +1,7 @@
 open class A : MutableList<Int> {
     override val size: Int
         get() = throw UnsupportedOperationException()
-    override val isEmpty: Boolean
-        get() = throw UnsupportedOperationException()
+    override fun isEmpty(): Boolean = throw UnsupportedOperationException()
 
     override fun contains(o: Int): Boolean {
         throw UnsupportedOperationException()

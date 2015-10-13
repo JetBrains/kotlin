@@ -13,7 +13,7 @@ internal object EmptySet : Set<Nothing>, Serializable {
     override fun toString(): String = "[]"
 
     override val size: Int get() = 0
-    override val isEmpty: Boolean get() = true
+    override fun isEmpty(): Boolean = true
     override fun contains(o: Nothing): Boolean = false
     override fun containsAll(c: Collection<Nothing>): Boolean = c.isEmpty()
 
