@@ -65,6 +65,7 @@ class CoercionTest {
     }
 
     @Test
+    @Suppress("DEPRECATION_ERROR")
     fun coercionsDouble() {
         expect(5.0) { 5.0.coerceAtLeast(1.0) }
         expect(5.0) { 1.0.coerceAtLeast(5.0) }
@@ -88,6 +89,7 @@ class CoercionTest {
     }
 
     @Test
+    @Suppress("DEPRECATION_ERROR")
     fun coercionsComparable() {
         val v = 0..10 map { ComparableNumber(it) }
 

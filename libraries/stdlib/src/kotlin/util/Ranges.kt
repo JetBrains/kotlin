@@ -5,6 +5,7 @@ package kotlin
 /**
  * Represents a range of [Comparable] values.
  */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.ERROR)
 public class ComparableRange<T: Comparable<T>> (
         override val start: T,
         override val end: T
@@ -13,6 +14,7 @@ public class ComparableRange<T: Comparable<T>> (
         return start <= item && item <= end
     }
 
+    @Suppress("DEPRECATION_ERROR")
     override fun equals(other: Any?): Boolean {
         return other is ComparableRange<*> && (isEmpty() && other.isEmpty() ||
                 start == other.start && end == other.end)
@@ -29,6 +31,8 @@ public class ComparableRange<T: Comparable<T>> (
  * Creates a range from this [Comparable] value to the specified [that] value. This value
  * needs to be smaller than [that] value, otherwise the returned range will be empty.
  */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public operator fun <T: Comparable<T>> T.rangeTo(that: T): ComparableRange<T> {
     return ComparableRange(this, that)
 }
