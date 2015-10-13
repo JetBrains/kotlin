@@ -28,10 +28,11 @@ sealed class EffectiveVisibility(val name: String) {
     //                /--/   |  \-------------\
     // Protected(Base)       |                 \
     //       |         Protected(Other)        Internal
-    // Protected(Derived) |                   /
-    //             |      |                  /
-    //       ProtectedBound                 /
-    //                     \InternalProtected
+    // Protected(Derived) |                   /     \
+    //             |      |                  /    InternalProtected(Base)
+    //       ProtectedBound                 /        \
+    //                    \                /       /InternalProtected(Derived)
+    //                     \InternalProtectedBound/
     //                              |
     //                           Private
 
@@ -48,15 +49,16 @@ sealed class EffectiveVisibility(val name: String) {
     object Internal : EffectiveVisibility("internal") {
         override fun relation(other: EffectiveVisibility) = when (other) {
             Public -> Permissiveness.LESS
-            Private, InternalProtected -> Permissiveness.MORE
+            Private, InternalProtectedBound, is InternalProtected -> Permissiveness.MORE
             Internal -> Permissiveness.SAME
             ProtectedBound, is Protected -> Permissiveness.UNKNOWN
         }
 
         override fun lowerBound(other: EffectiveVisibility) = when (other) {
             Public -> this
-            Private, InternalProtected, Internal -> other
-            ProtectedBound, is Protected -> InternalProtected
+            Private, InternalProtectedBound, Internal, is InternalProtected -> other
+            is Protected -> InternalProtected(other.container)
+            ProtectedBound -> InternalProtectedBound
         }
     }
 
@@ -70,61 +72,85 @@ sealed class EffectiveVisibility(val name: String) {
 
         override fun relation(other: EffectiveVisibility) = when (other) {
             Public -> Permissiveness.LESS
-            Private, ProtectedBound, InternalProtected -> Permissiveness.MORE
-            is Protected -> {
-                if (container == null || other.container == null) {
-                    Permissiveness.UNKNOWN
-                }
-                else if (container == other.container) {
-                    Permissiveness.SAME
-                }
-                else if (DescriptorUtils.isSubclass(container, other.container)) {
-                    Permissiveness.LESS
-                }
-                else if (DescriptorUtils.isSubclass(other.container, container)) {
-                    Permissiveness.MORE
-                }
-                else {
-                    Permissiveness.UNKNOWN
-                }
+            Private, ProtectedBound, InternalProtectedBound -> Permissiveness.MORE
+            is Protected -> containerRelation(container, other.container)
+            is InternalProtected -> when (containerRelation(container, other.container)) {
+                    Permissiveness.SAME, Permissiveness.LESS -> Permissiveness.LESS
+                    Permissiveness.UNKNOWN, Permissiveness.MORE -> Permissiveness.UNKNOWN
             }
             Internal -> Permissiveness.UNKNOWN
         }
 
         override fun lowerBound(other: EffectiveVisibility) = when (other) {
             Public -> this
-            Private, ProtectedBound, InternalProtected -> other
+            Private, ProtectedBound, InternalProtectedBound -> other
             is Protected -> when (relation(other)) {
                 Permissiveness.SAME, Permissiveness.MORE -> this
                 Permissiveness.LESS -> other
                 Permissiveness.UNKNOWN -> ProtectedBound
             }
-            Internal -> InternalProtected
+            is InternalProtected -> when (relation(other)) {
+                Permissiveness.LESS -> other
+                else -> InternalProtectedBound
+            }
+            Internal -> InternalProtected(container)
         }
     }
 
     // Lower bound for all protected visibilities
-    object ProtectedBound : EffectiveVisibility("protected(_)") {
+    object ProtectedBound : EffectiveVisibility("most protected") {
         override fun relation(other: EffectiveVisibility) = when (other) {
             Public, is Protected -> Permissiveness.LESS
-            Private, InternalProtected -> Permissiveness.MORE
+            Private, InternalProtectedBound -> Permissiveness.MORE
             ProtectedBound -> Permissiveness.SAME
-            Internal -> Permissiveness.UNKNOWN
+            Internal, is InternalProtected -> Permissiveness.UNKNOWN
         }
 
         override fun lowerBound(other: EffectiveVisibility) = when (other) {
             Public, is Protected -> this
-            Private, ProtectedBound, InternalProtected -> other
-            Internal -> InternalProtected
+            Private, ProtectedBound, InternalProtectedBound -> other
+            Internal, is InternalProtected -> InternalProtectedBound
         }
     }
 
-    // Lower bound for Internal and Protected
-    object InternalProtected : EffectiveVisibility("internal/protected") {
+    // Lower bound for internal and protected(C)
+    class InternalProtected(val container: ClassDescriptor?): EffectiveVisibility("protected & internal") {
+
+        override fun equals(other: Any?) = (other is InternalProtected && container == other.container)
+
+        override fun hashCode() = container?.hashCode() ?: 0
+
+        override fun toString() = "${super.toString()}(${container?.name ?: '?'})"
+
         override fun relation(other: EffectiveVisibility) = when (other) {
-            Public, is Protected, ProtectedBound, Internal -> Permissiveness.LESS
+            Public, Internal -> Permissiveness.LESS
+            Private, InternalProtectedBound -> Permissiveness.MORE
+            is InternalProtected -> containerRelation(container, other.container)
+            is Protected -> when (containerRelation(container, other.container)) {
+                Permissiveness.SAME, Permissiveness.MORE -> Permissiveness.MORE
+                Permissiveness.UNKNOWN, Permissiveness.LESS -> Permissiveness.UNKNOWN
+            }
+            ProtectedBound -> Permissiveness.UNKNOWN
+        }
+
+        override fun lowerBound(other: EffectiveVisibility) = when (other) {
+            Public, Internal -> this
+            Private, InternalProtectedBound -> other
+            is Protected, is InternalProtected -> when (relation(other)) {
+                Permissiveness.SAME, Permissiveness.MORE -> this
+                Permissiveness.LESS -> other
+                Permissiveness.UNKNOWN -> InternalProtectedBound
+            }
+            ProtectedBound -> InternalProtectedBound
+        }
+    }
+
+    // Lower bound for internal and protected lower bound
+    object InternalProtectedBound : EffectiveVisibility("most protected & internal") {
+        override fun relation(other: EffectiveVisibility) = when (other) {
+            Public, is Protected, is InternalProtected, ProtectedBound, Internal -> Permissiveness.LESS
             Private -> Permissiveness.MORE
-            InternalProtected -> Permissiveness.SAME
+            InternalProtectedBound -> Permissiveness.SAME
         }
     }
 
@@ -149,6 +175,23 @@ sealed class EffectiveVisibility(val name: String) {
     }
 
     companion object {
+
+        internal fun containerRelation(first: ClassDescriptor?, second: ClassDescriptor?): Permissiveness =
+                if (first == null || second == null) {
+                    Permissiveness.UNKNOWN
+                }
+                else if (first == second) {
+                    Permissiveness.SAME
+                }
+                else if (DescriptorUtils.isSubclass(first, second)) {
+                    Permissiveness.LESS
+                }
+                else if (DescriptorUtils.isSubclass(second, first)) {
+                    Permissiveness.MORE
+                }
+                else {
+                    Permissiveness.UNKNOWN
+                }
 
         private fun lowerBound(first: EffectiveVisibility, second: EffectiveVisibility) =
             first.lowerBound(second)
