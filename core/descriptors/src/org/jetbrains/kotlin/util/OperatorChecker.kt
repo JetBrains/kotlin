@@ -17,17 +17,15 @@
 package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions.GET
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET
@@ -103,10 +101,7 @@ object OperatorChecks {
     }
 
     private val ValueParameterDescriptor.isKProperty: Boolean
-        get() {
-            val kProperty = module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("kotlin.reflect.KProperty")))
-            return kProperty!!.defaultType.isSubtypeOf(type.makeNotNullable())
-        }
+        get() = ReflectionTypes.createKPropertyStarType(module)?.isSubtypeOf(type.makeNotNullable()) ?: false
 
     private val FunctionDescriptor.isMember: Boolean
         get() = containingDeclaration is ClassDescriptor

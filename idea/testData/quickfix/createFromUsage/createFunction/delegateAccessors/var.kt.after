@@ -1,10 +1,12 @@
+import kotlin.reflect.KProperty
+
 // "Create member function 'getValue', function 'setValue'" "true"
 class F {
-    fun getValue(x: X, propertyMetadata: PropertyMetadata): Int {
+    fun getValue(x: X, property: KProperty<*>): Int {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun setValue(x: X, propertyMetadata: PropertyMetadata, i: Int) {
+    fun setValue(x: X, property: KProperty<*>, i: Int) {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

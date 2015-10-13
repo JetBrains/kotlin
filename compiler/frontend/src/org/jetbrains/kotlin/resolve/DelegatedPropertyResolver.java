@@ -128,7 +128,7 @@ public class DelegatedPropertyResolver {
 
     @NotNull
     private static JetExpression createExpressionForProperty(@NotNull JetPsiFactory psiFactory) {
-        return psiFactory.createExpression("null as kotlin.reflect.KProperty<*>");
+        return psiFactory.createExpression("null as " + KotlinBuiltIns.FQ_NAMES.kProperty.asSingleFqName().asString() + "<*>");
     }
 
     public void resolveDelegatedPropertyPDMethod(
