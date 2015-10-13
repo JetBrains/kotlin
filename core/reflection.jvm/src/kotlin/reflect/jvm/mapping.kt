@@ -87,11 +87,24 @@ public val Field.kotlinProperty: KProperty<*>?
     get() {
         if (isSynthetic()) return null
 
-        // TODO: fields in package parts
         // TODO: optimize (search by name)
+
+        val kotlinPackage = getKPackage()
+        if (kotlinPackage != null) {
+            return kotlinPackage.members.filterIsInstance<KProperty<*>>().firstOrNull { it.javaField == this }
+        }
+
         return getDeclaringClass().kotlin.memberProperties.firstOrNull { it.javaField == this }
     }
 
+
+private fun Member.getKPackage(): KDeclarationContainer? {
+    // TODO: support multifile classes
+    val fileFacade = declaringClass.getAnnotation(KotlinFileFacade::class.java)
+    return if (fileFacade != null)
+        Reflection.getOrCreateKotlinPackage(declaringClass, fileFacade.moduleName)
+    else null
+}
 
 /**
  * Returns a [KFunction] instance corresponding to the given Java [Method] instance,
@@ -103,11 +116,8 @@ public val Method.kotlinFunction: KFunction<*>?
         if (isSynthetic) return null
 
         if (Modifier.isStatic(modifiers)) {
-            // TODO: support multifile classes
-
-            val fileFacade = declaringClass.getAnnotation(KotlinFileFacade::class.java)
-            if (fileFacade != null) {
-                val kotlinPackage = Reflection.getOrCreateKotlinPackage(declaringClass, fileFacade.moduleName)
+            val kotlinPackage = getKPackage()
+            if (kotlinPackage != null) {
                 return kotlinPackage.functions.firstOrNull { it.javaMethod == this }
             }
 

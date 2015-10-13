@@ -23,3 +23,6 @@ package kotlin.reflect
  */
 public val KDeclarationContainer.functions: Collection<KFunction<*>>
     get() = members.filterIsInstance<KFunction<*>>()
+
+public val KDeclarationContainer.properties: Collection<KProperty<*>>
+    get() = members.filterIsInstance<KProperty<*>>()
