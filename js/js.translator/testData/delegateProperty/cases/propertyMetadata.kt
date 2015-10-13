@@ -1,14 +1,16 @@
 package foo
 
+import kotlin.reflect.KProperty
+
 interface WithName {
     var name: String
 }
 
 class GetPropertyName() {
-    fun getValue(withName: WithName, property: PropertyMetadata): String {
+    fun getValue(withName: WithName, property: KProperty<*>): String {
         return withName.name + ":" + property.name;
     }
-    fun setValue(withName: WithName, property: PropertyMetadata, value: String) {
+    fun setValue(withName: WithName, property: KProperty<*>, value: String) {
         withName.name = value + ":" + property.name
     }
 }

@@ -1,3 +1,5 @@
+import kotlin.reflect.KProperty
+
 val four: Int by NumberDecrypter
 
 class A {
@@ -5,7 +7,7 @@ class A {
 }
 
 object NumberDecrypter {
-    fun getValue(instance: Any?, data: PropertyMetadata) = when (data.name) {
+    fun getValue(instance: Any?, data: KProperty<*>) = when (data.name) {
         "four" -> 4
         "two" -> 2
         else -> throw AssertionError()

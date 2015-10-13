@@ -1,14 +1,16 @@
+import kotlin.reflect.KProperty
+
 class MyClass() {
     public var x: Int by Delegate()
         private set
 }
 
 class Delegate {
-    fun getValue(t: Any?, p: PropertyMetadata): Int {
+    fun getValue(t: Any?, p: KProperty<*>): Int {
         return 1
     }
 
-    fun setValue(t: Any?, p: PropertyMetadata, i: Int) {}
+    fun setValue(t: Any?, p: KProperty<*>, i: Int) {}
 }
 
 // TESTED_OBJECT_KIND: function

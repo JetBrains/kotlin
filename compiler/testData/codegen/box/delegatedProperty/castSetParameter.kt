@@ -1,10 +1,12 @@
+import kotlin.reflect.KProperty
+
 class Delegate {
     var inner = Derived()
-    fun getValue(t: Any?, p: PropertyMetadata): Derived {
+    fun getValue(t: Any?, p: KProperty<*>): Derived {
         inner = Derived(inner.a + "-get")
         return inner
     }
-    fun setValue(t: Any?, p: PropertyMetadata, i: Base) { inner = Derived(inner.a + "-" + i.a + "-set") }
+    fun setValue(t: Any?, p: KProperty<*>, i: Base) { inner = Derived(inner.a + "-" + i.a + "-set") }
 }
 
 class A {

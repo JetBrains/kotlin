@@ -1,8 +1,10 @@
 // This test was adapted from compiler/testData/codegen/boxWithStdlib/callableReference/property/.
 package foo
 
+import kotlin.reflect.KProperty
+
 object NumberDecrypter {
-    fun getValue(instance: Any?, data: PropertyMetadata) = when (data.name) {
+    fun getValue(instance: Any?, data: KProperty<*>) = when (data.name) {
         "four" -> 4
         "two" -> 2
         else -> throw Exception()

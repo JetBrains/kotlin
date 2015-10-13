@@ -1,5 +1,7 @@
+import kotlin.reflect.KProperty
+
 class Delegate {
-    fun getValue(t: Any?, p: PropertyMetadata): Int = 1
+    fun getValue(t: Any?, p: KProperty<*>): Int = 1
 }
 
 interface A {

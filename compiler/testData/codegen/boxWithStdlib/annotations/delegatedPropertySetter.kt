@@ -1,3 +1,5 @@
+import kotlin.reflect.KProperty
+
 @Retention(AnnotationRetention.RUNTIME)
 annotation class First
 
@@ -7,11 +9,11 @@ class MyClass() {
 }
 
 class Delegate {
-    fun getValue(t: Any?, p: PropertyMetadata): String {
+    fun getValue(t: Any?, p: KProperty<*>): String {
         return "OK"
     }
 
-    fun setValue(t: Any?, p: PropertyMetadata, i: String) {}
+    fun setValue(t: Any?, p: KProperty<*>, i: String) {}
 }
 
 fun box(): String {
