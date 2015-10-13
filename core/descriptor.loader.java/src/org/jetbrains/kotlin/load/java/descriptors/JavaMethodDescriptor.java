@@ -135,7 +135,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @NotNull JetType enhancedReturnType
     ) {
         List<ValueParameterDescriptor> enhancedValueParameters =
-                DescriptorsPackage.createEnhancedValueParameters(enhancedValueParametersTypes, getValueParameters(), this);
+                UtilKt.copyValueParameters(enhancedValueParametersTypes, getValueParameters(), this);
 
         // We use `doSubstitute` here because it does exactly what we need:
         // 1. creates full copy of descriptor

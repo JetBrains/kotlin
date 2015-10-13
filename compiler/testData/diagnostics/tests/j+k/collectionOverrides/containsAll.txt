@@ -10,7 +10,7 @@ public abstract class A</*0*/ T : kotlin.Any!> : kotlin.MutableCollection<T!> {
     public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<T!>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: T!): kotlin.Boolean
-    public open override /*1*/ /*synthesized*/ fun containsAll(/*0*/ c: kotlin.Collection<T!>): kotlin.Boolean
+    public open override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<T!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<T!>
@@ -28,7 +28,7 @@ public abstract class B : kotlin.MutableCollection<kotlin.String!> {
     public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.String!): kotlin.Boolean
-    public open override /*1*/ /*synthesized*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public open override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<kotlin.String!>
@@ -45,7 +45,7 @@ public interface IC : kotlin.MutableCollection<kotlin.String!> {
     public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.String!): kotlin.Boolean
-    public abstract override /*1*/ /*synthesized*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<kotlin.String!>

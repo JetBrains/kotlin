@@ -22,16 +22,16 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.JetType
 
-fun createEnhancedValueParameters(
-        enhancedTypes: Collection<JetType>,
+fun copyValueParameters(
+        newValueParametersTypes: Collection<JetType>,
         oldValueParameters: Collection<ValueParameterDescriptor>,
         newOwner: CallableDescriptor
 ): List<ValueParameterDescriptor> {
-    assert(enhancedTypes.size() == oldValueParameters.size()) {
-        "Different value parameters sizes: Enhanced = ${enhancedTypes.size()}, Old = ${oldValueParameters.size()}"
+    assert(newValueParametersTypes.size() == oldValueParameters.size()) {
+        "Different value parameters sizes: Enhanced = ${newValueParametersTypes.size}, Old = ${oldValueParameters.size}"
     }
 
-    return enhancedTypes.zip(oldValueParameters).map {
+    return newValueParametersTypes.zip(oldValueParameters).map {
         pair ->
         val (newType, oldParameter) = pair
         ValueParameterDescriptorImpl(
