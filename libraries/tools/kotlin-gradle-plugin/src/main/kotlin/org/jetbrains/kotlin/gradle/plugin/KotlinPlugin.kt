@@ -53,10 +53,10 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
     protected val sourceSetName: String = sourceSet.getName()
     protected val sourceRootDir: String = "src/${sourceSetName}/kotlin"
     protected val absoluteSourceRootDir: String = project.getProjectDir().getPath() + "/" + sourceRootDir
-    protected val kotlinSourceSet: KotlinSourceSet? by Delegates.lazy { createKotlinSourceSet() }
-    protected val kotlinDirSet: SourceDirectorySet? by Delegates.lazy { createKotlinDirSet() }
-    protected val kotlinTask: T by Delegates.lazy { createKotlinCompileTask() }
-    protected val kotlinTaskName: String by Delegates.lazy { kotlinTask.getName() }
+    protected val kotlinSourceSet: KotlinSourceSet? by lazy { createKotlinSourceSet() }
+    protected val kotlinDirSet: SourceDirectorySet? by lazy { createKotlinDirSet() }
+    protected val kotlinTask: T by lazy { createKotlinCompileTask() }
+    protected val kotlinTaskName: String by lazy { kotlinTask.getName() }
 
     public fun run() {
         if (kotlinSourceSet == null || kotlinDirSet == null) {

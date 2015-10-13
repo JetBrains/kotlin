@@ -48,7 +48,7 @@ public abstract class AnnotationProcessorWrapper(
         val KAPT_ANNOTATION_OPTION = "kapt.annotations"
     }
 
-    private val processor: Processor by Delegates.lazy {
+    private val processor: Processor by lazy {
         try {
             val instance = Class.forName(processorFqName).newInstance() as? Processor
             instance ?: throw IllegalArgumentException("Instance has a wrong type: $processorFqName")

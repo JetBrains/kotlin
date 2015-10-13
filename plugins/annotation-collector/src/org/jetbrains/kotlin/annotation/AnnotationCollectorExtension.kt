@@ -93,7 +93,7 @@ public abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnot
             annotationFilters = nullableAnnotations.filterNotNull()
         }
 
-        private val classVisitor: ClassVisitor by Delegates.lazy {
+        private val classVisitor: ClassVisitor by lazy {
             object : ClassVisitor(Opcodes.ASM5, super.getVisitor()) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                     recordAnnotation(null, RecordTypes.ANNOTATED_CLASS, desc)
