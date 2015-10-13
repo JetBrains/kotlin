@@ -25,23 +25,15 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.rmi.LoopbackNetworkInterface
 import org.jetbrains.kotlin.rmi.SOCKET_ANY_FREE_PORT
-import java.rmi.server.UnicastRemoteObject
 
 
 public class CompilerCallbackServicesFacadeServer(
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         val compilationCancelledStatus: CompilationCanceledStatus? = null,
         port: Int = SOCKET_ANY_FREE_PORT
-) : CompilerCallbackServicesFacade {
-
-    init {
-        UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
-    }
-
-    public fun disconnect() {
-        UnicastRemoteObject.unexportObject(this, true)
-    }
-
+) : CompilerCallbackServicesFacade,
+    java.rmi.server.UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
+{
     override fun hasIncrementalCaches(): Boolean = incrementalCompilationComponents != null
 
     override fun hasLookupTracker(): Boolean = incrementalCompilationComponents != null
