@@ -320,7 +320,9 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val compilerServices = Services.Builder()
                 .register(javaClass<IncrementalCompilationComponents>(), IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
                 .register(javaClass<CompilationCanceledStatus>(), object : CompilationCanceledStatus {
-                    override fun checkCanceled(): Unit = if (context.getCancelStatus().isCanceled()) throw CompilationCanceledException()
+                    override fun checkCanceled() {
+                        if (context.getCancelStatus().isCanceled()) throw CompilationCanceledException()
+                    }
                 })
                 .build()
 
