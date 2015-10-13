@@ -9430,6 +9430,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("inlineParameters.kt")
+            public void testInlineParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/inlineParameters.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("internalInInterface.kt")
             public void testInternalInInterface() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/internalInInterface.kt");

@@ -51,6 +51,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
         DataClassAnnotationChecker(),
         ConstModifierChecker,
         UnderscoreChecker,
+        InlineParameterChecker,
         OperatorModifierChecker(),
         InfixModifierChecker())
 

@@ -1,0 +1,6 @@
+package
+
+@kotlin.inline() public fun bar(/*0*/ y: kotlin.Int, /*1*/ @kotlin.crossinline() x: kotlin.String): kotlin.Unit
+@kotlin.inline() public fun correct(/*0*/ @kotlin.noinline() x: (kotlin.Int) -> kotlin.Unit, /*1*/ @kotlin.crossinline() y: (kotlin.String) -> kotlin.Int): kotlin.Unit
+@kotlin.inline() public fun foo(/*0*/ @kotlin.noinline() x: kotlin.Int): kotlin.Unit
+public fun gav(/*0*/ @kotlin.noinline() x: (kotlin.Int) -> kotlin.Unit, /*1*/ @kotlin.crossinline() y: (kotlin.String) -> kotlin.Int): kotlin.Unit
