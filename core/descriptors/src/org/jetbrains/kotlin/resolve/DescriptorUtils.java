@@ -54,6 +54,7 @@ public class DescriptorUtils {
     public static final Name ENUM_VALUE_OF = Name.identifier("valueOf");
     public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
     public static final FqName PLATFORM_NAME = new FqName("kotlin.platform.platformName");
+    public static final FqName VOLATILE = new FqName("kotlin.jvm.Volatile");
 
     private DescriptorUtils() {
     }
@@ -603,6 +604,11 @@ public class DescriptorUtils {
     @Nullable
     public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotated annotated) {
         return getJvmNameAnnotation(annotated.getAnnotations());
+    }
+
+    @Nullable
+    public static AnnotationDescriptor getVolatileAnnotation(@NotNull Annotated annotated) {
+        return annotated.getAnnotations().findAnnotation(VOLATILE);
     }
 
     @NotNull

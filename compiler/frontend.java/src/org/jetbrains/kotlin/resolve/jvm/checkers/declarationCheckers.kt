@@ -128,6 +128,20 @@ public class JvmNameAnnotationChecker : DeclarationChecker {
     }
 }
 
+public class VolatileAnnotationChecker : DeclarationChecker {
+
+    override fun check(declaration: JetDeclaration,
+                       descriptor: DeclarationDescriptor,
+                       diagnosticHolder: DiagnosticSink,
+                       bindingContext: BindingContext
+    ) {
+        val volatileAnnotation = DescriptorUtils.getVolatileAnnotation(descriptor)
+        if (volatileAnnotation != null && descriptor is PropertyDescriptor && !descriptor.isVar) {
+            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(volatileAnnotation) ?: return
+            diagnosticHolder.report(ErrorsJvm.VOLATILE_ON_VALUE.on(annotationEntry))
+        }
+    }
+}
 
 public class OverloadsAnnotationChecker: DeclarationChecker {
     override fun check(
