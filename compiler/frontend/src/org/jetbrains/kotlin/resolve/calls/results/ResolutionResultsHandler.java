@@ -184,7 +184,7 @@ public class ResolutionResultsHandler {
     }
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
+    public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
             @NotNull Set<MutableResolvedCall<D>> candidates,
             boolean discriminateGenerics,
             @NotNull CheckArgumentTypesMode checkArgumentsMode

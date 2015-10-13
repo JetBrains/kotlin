@@ -99,7 +99,7 @@ public class TaskPrioritizer(
             taskPrioritizerContext: TaskPrioritizerContext<D, F>
     ) {
         if (qualifier is ClassQualifier) {
-            val companionObject = qualifier.companionObjectReceiver ?: return
+            val companionObject = qualifier.classValueReceiver ?: return
             val classifierDescriptor = qualifier.classifier
             doComputeTasks(companionObject, taskPrioritizerContext.filterCollectors {
                 when {

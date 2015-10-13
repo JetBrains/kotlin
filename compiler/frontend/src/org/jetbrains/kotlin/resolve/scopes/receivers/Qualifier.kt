@@ -91,7 +91,7 @@ class ClassifierQualifierWithEmptyScope(
 class ClassQualifier(
         referenceExpression: KtSimpleNameExpression,
         override val classifier: ClassDescriptor,
-        val companionObjectReceiver: ReceiverValue?
+        val classValueReceiver: ReceiverValue?
 ) : ClassifierQualifier(referenceExpression) {
 
     override val scope: MemberScope get() {

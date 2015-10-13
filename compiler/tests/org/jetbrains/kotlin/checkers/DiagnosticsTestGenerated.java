@@ -13533,6 +13533,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("implicitReceiverMemberVsParameter.kt")
+            public void testImplicitReceiverMemberVsParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/implicitReceiverMemberVsParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("initializerScopeOfExtensionProperty.kt")
             public void testInitializerScopeOfExtensionProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/initializerScopeOfExtensionProperty.kt");
