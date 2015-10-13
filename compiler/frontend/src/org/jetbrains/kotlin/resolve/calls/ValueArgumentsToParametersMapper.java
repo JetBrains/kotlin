@@ -84,6 +84,7 @@ public class ValueArgumentsToParametersMapper {
         private final MutableResolvedCall<D> candidateCall;
 
         private final Map<Name,ValueParameterDescriptor> parameterByName;
+        private Map<Name,ValueParameterDescriptor> parameterByNameInOverriddenMethods;
 
         private final Set<ValueArgument> unmappedArguments = Sets.newHashSet();
         private final Map<ValueParameterDescriptor, VarargValueArgument> varargs = Maps.newHashMap();
@@ -99,6 +100,20 @@ public class ValueArgumentsToParametersMapper {
             for (ValueParameterDescriptor valueParameter : candidateCall.getCandidateDescriptor().getValueParameters()) {
                 parameterByName.put(valueParameter.getName(), valueParameter);
             }
+        }
+
+        @Nullable
+        private ValueParameterDescriptor getParameterByNameInOverriddenMethods(Name name) {
+            if (parameterByNameInOverriddenMethods == null) {
+                parameterByNameInOverriddenMethods = Maps.newHashMap();
+                for (ValueParameterDescriptor valueParameter : candidateCall.getCandidateDescriptor().getValueParameters()) {
+                    for (ValueParameterDescriptor parameterDescriptor : valueParameter.getOverriddenDescriptors()) {
+                        parameterByNameInOverriddenMethods.put(parameterDescriptor.getName(), valueParameter);
+                    }
+                }
+            }
+
+            return parameterByNameInOverriddenMethods.get(name);
         }
 
         // We saw only positioned arguments so far
@@ -163,11 +178,17 @@ public class ValueArgumentsToParametersMapper {
                     ));
                 }
 
-                if (candidate.hasStableParameterNames() && nameReference != null && valueParameterDescriptor != null &&
+                if (candidate.hasStableParameterNames() && nameReference != null  &&
                     candidate instanceof CallableMemberDescriptor && ((CallableMemberDescriptor)candidate).getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                    for (ValueParameterDescriptor parameterFromSuperclass : valueParameterDescriptor.getOverriddenDescriptors()) {
-                        if (OverrideResolver.shouldReportParameterNameOverrideWarning(valueParameterDescriptor, parameterFromSuperclass)) {
+                    if (valueParameterDescriptor == null) {
+                        valueParameterDescriptor = getParameterByNameInOverriddenMethods(argumentName.getAsName());
+                    }
+
+                    if (valueParameterDescriptor != null) {
+                        for (ValueParameterDescriptor parameterFromSuperclass : valueParameterDescriptor.getOverriddenDescriptors()) {
+                            if (OverrideResolver.shouldReportParameterNameOverrideWarning(valueParameterDescriptor, parameterFromSuperclass)) {
                                 report(NAME_FOR_AMBIGUOUS_PARAMETER.on(nameReference));
+                            }
                         }
                     }
                 }
