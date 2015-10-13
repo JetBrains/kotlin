@@ -5,21 +5,21 @@ import org.testng.annotations.Test
 
 abstract class <lineMarker></lineMarker>KBase {
     @Test
-    fun <lineMarker></lineMarker>testFoo() {
+    fun testFoo() {
 
     }
 }
 
-class <lineMarker></lineMarker>KTest : KBase() {
+class KTest : KBase() {
     @Test
-    fun <lineMarker></lineMarker>testBar() {
+    fun testBar() {
 
     }
 }
 
-class <lineMarker></lineMarker>KTest2 : KBase() {
+class KTest2 : KBase() {
     @Test
-    fun <lineMarker></lineMarker>testBaz() {
+    fun testBaz() {
 
     }
 }

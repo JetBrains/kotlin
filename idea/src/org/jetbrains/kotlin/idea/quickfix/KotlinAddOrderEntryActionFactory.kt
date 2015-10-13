@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
+/*
+
 public object KotlinAddOrderEntryActionFactory : JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val simpleExpression = diagnostic.psiElement as? JetSimpleNameExpression ?: return emptyList()
@@ -56,3 +58,5 @@ public object KotlinAddOrderEntryActionFactory : JetIntentionActionsFactory() {
         return OrderEntryFix.registerFixes(QuickFixActionRegistrarImpl(null), reference) as List<IntentionAction>? ?: emptyList()
     }
 }
+
+*/

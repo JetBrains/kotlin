@@ -608,6 +608,9 @@
 
     <codeInsight.typeInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinExpressionTypeProvider"/>
 
+    <testCreator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.testIntegration.KotlinTestCreator"/>
+    <testFinder implementation="org.jetbrains.kotlin.idea.testIntegration.KotlinTestFinder"/>
+
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention</className>
       <category>Kotlin</category>
@@ -1055,6 +1058,11 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.MoveAssignmentToInitializerIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.testIntegration.KotlinCreateTestIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
