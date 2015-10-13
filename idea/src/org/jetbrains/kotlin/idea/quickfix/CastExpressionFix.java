@@ -49,7 +49,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     public String getText() {
         return JetBundle.message(
                 "cast.expression.to.type",
-                element.getText(),
+                getElement().getText(),
                 IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
         );
     }
@@ -63,7 +63,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         if (!super.isAvailable(project, editor, file)) return false;
-        JetType expressionType = ResolutionUtils.analyze(element).getType(element);
+        JetType expressionType = ResolutionUtils.analyze(getElement()).getType(getElement());
         return expressionType != null
                && (
                        JetTypeChecker.DEFAULT.isSubtypeOf(type, expressionType) // downcast
@@ -77,13 +77,13 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
 
         JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
         JetBinaryExpressionWithTypeRHS castExpression =
-                (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression("(" + element.getText() + ") as " + renderedType);
+                (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression("(" + getElement().getText() + ") as " + renderedType);
         if (JetPsiUtil.areParenthesesUseless((JetParenthesizedExpression) castExpression.getLeft())) {
-            castExpression = (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression(element.getText() + " as " + renderedType);
+            castExpression = (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression(getElement().getText() + " as " + renderedType);
         }
 
         JetParenthesizedExpression castExpressionInParentheses =
-                (JetParenthesizedExpression) element.replace(psiFactory.createExpression("(" + castExpression.getText() + ")"));
+                (JetParenthesizedExpression) getElement().replace(psiFactory.createExpression("(" + castExpression.getText() + ")"));
 
         if (JetPsiUtil.areParenthesesUseless(castExpressionInParentheses)) {
             castExpression = (JetBinaryExpressionWithTypeRHS) castExpressionInParentheses.replace(castExpression);

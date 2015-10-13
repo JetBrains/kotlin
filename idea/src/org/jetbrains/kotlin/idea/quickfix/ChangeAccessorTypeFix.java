@@ -39,7 +39,7 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        JetProperty property = PsiTreeUtil.getParentOfType(element, JetProperty.class);
+        JetProperty property = PsiTreeUtil.getParentOfType(getElement(), JetProperty.class);
         if (property == null) return false;
         JetType type = QuickFixUtil.getDeclarationReturnType(property);
         if (super.isAvailable(project, editor, file) && type != null && !type.isError()) {
@@ -53,7 +53,7 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
     @Override
     public String getText() {
         return JetBundle.message(
-                element.isGetter() ? "change.getter.type" : "change.setter.type",
+                getElement().isGetter() ? "change.getter.type" : "change.setter.type",
                 IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
         );
     }
@@ -70,11 +70,11 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
                 .JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
 
         JetTypeReference typeReference;
-        if (element.isGetter()) {
-            typeReference = element.getReturnTypeReference();
+        if (getElement().isGetter()) {
+            typeReference = getElement().getReturnTypeReference();
         }
         else {
-            JetParameter parameter = element.getParameter();
+            JetParameter parameter = getElement().getParameter();
             assert parameter != null;
             typeReference = parameter.getTypeReference();
         }

@@ -53,7 +53,7 @@ public class RemoveValVarFromParameterFix extends JetIntentionAction<JetParamete
 
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        PsiElement keyword = element.getValOrVarKeyword();
+        PsiElement keyword = getElement().getValOrVarKeyword();
         if (keyword == null) return;
         keyword.delete();
     }

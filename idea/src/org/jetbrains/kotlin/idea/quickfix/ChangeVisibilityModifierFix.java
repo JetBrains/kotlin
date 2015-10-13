@@ -65,18 +65,18 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetDeclarati
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetModifierKeywordToken modifier = findVisibilityChangeTo(file);
         assert modifier != null;
-        PsiModificationUtilsKt.setVisibility(element, modifier);
+        PsiModificationUtilsKt.setVisibility(getElement(), modifier);
     }
 
     @Nullable
     private JetModifierKeywordToken findVisibilityChangeTo(JetFile file) {
-        BindingContext bindingContext = ResolutionUtils.analyze(element);
+        BindingContext bindingContext = ResolutionUtils.analyze(getElement());
         DeclarationDescriptor descriptor;
-        if (element instanceof JetParameter) {
-            descriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, element);
+        if (getElement() instanceof JetParameter) {
+            descriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, getElement());
         }
         else {
-            descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+            descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, getElement());
         }
         if (!(descriptor instanceof CallableMemberDescriptor)) return null;
 

@@ -55,7 +55,7 @@ public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<P
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) && isEqualsHashCodeOrToString(element);
+        return super.isAvailable(project, editor, file) && isEqualsHashCodeOrToString(getElement());
     }
 
     private static boolean isEqualsHashCodeOrToString(@Nullable PsiElement element) {

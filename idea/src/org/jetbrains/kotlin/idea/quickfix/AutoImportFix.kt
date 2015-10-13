@@ -84,7 +84,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
     override fun getFamilyName() = JetBundle.message("import.fix")
 
-    override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
             = (super.isAvailable(project, editor, file)) && (anySuggestionFound ?: !suggestions.isEmpty())
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {

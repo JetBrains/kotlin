@@ -33,7 +33,7 @@ public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExp
 
 
     private String getBackingFieldName() {
-        return element.getText();
+        return getElement().getText();
     }
 
     private String getPropertyName() {
@@ -54,9 +54,8 @@ public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExp
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetSimpleNameExpression propertyName = (JetSimpleNameExpression) JetPsiFactoryKt
-                .JetPsiFactory(file).createExpression(getPropertyName());
-        element.replace(propertyName);
+        JetSimpleNameExpression propertyName = (JetSimpleNameExpression) JetPsiFactoryKt.JetPsiFactory(file).createExpression(getPropertyName());
+        getElement().replace(propertyName);
     }
 
     public static JetSingleIntentionActionFactory createFactory() {

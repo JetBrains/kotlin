@@ -85,14 +85,14 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        JetType type = QuickFixUtil.getDeclarationReturnType(element);
+        JetType type = QuickFixUtil.getDeclarationReturnType(getElement());
         return super.isAvailable(project, editor, file) && type != null && !type.isError();
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetType type = QuickFixUtil.getDeclarationReturnType(element);
-        JetProperty newElement = (JetProperty) element.copy();
+        JetType type = QuickFixUtil.getDeclarationReturnType(getElement());
+        JetProperty newElement = (JetProperty) getElement().copy();
         JetPropertyAccessor getter = newElement.getGetter();
         if (removeGetter && getter != null) {
             newElement.deleteChildInternal(getter.getNode());
@@ -114,9 +114,9 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
                 typeToAdd = type;
             }
         }
-        element = (JetProperty) element.replace(newElement);
+        newElement = (JetProperty) getElement().replace(newElement);
         if (typeToAdd != null) {
-            SpecifyTypeExplicitlyIntention.Companion.addTypeAnnotation(editor, element, typeToAdd);
+            SpecifyTypeExplicitlyIntention.Companion.addTypeAnnotation(editor, newElement, typeToAdd);
         }
     }
 

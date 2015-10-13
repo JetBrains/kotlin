@@ -51,12 +51,12 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) && !element.hasBody();
+        return super.isAvailable(project, editor, file) && !getElement().hasBody();
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetFunction newElement = (JetFunction) element.copy();
+        JetFunction newElement = (JetFunction) getElement().copy();
         JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
         if (!(newElement.getLastChild() instanceof PsiWhiteSpace)) {
             newElement.add(psiFactory.createWhiteSpace());
@@ -64,7 +64,7 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
         if (!newElement.hasBody()) {
             newElement.add(psiFactory.createEmptyBody());
         }
-        element.replace(newElement);
+        getElement().replace(newElement);
     }
     
     public static JetSingleIntentionActionFactory createFactory() {

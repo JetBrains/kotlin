@@ -125,7 +125,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
             @Override
             public void run() {
-                new MyAction(project, editor, element, possibleSignatures).execute();
+                new MyAction(project, editor, getElement(), possibleSignatures).execute();
             }
         });
     }

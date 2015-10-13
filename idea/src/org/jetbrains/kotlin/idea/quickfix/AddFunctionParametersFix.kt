@@ -67,7 +67,7 @@ public class AddFunctionParametersFix(
             "Add parameter$subjectSuffix to $callableDescription"
     }
 
-    override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
 
         // newParametersCnt <= 0: psi for this quickfix is no longer valid

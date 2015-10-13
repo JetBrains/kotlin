@@ -53,8 +53,8 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
     public String getText() {
         String renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
         return isPrimaryConstructorParameter ?
-            JetBundle.message("change.primary.constructor.parameter.type", element.getName(), containingDeclarationName, renderedType) :
-            JetBundle.message("change.function.parameter.type", element.getName(), containingDeclarationName, renderedType);
+            JetBundle.message("change.primary.constructor.parameter.type", getElement().getName(), containingDeclarationName, renderedType) :
+            JetBundle.message("change.function.parameter.type", getElement().getName(), containingDeclarationName, renderedType);
     }
 
     @NotNull
@@ -66,7 +66,7 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetTypeReference newTypeRef = JetPsiFactoryKt.JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
-        newTypeRef = element.setTypeReference(newTypeRef);
+        newTypeRef = getElement().setTypeReference(newTypeRef);
         assert newTypeRef != null;
         ShortenReferences.DEFAULT.process(newTypeRef);
     }

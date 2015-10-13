@@ -55,13 +55,13 @@ public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserTy
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        assert element.getTypeArguments().isEmpty();
+        assert getElement().getTypeArguments().isEmpty();
 
-        String typeString = TypeReconstructionUtil.getTypeNameAndStarProjectionsString(element.getText(), argumentCount);
+        String typeString = TypeReconstructionUtil.getTypeNameAndStarProjectionsString(getElement().getText(), argumentCount);
         JetTypeElement replacement = JetPsiFactoryKt.JetPsiFactory(file).createType(typeString).getTypeElement();
         assert replacement != null : "No type element after parsing " + typeString;
 
-        element.replace(replacement);
+        getElement().replace(replacement);
     }
 
     @Override
@@ -107,11 +107,11 @@ public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserTy
                     }
 
                     private boolean isZeroTypeArguments() {
-                        return element.getTypeArguments().isEmpty();
+                        return getElement().getTypeArguments().isEmpty();
                     }
 
                     private boolean isInsideJavaClassCall() {
-                        PsiElement parent = element.getParent().getParent().getParent().getParent();
+                        PsiElement parent = getElement().getParent().getParent().getParent().getParent();
                         if (parent instanceof JetCallExpression) {
                             JetExpression calleeExpression = ((JetCallExpression) parent).getCalleeExpression();
                             if (calleeExpression instanceof JetSimpleNameExpression) {

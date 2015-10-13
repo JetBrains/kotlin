@@ -52,19 +52,19 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) && element.getCloseBrace() != null;
+        return super.isAvailable(project, editor, file) && getElement().getCloseBrace() != null;
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        PsiElement whenCloseBrace = element.getCloseBrace();
+        PsiElement whenCloseBrace = getElement().getCloseBrace();
         assert (whenCloseBrace != null) : "isAvailable should check if close brace exist";
 
         JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
         JetWhenEntry entry = psiFactory.createWhenEntry(ELSE_ENTRY_TEXT);
 
-        PsiElement insertedBranch = element.addBefore(entry, whenCloseBrace);
-        element.addAfter(psiFactory.createNewLine(), insertedBranch);
+        PsiElement insertedBranch = getElement().addBefore(entry, whenCloseBrace);
+        getElement().addAfter(psiFactory.createNewLine(), insertedBranch);
 
         JetWhenEntry insertedWhenEntry = (JetWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
         TextRange textRange = insertedWhenEntry.getTextRange();

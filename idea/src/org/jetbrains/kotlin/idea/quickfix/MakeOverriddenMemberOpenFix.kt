@@ -40,7 +40,7 @@ public class MakeOverriddenMemberOpenFix(declaration: JetDeclaration) : JetInten
     private val overriddenNonOverridableMembers = ArrayList<JetCallableDeclaration>()
     private val containingDeclarationsNames = ArrayList<String>()
 
-    override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file) || file !is JetFile) {
             return false
         }

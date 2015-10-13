@@ -46,7 +46,7 @@ public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<Jet
             return false;
         }
 
-        JetSimpleNameExpression referenceExpression = PsiTreeUtil.findChildOfType(element, JetSimpleNameExpression.class);
+        JetSimpleNameExpression referenceExpression = PsiTreeUtil.findChildOfType(getElement(), JetSimpleNameExpression.class);
         if (referenceExpression == null) {
             return false;
         }

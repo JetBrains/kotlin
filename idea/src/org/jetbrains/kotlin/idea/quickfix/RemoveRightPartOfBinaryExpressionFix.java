@@ -21,7 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
@@ -55,12 +54,12 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
     public JetExpression invoke() throws IncorrectOperationException {
         JetExpression newExpression = null;
 
-        if (element instanceof JetBinaryExpression) {
+        if (getElement() instanceof JetBinaryExpression) {
             //noinspection ConstantConditions
-            newExpression = (JetExpression) element.replace(((JetBinaryExpression) element.copy()).getLeft());
+            newExpression = (JetExpression) getElement().replace(((JetBinaryExpression) getElement().copy()).getLeft());
         }
-        else if (element instanceof JetBinaryExpressionWithTypeRHS) {
-            newExpression = (JetExpression) element.replace(((JetBinaryExpressionWithTypeRHS) element.copy()).getLeft());
+        else if (getElement() instanceof JetBinaryExpressionWithTypeRHS) {
+            newExpression = (JetExpression) getElement().replace(((JetBinaryExpressionWithTypeRHS) getElement().copy()).getLeft());
         }
 
         PsiElement parent = newExpression != null ? newExpression.getParent() : null;

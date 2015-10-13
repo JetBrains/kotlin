@@ -35,7 +35,7 @@ public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement
     @NotNull
     @Override
     public String getText() {
-        String stars = TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", element.getTypeArgumentsAsTypes().size());
+        String stars = TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", getElement().getTypeArgumentsAsTypes().size());
         return JetBundle.message("change.to.star.projection", stars);
     }
 
@@ -47,7 +47,7 @@ public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        for (JetTypeReference typeReference : element.getTypeArgumentsAsTypes()) {
+        for (JetTypeReference typeReference : getElement().getTypeArgumentsAsTypes()) {
             if (typeReference != null) {
                 typeReference.replace(JetPsiFactoryKt.JetPsiFactory(file).createStar());
             }
