@@ -1,12 +1,12 @@
 package
 
 public val inVal: (kotlin.Int) -> kotlin.Unit
-public val onType: @TypeAnn() A.(@TypeAnn() A, A) -> A?
+public val onType: @TypeAnn() A.(@TypeAnn() A, A) -> @TypeAnn() A?
 public fun f(/*0*/ @Ann() x: kotlin.Int): kotlin.Unit
 public fun inParam(/*0*/ fn: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
 public fun inParamNested(/*0*/ fn1: ((kotlin.Int) -> kotlin.Unit) -> kotlin.Unit): kotlin.Unit
 public fun inReturn(): (kotlin.Int) -> kotlin.Unit
-public fun @TypeAnn() A.extFun(/*0*/ @Ann() a: @TypeAnn() A): A?
+public fun @TypeAnn() A.extFun(/*0*/ @Ann() a: @TypeAnn() A): @TypeAnn() A?
 
 public final class A : (kotlin.Int) -> kotlin.Unit {
     public constructor A()

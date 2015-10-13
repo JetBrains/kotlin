@@ -24,6 +24,6 @@ class A : (@<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!> Int)->Unit {
 @Target(AnnotationTarget.TYPE)
 annotation class TypeAnn
 
-val onType: (@TypeAnn A).(<!UNSUPPORTED!>@Ann<!> a: @TypeAnn A, @<!DEBUG_INFO_MISSING_UNRESOLVED!>TypeAnn<!> A)->@<!DEBUG_INFO_MISSING_UNRESOLVED!>TypeAnn<!> A? = <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!> null }
+val onType: (@TypeAnn A).(<!UNSUPPORTED!>@Ann<!> a: @TypeAnn A, @<!DEBUG_INFO_MISSING_UNRESOLVED!>TypeAnn<!> A)->@TypeAnn A? = <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!> null }
 
-fun (@TypeAnn A).extFun(@Ann a: @TypeAnn A): @<!DEBUG_INFO_MISSING_UNRESOLVED!>TypeAnn<!> A? = null
+fun (@TypeAnn A).extFun(@Ann a: @TypeAnn A): @TypeAnn A? = null
