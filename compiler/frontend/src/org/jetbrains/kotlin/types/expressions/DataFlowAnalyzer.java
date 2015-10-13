@@ -256,10 +256,21 @@ public class DataFlowAnalyzer {
 
     @Nullable
     public JetType checkImplicitCast(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
-        if (expressionType != null && context.expectedType == NO_EXPECTED_TYPE && context.contextDependency == INDEPENDENT && !isStatement
+        boolean isIfExpression = expression instanceof JetIfExpression;
+        if (expressionType != null && (context.expectedType == NO_EXPECTED_TYPE || isIfExpression)
+                && context.contextDependency == INDEPENDENT && !isStatement
                 && (KotlinBuiltIns.isUnit(expressionType) || KotlinBuiltIns.isAnyOrNullableAny(expressionType))
                 && !DynamicTypesKt.isDynamic(expressionType)) {
-            context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
+            if (isIfExpression && KotlinBuiltIns.isUnit(expressionType)) {
+                JetIfExpression ifExpression = (JetIfExpression) expression;
+                if (ifExpression.getThen() == null || ifExpression.getElse() == null) {
+                    context.trace.report(INVALID_IF_AS_EXPRESSION.on((JetIfExpression) expression));
+                    return expressionType;
+                }
+            }
+            else {
+                context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
+            }
         }
         return expressionType;
     }

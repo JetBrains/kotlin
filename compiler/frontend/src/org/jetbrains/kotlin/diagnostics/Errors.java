@@ -610,6 +610,8 @@ public interface Errors {
 
     DiagnosticFactory0<JetElement> SENSELESS_NULL_IN_WHEN = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<JetIfExpression> INVALID_IF_AS_EXPRESSION = DiagnosticFactory0.create(ERROR);
+
     // Nullability
 
     DiagnosticFactory1<PsiElement, JetType> UNSAFE_CALL = DiagnosticFactory1.create(ERROR);

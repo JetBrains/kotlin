@@ -42,19 +42,20 @@ public fun parseFunction(code: String, offset: Int, reporter: ErrorReporter, sco
 private class FunctionParsingObserver : Observer {
     var functionsStarted = 0
 
-    override fun update(o: Observable?, arg: Any?): Unit =
-            when (arg) {
-                is ParserEvents.OnFunctionParsingStart -> {
-                    functionsStarted++
-                }
-                is ParserEvents.OnFunctionParsingEnd -> {
-                    functionsStarted--
+    override fun update(o: Observable?, arg: Any?) {
+        when (arg) {
+            is ParserEvents.OnFunctionParsingStart -> {
+                functionsStarted++
+            }
+            is ParserEvents.OnFunctionParsingEnd -> {
+                functionsStarted--
 
-                    if (functionsStarted == 0) {
-                        arg.tokenStream.ungetToken(TokenStream.EOF)
-                    }
+                if (functionsStarted == 0) {
+                    arg.tokenStream.ungetToken(TokenStream.EOF)
                 }
             }
+        }
+    }
 }
 
 inline

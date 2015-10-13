@@ -6,9 +6,9 @@ class A (val p: String, p1: String, p2: String) {
 
     val prop: String = if (p == "test") p1 else p2
 
-    val prop1 = if (cond1(p)) p1
+    val prop1 = if (cond1(p)) p1 else false
 
-    val prop2 = if (cond2(p)) else;
+    val prop2 = if (cond2(p)) true else false
 
     fun cond1(p: String): Boolean {
         cond1 = "cond1"

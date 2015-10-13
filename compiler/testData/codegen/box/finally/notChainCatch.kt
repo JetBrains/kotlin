@@ -1,5 +1,10 @@
-fun unsupportedEx() = if (true) throw UnsupportedOperationException()
-fun runtimeEx() = if (true) throw RuntimeException()
+fun unsupportedEx() {
+    if (true) throw UnsupportedOperationException()
+}
+
+fun runtimeEx() {
+    if (true) throw RuntimeException()
+}
 
 fun test1() : String {
     var s = "";

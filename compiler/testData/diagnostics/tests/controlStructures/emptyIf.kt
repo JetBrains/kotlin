@@ -4,13 +4,13 @@ fun test() {
     if (false);
     if (true);
 
-    val x = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (false)<!>;
+    val x = <!INVALID_IF_AS_EXPRESSION!>if (false)<!>;
     foo(x)
 
-    val y: Unit = if (false);
+    val y: Unit = <!INVALID_IF_AS_EXPRESSION!>if (false)<!>;
     foo(y)
 
     foo({if (1==1);}())
 
-    return if (true);
+    return <!INVALID_IF_AS_EXPRESSION!>if (true)<!>;
 }

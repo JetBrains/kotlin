@@ -4,9 +4,9 @@ class A (val p: String, p1: String, p2: String) {
 
     var cond2: String = ""
 
-    val prop1 = if (cond1(p)) p1
+    val prop1 = if (cond1(p)) p1 else null
 
-    val prop2 = if (cond2(p)) else;
+    val prop2 = if (cond2(p)) p2 else null;
 
 
     fun cond1(p: String): Boolean {

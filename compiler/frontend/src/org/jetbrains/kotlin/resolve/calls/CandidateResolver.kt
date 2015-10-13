@@ -504,8 +504,11 @@ public class CandidateResolver(
     private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.shouldContinue() =
             candidateResolveMode == CandidateResolveMode.FULLY || candidateCall.getStatus().possibleTransformToSuccess()
 
-    private inline fun <D : CallableDescriptor> CallCandidateResolutionContext<D>
-            .check(checker: CallCandidateResolutionContext<D>.() -> Unit): Unit = if (shouldContinue()) checker()
+    private inline fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.check(
+            checker: CallCandidateResolutionContext<D>.() -> Unit
+    ) {
+        if (shouldContinue()) checker()
+    }
 
     private inline fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.
             checkAndReport(checker: CallCandidateResolutionContext<D>.() -> ResolutionStatus) {

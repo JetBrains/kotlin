@@ -3258,6 +3258,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("improperElseInExpression.kt")
+            public void testImproperElseInExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/improperElseInExpression.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("jumpAcrossFunctionBoundary.kt")
             public void testJumpAcrossFunctionBoundary() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/jumpAcrossFunctionBoundary.kt");
