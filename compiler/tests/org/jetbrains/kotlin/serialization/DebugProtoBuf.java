@@ -9015,6 +9015,7 @@ public final class DebugProtoBuf {
      *Modality
      *ClassKind
      *isInner
+     *isData
      * </pre>
      */
     boolean hasFlags();
@@ -9028,6 +9029,7 @@ public final class DebugProtoBuf {
      *Modality
      *ClassKind
      *isInner
+     *isData
      * </pre>
      */
     int getFlags();
@@ -9627,6 +9629,7 @@ public final class DebugProtoBuf {
      *Modality
      *ClassKind
      *isInner
+     *isData
      * </pre>
      */
     public boolean hasFlags() {
@@ -9642,6 +9645,7 @@ public final class DebugProtoBuf {
      *Modality
      *ClassKind
      *isInner
+     *isData
      * </pre>
      */
     public int getFlags() {
@@ -10714,6 +10718,7 @@ public final class DebugProtoBuf {
        *Modality
        *ClassKind
        *isInner
+       *isData
        * </pre>
        */
       public boolean hasFlags() {
@@ -10729,6 +10734,7 @@ public final class DebugProtoBuf {
        *Modality
        *ClassKind
        *isInner
+       *isData
        * </pre>
        */
       public int getFlags() {
@@ -10744,6 +10750,7 @@ public final class DebugProtoBuf {
        *Modality
        *ClassKind
        *isInner
+       *isData
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -10762,6 +10769,7 @@ public final class DebugProtoBuf {
        *Modality
        *ClassKind
        *isInner
+       *isData
        * </pre>
        */
       public Builder clearFlags() {
