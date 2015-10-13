@@ -20,6 +20,7 @@ import com.intellij.debugger.MultiRequestPositionManager
 import com.intellij.debugger.NoDataException
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcess
+import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.requests.ClassPrepareRequestor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.libraries.LibraryUtil
@@ -139,6 +140,9 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         for (literal in literalsOrFunctions) {
             val functionLiteral = literal as KtFunction
             if (isInlinedLambda(functionLiteral, typeMapper.bindingContext)) {
+                if (isInsideInlineArgument(functionLiteral, location, myDebugProcess as DebugProcessImpl)) {
+                    return functionLiteral
+                }
                 continue
             }
 

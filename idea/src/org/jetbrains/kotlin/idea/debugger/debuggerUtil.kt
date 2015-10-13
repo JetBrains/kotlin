@@ -16,35 +16,110 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.jdi.LocalVariableProxyImpl
-import com.intellij.openapi.project.Project
-import com.sun.jdi.Value
-import org.jetbrains.eval4j.jdi.asValue
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.debugger.evaluate.getClassDescriptor
+import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.psi.PsiElement
+import com.sun.jdi.*
+import com.sun.tools.jdi.LocalVariableImpl
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import java.util.*
 
-// This method check that all parameter of functional argument are present in current frame
-fun isInsideInlinedArgument(lambda: KtFunction, visibleVariables: List<Pair<LocalVariableProxyImpl, Value>>): Boolean {
-    val function = lambda.analyze(BodyResolveMode.PARTIAL).get(BindingContext.FUNCTION, lambda) ?: return false
-
-    return function.valueParameters.all { isLocalVariableForParameterPresent(lambda.project, it, visibleVariables) }
+fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debugProcess: DebugProcessImpl): Boolean {
+    return isInsideInlineArgument(inlineArgument, location.visibleVariables(debugProcess))
 }
 
-private fun isLocalVariableForParameterPresent(project: Project, parameter: ValueParameterDescriptor, visibleVariables: List<Pair<LocalVariableProxyImpl, Value>>): Boolean {
-    return visibleVariables.any {
-        if (it.first.name() != parameter.name.asString()) return false
+fun isInsideInlineArgument(inlineArgument: KtFunction, visibleVariables: List<LocalVariable>): Boolean {
+    val lambdaOrdinalIndex = runReadAction { lambdaOrdinalIndex(inlineArgument) }
+    val markerLocalVariables = visibleVariables.filter { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) }
+    for (variable in markerLocalVariables) {
+        val lambdaOrdinal = lambdaOrdinal(variable.name())
+        if (lambdaOrdinalIndex[inlineArgument] == lambdaOrdinal) {
+            return true
+        }
+    }
+    return false
+}
 
-        val parameterClassDescriptor = parameter.type.constructor.declarationDescriptor as? ClassDescriptor ?: return true
-        val actualClassDescriptor = it.second.asValue().asmType.getClassDescriptor(project) ?: return true
+private fun lambdaOrdinalIndex(elementAt: PsiElement): HashMap<KtFunction, Int> {
+    val parent = elementAt.parents.firstIsInstanceOrNull<KtNamedFunction>()
 
-        return runReadAction { DescriptorUtils.isSubclass(actualClassDescriptor, parameterClassDescriptor) }
+    val actualLambdaOrdinals = hashMapOf<KtFunction, Int>()
+    parent?.accept(object : KtTreeVisitorVoid() {
+        override fun visitNamedFunction(function: KtNamedFunction) {
+            if (function != parent) {
+                actualLambdaOrdinals[function] = actualLambdaOrdinals.size + 1
+            }
+            super.visitNamedFunction(function)
+        }
+
+        override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression) {
+            actualLambdaOrdinals[expression.functionLiteral] = actualLambdaOrdinals.size + 1
+            super.visitFunctionLiteralExpression(expression)
+        }
+    })
+    return actualLambdaOrdinals
+}
+
+private fun Location.visibleVariables(debugProcess: DebugProcessImpl): List<LocalVariable> {
+    val stackFrame = MockStackFrame(this, debugProcess.virtualMachineProxy.virtualMachine)
+    return stackFrame.visibleVariables()
+}
+
+private fun lambdaOrdinal(name: String): Int {
+    return try {
+        return name.substringAfter(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT).toInt()
+    }
+    catch(e: NumberFormatException) {
+        0
     }
 }
 
+private class MockStackFrame(private val location: Location, private val vm: VirtualMachine) : StackFrame {
+    private var visibleVariables: Map<String, LocalVariable>? = null
+
+    override fun location() = location
+    override fun thread() = null
+    override fun thisObject() = null
+
+    private fun createVisibleVariables() {
+        if (visibleVariables == null) {
+            val allVariables = location.method().variables()
+            val map = HashMap<String, LocalVariable>(allVariables.size)
+
+            for (allVariable in allVariables) {
+                val variable = allVariable as LocalVariableImpl
+                val name = variable.name()
+                if (variable.isVisible(this)) {
+                    map.put(name, variable)
+                }
+            }
+            visibleVariables = map
+        }
+    }
+
+    override fun visibleVariables(): List<LocalVariable> {
+        createVisibleVariables()
+        val mapAsList = ArrayList(visibleVariables!!.values)
+        Collections.sort(mapAsList)
+        return mapAsList
+    }
+
+    override fun visibleVariableByName(name: String): LocalVariable? {
+        createVisibleVariables()
+        return visibleVariables!![name]
+    }
+
+    override fun getValue(variable: LocalVariable) = null
+    override fun getValues(variables: List<LocalVariable>): Map<LocalVariable, Value> = emptyMap()
+    override fun setValue(variable: LocalVariable, value: Value) {
+    }
+
+    override fun getArgumentValues(): List<Value> = emptyList()
+    override fun virtualMachine() = vm
+}
