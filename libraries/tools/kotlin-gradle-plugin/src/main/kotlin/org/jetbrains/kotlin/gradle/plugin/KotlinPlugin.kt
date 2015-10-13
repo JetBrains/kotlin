@@ -522,7 +522,7 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
         return configuration.getResolvedConfiguration().getFiles { true }
     }
 
-    public fun kotlinPluginVersion(): String = project.getProperties()["kotlin.gradle.plugin.version"] as String
+    public fun kotlinPluginVersion(): String = project.property("kotlin.gradle.plugin.version") as String
     public fun kotlinPluginArtifactCoordinates(artifact: String): String = "org.jetbrains.kotlin:${artifact}:${kotlinPluginVersion()}"
     public fun kotlinJsLibraryCoordinates(): String = kotlinPluginArtifactCoordinates("kotlin-js-library")
 
