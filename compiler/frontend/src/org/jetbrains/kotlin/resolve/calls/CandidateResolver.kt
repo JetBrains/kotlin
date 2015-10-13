@@ -162,6 +162,9 @@ public class CandidateResolver(
                             candidateCall.addStatus(OTHER_ERROR)
                         }
                     }
+                    else {
+                        candidateCall.addStatus(OTHER_ERROR)
+                    }
                 }
             }
 
