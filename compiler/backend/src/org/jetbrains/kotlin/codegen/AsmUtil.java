@@ -786,10 +786,13 @@ public class AsmUtil {
     }
 
     public static boolean isPropertyWithBackingFieldCopyInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
+        boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
         DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
-        return propertyDescriptor.isConst()
-               && isInterfaceCompanionObject(propertyContainer)
-               && propertyDescriptor.getVisibility() == Visibilities.PUBLIC;
+        return !propertyDescriptor.isVar()
+               && !isExtensionProperty
+               && isCompanionObject(propertyContainer) && isInterface(propertyContainer.getContainingDeclaration())
+               && areBothAccessorDefault(propertyDescriptor)
+               && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
     }
 
     public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {

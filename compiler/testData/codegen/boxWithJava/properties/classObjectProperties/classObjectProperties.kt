@@ -7,13 +7,14 @@ class Klass {
 interface Trait {
     companion object {
         const val NAME = "Trait"
+        val DEPRECATED = "DEPRECATED"
     }
 }
 
 enum class Enoom {
     ;
     companion object {
-        const val NAME = "Enoom"
+        const val NAME = "Enum"
     }
 }
 

@@ -1024,8 +1024,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             PropertyDescriptor property = info.descriptor;
 
             Type type = typeMapper.mapType(property);
+            int modifiers = ACC_STATIC | ACC_FINAL | ACC_PUBLIC | (property.isConst() ? 0 : ACC_DEPRECATED);
             FieldVisitor fv = v.newField(Synthetic(DescriptorToSourceUtils.descriptorToDeclaration(property), property),
-                                         ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(property, false),
+                                         modifiers, context.getFieldName(property, false),
                                          type.getDescriptor(), typeMapper.mapFieldSignature(property.getType()),
                                          info.defaultValue);
 
