@@ -36,7 +36,7 @@ fun test(<!UNUSED_PARAMETER!>l<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util
     // ...
   }
   catch(e: Exception) {
-    System.out.println(e.getMessage())
+    System.out.println(e.message)
   }
 
   PrintStream("sdf")

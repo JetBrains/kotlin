@@ -60,6 +60,6 @@ fun main(args: Array<String>) {
       System.out.println("You won!");
   }
   catch(e: Throwable) {
-    System.out.println(e.getMessage())
+    System.out.println(e.message)
   }
 }

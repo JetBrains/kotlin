@@ -78,3 +78,9 @@ public inline fun <K, V> Map<K, V>.values(): Collection<V> = values
 @kotlin.jvm.JvmName("mutableValues")
 @Deprecated("Use property 'values' instead", ReplaceWith("this.values"))
 public inline fun <K, V> MutableMap<K, V>.values(): MutableCollection<V> = values
+
+@Deprecated("Use property 'message' instead", ReplaceWith("this.message"))
+public inline fun Throwable.getMessage(): String? = message
+
+@Deprecated("Use property 'cause' instead", ReplaceWith("this.cause"))
+public inline fun Throwable.getCause(): Throwable? = cause

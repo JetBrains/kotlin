@@ -1,6 +1,6 @@
 package foo
 
-class Fail(val message: String) : Exception(message)
+class Fail(message: String) : Exception(message)
 
 fun test(testName: String, actual: Any, expectedAsString: String) {
     val expected = eval("[$expectedAsString]")
@@ -20,7 +20,7 @@ fun box(): String {
         test("doubleArrayOf", doubleArrayOf(0.0, 1.1, 2.2, 3.3, 4.4), "0.0, 1.1, 2.2, 3.3, 4.4")
     }
     catch (e: Fail) {
-        return e.message
+        return e.message!!
     }
 
     return "OK"
