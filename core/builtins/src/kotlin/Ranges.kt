@@ -38,6 +38,8 @@ public class ByteRange(override val start: Byte, override val end: Byte) : Range
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * start.toInt() + end.toInt())
 
+    override fun toString(): String = "$start..$end"
+
     companion object {
         /** An empty range of values of type Byte. */
         public val EMPTY: ByteRange = ByteRange(1, 0)
@@ -63,6 +65,8 @@ public class CharRange(override val start: Char, override val end: Char) : Range
 
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * start.toInt() + end.toInt())
+
+    override fun toString(): String = "$start..$end"
 
     companion object {
         /** An empty range of values of type Char. */
@@ -90,6 +94,8 @@ public class ShortRange(override val start: Short, override val end: Short) : Ra
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * start.toInt() + end.toInt())
 
+    override fun toString(): String = "$start..$end"
+
     companion object {
         /** An empty range of values of type Short. */
         public val EMPTY: ShortRange = ShortRange(1, 0)
@@ -115,6 +121,8 @@ public class IntRange(override val start: Int, override val end: Int) : Range<In
 
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * start + end)
+
+    override fun toString(): String = "$start..$end"
 
     companion object {
         /** An empty range of values of type Int. */
@@ -142,6 +150,8 @@ public class LongRange(override val start: Long, override val end: Long) : Range
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * (start xor (start ushr 32)) + (end xor (end ushr 32))).toInt()
 
+    override fun toString(): String = "$start..$end"
+
     companion object {
         /** An empty range of values of type Long. */
         public val EMPTY: LongRange = LongRange(1, 0)
@@ -167,6 +177,8 @@ public class FloatRange(override val start: Float, override val end: Float) : Ra
 
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * java.lang.Float.floatToIntBits(start) + java.lang.Float.floatToIntBits(end))
+
+    override fun toString(): String = "$start..$end"
 
     companion object {
         /** An empty range of values of type Float. */
@@ -198,6 +210,8 @@ public class DoubleRange(override val start: Double, override val end: Double) :
         temp = java.lang.Double.doubleToLongBits(end)
         return (31 * result + (temp xor (temp ushr 32))).toInt()
     }
+
+    override fun toString(): String = "$start..$end"
 
     companion object {
         /** An empty range of values of type Double. */

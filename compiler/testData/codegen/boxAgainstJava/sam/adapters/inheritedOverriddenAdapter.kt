@@ -1,7 +1,8 @@
 fun box(): String {
     val sub = Sub()
+    val sup: Super = sub
 
-    (sub : Super).foo{ }
+    sup.foo{ }
     if (sub.lastCalled != "super") {
         return "FAIL: ${sub.lastCalled} instead of super"
     }

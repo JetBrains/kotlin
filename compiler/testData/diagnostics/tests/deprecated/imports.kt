@@ -1,8 +1,8 @@
-import <!DEPRECATED_SYMBOL_WITH_MESSAGE!>C<!> as C2
+import <!DEPRECATION!>C<!> as C2
 
 @Deprecated("obsolete")
 class C {
     fun use() {}
 }
 
-fun useAlias(c : <!DEPRECATED_SYMBOL_WITH_MESSAGE!>C2<!>) { c.use() }
+fun useAlias(c : <!DEPRECATION!>C2<!>) { c.use() }

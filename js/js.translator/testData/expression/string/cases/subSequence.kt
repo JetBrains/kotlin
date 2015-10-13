@@ -8,7 +8,7 @@ fun box(): String {
     val kot: CharSequence = kotlin.subSequence(0, 3)
     if (kot.toString() != "kot") return "Fail 1: $kot"
 
-    val tlin = (kotlin : CharSequence).subSequence(2, 6)
+    val tlin = (kotlin as CharSequence).subSequence(2, 6)
     if (tlin.toString() != "tlin") return "Fail 2: $tlin"
 
     return "OK"

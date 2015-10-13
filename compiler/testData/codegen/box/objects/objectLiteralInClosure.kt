@@ -1,6 +1,6 @@
 package p
 
-class C(val y: Int) {
+private class C(val y: Int) {
     val initChild = { ->
         object {
             override fun toString(): String {

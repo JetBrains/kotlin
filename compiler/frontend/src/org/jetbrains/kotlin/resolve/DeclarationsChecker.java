@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
@@ -23,12 +24,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
@@ -286,7 +290,8 @@ public class DeclarationsChecker {
         checkTypeParameterConstraints(aClass);
 
         if (aClass.isInterface()) {
-            checkConstructorInTrait(aClass);
+            checkConstructorInInterface(aClass);
+            checkMethodsOfAnyInInterface(classDescriptor);
             if (aClass.isLocal() && !(classDescriptor.getContainingDeclaration() instanceof ClassDescriptor)) {
                 trace.report(LOCAL_INTERFACE_NOT_ALLOWED.on(aClass, classDescriptor));
             }
@@ -365,11 +370,69 @@ public class DeclarationsChecker {
         return false;
     }
 
-    private void checkConstructorInTrait(JetClass klass) {
+    private void checkConstructorInInterface(JetClass klass) {
         JetPrimaryConstructor primaryConstructor = klass.getPrimaryConstructor();
         if (primaryConstructor != null) {
-            trace.report(CONSTRUCTOR_IN_TRAIT.on(primaryConstructor));
+            trace.report(CONSTRUCTOR_IN_INTERFACE.on(primaryConstructor));
         }
+    }
+
+    private void checkMethodsOfAnyInInterface(ClassDescriptorWithResolutionScopes classDescriptor) {
+        for (CallableMemberDescriptor declaredCallableMember : classDescriptor.getDeclaredCallableMembers()) {
+            if (!(declaredCallableMember instanceof FunctionDescriptor)) continue;
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) declaredCallableMember;
+
+            PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
+            if (!(declaration instanceof JetNamedFunction)) continue;
+            JetNamedFunction functionDeclaration = (JetNamedFunction) declaration;
+
+            if (isHidingParentMemberIfPresent(declaredCallableMember)) continue;
+
+            if (isImplementingMethodOfAny(declaredCallableMember)) {
+                trace.report(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE.on(functionDeclaration));
+            }
+        }
+    }
+
+    private static final Set<String> METHOD_OF_ANY_NAMES = ImmutableSet.of("toString", "hashCode", "equals");
+
+    private static boolean isImplementingMethodOfAny(CallableMemberDescriptor member) {
+        if (!METHOD_OF_ANY_NAMES.contains(member.getName().asString())) return false;
+        if (member.getModality() == Modality.ABSTRACT) return false;
+
+        return isImplementingMethodOfAnyInternal(member, new HashSet<ClassDescriptor>());
+    }
+
+    private static boolean isImplementingMethodOfAnyInternal(CallableMemberDescriptor member, Set<ClassDescriptor> visitedClasses) {
+        for (CallableMemberDescriptor overridden : member.getOverriddenDescriptors()) {
+            DeclarationDescriptor containingDeclaration = overridden.getContainingDeclaration();
+            if (!(containingDeclaration instanceof ClassDescriptor)) continue;
+            ClassDescriptor containingClass = (ClassDescriptor) containingDeclaration;
+            if (visitedClasses.contains(containingClass)) continue;
+
+            if (DescriptorUtils.getFqName(containingClass).equals(KotlinBuiltIns.FQ_NAMES.any)) {
+                return true;
+            }
+
+            if (isHidingParentMemberIfPresent(overridden)) continue;
+
+            visitedClasses.add(containingClass);
+
+            if (isImplementingMethodOfAnyInternal(overridden, visitedClasses)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isHidingParentMemberIfPresent(CallableMemberDescriptor member) {
+        JetNamedDeclaration declaration = (JetNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
+        if (declaration != null) {
+            JetModifierList modifierList = declaration.getModifierList();
+            return modifierList == null || !modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD);
+        }
+        return false;
     }
 
     private void checkAnnotationClassWithBody(JetClassOrObject classOrObject) {
@@ -492,7 +555,7 @@ public class DeclarationsChecker {
                 return;
             }
             if (classDescriptor.getKind() == ClassKind.INTERFACE) {
-                trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(property));
+                trace.report(ABSTRACT_MODIFIER_IN_INTERFACE.on(property));
             }
         }
 
@@ -537,7 +600,7 @@ public class DeclarationsChecker {
                 Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
 
         if (inTrait && backingFieldRequired && hasAccessorImplementation) {
-            trace.report(BACKING_FIELD_IN_TRAIT.on(property));
+            trace.report(BACKING_FIELD_IN_INTERFACE.on(property));
         }
 
         if (initializer == null && delegate == null) {
@@ -564,10 +627,10 @@ public class DeclarationsChecker {
 
         if (inTrait) {
             if (delegate != null) {
-                trace.report(DELEGATED_PROPERTY_IN_TRAIT.on(delegate));
+                trace.report(DELEGATED_PROPERTY_IN_INTERFACE.on(delegate));
             }
             else {
-                trace.report(PROPERTY_INITIALIZER_IN_TRAIT.on(initializer));
+                trace.report(PROPERTY_INITIALIZER_IN_INTERFACE.on(initializer));
             }
         }
         else if (delegate == null) {
@@ -591,6 +654,58 @@ public class DeclarationsChecker {
         }
     }
 
+    private void checkLocalTypesInFunctionReturnType(@NotNull JetFunction function, @NotNull FunctionDescriptor functionDescriptor) {
+        if (functionDescriptor instanceof ConstructorDescriptor) return;
+        if (!isExposedAsPublicAPI(functionDescriptor)) return;
+        JetType returnType = functionDescriptor.getReturnType();
+        if (returnType == null) return;
+        checkLocalTypesExposedInType(function, functionDescriptor, returnType,
+                                     FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS,
+                                     new HashSet<JetType>());
+    }
+
+    private void checkLocalTypesInPropertyType(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+        if (!isExposedAsPublicAPI(propertyDescriptor)) return;
+        JetType propertyType = propertyDescriptor.getType();
+        checkLocalTypesExposedInType(property, propertyDescriptor, propertyType,
+                                     PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS,
+                                     new HashSet<JetType>());
+    }
+
+    private static boolean isExposedAsPublicAPI(@NotNull DeclarationDescriptor descriptor) {
+        for (DeclarationDescriptor finger = descriptor; finger != null; finger = finger.getContainingDeclaration()) {
+            if (finger instanceof DeclarationDescriptorWithVisibility) {
+                Visibility visibility = ((DeclarationDescriptorWithVisibility) finger).getVisibility();
+                if (Visibilities.isPrivate(visibility) || visibility == Visibilities.LOCAL) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private <D extends JetDeclaration> void checkLocalTypesExposedInType(
+            @NotNull D reportOnDeclaration,
+            @NotNull DeclarationDescriptor parentDeclarationDescriptor,
+            @NotNull JetType type,
+            @NotNull DiagnosticFactory1<D, ClassDescriptor> diagnostic,
+            @NotNull Set<JetType> visitedTypes
+    ) {
+        visitedTypes.add(type);
+        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
+        if (classDescriptor != null) {
+            if (DescriptorUtils.isLocal(classDescriptor) && DescriptorUtils.isAncestor(parentDeclarationDescriptor, classDescriptor, true)) {
+                trace.report(diagnostic.on(reportOnDeclaration, classDescriptor));
+            }
+        }
+        for (TypeProjection projection : type.getArguments()) {
+            JetType projectedType = projection.getType();
+            if (!visitedTypes.contains(projectedType)) {
+                checkLocalTypesExposedInType(reportOnDeclaration, parentDeclarationDescriptor, projectedType, diagnostic, visitedTypes);
+            }
+        }
+    }
+
     private void checkPropertyExposedType(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         EffectiveVisibility propertyVisibility = EffectiveVisibility.Companion.forMember(propertyDescriptor);
         EffectiveVisibility typeVisibility = EffectiveVisibility.Companion.forType(propertyDescriptor.getType());
@@ -598,6 +713,7 @@ public class DeclarationsChecker {
             trace.report(EXPOSED_PROPERTY_TYPE.on(property, propertyVisibility, typeVisibility));
         }
         checkMemberReceiverExposedType(property.getReceiverTypeReference(), propertyDescriptor);
+        checkLocalTypesInPropertyType(property, propertyDescriptor);
     }
 
     protected void checkFunction(JetNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
@@ -618,7 +734,7 @@ public class DeclarationsChecker {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName().asString(), classDescriptor));
             }
             if (hasAbstractModifier && inTrait) {
-                trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(function));
+                trace.report(ABSTRACT_MODIFIER_IN_INTERFACE.on(function));
             }
             boolean hasBody = function.hasBody();
             if (hasBody && hasAbstractModifier) {
@@ -639,6 +755,9 @@ public class DeclarationsChecker {
         }
         if (!function.hasBody() && !hasAbstractModifier) {
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
+        }
+        if (TypeUtilsKt.isNothing(functionDescriptor.getReturnType()) && !function.hasDeclaredReturnType()) {
+            trace.report(IMPLICIT_NOTHING_RETURN_TYPE.on(function.getNameIdentifier() != null ? function.getNameIdentifier() : function));
         }
         checkFunctionExposedType(function, functionDescriptor);
     }
@@ -664,6 +783,7 @@ public class DeclarationsChecker {
             i++;
         }
         checkMemberReceiverExposedType(function.getReceiverTypeReference(), functionDescriptor);
+        checkLocalTypesInFunctionReturnType(function, functionDescriptor);
     }
 
     private void checkAccessors(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
@@ -672,22 +792,42 @@ public class DeclarationsChecker {
             assert propertyAccessorDescriptor != null : "No property accessor descriptor for " + property.getText();
             modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor);
         }
-        JetPropertyAccessor getter = property.getGetter();
-        PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
-        JetModifierList getterModifierList = getter != null ? getter.getModifierList() : null;
-        if (getterModifierList != null && getterDescriptor != null) {
-            Map<JetModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(getterModifierList, Sets
+        checkAccessor(propertyDescriptor, property.getGetter(), propertyDescriptor.getGetter());
+        checkAccessor(propertyDescriptor, property.getSetter(), propertyDescriptor.getSetter());
+    }
+
+    private void reportVisibilityModifierDiagnostics(Collection<PsiElement> tokens, DiagnosticFactory0<PsiElement> diagnostic) {
+        for (PsiElement token : tokens) {
+            trace.report(diagnostic.on(token));
+        }
+    }
+
+    private void checkAccessor(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @Nullable JetPropertyAccessor accessor,
+            @Nullable PropertyAccessorDescriptor accessorDescriptor
+    ) {
+        if (accessor == null) return;
+        JetModifierList accessorModifierList = accessor.getModifierList();
+        if (accessorModifierList != null && accessorDescriptor != null) {
+            Map<JetModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(accessorModifierList, Sets
                     .newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD,
                                 JetTokens.INTERNAL_KEYWORD));
-            if (getterDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
-                for (PsiElement token : tokens.values()) {
-                    trace.report(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.on(token));
+            if (propertyDescriptor.getModality() == Modality.ABSTRACT && accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
+                reportVisibilityModifierDiagnostics(tokens.values(), Errors.ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY);
+            }
+            else if (accessor.isGetter()) {
+                if (accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
+                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY);
+                }
+                else {
+                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.REDUNDANT_MODIFIER_IN_GETTER);
                 }
             }
-            else {
-                for (PsiElement token : tokens.values()) {
-                    trace.report(Errors.REDUNDANT_MODIFIER_IN_GETTER.on(token));
-                }
+            else if (accessorDescriptor.getVisibility() == Visibilities.PRIVATE
+                     && propertyDescriptor.getVisibility() != Visibilities.PRIVATE
+                     && propertyDescriptor.isLateInit()) {
+                reportVisibilityModifierDiagnostics(tokens.values(), Errors.PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR);
             }
         }
     }

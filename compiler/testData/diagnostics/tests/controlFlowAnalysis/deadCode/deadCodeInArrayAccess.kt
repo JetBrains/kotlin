@@ -37,4 +37,4 @@ fun testArrayPlusAssign(array: Array<Any>) {
     array[1] <!UNREACHABLE_CODE!>+=<!> todo()
 }
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()

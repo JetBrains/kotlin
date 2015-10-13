@@ -2,7 +2,8 @@ abstract class C {
     fun test(x: Int) {
         if (x == 0) return
         if (this is D) {
-            (this: D).test(x - 1)
+            val d: D = this
+            d.test(x - 1)
         }
     }
 }

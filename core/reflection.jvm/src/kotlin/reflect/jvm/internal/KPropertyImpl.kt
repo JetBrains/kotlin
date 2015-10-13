@@ -18,7 +18,10 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -86,14 +89,29 @@ internal interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<
 
 
 private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean): FunctionCaller<*> {
+    fun isInsideClassCompanionObject(): Boolean {
+        val possibleCompanionObject = property.descriptor.containingDeclaration
+        if (DescriptorUtils.isCompanionObject(possibleCompanionObject) && !DescriptorUtils.isInterface(possibleCompanionObject.containingDeclaration)) {
+            return true
+        }
+        return false
+    }
     fun isJvmStaticProperty() =
             property.descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null ||
             property.descriptor.annotations.findAnnotation(JVM_STATIC) != null
+
 
     fun isNotNullProperty() =
             !TypeUtils.isNullableType(property.descriptor.type)
 
     fun computeFieldCaller(field: Field): FunctionCaller<Field> = when {
+        isInsideClassCompanionObject() -> {
+            val containingDeclaration = descriptor.containingDeclaration as ClassDescriptor
+            val sourceElement = containingDeclaration.source as KotlinJvmBinarySourceElement
+            val klass = (sourceElement.binaryClass as ReflectKotlinClass).klass
+            if (isGetter) FunctionCaller.ClassCompanionFieldGetter(field, klass)
+            else FunctionCaller.ClassCompanionFieldSetter(field, klass)
+        }
         !Modifier.isStatic(field.modifiers) ->
             if (isGetter) FunctionCaller.InstanceFieldGetter(field)
             else FunctionCaller.InstanceFieldSetter(field, isNotNullProperty())

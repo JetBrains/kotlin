@@ -1,0 +1,2 @@
+// "Specify return type explicitly" "true"
+fun foo(): Nothing<caret> = throw IllegalArgumentException()

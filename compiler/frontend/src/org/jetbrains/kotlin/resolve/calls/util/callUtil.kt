@@ -90,7 +90,7 @@ private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is Jet
 
 public fun Call.getValueArgumentForExpression(expression: JetExpression): ValueArgument? {
     fun JetElement.deparenthesizeStructurally(): JetElement? {
-        val deparenthesized = if (this is JetExpression) JetPsiUtil.deparenthesizeOnce(this, false) else this
+        val deparenthesized = if (this is JetExpression) JetPsiUtil.deparenthesizeOnce(this) else this
         return when {
             deparenthesized != this -> deparenthesized
             this is JetFunctionLiteralExpression -> this.getFunctionLiteral()
@@ -105,7 +105,7 @@ public fun Call.getValueArgumentForExpression(expression: JetExpression): ValueA
 // Get call / resolved call from binding context
 
 public fun JetElement?.getCalleeExpressionIfAny(): JetExpression? {
-    val element = if (this is JetExpression) JetPsiUtil.deparenthesize(this, false) else this
+    val element = if (this is JetExpression) JetPsiUtil.deparenthesize(this) else this
     return when (element) {
         is JetSimpleNameExpression -> element
         is JetCallElement -> element.getCalleeExpression()
@@ -127,8 +127,8 @@ public fun JetElement.getCall(context: BindingContext): Call? {
     if (element == null) return null
 
     val parent = element.getParent()
-    val reference = when {
-        parent is JetInstanceExpressionWithLabel -> parent : JetInstanceExpressionWithLabel
+    val reference: JetExpression? = when {
+        parent is JetInstanceExpressionWithLabel -> parent
         parent is JetUserType -> parent.getParent()?.getParent() as? JetConstructorCalleeExpression
         else -> element.getCalleeExpressionIfAny()
     }

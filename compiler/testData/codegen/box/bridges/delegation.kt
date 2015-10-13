@@ -8,4 +8,7 @@ class B : A<String> {
 
 class C(a: A<String>) : A<String> by a
 
-fun box() = (C(B()) : A<String>).foo()
+fun box(): String {
+    val a: A<String> = C(B())
+    return a.foo()
+}

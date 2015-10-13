@@ -114,7 +114,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     public void addSupertype(@NotNull JetType supertype) {
         assert !supertype.isError() : "Error types must be filtered out in DescriptorResolver";
         if (TypeUtils.getClassDescriptor(supertype) != null) {
-            // See the Errors.SUPERTYPE_NOT_A_CLASS_OR_TRAIT
+            // See the Errors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE
             supertypes.add(supertype);
         }
     }

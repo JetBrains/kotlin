@@ -99,7 +99,7 @@ public object UsageTypeUtils {
 
                 with(refExpr.getParentOfTypeAndBranch<JetBinaryExpressionWithTypeRHS>(){ getRight() }) {
                     val opType = this?.getOperationReference()?.getReferencedNameElementType()
-                    opType == JetTokens.AS_KEYWORD || opType == JetTokens.AS_SAFE || opType == JetTokens.COLON
+                    opType == JetTokens.AS_KEYWORD || opType == JetTokens.AS_SAFE
                 } ->
                     CLASS_CAST_TO
 

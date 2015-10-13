@@ -10,11 +10,9 @@ fun box(): String {
     val clazz = Z::class.java
     val classField = clazz.getDeclaredField("noMangling")
     if (classField == null) return "Class internal backing field should exist"
-    if (!classField.isSynthetic) return "Class internal backing field should be synthetic"
 
     val topLevel = Class.forName("test.FieldKt").getDeclaredField("noMangling")
     if (topLevel == null) return "Top level internal backing field should exist"
-    if (!topLevel.isSynthetic) return "Top level internal backing field should be synthetic"
 
     return "OK"
 }

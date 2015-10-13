@@ -17,40 +17,40 @@ class Inv<T>() {
 
 fun testInOut() {
   In<String>().`In.f:T->Unit`f("1");
-  (return : In<in String>).`In.f:T->Unit`f("1");
-  (return : In<out String>).`In.f:Int->Int`f("1")
-  (return : In<*>).`In.f:Int->Int`f("1");
+  (return as In<in String>).`In.f:T->Unit`f("1");
+  (return as In<out String>).`In.f:Int->Int`f("1")
+  (return as In<*>).`In.f:Int->Int`f("1");
 
   In<String>().`In.f:Int->Int`f(1);
-  (return : In<in String>).`In.f:Int->Int`f(1);
-  (return : In<out String>).`In.f:Int->Int`f(1)
-  (return : In<out String>).`!`f1(1)
-  (return : In<*>).`In.f:Int->Int`f(1);
+  (return as In<in String>).`In.f:Int->Int`f(1);
+  (return as In<out String>).`In.f:Int->Int`f(1)
+  (return as In<out String>).`!`f1(1)
+  (return as In<*>).`In.f:Int->Int`f(1);
 
   Out<Int>().`Out.f(a)`f(1)
-  (return : Out<out Int>).`Out.f(a)`f(1)
-  (return : Out<in Int>).`Out.f(a)`f(1)
-  (return : Out<*>).`Out.f(a)`f(1)
+  (return as Out<out Int>).`Out.f(a)`f(1)
+  (return as Out<in Int>).`Out.f(a)`f(1)
+  (return as Out<*>).`Out.f(a)`f(1)
 
   Out<Int>().`Out.f`f()
-  (return : Out<out Int>).`Out.f`f()
-  (return : Out<in Int>).`Out.f`f()
-  (return : Out<*>).`Out.f`f()
+  (return as Out<out Int>).`Out.f`f()
+  (return as Out<in Int>).`Out.f`f()
+  (return as Out<*>).`Out.f`f()
 
   Inv<Int>().`Inv.f`f(1)
-  (return : Inv<in Int>).`Inv.f`f(1)
-  (return : Inv<out Int>).`!`f(1)
-  (return : Inv<*>).`!`f(1)
+  (return as Inv<in Int>).`Inv.f`f(1)
+  (return as Inv<out Int>).`!`f(1)
+  (return as Inv<*>).`!`f(1)
 
   Inv<Int>().`Inv.inf`inf(1)
-  (return : Inv<in Int>).`Inv.inf`inf(1)
-  (return : Inv<out Int>).`!`inf(1)
-  (return : Inv<*>).`!`inf(1)
+  (return as Inv<in Int>).`Inv.inf`inf(1)
+  (return as Inv<out Int>).`!`inf(1)
+  (return as Inv<*>).`!`inf(1)
 
   Inv<Int>().`Inv.outf`outf()
-  ((return : Inv<in Int>).`Inv.outf`outf())`:kotlin::Any`
-  (return : Inv<out Int>).`Inv.outf`outf()
-  (return : Inv<*>).`Inv.outf`outf()
+  ((return as Inv<in Int>).`Inv.outf`outf())`:kotlin::Any`
+  (return as Inv<out Int>).`Inv.outf`outf()
+  (return as Inv<*>).`Inv.outf`outf()
 
   Inv<Int>().`Inv.outf`outf(1)
 }

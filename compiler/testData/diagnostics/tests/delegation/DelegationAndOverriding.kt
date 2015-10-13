@@ -9,7 +9,7 @@ open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Br<!>(<!UNUSED_PARAMETER!>t<!> : T
 
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Br3<!>(t : T) : Br(t) {
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class Br3<!>(t : T) : Br(t) {
 
 }
 

@@ -10,6 +10,8 @@ class C : B
 
 fun box(): String {
     val c = C()
-    var r = c.foo() + (c : B).foo() + (c : A).foo()
+    val b: B = c
+    val a: A = c
+    var r = c.foo() + b.foo() + a.foo()
     return if (r == "BBB") "OK" else "Fail: $r"
 }

@@ -62,7 +62,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         ABSTRACT_PROPERTY_WITH_GETTER.registerFactory(removeAbstractModifierFactory, removePartsFromPropertyFactory)
         ABSTRACT_PROPERTY_WITH_SETTER.registerFactory(removeAbstractModifierFactory, removePartsFromPropertyFactory)
 
-        PROPERTY_INITIALIZER_IN_TRAIT.registerFactory(removePartsFromPropertyFactory)
+        PROPERTY_INITIALIZER_IN_INTERFACE.registerFactory(removePartsFromPropertyFactory)
 
         MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(addAbstractModifierFactory)
         ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
@@ -95,7 +95,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         VIRTUAL_MEMBER_HIDDEN.registerFactory(AddModifierFix.createFactory(OVERRIDE_KEYWORD))
 
         USELESS_CAST.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory("Remove cast"))
-        DEPRECATED_STATIC_ASSERT.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory("Remove static type assertion"))
 
         val changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory()
         WRONG_SETTER_PARAMETER_TYPE.registerFactory(changeAccessorTypeFactory)
@@ -105,7 +104,7 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         val removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true)
         REDUNDANT_MODIFIER.registerFactory(removeRedundantModifierFactory)
-        ABSTRACT_MODIFIER_IN_TRAIT.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD, true))
+        ABSTRACT_MODIFIER_IN_INTERFACE.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD, true))
 
         REDUNDANT_PROJECTION.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(true))
         INCOMPATIBLE_MODIFIERS.registerFactory(RemoveModifierFix.createRemoveModifierFactory(false))
@@ -117,6 +116,8 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         val removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory()
         GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
+        PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR.registerFactory(removeModifierFactory)
+        ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY.registerFactory(removeModifierFactory)
         REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
         WRONG_MODIFIER_TARGET.registerFactory(removeModifierFactory)
         REDUNDANT_MODIFIER_FOR_TARGET.registerFactory(removeModifierFactory)
@@ -219,6 +220,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForComponentFunctionReturnTypeMismatch())
         HAS_NEXT_FUNCTION_TYPE_MISMATCH.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForHasNextFunctionTypeMismatch())
         COMPARE_TO_TYPE_MISMATCH.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForCompareToTypeMismatch())
+        IMPLICIT_NOTHING_RETURN_TYPE.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForChangingReturnTypeToNothing())
 
         TOO_MANY_ARGUMENTS.registerFactory(ChangeFunctionSignatureFix.createFactory())
         NO_VALUE_FOR_PARAMETER.registerFactory(ChangeFunctionSignatureFix.createFactory())
@@ -310,8 +312,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         UNRESOLVED_REFERENCE.registerFactory(ReplaceObsoleteLabelSyntaxFix,
                                         ReplaceObsoleteLabelSyntaxFix.createWholeProjectFixFactory())
 
-        DEPRECATED_SYMBOL_WITH_MESSAGE.registerFactory(DeprecatedSymbolUsageFix,
-                                                       DeprecatedSymbolUsageInWholeProjectFix)
+        DEPRECATION.registerFactory(DeprecatedSymbolUsageFix, DeprecatedSymbolUsageInWholeProjectFix)
 
         POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION.registerFactory(ReplaceJavaAnnotationPositionedArgumentsFix)
 

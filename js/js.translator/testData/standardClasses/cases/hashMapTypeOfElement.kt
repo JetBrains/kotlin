@@ -14,11 +14,11 @@ fun box(): String {
     assertEquals("number", typeof (mapWithIntKeys.keySet().iterator().next()), "mapWithIntKeys")
 
     val mapWithShortKeys = HashMap<Short, Int>()
-    mapWithShortKeys[1: Short] = 1
+    mapWithShortKeys[1.toShort()] = 1
     assertEquals("number", typeof (mapWithShortKeys.keySet().iterator().next()), "mapWithShortKeys")
 
     val mapWithByteKeys = HashMap<Byte, Int>()
-    mapWithByteKeys[1: Byte] = 1
+    mapWithByteKeys[1.toByte()] = 1
     assertEquals("number", typeof (mapWithByteKeys.keySet().iterator().next()), "mapWithByteKeys")
 
     val mapWithDoubleKeys = HashMap<Double, Int>()

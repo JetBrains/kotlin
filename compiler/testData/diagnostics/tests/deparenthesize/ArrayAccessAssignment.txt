@@ -1,5 +1,0 @@
-package
-
-package t {
-    public fun foo(/*0*/ array: kotlin.Array<kotlin.Int>): kotlin.Unit
-}

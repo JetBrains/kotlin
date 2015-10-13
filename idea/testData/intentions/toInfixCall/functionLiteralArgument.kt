@@ -3,5 +3,5 @@ fun foo(x: Foo) {
 }
 
 interface Foo {
-    fun foo(f: (Int) -> Int)
+    infix fun foo(f: (Int) -> Int)
 }

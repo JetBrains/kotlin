@@ -25,9 +25,10 @@ fun testMethodAsCompareTo() {
     assertEquals(true, x > y, "meth: x > y")
     assertEquals(1, x compareTo y, "meth: x compareTo y")
 
-    assertEquals(false, (x: Comparable<A>) < y, "meth: (x: Comparable<A>) < y")
-    assertEquals(true, (x: Comparable<A>) > y, "meth: (x: Comparable<A>) > y")
-    assertEquals(1, (x: Comparable<A>) compareTo y, "meth: (x: Comparable<A>) compareTo y")
+    val comparable: Comparable<A> = x
+    assertEquals(false, comparable < y, "meth: (x: Comparable<A>) < y")
+    assertEquals(true, comparable > y, "meth: (x: Comparable<A>) > y")
+    assertEquals(1, comparable compareTo y, "meth: (x: Comparable<A>) compareTo y")
 }
 
 fun box(): String {

@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface T {
-  val a: Int <!DELEGATED_PROPERTY_IN_TRAIT!>by Delegate()<!>
+  val a: Int <!DELEGATED_PROPERTY_IN_INTERFACE!>by Delegate()<!>
 }
 
 class Delegate {

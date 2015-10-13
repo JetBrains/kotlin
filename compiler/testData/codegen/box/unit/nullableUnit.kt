@@ -14,7 +14,7 @@ fun box(): String {
     val y = x
     if (!isNullGeneric(y)) return "Fail 3"
 
-    if (!deepIsNull((null : Unit?) ?: null)) return "Fail 4"
+    if (!deepIsNull(x ?: null)) return "Fail 4"
 
     return "OK"
 }

@@ -6,7 +6,7 @@ fun testCommasAndWhitespaces() {
     <!UNREACHABLE_CODE!>bar(<!> 1 , todo() , <!UNREACHABLE_CODE!>"" )<!>
 }
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()
 
 
 

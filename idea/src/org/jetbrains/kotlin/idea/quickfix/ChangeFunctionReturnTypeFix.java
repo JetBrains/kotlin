@@ -248,4 +248,16 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             }
         };
     }
+
+    @NotNull
+    public static JetSingleIntentionActionFactory createFactoryForChangingReturnTypeToNothing() {
+        return new JetSingleIntentionActionFactory() {
+            @Nullable
+            @Override
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
+                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
+                return function == null ? null : new ChangeFunctionReturnTypeFix(function, getPlatform(function).getBuiltIns().getNothingType());
+            }
+        };
+    }
 }

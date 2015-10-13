@@ -26,15 +26,12 @@ fun foo() {
   1 foo 2 ?: 1 bar 3
   a b c d e f g
   a ?: b in b?: c
-  (a : b) < b : c
   a < b == b > c
   a != b && c
   a || b && c
   a = b -> c
   a = b || c
 
-  t : Any
-  t : Any?
   t as Any<T>?
   t as Any.Any<T>.Any<T>
   t as  () -> T
@@ -42,17 +39,10 @@ fun foo() {
   t as? Any.Any<T>.Any<T>
   t as?  () -> T
 
-  t : Any * 1
-  t : Any? * 1
   t as Any<T>? * 1
   t as Any.Any<T>.Any<T> * 1
   t as  () -> T * 1
   t as? Any<T>? * 1
   t as? Any.Any<T>.Any<T> * 1
   t as?  () -> T * 1
-
-  ++t : Any + 1
-  a.b : Any + 1
-
-  (t : Any) * 1
 }

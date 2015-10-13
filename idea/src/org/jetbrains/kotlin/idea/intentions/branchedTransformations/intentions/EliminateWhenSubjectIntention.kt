@@ -20,15 +20,15 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpression
+import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetWhenExpression
 import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class EliminateWhenSubjectIntention : JetSelfTargetingIntention<JetWhenExpression>(javaClass(), "Eliminate argument of 'when'"), LowPriorityAction {
     override fun isApplicableTo(element: JetWhenExpression, caretOffset: Int): Boolean {
-        if (element.getSubjectExpression() !is JetSimpleNameExpression) return false
+        if (element.getSubjectExpression() !is JetNameReferenceExpression) return false
         val lBrace = element.getOpenBrace() ?: return false
         return caretOffset <= lBrace.startOffset
     }

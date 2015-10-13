@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.JetType
 
 fun JetCallableDeclaration.setType(type: JetType, shortenReferences: Boolean = true) {
@@ -67,9 +68,9 @@ fun JetContainerNode.description(): String? {
     return null
 }
 
-fun isAutoCreatedItUsage(expression: JetSimpleNameExpression): Boolean {
+fun isAutoCreatedItUsage(expression: JetNameReferenceExpression): Boolean {
     if (expression.getReferencedName() != "it") return false
-    val context = expression.analyze()
+    val context = expression.analyze(BodyResolveMode.PARTIAL)
     val target = expression.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return false
     return context[BindingContext.AUTO_CREATED_IT, target]!!
 }
@@ -101,7 +102,7 @@ val JetQualifiedExpression.callExpression: JetCallExpression?
     get() = getSelectorExpression() as? JetCallExpression
 
 val JetQualifiedExpression.calleeName: String?
-    get() = (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getText()
+    get() = (callExpression?.getCalleeExpression() as? JetNameReferenceExpression)?.getText()
 
 fun JetQualifiedExpression.toResolvedCall(): ResolvedCall<out CallableDescriptor>? {
     val callExpression = callExpression ?: return null

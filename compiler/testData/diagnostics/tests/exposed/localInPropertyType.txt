@@ -1,0 +1,30 @@
+package
+
+public val invalid1: My<invalid1.<anonymous>.Local>
+public val invalid2: My<invalid2.<no name provided>>
+public val invalid3: My<invalid3.<no name provided>>
+public val invalid4: My<My<invalid4.<anonymous>.Local>>
+public val invalid5: My<invalid5.<anonymous>.invalid5a.<anonymous>.Local>
+public val valid1: kotlin.Any
+public val valid2: Base
+public val valid3: My<Base>
+public val valid4: My<Base>
+public val valid5: My<kotlin.Any>
+public val valid6: My<kotlin.Any>
+public val valid7: My<My<*>>
+public fun </*0*/ T> run(/*0*/ f: () -> T): T
+
+public open class Base {
+    public constructor Base()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class My</*0*/ T> {
+    public constructor My</*0*/ T>(/*0*/ value: T)
+    public final val value: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

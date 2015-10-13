@@ -462,7 +462,7 @@ private fun copyTypeParameters<T>(
         to: T,
         inserter: (T, PsiTypeParameterList) -> Unit
 ) where T : PsiTypeParameterListOwner, T : PsiNameIdentifierOwner {
-    val factory = PsiElementFactory.SERVICE.getInstance((from : PsiElement).getProject())
+    val factory = PsiElementFactory.SERVICE.getInstance((from as PsiElement).getProject())
     val templateTypeParams = from.getTypeParameterList()?.getTypeParameters() ?: PsiTypeParameter.EMPTY_ARRAY
     if (templateTypeParams.isNotEmpty()) {
         inserter(to, factory.createTypeParameterList())

@@ -265,17 +265,13 @@ JetFile: TypeExpressionAmbiguities_ERR.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            BINARY_WITH_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-              PsiWhiteSpace(' ')
-              OPERATION_REFERENCE
-                PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('b')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Unexpected type specification
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('b')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
@@ -291,28 +287,17 @@ JetFile: TypeExpressionAmbiguities_ERR.kt
                 PsiElement(RPAR)(')')
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n    ')
-      BINARY_WITH_TYPE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('a')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
-        OPERATION_REFERENCE
-          PsiElement(COLON)(':')
+        PsiElement(IDENTIFIER)('b')
         PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            TYPE_ARGUMENT_LIST
-              PsiElement(LT)('<')
-              PsiWhiteSpace(' ')
-              TYPE_PROJECTION
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('c')
-              PsiErrorElement:Expecting a '>'
-                <empty list>
+        PsiElement(LT)('<')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('c')
       PsiWhiteSpace('\n    ')
       BINARY_WITH_TYPE
         REFERENCE_EXPRESSION

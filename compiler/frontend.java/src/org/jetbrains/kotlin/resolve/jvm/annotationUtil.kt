@@ -16,9 +16,32 @@
 
 package org.jetbrains.kotlin.resolve.jvm.annotations
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public fun DeclarationDescriptor.hasJvmOverloadsAnnotation(): Boolean {
     return getAnnotations().findAnnotation(FqName("kotlin.jvm.JvmOverloads")) != null
+}
+
+public fun DeclarationDescriptor.findJvmFieldAnnotation(): AnnotationDescriptor? {
+    val fqName = FqName("kotlin.jvm.JvmField")
+    val annotation = annotations.findAnnotation(fqName)
+    if (annotation != null) {
+        return annotation;
+    }
+
+    return annotations.getUseSiteTargetedAnnotations().asSequence().filter {
+        it.target == AnnotationUseSiteTarget.FIELD
+    }.map { it.annotation }.firstOrNull {
+        val descriptor = it.getType().getConstructor().getDeclarationDescriptor()
+        descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
+    }
+}
+
+public fun DeclarationDescriptor.hasJvmFieldAnnotation(): Boolean {
+    return findJvmFieldAnnotation() != null
 }

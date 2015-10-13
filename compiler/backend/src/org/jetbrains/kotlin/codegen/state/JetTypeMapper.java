@@ -880,7 +880,7 @@ public class JetTypeMapper {
         }
 
         if (!(descriptor instanceof ConstructorDescriptor) && descriptor.getVisibility() == Visibilities.INTERNAL) {
-            return name + "$" + JvmCodegenUtil.sanitizeAsJavaIdentifier(moduleName);
+            return name + "$" + JvmAbi.sanitizeAsJavaIdentifier(moduleName);
         }
 
         return name;

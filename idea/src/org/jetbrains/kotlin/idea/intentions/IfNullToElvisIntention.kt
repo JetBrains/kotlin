@@ -22,17 +22,17 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
-import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.ArrayList
+import java.util.*
 
 public class IfNullToElvisInspection : IntentionBasedInspection<JetIfExpression>(IfNullToElvisIntention())
 
@@ -91,7 +91,7 @@ public class IfNullToElvisIntention : JetSelfTargetingRangeIntention<JetIfExpres
 
         val binaryExpression = ifExpression.getCondition() as? JetBinaryExpression ?: return null
         if (binaryExpression.getOperationToken() != JetTokens.EQEQ) return null
-        val value = binaryExpression.expressionComparedToNull() as? JetSimpleNameExpression ?: return null
+        val value = binaryExpression.expressionComparedToNull() as? JetNameReferenceExpression ?: return null
 
         if (ifExpression.getParent() !is JetBlockExpression) return null
         val prevStatement = ifExpression.siblings(forward = false, withItself = false)

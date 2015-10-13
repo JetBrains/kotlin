@@ -40,10 +40,10 @@ import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.DeprecationUtilKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
@@ -69,6 +69,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -214,7 +215,6 @@ public class AsmUtil {
         }
 
         if (JetTypeMapper.isAccessor(functionDescriptor)
-            || functionDescriptor.getVisibility() == Visibilities.INTERNAL
             || AnnotationUtilKt.hasJvmSyntheticAnnotation(functionDescriptor)) {
             flags |= ACC_SYNTHETIC;
         }
@@ -226,9 +226,9 @@ public class AsmUtil {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (DescriptorUtilPackage.isAnnotatedAsHidden(functionDescriptor)
+        if (DeprecationUtilKt.isAnnotatedAsHidden(functionDescriptor)
             || functionDescriptor instanceof PropertyAccessorDescriptor
-               && DescriptorUtilPackage.isAnnotatedAsHidden(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
+               && DeprecationUtilKt.isAnnotatedAsHidden(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;
@@ -240,9 +240,13 @@ public class AsmUtil {
         if (specialCase != null) {
             return specialCase;
         }
-        Integer defaultMapping = visibilityToAccessFlag.get(descriptor.getVisibility());
+        return getDefaultVisibilityFlag(descriptor.getVisibility());
+    }
+
+    public static int getDefaultVisibilityFlag(@NotNull Visibility visibility) {
+        Integer defaultMapping = visibilityToAccessFlag.get(visibility);
         if (defaultMapping == null) {
-            throw new IllegalStateException(descriptor.getVisibility() + " is not a valid visibility in backend: " + descriptor);
+            throw new IllegalStateException(visibility + " is not a valid visibility in backend");
         }
         return defaultMapping;
     }
@@ -375,7 +379,10 @@ public class AsmUtil {
             }
         }
 
-        if (memberDescriptor instanceof PropertyDescriptor && ((PropertyDescriptor) memberDescriptor).isConst()) return null;
+        if (memberDescriptor instanceof PropertyDescriptor &&
+            ((PropertyDescriptor) memberDescriptor).isConst() || hasJvmFieldAnnotation(memberDescriptor)) {
+            return null;
+        }
 
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
             return ACC_PUBLIC;

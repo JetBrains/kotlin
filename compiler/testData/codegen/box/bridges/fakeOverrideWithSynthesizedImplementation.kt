@@ -10,7 +10,9 @@ class C(value: String) : A(value), B
 
 fun box(): String {
     val c = C("OK")
-    if ((c : B).component1() != "OK") return "Fail 1"
-    if ((c : A).component1() != "OK") return "Fail 2"
+    val b: B = c
+    val a: A = c
+    if (b.component1() != "OK") return "Fail 1"
+    if (a.component1() != "OK") return "Fail 2"
     return c.component1()
 }

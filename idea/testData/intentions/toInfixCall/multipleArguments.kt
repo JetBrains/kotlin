@@ -1,6 +1,7 @@
 // IS_APPLICABLE: false
+// ERROR: 'infix' modifier is inapplicable on this function
 interface Foo {
-    fun foo(a: Int, b: Int)
+    infix fun foo(a: Int, b: Int)
 }
 
 fun foo(x: Foo) {

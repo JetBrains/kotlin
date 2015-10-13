@@ -37,7 +37,8 @@ fun box(): String {
     assertNotEquals(ho1, ho2)
     assertNotEquals(ho1, ho3)
 
-    assertTrue((d1 : Any) != "")
+    val d1any: Any = d1
+    assertTrue(d1any != "")
 
     return "OK"
 }

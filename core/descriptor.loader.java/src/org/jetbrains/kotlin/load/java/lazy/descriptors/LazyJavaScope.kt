@@ -253,7 +253,7 @@ public abstract class LazyJavaScope(
             c.components.externalSignatureResolver.reportSignatureErrors(propertyDescriptor, signatureErrors)
         }
 
-        propertyDescriptor.setType(effectiveSignature.getReturnType(), listOf(), getDispatchReceiverParameter(), null : JetType?)
+        propertyDescriptor.setType(effectiveSignature.getReturnType(), listOf(), getDispatchReceiverParameter(), null as JetType?)
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.getType())) {
             propertyDescriptor.setCompileTimeInitializer(

@@ -145,7 +145,7 @@ public class DefaultErrorMessages {
         MAP.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", STRING);
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
-        MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in interface");
+        MAP.put(ABSTRACT_MODIFIER_IN_INTERFACE, "Modifier ''abstract'' is redundant in interface");
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");
         MAP.put(TYPE_PARAMETERS_IN_ENUM, "Enum class cannot have type parameters");
         MAP.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM,
@@ -210,7 +210,7 @@ public class DefaultErrorMessages {
 
         MAP.put(ABSTRACT_DELEGATED_PROPERTY, "Delegated property cannot be abstract");
         MAP.put(ACCESSOR_FOR_DELEGATED_PROPERTY, "Delegated property cannot have accessors with non-default implementations");
-        MAP.put(DELEGATED_PROPERTY_IN_TRAIT, "Delegated properties are not allowed in interfaces");
+        MAP.put(DELEGATED_PROPERTY_IN_INTERFACE, "Delegated properties are not allowed in interfaces");
         MAP.put(LOCAL_VARIABLE_WITH_DELEGATE, "Local variables are not allowed to have delegates");
 
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier is allowed only on member properties with a backing field");
@@ -221,10 +221,12 @@ public class DefaultErrorMessages {
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE, "''lateinit'' modifier is not allowed on primitive type properties");
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
-        MAP.put(BACKING_FIELD_IN_TRAIT, "Property in an interface cannot have a backing field");
+        MAP.put(PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR, "Private setter is not allowed on non-private lateinit property");
+        MAP.put(ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY, "Accessor visibilities are not allowed for abstract variables");
+        MAP.put(BACKING_FIELD_IN_INTERFACE, "Property in an interface cannot have a backing field");
         MAP.put(MUST_BE_INITIALIZED, "Property must be initialized");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract");
-        MAP.put(PROPERTY_INITIALIZER_IN_TRAIT, "Property initializers are not allowed in interfaces");
+        MAP.put(PROPERTY_INITIALIZER_IN_INTERFACE, "Property initializers are not allowed in interfaces");
         MAP.put(FINAL_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be final");
         MAP.put(PRIVATE_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be private");
         MAP.put(EXTENSION_PROPERTY_WITH_BACKING_FIELD, "Extension property cannot be initialized because it has no backing field");
@@ -267,6 +269,8 @@ public class DefaultErrorMessages {
         MAP.put(UNUSED_CHANGED_VALUE, "The value changed at ''{0}'' is never used", ELEMENT_TEXT);
         MAP.put(UNUSED_EXPRESSION, "The expression is unused");
         MAP.put(UNUSED_FUNCTION_LITERAL, "The function literal is unused. If you mean block, you can use 'run { ... }'");
+        MAP.put(FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS, "Function return type depends on local class or object {0}", NAME);
+        MAP.put(PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS, "Property type depends on local class or object {0}", NAME);
 
         MAP.put(VAL_REASSIGNMENT, "Val cannot be reassigned", NAME);
         MAP.put(SETTER_PROJECTED_OUT, "Setter for ''{0}'' is removed by type projection", NAME);
@@ -288,16 +292,16 @@ public class DefaultErrorMessages {
 
         MAP.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class");
 
-        MAP.put(DEPRECATED_SYMBOL, "''{0}'' is deprecated.", DEPRECATION_RENDERER);
-        MAP.put(DEPRECATED_SYMBOL_WITH_MESSAGE, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
+        MAP.put(DEPRECATION, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
+        MAP.put(DEPRECATION_ERROR, "Using ''{0}'' is an error. {1}", DEPRECATION_RENDERER, STRING);
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(LOCAL_INTERFACE_NOT_ALLOWED, "''{0}'' is an interface so it cannot be local. Try to use anonymous object or abstract class instead", NAME);
         MAP.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated");
         MAP.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated");
 
-        MAP.put(DELEGATION_IN_TRAIT, "Interfaces cannot use delegation");
-        MAP.put(DELEGATION_NOT_TO_TRAIT, "Only interfaces can be delegated to");
+        MAP.put(DELEGATION_IN_INTERFACE, "Interfaces cannot use delegation");
+        MAP.put(DELEGATION_NOT_TO_INTERFACE, "Only interfaces can be delegated to");
         MAP.put(NO_CONSTRUCTOR, "This class does not have a constructor");
         MAP.put(NOT_A_CLASS, "Not a class");
         MAP.put(ILLEGAL_ESCAPE_SEQUENCE, "Illegal escape sequence");
@@ -326,12 +330,11 @@ public class DefaultErrorMessages {
         MAP.put(SETTER_PARAMETER_WITH_DEFAULT_VALUE, "Setter parameters cannot have default values");
         MAP.put(NO_THIS, "'this' is not defined in this context");
         MAP.put(SUPER_NOT_AVAILABLE, "No supertypes are accessible in this context");
-        MAP.put(SUPERCLASS_NOT_ACCESSIBLE_FROM_TRAIT, "Superclass is not accessible from interface");
+        MAP.put(SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE, "Superclass is not accessible from interface");
         MAP.put(AMBIGUOUS_SUPER, "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'");
         MAP.put(ABSTRACT_SUPER_CALL, "Abstract member cannot be accessed directly");
         MAP.put(NOT_A_SUPERTYPE, "Not a supertype");
         MAP.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, "Type arguments do not need to be specified in a 'super' qualifier");
-        MAP.put(DEPRECATED_STATIC_ASSERT, "Static type assertions are deprecated, consider using a cast instead");
         MAP.put(USELESS_CAST, "No cast needed");
         MAP.put(CAST_NEVER_SUCCEEDS, "This cast can never succeed");
         MAP.put(DYNAMIC_NOT_ALLOWED, "Dynamic types are not allowed in this position");
@@ -363,7 +366,7 @@ public class DefaultErrorMessages {
         MAP.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
 
         MAP.put(DELEGATE_SPECIAL_FUNCTION_MISSING, "Missing ''{0}'' method on delegate of type ''{1}''", STRING, RENDER_TYPE);
-        MAP.put(DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION, " ''{0}'' method convention on type ''{1}'' is deprecated. Rename to ''{2}''", NAME, RENDER_TYPE, STRING);
+        MAP.put(DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION, "''{0}'' method convention on type ''{1}'' is deprecated. Rename to ''{2}''", NAME, RENDER_TYPE, STRING);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "Overload resolution ambiguity on method ''{0}'': {1}",  STRING, AMBIGUOUS_CALLS);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, "Property delegate must have a ''{0}'' method. None of the following functions is suitable: {1}",
                 STRING, AMBIGUOUS_CALLS);
@@ -435,11 +438,12 @@ public class DefaultErrorMessages {
         MAP.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has itself as an upper bound");
 
         MAP.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list");
-        MAP.put(SUPERTYPE_NOT_A_CLASS_OR_TRAIT, "Only classes and interfaces may serve as supertypes");
-        MAP.put(SUPERTYPE_INITIALIZED_IN_TRAIT, "Interfaces cannot initialize supertypes");
+        MAP.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Only classes and interfaces may serve as supertypes");
+        MAP.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
-        MAP.put(CONSTRUCTOR_IN_TRAIT, "An interface may not have a constructor");
-        MAP.put(TRAIT_WITH_SUPERCLASS, "An interface cannot inherit from a class");
+        MAP.put(CONSTRUCTOR_IN_INTERFACE, "An interface may not have a constructor");
+        MAP.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'kotlin.Any'");
+        MAP.put(INTERFACE_WITH_SUPERCLASS, "An interface cannot inherit from a class");
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
         MAP.put(DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES, "Data class inheritance from other classes is deprecated");
@@ -470,7 +474,7 @@ public class DefaultErrorMessages {
         MAP.put(NOT_A_LOOP_LABEL, "The label ''{0}'' does not denote a loop", STRING);
         MAP.put(NOT_A_RETURN_LABEL, "The label ''{0}'' does not reference to a context from which we can return", STRING);
 
-        MAP.put(ANONYMOUS_INITIALIZER_IN_TRAIT, "Anonymous initializers are not allowed in interfaces");
+        MAP.put(ANONYMOUS_INITIALIZER_IN_INTERFACE, "Anonymous initializers are not allowed in interfaces");
         MAP.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable");
         MAP.put(DYNAMIC_SUPERTYPE, "A supertype cannot be dynamic");
         MAP.put(REDUNDANT_NULLABLE, "Redundant '?'");
@@ -525,6 +529,7 @@ public class DefaultErrorMessages {
                 RENDER_TYPE);
         MAP.put(TYPE_MISMATCH_IN_CONDITION, "Condition must be of type kotlin.Boolean, but is of type {0}", RENDER_TYPE);
         MAP.put(INCOMPATIBLE_TYPES, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(IMPLICIT_NOTHING_RETURN_TYPE, "''Nothing'' return type needs to be specified explicitly");
         MAP.put(EXPECTED_CONDITION, "Expected condition of type kotlin.Boolean");
 
         MAP.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type: {0}", RENDER_TYPE);
@@ -558,8 +563,12 @@ public class DefaultErrorMessages {
 
         MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "{0} must be declared abstract or implement abstract member {1}", RENDER_CLASS_OR_OBJECT,
                 FQ_NAMES_IN_TYPES);
+        MAP.put(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, "{0} must be declared abstract or implement abstract base class member {1}",
+                RENDER_CLASS_OR_OBJECT, FQ_NAMES_IN_TYPES);
 
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "{0} must override {1} because it inherits many implementations of it",
+                RENDER_CLASS_OR_OBJECT, FQ_NAMES_IN_TYPES);
+        MAP.put(MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, "{0} must override {1} because it inherits multiple interface methods of it",
                 RENDER_CLASS_OR_OBJECT, FQ_NAMES_IN_TYPES);
 
         MAP.put(CONFLICTING_OVERLOADS, "''{0}'' is already defined in {1}", COMPACT_WITH_MODIFIERS, STRING);

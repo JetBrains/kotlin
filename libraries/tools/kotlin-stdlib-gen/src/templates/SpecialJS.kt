@@ -12,7 +12,7 @@ fun specialJS(): List<GenericFunction> {
         body(ArraysOfObjects) {
             """
             val al = ArrayList<T>()
-            (al: dynamic).array = this    // black dynamic magic
+            al.asDynamic().array = this    // black dynamic magic
             return al
             """
         }
@@ -46,7 +46,7 @@ fun specialJS(): List<GenericFunction> {
         returns("SELF")
         returns(ArraysOfObjects) { "Array<T>" }
         body {
-            "return (this: dynamic).slice(fromIndex, toIndex)"
+            "return this.asDynamic().slice(fromIndex, toIndex)"
         }
     }
 
@@ -58,7 +58,7 @@ fun specialJS(): List<GenericFunction> {
         returns("SELF")
         returns(ArraysOfObjects) { "Array<T>" }
         body {
-            "return (this: dynamic).slice(0)"
+            "return this.asDynamic().slice(0)"
         }
     }
 
@@ -99,7 +99,7 @@ fun specialJS(): List<GenericFunction> {
         doc { "Returns an array containing all elements of the original array and then the given [element]." }
         body() {
             """
-            return (this: dynamic).concat(arrayOf(element))
+            return this.asDynamic().concat(arrayOf(element))
             """
         }
     }
@@ -126,7 +126,7 @@ fun specialJS(): List<GenericFunction> {
         returns(ArraysOfObjects) { "Array<T>" }
         body {
             """
-            return (this: dynamic).concat(array)
+            return this.asDynamic().concat(array)
             """
         }
     }

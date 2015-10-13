@@ -21,16 +21,12 @@ JetFile: recovery.kt
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
-              BINARY_WITH_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('x')
-                OPERATION_REFERENCE
-                  PsiElement(COLON)(':')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Int')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiErrorElement:Unexpected type specification
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('Int')
             PsiElement(RPAR)(')')
     PsiErrorElement:Expecting 'constructor' keyword
       <empty list>

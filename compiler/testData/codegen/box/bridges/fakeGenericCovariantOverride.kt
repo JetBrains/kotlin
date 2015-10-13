@@ -12,8 +12,9 @@ class Foo: Class(), Trait<String> {
 }
 
 fun box(): String {
+    val t: Trait<String> = Foo()
     try {
-        (Foo() : Trait<String>).f()
+        t.f()
     } catch (e: UnsupportedOperationException) {
         return "OK"
     }

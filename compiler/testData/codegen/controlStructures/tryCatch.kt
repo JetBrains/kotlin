@@ -4,6 +4,6 @@ fun foo(s: String): String? {
     return "no message";
   }
   catch(e: NumberFormatException) {
-    return (e : Throwable).getMessage(); // Work around an overload-resolution bug
+    return e.getMessage(); // Work around an overload-resolution bug
   }
 }

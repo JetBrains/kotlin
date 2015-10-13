@@ -443,7 +443,7 @@ public class CallExpressionResolver {
     ) {
         if (qualifierReceiver == null) return;
         JetExpression calleeExpression =
-                JetPsiUtil.deparenthesize(CallUtilPackage.getCalleeExpressionIfAny(qualifiedExpression.getSelectorExpression()), false);
+                JetPsiUtil.deparenthesize(CallUtilPackage.getCalleeExpressionIfAny(qualifiedExpression.getSelectorExpression()));
         DeclarationDescriptor selectorDescriptor =
                 calleeExpression instanceof JetReferenceExpression
                 ? context.trace.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) calleeExpression) : null;

@@ -63,7 +63,7 @@ public class MoveAssignmentToInitializerIntention :
     }
 
     private fun findTargetProperty(expr: JetBinaryExpression): JetProperty? {
-        val leftExpression = expr.left as? JetSimpleNameExpression ?: return null
+        val leftExpression = expr.left as? JetNameReferenceExpression ?: return null
         return leftExpression.resolveAllReferences().firstIsInstanceOrNull<JetProperty>()
     }
 

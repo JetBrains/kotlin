@@ -3,8 +3,8 @@ package builders
 import java.util.ArrayList
 import java.util.HashMap
 
-interface Element {
-    fun render(builder: StringBuilder, indent: String)
+abstract class Element {
+    abstract fun render(builder: StringBuilder, indent: String)
 
     override fun toString(): String {
         val builder = StringBuilder()
@@ -13,13 +13,13 @@ interface Element {
     }
 }
 
-class TextElement(val text: String) : Element {
+class TextElement(val text: String) : Element() {
     override fun render(builder: StringBuilder, indent: String) {
         builder.append("$indent$text\n")
     }
 }
 
-abstract class Tag(val name: String) : Element {
+abstract class Tag(val name: String) : Element() {
     val children = ArrayList<Element>()
     val attributes = HashMap<String, String>()
 

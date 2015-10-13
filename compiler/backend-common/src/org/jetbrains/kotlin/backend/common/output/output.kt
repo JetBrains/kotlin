@@ -33,8 +33,6 @@ public interface OutputFile {
     public val sourceFiles: List<File>
     public fun asByteArray(): ByteArray
     public fun asText(): String
-
-    override fun toString() = "$relativePath (compiled from $sourceFiles)"
 }
 
 public class SimpleOutputFile(
@@ -44,4 +42,6 @@ public class SimpleOutputFile(
 ) : OutputFile {
     override fun asByteArray(): ByteArray = content.toByteArray()
     override fun asText(): String = content
+
+    override fun toString() = "$relativePath (compiled from $sourceFiles)"
 }

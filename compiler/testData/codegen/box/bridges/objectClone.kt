@@ -13,7 +13,8 @@ fun box(): String {
         "Fail 1"
     } catch (e: AssertionError) {
         try {
-            (B() : HashSet<String>).clone()
+            val hs: HashSet<String> = B()
+            hs.clone()
             "Fail 2"
         } catch (e: AssertionError) {
             "OK"

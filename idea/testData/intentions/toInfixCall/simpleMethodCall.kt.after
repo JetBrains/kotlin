@@ -1,3 +1,7 @@
-fun foo(x: Int) {
+interface X {
+    infix fun times(p: Int): Int
+}
+
+fun foo(x: X) {
     x times 1
 }

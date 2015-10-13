@@ -10,8 +10,8 @@ interface B {
         get() = "FAIL"
 }
 
-abstract class C {
-    abstract protected val c: String
+open class C {
+    private val c: String = "FAIL"
 }
 
 open class D: C(), A, B {

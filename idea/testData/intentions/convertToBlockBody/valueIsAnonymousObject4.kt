@@ -2,4 +2,4 @@
 
 interface I
 
-fun f() = <caret>listOf(object : I { })
+private fun f() = <caret>listOf(object : I { })

@@ -17,5 +17,5 @@ fun testDoWhile() {
     <!UNREACHABLE_CODE!>bar()<!>
 }
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()
 fun bar() {}

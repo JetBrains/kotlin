@@ -50,8 +50,8 @@ fun box(): String {
     val aZ = BooleanArray(3)
 
 
-    if (barB(*aB, 23: Byte).size() != 4) return "fail: Byte"
-    if (barB(11: Byte, *aB, 23: Byte, *aB).size() != 8) return "fail: Byte"
+    if (barB(*aB, 23.toByte()).size() != 4) return "fail: Byte"
+    if (barB(11.toByte(), *aB, 23.toByte(), *aB).size() != 8) return "fail: Byte"
 
     if (barC(*aC, 'A').size() != 4) return "fail: Char"
     if (barC('A', *aC, 'A', *aC).size() != 8) return "fail: Char"
@@ -80,11 +80,11 @@ fun box(): String {
     if (concatParameters(*aI, 7, 8, *bI) != "1237845") return "fail: concatParameters 6"
     if (concatParameters(*aI, 7, *bI, *aI, 9) != "1237451239") return "fail: concatParameters 7"
 
-    if (barJ(*aJ, 23: Long).size() != 4) return "fail: Long"
-    if (barJ(*aJ, 23: Long, *aJ, *aJ).size() != 10) return "fail: Long"
+    if (barJ(*aJ, 23L).size() != 4) return "fail: Long"
+    if (barJ(*aJ, 23L, *aJ, *aJ).size() != 10) return "fail: Long"
 
-    if (barS(*aS, 23: Short).size() != 4) return "fail: Short"
-    if (barS(*aS, *aS, 23: Short, *aS).size() != 10) return "fail: Short"
+    if (barS(*aS, 23.toShort()).size() != 4) return "fail: Short"
+    if (barS(*aS, *aS, 23.toShort(), *aS).size() != 10) return "fail: Short"
 
     if (barZ(*aZ, true).size() != 4) return "fail: Boolean"
     if (barZ(false, *aZ, true, *aZ).size() != 8) return "fail: Boolean"

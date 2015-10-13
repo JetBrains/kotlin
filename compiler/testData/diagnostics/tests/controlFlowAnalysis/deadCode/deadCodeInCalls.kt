@@ -10,4 +10,4 @@ fun testArgumentInVariableAsFunctionCall(f: (Any) -> Unit) {
     f<!UNREACHABLE_CODE!>(<!>todo()<!UNREACHABLE_CODE!>)<!>
 }
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()

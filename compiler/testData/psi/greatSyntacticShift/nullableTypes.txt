@@ -33,28 +33,6 @@ JetFile: nullableTypes.kt
         RETURN
           PsiElement(return)('return')
       PsiWhiteSpace('\n    ')
-      BINARY_WITH_TYPE
-        BINARY_WITH_TYPE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          OPERATION_REFERENCE
-            PsiElement(AS_SAFE)('as?')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            NULLABLE_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('X')
-              PsiElement(QUEST)('?')
-        PsiWhiteSpace(' ')
-        OPERATION_REFERENCE
-          PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          PsiErrorElement:Type expected
-            PsiElement(return)('return')
-      PsiWhiteSpace('\n    ')
       BINARY_EXPRESSION
         BINARY_WITH_TYPE
           REFERENCE_EXPRESSION

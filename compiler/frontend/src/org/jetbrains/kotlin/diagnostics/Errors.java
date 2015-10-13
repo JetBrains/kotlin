@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.diagnostics;
 import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
@@ -87,7 +86,7 @@ public interface Errors {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Errors/warnings in types
-    // Note: class/trait declaration is NOT a type. A type is something that may be written on the right-hand side of ":"
+    // Note: class/interface declaration is NOT a type. A type is something that may be written on the right-hand side of ":"
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -162,7 +161,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> INAPPLICABLE_PARAM_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> REDUNDANT_ANNOTATION_TARGET = DiagnosticFactory1.create(WARNING);
 
-    // Classes and traits
+    // Classes and interfaces
 
     DiagnosticFactory0<JetTypeProjection> PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE =
             DiagnosticFactory0.create(ERROR, VARIANCE_IN_PROJECTION);
@@ -171,8 +170,8 @@ public interface Errors {
 
     DiagnosticFactory0<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<JetTypeReference> DELEGATION_NOT_TO_TRAIT = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetTypeReference> SUPERTYPE_NOT_A_CLASS_OR_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> DELEGATION_NOT_TO_INTERFACE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> SUPERTYPE_NOT_A_CLASS_OR_INTERFACE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = DiagnosticFactory0.create(ERROR);
 
@@ -211,18 +210,19 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, DeclarationDescriptor> INSTANCE_ACCESS_BEFORE_SUPER_CALL = DiagnosticFactory1.create(ERROR);
 
-    // Trait-specific
+    // Interface-specific
 
-    DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_TRAIT = DiagnosticFactory0
+    DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_INTERFACE = DiagnosticFactory0
             .create(WARNING, ABSTRACT_MODIFIER);
 
-    DiagnosticFactory0<JetDeclaration> CONSTRUCTOR_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<JetDeclaration> CONSTRUCTOR_IN_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<JetDeclaration> METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> SUPERTYPE_INITIALIZED_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> SUPERTYPE_INITIALIZED_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<JetDelegatorByExpressionSpecifier> DELEGATION_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetDelegatorByExpressionSpecifier> DELEGATION_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> TRAIT_WITH_SUPERCLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INTERFACE_WITH_SUPERCLASS = DiagnosticFactory0.create(ERROR);
 
     // Enum-specific
 
@@ -240,8 +240,8 @@ public interface Errors {
 
     DiagnosticFactory0<JetObjectDeclaration> MANY_COMPANION_OBJECTS = DiagnosticFactory0.create(ERROR, COMPANION_OBJECT);
 
-    DiagnosticFactory1<PsiElement, DeclarationDescriptor> DEPRECATED_SYMBOL = DiagnosticFactory1.create(WARNING);
-    DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATED_SYMBOL_WITH_MESSAGE = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATION = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATION_ERROR = DiagnosticFactory2.create(ERROR);
 
     // Objects
 
@@ -309,8 +309,13 @@ public interface Errors {
 
     DiagnosticFactory2<JetClassOrObject, JetClassOrObject, CallableMemberDescriptor> ABSTRACT_MEMBER_NOT_IMPLEMENTED =
             DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
+    DiagnosticFactory2<JetClassOrObject, JetClassOrObject, CallableMemberDescriptor> ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED =
+            DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
     DiagnosticFactory2<JetClassOrObject, JetClassOrObject, CallableMemberDescriptor> MANY_IMPL_MEMBER_NOT_IMPLEMENTED =
             DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
+    DiagnosticFactory2<JetClassOrObject, JetClassOrObject, CallableMemberDescriptor> MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED =
+            DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
+
 
     DiagnosticFactory1<JetNamedDeclaration, Collection<JetType>> AMBIGUOUS_ANONYMOUS_TYPE_INFERRED =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
@@ -322,6 +327,8 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> REDUNDANT_MODIFIER_IN_GETTER = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<JetTypeReference, JetType, JetType> WRONG_GETTER_RETURN_TYPE = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory0<JetModifierListOwner>
@@ -332,7 +339,7 @@ public interface Errors {
 
     DiagnosticFactory0<JetPropertyDelegate> ABSTRACT_DELEGATED_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetPropertyAccessor> ACCESSOR_FOR_DELEGATED_PROPERTY = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetPropertyDelegate> DELEGATED_PROPERTY_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetPropertyDelegate> DELEGATED_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetPropertyDelegate> LOCAL_VARIABLE_WITH_DELEGATE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetProperty> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
@@ -342,10 +349,10 @@ public interface Errors {
 
     DiagnosticFactory0<JetExpression> EXTENSION_PROPERTY_WITH_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetProperty> FINAL_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
     DiagnosticFactory0<JetProperty> PRIVATE_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR, PRIVATE_MODIFIER);
-    DiagnosticFactory0<JetProperty> BACKING_FIELD_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<JetProperty> BACKING_FIELD_IN_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<JetSimpleNameExpression> BACKING_FIELD_OLD_SYNTAX = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetSimpleNameExpression> BACKING_FIELD_USAGE_FORBIDDEN = DiagnosticFactory0.create(ERROR);
@@ -388,6 +395,9 @@ public interface Errors {
     DiagnosticFactory0<JetParameter> FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
 
     DiagnosticFactory0<JetParameter> USELESS_VARARG_ON_PARAMETER = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory1<JetFunction, ClassDescriptor> FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS = DiagnosticFactory1.create(ERROR, DECLARATION_RETURN_TYPE);
+    DiagnosticFactory1<JetProperty, ClassDescriptor> PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS = DiagnosticFactory1.create(ERROR, DECLARATION_RETURN_TYPE);
 
     // Named parameters
 
@@ -507,7 +517,7 @@ public interface Errors {
     DiagnosticFactory1<JetSuperExpression, String> SUPER_IS_NOT_AN_EXPRESSION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSuperExpression, String> SUPER_CANT_BE_EXTENSION_RECEIVER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetSuperExpression> SUPER_NOT_AVAILABLE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetSuperExpression> SUPERCLASS_NOT_ACCESSIBLE_FROM_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetSuperExpression> SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetSuperExpression> AMBIGUOUS_SUPER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ABSTRACT_SUPER_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> NOT_A_SUPERTYPE = DiagnosticFactory0.create(ERROR);
@@ -635,7 +645,6 @@ public interface Errors {
     DiagnosticFactory1<JetElement, JetType> CANNOT_CHECK_FOR_ERASED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetBinaryExpressionWithTypeRHS, JetType, JetType> UNCHECKED_CAST = DiagnosticFactory2.create(WARNING);
 
-    DiagnosticFactory0<JetBinaryExpressionWithTypeRHS> DEPRECATED_STATIC_ASSERT = DiagnosticFactory0.create(WARNING, AS_TYPE);
     DiagnosticFactory0<JetBinaryExpressionWithTypeRHS> USELESS_CAST = DiagnosticFactory0.create(WARNING, AS_TYPE);
     DiagnosticFactory0<JetSimpleNameExpression> CAST_NEVER_SUCCEEDS = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetTypeReference> DYNAMIC_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
@@ -694,6 +703,8 @@ public interface Errors {
 
     DiagnosticFactory2<JetElement, JetType, JetType> INCOMPATIBLE_TYPES = DiagnosticFactory2.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> IMPLICIT_NOTHING_RETURN_TYPE = DiagnosticFactory0.create(WARNING);
+
     // Context tracking
 
     DiagnosticFactory1<JetExpression, JetExpression> EXPRESSION_EXPECTED = DiagnosticFactory1.create(ERROR);
@@ -707,7 +718,7 @@ public interface Errors {
     DiagnosticFactory0<JetDeclarationWithBody>
             NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_WITH_BODY);
 
-    DiagnosticFactory0<JetClassInitializer> ANONYMOUS_INITIALIZER_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetClassInitializer> ANONYMOUS_INITIALIZER_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetThisExpression> NO_THIS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetRootPackageExpression> PACKAGE_IS_NOT_AN_EXPRESSION = DiagnosticFactory0.create(ERROR);

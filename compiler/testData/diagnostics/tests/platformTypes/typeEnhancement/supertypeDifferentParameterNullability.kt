@@ -22,7 +22,7 @@ public interface B {
     <!ACCIDENTAL_OVERRIDE!>override fun foo(x: String?)<!> {}
 }
 
-interface <!ACCIDENTAL_OVERRIDE!>I<!> : A, B
+interface <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>I<!> : A, B
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class C3<!> : I {
     <!ACCIDENTAL_OVERRIDE!>override fun foo(x: String)<!> {}

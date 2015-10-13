@@ -33,7 +33,7 @@ public class SamConstructorDescriptor(
         samInterface.getSource()
 )
 
-public object SamConstructorDescriptorKindExclude : DescriptorKindExclude {
+public object SamConstructorDescriptorKindExclude : DescriptorKindExclude() {
     override fun excludes(descriptor: DeclarationDescriptor) = descriptor is SamConstructorDescriptor
 
     override val fullyExcludedDescriptorKinds: Int get() = 0

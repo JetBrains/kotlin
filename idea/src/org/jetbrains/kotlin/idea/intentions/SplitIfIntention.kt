@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Split if into 2 if's") {
     override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
         return when (element) {
-            is JetSimpleNameExpression -> isOperatorValid(element)
+            is JetOperationReferenceExpression -> isOperatorValid(element)
             is JetIfExpression -> getFirstValidOperator(element) != null && element.getIfKeyword().getTextRange().containsOffset(caretOffset)
             else -> false
         }
@@ -41,7 +41,7 @@ public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>(javaCla
     override fun applyTo(element: JetExpression, editor: Editor) {
         val operator = when (element) {
             is JetIfExpression -> getFirstValidOperator(element)!!
-            else -> element as JetSimpleNameExpression
+            else -> element as JetOperationReferenceExpression
         }
 
         val ifExpression = operator.getNonStrictParentOfType<JetIfExpression>()
@@ -95,13 +95,13 @@ public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>(javaCla
         return expression
     }
 
-    private fun getFirstValidOperator(element: JetIfExpression): JetSimpleNameExpression? {
+    private fun getFirstValidOperator(element: JetIfExpression): JetOperationReferenceExpression? {
         val condition = element.getCondition() ?: return null
-        return PsiTreeUtil.findChildrenOfType(condition, javaClass<JetSimpleNameExpression>())
+        return PsiTreeUtil.findChildrenOfType(condition, javaClass<JetOperationReferenceExpression>())
                 .firstOrNull { isOperatorValid(it) }
     }
 
-    private fun isOperatorValid(element: JetSimpleNameExpression): Boolean {
+    private fun isOperatorValid(element: JetOperationReferenceExpression): Boolean {
         val operator = element.getReferencedNameElementType()
         if (operator != JetTokens.ANDAND && operator != JetTokens.OROR) return false
 

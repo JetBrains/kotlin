@@ -9,4 +9,7 @@ class Z : B() {
 }
 
 
-fun box() = (Z() : A<String>).foo
+fun box(): String {
+    val a: A<String> = Z()
+    return a.foo
+}

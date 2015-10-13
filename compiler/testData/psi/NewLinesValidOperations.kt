@@ -11,10 +11,6 @@ fun test() {
 
     str
 
-        : String
-
-    str
-
         as String
 
     str

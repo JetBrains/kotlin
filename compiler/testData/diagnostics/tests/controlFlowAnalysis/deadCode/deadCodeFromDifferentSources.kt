@@ -14,7 +14,7 @@ fun test3() {
     <!UNREACHABLE_CODE!>bar()<!>
 }
 
-fun throwNPE() = null!!
+fun throwNPE(): Nothing = null!!
 
 class A {
     operator fun plus(<!UNUSED_PARAMETER!>a<!>: A): Nothing = throw Exception()

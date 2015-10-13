@@ -7707,6 +7707,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("notInfix.kt")
+        public void testNotInfix() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/notInfix.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullAssertedReceiver.kt")
         public void testNullAssertedReceiver() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/nullAssertedReceiver.kt");

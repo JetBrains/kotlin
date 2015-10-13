@@ -241,7 +241,6 @@ public interface JetTokens {
                                           MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
                                           SAFE_ACCESS, ELVIS,
             //            MAP, FILTER,
-                                          COLON,
                                           RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
                                           NOT_IN, NOT_IS,
                                           IDENTIFIER);

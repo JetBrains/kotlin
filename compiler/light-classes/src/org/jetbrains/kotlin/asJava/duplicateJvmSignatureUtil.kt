@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
     fun getDiagnosticsForPackage(file: JetFile): Diagnostics? {
@@ -86,7 +87,7 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
     }
 
     override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {
-        val jvmDiagnosticFactories = setOf(CONFLICTING_JVM_DECLARATIONS, ACCIDENTAL_OVERRIDE)
+        val jvmDiagnosticFactories = setOf(CONFLICTING_JVM_DECLARATIONS, ACCIDENTAL_OVERRIDE, CONFLICTING_INHERITED_JVM_DECLARATIONS)
         fun Diagnostic.data() = cast(this, jvmDiagnosticFactories).getA()
         val (conflicting, other) = jvmDiagnostics.forElement(psiElement).partition { it.getFactory() in jvmDiagnosticFactories }
         if (alreadyReported(psiElement)) {
@@ -110,9 +111,10 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
                                 other ->
                                 me != other && (
                                         // in case of implementation copied from a super trait there will be both diagnostics on the same signature
-                                        me.getFactory() == ACCIDENTAL_OVERRIDE && other.getFactory() == CONFLICTING_JVM_DECLARATIONS
-                                                // there are paris of corresponding signatures that frequently clash simultaneously: package facade & part, trait and trait-impl
-                                                || other.data() higherThan me.data()
+                                        other.factory == ErrorsJvm.CONFLICTING_JVM_DECLARATIONS && (me.factory == ACCIDENTAL_OVERRIDE ||
+                                                                                                    me.factory == CONFLICTING_INHERITED_JVM_DECLARATIONS)
+                                        // there are paris of corresponding signatures that frequently clash simultaneously: package facade & part, trait and trait-impl
+                                        || other.data() higherThan me.data()
                                         )
                             }
                         }

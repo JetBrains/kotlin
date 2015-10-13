@@ -25,12 +25,13 @@ import java.lang.reflect.TypeVariable
 public class ReflectJavaClassifierType(public override val type: Type) : ReflectJavaType(), JavaClassifierType {
     private val classifier: JavaClassifier = run {
         val type = type
-        when (type) {
+        val classifier: JavaClassifier = when (type) {
             is Class<*> -> ReflectJavaClass(type)
             is TypeVariable<*> -> ReflectJavaTypeParameter(type)
             is ParameterizedType -> ReflectJavaClass(type.getRawType() as Class<*>)
             else -> throw IllegalStateException("Not a classifier type (${type.javaClass}): $type")
-        } : JavaClassifier
+        }
+        classifier
     }
 
     override fun getClassifier(): JavaClassifier = classifier

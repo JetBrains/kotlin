@@ -1,5 +1,5 @@
 // C
 
 class C {
-    @[kotlin.jvm.publicField] private val foo: String = "A"
+    @[kotlin.jvm.JvmField] public val foo: String = "A"
 }

@@ -1,4 +1,4 @@
 fun foo() {
     @Suppress("warnings")
-    ("": String??)
+    ("" as String??)
 }

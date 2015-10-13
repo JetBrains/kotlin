@@ -36,7 +36,7 @@ class MigrateTypeParameterListFix(typeParameterList: JetTypeParameterList)
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         val function = element.getStrictParentOfType<JetNamedFunction>() ?: return
-        function.addBefore(element, function.nameIdentifier)
+        function.addBefore(element, function.receiverTypeReference ?: function.nameIdentifier)
         element.delete()
     }
 

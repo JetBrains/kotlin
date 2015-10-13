@@ -11,7 +11,7 @@ public abstract class B implements A {
 
 // FILE: C.kt
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class C<!> : B()
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class C<!> : B()
 
 fun main() {
     C().a

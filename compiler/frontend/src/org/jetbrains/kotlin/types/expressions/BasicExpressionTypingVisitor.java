@@ -172,17 +172,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, allowBareTypes);
         PossiblyBareType possiblyBareTarget = components.typeResolver.resolvePossiblyBareType(typeResolutionContext, right);
 
-        if (operationType == JetTokens.COLON) {
-            // We do not allow bare types on static assertions, because static assertions provide an expected type for their argument,
-            // thus causing a circularity in type dependencies
-            assert !possiblyBareTarget.isBare() : "Bare types should not be allowed for static assertions, because argument inference makes no sense there";
-            JetType targetType = possiblyBareTarget.getActualType();
-
-            JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType.replaceExpectedType(targetType));
-            checkBinaryWithTypeRHS(expression, context, targetType, typeInfo.getType());
-            return components.dataFlowAnalyzer.checkType(typeInfo.replaceType(targetType), expression, context);
-        }
-
         JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
 
         JetType subjectType = typeInfo.getType();
@@ -210,10 +199,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (actualType == null) return;
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
-        if (operationType == JetTokens.COLON) {
-            context.trace.report(DEPRECATED_STATIC_ASSERT.on(expression));
-            return;
-        }
         if (operationType != JetTokens.AS_KEYWORD && operationType != JetTokens.AS_SAFE) {
             context.trace.report(UNSUPPORTED.on(operationSign, "binary operation with type RHS"));
             return;
@@ -423,7 +408,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (result != null) {
             if (DescriptorUtils.isInterface(thisType.getConstructor().getDeclarationDescriptor())) {
                 if (DescriptorUtils.isClass(result.getConstructor().getDeclarationDescriptor())) {
-                    context.trace.report(SUPERCLASS_NOT_ACCESSIBLE_FROM_TRAIT.on(expression));
+                    context.trace.report(SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE.on(expression));
                 }
             }
             context.trace.recordType(expression.getInstanceReference(), result);

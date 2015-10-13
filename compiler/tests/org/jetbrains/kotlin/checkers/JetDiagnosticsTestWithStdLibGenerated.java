@@ -322,6 +322,39 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JvmField extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInJvmField() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("clashWithCompanionObjectField.kt")
+            public void testClashWithCompanionObjectField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/clashWithCompanionObjectField.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inMultiFileFacade.kt")
+            public void testInMultiFileFacade() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/inMultiFileFacade.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inSingleFileFacade.kt")
+            public void testInSingleFileFacade() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/inSingleFileFacade.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmFieldApplicability.kt")
+            public void testJvmFieldApplicability() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/jvmFieldApplicability.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmOverloads")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -474,27 +507,6 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             @TestMetadata("withoutValue.kt")
             public void testWithoutValue() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument/withoutValue.kt");
-                doTest(fileName);
-            }
-        }
-
-        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/publicField")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class PublicField extends AbstractJetDiagnosticsTestWithStdLib {
-            public void testAllFilesPresentInPublicField() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/publicField"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-
-            @TestMetadata("publicFieldNotOnProperty.kt")
-            public void testPublicFieldNotOnProperty() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/publicField/publicFieldNotOnProperty.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("publicFieldOnDelegatedProperty.kt")
-            public void testPublicFieldOnDelegatedProperty() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/publicField/publicFieldOnDelegatedProperty.kt");
                 doTest(fileName);
             }
         }

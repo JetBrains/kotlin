@@ -6,7 +6,7 @@ fun box(): String {
 
     assertEquals(true, 'A' == 'A')
     assertEquals(false, 'A'== 'B')
-    assertEquals(false, ('A': Any) == (65: Any))
+    assertEquals(false, ('A' as Any) == (65 as Any))
 
     return "OK"
 }

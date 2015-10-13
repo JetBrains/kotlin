@@ -1,11 +1,7 @@
-// "Suppress 'REDUNDANT_NULLABLE' for statement " "true"
+// "Suppress 'USELESS_CAST' for statement " "true"
 
 fun foo() {
-    var v = Box<String?>()
-    @Suppress("REDUNDANT_NULLABLE")
-    ++(v: Box<String?<caret>?>)
-}
-
-class Box<T> {
-    fun inc() = this
+    val arr = IntArray(1)
+    @Suppress("USELESS_CAST")
+    ++arr[1 as Int]
 }

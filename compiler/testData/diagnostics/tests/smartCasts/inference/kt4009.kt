@@ -19,4 +19,4 @@ fun foo1(e: PsiElement) {
 }
 
 //from library
-fun println(any: Any?) = throw Exception("$any")
+fun println(any: Any?): Nothing = throw Exception("$any")

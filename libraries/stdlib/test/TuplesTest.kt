@@ -28,7 +28,7 @@ class PairTest {
         assertNotEquals(Pair(2, "a"), p)
         assertNotEquals(Pair(1, "b"), p)
         assertTrue(!p.equals(null))
-        assertNotEquals("", (p : Any))
+        assertNotEquals("", (p as Any))
     }
 
     @test fun pairHashCode() {
@@ -78,7 +78,7 @@ class TripleTest {
         assertNotEquals(Triple(1, "b", 0.07), t)
         assertNotEquals(Triple(1, "a", 0.1), t)
         assertTrue(!t.equals(null))
-        assertNotEquals("", (t : Any))
+        assertNotEquals("", (t as Any))
     }
 
     @test fun tripleHashCode() {

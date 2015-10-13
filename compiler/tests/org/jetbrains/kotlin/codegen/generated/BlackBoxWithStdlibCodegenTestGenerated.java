@@ -2006,6 +2006,87 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/jvmField")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmField extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInJvmField() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/jvmField"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("captureClassFields.kt")
+        public void testCaptureClassFields() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/captureClassFields.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("capturePackageFields.kt")
+        public void testCapturePackageFields() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/capturePackageFields.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("checkNoAccessors.kt")
+        public void testCheckNoAccessors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/checkNoAccessors.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("classFieldReference.kt")
+        public void testClassFieldReference() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/classFieldReference.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("classFieldReflection.kt")
+        public void testClassFieldReflection() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/classFieldReflection.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("publicField.kt")
+        public void testPublicField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/publicField.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("superCall.kt")
+        public void testSuperCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/superCall.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("superCall2.kt")
+        public void testSuperCall2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/superCall2.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("topLevelFieldReference.kt")
+        public void testTopLevelFieldReference() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/topLevelFieldReference.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("topLevelFieldReflection.kt")
+        public void testTopLevelFieldReflection() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/topLevelFieldReflection.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("visibility.kt")
+        public void testVisibility() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/visibility.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("writeFieldReference.kt")
+        public void testWriteFieldReference() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmField/writeFieldReference.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

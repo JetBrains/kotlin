@@ -1,4 +1,6 @@
 // IS_APPLICABLE: false
+fun String.xxx(p: String): Int = 0
+
 fun foo(x: String?) {
-    x?.<caret>compareTo("1")
+    x?.<caret>xxx("1")
 }

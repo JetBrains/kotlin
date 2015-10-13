@@ -10,8 +10,8 @@ class MyClass() {
 
     <error>var b: Int</error>                private set
     var b1: Int = 0;                         private set
-    <error>abstract</error> var b2: Int      private set
-    <error>abstract</error> var b3: Int = 0; private set
+    <error>abstract</error> var b2: Int      <error>private</error> set
+    <error>abstract</error> var b3: Int = 0; <error>private</error> set
 
     <error>var c: Int</error>                set(v: Int) { field = v }
     var c1: Int = 0;                         set(v: Int) { field = v }
@@ -41,8 +41,8 @@ abstract class MyAbstractClass() {
 
     <error>var b: Int</error>                private set
     var b1: Int = 0;                         private set
-    abstract var b2: Int      private set
-    abstract var b3: Int = <error>0</error>; private set
+    abstract var b2: Int                     <error>private</error> set
+    abstract var b3: Int = <error>0</error>; <error>private</error> set
 
     <error>var c: Int</error>                set(v: Int) { field = v }
     var c1: Int = 0;                         set(v: Int) { field = v }
@@ -70,10 +70,10 @@ interface MyTrait {
     <warning>abstract</warning> val a2: Int
     <warning>abstract</warning> val a3: Int = <error>1</error>
 
-    var b: Int                                                  private set
+    var b: Int                                                  <error>private</error> set
     var b1: Int = <error>0</error>;                             private set
-    <warning>abstract</warning> var b2: Int                     private set
-    <warning>abstract</warning> var b3: Int = <error>0</error>; private set
+    <warning>abstract</warning> var b2: Int                     <error>private</error> set
+    <warning>abstract</warning> var b3: Int = <error>0</error>; <error>private</error> set
 
     <error>var c: Int</error>                                   set(v: Int) { field = v }
     <error>var c1: Int</error> = <error>0</error>;              set(v: Int) { field = v }
@@ -104,8 +104,8 @@ enum class MyEnum() {
 
     <error>var b: Int</error>                private set
     var b1: Int = 0;                         private set
-    abstract var b2: Int      private set
-    abstract var b3: Int = <error>0</error>; private set
+    abstract var b2: Int                     <error>private</error> set
+    abstract var b3: Int = <error>0</error>; <error>private</error> set
 
     <error>var c: Int</error>                set(v: Int) { field = v }
     var c1: Int = 0;                         set(v: Int) { field = v }

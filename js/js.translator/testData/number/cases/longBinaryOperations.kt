@@ -19,14 +19,14 @@ fun box(): String {
     assertEquals(30.0f, 10L + 20.0f)
     assertEquals(30L, 10L + 20L)
     assertEquals(30L, 10L + 20)
-    assertEquals(30L, 10L + (20: Short))
-    assertEquals(30L, 10L + (20: Byte))
+    assertEquals(30L, 10L + 20.toShort())
+    assertEquals(30L, 10L + 20.toByte())
 
     assertEquals(30.0, 20.0 + 10L)
     assertEquals(30.0f, 20.0f + 10L)
     assertEquals(20L, 10 + 10L)
-    assertEquals(20L, (10: Short) + 10L)
-    assertEquals(20L, (10: Byte) + 10L)
+    assertEquals(20L, 10.toShort() + 10L)
+    assertEquals(20L, 10.toByte() + 10L)
 
     assertEquals(20L, 30 - 10L)
 

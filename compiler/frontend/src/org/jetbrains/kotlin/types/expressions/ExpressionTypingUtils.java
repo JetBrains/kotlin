@@ -224,7 +224,7 @@ public class ExpressionTypingUtils {
     }
 
     public static boolean dependsOnExpectedType(@Nullable JetExpression expression) {
-        JetExpression expr = JetPsiUtil.deparenthesize(expression, false);
+        JetExpression expr = JetPsiUtil.deparenthesize(expression);
         if (expr == null) return false;
 
         if (expr instanceof JetBinaryExpressionWithTypeRHS) {

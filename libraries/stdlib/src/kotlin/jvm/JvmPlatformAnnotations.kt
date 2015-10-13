@@ -66,15 +66,6 @@ public annotation class JvmMultifileClass
 public annotation class JvmSynthetic
 
 /**
- * Instructs the Kotlin compiler to generate a public backing field for this property.
- */
-@Target(AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.SOURCE)
-@MustBeDocumented
-@Deprecated("Use lateinit instead")
-public annotation class publicField
-
-/**
  * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method.
  *
  * Example:
@@ -101,4 +92,11 @@ public annotation class Throws(public vararg val exceptionClasses: KClass<out Th
 @Retention(AnnotationRetention.SOURCE)
 internal annotation class JvmVersion(public val minimum: Int = 6, public val maximum: Int = 100)
 
+/**
+ * Instructs the Kotlin compiler not to generate getters/setters for this property and expose it as a field.
+ */
+@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+public annotation class JvmField
 

@@ -149,6 +149,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("infixCall2.before.Main.kt")
+        public void testInfixCall2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/infixCall2.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("minusOperator.before.Main.kt")
         public void testMinusOperator() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/minusOperator.before.Main.kt");

@@ -45,6 +45,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
     static {
         MAP.put(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ErrorsJvm.ACCIDENTAL_OVERRIDE, "Accidental override: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
+        MAP.put(ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS, "Inherited platform declarations clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and companion objects of classes can be annotated with 'JvmStatic'");
         MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be 'JvmStatic' in object");
         MAP.put(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "''JvmOverloads'' annotation has no effect for methods without default arguments");
@@ -54,7 +55,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.ILLEGAL_JVM_NAME, "Illegal JVM name");
         MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, "External declaration can not be abstract");
         MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, "External declaration can not have a body");
-        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_IN_TRAIT, "Members of interfaces can not be external");
+        MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE, "Members of interfaces can not be external");
         MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_INLINED, "Members of interfaces can not be external");
 
         MAP.put(ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
@@ -69,11 +70,9 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Expected type does not accept nulls in {0}, but the value may be null in {1}", Renderers.TO_STRING, Renderers.TO_STRING);
 
-        MAP.put(ErrorsJvm.TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can't call Java default methods via super");
+        MAP.put(ErrorsJvm.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can't call Java default methods via super");
 
         MAP.put(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument can be null in Java, but exhaustive when contains no null branch");
-
-        MAP.put(ErrorsJvm.INAPPLICABLE_PUBLIC_FIELD, "publicField annotation is not applicable to this declaration");
 
         MAP.put(ErrorsJvm.JAVA_CLASS_ON_COMPANION,
                 "The resulting type of this ''javaClass'' call is {0} and not {1}. " +
@@ -87,6 +86,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", Renderers.TO_STRING, Renderers.TO_STRING);
 
         MAP.put(ErrorsJvm.UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of a type parameter cannot be an array");
+
+        MAP.put(ErrorsJvm.INAPPLICABLE_JVM_FIELD, "{0}", Renderers.TO_STRING);
     }
 
     @NotNull

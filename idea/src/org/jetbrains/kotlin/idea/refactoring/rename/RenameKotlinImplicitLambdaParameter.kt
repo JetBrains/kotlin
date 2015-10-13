@@ -16,26 +16,24 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention
-import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
+import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention
 import org.jetbrains.kotlin.idea.intentions.isAutoCreatedItUsage
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 
 public class RenameKotlinImplicitLambdaParameter: VariableInplaceRenameHandler() {
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
-        val simpleNameExpression = PsiTreeUtil.findElementOfClassAtOffset(
-                file, editor.getCaretModel().getOffset(), javaClass<JetSimpleNameExpression>(), false)
+        val nameExpression = PsiTreeUtil.findElementOfClassAtOffset(
+                file, editor.getCaretModel().getOffset(), javaClass<JetNameReferenceExpression>(), false)
 
-        return simpleNameExpression != null && isAutoCreatedItUsage(simpleNameExpression)
+        return nameExpression != null && isAutoCreatedItUsage(nameExpression)
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {

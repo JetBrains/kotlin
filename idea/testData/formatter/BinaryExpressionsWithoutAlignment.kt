@@ -28,9 +28,6 @@ fun test() {
     a as?
     String
 
-    a :
-    String
-
     a in
     1..2
 

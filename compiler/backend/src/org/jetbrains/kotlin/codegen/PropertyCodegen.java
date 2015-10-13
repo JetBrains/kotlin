@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -59,8 +58,8 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterfaceCompanionObject;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -153,6 +152,8 @@ public class PropertyCodegen {
             @NotNull PropertyDescriptor descriptor,
             @Nullable JetPropertyAccessor accessor
     ) {
+        if (hasJvmFieldAnnotation(descriptor)) return false;
+
         boolean isDefaultAccessor = accessor == null || !accessor.hasBody();
 
         // Don't generate accessors for trait properties with default accessors in TRAIT_IMPL
@@ -303,7 +304,7 @@ public class PropertyCodegen {
 
         ClassBuilder builder = v;
 
-        boolean hasPublicFieldAnnotation = AnnotationsPackage.findPublicFieldAnnotation(propertyDescriptor) != null;
+        boolean hasJvmFieldAnnotation = hasJvmFieldAnnotation(propertyDescriptor);
 
         FieldOwnerContext backingFieldContext = context;
         boolean takeVisibilityFromDescriptor = propertyDescriptor.isLateInit() || propertyDescriptor.isConst();
@@ -313,8 +314,8 @@ public class PropertyCodegen {
             if (takeVisibilityFromDescriptor) {
                 modifiers |= getVisibilityAccessFlag(propertyDescriptor);
             }
-            else if (hasPublicFieldAnnotation && !isDelegate) {
-                modifiers |= ACC_PUBLIC;
+            else if (hasJvmFieldAnnotation && !isDelegate) {
+                modifiers |= getDefaultVisibilityFlag(propertyDescriptor.getVisibility());
             }
             else {
                 modifiers |= getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
@@ -330,15 +331,11 @@ public class PropertyCodegen {
         else if (takeVisibilityFromDescriptor) {
             modifiers |= getVisibilityAccessFlag(propertyDescriptor);
         }
-        else if (!isDelegate && hasPublicFieldAnnotation) {
-            modifiers |= ACC_PUBLIC;
+        else if (!isDelegate && hasJvmFieldAnnotation) {
+            modifiers |= getDefaultVisibilityFlag(propertyDescriptor.getVisibility());
         }
         else if (kind != OwnerKind.PACKAGE || isDelegate) {
             modifiers |= ACC_PRIVATE;
-        }
-
-        if (propertyDescriptor.getVisibility() == Visibilities.INTERNAL) {
-            modifiers |= ACC_SYNTHETIC;
         }
 
         if (AsmUtil.isPropertyWithBackingFieldCopyInOuterClass(propertyDescriptor)) {

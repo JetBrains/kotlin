@@ -32,5 +32,5 @@ fun testFunctionDefaultArgument() {
 
 open class Foo(i: Int) {}
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()
 fun bar() {}

@@ -21,20 +21,20 @@ interface T1 {}
 
 interface T2<T> {}
 
-interface Test<!CONSTRUCTOR_IN_TRAIT!>()<!> {
+interface Test<!CONSTRUCTOR_IN_INTERFACE!>()<!> {
 }
 
-interface Test1 : <!TRAIT_WITH_SUPERCLASS!>C2<!><!SUPERTYPE_INITIALIZED_IN_TRAIT!>()<!> {}
+interface Test1 : <!INTERFACE_WITH_SUPERCLASS!>C2<!><!SUPERTYPE_INITIALIZED_IN_INTERFACE!>()<!> {}
 
-interface Test2 : <!TRAIT_WITH_SUPERCLASS!>C2<!> {}
+interface Test2 : <!INTERFACE_WITH_SUPERCLASS!>C2<!> {}
 
-interface Test3 : <!TRAIT_WITH_SUPERCLASS!>C2<!>, <!MANY_CLASSES_IN_SUPERTYPE_LIST!>C3<!> {}
+interface Test3 : <!INTERFACE_WITH_SUPERCLASS!>C2<!>, <!MANY_CLASSES_IN_SUPERTYPE_LIST!>C3<!> {}
 
 interface Test4 : T1 {}
 
 interface Test5 : T1, <!SUPERTYPE_APPEARS_TWICE!>T1<!> {}
 
-interface Test6 : <!TRAIT_WITH_SUPERCLASS, FINAL_SUPERTYPE!>C1<!> {}
+interface Test6 : <!INTERFACE_WITH_SUPERCLASS, FINAL_SUPERTYPE!>C1<!> {}
 
 class CTest1() : OC1() {}
 

@@ -4,10 +4,6 @@ package test
     public constructor C()
 }
 
-@test.Primitives(boolean = true, byte = 7.toByte(), char = \u0025 ('%'), double = -3.14.toDouble(), float = 2.72.toFloat(), int = 239017, long = 123456789123456789.toLong(), short = 239.toShort()) public final class D {
-    public constructor D()
-}
-
 @kotlin.annotation.annotation() public final class Primitives : kotlin.Annotation {
     public constructor Primitives(/*0*/ byte: kotlin.Byte, /*1*/ char: kotlin.Char, /*2*/ short: kotlin.Short, /*3*/ int: kotlin.Int, /*4*/ long: kotlin.Long, /*5*/ float: kotlin.Float, /*6*/ double: kotlin.Double, /*7*/ boolean: kotlin.Boolean)
     public final val boolean: kotlin.Boolean

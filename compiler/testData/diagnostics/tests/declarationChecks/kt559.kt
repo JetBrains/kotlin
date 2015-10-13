@@ -14,13 +14,13 @@ abstract class D(): A() {
     override val i : Int = 34
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class C<!>() : D() {
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class C<!>() : D() {
     fun test() {
         super.i
     }
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class B<!>() : A() {
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class B<!>() : A() {
     override fun foo(): Int {
         super.<!ABSTRACT_SUPER_CALL!>i<!>
 

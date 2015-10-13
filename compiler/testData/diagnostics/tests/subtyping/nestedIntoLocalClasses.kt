@@ -6,14 +6,14 @@ fun <T> run(f: () -> T): T {
     return f()
 }
 
-fun foo(a: Int) = run {
+private fun foo(a: Int) = run {
     object {
         inner class A
         fun foo() = A()
     }.foo()
 }
 
-fun foo() = run {
+private fun foo() = run {
     object {
         inner class A
         fun foo() = A()

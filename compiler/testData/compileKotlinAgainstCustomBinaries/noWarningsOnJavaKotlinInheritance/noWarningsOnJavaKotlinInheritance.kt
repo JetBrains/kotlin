@@ -11,4 +11,8 @@ interface KotlinTrait {
     public fun foo(someOtherName: Int) {}
 }
 
-class BothTraitsSubclass : JavaInterface, KotlinTrait
+class BothTraitsSubclass : JavaInterface, KotlinTrait {
+    override fun foo(someOtherName: Int) {
+        super.foo(someOtherName)
+    }
+}

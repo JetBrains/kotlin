@@ -57,7 +57,7 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
 
         if (targetElement !is PsiNamedElement || targetElement !is JetElement) return null
 
-        val name = (targetElement : PsiNamedElement).getName()
+        val name = (targetElement as PsiNamedElement).getName()
 
         return when(location) {
             is UsageViewLongNameLocation ->

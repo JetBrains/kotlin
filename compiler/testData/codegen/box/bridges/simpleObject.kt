@@ -11,11 +11,13 @@ fun box(): String {
     val z = object : A<String>() {
         override fun foo(t: String) = "z"
     }
+    val az: A<String> = Z
+    val a: A<String> = z
     return when {
-        Z.foo("")               != "Z" -> "Fail #1"
-        z.foo("")               != "z" -> "Fail #2"
-        (Z : A<String>).foo("") != "Z" -> "Fail #3"
-        (z : A<String>).foo("") != "z" -> "Fail #4"
+        Z.foo("") != "Z" -> "Fail #1"
+        z.foo("") != "z" -> "Fail #2"
+        az.foo("") != "Z" -> "Fail #3"
+        a.foo("") != "z" -> "Fail #4"
         else -> "OK"
     }
 }

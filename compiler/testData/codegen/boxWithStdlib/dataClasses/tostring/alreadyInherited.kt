@@ -1,8 +1,8 @@
-interface SuperTrait {
+abstract class SuperTrait {
   override fun toString(): String = "!"
 }
 
-data class A(val x: Int): SuperTrait {
+data class A(val x: Int): SuperTrait() {
 }
 
 fun box(): String {

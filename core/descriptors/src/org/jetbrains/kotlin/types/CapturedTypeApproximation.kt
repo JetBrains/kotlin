@@ -53,7 +53,7 @@ private fun TypeArgument.toTypeProjection(): TypeProjection {
 }
 
 private fun TypeProjection.toTypeArgument(typeParameter: TypeParameterDescriptor) =
-        when (TypeSubstitutor.combine(typeParameter.getVariance(), getProjectionKind()) : Variance) {
+        when (TypeSubstitutor.combine(typeParameter.getVariance(), getProjectionKind())) {
             Variance.INVARIANT -> TypeArgument(typeParameter, getType(), getType())
             Variance.IN_VARIANCE -> TypeArgument(typeParameter, getType(), typeParameter.builtIns.nullableAnyType)
             Variance.OUT_VARIANCE -> TypeArgument(typeParameter, typeParameter.builtIns.nothingType, type)

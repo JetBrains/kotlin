@@ -110,10 +110,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         assertType("1.0", builtIns.getDoubleType());
         assertType("1.0.toDouble()", builtIns.getDoubleType());
-        assertType("0x1.fffffffffffffp1023", builtIns.getDoubleType());
 
         assertType("1.0.toFloat()", builtIns.getFloatType());
-        assertType("0x1.fffffffffffffp1023.toFloat()", builtIns.getFloatType());
 
         assertType("true", builtIns.getBooleanType());
         assertType("false", builtIns.getBooleanType());
@@ -403,7 +401,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("Props<out Int>().p", "Int");
         assertType("Props<Properties>().p.p", "Int");
 
-        assertType("(return : Props<in Int>).p", "Any?");
+        assertType("(return as Props<in Int>).p", "Any?");
     }
 
     public void testOverloads() throws Exception {
@@ -444,18 +442,18 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("'1'.minus(1)", "Char");
         assertType("'1'.minus('1')", "Int");
 
-        assertType("(1:Short).plus(1.toDouble())", "Double");
-        assertType("(1:Short).plus(1.toFloat())", "Float");
-        assertType("(1:Short).plus(1.toLong())", "Long");
-        assertType("(1:Short).plus(1)", "Int");
-        assertType("(1:Short).plus(1:Short)", "Int");
+        assertType("(1.toShort()).plus(1.toDouble())", "Double");
+        assertType("(1.toShort()).plus(1.toFloat())", "Float");
+        assertType("(1.toShort()).plus(1.toLong())", "Long");
+        assertType("(1.toShort()).plus(1)", "Int");
+        assertType("(1.toShort()).plus(1.toShort())", "Int");
 
-        assertType("(1:Byte).plus(1.toDouble())", "Double");
-        assertType("(1:Byte).plus(1.toFloat())", "Float");
-        assertType("(1:Byte).plus(1.toLong())", "Long");
-        assertType("(1:Byte).plus(1)", "Int");
-        assertType("(1:Byte).plus(1:Short)", "Int");
-        assertType("(1:Byte).plus(1:Byte)", "Int");
+        assertType("(1.toByte()).plus(1.toDouble())", "Double");
+        assertType("(1.toByte()).plus(1.toFloat())", "Float");
+        assertType("(1.toByte()).plus(1.toLong())", "Long");
+        assertType("(1.toByte()).plus(1)", "Int");
+        assertType("(1.toByte()).plus(1.toShort())", "Int");
+        assertType("(1.toByte()).plus(1.toByte())", "Int");
 
         assertType("\"1\".plus(1.toDouble())", "String");
         assertType("\"1\".plus(1.toFloat())", "String");

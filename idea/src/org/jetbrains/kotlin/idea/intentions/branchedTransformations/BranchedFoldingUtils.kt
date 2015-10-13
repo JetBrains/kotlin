@@ -26,7 +26,7 @@ object BranchedFoldingUtils {
         fun checkAssignment(expression: JetBinaryExpression): Boolean {
             if (expression.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return false
 
-            val left = expression.getLeft() as? JetSimpleNameExpression ?: return false
+            val left = expression.getLeft() as? JetNameReferenceExpression ?: return false
             if (expression.getRight() == null) return false
 
             val parent = expression.getParent()

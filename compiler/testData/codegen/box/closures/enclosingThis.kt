@@ -4,7 +4,7 @@ class Point(val x:Int, val y:Int) {
     }
 }
 
-val m = Point(2, 3).mul() :  (scalar:Int)->Point
+val m = Point(2, 3).mul()
 
 fun box() : String {
     val answer = m(5)

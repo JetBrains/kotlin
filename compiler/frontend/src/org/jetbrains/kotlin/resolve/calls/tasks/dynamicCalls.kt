@@ -104,7 +104,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
                 dynamicType,
                 createTypeParameters(propertyDescriptor, call),
                 createDynamicDispatchReceiverParameter(propertyDescriptor),
-                null: JetType?
+                null as JetType?
         )
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
@@ -186,7 +186,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
             val varargElementType: JetType?
             var hasSpreadOperator = false
 
-            val argExpression = JetPsiUtil.deparenthesize(arg.getArgumentExpression(), false)
+            val argExpression = JetPsiUtil.deparenthesize(arg.getArgumentExpression())
 
             when {
                 argExpression is JetFunctionLiteralExpression -> {

@@ -40,6 +40,4 @@ public interface Range<T : Comparable<T>> {
      * Checks if the range is empty.
      */
     public fun isEmpty(): Boolean = start > end
-
-    override fun toString(): String = "$start..$end"
 }

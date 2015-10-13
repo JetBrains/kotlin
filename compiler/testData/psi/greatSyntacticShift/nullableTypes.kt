@@ -1,6 +1,5 @@
 fun test() {
     x as? X ?: return
-    x as? X? : return
     x as X? ?: return
 
     X?::x

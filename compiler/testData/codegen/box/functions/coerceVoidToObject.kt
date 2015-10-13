@@ -1,6 +1,6 @@
 fun a(): String? = null
 
-fun b() = throw Exception()
+fun b(): Nothing = throw Exception()
 
 fun foo(): String = a() ?: b()
 

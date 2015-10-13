@@ -5,7 +5,7 @@ interface T3
 open class OC1: T1
 open class OC2: OC1(), T2
 class FC1: OC2(), T3
-interface T4: <!TRAIT_WITH_SUPERCLASS!>OC1<!>
+interface T4: <!INTERFACE_WITH_SUPERCLASS!>OC1<!>
 interface T5: T2
 
 fun test<TP1: OC1, TP2: T2, TP3: OC2>(

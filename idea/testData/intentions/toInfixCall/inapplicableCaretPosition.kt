@@ -1,4 +1,6 @@
 // IS_APPLICABLE: false
-fun foo(x: Int) {
-    x.times(<caret>1)
+fun String.xxx(p: Int): Int = 0
+
+fun foo(x: String) {
+    x.xxx(<caret>1)
 }

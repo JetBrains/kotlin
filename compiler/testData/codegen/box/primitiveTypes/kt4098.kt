@@ -1,5 +1,5 @@
 fun box(): String {
-    val c = '0': Char?
+    val c: Char? = '0'
     c!!.toInt()
 
     "123456"?.get(0)!!.toInt()

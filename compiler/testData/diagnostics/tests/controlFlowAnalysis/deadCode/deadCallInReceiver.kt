@@ -8,4 +8,4 @@ fun test12() {
     todo()<!UNNECESSARY_SAFE_CALL!>?.<!><!UNREACHABLE_CODE!>bar(1)<!>
 }
 
-fun todo() = throw Exception()
+fun todo(): Nothing = throw Exception()

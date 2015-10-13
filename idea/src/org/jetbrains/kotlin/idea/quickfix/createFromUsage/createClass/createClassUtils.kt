@@ -52,7 +52,7 @@ internal fun getTargetParentByQualifier(
         isQualified: Boolean,
         qualifierDescriptor: DeclarationDescriptor?): PsiElement? {
     val project = file.getProject()
-    val targetParent = when {
+    val targetParent: PsiElement = when {
         !isQualified ->
             file
         qualifierDescriptor is ClassDescriptor ->
@@ -61,7 +61,7 @@ internal fun getTargetParentByQualifier(
             if (qualifierDescriptor.fqName != file.getPackageFqName()) {
                 JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.fqName.asString())
             }
-            else file : PsiElement
+            else file as PsiElement
         else ->
             null
     } ?: return null
@@ -112,11 +112,12 @@ internal fun JetSimpleNameExpression.getCreatePackageFixIfApplicable(targetParen
     val name = getReferencedName()
     if (!name.checkPackageName()) return null
 
-    val basePackage: PsiPackage = when (targetParent) {
+    val basePackage: PsiPackage? = when (targetParent) {
                                       is JetFile -> JavaPsiFacade.getInstance(targetParent.getProject()).findPackage(targetParent.getPackageFqName().asString())
-                                      is PsiPackage -> targetParent : PsiPackage
+                                      is PsiPackage -> targetParent
                                       else -> null
-                                  } ?: return null
+                                  }
+    if (basePackage == null) return null
 
     val baseName = basePackage.getQualifiedName()
     val fullName = if (baseName.isNotEmpty()) "$baseName.$name" else name

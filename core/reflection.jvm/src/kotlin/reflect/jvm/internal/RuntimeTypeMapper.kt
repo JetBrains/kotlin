@@ -18,14 +18,18 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.reflect.*
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -41,6 +45,7 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Member
 import java.lang.reflect.Method
+import kotlin.jvm.internal.KotlinClass
 import kotlin.reflect.KotlinReflectionInternalError
 
 internal sealed class JvmFunctionSignature {
@@ -107,7 +112,20 @@ internal sealed class JvmPropertySignature {
                 val (name, desc) =
                         JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver) ?:
                                 throw KotlinReflectionInternalError("No field signature for property: $descriptor")
-                string = JvmAbi.getterName(name) + "()" + desc
+
+                val moduleSuffix =
+                        if (descriptor.visibility == Visibilities.INTERNAL &&
+                            descriptor.containingDeclaration is ClassDescriptor) {
+                            val containingDeclaration = descriptor.containingDeclaration as ClassDescriptor
+                            val sourceElement = containingDeclaration.source as KotlinJvmBinarySourceElement
+                            val klass = (sourceElement.binaryClass as ReflectKotlinClass).klass
+                            val moduleName = klass.getAnnotation(KotlinClass::class.java).moduleName
+                            "$" + JvmAbi.sanitizeAsJavaIdentifier(moduleName)
+                        }
+                        else {
+                            ""
+                        }
+                string = JvmAbi.getterName(name) + moduleSuffix + "()" + desc
             }
         }
 
