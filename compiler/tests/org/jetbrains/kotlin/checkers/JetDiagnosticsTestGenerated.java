@@ -5826,6 +5826,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("protectedInProtected.kt")
+            public void testProtectedInProtected() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/protectedInProtected.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("protectedJava.kt")
             public void testProtectedJava() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/protectedJava.kt");
