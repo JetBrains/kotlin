@@ -137,6 +137,12 @@ object BuiltinSpecialMethods {
     val REMOVE_AT_FQ_NAME = FqName("kotlin.MutableList.removeAt")
 
     val FQ_NAMES_TO_JVM_MAP: Map<FqName, Name> = mapOf(
+            FqName("kotlin.Number.toByte")    to Name.identifier("byteValue"),
+            FqName("kotlin.Number.toShort")   to Name.identifier("shortValue"),
+            FqName("kotlin.Number.toInt")     to Name.identifier("intValue"),
+            FqName("kotlin.Number.toLong")    to Name.identifier("longValue"),
+            FqName("kotlin.Number.toFloat")   to Name.identifier("floatValue"),
+            FqName("kotlin.Number.toDouble")  to Name.identifier("doubleValue"),
             REMOVE_AT_FQ_NAME                 to Name.identifier("remove"),
             FqName("kotlin.CharSequence.get") to Name.identifier("charAt")
     )
