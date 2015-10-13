@@ -143,6 +143,21 @@ public class VolatileAnnotationChecker : DeclarationChecker {
     }
 }
 
+public class SynchronizedAnnotationChecker : DeclarationChecker {
+
+    override fun check(declaration: JetDeclaration,
+                       descriptor: DeclarationDescriptor,
+                       diagnosticHolder: DiagnosticSink,
+                       bindingContext: BindingContext
+    ) {
+        val synchronizedAnnotation = DescriptorUtils.getSynchronizedAnnotation(descriptor)
+        if (synchronizedAnnotation != null && descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
+            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(synchronizedAnnotation) ?: return
+            diagnosticHolder.report(ErrorsJvm.SYNCHRONIZED_ON_ABSTRACT.on(annotationEntry))
+        }
+    }
+}
+
 public class OverloadsAnnotationChecker: DeclarationChecker {
     override fun check(
             declaration: JetDeclaration,
