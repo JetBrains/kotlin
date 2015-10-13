@@ -51,9 +51,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
+import org.jetbrains.kotlin.utils.identity
+import java.util.*
 
 /**
  * Generates a definition of a single class.
@@ -243,7 +242,7 @@ public class ClassTranslator private constructor(
     private fun generateOtherBridges(properties: MutableList<JsPropertyInitializer>) {
         for (memberDescriptor in descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             if (memberDescriptor is FunctionDescriptor) {
-                val bridgesToGenerate = generateBridgesForFunctionDescriptor<FunctionDescriptor>(memberDescriptor, ID)
+                val bridgesToGenerate = generateBridgesForFunctionDescriptor(memberDescriptor, identity())
 
                 for (bridge in bridgesToGenerate) {
                     generateBridge(bridge, properties)

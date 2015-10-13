@@ -16,20 +16,23 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
-import com.google.common.collect.ImmutableSet
-import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
+import com.google.dart.compiler.backend.js.ast.JsExpression
+import com.google.dart.compiler.backend.js.ast.JsNumberLiteral
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable
-import org.jetbrains.kotlin.js.translate.utils.ID
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.charToInt
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.compareForObject
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.invokeMethod
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.longFromInt
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.utils.identity as ID
 
 public object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
 
@@ -63,11 +66,11 @@ public object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
-    private val INTEGER_COMPARE_TO_LONG = CompareToBinaryIntrinsic( { longFromInt(it) }, ID)
-    private val CHAR_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( { longFromInt(charToInt(it)) }, ID)
-    private val LONG_COMPARE_TO_INTEGER  = CompareToBinaryIntrinsic( ID, { longFromInt(it) })
-    private val LONG_COMPARE_TO_CHAR  = CompareToBinaryIntrinsic( ID, { longFromInt(charToInt(it)) })
-    private val LONG_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( ID, ID )
+    private val INTEGER_COMPARE_TO_LONG = CompareToBinaryIntrinsic( { longFromInt(it) }, ID())
+    private val CHAR_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( { longFromInt(charToInt(it)) }, ID())
+    private val LONG_COMPARE_TO_INTEGER  = CompareToBinaryIntrinsic( ID(), { longFromInt(it) })
+    private val LONG_COMPARE_TO_CHAR  = CompareToBinaryIntrinsic( ID(), { longFromInt(charToInt(it)) })
+    private val LONG_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( ID(), ID() )
 
     override public fun getSupportTokens() = OperatorConventions.COMPARISON_OPERATIONS
 

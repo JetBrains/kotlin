@@ -16,19 +16,13 @@
 
 package org.jetbrains.kotlin.js.translate.utils
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsInvocation
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.JsParameter
-import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer
+import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-
-public val <T> ID: (T) -> T = { it }
 
 public fun generateDelegateCall(
         fromDescriptor: FunctionDescriptor,
