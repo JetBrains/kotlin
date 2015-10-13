@@ -435,7 +435,7 @@ public class JetParsing extends AbstractJetParsing {
      */
     boolean parseModifierList(
             @NotNull AnnotationParsingMode annotationParsingMode,
-            @Nullable TokenSet noModifiersBefore
+            @NotNull TokenSet noModifiersBefore
     ) {
         return parseModifierList(null, annotationParsingMode, noModifiersBefore);
     }
@@ -448,7 +448,7 @@ public class JetParsing extends AbstractJetParsing {
     boolean parseModifierList(
             @Nullable Consumer<IElementType> tokenConsumer,
             @NotNull AnnotationParsingMode annotationParsingMode,
-            @Nullable TokenSet noModifiersBefore
+            @NotNull TokenSet noModifiersBefore
     ) {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
@@ -477,12 +477,12 @@ public class JetParsing extends AbstractJetParsing {
         return !empty;
     }
 
-    private boolean tryParseModifier(@Nullable Consumer<IElementType> tokenConsumer, @Nullable TokenSet noModifiersBefore) {
+    private boolean tryParseModifier(@Nullable Consumer<IElementType> tokenConsumer, @NotNull TokenSet noModifiersBefore) {
         PsiBuilder.Marker marker = mark();
 
         if (atSet(MODIFIER_KEYWORDS)) {
             IElementType lookahead = lookahead(1);
-            if (noModifiersBefore == null || lookahead != null && !noModifiersBefore.contains(lookahead)) {
+            if (lookahead != null && !noModifiersBefore.contains(lookahead)) {
                 IElementType tt = tt();
                 if (tokenConsumer != null) {
                     tokenConsumer.consume(tt);
