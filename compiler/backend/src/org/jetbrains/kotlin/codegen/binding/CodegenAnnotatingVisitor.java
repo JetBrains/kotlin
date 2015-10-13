@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
-import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
+import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.Name;
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.source.SourcePackage;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -99,7 +99,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                 Name.special("<closure-" + simpleName + ">"),
                 Modality.FINAL,
                 supertypes,
-                SourcePackage.toSourceElement(element)
+                KotlinSourceElementKt.toSourceElement(element)
         );
         classDescriptor.initialize(JetScope.Empty.INSTANCE$, Collections.<ConstructorDescriptor>emptySet(), null);
 
@@ -288,7 +288,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @Override
     public void visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression) {
-        ResolvedCall<?> referencedFunction = CallUtilPackage.getResolvedCall(expression.getCallableReference(), bindingContext);
+        ResolvedCall<?> referencedFunction = CallUtilKt.getResolvedCall(expression.getCallableReference(), bindingContext);
         if (referencedFunction == null) return;
         CallableDescriptor target = referencedFunction.getResultingDescriptor();
 
@@ -392,7 +392,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         else if (containingDeclaration instanceof PackageFragmentDescriptor) {
             JetFile containingFile = DescriptorToSourceUtils.getContainingFile(descriptor);
             assert containingFile != null : "File not found for " + descriptor;
-            return FileClassesPackage.getFileClassInternalName(fileClassesProvider, containingFile) + '$' + name;
+            return FileClasses.getFileClassInternalName(fileClassesProvider, containingFile) + '$' + name;
         }
 
         return null;
@@ -405,7 +405,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     private void checkSamCall(@NotNull JetCallElement expression) {
-        ResolvedCall<?> call = CallUtilPackage.getResolvedCall(expression, bindingContext);
+        ResolvedCall<?> call = CallUtilKt.getResolvedCall(expression, bindingContext);
         if (call == null) return;
 
         CallableDescriptor descriptor = call.getResultingDescriptor();
@@ -573,7 +573,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             }
         }
 
-        return FileClassesPackage.getFacadeClassInternalName(fileClassesProvider, file);
+        return FileClasses.getFacadeClassInternalName(fileClassesProvider, file);
     }
 
     private static <T> T peekFromStack(@NotNull Stack<T> stack) {

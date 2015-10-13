@@ -34,11 +34,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunction;
-import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilPackage;
+import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -172,7 +171,7 @@ public class JvmCodegenUtil {
 
     private static boolean isDebuggerContext(@NotNull MethodContext context) {
         JetFile file = DescriptorToSourceUtils.getContainingFile(context.getContextDescriptor());
-        return file != null && CodeFragmentUtilPackage.getSuppressDiagnosticsInDebugMode(file);
+        return file != null && CodeFragmentUtilKt.getSuppressDiagnosticsInDebugMode(file);
     }
 
     @Nullable

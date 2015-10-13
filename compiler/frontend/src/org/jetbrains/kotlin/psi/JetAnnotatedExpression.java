@@ -20,10 +20,8 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class JetAnnotatedExpression extends JetExpressionImpl implements JetAnnotated, JetAnnotationsContainer {
@@ -50,6 +48,6 @@ public class JetAnnotatedExpression extends JetExpressionImpl implements JetAnno
     @Override
     @NotNull
     public List<JetAnnotationEntry> getAnnotationEntries() {
-        return PsiUtilPackage.collectAnnotationEntriesFromStubOrPsi(this);
+        return JetPsiUtilKt.collectAnnotationEntriesFromStubOrPsi(this);
     }
 }

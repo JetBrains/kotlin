@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.FunctionAnalyzerExtension;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
 import java.util.List;
 
@@ -79,7 +79,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
     ) {
         List<JetParameter> jetParameters = function.getValueParameters();
         for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
-            if (DescriptorUtilPackage.hasDefaultValue(parameter)) {
+            if (DescriptorUtilsKt.hasDefaultValue(parameter)) {
                 JetParameter jetParameter = jetParameters.get(parameter.getIndex());
                 //report not supported default only on inlinable lambda and on parameter with inherited default (there is some problems to inline it)
                 if (checkInlinableParameter(parameter, jetParameter, functionDescriptor, null) || !parameter.declaresDefaultValue()) {

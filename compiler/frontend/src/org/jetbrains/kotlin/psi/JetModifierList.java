@@ -22,7 +22,7 @@ import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -50,7 +50,7 @@ public abstract class JetModifierList extends JetElementImplStub<KotlinModifierL
 
     @NotNull
     public List<JetAnnotationEntry> getAnnotationEntries() {
-        return PsiUtilPackage.collectAnnotationEntriesFromStubOrPsi(this);
+        return JetPsiUtilKt.collectAnnotationEntriesFromStubOrPsi(this);
     }
 
     public boolean hasModifier(@NotNull JetModifierKeywordToken tokenType) {

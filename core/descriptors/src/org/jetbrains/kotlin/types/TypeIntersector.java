@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.resolve.calls.inference.InferencePackage.registerTypeVariables;
+import static org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImplKt.registerTypeVariables;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL;
 
 public class TypeIntersector {
@@ -114,7 +114,7 @@ public class TypeIntersector {
             // in that case, we can safely select the best representative out of that set and return it
             // TODO: maybe return the most specific among the types that are subtypes to all others in the `nullabilityStripped`?
             // TODO: e.g. among {Int, Int?, Int!}, return `Int` (now it returns `Int!`).
-            JetType bestRepresentative = TypesPackage.singleBestRepresentative(nullabilityStripped);
+            JetType bestRepresentative = FlexibleTypesKt.singleBestRepresentative(nullabilityStripped);
             if (bestRepresentative == null) {
                 throw new AssertionError("Empty intersection for types " + types);
             }
@@ -183,7 +183,7 @@ public class TypeIntersector {
                     }
                     parameters.put(parameterUsage.typeParameterDescriptor,
                                    parameterUsage.howTheTypeParameterIsUsed.superpose(howTheTypeIsUsedBefore));
-                    return Unit.INSTANCE$;
+                    return Unit.INSTANCE;
                 }
             };
             processAllTypeParameters(withParameters, Variance.INVARIANT, processor);

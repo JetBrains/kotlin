@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.Box;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -330,7 +330,7 @@ public class BodyResolver {
                     // Recording type info for callee to use later in JetObjectLiteralExpression
                     trace.record(PROCESSED, call.getCalleeExpression(), true);
                     trace.record(EXPRESSION_TYPE_INFO, call.getCalleeExpression(),
-                                 TypeInfoFactoryPackage.noTypeInfo(results.getResultingCall().getDataFlowInfoForArguments().getResultInfo()));
+                                 TypeInfoFactoryKt.noTypeInfo(results.getResultingCall().getDataFlowInfoForArguments().getResultInfo()));
                 }
                 else {
                     recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
@@ -450,7 +450,7 @@ public class BodyResolver {
                         addSupertype = false;
                     }
                     else if (supertypeOwner.getKind() == ClassKind.INTERFACE &&
-                             !classAppeared && !TypesPackage.isDynamic(supertype) /* avoid duplicate diagnostics */) {
+                             !classAppeared && !DynamicTypesKt.isDynamic(supertype) /* avoid duplicate diagnostics */) {
                         trace.report(INTERFACE_WITH_SUPERCLASS.on(typeReference));
                         addSupertype = false;
                     }
@@ -744,7 +744,7 @@ public class BodyResolver {
             JetNamedFunction declaration = entry.getKey();
 
             LexicalScope scope = c.getDeclaringScope(declaration);
-            assert scope != null : "Scope is null: " + PsiUtilPackage.getElementTextWithContext(declaration);
+            assert scope != null : "Scope is null: " + PsiUtilsKt.getElementTextWithContext(declaration);
 
             if (!c.getTopDownAnalysisMode().isLocalDeclarations() && !(bodyResolveCache instanceof BodyResolveCache.ThrowException) &&
                 expressionTypingServices.getStatementFilter() != StatementFilter.NONE) {

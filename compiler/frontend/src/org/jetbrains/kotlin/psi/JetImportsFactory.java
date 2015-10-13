@@ -45,7 +45,7 @@ public class JetImportsFactory {
             return directive;
         }
 
-        JetImportDirective createdDirective = JetPsiFactory(project).createImportDirective(importPath);
+        JetImportDirective createdDirective = JetPsiFactoryKt.JetPsiFactory(project).createImportDirective(importPath);
         importsCache.put(importPath, createdDirective);
 
         return createdDirective;

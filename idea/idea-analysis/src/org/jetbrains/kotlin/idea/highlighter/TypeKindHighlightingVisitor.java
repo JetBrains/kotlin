@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetDynamicType;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 import org.jetbrains.kotlin.psi.JetTypeParameter;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
@@ -58,7 +58,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     private void highlightAnnotation(@NotNull JetSimpleNameExpression expression) {
-        TextRange toHighlight = PsiUtilPackage.getCalleeHighlightingRange(expression);
+        TextRange toHighlight = JetPsiUtilKt.getCalleeHighlightingRange(expression);
         JetPsiChecker.highlightName(holder, toHighlight, JetHighlightingColors.ANNOTATION);
     }
 

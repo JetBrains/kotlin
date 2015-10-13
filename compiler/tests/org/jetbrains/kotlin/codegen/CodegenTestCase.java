@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.tree.ClassNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
@@ -55,7 +56,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
 import static org.jetbrains.kotlin.test.JetTestUtils.compilerConfigurationForTests;
@@ -176,7 +176,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     @NotNull
     private URL[] getClassPathURLs() {
         List<URL> urls = Lists.newArrayList();
-        for (File file : getJvmClasspathRoots(myEnvironment.getConfiguration())) {
+        for (File file : JvmContentRootsKt.getJvmClasspathRoots(myEnvironment.getConfiguration())) {
             try {
                 urls.add(file.toURI().toURL());
             }
@@ -261,7 +261,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     private static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader) {
         boolean noErrors = true;
-        for (OutputFile file : CodegenPackage.getClassFiles(factory)) {
+        for (OutputFile file : ClassFileUtilsKt.getClassFiles(factory)) {
             noErrors &= verifyWithAsm(file, loader);
         }
         return noErrors;
@@ -324,7 +324,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             return (Class<? extends Annotation>) initializedClassLoader.loadClass(fqName);
         }
         catch (ClassNotFoundException e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 }

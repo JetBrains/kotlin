@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.annotations.*;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -68,7 +67,7 @@ public class AnnotationResolver {
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.storageManager = storageManager;
 
-        modifiersAnnotations = AnnotationsPackage.buildMigrationAnnotationDescriptors(kotlinBuiltIns);
+        modifiersAnnotations = AnnotationUtilKt.buildMigrationAnnotationDescriptors(kotlinBuiltIns);
     }
 
 

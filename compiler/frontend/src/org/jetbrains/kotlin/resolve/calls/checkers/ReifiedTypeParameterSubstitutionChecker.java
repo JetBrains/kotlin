@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.Map;
 
@@ -49,7 +49,7 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
                             Errors.TYPE_PARAMETER_AS_REIFIED.on(getCallElement(context), parameter)
                     );
                 }
-                else if (TypeUtilPackage.cannotBeReified(argument)) {
+                else if (TypeUtilsKt.cannotBeReified(argument)) {
                     context.trace.report(Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION.on(getCallElement(context), argument));
                 }
             }

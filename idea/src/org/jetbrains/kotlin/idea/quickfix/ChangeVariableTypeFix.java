@@ -82,7 +82,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetPsiFactory psiFactory = JetPsiFactory(file);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
 
         PsiElement nameIdentifier = element.getNameIdentifier();
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";

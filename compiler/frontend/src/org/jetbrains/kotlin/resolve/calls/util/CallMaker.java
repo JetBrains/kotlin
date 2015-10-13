@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.Call.CallType;
-import org.jetbrains.kotlin.psi.debugText.DebugTextPackage;
+import org.jetbrains.kotlin.psi.debugText.DebugTextUtilKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.ArrayList;
@@ -326,7 +326,7 @@ public class CallMaker {
 
             @Override
             public String toString() {
-                return DebugTextPackage.getDebugText(callElement);
+                return DebugTextUtilKt.getDebugText(callElement);
             }
 
             @NotNull

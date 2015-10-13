@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
@@ -51,7 +52,7 @@ public abstract class JetCallableParameterTableModel extends ParameterTableModel
         if (parameterInfo == null) {
             parameterInfo = new JetParameterInfo(methodDescriptor.getBaseDescriptor(), -1, "", null, null, null, JetValVar.None, null);
         }
-        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(project);
         PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(parameterInfo.getTypeText(), myTypeContext);
         JetExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
         PsiCodeFragment defaultValueCodeFragment = psiFactory.createExpressionCodeFragment(

@@ -32,7 +32,7 @@ import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.AsJavaPackage;
+import org.jetbrains.kotlin.asJava.DuplicateJvmSignatureUtilKt;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.psi.JetDeclaration;
@@ -400,8 +400,8 @@ public abstract class BaseDiagnosticsTest extends
             Set<Diagnostic> jvmSignatureDiagnostics = new HashSet<Diagnostic>();
             Collection<JetDeclaration> declarations = PsiTreeUtil.findChildrenOfType(jetFile, JetDeclaration.class);
             for (JetDeclaration declaration : declarations) {
-                Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(declaration, bindingContext.getDiagnostics(),
-                                                                                   GlobalSearchScope.allScope(getProject()));
+                Diagnostics diagnostics = DuplicateJvmSignatureUtilKt.getJvmSignatureDiagnostics(declaration, bindingContext.getDiagnostics(),
+                                                                                                 GlobalSearchScope.allScope(getProject()));
                 if (diagnostics == null) continue;
                 jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration));
             }

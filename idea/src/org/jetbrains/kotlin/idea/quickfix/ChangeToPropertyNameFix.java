@@ -56,7 +56,8 @@ public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExp
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetSimpleNameExpression propertyName = (JetSimpleNameExpression) JetPsiFactory(file).createExpression(getPropertyName());
+        JetSimpleNameExpression propertyName = (JetSimpleNameExpression) JetPsiFactoryKt
+                .JetPsiFactory(file).createExpression(getPropertyName());
         element.replace(propertyName);
     }
 

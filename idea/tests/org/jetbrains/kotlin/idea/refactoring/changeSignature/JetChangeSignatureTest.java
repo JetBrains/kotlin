@@ -37,11 +37,11 @@ import kotlin.CollectionsKt;
 import kotlin.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.AsJavaPackage;
+import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.Visibilities;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinMethodNode;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
+import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -106,7 +106,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
             getChangeInfo();
         }
         catch (CommonRefactoringUtil.RefactoringErrorHintException e) {
-            assertEquals(JetRefactoringBundle.message("cannot.refactor.synthesized.function", DataClassUtilsPackage.createComponentName(1).asString()), e.getMessage());
+            assertEquals(JetRefactoringBundle.message("cannot.refactor.synthesized.function", DataClassUtilsKt.createComponentName(1).asString()), e.getMessage());
             return;
         }
         fail();
@@ -264,10 +264,10 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                     return false;
                 }
             };
-            BindingContext context = ResolvePackage.analyze(method, BodyResolveMode.FULL);
+            BindingContext context = ResolutionUtils.analyze(method, BodyResolveMode.FULL);
 
-            ChangeSignaturePackage
-                    .runChangeSignature(getProject(), ChangeSignaturePackage.getOriginalBaseFunctionDescriptor(changeInfo), empty, context, method, "test");
+            JetChangeSignatureKt
+                    .runChangeSignature(getProject(), JetChangeInfoKt.getOriginalBaseFunctionDescriptor(changeInfo), empty, context, method, "test");
         }
         catch (RuntimeException e) {
             assertTrue(e.getMessage().startsWith("Refactoring cannot be"));
@@ -1173,7 +1173,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                                 JetTopLevelFunctionFqnNameIndex.getInstance().get("test", getProject(), GlobalSearchScope.allScope(getProject()))
                                         .iterator().next();
 
-                        return SetsKt.setOf(methodBar, AsJavaPackage.getRepresentativeLightMethod(functionTest));
+                        return SetsKt.setOf(methodBar, LightClassUtilsKt.getRepresentativeLightMethod(functionTest));
                     }
                 }
         );
@@ -1281,7 +1281,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                                                              new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
 
-        PsiMethod constructor = AsJavaPackage.getRepresentativeLightMethod(changeInfo.getMethod());
+        PsiMethod constructor = LightClassUtilsKt.getRepresentativeLightMethod(changeInfo.getMethod());
         assert constructor != null;
         changeInfo.setPrimaryPropagationTargets(findCallers(constructor));
 
@@ -1296,7 +1296,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                                                              new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
 
-        PsiMethod constructor = AsJavaPackage.getRepresentativeLightMethod(changeInfo.getMethod());
+        PsiMethod constructor = LightClassUtilsKt.getRepresentativeLightMethod(changeInfo.getMethod());
         assert constructor != null;
         changeInfo.setPrimaryPropagationTargets(findCallers(constructor));
 
@@ -1357,7 +1357,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         LinkedHashSet<PsiMethod> callers = new LinkedHashSet<PsiMethod>();
         for (int i = 0; i < rootNode.getChildCount(); i++) {
             PsiElement element = ((KotlinMethodNode) rootNode.getChildAt(i)).getMethod();
-            callers.addAll(AsJavaPackage.toLightMethods(element));
+            callers.addAll(LightClassUtilsKt.toLightMethods(element));
         }
         return callers;
     }
@@ -1398,14 +1398,14 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetElement element = (JetElement) new JetChangeSignatureHandler().findTargetMember(file, editor);
         assertNotNull("Target element is null", element);
 
-        BindingContext bindingContext = ResolvePackage.analyze(element, BodyResolveMode.FULL);
+        BindingContext bindingContext = ResolutionUtils.analyze(element, BodyResolveMode.FULL);
         PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
         assertNotNull(context);
 
         CallableDescriptor callableDescriptor = JetChangeSignatureHandler.Companion.findDescriptor(element, project, editor, bindingContext);
         assertNotNull(callableDescriptor);
 
-        return ChangeSignaturePackage.createChangeInfo(
+        return JetChangeSignatureKt.createChangeInfo(
                 project, callableDescriptor, JetChangeSignatureConfiguration.Empty.INSTANCE$, bindingContext, context
         );
     }

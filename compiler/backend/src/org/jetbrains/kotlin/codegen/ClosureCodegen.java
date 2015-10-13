@@ -38,12 +38,14 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.FunctionsKt;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -60,9 +62,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeModuleName;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
-import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -119,7 +119,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         }
         else {
             this.superInterfaceTypes = Collections.singletonList(samType.getType());
-            this.superClassType = getBuiltIns(funDescriptor).getAnyType();
+            this.superClassType = DescriptorUtilsKt.getBuiltIns(funDescriptor).getAnyType();
         }
 
         this.closure = bindingContext.get(CLOSURE, classDescriptor);
@@ -182,7 +182,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
                 typeMapper.mapSignature(funDescriptor).getAsmMethod()
         );
 
-        functionCodegen.generateMethod(OtherOrigin(element, funDescriptor), funDescriptor, strategy);
+        functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), funDescriptor, strategy);
 
         //TODO: rewrite cause ugly hack
         if (samType != null) {
@@ -207,7 +207,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         this.constructor = generateConstructor();
 
         if (isConst(closure)) {
-            generateConstInstance(asmType, asmType, UtilsPackage.<InstructionAdapter>doNothing());
+            generateConstInstance(asmType, asmType, FunctionsKt.<InstructionAdapter>doNothing());
         }
 
         genClosureFields(closure, v, typeMapper);
@@ -270,7 +270,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         if (bridge.equals(delegate)) return;
 
         MethodVisitor mv =
-                v.newMethod(OtherOrigin(element, funDescriptor), ACC_PUBLIC | ACC_BRIDGE,
+                v.newMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), ACC_PUBLIC | ACC_BRIDGE,
                             bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
@@ -284,8 +284,8 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
         Type[] myParameterTypes = bridge.getArgumentTypes();
 
-        List<ParameterDescriptor> calleeParameters = CollectionsKt.plus(
-                UtilsPackage.<ParameterDescriptor>singletonOrEmptyList(funDescriptor.getExtensionReceiverParameter()),
+        List<ParameterDescriptor> calleeParameters = CollectionsKt.<ParameterDescriptor>plus(
+                org.jetbrains.kotlin.utils.CollectionsKt.<ParameterDescriptor>singletonOrEmptyList(funDescriptor.getExtensionReceiverParameter()),
                 funDescriptor.getValueParameters()
         );
 
@@ -382,8 +382,8 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         Type[] argTypes = fieldListToTypeArray(args);
 
         Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
-        MethodVisitor mv = v.newMethod(OtherOrigin(element, funDescriptor), visibilityFlag, "<init>", constructor.getDescriptor(), null,
-                                        ArrayUtil.EMPTY_STRING_ARRAY);
+        MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), visibilityFlag, "<init>", constructor.getDescriptor(), null,
+                                       ArrayUtil.EMPTY_STRING_ARRAY);
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
@@ -463,8 +463,8 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     public static FunctionDescriptor getErasedInvokeFunction(@NotNull FunctionDescriptor elementDescriptor) {
         int arity = elementDescriptor.getValueParameters().size();
         ClassDescriptor elementClass = elementDescriptor.getExtensionReceiverParameter() == null
-                                   ? getBuiltIns(elementDescriptor).getFunction(arity)
-                                   : getBuiltIns(elementDescriptor).getExtensionFunction(arity);
+                                   ? DescriptorUtilsKt.getBuiltIns(elementDescriptor).getFunction(arity)
+                                   : DescriptorUtilsKt.getBuiltIns(elementDescriptor).getExtensionFunction(arity);
         JetScope scope = elementClass.getDefaultType().getMemberScope();
         return scope.getFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
     }

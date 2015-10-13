@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
@@ -71,7 +72,7 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
     //}
 
     private void doTest(String text, String expected) {
-        JetFile jetFile = JetPsiFactory(getProject()).createFile("fun.kt", text);
+        JetFile jetFile = JetPsiFactoryKt.JetPsiFactory(getProject()).createFile("fun.kt", text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
         Collection<FunctionDescriptor> functions =
                 module.getPackage(FqName.ROOT).getMemberScope().getFunctions(Name.identifier("f"), NoLookupLocation.FROM_TEST);

@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.parsing.JetExpressionParsing;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.kotlin.resolve.ResolvePackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 import org.jetbrains.kotlin.resolve.StatementFilter;
+import org.jetbrains.kotlin.resolve.StatementFilterKt;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.Collection;
@@ -263,12 +263,12 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetSimpleNameExpression getLastReference(@NotNull JetExpression importedReference) {
-        JetElement selector = PsiUtilPackage.getQualifiedElementSelector(importedReference);
+        JetElement selector = JetPsiUtilKt.getQualifiedElementSelector(importedReference);
         return selector instanceof JetSimpleNameExpression ? (JetSimpleNameExpression) selector : null;
     }
 
     public static boolean isSelectorInQualified(@NotNull JetSimpleNameExpression nameExpression) {
-        JetElement qualifiedElement = PsiUtilPackage.getQualifiedElement(nameExpression);
+        JetElement qualifiedElement = JetPsiUtilKt.getQualifiedElement(nameExpression);
         return qualifiedElement instanceof JetQualifiedExpression
                || ((qualifiedElement instanceof JetUserType) && ((JetUserType) qualifiedElement).getQualifier() != null);
     }
@@ -502,7 +502,7 @@ public class JetPsiUtil {
 
         if (parentExpression instanceof JetCallExpression && currentInner == ((JetCallExpression) parentExpression).getCalleeExpression()) {
             if (innerExpression instanceof JetSimpleNameExpression) return false;
-            if (PsiUtilPackage.getQualifiedExpressionForSelector(parentExpression) != null) return true;
+            if (JetPsiUtilKt.getQualifiedExpressionForSelector(parentExpression) != null) return true;
             return !(innerExpression instanceof JetThisExpression
                      || innerExpression instanceof JetArrayAccessExpression
                      || innerExpression instanceof JetConstantExpression
@@ -845,7 +845,7 @@ public class JetPsiUtil {
             // This case is a temporary hack for 'if' branches.
             // The right way to implement this logic is to interpret 'if' branches as function literals with explicitly-typed signatures
             // (no arguments and no receiver) and therefore analyze them straight away (not in the 'complete' phase).
-            JetExpression lastStatementInABlock = ResolvePackage.getLastStatementInABlock(statementFilter, blockExpression);
+            JetExpression lastStatementInABlock = StatementFilterKt.getLastStatementInABlock(statementFilter, blockExpression);
             if (lastStatementInABlock != null) {
                 return getLastElementDeparenthesized(lastStatementInABlock, statementFilter);
             }

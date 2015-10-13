@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator;
 import org.jetbrains.kotlin.idea.configuration.RuntimeLibraryFiles;
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialog;
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils;
-import org.jetbrains.kotlin.idea.util.projectStructure.ProjectStructurePackage;
+import org.jetbrains.kotlin.idea.util.projectStructure.ProjectStructureUtilKt;
 
 import javax.swing.*;
 import java.io.File;
@@ -97,7 +97,7 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
         DeferredCopyFileRequests deferredCopyFileRequests = getCopyFileRequests();
         if (deferredCopyFileRequests == null) return;
 
-        Library library = ProjectStructurePackage.findLibrary(rootModel.orderEntries(), new Function1<Library, Boolean>() {
+        Library library = ProjectStructureUtilKt.findLibrary(rootModel.orderEntries(), new Function1<Library, Boolean>() {
             @Override
             public Boolean invoke(@NotNull Library library) {
                 LibraryPresentationManager libraryPresentationManager = LibraryPresentationManager.getInstance();
@@ -113,7 +113,7 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
 
         Library.ModifiableModel model = library.getModifiableModel();
         try {
-            deferredCopyFileRequests.performRequests(ProjectStructurePackage.getModuleDir(module), model);
+            deferredCopyFileRequests.performRequests(ProjectStructureUtilKt.getModuleDir(module), model);
         }
         finally {
             model.commit();
@@ -137,7 +137,7 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
                 File resultFile = configurator.copyFileToDir(request.file, destinationPath);
 
                 if (request.replaceInLib) {
-                    ProjectStructurePackage.replaceFileRoot(model, request.file, resultFile);
+                    ProjectStructureUtilKt.replaceFileRoot(model, request.file, resultFile);
                 }
             }
         }

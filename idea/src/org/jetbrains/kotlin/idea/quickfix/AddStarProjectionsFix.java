@@ -60,7 +60,7 @@ public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserTy
         assert element.getTypeArguments().isEmpty();
 
         String typeString = TypeReconstructionUtil.getTypeNameAndStarProjectionsString(element.getText(), argumentCount);
-        JetTypeElement replacement = JetPsiFactory(file).createType(typeString).getTypeElement();
+        JetTypeElement replacement = JetPsiFactoryKt.JetPsiFactory(file).createType(typeString).getTypeElement();
         assert replacement != null : "No type element after parsing " + typeString;
 
         element.replace(replacement);

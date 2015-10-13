@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetSuperExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 
 public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDescriptor implements AccessorForCallableDescriptor<FunctionDescriptor> {
     private final FunctionDescriptor calleeDescriptor;
@@ -40,7 +40,7 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
         this.superCallExpression = superCallExpression;
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getExtensionReceiverParameter()),
-                   descriptor instanceof ConstructorDescriptor || AnnotationsPackage.isPlatformStaticInObjectOrClass(descriptor)
+                   descriptor instanceof ConstructorDescriptor || AnnotationUtilKt.isPlatformStaticInObjectOrClass(descriptor)
                         ? null
                         : descriptor.getDispatchReceiverParameter(),
                    copyTypeParameters(descriptor),

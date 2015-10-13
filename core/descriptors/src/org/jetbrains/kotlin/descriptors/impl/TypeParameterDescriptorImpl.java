@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.utils.SmartSet;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor {
     public static TypeParameterDescriptor createWithDefaultBound(

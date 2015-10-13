@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 
@@ -136,7 +136,7 @@ public final class PsiUtils {
             @NotNull JetCallExpression expression,
             @NotNull TranslationContext context
     ) {
-        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context.bindingContext());
+        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, context.bindingContext());
         assert resolvedCall != null;
 
         return getFunctionDescriptor(resolvedCall);

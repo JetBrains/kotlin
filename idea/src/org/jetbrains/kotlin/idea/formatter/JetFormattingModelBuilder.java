@@ -38,7 +38,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
         PsiFile containingFile = element.getContainingFile().getViewProvider().getPsi(KotlinLanguage.INSTANCE);
         JetBlock block = new JetBlock(
                 containingFile.getNode(), NodeAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
-                FormatterPackage.createSpacingBuilder(settings));
+                KotlinSpacingRulesKt.createSpacingBuilder(settings));
 
         //TODO: this is temporary code to allow formatting non-physical files in non-UI thread (used by conversion from Java to Kotlin)
         // it's needed until IDEA's issue with this document being created with wrong threading policy is fixed

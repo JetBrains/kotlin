@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.name;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -243,7 +243,7 @@ public final class FqNameUnsafe extends FqNameBase {
 
     @NotNull
     public static FqNameUnsafe fromSegments(@NotNull List<?> names) {
-        return new FqNameUnsafe(UtilsPackage.join(names, "."));
+        return new FqNameUnsafe(StringsKt.join(names, "."));
     }
 
 

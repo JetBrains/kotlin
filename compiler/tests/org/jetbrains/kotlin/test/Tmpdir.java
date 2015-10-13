@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.test;
 import com.google.common.io.Files;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
@@ -36,7 +36,7 @@ public class Tmpdir extends TestWatcher {
             tmpDir = Files.createTempDir().getCanonicalFile();
         }
         catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

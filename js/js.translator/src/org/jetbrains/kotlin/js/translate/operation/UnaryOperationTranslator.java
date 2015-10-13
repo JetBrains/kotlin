@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.JetConstantExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetUnaryExpression;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
@@ -41,7 +42,6 @@ import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.messag
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getBaseExpression;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.*;
-import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 
 public final class UnaryOperationTranslator {
     private UnaryOperationTranslator() {
@@ -81,7 +81,7 @@ public final class UnaryOperationTranslator {
             return translateExclForBinaryEqualLikeExpr((JsBinaryOperation) baseExpression);
         }
 
-        ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCallWithAssert(expression, context.bindingContext());
+        ResolvedCall<? extends FunctionDescriptor> resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
         return CallTranslator.translate(context, resolvedCall, baseExpression);
     }
 

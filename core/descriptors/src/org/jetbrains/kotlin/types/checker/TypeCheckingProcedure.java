@@ -20,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.types.Variance.*;
 
 public class TypeCheckingProcedure {
@@ -40,7 +40,7 @@ public class TypeCheckingProcedure {
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
     public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedureCallbacks typeCheckingProcedureCallbacks) {
-        return CheckerPackage.findCorrespondingSupertype(subtype, supertype, typeCheckingProcedureCallbacks);
+        return UtilsKt.findCorrespondingSupertype(subtype, supertype, typeCheckingProcedureCallbacks);
     }
 
     public static JetType getOutType(TypeParameterDescriptor parameter, TypeProjection argument) {
@@ -50,7 +50,7 @@ public class TypeCheckingProcedure {
 
     public static JetType getInType(@NotNull TypeParameterDescriptor parameter, @NotNull TypeProjection argument) {
         boolean isOutProjected = argument.getProjectionKind() == OUT_VARIANCE || parameter.getVariance() == OUT_VARIANCE;
-        return isOutProjected ? getBuiltIns(parameter).getNothingType() : argument.getType();
+        return isOutProjected ? DescriptorUtilsKt.getBuiltIns(parameter).getNothingType() : argument.getType();
     }
 
     private final TypeCheckingProcedureCallbacks constraints;
@@ -61,13 +61,13 @@ public class TypeCheckingProcedure {
 
     public boolean equalTypes(@NotNull JetType type1, @NotNull JetType type2) {
         if (type1 == type2) return true;
-        if (TypesPackage.isFlexible(type1)) {
-            if (TypesPackage.isFlexible(type2)) {
+        if (FlexibleTypesKt.isFlexible(type1)) {
+            if (FlexibleTypesKt.isFlexible(type2)) {
                 return !type1.isError() && !type2.isError() && isSubtypeOf(type1, type2) && isSubtypeOf(type2, type1);
             }
             return heterogeneousEquivalence(type2, type1);
         }
-        else if (TypesPackage.isFlexible(type2)) {
+        else if (FlexibleTypesKt.isFlexible(type2)) {
             return heterogeneousEquivalence(type1, type2);
         }
 
@@ -118,9 +118,9 @@ public class TypeCheckingProcedure {
 
     protected boolean heterogeneousEquivalence(JetType inflexibleType, JetType flexibleType) {
         // This is to account for the case when we have Collection<X> vs (Mutable)Collection<X>! or K(java.util.Collection<? extends X>)
-        assert !TypesPackage.isFlexible(inflexibleType) : "Only inflexible types are allowed here: " + inflexibleType;
-        return isSubtypeOf(TypesPackage.flexibility(flexibleType).getLowerBound(), inflexibleType)
-               && isSubtypeOf(inflexibleType, TypesPackage.flexibility(flexibleType).getUpperBound());
+        assert !FlexibleTypesKt.isFlexible(inflexibleType) : "Only inflexible types are allowed here: " + inflexibleType;
+        return isSubtypeOf(FlexibleTypesKt.flexibility(flexibleType).getLowerBound(), inflexibleType)
+               && isSubtypeOf(inflexibleType, FlexibleTypesKt.flexibility(flexibleType).getUpperBound());
     }
 
     public enum EnrichedProjectionKind {
@@ -179,11 +179,11 @@ public class TypeCheckingProcedure {
     }
 
     public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
-        if (TypesPackage.sameTypeConstructors(subtype, supertype)) {
+        if (TypeCapabilitiesKt.sameTypeConstructors(subtype, supertype)) {
             return !subtype.isMarkedNullable() || supertype.isMarkedNullable();
         }
-        JetType subtypeRepresentative = TypesPackage.getSubtypeRepresentative(subtype);
-        JetType supertypeRepresentative = TypesPackage.getSupertypeRepresentative(supertype);
+        JetType subtypeRepresentative = TypeCapabilitiesKt.getSubtypeRepresentative(subtype);
+        JetType supertypeRepresentative = TypeCapabilitiesKt.getSupertypeRepresentative(supertype);
         if (subtypeRepresentative != subtype || supertypeRepresentative != supertype) {
             // recursive invocation for possible chain of representatives
             return isSubtypeOf(subtypeRepresentative, supertypeRepresentative);

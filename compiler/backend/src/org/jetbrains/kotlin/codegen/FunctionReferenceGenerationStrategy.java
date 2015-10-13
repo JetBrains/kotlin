@@ -21,10 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.psi.JetCallExpression;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.ValueArgument;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.model.DelegatingResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -142,7 +139,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             }
         }
         fakeFunctionCall.append(")");
-        return (JetCallExpression) JetPsiFactory(state.getProject()).createExpression(fakeFunctionCall.toString());
+        return (JetCallExpression) JetPsiFactoryKt.JetPsiFactory(state.getProject()).createExpression(fakeFunctionCall.toString());
     }
 
     private void computeAndSaveArguments(@NotNull List<? extends ValueArgument> fakeArguments, @NotNull ExpressionCodegen codegen) {
@@ -168,7 +165,8 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
     ) {
         if (receiver == null) return NO_RECEIVER;
 
-        JetExpression receiverExpression = JetPsiFactory(state.getProject()).createExpression("callableReferenceFakeReceiver");
+        JetExpression receiverExpression = JetPsiFactoryKt
+                .JetPsiFactory(state.getProject()).createExpression("callableReferenceFakeReceiver");
         codegen.tempVariables.put(receiverExpression, receiverParameterStackValue(signature));
         return new ExpressionReceiver(receiverExpression, receiver.getType());
     }

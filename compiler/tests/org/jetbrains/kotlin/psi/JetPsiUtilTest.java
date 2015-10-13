@@ -73,7 +73,7 @@ public class JetPsiUtilTest extends JetLiteFixture {
 
     public void testIsLocalClass() throws IOException {
         String text = FileUtil.loadFile(new File(getTestDataPath() + "/psiUtil/isLocalClass.kt"), true);
-        JetClass aClass = JetPsiFactory(getProject()).createClass(text);
+        JetClass aClass = JetPsiFactoryKt.JetPsiFactory(getProject()).createClass(text);
 
         @SuppressWarnings("unchecked")
         Collection<JetClassOrObject> classOrObjects = PsiTreeUtil.collectElementsOfType(aClass, JetClassOrObject.class);
@@ -104,7 +104,7 @@ public class JetPsiUtilTest extends JetLiteFixture {
 
     private ImportPath getImportPathFromParsed(String text) {
         JetImportDirective importDirective =
-                PsiTreeUtil.findChildOfType(JetPsiFactory(getProject()).createFile(text), JetImportDirective.class);
+                PsiTreeUtil.findChildOfType(JetPsiFactoryKt.JetPsiFactory(getProject()).createFile(text), JetImportDirective.class);
 
         assertNotNull("At least one import directive is expected", importDirective);
 

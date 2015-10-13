@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.resolve.MemberComparator;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.Interner;
-import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class DescriptorSerializer {
             return result.toByteArray();
         }
         catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -359,8 +359,8 @@ public class DescriptorSerializer {
     public ProtoBuf.Type.Builder type(@NotNull JetType type) {
         assert !type.isError() : "Can't serialize error types: " + type; // TODO
 
-        if (TypesPackage.isFlexible(type)) {
-            Flexibility flexibility = TypesPackage.flexibility(type);
+        if (FlexibleTypesKt.isFlexible(type)) {
+            Flexibility flexibility = FlexibleTypesKt.flexibility(type);
 
             return type(flexibility.getLowerBound())
                     .setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(flexibility.getExtraCapabilities().getId()))

@@ -68,7 +68,8 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetTypeReference newTypeReference = JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+        JetTypeReference newTypeReference = JetPsiFactoryKt
+                .JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
 
         JetTypeReference typeReference;
         if (element.isGetter()) {

@@ -128,7 +128,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
         for (JetUserType usage : usages) {
             JetTypeArgumentList typeArguments = usage.getTypeArgumentList();
             String typeArgumentsString = typeArguments == null ? "" : typeArguments.getText();
-            JetTypeReference replacementType = JetPsiFactory(project).createType(replacementClassName + typeArgumentsString);
+            JetTypeReference replacementType = JetPsiFactoryKt.JetPsiFactory(project).createType(replacementClassName + typeArgumentsString);
             JetTypeElement replacementTypeElement = replacementType.getTypeElement();
             assert replacementTypeElement != null;
             PsiElement replacedElement = usage.replace(replacementTypeElement);

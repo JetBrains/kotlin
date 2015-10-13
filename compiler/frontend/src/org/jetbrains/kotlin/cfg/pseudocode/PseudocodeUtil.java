@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.ResolvedCallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.ResolvedCallUtilKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -117,6 +117,6 @@ public class PseudocodeUtil {
                 "AccessTarget.Declaration has no receivers and it's not BlackBox, so it should be Call";
 
         ResolvedCall<?> accessResolvedCall = ((AccessTarget.Call) accessTarget).getResolvedCall();
-        return ResolvedCallUtilPackage.hasThisOrNoDispatchReceiver(accessResolvedCall, bindingContext);
+        return ResolvedCallUtilKt.hasThisOrNoDispatchReceiver(accessResolvedCall, bindingContext);
     }
 }

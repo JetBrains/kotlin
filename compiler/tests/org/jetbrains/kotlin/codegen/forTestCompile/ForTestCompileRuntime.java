@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.forTestCompile;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.lang.ref.SoftReference;
@@ -25,8 +26,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.jetbrains.kotlin.utils.UtilsPackage.rethrow;
 
 public class ForTestCompileRuntime {
     private static volatile SoftReference<ClassLoader> reflectJarClassLoader = new SoftReference<ClassLoader>(null);
@@ -80,7 +79,7 @@ public class ForTestCompileRuntime {
             return new URLClassLoader(urls.toArray(new URL[urls.size()]), null);
         }
         catch (MalformedURLException e) {
-            throw rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 }

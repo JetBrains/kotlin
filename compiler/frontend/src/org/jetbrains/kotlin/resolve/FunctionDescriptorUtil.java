@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,7 +57,7 @@ public class FunctionDescriptorUtil {
     ) {
         if (functionDescriptor.getTypeParameters().isEmpty()) return TypeSubstitution.getEMPTY();
 
-        return new IndexedParametersSubstitution(functionDescriptor.getTypeParameters(), TypeUtilPackage.defaultProjections(typeArguments));
+        return new IndexedParametersSubstitution(functionDescriptor.getTypeParameters(), TypeUtilsKt.defaultProjections(typeArguments));
     }
 
     @NotNull

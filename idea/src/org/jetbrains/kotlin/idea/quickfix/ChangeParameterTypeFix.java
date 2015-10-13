@@ -67,7 +67,7 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetTypeReference newTypeRef = JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+        JetTypeReference newTypeRef = JetPsiFactoryKt.JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
         newTypeRef = element.setTypeReference(newTypeRef);
         assert newTypeRef != null;
         ShortenReferences.DEFAULT.process(newTypeRef);

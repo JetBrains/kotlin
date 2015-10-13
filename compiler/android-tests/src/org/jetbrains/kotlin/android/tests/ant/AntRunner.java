@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.android.tests.OutputUtils;
 import org.jetbrains.kotlin.android.tests.PathManager;
 import org.jetbrains.kotlin.android.tests.run.RunResult;
 import org.jetbrains.kotlin.android.tests.run.RunUtils;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +90,7 @@ public class AntRunner {
                 Thread.sleep(20000);
             }
             catch (InterruptedException e) {
-                throw UtilsPackage.rethrow(e);
+                throw ExceptionUtilsKt.rethrow(e);
             }
             return false;
         }

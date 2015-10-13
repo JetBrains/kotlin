@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils;
 import org.jetbrains.kotlin.preloading.Preloader;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
-import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.*;
 import java.lang.ref.SoftReference;
@@ -106,7 +106,7 @@ public class MockLibraryUtil {
             return createJarFile(contentDir, classesDir, sourcesPath, jarName, addSources);
         }
         catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -127,7 +127,7 @@ public class MockLibraryUtil {
             return createJarFile(contentDir, outDir, sourcesPath, jarName, addSources);
         }
         catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -164,7 +164,7 @@ public class MockLibraryUtil {
             assertEquals(new String(outStream.toByteArray()), ExitCode.OK.name(), invocationResult.name());
         }
         catch (Throwable e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -221,7 +221,7 @@ public class MockLibraryUtil {
             return classLoader.loadClass(compilerClassName);
         }
         catch (Throwable e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -234,7 +234,7 @@ public class MockLibraryUtil {
             );
         }
         catch (Throwable e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

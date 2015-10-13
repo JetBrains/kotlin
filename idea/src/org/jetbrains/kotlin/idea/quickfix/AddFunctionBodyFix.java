@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunction;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
@@ -58,7 +59,7 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetFunction newElement = (JetFunction) element.copy();
-        JetPsiFactory psiFactory = JetPsiFactory(file);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
         if (!(newElement.getLastChild() instanceof PsiWhiteSpace)) {
             newElement.add(psiFactory.createWhiteSpace());
         }

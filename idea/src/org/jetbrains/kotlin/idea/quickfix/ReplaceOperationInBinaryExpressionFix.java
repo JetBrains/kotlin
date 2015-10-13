@@ -21,10 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.psi.*;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
@@ -48,7 +45,7 @@ public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpress
             JetExpression left = ((JetBinaryExpressionWithTypeRHS) element).getLeft();
             JetTypeReference right = ((JetBinaryExpressionWithTypeRHS) element).getRight();
             if (right != null) {
-                JetExpression expression = JetPsiFactory(file).createExpression(left.getText() + operation + right.getText());
+                JetExpression expression = JetPsiFactoryKt.JetPsiFactory(file).createExpression(left.getText() + operation + right.getText());
                 element.replace(expression);
             }
         }

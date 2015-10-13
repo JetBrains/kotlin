@@ -37,12 +37,12 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
+import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -65,7 +65,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
         if (element instanceof JetFunctionLiteral) {
             JetFunctionLiteralExpression functionLiteralExpression = PsiTreeUtil.getParentOfType(element, JetFunctionLiteralExpression.class);
             assert functionLiteralExpression != null : "FunctionLiteral outside any FunctionLiteralExpression: " +
-                                                       PsiUtilPackage.getElementTextWithContext(element);
+                                                       PsiUtilsKt.getElementTextWithContext(element);
             changeFunctionLiteralReturnTypeFix = new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, type);
         }
         else {
@@ -113,7 +113,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
         }
         else {
             if (!(KotlinBuiltIns.isUnit(type) && element.hasBlockBody())) {
-                JetTypeReference newTypeRef = JetPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+                JetTypeReference newTypeRef = JetPsiFactoryKt
+                        .JetPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
                 newTypeRef = element.setTypeReference(newTypeRef);
                 assert newTypeRef != null;
                 ShortenReferences.DEFAULT.process(newTypeRef);
@@ -127,7 +128,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
     @NotNull
     public static JetMultiDeclarationEntry getMultiDeclarationEntryThatTypeMismatchComponentFunction(Diagnostic diagnostic) {
         Name componentName = COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.cast(diagnostic).getA();
-        int componentIndex = DataClassUtilsPackage.getComponentIndex(componentName);
+        int componentIndex = DataClassUtilsKt.getComponentIndex(componentName);
         JetMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, JetMultiDeclaration.class);
         assert multiDeclaration != null : "COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration";
         return multiDeclaration.getEntries().get(componentIndex - 1);
@@ -185,7 +186,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
                 JetBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpression.class);
                 assert expression != null : "COMPARE_TO_TYPE_MISMATCH reported on element that is not within any expression";
                 BindingContext context = ResolutionUtils.analyze(expression);
-                ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context);
+                ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, context);
                 if (resolvedCall == null) return null;
                 CallableDescriptor compareToDescriptor = resolvedCall.getCandidateDescriptor();
                 PsiElement compareTo = DescriptorToSourceUtils.descriptorToDeclaration(compareToDescriptor);

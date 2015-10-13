@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.NamePackage;
+import org.jetbrains.kotlin.name.FqNamesUtilKt;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetEnumEntry;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -108,7 +108,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     }
 
     private PsiClass[] doFindClasses(String qualifiedNameString, GlobalSearchScope scope) {
-        if (!NamePackage.isValidJavaFqName(qualifiedNameString)) {
+        if (!FqNamesUtilKt.isValidJavaFqName(qualifiedNameString)) {
             return PsiClass.EMPTY_ARRAY;
         }
 
@@ -184,7 +184,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
     @Override
     public PsiPackage findPackage(@NotNull String qualifiedNameString) {
-        if (!NamePackage.isValidJavaFqName(qualifiedNameString)) {
+        if (!FqNamesUtilKt.isValidJavaFqName(qualifiedNameString)) {
             return null;
         }
 

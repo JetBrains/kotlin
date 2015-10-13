@@ -36,7 +36,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KClass getOrCreateKotlinClass(Class javaClass) {
-        return InternalPackage.getOrCreateKotlinClass(javaClass);
+        return KClassCacheKt.getOrCreateKotlinClass(javaClass);
     }
 
     // Functions

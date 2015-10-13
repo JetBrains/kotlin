@@ -27,11 +27,10 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 
@@ -106,9 +105,9 @@ public class InlineUtil {
 
         JetExpression call = JetPsiUtil.getParentCallIfPresent(argument);
         if (call != null) {
-            ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(call, bindingContext);
+            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(call, bindingContext);
             if (resolvedCall != null && isInline(resolvedCall.getResultingDescriptor())) {
-                ValueArgument valueArgument = CallUtilPackage.getValueArgumentForExpression(resolvedCall.getCall(), argument);
+                ValueArgument valueArgument = CallUtilKt.getValueArgumentForExpression(resolvedCall.getCall(), argument);
                 if (valueArgument != null) {
                     ArgumentMapping mapping = resolvedCall.getArgumentMapping(valueArgument);
                     if (mapping instanceof ArgumentMatch) {

@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetBinaryExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -47,7 +48,6 @@ import static org.jetbrains.kotlin.js.translate.operation.CompareToTranslator.is
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.not;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.*;
-import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 
 public final class BinaryOperationTranslator extends AbstractTranslator {
 
@@ -137,7 +137,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
         JsExpression result;
         JsIf ifStatement;
-        if (BindingContextUtilPackage.isUsedAsExpression(expression, context().bindingContext())) {
+        if (BindingContextUtilsKt.isUsedAsExpression(expression, context().bindingContext())) {
             if (TranslationUtils.isCacheNeeded(leftExpression)) {
                 TemporaryVariable resultVar = context().declareTemporary(leftExpression);
                 result = resultVar.reference();
@@ -229,7 +229,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
         JsIf ifStatement;
         JsExpression result;
-        if (BindingContextUtilPackage.isUsedAsExpression(expression, context().bindingContext())) {
+        if (BindingContextUtilsKt.isUsedAsExpression(expression, context().bindingContext())) {
             if (!JsAstUtils.isEmptyExpression(rightExpression)) {
                 if (rightExpression instanceof JsNameRef) {
                     result = rightExpression; // Reuse tmp variable
@@ -279,7 +279,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translateAsOverloadedBinaryOperation() {
-        ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCallWithAssert(expression, bindingContext());
+        ResolvedCall<? extends FunctionDescriptor> resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(expression, bindingContext());
         JsExpression result = CallTranslator.translate(context(), resolvedCall, getReceiver());
         return mayBeWrapWithNegation(result);
     }

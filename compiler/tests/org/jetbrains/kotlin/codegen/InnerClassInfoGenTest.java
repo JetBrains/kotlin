@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -201,7 +201,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
                 return result.isEmpty() ? "<empty>" : result.substring(1);
             }
             catch (Exception e) {
-                throw UtilsPackage.rethrow(e);
+                throw ExceptionUtilsKt.rethrow(e);
             }
         }
     }

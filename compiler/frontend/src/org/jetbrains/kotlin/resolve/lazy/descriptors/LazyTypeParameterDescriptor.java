@@ -25,11 +25,10 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Set;
-
-import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor implements LazyEntity {
     private final LazyClassContext c;
@@ -48,7 +47,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
                 jetTypeParameter.getVariance(),
                 jetTypeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
                 index,
-                toSourceElement(jetTypeParameter)
+                KotlinSourceElementKt.toSourceElement(jetTypeParameter)
         );
         this.c = c;
         this.jetTypeParameter = jetTypeParameter;

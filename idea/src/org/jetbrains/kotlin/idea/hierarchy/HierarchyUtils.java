@@ -27,7 +27,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 public class HierarchyUtils {
     public static final Function1<PsiElement, Boolean> IS_CALL_HIERARCHY_ELEMENT = new Function1<PsiElement, Boolean>() {
@@ -60,7 +60,7 @@ public class HierarchyUtils {
 
     public static PsiElement getCallHierarchyElement(PsiElement element) {
         //noinspection unchecked
-        return PsiUtilPackage.getParentOfTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_CALL_HIERARCHY_ELEMENT);
+        return PsiUtilsKt.getParentOfTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_CALL_HIERARCHY_ELEMENT);
     }
 
 }

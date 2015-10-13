@@ -22,6 +22,7 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.JsNumberLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
@@ -29,14 +30,12 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Collections;
 
 import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.sum;
-import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.getNameIfStandardType;
 
 public final class StringTemplateTranslator extends AbstractTranslator {
     private final JetStringTemplateEntry[] expressionEntries;
@@ -102,7 +101,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
         }
 
         private boolean mustCallToString(@NotNull JetType type) {
-            Name typeName = getNameIfStandardType(type);
+            Name typeName = DescriptorUtilsKt.getNameIfStandardType(type);
             if (typeName != null) {
                 //TODO: this is a hacky optimization, should use some generic approach
                 if (NamePredicate.STRING.apply(typeName)) {

@@ -25,10 +25,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedFunctionDefinitionsKt;
+import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedLocalFunctionDeclarationsKt;
 import org.jetbrains.kotlin.js.inline.context.FunctionContext;
 import org.jetbrains.kotlin.js.inline.context.InliningContext;
 import org.jetbrains.kotlin.js.inline.context.NamingContext;
-import org.jetbrains.kotlin.js.inline.util.ExpressionDecomposer;
+import org.jetbrains.kotlin.js.inline.util.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
@@ -36,17 +38,14 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.canBeExpression;
 import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.getInlineableCallReplacement;
-import static org.jetbrains.kotlin.js.inline.clean.CleanPackage.removeUnusedFunctionDefinitions;
-import static org.jetbrains.kotlin.js.inline.clean.CleanPackage.removeUnusedLocalFunctionDeclarations;
-import static org.jetbrains.kotlin.js.inline.util.UtilPackage.*;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatement;
 
 public class JsInliner extends JsVisitorWithContextImpl {
 
     private final IdentityHashMap<JsName, JsFunction> functions;
     private final Stack<JsInliningContext> inliningContexts = new Stack<JsInliningContext>();
-    private final Set<JsFunction> processedFunctions = IdentitySet();
-    private final Set<JsFunction> inProcessFunctions = IdentitySet();
+    private final Set<JsFunction> processedFunctions = CollectionUtilsKt.IdentitySet();
+    private final Set<JsFunction> inProcessFunctions = CollectionUtilsKt.IdentitySet();
     private final FunctionReader functionReader;
     private final DiagnosticSink trace;
 
@@ -71,10 +70,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     public static JsProgram process(@NotNull TranslationContext context) {
         JsProgram program = context.program();
-        IdentityHashMap<JsName, JsFunction> functions = collectNamedFunctions(program);
+        IdentityHashMap<JsName, JsFunction> functions = CollectUtilsKt.collectNamedFunctions(program);
         JsInliner inliner = new JsInliner(functions, new FunctionReader(context), context.bindingTrace());
         inliner.accept(program);
-        removeUnusedFunctionDefinitions(program, functions);
+        RemoveUnusedFunctionDefinitionsKt.removeUnusedFunctionDefinitions(program, functions);
         return program;
     }
 
@@ -104,9 +103,9 @@ public class JsInliner extends JsVisitorWithContextImpl {
     @Override
     public void endVisit(@NotNull JsFunction function, @NotNull JsContext context) {
         super.endVisit(function, context);
-        refreshLabelNames(getInliningContext().newNamingContext(), function);
+        NamingUtilsKt.refreshLabelNames(getInliningContext().newNamingContext(), function);
 
-        removeUnusedLocalFunctionDeclarations(function);
+        RemoveUnusedLocalFunctionDeclarationsKt.removeUnusedLocalFunctionDeclarations(function);
         processedFunctions.add(function);
 
         assert inProcessFunctions.contains(function);
@@ -206,7 +205,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
         if (currentStatement instanceof JsExpressionStatement &&
             ((JsExpressionStatement) currentStatement).getExpression() == call &&
-            (resultExpression == null || !canHaveSideEffect(resultExpression))
+            (resultExpression == null || !SideEffectUtilsKt.canHaveSideEffect(resultExpression))
         ) {
             statementContext.removeMe();
         }

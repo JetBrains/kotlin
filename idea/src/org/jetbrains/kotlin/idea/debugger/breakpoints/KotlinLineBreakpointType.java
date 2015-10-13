@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints;
 
-import com.intellij.debugger.DebuggerBundle;
 import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType;
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint;
@@ -66,7 +65,7 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
 
     @Override
     public boolean canPutAt(@NotNull VirtualFile file, int line, @NotNull Project project) {
-        return BreakpointsPackage.canPutAt(file, line, project, getClass());
+        return BreakpointTypeUtilsKt.canPutAt(file, line, project, getClass());
     }
 
 

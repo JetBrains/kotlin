@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.psi.JetCallExpression;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 public abstract class AbstractCallExpressionTranslator extends AbstractTranslator {
@@ -42,7 +42,7 @@ public abstract class AbstractCallExpressionTranslator extends AbstractTranslato
     ) {
         super(context);
         this.expression = expression;
-        this.resolvedCall = CallUtilPackage.getFunctionResolvedCallWithAssert(expression, bindingContext());
+        this.resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(expression, bindingContext());
         this.receiver = receiver;
     }
 

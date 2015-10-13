@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.name.NamePackage;
-import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.name.*;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedDeclarationUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -61,7 +58,7 @@ public class ResolveSessionUtils {
         while (true) {
             PackageViewDescriptor packageDescriptor = module.getPackage(packageFqName);
             if (!packageDescriptor.isEmpty()) {
-                FqName relativeClassFqName = NamePackage.tail(fqName, packageFqName);
+                FqName relativeClassFqName = FqNamesUtilKt.tail(fqName, packageFqName);
                 ClassDescriptor classDescriptor = findByQualifiedName(packageDescriptor.getMemberScope(), relativeClassFqName);
                 if (classDescriptor != null && filter.apply(classDescriptor)) {
                     result.add(classDescriptor);

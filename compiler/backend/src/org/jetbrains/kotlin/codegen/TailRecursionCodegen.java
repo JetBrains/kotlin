@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -107,7 +108,7 @@ public class TailRecursionCodegen {
                 JetExpression argumentExpression = argument == null ? null : argument.getArgumentExpression();
 
                 if (argumentExpression instanceof JetSimpleNameExpression) {
-                    ResolvedCall<?> resolvedCall = getResolvedCall(argumentExpression, state.getBindingContext());
+                    ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(argumentExpression, state.getBindingContext());
                     if (resolvedCall != null && resolvedCall.getResultingDescriptor().equals(parameterDescriptor.getOriginal())) {
                         // do nothing: we shouldn't store argument to itself again
                         AsmUtil.pop(v, type);

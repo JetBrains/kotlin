@@ -25,7 +25,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.lexer.JetKeywordToken;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.utils.strings.StringsPackage;
+import org.jetbrains.kotlin.utils.strings.StringsKt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -488,6 +488,6 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
     @SuppressWarnings("UnusedDeclaration")
     @TestOnly
     public String currentContext() {
-        return StringsPackage.substringWithContext(myBuilder.getOriginalText(), myBuilder.getCurrentOffset(), myBuilder.getCurrentOffset(), 20);
+        return StringsKt.substringWithContext(myBuilder.getOriginalText(), myBuilder.getCurrentOffset(), myBuilder.getCurrentOffset(), 20);
     }
 }

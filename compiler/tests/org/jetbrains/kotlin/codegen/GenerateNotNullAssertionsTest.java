@@ -21,7 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
@@ -87,7 +87,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         loadFile("notNullAssertions/noAssertionsForKotlin.kt");
         OutputFileCollection outputFiles = generateClassesInFile();
         File compiledDirectory = new File(FileUtil.getTempDirectory(), "kotlin-classes");
-        OutputUtilsPackage.writeAllTo(outputFiles, compiledDirectory);
+        OutputUtilsKt.writeAllTo(outputFiles, compiledDirectory);
 
         setUpEnvironment(false, true, compiledDirectory);
         loadFile("notNullAssertions/noAssertionsForKotlinMain.kt");

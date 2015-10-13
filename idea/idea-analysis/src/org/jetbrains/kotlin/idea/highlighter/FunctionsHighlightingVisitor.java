@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
@@ -65,11 +65,11 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     @Override
     public void visitCallExpression(@NotNull JetCallExpression expression) {
         JetExpression callee = expression.getCalleeExpression();
-        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, bindingContext);
+        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
         if (callee instanceof JetReferenceExpression && resolvedCall != null) {
             CallableDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
 
-            if (TasksPackage.isDynamic(calleeDescriptor)) {
+            if (DynamicCallsKt.isDynamic(calleeDescriptor)) {
                 JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.DYNAMIC_FUNCTION_CALL);
             }
             else if (resolvedCall instanceof VariableAsFunctionResolvedCall) {

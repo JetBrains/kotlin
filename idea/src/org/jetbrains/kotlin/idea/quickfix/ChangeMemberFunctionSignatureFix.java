@@ -385,7 +385,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
 
             PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-            final JetPsiFactory psiFactory = PsiPackage.JetPsiFactory(project);
+            final JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(project);
             CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                 @Override
                 public void run() {

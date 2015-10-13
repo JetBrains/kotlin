@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 
 import java.util.List;
 
@@ -75,7 +75,7 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
         JetDeclaration declaration = method.getOrigin();
         if (declaration == null) return null;
 
-        int jetIndex = PsiUtilPackage.isExtensionDeclaration(declaration) ? index - 1 : index;
+        int jetIndex = JetPsiUtilKt.isExtensionDeclaration(declaration) ? index - 1 : index;
         if (jetIndex < 0) return null;
 
         if (declaration instanceof JetFunction) {

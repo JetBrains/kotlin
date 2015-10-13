@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMember;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.SignaturesPropagationData;
@@ -86,7 +86,7 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
         );
 
         if (data.isAnnotated() && !data.hasErrors()) {
-            if (JvmPackage.getPLATFORM_TYPES()) {
+            if (JavaDescriptorResolverKt.getPLATFORM_TYPES()) {
                 return new AlternativeMethodSignature(returnType, receiverType, valueParameters,
                                                       typeParameters, Collections.<String>emptyList(), hasStableParameterNames);
             }
@@ -108,7 +108,7 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
         AlternativeFieldSignatureData data = new AlternativeFieldSignatureData(field, returnType, project, isVar);
 
         if (data.isAnnotated() && !data.hasErrors()) {
-            if (JvmPackage.getPLATFORM_TYPES()) {
+            if (JavaDescriptorResolverKt.getPLATFORM_TYPES()) {
                 return new AlternativeFieldSignature(returnType, null);
             }
             return new AlternativeFieldSignature(data.getReturnType(), null);

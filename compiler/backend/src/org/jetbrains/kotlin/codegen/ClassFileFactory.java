@@ -114,7 +114,7 @@ public class ClassFileFactory implements OutputFileCollection {
             sourceFiles.addAll(toIoFilesIgnoringNonPhysical(PackagePartClassUtils.getFilesWithCallables(codegen.getFiles())));
         }
 
-        for (PackageParts part : CodegenPackage.addCompiledPartsAndSort(parts, state)) {
+        for (PackageParts part : ClassFileUtilsKt.addCompiledPartsAndSort(parts, state)) {
             PackageParts.Companion.serialize(part, builder);
         }
 

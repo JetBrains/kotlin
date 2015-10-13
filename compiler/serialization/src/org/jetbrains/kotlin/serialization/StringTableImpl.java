@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.ErrorUtils;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.Interner;
-import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -129,7 +129,7 @@ public class StringTableImpl implements StringTable {
             qualifiedNameTable.build().writeDelimitedTo(output);
         }
         catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 }

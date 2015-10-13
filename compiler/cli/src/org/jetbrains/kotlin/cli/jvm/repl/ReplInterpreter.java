@@ -38,8 +38,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
+import org.jetbrains.kotlin.cli.jvm.config.ModuleNameKt;
 import org.jetbrains.kotlin.cli.jvm.repl.di.ContainerForReplWithJava;
-import org.jetbrains.kotlin.cli.jvm.repl.di.DiPackage;
+import org.jetbrains.kotlin.cli.jvm.repl.di.InjectionKt;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplIdeDiagnosticMessageHolder;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
@@ -68,7 +70,7 @@ import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.io.File;
@@ -83,8 +85,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getModuleName;
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.registerClassNameForScript;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
@@ -121,7 +121,8 @@ public class ReplInterpreter {
         Project project = environment.getProject();
         this.psiFileFactory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
         this.trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        MutableModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, getModuleName(environment));
+        MutableModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, ModuleNameKt
+                .getModuleName(environment));
         this.module = moduleContext.getModule();
 
         scriptDeclarationFactory = new ScriptMutableDeclarationProviderFactory();
@@ -134,7 +135,7 @@ public class ReplInterpreter {
             }
         };
 
-        ContainerForReplWithJava container = DiPackage.createContainerForReplWithJava(
+        ContainerForReplWithJava container = InjectionKt.createContainerForReplWithJava(
                 moduleContext,
                 trace,
                 scriptDeclarationFactory,
@@ -156,12 +157,12 @@ public class ReplInterpreter {
         ));
 
         List<URL> classpath = Lists.newArrayList();
-        for (File file : getJvmClasspathRoots(configuration)) {
+        for (File file : JvmContentRootsKt.getJvmClasspathRoots(configuration)) {
             try {
                 classpath.add(file.toURI().toURL());
             }
             catch (MalformedURLException e) {
-                throw UtilsPackage.rethrow(e);
+                throw ExceptionUtilsKt.rethrow(e);
             }
         }
 
@@ -363,7 +364,7 @@ public class ReplInterpreter {
             PrintWriter writer = new PrintWriter(System.err);
             classLoader.dumpClasses(writer);
             writer.flush();
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

@@ -25,6 +25,6 @@ import java.util.List;
 public class KotlinOutputParser implements PatternAwareOutputParser {
     @Override
     public boolean parse(String s, OutputLineReader reader, List list, ILogger logger) {
-        return AndroidPackage.parse(s, reader, list, logger);
+        return KotlinOutputParserHelperKt.parse(s, reader, list, logger);
     }
 }

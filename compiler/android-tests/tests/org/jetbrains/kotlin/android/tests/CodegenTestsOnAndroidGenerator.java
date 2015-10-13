@@ -23,7 +23,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
@@ -182,7 +182,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
             }
             Assert.assertTrue("Cannot create directory for compiled files", outputDir.exists());
 
-            OutputUtilsPackage.writeAllTo(outputFiles, outputDir);
+            OutputUtilsKt.writeAllTo(outputFiles, outputDir);
         }
     }
 

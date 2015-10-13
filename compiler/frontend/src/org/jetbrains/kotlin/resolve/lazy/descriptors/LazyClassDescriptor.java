@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
@@ -64,7 +65,6 @@ import static org.jetbrains.kotlin.diagnostics.Errors.CYCLIC_INHERITANCE_HIERARC
 import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETERS_IN_ENUM;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
-import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorWithResolutionScopes, LazyEntity {
     private static final Predicate<JetType> VALID_SUPERTYPE = new Predicate<JetType>() {
@@ -104,7 +104,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @NotNull JetClassLikeInfo classLikeInfo
     ) {
         super(c.getStorageManager(), containingDeclaration, name,
-              toSourceElement(classLikeInfo.getCorrespondingClassOrObject())
+              KotlinSourceElementKt.toSourceElement(classLikeInfo.getCorrespondingClassOrObject())
         );
         this.c = c;
 

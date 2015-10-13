@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager;
-import org.jetbrains.kotlin.idea.quickfix.utils.UtilsPackage;
+import org.jetbrains.kotlin.idea.quickfix.utils.QuickfixTestUtilsKt;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -176,7 +176,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     }
 
     private void enableInspections(String beforeFileName) throws IOException, ClassNotFoundException {
-        File inspectionFile = UtilsPackage.findInspectionFile(new File(beforeFileName).getParentFile());
+        File inspectionFile = QuickfixTestUtilsKt.findInspectionFile(new File(beforeFileName).getParentFile());
         if (inspectionFile != null) {
             String className = FileUtil.loadFile(inspectionFile).trim();
             Class<?> inspectionClass = Class.forName(className);

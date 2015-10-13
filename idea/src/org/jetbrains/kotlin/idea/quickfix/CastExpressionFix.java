@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
+import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypesPackage;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
@@ -77,7 +77,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         String renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(type);
 
-        JetPsiFactory psiFactory = JetPsiFactory(file);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
         JetBinaryExpressionWithTypeRHS castExpression =
                 (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression("(" + element.getText() + ") as " + renderedType);
         if (JetPsiUtil.areParenthesesUseless((JetParenthesizedExpression) castExpression.getLeft())) {
@@ -122,7 +122,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
                 DiagnosticWithParameters2<JetExpression, JetType, JetType> diagnosticWithParameters =
                         ErrorsJvm.JAVA_TYPE_MISMATCH.cast(diagnostic);
                 return new CastExpressionFix(
-                        diagnosticWithParameters.getPsiElement(), TypesPackage.flexibility(diagnosticWithParameters.getB()).getUpperBound()
+                        diagnosticWithParameters.getPsiElement(), FlexibleTypesKt.flexibility(diagnosticWithParameters.getB()).getUpperBound()
                 );
             }
         };

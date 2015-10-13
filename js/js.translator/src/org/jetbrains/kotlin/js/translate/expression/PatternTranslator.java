@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.types.JetType;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeByReference;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
-import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.getNameIfStandardType;
 
 public final class PatternTranslator extends AbstractTranslator {
 
@@ -95,7 +95,7 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @Nullable
     private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull JetType type) {
-        Name typeName = getNameIfStandardType(type);
+        Name typeName = DescriptorUtilsKt.getNameIfStandardType(type);
 
         if (NamePredicate.STRING.apply(typeName)) {
             return namer().isTypeOf(program().getStringLiteral("string"));

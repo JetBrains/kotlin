@@ -22,7 +22,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.AsJavaPackage;
+import org.jetbrains.kotlin.asJava.DuplicateJvmSignatureUtilKt;
+import org.jetbrains.kotlin.idea.caches.resolve.GetModuleInfoKt;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
@@ -31,8 +32,6 @@ import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-
-import static org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage.getModuleInfo;
 
 public class DuplicateJvmSignatureAnnotator implements Annotator {
     @Override
@@ -44,8 +43,8 @@ public class DuplicateJvmSignatureAnnotator implements Annotator {
         if (!(file instanceof JetFile) || TargetPlatformDetector.getPlatform((JetFile) file) != JvmPlatform.INSTANCE$) return;
 
         Diagnostics otherDiagnostics = ResolutionUtils.analyzeFully((JetElement) element).getDiagnostics();
-        GlobalSearchScope moduleScope = getModuleInfo(element).contentScope();
-        Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(element, otherDiagnostics, moduleScope);
+        GlobalSearchScope moduleScope = GetModuleInfoKt.getModuleInfo(element).contentScope();
+        Diagnostics diagnostics = DuplicateJvmSignatureUtilKt.getJvmSignatureDiagnostics(element, otherDiagnostics, moduleScope);
 
         if (diagnostics == null) return;
         new JetPsiChecker().annotateElement(element, holder, diagnostics);

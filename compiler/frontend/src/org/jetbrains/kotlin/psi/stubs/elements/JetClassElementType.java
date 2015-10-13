@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetEnumEntry;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl;
 import org.jetbrains.kotlin.psi.stubs.impl.Utils;
@@ -57,10 +57,10 @@ public class JetClassElementType extends JetStubElementType<KotlinClassStub, Jet
     public KotlinClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         boolean isEnumEntry = psi instanceof JetEnumEntry;
-        List<String> superNames = PsiUtilPackage.getSuperNames(psi);
+        List<String> superNames = JetPsiUtilKt.getSuperNames(psi);
         return new KotlinClassStubImpl(
                 getStubType(isEnumEntry), parentStub, StringRef.fromString(fqName != null ? fqName.asString() : null),
-                StringRef.fromString(psi.getName()), Utils.INSTANCE$.wrapStrings(superNames), psi.isInterface(), isEnumEntry,
+                StringRef.fromString(psi.getName()), Utils.INSTANCE.wrapStrings(superNames), psi.isInterface(), isEnumEntry,
                 psi.isLocal(), psi.isTopLevel());
     }
 

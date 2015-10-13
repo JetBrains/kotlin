@@ -24,11 +24,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,8 +38,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoot;
 
 public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixture {
     protected class ModuleAndDependencies {
@@ -59,7 +58,7 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
             return true;
         }
         catch (Exception e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -69,7 +68,7 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
         CompilerConfiguration configuration = createCompilerConfiguration(javaFilesDir);
         File kotlinSourceRoot = getKotlinSourceRoot();
         if (kotlinSourceRoot != null) {
-            addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
+            ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
         }
         return createEnvironment(getTestRootDisposable(), configuration);
     }
@@ -104,7 +103,7 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
             JetTestUtils.mkdirs(dir);
         }
         catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
         return dir;
     }

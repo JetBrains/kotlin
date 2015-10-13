@@ -30,18 +30,19 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.CommonSupertypes;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +52,6 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.types.TypeUtils.*;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createDataFlowInfoForArgumentsForIfCall;
@@ -111,18 +111,18 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                        ? result.replaceJumpOutPossible(true).replaceJumpFlowInfo(conditionDataFlowInfo)
                        : result;
             }
-            return TypeInfoFactoryPackage.createTypeInfo(components.dataFlowAnalyzer.checkImplicitCast(
+            return TypeInfoFactoryKt.createTypeInfo(components.dataFlowAnalyzer.checkImplicitCast(
                                                                  components.builtIns.getUnitType(), ifExpression,
                                                                  contextWithExpectedType, isStatement
                                                          ),
-                                                         thenInfo.or(elseInfo)
+                                                    thenInfo.or(elseInfo)
             );
         }
         if (thenBranch == null) {
             return getTypeInfoWhenOnlyOneBranchIsPresent(
                     elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, ifExpression, isStatement);
         }
-        JetPsiFactory psiFactory = JetPsiFactory(ifExpression);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(ifExpression);
         JetBlockExpression thenBlock = psiFactory.wrapInABlockWrapper(thenBranch);
         JetBlockExpression elseBlock = psiFactory.wrapInABlockWrapper(elseBranch);
         Call callForIf = createCallForSpecialConstruction(ifExpression, ifExpression, Lists.newArrayList(thenBlock, elseBlock));
@@ -164,7 +164,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         JetType resultType = resolvedCall.getResultingDescriptor().getReturnType();
         // If break or continue was possible, take condition check info as the jump info
-        return TypeInfoFactoryPackage
+        return TypeInfoFactoryKt
                 .createTypeInfo(components.dataFlowAnalyzer.checkImplicitCast(resultType, ifExpression, contextWithExpectedType, isStatement),
                                 resultDataFlowInfo, loopBreakContinuePossible, conditionDataFlowInfo);
     }
@@ -232,7 +232,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo));
         }
         else {
-            bodyTypeInfo = TypeInfoFactoryPackage.noTypeInfo(conditionInfo);
+            bodyTypeInfo = TypeInfoFactoryKt.noTypeInfo(conditionInfo);
         }
 
         // Condition is false at this point only if there is no jumps outside
@@ -332,7 +332,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     writableScope, block, CoercionStrategy.NO_COERCION, context);
         }
         else {
-            bodyTypeInfo = TypeInfoFactoryPackage.noTypeInfo(context);
+            bodyTypeInfo = TypeInfoFactoryKt.noTypeInfo(context);
         }
         JetExpression condition = expression.getCondition();
         DataFlowInfo conditionDataFlowInfo = checkCondition(conditionScope, condition, context);
@@ -384,7 +384,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            loopRangeInfo = TypeInfoFactoryPackage.noTypeInfo(context);
+            loopRangeInfo = TypeInfoFactoryKt.noTypeInfo(context);
         }
 
         LexicalWritableScope loopScope = newWritableScopeImpl(context, "Scope with for-loop index");
@@ -455,7 +455,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         {
             // http://youtrack.jetbrains.net/issue/KT-527
 
-            VariableDescriptor olderVariable = UtilsPackage.getLocalVariable(context.scope, variableDescriptor.getName());
+            VariableDescriptor olderVariable = ScopeUtilsKt.getLocalVariable(context.scope, variableDescriptor.getName());
             if (olderVariable != null && isLocal(context.scope.getOwnerDescriptor(), olderVariable)) {
                 PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
                 context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
@@ -495,7 +495,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
 
-        JetTypeInfo result = TypeInfoFactoryPackage.noTypeInfo(context);
+        JetTypeInfo result = TypeInfoFactoryKt.noTypeInfo(context);
         if (finallyBlock != null) {
             result = facade.getTypeInfo(finallyBlock.getFinalExpression(),
                                         context.replaceExpectedType(NO_EXPECTED_TYPE));
@@ -624,7 +624,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     ) {
         JetType expectedType;
         if (function instanceof JetSecondaryConstructor) {
-            expectedType = getBuiltIns(descriptor).getUnitType();
+            expectedType = DescriptorUtilsKt.getBuiltIns(descriptor).getUnitType();
         }
         else if (function instanceof JetFunction) {
             JetFunction jetFunction = (JetFunction) function;

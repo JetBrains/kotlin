@@ -144,7 +144,7 @@ public class IdeStubIndexService extends StubIndexService {
             if (fqName != null) {
                 sink.occurrence(JetTopLevelFunctionFqnNameIndex.getInstance().getKey(), fqName.asString());
                 sink.occurrence(JetTopLevelFunctionByPackageIndex.getInstance().getKey(), fqName.parent().asString());
-                StubindexPackage.indexTopLevelExtension(stub, sink);
+                IndexUtilsKt.indexTopLevelExtension(stub, sink);
             }
         }
     }
@@ -166,7 +166,7 @@ public class IdeStubIndexService extends StubIndexService {
             if (fqName != null) {
                 sink.occurrence(JetTopLevelPropertyFqnNameIndex.getInstance().getKey(), fqName.asString());
                 sink.occurrence(JetTopLevelPropertyByPackageIndex.getInstance().getKey(), fqName.parent().asString());
-                StubindexPackage.indexTopLevelExtension(stub, sink);
+                IndexUtilsKt.indexTopLevelExtension(stub, sink);
             }
         }
     }

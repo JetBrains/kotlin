@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -27,9 +28,6 @@ import org.jetbrains.kotlin.resolve.OverrideResolver;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.getNameIfStandardType;
-import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.getJetTypeFqName;
 
 public final class PatternBuilder {
 
@@ -162,7 +160,7 @@ public final class PatternBuilder {
                     }
                     for (int i = 0; i < valueParameterDescriptors.size(); i++) {
                         ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
-                        Name name = getNameIfStandardType(valueParameterDescriptor.getType());
+                        Name name = DescriptorUtilsKt.getNameIfStandardType(valueParameterDescriptor.getType());
                         NamePredicate namePredicate = argumentCheckers.get(i);
                         if (!namePredicate.apply(name)) return false;
                     }
@@ -242,7 +240,7 @@ public final class PatternBuilder {
             if (actualReceiver != null) {
                 if (receiverFqName == null) return false;
 
-                String actualReceiverFqName = getJetTypeFqName(actualReceiver.getType(), false);
+                String actualReceiverFqName = DescriptorUtilsKt.getJetTypeFqName(actualReceiver.getType(), false);
 
                 if (!actualReceiverFqName.equals(receiverFqName)) return false;
             }

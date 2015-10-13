@@ -21,14 +21,13 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoot;
 
 public class LightClassAnnotationsTest extends KotlinAsJavaTestBase {
     private final File testDir = new File("compiler/testData/asJava/annotations");
@@ -40,7 +39,7 @@ public class LightClassAnnotationsTest extends KotlinAsJavaTestBase {
 
     @Override
     protected void extraConfiguration(@NotNull CompilerConfiguration configuration) {
-        addJvmClasspathRoot(configuration, JetTestUtils.getAnnotationsJar());
+        JvmContentRootsKt.addJvmClasspathRoot(configuration, JetTestUtils.getAnnotationsJar());
     }
 
     public void testExtraAnnotations() throws Exception {

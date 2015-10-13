@@ -30,10 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableControlFlowState;
 import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState;
-import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
-import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
-import org.jetbrains.kotlin.cfg.pseudocode.PseudocodePackage;
-import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
+import org.jetbrains.kotlin.cfg.pseudocode.*;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.JetElementInstruction;
@@ -44,7 +41,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges;
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.PseudocodeTraverserKt;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptorKt;
@@ -55,10 +52,10 @@ import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.ResolvedCallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.ResolvedCallUtilKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
@@ -311,7 +308,7 @@ public class JetFlowInformationProvider {
 
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
 
-        PseudocodeTraverserPackage.traverse(
+        PseudocodeTraverserKt.traverse(
                 pseudocode, FORWARD, initializers,
                 new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableControlFlowState>>() {
                     @Override
@@ -424,7 +421,7 @@ public class JetFlowInformationProvider {
             DeclarationDescriptor descriptor = BindingContextUtils.getEnclosingDescriptor(trace.getBindingContext(), expression);
             PropertySetterDescriptor setterDescriptor = ((PropertyDescriptor) variableDescriptor).getSetter();
 
-            ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilPackage.getResolvedCall(expression, trace.getBindingContext());
+            ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
             ReceiverValue receiverValue = ReceiverValue.IRRELEVANT_RECEIVER;
             if (resolvedCall != null) {
                 receiverValue = ExpressionTypingUtils
@@ -708,7 +705,7 @@ public class JetFlowInformationProvider {
                         }
                     }
                 };
-        PseudocodeTraverserPackage.traverse(pseudocode, TraversalOrder.BACKWARD, variableStatusData, variableStatusAnalyzeStrategy);
+        PseudocodeTraverserKt.traverse(pseudocode, TraversalOrder.BACKWARD, variableStatusData, variableStatusAnalyzeStrategy);
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -716,7 +713,7 @@ public class JetFlowInformationProvider {
 
     public void markUnusedExpressions() {
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
-        PseudocodeTraverserPackage.traverse(
+        PseudocodeTraverserKt.traverse(
                 pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
@@ -725,8 +722,8 @@ public class JetFlowInformationProvider {
                         JetElement element = ((JetElementInstruction)instruction).getElement();
                         if (!(element instanceof JetExpression)) return;
 
-                        if (BindingContextUtilPackage.isUsedAsStatement((JetExpression) element, trace.getBindingContext())
-                                && PseudocodePackage.getSideEffectFree(instruction)) {
+                        if (BindingContextUtilsKt.isUsedAsStatement((JetExpression) element, trace.getBindingContext())
+                            && PseudocodeUtilsKt.getSideEffectFree(instruction)) {
                             VariableContext ctxt = new VariableContext(instruction, reportedDiagnosticMap);
                             report(
                                     element instanceof JetFunctionLiteralExpression
@@ -744,7 +741,7 @@ public class JetFlowInformationProvider {
 // Statements
 
     public void markStatements() {
-        PseudocodeTraverserPackage.traverse(
+        PseudocodeTraverserKt.traverse(
                 pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
@@ -762,7 +759,7 @@ public class JetFlowInformationProvider {
     }
 
     public void markWhenWithoutElse() {
-        PseudocodeTraverserPackage.traverse(
+        PseudocodeTraverserKt.traverse(
                 pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
@@ -810,7 +807,7 @@ public class JetFlowInformationProvider {
             }
         }
         final Map<JetElement, KindAndCall> calls = new HashMap<JetElement, KindAndCall>();
-        PseudocodeTraverserPackage.traverse(
+        PseudocodeTraverserKt.traverse(
                 pseudocode,
                 FORWARD,
                 new FunctionVoid1<Instruction>() {
@@ -818,7 +815,7 @@ public class JetFlowInformationProvider {
                         if (!(instruction instanceof CallInstruction)) return;
                         CallInstruction callInstruction = (CallInstruction) instruction;
 
-                        ResolvedCall<?> resolvedCall = getResolvedCall(callInstruction.getElement(), trace.getBindingContext());
+                        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(callInstruction.getElement(), trace.getBindingContext());
                         if (resolvedCall == null) return;
 
                         // is this a recursive call?
@@ -839,7 +836,7 @@ public class JetFlowInformationProvider {
                             return;
                         }
 
-                        boolean isTail = PseudocodeTraverserPackage.traverseFollowingInstructions(
+                        boolean isTail = PseudocodeTraverserKt.traverseFollowingInstructions(
                                 callInstruction,
                                 new HashSet<Instruction>(),
                                 FORWARD,
@@ -853,7 +850,7 @@ public class JetFlowInformationProvider {
                         //       }
                         //   }
                         boolean sameDispatchReceiver =
-                                ResolvedCallUtilPackage.hasThisOrNoDispatchReceiver(resolvedCall, trace.getBindingContext());
+                                ResolvedCallUtilKt.hasThisOrNoDispatchReceiver(resolvedCall, trace.getBindingContext());
 
                         TailRecursionKind kind = isTail && sameDispatchReceiver ? TAIL_CALL : NON_TAIL;
 

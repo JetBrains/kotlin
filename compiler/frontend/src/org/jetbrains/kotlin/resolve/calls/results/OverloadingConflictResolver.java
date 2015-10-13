@@ -244,8 +244,8 @@ public class OverloadingConflictResolver {
 
         if (!isSubtype) return false;
 
-        Specificity.Relation sThanG = TypesPackage.getSpecificityRelationTo(specific, general);
-        Specificity.Relation gThanS = TypesPackage.getSpecificityRelationTo(general, specific);
+        Specificity.Relation sThanG = TypeCapabilitiesKt.getSpecificityRelationTo(specific, general);
+        Specificity.Relation gThanS = TypeCapabilitiesKt.getSpecificityRelationTo(general, specific);
         if (sThanG == Specificity.Relation.LESS_SPECIFIC && gThanS != Specificity.Relation.LESS_SPECIFIC) {
             return false;
         }

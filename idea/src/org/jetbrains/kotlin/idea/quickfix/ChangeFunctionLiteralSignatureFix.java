@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.types.JetType;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
-
 public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFix {
     private final List<JetType> parameterTypes;
 
@@ -58,11 +56,11 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
         BindingContext bindingContext = ResolutionUtils.analyzeFully(file);
-        runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
+        JetChangeSignatureKt.runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
             @NotNull
             @Override
             public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor, @NotNull BindingContext bindingContext) {
-                return ChangeSignaturePackage.modify(
+                return JetChangeSignatureKt.modify(
                         originalDescriptor,
                         new Function1<JetMutableMethodDescriptor, Unit>() {
                             @Override

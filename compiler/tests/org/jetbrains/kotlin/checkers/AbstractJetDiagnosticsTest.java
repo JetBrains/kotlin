@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
+import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.SimpleGlobalContext;
@@ -55,13 +56,11 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.util.*;
 
-import static org.jetbrains.kotlin.context.ContextPackage.withModule;
-import static org.jetbrains.kotlin.context.ContextPackage.withProject;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL;
@@ -128,7 +127,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             moduleBindings.put(testModule, moduleTrace.getBindingContext());
 
 
-            ModuleContext moduleContext = withModule(withProject(context, getProject()), module);
+            ModuleContext moduleContext = ContextKt.withModule(ContextKt.withProject(context, getProject()), module);
             analyzeModuleContents(moduleContext, jetFiles, moduleTrace);
 
             checkAllResolvedCallsAreCompleted(jetFiles, moduleTrace.getBindingContext());
@@ -178,13 +177,13 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         // now we throw a previously found error, if any
         if (exceptionFromDescriptorValidation != null) {
-            throw UtilsPackage.rethrow(exceptionFromDescriptorValidation);
+            throw ExceptionUtilsKt.rethrow(exceptionFromDescriptorValidation);
         }
         if (exceptionFromLazyResolveLogValidation != null) {
-            throw UtilsPackage.rethrow(exceptionFromLazyResolveLogValidation);
+            throw ExceptionUtilsKt.rethrow(exceptionFromLazyResolveLogValidation);
         }
         if (exceptionFromDynamicCallDescriptorsValidation != null) {
-            throw UtilsPackage.rethrow(exceptionFromDynamicCallDescriptorsValidation);
+            throw ExceptionUtilsKt.rethrow(exceptionFromDynamicCallDescriptorsValidation);
         }
     }
 

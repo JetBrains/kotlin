@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.psi.JetClassBody;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.psi.JetPsiFactory;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 
 import javax.swing.*;
@@ -85,7 +82,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
                     public void run() {
-                        JetPsiFactory psiFactory = JetPsiFactory(classifierDeclaration);
+                        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(classifierDeclaration);
                         JetClassBody body = classifierDeclaration.getOrCreateBody();
 
                         String functionBody = "";

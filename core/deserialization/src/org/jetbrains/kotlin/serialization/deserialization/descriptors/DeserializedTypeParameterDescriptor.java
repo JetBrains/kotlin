@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.Deserialization;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext;
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage;
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -31,7 +30,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class DeserializedTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor {
     private final ProtoBuf.TypeParameter proto;

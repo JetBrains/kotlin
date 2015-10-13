@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 import org.jetbrains.kotlin.psi.JetThisExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 
 class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     PropertiesHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {
@@ -88,7 +88,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             @NotNull PropertyDescriptor descriptor,
             boolean withBackingField
     ) {
-        if (TasksPackage.isDynamic(descriptor)) {
+        if (DynamicCallsKt.isDynamic(descriptor)) {
             JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
             return;
         }

@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.codegen.ClassFileFactory;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
-import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.*;
 import java.util.Collection;
@@ -105,10 +105,10 @@ public class CompileEnvironmentUtil {
             throw new CompileEnvironmentException("Invalid jar path " + jarPath, e);
         }
         catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
         finally {
-            UtilsPackage.closeQuietly(outputStream);
+            ExceptionUtilsKt.closeQuietly(outputStream);
         }
     }
 

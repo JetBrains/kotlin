@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.kotlin.idea.test.RunnableWithException;
-import org.jetbrains.kotlin.idea.test.TestPackage;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
@@ -35,7 +34,7 @@ abstract public class KotlinLightQuickFixTestCase extends LightQuickFixTestCase 
     protected void tearDown() throws Exception {
         VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
 
-        TestPackage.unInvalidateBuiltinsAndStdLib(getProject(), new RunnableWithException() {
+        TestUtilsKt.unInvalidateBuiltinsAndStdLib(getProject(), new RunnableWithException() {
             @Override
             public void run() throws Exception {
                 KotlinLightQuickFixTestCase.super.tearDown();

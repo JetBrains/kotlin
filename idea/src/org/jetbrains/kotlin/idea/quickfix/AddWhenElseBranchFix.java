@@ -28,10 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetPsiFactory;
-import org.jetbrains.kotlin.psi.JetWhenEntry;
-import org.jetbrains.kotlin.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.*;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
@@ -65,7 +62,7 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
         PsiElement whenCloseBrace = element.getCloseBrace();
         assert (whenCloseBrace != null) : "isAvailable should check if close brace exist";
 
-        JetPsiFactory psiFactory = JetPsiFactory(file);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
         JetWhenEntry entry = psiFactory.createWhenEntry(ELSE_ENTRY_TEXT);
 
         PsiElement insertedBranch = element.addBefore(entry, whenCloseBrace);

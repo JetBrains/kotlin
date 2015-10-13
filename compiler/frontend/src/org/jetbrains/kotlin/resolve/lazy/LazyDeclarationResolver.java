@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -79,7 +79,7 @@ public class LazyDeclarationResolver {
             throw new IllegalArgumentException(
                    String.format("Could not find a classifier for %s.\n" +
                                  "Found descriptor: %s (%s).\n",
-                                 PsiUtilPackage.getElementTextWithContext(classOrObject),
+                                 PsiUtilsKt.getElementTextWithContext(classOrObject),
                                  scopeDescriptor != null ? DescriptorRenderer.DEBUG_TEXT.render(scopeDescriptor) : "null",
                                  scopeDescriptor != null ? (scopeDescriptor.getContainingDeclaration().getClass()) : null));
         }
@@ -216,7 +216,7 @@ public class LazyDeclarationResolver {
             @Override
             public DeclarationDescriptor visitJetElement(@NotNull JetElement element, Void data) {
                 throw new IllegalArgumentException("Unsupported declaration type: " + element + " " +
-                                                   PsiUtilPackage.getElementTextWithContext(element));
+                                                   PsiUtilsKt.getElementTextWithContext(element));
             }
         }, null);
         if (result == null) {
@@ -240,7 +240,7 @@ public class LazyDeclarationResolver {
                 return getClassDescriptor((JetClassOrObject) parentDeclaration, location).getUnsubstitutedMemberScope();
             } else {
                 throw new IllegalStateException("Don't call this method for local declarations: " + declaration + "\n" +
-                                                PsiUtilPackage.getElementTextWithContext(declaration));
+                                                PsiUtilsKt.getElementTextWithContext(declaration));
             }
         }
     }

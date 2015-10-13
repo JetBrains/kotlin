@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypesPackage;
+import org.jetbrains.kotlin.types.TypeCapabilitiesKt;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
 import java.util.List;
@@ -72,7 +72,7 @@ public class OverloadUtil {
             JetType superValueParameterType = OverridingUtil.getUpperBound(superValueParameters.get(i));
             JetType subValueParameterType = OverridingUtil.getUpperBound(subValueParameters.get(i));
             if (!JetTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType)
-                || TypesPackage.oneMoreSpecificThanAnother(subValueParameterType, superValueParameterType)) {
+                || TypeCapabilitiesKt.oneMoreSpecificThanAnother(subValueParameterType, superValueParameterType)) {
                 return OverridingUtil.OverrideCompatibilityInfo
                         .valueParameterTypeMismatch(superValueParameterType, subValueParameterType, INCOMPATIBLE);
             }

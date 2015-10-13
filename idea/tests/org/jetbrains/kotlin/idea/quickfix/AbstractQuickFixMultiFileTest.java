@@ -38,7 +38,7 @@ import kotlin.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
-import org.jetbrains.kotlin.idea.quickfix.utils.UtilsPackage;
+import org.jetbrains.kotlin.idea.quickfix.utils.QuickfixTestUtilsKt;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -77,7 +77,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     }
 
     private void enableInspections(String beforeFileName) throws IOException, ClassNotFoundException {
-        File inspectionFile = UtilsPackage.findInspectionFile(new File(beforeFileName).getParentFile());
+        File inspectionFile = QuickfixTestUtilsKt.findInspectionFile(new File(beforeFileName).getParentFile());
         if (inspectionFile != null) {
             String className = FileUtil.loadFile(inspectionFile).trim();
             Class<?> inspectionClass = Class.forName(className);

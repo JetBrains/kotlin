@@ -85,7 +85,7 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
             @Override
             public void actionPerformed(@NotNull ActionEvent e) {
                 PsiClass selectedClass = getSelectedClass();
-                DescriptorMemberChooserObject[] properties = DialogPackage.collectProperties(selectedClass);
+                DescriptorMemberChooserObject[] properties = FieldBreakpointDialogUtilKt.collectProperties(selectedClass);
                 MemberChooser<DescriptorMemberChooserObject> chooser = new MemberChooser<DescriptorMemberChooserObject>(properties, false, false, myProject);
                 chooser.setTitle(DebuggerBundle.message("add.field.breakpoint.dialog.field.chooser.title", properties.length));
                 chooser.setCopyJavadocVisible(false);

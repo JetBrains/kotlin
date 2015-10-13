@@ -38,17 +38,19 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
+import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -64,8 +66,6 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
-import static org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage.asJetScope;
-import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class DescriptorResolver {
     public static final Name COPY_METHOD_NAME = Name.identifier("copy");
@@ -175,7 +175,7 @@ public class DescriptorResolver {
             JetTypeReference typeReference = delegationSpecifier.getTypeReference();
             if (typeReference != null) {
                 JetType supertype = resolver.resolveType(extensibleScope, typeReference, trace, checkBounds);
-                if (TypesPackage.isDynamic(supertype)) {
+                if (DynamicTypesKt.isDynamic(supertype)) {
                     trace.report(DYNAMIC_SUPERTYPE.on(typeReference));
                 }
                 else {
@@ -224,7 +224,7 @@ public class DescriptorResolver {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull BindingTrace trace
     ) {
-        Name functionName = DataClassUtilsPackage.createComponentName(parameterIndex);
+        Name functionName = DataClassUtilsKt.createComponentName(parameterIndex);
         JetType returnType = property.getType();
 
         SimpleFunctionDescriptorImpl functionDescriptor = SimpleFunctionDescriptorImpl.create(
@@ -366,7 +366,7 @@ public class DescriptorResolver {
                 variableType,
                 valueParameter.hasDefaultValue(),
                 varargElementType,
-                toSourceElement(valueParameter)
+                KotlinSourceElementKt.toSourceElement(valueParameter)
         );
 
         trace.record(BindingContext.VALUE_PARAMETER, valueParameter, valueParameterDescriptor);
@@ -418,7 +418,7 @@ public class DescriptorResolver {
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
                 index,
-                toSourceElement(typeParameter)
+                KotlinSourceElementKt.toSourceElement(typeParameter)
         );
         trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
         extensibleScope.addClassifierDescriptor(typeParameterDescriptor);
@@ -432,7 +432,7 @@ public class DescriptorResolver {
             @NotNull BindingTrace trace
     ) {
         ConstructorDescriptorImpl constructorDescriptor =
-                DescriptorFactory.createPrimaryConstructorForObject(classDescriptor, toSourceElement(object));
+                DescriptorFactory.createPrimaryConstructorForObject(classDescriptor, KotlinSourceElementKt.toSourceElement(object));
         if (object != null) {
             JetPrimaryConstructor primaryConstructor = object.getPrimaryConstructor();
             trace.record(CONSTRUCTOR, primaryConstructor != null ? primaryConstructor : object, constructorDescriptor);
@@ -549,7 +549,7 @@ public class DescriptorResolver {
 
             Name name = nameExpression.getReferencedNameAsName();
 
-            ClassifierDescriptor classifier = asJetScope(scope).getClassifier(name, NoLookupLocation.UNSORTED);
+            ClassifierDescriptor classifier = ScopeUtilsKt.asJetScope(scope).getClassifier(name, NoLookupLocation.UNSORTED);
             if (classifier instanceof TypeParameterDescriptor && classifier.getContainingDeclaration() == descriptor) continue;
 
             if (classifier != null) {
@@ -580,7 +580,7 @@ public class DescriptorResolver {
             }
             trace.report(FINAL_UPPER_BOUND.on(upperBound, upperBoundType));
         }
-        if (TypesPackage.isDynamic(upperBoundType)) {
+        if (DynamicTypesKt.isDynamic(upperBoundType)) {
             trace.report(DYNAMIC_UPPER_BOUND.on(upperBound));
         }
     }
@@ -623,7 +623,7 @@ public class DescriptorResolver {
                 JetPsiUtil.safeName(parameter.getName()),
                 type,
                 false,
-                toSourceElement(parameter)
+                KotlinSourceElementKt.toSourceElement(parameter)
         );
         trace.record(BindingContext.VALUE_PARAMETER, parameter, variableDescriptor);
         // Type annotations also should be resolved
@@ -651,7 +651,7 @@ public class DescriptorResolver {
                     variable.isVar(),
                     JetPsiUtil.safeName(variable.getName()),
                     CallableMemberDescriptor.Kind.DECLARATION,
-                    toSourceElement(variable),
+                    KotlinSourceElementKt.toSourceElement(variable),
                     /* lateInit = */ false,
                     /* isConst = */ false
             );
@@ -704,7 +704,7 @@ public class DescriptorResolver {
                 JetPsiUtil.safeName(variable.getName()),
                 type,
                 variable.isVar(),
-                toSourceElement(variable)
+                KotlinSourceElementKt.toSourceElement(variable)
         );
         trace.record(BindingContext.VARIABLE, variable, variableDescriptor);
         return variableDescriptor;
@@ -750,7 +750,7 @@ public class DescriptorResolver {
                 isVar,
                 JetPsiUtil.safeName(property.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION,
-                toSourceElement(property),
+                KotlinSourceElementKt.toSourceElement(property),
                 modifierList != null && modifierList.hasModifier(JetTokens.LATEINIT_KEYWORD),
                 modifierList != null && modifierList.hasModifier(JetTokens.CONST_KEYWORD)
         );
@@ -998,7 +998,8 @@ public class DescriptorResolver {
                                                                 resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
                                                                 resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
                                                                 setter.hasBody(), false,
-                                                                CallableMemberDescriptor.Kind.DECLARATION, null, toSourceElement(setter));
+                                                                CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt
+                                                                        .toSourceElement(setter));
             if (parameter != null) {
 
                 // This check is redundant: the parser does not allow a default value, but we'll keep it just in case
@@ -1078,7 +1079,8 @@ public class DescriptorResolver {
                                                                 resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
                                                                 resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
                                                                 getter.hasBody(), false,
-                                                                CallableMemberDescriptor.Kind.DECLARATION, null, toSourceElement(getter));
+                                                                CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt
+                                                                        .toSourceElement(getter));
             getterDescriptor.initialize(returnType);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
@@ -1130,7 +1132,7 @@ public class DescriptorResolver {
                 isMutable,
                 name,
                 CallableMemberDescriptor.Kind.DECLARATION,
-                toSourceElement(parameter),
+                KotlinSourceElementKt.toSourceElement(parameter),
                 /* lateInit = */ false,
                 /* isConst = */ false
         );
@@ -1167,12 +1169,12 @@ public class DescriptorResolver {
         List<JetTypeReference> jetTypeArguments = typeElement.getTypeArgumentsAsTypes();
 
         // A type reference from Kotlin code can yield a flexible type only if it's `ft<T1, T2>`, whose bounds should not be checked
-        if (TypesPackage.isFlexible(type) && !TypesPackage.isDynamic(type)) {
+        if (FlexibleTypesKt.isFlexible(type) && !DynamicTypesKt.isDynamic(type)) {
             assert jetTypeArguments.size() == 2
                     : "Flexible type cannot be denoted in Kotlin otherwise than as ft<T1, T2>, but was: "
-                      + PsiUtilPackage.getElementTextWithContext(typeReference);
+                      + PsiUtilsKt.getElementTextWithContext(typeReference);
             // it's really ft<Foo, Bar>
-            Flexibility flexibility = TypesPackage.flexibility(type);
+            Flexibility flexibility = FlexibleTypesKt.flexibility(type);
             checkBounds(jetTypeArguments.get(0), flexibility.getLowerBound(), trace);
             checkBounds(jetTypeArguments.get(1), flexibility.getUpperBound(), trace);
             return;

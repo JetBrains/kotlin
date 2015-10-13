@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.codeInsight.surroundWith.MoveDeclarationsOutHel
 import org.jetbrains.kotlin.psi.JetBlockExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetIfExpression;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
@@ -44,7 +45,7 @@ public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder 
             return null;
         }
 
-        JetIfExpression ifExpression = (JetIfExpression) JetPsiFactory(project).createExpression(getCodeTemplate());
+        JetIfExpression ifExpression = (JetIfExpression) JetPsiFactoryKt.JetPsiFactory(project).createExpression(getCodeTemplate());
         ifExpression = (JetIfExpression) container.addAfter(ifExpression, statements[statements.length - 1]);
 
         // TODO move a comment for first statement

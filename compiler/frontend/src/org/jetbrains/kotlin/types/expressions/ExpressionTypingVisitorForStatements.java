@@ -41,11 +41,11 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.Collection;
 
@@ -101,7 +101,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT),
                 scope.getOwnerDescriptor(),
                 declaration);
-        return TypeInfoFactoryPackage.createTypeInfo(components.dataFlowAnalyzer.checkStatementType(declaration, context), context);
+        return TypeInfoFactoryKt.createTypeInfo(components.dataFlowAnalyzer.checkStatementType(declaration, context), context);
     }
 
     @Override
@@ -155,11 +155,11 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             }
         }
         else {
-            typeInfo = TypeInfoFactoryPackage.noTypeInfo(context);
+            typeInfo = TypeInfoFactoryKt.noTypeInfo(context);
         }
 
         {
-            VariableDescriptor olderVariable = UtilsPackage.getLocalVariable(scope, propertyDescriptor.getName());
+            VariableDescriptor olderVariable = ScopeUtilsKt.getLocalVariable(scope, propertyDescriptor.getName());
             ExpressionTypingUtils.checkVariableShadowing(context, propertyDescriptor, olderVariable);
         }
 
@@ -176,13 +176,13 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetExpression initializer = multiDeclaration.getInitializer();
         if (initializer == null) {
             context.trace.report(INITIALIZER_REQUIRED_FOR_MULTIDECLARATION.on(multiDeclaration));
-            return TypeInfoFactoryPackage.noTypeInfo(context);
+            return TypeInfoFactoryKt.noTypeInfo(context);
         }
         ExpressionReceiver expressionReceiver = ExpressionTypingUtils.getExpressionReceiver(
                 facade, initializer, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
         JetTypeInfo typeInfo = facade.getTypeInfo(initializer, context);
         if (expressionReceiver == null) {
-            return TypeInfoFactoryPackage.noTypeInfo(context);
+            return TypeInfoFactoryKt.noTypeInfo(context);
         }
         components.multiDeclarationResolver.defineLocalVariablesFromMultiDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
         components.modifiersChecker.withTrace(context.trace).checkModifiersForMultiDeclaration(multiDeclaration);
@@ -201,7 +201,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT),
                 scope.getOwnerDescriptor(),
                 klass);
-        return TypeInfoFactoryPackage.createTypeInfo(components.dataFlowAnalyzer.checkStatementType(klass, context), context);
+        return TypeInfoFactoryKt.createTypeInfo(components.dataFlowAnalyzer.checkStatementType(klass, context), context);
     }
 
     @Override
@@ -212,7 +212,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitDeclaration(@NotNull JetDeclaration dcl, ExpressionTypingContext context) {
-        return TypeInfoFactoryPackage.createTypeInfo(components.dataFlowAnalyzer.checkStatementType(dcl, context), context);
+        return TypeInfoFactoryKt.createTypeInfo(components.dataFlowAnalyzer.checkStatementType(dcl, context), context);
     }
 
     @Override
@@ -346,7 +346,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetExpression right = expression.getRight();
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
-            if (right == null) return TypeInfoFactoryPackage.noTypeInfo(context);
+            if (right == null) return TypeInfoFactoryKt.noTypeInfo(context);
             JetTypeInfo typeInfo = basic.resolveArrayAccessSetMethod(arrayAccessExpression, right, context, context.trace);
             basic.checkLValue(context.trace, context, arrayAccessExpression, right);
             return typeInfo.replaceType(checkAssignmentType(typeInfo.getType(), expression, contextWithExpectedType));
@@ -384,7 +384,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitJetElement(@NotNull JetElement element, ExpressionTypingContext context) {
         context.trace.report(UNSUPPORTED.on(element, "in a block"));
-        return TypeInfoFactoryPackage.noTypeInfo(context);
+        return TypeInfoFactoryKt.noTypeInfo(context);
     }
 
     @Override

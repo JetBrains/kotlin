@@ -26,16 +26,11 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMutableMethodDescriptor;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.*;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.util.Collection;
-
-import static org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
 
 public class RemoveFunctionParametersFix extends ChangeFunctionSignatureFix {
     private final ValueParameterDescriptor parameterToRemove;
@@ -58,11 +53,11 @@ public class RemoveFunctionParametersFix extends ChangeFunctionSignatureFix {
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
         BindingContext bindingContext = ResolutionUtils.analyzeFully(file);
-        runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
+        JetChangeSignatureKt.runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
             @NotNull
             @Override
             public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor, @NotNull BindingContext bindingContext) {
-                return ChangeSignaturePackage.modify(
+                return JetChangeSignatureKt.modify(
                         originalDescriptor,
                         new Function1<JetMutableMethodDescriptor, Unit>() {
                             @Override

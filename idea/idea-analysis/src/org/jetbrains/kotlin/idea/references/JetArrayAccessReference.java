@@ -96,6 +96,6 @@ public class JetArrayAccessReference extends JetSimpleReference<JetArrayAccessEx
     @Nullable
     @Override
     public PsiElement handleElementRename(@Nullable String newElementName) {
-        return ReferencesPackage.renameImplicitConventionalCall(this, newElementName);
+        return ReferenceUtilKt.renameImplicitConventionalCall(this, newElementName);
     }
 }

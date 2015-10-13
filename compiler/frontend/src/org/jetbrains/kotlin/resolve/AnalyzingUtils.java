@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetTreeVisitorVoid;
-import org.jetbrains.kotlin.psi.debugText.DebugTextPackage;
+import org.jetbrains.kotlin.psi.debugText.DebugTextUtilKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public class AnalyzingUtils {
         StringBuilder debugInfo = new StringBuilder(debugName);
         if (resolutionSubjectForMessage instanceof JetElement) {
             JetElement element = (JetElement) resolutionSubjectForMessage;
-            debugInfo.append(" ").append(DebugTextPackage.getDebugText(element));
+            debugInfo.append(" ").append(DebugTextUtilKt.getDebugText(element));
             debugInfo.append(" in ").append(element.getContainingFile().getName());
         }
         else if (resolutionSubjectForMessage != null) {

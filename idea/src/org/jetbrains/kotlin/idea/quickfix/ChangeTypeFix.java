@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -61,7 +62,7 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetTypeReference newTypeRef = (JetTypeReference) element.replace(JetPsiFactory(file).createType(renderedType));
+        JetTypeReference newTypeRef = (JetTypeReference) element.replace(JetPsiFactoryKt.JetPsiFactory(file).createType(renderedType));
         ShortenReferences.DEFAULT.process(newTypeRef);
     }
 

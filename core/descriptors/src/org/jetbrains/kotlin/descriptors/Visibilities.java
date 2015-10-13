@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.util.ModuleVisibilityHelper;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.CollectionsKt;
 
 import java.util.*;
 
@@ -227,7 +227,7 @@ public class Visibilities {
     private static final Map<Visibility, Integer> ORDERED_VISIBILITIES;
 
     static {
-        Map<Visibility, Integer> visibilities = UtilsPackage.newHashMapWithExpectedSize(4);
+        Map<Visibility, Integer> visibilities = CollectionsKt.newHashMapWithExpectedSize(4);
         visibilities.put(PRIVATE_TO_THIS, 0);
         visibilities.put(PRIVATE, 0);
         visibilities.put(INTERNAL, 1);

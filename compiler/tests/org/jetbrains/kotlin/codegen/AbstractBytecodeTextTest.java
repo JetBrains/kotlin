@@ -23,7 +23,7 @@ import com.intellij.util.Processor;
 import kotlin.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.util.*;
@@ -65,7 +65,7 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
         }
         catch (Throwable e) {
             System.out.println(text);
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

@@ -36,8 +36,8 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.AsJavaPackage;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
+import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -48,9 +48,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.string.StringPackage;
+import org.jetbrains.kotlin.idea.util.string.StringUtilKt;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -239,7 +239,7 @@ public class JetRefactoringUtil {
 
     @NotNull
     public static String formatJavaOrLightMethod(@NotNull PsiMethod method) {
-        PsiElement originalDeclaration = AsJavaPackage.getUnwrapped(method);
+        PsiElement originalDeclaration = LightClassUtilsKt.getUnwrapped(method);
         if (originalDeclaration instanceof JetDeclaration) {
             JetDeclaration jetDeclaration = (JetDeclaration) originalDeclaration;
             BindingContext bindingContext = ResolutionUtils.analyze(jetDeclaration, BodyResolveMode.FULL);
@@ -314,7 +314,7 @@ public class JetRefactoringUtil {
     }
 
     private static void addParameter(@NotNull PsiMethod method, @NotNull Set<PsiElement> result, @NotNull PsiParameter parameter) {
-        int parameterIndex = PsiUtilPackage.parameterIndex(AsJavaPackage.getUnwrapped(parameter));
+        int parameterIndex = JetPsiUtilKt.parameterIndex(LightClassUtilsKt.getUnwrapped(parameter));
 
         if (method instanceof KotlinLightMethod) {
             JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
@@ -482,7 +482,7 @@ public class JetRefactoringUtil {
     }
 
     public static String getExpressionShortText(@NotNull JetElement element) { //todo: write appropriate implementation
-        return StringPackage.collapseSpaces(StringUtil.shortenTextWithEllipsis(element.getText(), 53, 0));
+        return StringUtilKt.collapseSpaces(StringUtil.shortenTextWithEllipsis(element.getText(), 53, 0));
     }
 
     @Nullable

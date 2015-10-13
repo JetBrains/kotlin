@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.Collections;
 import java.util.Set;
@@ -142,14 +142,14 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             commonDataFlowInfo = commonDataFlowInfo.or(context.dataFlowInfo);
         }
 
-        return TypeInfoFactoryPackage.createTypeInfo(expressionTypes.isEmpty() ? null : components.dataFlowAnalyzer.checkType(
+        return TypeInfoFactoryKt.createTypeInfo(expressionTypes.isEmpty() ? null : components.dataFlowAnalyzer.checkType(
                                                              components.dataFlowAnalyzer.checkImplicitCast(
                                                                      CommonSupertypes.commonSupertype(expressionTypes), expression,
                                                                      contextWithExpectedType, isStatement),
                                                              expression, contextWithExpectedType),
-                                                     commonDataFlowInfo,
-                                                     loopBreakContinuePossible,
-                                                     contextWithExpectedType.dataFlowInfo);
+                                                commonDataFlowInfo,
+                                                loopBreakContinuePossible,
+                                                contextWithExpectedType.dataFlowInfo);
     }
 
     @NotNull
@@ -309,7 +309,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         PossiblyBareType possiblyBareTarget = components.typeResolver.resolvePossiblyBareType(typeResolutionContext, typeReferenceAfterIs);
         JetType targetType = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace, components.builtIns);
 
-        if (TypesPackage.isDynamic(targetType)) {
+        if (DynamicTypesKt.isDynamic(targetType)) {
             context.trace.report(DYNAMIC_NOT_ALLOWED.on(typeReferenceAfterIs));
         }
         ClassDescriptor targetDescriptor = TypeUtils.getClassDescriptor(targetType);

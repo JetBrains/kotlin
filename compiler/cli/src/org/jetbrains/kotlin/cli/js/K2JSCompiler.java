@@ -37,12 +37,13 @@ import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.cli.common.messages.*;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
@@ -62,7 +63,6 @@ import java.util.List;
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
-import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoots;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
@@ -100,7 +100,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             configuration.put(JVMConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
         }
 
-        addKotlinSourceRoots(configuration, arguments.freeArgs);
+        ContentRootsKt.addKotlinSourceRoots(configuration, arguments.freeArgs);
         KotlinCoreEnvironment environmentForJS =
                 KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES);
 
@@ -205,7 +205,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        OutputUtilsPackage.writeAll(outputFiles, outputDir, messageSeverityCollector);
+        OutputUtilsKt.writeAll(outputFiles, outputDir, messageSeverityCollector);
 
         return OK;
     }

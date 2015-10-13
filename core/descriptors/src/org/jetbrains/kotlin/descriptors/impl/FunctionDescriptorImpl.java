@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.types.DescriptorSubstitutor;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
+import org.jetbrains.kotlin.utils.CollectionsKt;
 import org.jetbrains.kotlin.utils.SmartSet;
-import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,7 +71,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @Nullable Modality modality,
             @NotNull Visibility visibility
     ) {
-        this.typeParameters = UtilsPackage.toReadOnlyList(typeParameters);
+        this.typeParameters = CollectionsKt.toReadOnlyList(typeParameters);
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;

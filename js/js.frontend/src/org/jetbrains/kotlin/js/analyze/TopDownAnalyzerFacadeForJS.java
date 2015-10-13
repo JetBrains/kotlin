@@ -16,20 +16,17 @@
 
 package org.jetbrains.kotlin.js.analyze;
 
-import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.context.ContextPackage;
+import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
-import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.frontend.js.di.DiPackage;
+import org.jetbrains.kotlin.frontend.js.di.InjectionKt;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
@@ -50,7 +47,7 @@ public final class TopDownAnalyzerFacadeForJS {
     ) {
         BindingTrace trace = new BindingTraceContext();
 
-        MutableModuleContext newModuleContext = ContextPackage.ContextForNewModule(
+        MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
                 config.getProject(), Name.special("<" + config.getModuleId() + ">"), JsPlatform.INSTANCE$
         );
         newModuleContext.setDependencies(computeDependencies(newModuleContext.getModule(), config));
@@ -75,7 +72,7 @@ public final class TopDownAnalyzerFacadeForJS {
     ) {
         Collection<JetFile> allFiles = Config.withJsLibAdded(files, config);
 
-        LazyTopDownAnalyzerForTopLevel analyzerForJs = DiPackage.createTopDownAnalyzerForJs(
+        LazyTopDownAnalyzerForTopLevel analyzerForJs = InjectionKt.createTopDownAnalyzerForJs(
                 moduleContext, trace,
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles)
         );

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.mutator.Mutator;
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
 import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
 
         List<JsStatement> result = new ArrayList<JsStatement>(valueParameters.size());
         for (ValueParameterDescriptor valueParameter : valueParameters) {
-            if (!DescriptorUtilPackage.hasDefaultValue(valueParameter)) continue;
+            if (!DescriptorUtilsKt.hasDefaultValue(valueParameter)) continue;
 
             JsNameRef jsNameRef = functionBodyContext.getNameForDescriptor(valueParameter).makeRef();
             JetExpression defaultArgument = getDefaultArgument(valueParameter);

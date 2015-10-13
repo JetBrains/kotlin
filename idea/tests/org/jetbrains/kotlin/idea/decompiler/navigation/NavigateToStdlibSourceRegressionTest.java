@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
-import org.jetbrains.kotlin.idea.test.TestPackage;
+import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 
 public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegressionTest {
     /**
@@ -37,7 +37,7 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
         // Workaround for IDEA's bug during tests.
         // After tests IDEA disposes VirtualFiles within LocalFileSystem, but doesn't rebuild indices.
         // This causes library source files to be impossible to find via indices
-        TestPackage.closeAndDeleteProject();
+        TestUtilsKt.closeAndDeleteProject();
     }
 
     @NotNull

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CachedAccessTranslator;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetUnaryExpression;
-import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.List;
@@ -128,6 +128,6 @@ public abstract class IncrementTranslator extends AbstractTranslator {
 
     private static boolean isDynamic(TranslationContext context, JetUnaryExpression expression) {
         CallableDescriptor operationDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
-        return TasksPackage.isDynamic(operationDescriptor);
+        return DynamicCallsKt.isDynamic(operationDescriptor);
     }
 }

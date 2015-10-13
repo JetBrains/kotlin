@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import java.lang.ref.WeakReference
+import kotlin.reflect.KClass
 import kotlin.reflect.jvm.internal.pcollections.HashPMap
 
 // TODO: collect nulls periodically

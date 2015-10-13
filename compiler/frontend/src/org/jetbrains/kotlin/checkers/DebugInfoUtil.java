@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -127,7 +127,7 @@ public class DebugInfoUtil {
 
             @Override
             public void visitThisExpression(@NotNull JetThisExpression expression) {
-                ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilPackage.getResolvedCall(expression, bindingContext);
+                ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
                 if (resolvedCall != null) {
                     reportIfDynamic(expression, resolvedCall.getResultingDescriptor(), debugInfoReporter);
                 }
@@ -225,7 +225,7 @@ public class DebugInfoUtil {
     }
 
     private static boolean reportIfDynamic(JetElement element, DeclarationDescriptor declarationDescriptor, DebugInfoReporter debugInfoReporter) {
-        if (declarationDescriptor != null && TasksPackage.isDynamic(declarationDescriptor)) {
+        if (declarationDescriptor != null && DynamicCallsKt.isDynamic(declarationDescriptor)) {
             debugInfoReporter.reportDynamicCall(element, declarationDescriptor);
             return true;
         }

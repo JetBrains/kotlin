@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 import java.util.Map;
 
@@ -76,7 +76,7 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
     @Nullable
     protected static PsiMethod getRepresentativePsiMethod(PsiElement element) {
         while (true) {
-            element = PsiUtilPackage.getParentOfTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_NON_LOCAL_DECLARATION);
+            element = PsiUtilsKt.getParentOfTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_NON_LOCAL_DECLARATION);
             if (element == null) return null;
 
             PsiMethod method = getRepresentativePsiMethodForNonLocalDeclaration(element);

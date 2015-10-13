@@ -119,7 +119,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
         // there's no point to present such diagnostics to the user, because the user didn't write this code
         PsiFile file = element.getContainingFile();
         if (file instanceof JetFile) {
-            if (PsiPackage.getDoNotAnalyze((JetFile) file) != null) return true;
+            if (JetPsiFactoryKt.getDoNotAnalyze((JetFile) file) != null) return true;
         }
 
         for (DiagnosticSuppressor suppressor : DIAGNOSTIC_SUPPRESSORS.get()) {

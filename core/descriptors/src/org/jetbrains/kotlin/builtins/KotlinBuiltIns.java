@@ -54,7 +54,7 @@ public abstract class KotlinBuiltIns {
     public static final Set<FqName> BUILT_INS_PACKAGE_FQ_NAMES = setOf(
             BUILT_INS_PACKAGE_FQ_NAME,
             ANNOTATION_PACKAGE_FQ_NAME,
-            BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()
+            ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME()
     );
 
     protected final ModuleDescriptorImpl builtInsModule;
@@ -73,7 +73,7 @@ public abstract class KotlinBuiltIns {
                 Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$, this
         );
 
-        PackageFragmentProvider packageFragmentProvider = BuiltinsPackage.createBuiltInPackageFragmentProvider(
+        PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
                 new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
                 getAdditionalSupertypesProvider(),

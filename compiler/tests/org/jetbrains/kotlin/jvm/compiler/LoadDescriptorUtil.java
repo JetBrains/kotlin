@@ -23,7 +23,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -70,7 +70,7 @@ public final class LoadDescriptorUtil {
         AnalysisResult result = filesAndResult.getAnalysisResult();
         List<JetFile> files = filesAndResult.getJetFiles();
         GenerationState state = GenerationUtils.compileFilesGetGenerationState(files.get(0).getProject(), result, files);
-        OutputUtilsPackage.writeAllTo(state.getFactory(), outDir);
+        OutputUtilsKt.writeAllTo(state.getFactory(), outDir);
         return result;
     }
 

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.mozilla.javascript.*;
 
 import java.io.File;
@@ -35,7 +36,6 @@ import java.util.Set;
 import static org.jetbrains.kotlin.js.config.LibrarySourcesConfig.*;
 import static org.jetbrains.kotlin.js.test.BasicTest.DIST_DIR_PATH;
 import static org.jetbrains.kotlin.js.test.BasicTest.TEST_DATA_DIR_PATH;
-import static org.jetbrains.kotlin.utils.UtilsPackage.rethrow;
 
 public final class RhinoUtils {
     private static final String KOTLIN_JS_LIB_ECMA_5 = TEST_DATA_DIR_PATH + "kotlin_lib_ecma5.js";
@@ -204,7 +204,7 @@ public final class RhinoUtils {
             }
         }
         catch (Exception e) {
-            throw rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
         //scope.sealObject();
         return scope;

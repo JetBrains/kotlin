@@ -43,17 +43,16 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DeprecationUtilKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
+import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypesPackage;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -177,7 +176,7 @@ public class AsmUtil {
     public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
         return isStaticKind(kind) ||
                JetTypeMapper.isStaticAccessor(functionDescriptor) ||
-               AnnotationsPackage.isPlatformStaticInObjectOrClass(functionDescriptor);
+               AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor);
     }
 
     public static boolean isStaticKind(OwnerKind kind) {
@@ -193,7 +192,7 @@ public class AsmUtil {
             }
         }
 
-        if (AnnotationsPackage.isPlatformStaticInCompanionObject(functionDescriptor)) {
+        if (AnnotationUtilKt.isPlatformStaticInCompanionObject(functionDescriptor)) {
             // Native method will be a member of the class, the companion object method will be delegated to it
             flags &= ~Opcodes.ACC_NATIVE;
         }
@@ -666,14 +665,14 @@ public class AsmUtil {
             @NotNull String assertMethodToCall
     ) {
         // Assertions are generated elsewhere for platform types
-        if (JvmPackage.getPLATFORM_TYPES()) return false;
+        if (JavaDescriptorResolverKt.getPLATFORM_TYPES()) return false;
 
         if (!state.isCallAssertionsEnabled()) return false;
 
         if (!isDeclaredInJava(descriptor)) return false;
 
         JetType type = descriptor.getReturnType();
-        if (type == null || isNullableType(TypesPackage.lowerIfFlexible(type))) return false;
+        if (type == null || isNullableType(FlexibleTypesKt.lowerIfFlexible(type))) return false;
 
         Type asmType = state.getTypeMapper().mapReturnType(descriptor);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {

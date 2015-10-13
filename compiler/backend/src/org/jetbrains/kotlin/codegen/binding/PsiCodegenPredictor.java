@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
+import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -75,7 +75,7 @@ public final class PsiCodegenPredictor {
 
             if (declaration instanceof JetNamedFunction) {
                 Name name = ((JetNamedFunction) declaration).getNameAsName();
-                return name == null ? null : FileClassesPackage.getFileClassInternalName(fileClassesProvider, containingFile) + "$" + name.asString();
+                return name == null ? null : FileClasses.getFileClassInternalName(fileClassesProvider, containingFile) + "$" + name.asString();
             }
 
             parentInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(containingFile.getPackageFqName());

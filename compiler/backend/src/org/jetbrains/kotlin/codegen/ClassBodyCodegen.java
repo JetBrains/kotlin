@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.backend.common.bridges.BridgesPackage;
+import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
@@ -70,7 +70,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
             for (DeclarationDescriptor memberDescriptor : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
                 if (memberDescriptor instanceof CallableMemberDescriptor) {
                     CallableMemberDescriptor member = (CallableMemberDescriptor) memberDescriptor;
-                    if (!member.getKind().isReal() && BridgesPackage.findTraitImplementation(member) == null) {
+                    if (!member.getKind().isReal() && ImplKt.findTraitImplementation(member) == null) {
                         if (member instanceof FunctionDescriptor) {
                             functionCodegen.generateBridges((FunctionDescriptor) member);
                         }
