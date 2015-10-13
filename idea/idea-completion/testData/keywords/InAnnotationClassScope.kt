@@ -1,24 +1,24 @@
-package Test
-
-<caret>
+annotation class Test {
+    <caret>
+}
 
 // EXIST:  abstract
 // EXIST:  class
 // EXIST:  enum
 // EXIST:  final
 // EXIST:  fun
-// EXIST:  import
-// EXIST:  internal
 // EXIST:  object
 // EXIST:  open
-// EXIST:  private
 // EXIST:  public
 // EXIST:  interface
 // EXIST:  val
 // EXIST:  var
+// EXIST:  constructor
+// EXIST:  init
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed
+// EXIST:  lateinit
 // EXIST:  data
 // EXIST:  inline
 // EXIST:  tailrec

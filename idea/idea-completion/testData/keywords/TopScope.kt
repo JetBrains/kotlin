@@ -6,18 +6,15 @@
 // EXIST:  final
 // EXIST:  fun
 // EXIST:  import
-// EXIST:  inner
 // EXIST:  internal
 // EXIST:  object
 // EXIST:  open
 // EXIST:  package
 // EXIST:  private
-// EXIST:  protected
 // EXIST:  public
 // EXIST:  interface
 // EXIST:  val
 // EXIST:  var
-// EXIST:  companion object
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed

@@ -28,6 +28,7 @@ import com.intellij.psi.filters.position.LeftNeighbour
 import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
@@ -197,10 +198,10 @@ object KeywordCompletion {
 
                 else -> {
                     if (elementAt.parent !is JetModifierList) return true
-                    val declaration = elementAt.parent.parent
-                    val possibleTargets = when (declaration) {
+                    val container = elementAt.parent.parent
+                    val possibleTargets = when (container) {
                         is JetParameter -> {
-                            if (declaration.ownerFunction is JetPrimaryConstructor)
+                            if (container.ownerFunction is JetPrimaryConstructor)
                                 listOf(VALUE_PARAMETER, MEMBER_PROPERTY)
                             else
                                 listOf(VALUE_PARAMETER)
@@ -208,14 +209,43 @@ object KeywordCompletion {
 
                         is JetTypeParameter -> listOf(TYPE_PARAMETER)
 
+                        is JetEnumEntry -> listOf(ENUM_ENTRY)
+
                         is JetClassBody -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, INNER_CLASS, MEMBER_FUNCTION, MEMBER_PROPERTY, FUNCTION, PROPERTY)
 
                         is JetFile -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, FUNCTION, PROPERTY)
 
+                        else -> null
+                    }
+                    val modifierTargets = ModifierCheckerCore.possibleTargetMap[keywordTokenType]
+                    if (modifierTargets != null && possibleTargets != null && possibleTargets.none { it in modifierTargets }) return false
+
+                    val ownerDeclaration = container?.getParentOfType<JetDeclaration>(strict = true)
+                    val parentTarget = when (ownerDeclaration) {
+                        null -> KotlinTarget.FILE
+
+                        is JetClass -> {
+                            when {
+                                ownerDeclaration.isInterface() -> KotlinTarget.INTERFACE
+                                ownerDeclaration.isEnum() -> KotlinTarget.ENUM_CLASS
+                                ownerDeclaration.isAnnotation() -> KotlinTarget.ANNOTATION_CLASS
+                                ownerDeclaration.isInner() -> KotlinTarget.INNER_CLASS
+                                else -> KotlinTarget.CLASS_ONLY
+                            }
+                        }
+
+                        is JetObjectDeclaration -> if (ownerDeclaration.isObjectLiteral()) KotlinTarget.OBJECT_LITERAL else KotlinTarget.OBJECT
+
                         else -> return true
                     }
-                    val modifierTargets = ModifierCheckerCore.possibleTargetMap[keywordTokenType] ?: return true
-                    return possibleTargets.any { it in modifierTargets }
+
+                    val modifierParents = ModifierCheckerCore.possibleParentTargetMap[keywordTokenType]
+                    if (modifierParents != null && parentTarget !in modifierParents) return false
+
+                    val deprecatedParents = ModifierCheckerCore.deprecatedParentTargetMap[keywordTokenType]
+                    if (deprecatedParents != null && parentTarget in deprecatedParents) return false
+
+                    return true
                 }
             }
         }

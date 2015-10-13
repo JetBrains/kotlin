@@ -95,7 +95,7 @@ public object ModifierCheckerCore {
             FINAL_KEYWORD     to EnumSet.of(ENUM_CLASS, OBJECT)
     )
 
-    private val possibleParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
+    val possibleParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
             INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, ENUM_ENTRY),
             OVERRIDE_KEYWORD  to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
                                             INTERFACE, ENUM_CLASS, ENUM_ENTRY),
@@ -107,7 +107,7 @@ public object ModifierCheckerCore {
             COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE)
     )
 
-    private val deprecatedParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
+    val deprecatedParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
             // Deprecated in M15
             FINAL_KEYWORD     to EnumSet.of(INTERFACE),
             PROTECTED_KEYWORD to EnumSet.of(OBJECT)

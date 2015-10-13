@@ -21,7 +21,6 @@ class B {
 // EXIST:  object
 // EXIST:  open
 // EXIST:  private
-// EXIST:  protected
 // EXIST:  public
 // EXIST:  interface
 // EXIST:  val
@@ -35,8 +34,4 @@ class B {
 // EXIST:  external
 // EXIST:  annotation
 // EXIST:  const
-/*TODO:*/
-// EXIST:  inner
-/*TODO:*/
-// EXIST:  companion object
 // NOTHING_ELSE

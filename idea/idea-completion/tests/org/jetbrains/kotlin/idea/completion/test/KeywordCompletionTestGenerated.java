@@ -119,6 +119,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("InAnnotationClassScope.kt")
+    public void testInAnnotationClassScope() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InAnnotationClassScope.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InArgumentList.kt")
     public void testInArgumentList() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InArgumentList.kt");
@@ -173,6 +179,18 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("InEnumScope1.kt")
+    public void testInEnumScope1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InEnumScope1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InEnumScope2.kt")
+    public void testInEnumScope2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InEnumScope2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InFunctionExpressionBody.kt")
     public void testInFunctionExpressionBody() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InFunctionExpressionBody.kt");
@@ -203,6 +221,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("InInterfaceScope.kt")
+    public void testInInterfaceScope() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InInterfaceScope.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InMemberFunParametersList.kt")
     public void testInMemberFunParametersList() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InMemberFunParametersList.kt");
@@ -218,6 +242,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("InNotFinishedGenericWithFunAfter.kt")
     public void testInNotFinishedGenericWithFunAfter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InNotFinishedGenericWithFunAfter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InObjectScope.kt")
+    public void testInObjectScope() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/InObjectScope.kt");
         doTest(fileName);
     }
 
