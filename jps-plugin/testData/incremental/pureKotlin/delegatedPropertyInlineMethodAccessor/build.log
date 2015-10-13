@@ -5,7 +5,9 @@ Compiling files:
 src/inline.kt
 End of files
 Cleaning output files:
+out/production/module/usage/UsageVal$x$1.class
 out/production/module/usage/UsageVal.class
+out/production/module/usage/UsageVar$x$1.class
 out/production/module/usage/UsageVar.class
 End of files
 Compiling files:
@@ -21,6 +23,7 @@ Compiling files:
 src/inline.kt
 End of files
 Cleaning output files:
+out/production/module/usage/UsageVar$x$1.class
 out/production/module/usage/UsageVar.class
 End of files
 Compiling files:

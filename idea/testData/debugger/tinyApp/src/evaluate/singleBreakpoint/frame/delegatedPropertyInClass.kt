@@ -1,6 +1,7 @@
 package delegatedPropertyInClass
 
 import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
 
 fun main(args: Array<String>) {
     val a = A()
@@ -14,11 +15,11 @@ class A {
 }
 
 class MyDelegate {
-    fun getValue(t: Any?, p: PropertyMetadata): Int = 1
+    fun getValue(t: Any?, p: KProperty<*>): Int = 1
 }
 
 class MyDelegateThrowsException {
-    fun getValue(t: Any?, p: PropertyMetadata): Int = throw IllegalStateException()
+    fun getValue(t: Any?, p: KProperty<*>): Int = throw IllegalStateException()
 }
 
 // PRINT_FRAME

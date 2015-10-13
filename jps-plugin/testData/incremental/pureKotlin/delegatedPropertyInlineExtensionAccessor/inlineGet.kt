@@ -1,5 +1,7 @@
 package inline
 
-inline fun Inline.getValue(receiver: Any?, prop: PropertyMetadata): Int {
+import kotlin.reflect.KProperty
+
+inline fun Inline.getValue(receiver: Any?, prop: KProperty<*>): Int {
     return 0
 }

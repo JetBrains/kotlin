@@ -1,3 +1,5 @@
+<info>import</info> kotlin.reflect.KProperty
+
 interface T
 class T1(<warning>t</warning>: Int): T
 
@@ -5,7 +7,7 @@ class T1(<warning>t</warning>: Int): T
 
 
 class Delegate(<warning>d</warning>: Int) {
-    <info>operator</info> fun getValue(k: Any, m: PropertyMetadata) {}
+    <info>operator</info> fun getValue(k: Any, m: KProperty<*>) {}
 }
 
 class A(y: Int, t: Int, d: Int): T <info>by</info> T1(t) {

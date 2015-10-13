@@ -1,10 +1,11 @@
-LineBreakpoint created at delegatedPropertyInClass.kt:8
+LineBreakpoint created at delegatedPropertyInClass.kt:9
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! delegatedPropertyInClass.DelegatedPropertyInClassPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-delegatedPropertyInClass.kt:8
+delegatedPropertyInClass.kt:9
 package delegatedPropertyInClass
 
 import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
 
 fun main(args: Array<String>) {
     val a = A()
@@ -18,23 +19,24 @@ class A {
 }
 
 class MyDelegate {
-    fun getValue(t: Any?, p: PropertyMetadata): Int = 1
+    fun getValue(t: Any?, p: KProperty<*>): Int = 1
 }
 
 class MyDelegateThrowsException {
-    fun getValue(t: Any?, p: PropertyMetadata): Int = throw IllegalStateException()
+    fun getValue(t: Any?, p: KProperty<*>): Int = throw IllegalStateException()
 }
 
 // PRINT_FRAME
- frame    = main():8, DelegatedPropertyInClassKt {delegatedPropertyInClass}
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClass.kt, 5)
-   local    = a: delegatedPropertyInClass.A = {delegatedPropertyInClass.A@uniqueID} (sp = delegatedPropertyInClass.kt, 6)
-     field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID} (sp = delegatedPropertyInClass.kt, 12)
+
+ frame    = main():9, DelegatedPropertyInClassKt {delegatedPropertyInClass}
+   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClass.kt, 6)
+   local    = a: delegatedPropertyInClass.A = {delegatedPropertyInClass.A@uniqueID} (sp = delegatedPropertyInClass.kt, 7)
+     field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID} (sp = delegatedPropertyInClass.kt, 13)
                 - Class has no fields
-     field    = prop: int = 1 (sp = delegatedPropertyInClass.kt, 12)
-     field    = propEx$delegate: delegatedPropertyInClass.MyDelegateThrowsException = {delegatedPropertyInClass.MyDelegateThrowsException@uniqueID} (sp = delegatedPropertyInClass.kt, 13)
+     field    = prop: int = 1 (sp = delegatedPropertyInClass.kt, 13)
+     field    = propEx$delegate: delegatedPropertyInClass.MyDelegateThrowsException = {delegatedPropertyInClass.MyDelegateThrowsException@uniqueID} (sp = delegatedPropertyInClass.kt, 14)
                 - Class has no fields
-     field    = propEx: int = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = delegatedPropertyInClass.kt, 13)
+     field    = propEx: int = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = delegatedPropertyInClass.kt, 14)
        field    = detailMessage: java.lang.String = null (sp = Throwable.!EXT!)
        field    = cause: java.lang.Throwable = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = Throwable.!EXT!)
        field    = stackTrace: java.lang.StackTraceElement[] = null (sp = Throwable.!EXT!)

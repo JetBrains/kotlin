@@ -1,6 +1,7 @@
 package delegatedPropertyInClassWoRenderer
 
 import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
 
 fun main(args: Array<String>) {
     val a = A()
@@ -13,7 +14,7 @@ class A {
 }
 
 class MyDelegate {
-    fun getValue(t: Any?, p: PropertyMetadata): Int = 1
+    fun getValue(t: Any?, p: KProperty<*>): Int = 1
 }
 
 // RENDER_DELEGATED_PROPERTIES: false

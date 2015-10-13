@@ -1,5 +1,6 @@
 import pack.bar
 import pack.oldFun2 // should not be removed for non-deprecated overload used
+import kotlin.reflect.KProperty
 
 class A private constructor()
 
@@ -45,8 +46,8 @@ class Foo {
 }
 
 class CustomDelegate {
-    operator fun getValue(thisRef: Any?, prop: PropertyMetadata): String = ""
-    operator fun setValue(thisRef: Any?, prop: PropertyMetadata, value: String) {}
+    operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = ""
+    operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: String) {}
 }
 
 class B {
