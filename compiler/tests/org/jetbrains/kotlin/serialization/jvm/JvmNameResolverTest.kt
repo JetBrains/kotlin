@@ -36,6 +36,7 @@ class JvmNameResolverTest : UsefulTestCase() {
                 string: String?,
                 range: Int? = null,
                 predefinedIndex: Int? = null,
+                internalString: String? = null,
                 operation: Record.Operation? = null,
                 substringIndex: List<Int>? = null,
                 replaceChar: List<Char>? = null
@@ -43,6 +44,7 @@ class JvmNameResolverTest : UsefulTestCase() {
             types.addRecord(Record.newBuilder().apply {
                 range?.let { setRange(it) }
                 predefinedIndex?.let { setPredefinedIndex(it) }
+                internalString?.let { setString(it) }
                 operation?.let { setOperation(it) }
                 substringIndex?.let { addAllSubstringIndex(it) }
                 replaceChar?.let { addAllReplaceChar(it.map(Char::toInt)) }
@@ -60,7 +62,7 @@ class JvmNameResolverTest : UsefulTestCase() {
     }
 
     private fun str(string: String?, predefinedIndex: Int? = null, operation: Record.Operation? = null): String {
-        return create { string(string, null, predefinedIndex, operation, null, null) }.getString(0)
+        return create { string(string, null, predefinedIndex, null, operation, null, null) }.getString(0)
     }
 
     fun testSimpleString() {
@@ -157,5 +159,13 @@ class JvmNameResolverTest : UsefulTestCase() {
 
         assertEquals("a.b.c", n.getString(0))
         assertEquals("d.e.f", n.getString(1))
+    }
+
+    fun testString() {
+        val n = create {
+            string("java", internalString = "kotlin", range = 5)
+        }
+
+        (0..4).forEach { assertEquals("kotlin", n.getString(it)) }
     }
 }
