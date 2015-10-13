@@ -83,6 +83,18 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("delegateExtensionGet.test")
+        public void testDelegateExtensionGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/delegateExtensionGet.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("delegateExtensionSet.test")
+        public void testDelegateExtensionSet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/delegateExtensionSet.test");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("divOperator.before.Main.kt")
         public void testDivOperator() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/divOperator.before.Main.kt");
@@ -143,6 +155,36 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("indexCallExtensionGet.test")
+        public void testIndexCallExtensionGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/indexCallExtensionGet.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("indexCallExtensionGetNoOperator.test")
+        public void testIndexCallExtensionGetNoOperator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/indexCallExtensionGetNoOperator.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("indexCallExtensionSet.test")
+        public void testIndexCallExtensionSet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/indexCallExtensionSet.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("indexCallNoImportWhenGetNeededButSetAvailable.test")
+        public void testIndexCallNoImportWhenGetNeededButSetAvailable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/indexCallNoImportWhenGetNeededButSetAvailable.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("indexCallNoImportWhenSetNeededButGetAvailable.test")
+        public void testIndexCallNoImportWhenSetNeededButGetAvailable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/indexCallNoImportWhenSetNeededButGetAvailable.test");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("infixCall.before.Main.kt")
         public void testInfixCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/infixCall.before.Main.kt");
@@ -155,9 +197,39 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("invokeExtension.test")
+        public void testInvokeExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/invokeExtension.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("invokeExtensionNoOperator.test")
+        public void testInvokeExtensionNoOperator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/invokeExtensionNoOperator.test");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("minusOperator.before.Main.kt")
         public void testMinusOperator() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/minusOperator.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("multiDeclarationExtensionComponent1.test")
+        public void testMultiDeclarationExtensionComponent1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/multiDeclarationExtensionComponent1.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("multiDeclarationExtensionComponent2.test")
+        public void testMultiDeclarationExtensionComponent2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/multiDeclarationExtensionComponent2.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("multiDeclarationExtensionComponentNoOperator.test")
+        public void testMultiDeclarationExtensionComponentNoOperator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/multiDeclarationExtensionComponentNoOperator.test");
             doTestWithExtraFile(fileName);
         }
 
@@ -236,6 +308,24 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("objectImport.before.Main.kt")
         public void testObjectImport() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/objectImport.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("operatorAssignPlus.test")
+        public void testOperatorAssignPlus() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/operatorAssignPlus.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("operatorAssignPlusAssign.test")
+        public void testOperatorAssignPlusAssign() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/operatorAssignPlusAssign.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("operatorAssignPlusTwoVariantsDifferentPackages.test")
+        public void testOperatorAssignPlusTwoVariantsDifferentPackages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/operatorAssignPlusTwoVariantsDifferentPackages.test");
             doTestWithExtraFile(fileName);
         }
 

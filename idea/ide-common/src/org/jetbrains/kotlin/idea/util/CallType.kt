@@ -53,6 +53,8 @@ public sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: D
 
     object TYPE : CallType<KtExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK))
 
+    object DELEGATE : CallType<KtExpression?>(DescriptorKindFilter.FUNCTIONS)
+
     object ANNOTATION : CallType<KtExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude)
 
     private object NonInfixExclude : DescriptorKindExclude() {
@@ -103,6 +105,7 @@ public sealed class CallTypeAndReceiver<TReceiver : KtElement?, TCallType : Call
     class IMPORT_DIRECTIVE(receiver: KtExpression?) : CallTypeAndReceiver<KtExpression?, CallType.IMPORT_DIRECTIVE>(CallType.IMPORT_DIRECTIVE, receiver)
     class PACKAGE_DIRECTIVE(receiver: KtExpression?) : CallTypeAndReceiver<KtExpression?, CallType.PACKAGE_DIRECTIVE>(CallType.PACKAGE_DIRECTIVE, receiver)
     class TYPE(receiver: KtExpression?) : CallTypeAndReceiver<KtExpression?, CallType.TYPE>(CallType.TYPE, receiver)
+    class DELEGATE(receiver: KtExpression?) : CallTypeAndReceiver<KtExpression?, CallType.DELEGATE>(CallType.DELEGATE, receiver)
     class ANNOTATION(receiver: KtExpression?) : CallTypeAndReceiver<KtExpression?, CallType.ANNOTATION>(CallType.ANNOTATION, receiver)
 
     companion object {
@@ -193,10 +196,12 @@ public fun CallTypeAndReceiver<*, *>.receiverTypes(
         }
 
         is CallTypeAndReceiver.DEFAULT -> receiverExpression = null
+
         is CallTypeAndReceiver.DOT -> receiverExpression = receiver
         is CallTypeAndReceiver.SAFE -> receiverExpression = receiver
         is CallTypeAndReceiver.INFIX -> receiverExpression = receiver
         is CallTypeAndReceiver.OPERATOR -> receiverExpression = receiver
+        is CallTypeAndReceiver.DELEGATE -> receiverExpression = receiver
 
         is CallTypeAndReceiver.IMPORT_DIRECTIVE,
         is CallTypeAndReceiver.PACKAGE_DIRECTIVE,

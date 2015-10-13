@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -42,16 +44,19 @@ import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.CachedValueProperty
 import java.util.*
 
 /**
  * Check possibility and perform fix for unresolved references.
  */
-public abstract class AutoImportFixBase(
+abstract class AutoImportFixBase public constructor(
         expression: KtExpression,
         val diagnostics: Collection<Diagnostic> = emptyList()) : KotlinQuickFixAction<KtExpression>(expression), HighPriorityAction, HintAction {
 
@@ -189,8 +194,8 @@ public abstract class AutoImportFixBase(
     }
 }
 
-public class AutoImportFix(expression: KtSimpleNameExpression, diagnostic: Diagnostic? = null) : AutoImportFixBase(expression, diagnostic) {
-    override fun getTypeAndReceiver(): CallTypeAndReceiver<*, *> = CallTypeAndReceiver.detect(element as KtSimpleNameExpression)
+class AutoImportFix(expression: KtSimpleNameExpression, diagnostic: Diagnostic? = null) : AutoImportFixBase(expression, diagnostic) {
+    override fun getTypeAndReceiver(): CallTypeAndReceiver<*, *> = CallTypeAndReceiver.detect(element as JetSimpleNameExpression)
     override fun getImportNames(diagnostics: Collection<Diagnostic>, element: KtExpression): Collection<String> {
         element as KtSimpleNameExpression
 
@@ -198,7 +203,14 @@ public class AutoImportFix(expression: KtSimpleNameExpression, diagnostic: Diagn
             val conventionName = KtPsiUtil.getConventionName(element)
             if (conventionName != null) {
                 if (element is KtOperationReferenceExpression) {
-                    return listOf(conventionName.asString())
+                    val elementType = element.firstChild.node.elementType
+                    if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(elementType)) {
+                        val conterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(elementType)
+                        val counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(conterpart)
+                        if (counterpartName != null) {
+                            return listOf(conventionName.asString(), counterpartName.asString())
+                        }
+                    }
                 }
 
                 return listOf(conventionName.asString())
@@ -227,5 +239,100 @@ public class AutoImportFix(expression: KtSimpleNameExpression, diagnostic: Diagn
         override fun isApplicableForCodeFragment() = true
 
         private val ERRORS: Collection<DiagnosticFactory<*>> by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
+    }
+}
+
+class MissingInvokeAutoImportFix(expression: KtExpression, diagnostic: Diagnostic) : AutoImportFixBase(expression, diagnostic) {
+    override fun getImportNames(diagnostics: Collection<Diagnostic>, element: KtExpression) = setOf("invoke")
+
+    override fun getTypeAndReceiver() = CallTypeAndReceiver.OPERATOR(element as KtExpression)
+
+    override fun getSupportedErrors() = ERRORS
+
+    companion object : JetSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
+            val element = diagnostic.psiElement
+            if (element is KtExpression) {
+                return MissingInvokeAutoImportFix(element, diagnostic)
+            }
+
+            return null
+        }
+
+        private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
+    }
+}
+
+class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpression, diagnostic: Diagnostic) : AutoImportFixBase(element, diagnostic) {
+    override fun getImportNames(diagnostics: Collection<Diagnostic>, element: KtExpression): Set<String> {
+        val s = if ((element.parent as? KtBinaryExpression)?.operationToken == KtTokens.EQ) "set" else "get"
+        return setOf(s)
+    }
+
+    override fun getTypeAndReceiver() =
+            CallTypeAndReceiver.OPERATOR((element as KtArrayAccessExpression).arrayExpression!!)
+
+    override fun getSupportedErrors() = ERRORS
+
+    companion object : JetSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
+            val element = diagnostic.psiElement
+            if (element is KtArrayAccessExpression && element.arrayExpression != null) {
+                return MissingArrayAccessorAutoImportFix(element, diagnostic)
+            }
+
+            return null
+        }
+
+        private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
+    }
+}
+
+class MissingDelegateAccessorsAutoImportFix(element: KtExpression, diagnostics: Collection<Diagnostic>) : AutoImportFixBase(element, diagnostics) {
+    override fun createAction(project: Project, editor: Editor): KotlinAddImportAction {
+        return KotlinAddImportAction(project, editor, element, suggestions)
+    }
+
+    override fun getImportNames(diagnostics: Collection<Diagnostic>, element: KtExpression): Set<String> {
+        return diagnostics.mapTo(LinkedHashSet()) { if (it.toString().contains("setValue")) "setValue" else "getValue" }
+    }
+
+    override fun getTypeAndReceiver() = CallTypeAndReceiver.DELEGATE(element as KtExpression)
+
+    override fun getSupportedErrors() = ERRORS
+
+    companion object : JetSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
+            assert(diagnostic.factory == Errors.DELEGATE_SPECIAL_FUNCTION_MISSING)
+            return MissingDelegateAccessorsAutoImportFix(diagnostic.psiElement as KtExpression, listOf(diagnostic))
+        }
+
+        private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
+    }
+}
+
+class MissingComponentsAutoImportFix(element: KtExpression, diagnostics: Collection<Diagnostic>) : AutoImportFixBase(element, diagnostics) {
+    override fun createAction(project: Project, editor: Editor): KotlinAddImportAction {
+        return KotlinAddImportAction(project, editor, element, suggestions)
+    }
+
+    override fun getImportNames(diagnostics: Collection<Diagnostic>, element: KtExpression): List<String> {
+        return diagnostics.map {
+            @Suppress("UNCHECKED_CAST")
+            (it as DiagnosticWithParameters2<*, Name, *>).a.identifier
+        }
+    }
+
+    override fun getTypeAndReceiver() = CallTypeAndReceiver.OPERATOR(element as KtExpression)
+
+    override fun getSupportedErrors() = ERRORS
+
+    companion object : JetSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
+            assert(diagnostic.factory == Errors.COMPONENT_FUNCTION_MISSING)
+            return MissingComponentsAutoImportFix(diagnostic.psiElement as KtExpression, listOf(diagnostic))
+        }
+
+        private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
     }
 }
