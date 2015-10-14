@@ -269,7 +269,7 @@ public class TypeResolver(
                     c.trace.report(Errors.UNSUPPORTED.on(param.defaultValue!!, "default value of parameter in function type"))
                 }
 
-                if (param.nameIdentifier != null) {
+                if (param.name != null) {
                     for (annotationEntry in param.annotationEntries) {
                         c.trace.report(Errors.UNSUPPORTED.on(annotationEntry, "annotation on parameter in function type"))
                     }
