@@ -53,21 +53,21 @@ public inline fun <K, V> Map<K, V>.keySet(): Set<K> = keys
 
 @kotlin.jvm.JvmName("mutableKeys")
 @Deprecated("Use property 'keys' instead", ReplaceWith("this.keys"))
-public inline fun <K, V> MutableMap<K, V>.keySet(): MutableSet<K> = keys
+public fun <K, V> MutableMap<K, V>.keySet(): MutableSet<K> = keys
 
 @Deprecated("Use property 'entries' instead", ReplaceWith("this.entries"))
 public inline fun <K, V> Map<K, V>.entrySet(): Set<Map.Entry<K, V>> = entries
 
 @kotlin.jvm.JvmName("mutableEntrySet")
 @Deprecated("Use property 'entries' instead", ReplaceWith("this.entries"))
-public inline fun <K, V> MutableMap<K, V>.entrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = entries
+public fun <K, V> MutableMap<K, V>.entrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = entries
 
 @Deprecated("Use property 'values' instead", ReplaceWith("this.values"))
 public inline fun <K, V> Map<K, V>.values(): Collection<V> = values
 
 @kotlin.jvm.JvmName("mutableValues")
 @Deprecated("Use property 'values' instead", ReplaceWith("this.values"))
-public inline fun <K, V> MutableMap<K, V>.values(): MutableCollection<V> = values
+public fun <K, V> MutableMap<K, V>.values(): MutableCollection<V> = values
 
 /**
  * Adds the specified [element] to this mutable collection.
