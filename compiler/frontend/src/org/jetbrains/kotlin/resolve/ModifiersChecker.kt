@@ -290,3 +290,10 @@ public object ModifierCheckerCore {
         checkModifierList(list, trace, descriptor?.containingDeclaration, actualTargets)
     }
 }
+
+fun foo(p: Pair<Int?, Int?>) {
+    val list: MutableList<Int> = LinkedList()
+    if (p.first != null) {
+        list.add(p.first as Int)
+    }
+}

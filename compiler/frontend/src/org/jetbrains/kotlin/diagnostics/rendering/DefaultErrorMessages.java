@@ -282,11 +282,6 @@ public class DefaultErrorMessages {
         MAP.put(VAL_OR_VAR_ON_CATCH_PARAMETER, "''{0}'' on catch parameter is not allowed", TO_STRING);
         MAP.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING);
 
-        MAP.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER,
-                "This property cannot be initialized inside ''init'' block because it has a custom setter", NAME);
-        MAP.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER,
-                "This property cannot be initialized inside ''init'' block because it has an open setter", NAME);
-
         MAP.put(UNREACHABLE_CODE, "Unreachable code", TO_STRING);
 
         MAP.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class");

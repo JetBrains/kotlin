@@ -659,9 +659,6 @@ public interface Errors {
 
     // Properties / locals
 
-    DiagnosticFactory1<JetExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<JetExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER = DiagnosticFactory1.create(ERROR);
-
     DiagnosticFactory0<JetTypeReference> LOCAL_EXTENSION_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetPropertyAccessor> LOCAL_VARIABLE_WITH_GETTER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetPropertyAccessor> LOCAL_VARIABLE_WITH_SETTER = DiagnosticFactory0.create(ERROR);

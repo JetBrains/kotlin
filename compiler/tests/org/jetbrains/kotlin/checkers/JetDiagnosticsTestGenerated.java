@@ -1524,6 +1524,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("InitCustomSetter.kt")
+            public void testInitCustomSetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/InitCustomSetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InitOpenSetter.kt")
+            public void testInitOpenSetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/InitOpenSetter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt782packageLevel.kt")
             public void testKt782packageLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/kt782packageLevel.kt");
@@ -9326,16 +9338,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/java8Overrides/singleRelevantDefault.kt");
                 doTest(fileName);
             }
-        }
-
-        @TestMetadata("compiler/testData/diagnostics/tests/jdk-annotations")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Jdk_annotations extends AbstractJetDiagnosticsTest {
-            public void testAllFilesPresentInJdk_annotations() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/jdk-annotations"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/labels")

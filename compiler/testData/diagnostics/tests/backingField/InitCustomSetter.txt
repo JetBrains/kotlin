@@ -1,0 +1,15 @@
+package
+
+public final class My {
+    public constructor My()
+    public constructor My(/*0*/ v: kotlin.Int)
+    public final var u: kotlin.Int
+    public final val v: kotlin.Int
+    public final var w: kotlin.Int
+    public final var x: kotlin.Int
+    public final var y: kotlin.Int
+    public final var z: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
