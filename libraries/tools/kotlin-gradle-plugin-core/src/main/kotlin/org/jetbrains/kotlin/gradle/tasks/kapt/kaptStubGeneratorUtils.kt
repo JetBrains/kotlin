@@ -9,7 +9,7 @@ import java.io.File
     but org.jetbrains.org.objectweb.asm can't be used there.
  */
 
-private fun generateKotlinAptAnnotation(outputDirectory: File): File {
+public fun generateKotlinAptAnnotation(outputDirectory: File): File {
     val packageName = "__gen"
     val className = "KotlinAptAnnotation"
     val classFqName = "$packageName/$className"
@@ -30,7 +30,7 @@ private fun generateKotlinAptAnnotation(outputDirectory: File): File {
     return outputFile
 }
 
-private fun generateAnnotationProcessorWrapper(
+public fun generateAnnotationProcessorWrapper(
         processorFqName: String,
         packageName: String,
         outputDirectory: File,
