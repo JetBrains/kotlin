@@ -56,32 +56,7 @@ public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
     return if (index < 0) this else this.replaceRange(index, index + oldValue.length(), newValue)
 }
 
-/**
- * Returns a copy of this string converted to upper case using the rules of the default locale.
- */
-public fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
-
-/**
- * Returns a copy of this string converted to lower case using the rules of the default locale.
- */
-public fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
-
-/**
- * Returns a new character array containing the characters from this string.
- */
-public fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
-
-/**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
- * using the default locale.
- */
-public fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
-
-/**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments, using
- * the specified locale.
- */
-public fun String.format(locale: Locale, vararg args : Any?) : String = java.lang.String.format(locale, this, *args)
+*/
 
 /**
  * Splits this string around matches of the given regular expression.
@@ -89,149 +64,14 @@ public fun String.format(locale: Locale, vararg args : Any?) : String = java.lan
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.split(regex: Pattern, limit: Int = 0): List<String>
 {
     require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
     return regex.split(this, if (limit == 0) -1 else limit).asList()
 }
 
-/**
- * Returns a substring of this string starting with the specified index.
- */
-public fun String.substring(beginIndex: Int): String = (this as java.lang.String).substring(beginIndex)
-
-/**
- * Returns the substring of this string starting and ending at the specified indices.
- */
-public fun String.substring(beginIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(beginIndex, endIndex)
-
-/**
- * Returns `true` if this string starts with the specified prefix.
- */
-public fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean {
-    if (!ignoreCase)
-        return (this as java.lang.String).startsWith(prefix)
-    else
-        return regionMatches(0, prefix, 0, prefix.length(), ignoreCase)
-}
-
-/**
- * Returns `true` if a substring of this string starting at the specified offset [thisOffset] starts with the specified prefix.
- */
-public fun String.startsWith(prefix: String, thisOffset: Int, ignoreCase: Boolean = false): Boolean {
-    if (!ignoreCase)
-        return (this as java.lang.String).startsWith(prefix, thisOffset)
-    else
-        return regionMatches(thisOffset, prefix, 0, prefix.length(), ignoreCase)
-}
-
-/**
- * Returns `true` if this string ends with the specified suffix.
- */
-public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean {
-    if (!ignoreCase)
-        return (this as java.lang.String).endsWith(suffix)
-    else
-        return regionMatches(length() - suffix.length(), suffix, 0, suffix.length(), ignoreCase = true)
-}
-
-// "constructors" for String
-
-/**
- * Converts the data from a portion of the specified array of bytes to characters using the specified character set
- * and returns the conversion result as a string.
- *
- * @param bytes the source array for the conversion.
- * @param offset the offset in the array of the data to be converted.
- * @param length the number of bytes to be converted.
- * @param charsetName the name of the character set to use.
- */
-public fun String(bytes: ByteArray, offset: Int, length: Int, charsetName: String): String = java.lang.String(bytes, offset, length, charsetName) as String
-
-/**
- * Converts the data from a portion of the specified array of bytes to characters using the specified character set
- * and returns the conversion result as a string.
- *
- * @param bytes the source array for the conversion.
- * @param offset the offset in the array of the data to be converted.
- * @param length the number of bytes to be converted.
- * @param charset the character set to use.
- */
-public fun String(bytes: ByteArray, offset: Int, length: Int, charset: Charset): String = java.lang.String(bytes, offset, length, charset) as String
-
-/**
- * Converts the data from the specified array of bytes to characters using the specified character set
- * and returns the conversion result as a string.
- */
-public fun String(bytes: ByteArray, charsetName: String): String = java.lang.String(bytes, charsetName) as String
-
-/**
- * Converts the data from the specified array of bytes to characters using the specified character set
- * and returns the conversion result as a string.
- */
-public fun String(bytes: ByteArray, charset: Charset): String = java.lang.String(bytes, charset) as String
-
-/**
- * Converts the data from a portion of the specified array of bytes to characters using the UTF-8 character set
- * and returns the conversion result as a string.
- *
- * @param bytes the source array for the conversion.
- * @param offset the offset in the array of the data to be converted.
- * @param length the number of bytes to be converted.
- */
-public fun String(bytes: ByteArray, offset: Int, length: Int): String = java.lang.String(bytes, offset, length, Charsets.UTF_8) as String
-
-/**
- * Converts the data from the specified array of bytes to characters using the UTF-8 character set
- * and returns the conversion result as a string.
- */
-public fun String(bytes: ByteArray): String = java.lang.String(bytes, Charsets.UTF_8) as String
-
-/**
- * Converts the characters in the specified array to a string.
- */
-public fun String(chars: CharArray): String = java.lang.String(chars) as String
-
-/**
- * Converts the characters from a portion of the specified array to a string.
- */
-public fun String(chars: CharArray, offset: Int, length: Int): String = java.lang.String(chars, offset, length) as String
-
-/**
- * Converts the code points from a portion of the specified Unicode code point array to a string.
- */
-public fun String(codePoints: IntArray, offset: Int, length: Int): String = java.lang.String(codePoints, offset, length) as String
-
-/**
- * Converts the contents of the specified StringBuffer to a string.
- */
-public fun String(stringBuffer: java.lang.StringBuffer): String = java.lang.String(stringBuffer) as String
-
-/**
- * Converts the contents of the specified StringBuilder to a string.
- */
-public fun String(stringBuilder: java.lang.StringBuilder): String = java.lang.String(stringBuilder) as String
-
-///**
-// * Replaces the first substring of this string that matches the given regular expression with the given replacement.
-// */
-//deprecated("Use replaceFirst(Regex, String) or replaceFirstLiteral(String, String) instead.", ReplaceWith("replaceFirst(regex.toRegex(), replacement)"))
-//public fun String.replaceFirst(regex: String, replacement: String): String = (this as java.lang.String).replaceFirst(regex, replacement)
-
-/**
- * Returns the character (Unicode code point) at the specified index.
- */
-public fun String.codePointAt(index: Int): Int = (this as java.lang.String).codePointAt(index)
-
-/**
- * Returns the character (Unicode code point) before the specified index.
- */
-public fun String.codePointBefore(index: Int): Int = (this as java.lang.String).codePointBefore(index)
-
-/**
- * Returns the number of Unicode code points in the specified text range of this String.
- */
-public fun String.codePointCount(beginIndex: Int, endIndex: Int): Int = (this as java.lang.String).codePointCount(beginIndex, endIndex)
+/*
 
 /**
  * Compares two strings lexicographically, optionally ignoring case differences.
@@ -258,126 +98,20 @@ public fun String.contentEquals(cs: CharSequence): Boolean = (this as java.lang.
  */
 public fun String.contentEquals(sb: StringBuffer): Boolean = (this as java.lang.String).contentEquals(sb)
 
-/**
- * Copies the characters from a substring of this string into the specified character array.
- * @param srcBegin the start offset (inclusive) of the substring to copy.
- * @param srcEnd the end offset (exclusive) of the substring to copy.
- * @param dst the array to copy to.
- * @param dstBegin the position in the array to copy to.
- */
-public fun String.getChars(srcBegin: Int, srcEnd: Int, dst: CharArray, dstBegin: Int): Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)
-
-
-/**
- * Returns a canonical representation for this string object.
- */
-public fun String.intern(): String = (this as java.lang.String).intern()
-
+*/
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
 
-/**
- * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
- */
-public fun String.offsetByCodePoints(index: Int, codePointOffset: Int): Int = (this as java.lang.String).offsetByCodePoints(index, codePointOffset)
-
-/**
- * Returns `true` if the specified range in this string is equal to the specified range in another string.
- * @param thisOffset the start offset in this string of the substring to compare.
- * @param other the string against a substring of which the comparison is performed.
- * @param otherOffset the start offset in the other string of the substring to compare.
- * @param length the length of the substring to compare.
- */
-public fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean =
-        if (!ignoreCase)
-            (this as java.lang.String).regionMatches(thisOffset, other, otherOffset, length)
-        else
-            (this as java.lang.String).regionMatches(ignoreCase, thisOffset, other, otherOffset, length)
-
-/**
- * Returns a copy of this string converted to lower case using the rules of the specified locale.
- */
-public fun String.toLowerCase(locale: java.util.Locale): String = (this as java.lang.String).toLowerCase(locale)
-
-/**
- * Returns a copy of this string converted to upper case using the rules of the specified locale.
- */
-public fun String.toUpperCase(locale: java.util.Locale): String = (this as java.lang.String).toUpperCase(locale)
-
-/**
- * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
- */
-public fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
-
-/**
- * Parses the string as a [Short] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-public fun String.toShort(): Short = java.lang.Short.parseShort(this)
-
-/**
- * Parses the string as an [Int] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-public fun String.toInt(): Int = java.lang.Integer.parseInt(this)
-
-/**
- * Parses the string as a [Long] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-public fun String.toLong(): Long = java.lang.Long.parseLong(this)
-
-/**
- * Parses the string as a [Float] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-public fun String.toFloat(): Float = java.lang.Float.parseFloat(this)
-
-/**
- * Parses the string as a [Double] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
- */
-public fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
-
-/**
- * Returns the list of all characters in this string.
- */
-public fun String.toCharList(): List<Char> = toCharArray().toList()
-
-/**
- * Returns a subsequence of this sequence.
- *
- * @param start the start index (inclusive).
- * @param end the end index (exclusive).
- */
-public operator fun CharSequence.get(start: Int, end: Int): CharSequence = subSequence(start, end)
-
-/**
- * Encodes the contents of this string using the specified character set and returns the resulting byte array.
- */
-public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
-
-/**
- * Encodes the contents of this string using the specified character set and returns the resulting byte array.
- */
-public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
+/*
 
 /**
  * Returns a subsequence of this sequence specified by given [range].
  */
 public fun CharSequence.slice(range: IntRange): CharSequence {
     return subSequence(range.start, range.end + 1) // inclusive
-}
-
-/**
- * Converts the string into a regular expression [Pattern] optionally
- * with the specified [flags] from [Pattern] or'd together
- * so that strings can be split or matched on.
- */
-public fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
-    return java.util.regex.Pattern.compile(this, flags)
 }
 
 /**

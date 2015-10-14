@@ -329,39 +329,6 @@ public fun String.removeRange(firstIndex: Int, lastIndex: Int): String {
 public fun String.removeRange(range: IntRange): String = removeRange(range.start, range.end + 1)
 
 /*
-/**
- * If this string starts with the given [prefix], returns a copy of this string
- * with the prefix removed. Otherwise, returns this string.
- */
-public fun String.removePrefix(prefix: String): String {
-    if (startsWith(prefix)) {
-        return substring(prefix.length())
-    }
-    return this
-}
-
-/**
- * If this string ends with the given [suffix], returns a copy of this string
- * with the suffix removed. Otherwise, returns this string.
- */
-public fun String.removeSuffix(suffix: String): String {
-    if (endsWith(suffix)) {
-        return substring(0, length() - suffix.length())
-    }
-    return this
-}
-
-/**
- * Removes from a string both the given [prefix] and [suffix] if and only if
- * it starts with the [prefix] and ends with the [suffix].
- * Otherwise returns this string unchanged.
- */
-public fun String.removeSurrounding(prefix: String, suffix: String): String {
-    if (startsWith(prefix) && endsWith(suffix)) {
-        return substring(prefix.length(), length() - suffix.length())
-    }
-    return this
-}
 
 /**
  * Removes the given [delimiter] string from both the start and the end of this string
@@ -541,7 +508,6 @@ public fun String.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, 
         findAnyOf(chars, startIndex, ignoreCase, last = true)?.first ?: -1
 
 
-/*
 private fun String.findAnyOf(strings: Collection<String>, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, String>? {
     if (!ignoreCase && strings.size() == 1) {
         val string = strings.single()
@@ -570,6 +536,7 @@ private fun String.findAnyOf(strings: Collection<String>, startIndex: Int, ignor
  * the beginning to the end of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.findAnyOf(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Pair<Int, String>? =
         findAnyOf(strings, startIndex, ignoreCase, last = false)
 
@@ -585,6 +552,7 @@ public fun String.findAnyOf(strings: Collection<String>, startIndex: Int = 0, ig
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.findLastAnyOf(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Pair<Int, String>? =
         findAnyOf(strings, startIndex, ignoreCase, last = true)
 
@@ -599,6 +567,7 @@ public fun String.findLastAnyOf(strings: Collection<String>, startIndex: Int = l
  * the beginning to the end of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.indexOfAny(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
         findAnyOf(strings, startIndex, ignoreCase, last = false)?.first ?: -1
 
@@ -614,9 +583,10 @@ public fun String.indexOfAny(strings: Collection<String>, startIndex: Int = 0, i
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.lastIndexOfAny(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
         findAnyOf(strings, startIndex, ignoreCase, last = true)?.first ?: -1
-*/
+
 
 // indexOf
 
@@ -634,7 +604,6 @@ public fun String.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean =
         nativeIndexOf(char, startIndex)
 }
 
-/*
 /**
  * Returns the index within this string of the first occurrence of the specified [string], starting from the specified [startIndex].
  *
@@ -642,13 +611,14 @@ public fun String.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean =
  * @returns An index of the first occurrence of [string] or -1 if none is found.
  */
 @kotlin.jvm.JvmOverloads
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase)
         indexOfAny(listOf(string), startIndex, ignoreCase)
     else
         nativeIndexOf(string, startIndex)
 }
-*/
+
 /**
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified [startIndex].
  *
@@ -664,7 +634,7 @@ public fun String.lastIndexOf(char: Char, startIndex: Int = lastIndex, ignoreCas
         nativeLastIndexOf(char, startIndex)
 }
 
-/*
+
 /**
  * Returns the index within this string of the last occurrence of the specified [string], starting from the specified [startIndex].
  *
@@ -672,6 +642,7 @@ public fun String.lastIndexOf(char: Char, startIndex: Int = lastIndex, ignoreCas
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
  * @returns An index of the first occurrence of [string] or -1 if none is found.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.lastIndexOf(string: String, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
     return if (ignoreCase)
         lastIndexOfAny(listOf(string), startIndex, ignoreCase)
@@ -684,6 +655,7 @@ public fun String.lastIndexOf(string: String, startIndex: Int = lastIndex, ignor
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public operator fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Boolean =
         indexOf(seq.toString(), ignoreCase = ignoreCase) >= 0
 
@@ -693,9 +665,10 @@ public operator fun String.contains(seq: CharSequence, ignoreCase: Boolean = fal
  *
  * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public operator fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
         indexOf(char, ignoreCase = ignoreCase) >= 0
-*/
+
 
 // rangesDelimitedBy
 

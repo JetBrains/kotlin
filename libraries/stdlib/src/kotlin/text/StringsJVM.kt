@@ -111,7 +111,7 @@ public fun String.format(locale: Locale, vararg args : Any?) : String = java.lan
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
  */
-public fun String.split(regex: Pattern, limit: Int = 0): List<String>
+public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String>
 {
     require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
     return regex.split(this, if (limit == 0) -1 else limit).asList()
@@ -234,12 +234,6 @@ public fun String(stringBuffer: java.lang.StringBuffer): String = java.lang.Stri
  */
 public fun String(stringBuilder: java.lang.StringBuilder): String = java.lang.String(stringBuilder) as String
 
-///**
-// * Replaces the first substring of this string that matches the given regular expression with the given replacement.
-// */
-//deprecated("Use replaceFirst(Regex, String) or replaceFirstLiteral(String, String) instead.", ReplaceWith("replaceFirst(regex.toRegex(), replacement)"))
-//public fun String.replaceFirst(regex: String, replacement: String): String = (this as java.lang.String).replaceFirst(regex, replacement)
-
 /**
  * Returns the character (Unicode code point) at the specified index.
  */
@@ -304,6 +298,20 @@ public fun CharSequence.isBlank(): Boolean = length() == 0 || indices.all { this
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
  */
 public fun String.offsetByCodePoints(index: Int, codePointOffset: Int): Int = (this as java.lang.String).offsetByCodePoints(index, codePointOffset)
+
+/**
+ * Returns `true` if the specified range in this CharSequence is equal to the specified range in another CharSequence.
+ * @param thisOffset the start offset in this CharSequence of the substring to compare.
+ * @param other the string against a substring of which the comparison is performed.
+ * @param otherOffset the start offset in the other CharSequence of the substring to compare.
+ * @param length the length of the substring to compare.
+ */
+public fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean {
+    if (this is String && other is String)
+        return this.regionMatches(thisOffset, other, otherOffset, length, ignoreCase)
+    else
+        return regionMatchesImpl(thisOffset, other, otherOffset, length, ignoreCase)
+}
 
 /**
  * Returns `true` if the specified range in this string is equal to the specified range in another string.

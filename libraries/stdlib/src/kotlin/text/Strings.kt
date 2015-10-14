@@ -533,6 +533,22 @@ public fun CharSequence.replaceFirst(regex: Regex, replacement: String): String 
  */
 public fun CharSequence.matches(regex: Regex): Boolean = regex.matches(this)
 
+/**
+ * Implementation of [regionMatches] for CharSequences.
+ * Invoked when it's already known that arguments are not Strings, so that no additional type checks are performed.
+ */
+internal fun CharSequence.regionMatchesImpl(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean): Boolean {
+    if ((otherOffset < 0) || (thisOffset < 0) || (thisOffset > this.length - length)
+            || (otherOffset > other.length - length)) {
+        return false;
+    }
+
+    for (index in 0..length-1) {
+        if (!this[thisOffset + index].equals(other[otherOffset + index], ignoreCase))
+            return false
+    }
+    return true
+}
 
 /**
  * Returns `true` if this string starts with the specified character.
@@ -546,6 +562,35 @@ public fun CharSequence.startsWith(char: Char, ignoreCase: Boolean = false): Boo
 public fun CharSequence.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[lastIndex].equals(char, ignoreCase)
 
+/**
+ * Returns `true` if this CharSequence starts with the specified prefix.
+ */
+public fun CharSequence.startsWith(prefix: CharSequence, ignoreCase: Boolean = false): Boolean {
+    if (!ignoreCase && this is String && prefix is String)
+        return this.startsWith(prefix)
+    else
+        return regionMatchesImpl(0, prefix, 0, prefix.length(), ignoreCase)
+}
+
+/**
+ * Returns `true` if a substring of this CharSequence starting at the specified offset [thisOffset] starts with the specified prefix.
+ */
+public fun CharSequence.startsWith(prefix: CharSequence, thisOffset: Int, ignoreCase: Boolean = false): Boolean {
+    if (!ignoreCase && this is String && prefix is String)
+        return this.startsWith(prefix, thisOffset)
+    else
+        return regionMatchesImpl(thisOffset, prefix, 0, prefix.length(), ignoreCase)
+}
+
+/**
+ * Returns `true` if this CharSequence ends with the specified suffix.
+ */
+public fun CharSequence.endsWith(suffix: CharSequence, ignoreCase: Boolean = false): Boolean {
+    if (!ignoreCase && this is String && suffix is String)
+        return this.endsWith(suffix)
+    else
+        return regionMatchesImpl(length() - suffix.length(), suffix, 0, suffix.length(), ignoreCase)
+}
 
 
 // common prefix and suffix
@@ -637,19 +682,47 @@ public fun CharSequence.lastIndexOfAny(chars: CharArray, startIndex: Int = lastI
     findAnyOf(chars, startIndex, ignoreCase, last = true)?.first ?: -1
 
 
+private fun CharSequence.indexOf(other: CharSequence, startIndex: Int, endIndex: Int, ignoreCase: Boolean, last: Boolean = false): Int {
+    val indices = if (!last)
+        startIndex.coerceAtLeast(0)..endIndex.coerceAtMost(length())
+    else
+        startIndex.coerceAtMost(lastIndex) downTo endIndex.coerceAtLeast(0)
 
-private fun String.findAnyOf(strings: Collection<String>, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, String>? {
-    if (!ignoreCase && strings.size() == 1) {
+    if (this is String && other is String) { // smart cast
+        for (index in indices) {
+            if (other.regionMatches(0, this, index, other.length(), ignoreCase))
+                return index
+        }
+    } else {
+        for (index in indices) {
+            if (other.regionMatchesImpl(0, this, index, other.length(), ignoreCase))
+                return index
+        }
+    }
+    return -1
+}
+
+private fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, String>? {
+    if (!ignoreCase && strings.size == 1) {
         val string = strings.single()
-        val index = if (!last) nativeIndexOf(string, startIndex) else nativeLastIndexOf(string, startIndex)
+        val index = if (!last) indexOf(string, startIndex) else lastIndexOf(string, startIndex)
         return if (index < 0) null else index to string
     }
 
-    val indices = if (!last) Math.max(startIndex, 0)..length() else Math.min(startIndex, lastIndex) downTo 0
-    for (index in indices) {
-        val matchingString = strings.firstOrNull { it.regionMatches(0, this, index, it.length(), ignoreCase) }
-        if (matchingString != null)
-            return index to matchingString
+    val indices = if (!last) startIndex.coerceAtLeast(0)..length() else startIndex.coerceAtMost(lastIndex) downTo 0
+
+    if (this is String) {
+        for (index in indices) {
+            val matchingString = strings.firstOrNull { it.regionMatches(0, this, index, it.length(), ignoreCase) }
+            if (matchingString != null)
+                return index to matchingString
+        }
+    } else {
+        for (index in indices) {
+            val matchingString = strings.firstOrNull { it.regionMatchesImpl(0, this, index, it.length(), ignoreCase) }
+            if (matchingString != null)
+                return index to matchingString
+        }
     }
 
     return null
@@ -666,7 +739,7 @@ private fun String.findAnyOf(strings: Collection<String>, startIndex: Int, ignor
  * the beginning to the end of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
-public fun String.findAnyOf(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Pair<Int, String>? =
+public fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Pair<Int, String>? =
     findAnyOf(strings, startIndex, ignoreCase, last = false)
 
 /**
@@ -681,7 +754,7 @@ public fun String.findAnyOf(strings: Collection<String>, startIndex: Int = 0, ig
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
-public fun String.findLastAnyOf(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Pair<Int, String>? =
+public fun CharSequence.findLastAnyOf(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Pair<Int, String>? =
     findAnyOf(strings, startIndex, ignoreCase, last = true)
 
 /**
@@ -695,7 +768,7 @@ public fun String.findLastAnyOf(strings: Collection<String>, startIndex: Int = l
  * the beginning to the end of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
-public fun String.indexOfAny(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
+public fun CharSequence.indexOfAny(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
     findAnyOf(strings, startIndex, ignoreCase, last = false)?.first ?: -1
 
 /**
@@ -710,7 +783,7 @@ public fun String.indexOfAny(strings: Collection<String>, startIndex: Int = 0, i
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
-public fun String.lastIndexOfAny(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
+public fun CharSequence.lastIndexOfAny(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
     findAnyOf(strings, startIndex, ignoreCase, last = true)?.first ?: -1
 
 
@@ -735,9 +808,9 @@ public fun CharSequence.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boo
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
  * @returns An index of the first occurrence of [string] or -1 if none is found.
  */
-public fun String.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
-    return if (ignoreCase)
-        indexOfAny(listOf(string), startIndex, ignoreCase)
+public fun CharSequence.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
+    return if (ignoreCase || this !is String)
+        indexOf(string, startIndex, length(), ignoreCase)
     else
         nativeIndexOf(string, startIndex)
 }
@@ -763,9 +836,9 @@ public fun CharSequence.lastIndexOf(char: Char, startIndex: Int = lastIndex, ign
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
  * @returns An index of the first occurrence of [string] or -1 if none is found.
  */
-public fun String.lastIndexOf(string: String, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
-    return if (ignoreCase)
-        lastIndexOfAny(listOf(string), startIndex, ignoreCase)
+public fun CharSequence.lastIndexOf(string: String, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
+    return if (ignoreCase || this !is String)
+        indexOf(string, startIndex, 0, ignoreCase, last = true)
     else
         nativeLastIndexOf(string, startIndex)
 }
@@ -775,8 +848,12 @@ public fun String.lastIndexOf(string: String, startIndex: Int = lastIndex, ignor
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
-public operator fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Boolean =
-        indexOf(seq.toString(), ignoreCase = ignoreCase) >= 0
+public operator fun CharSequence.contains(other: CharSequence, ignoreCase: Boolean = false): Boolean =
+    if (other is String)
+        indexOf(other, ignoreCase = ignoreCase) >= 0
+    else
+        indexOf(other, 0, length(), ignoreCase) >= 0
+
 
 
 /**

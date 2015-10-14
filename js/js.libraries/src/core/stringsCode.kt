@@ -54,14 +54,8 @@ public fun String?.equals(anotherString: String?, ignoreCase: Boolean = false): 
             anotherString != null && this.toLowerCase() == anotherString.toLowerCase()
 
 
-public fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean {
-    if ((otherOffset < 0) || (thisOffset < 0) || (thisOffset > length() - length)
-        || (otherOffset > other.length() - length)) {
-        return false;
-    }
-
-    return substring(thisOffset, thisOffset + length).equals(other.substring(otherOffset, otherOffset + length), ignoreCase)
-}
+public fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean
+        = regionMatchesImpl(thisOffset, other, otherOffset, length, ignoreCase)
 
 
 /**
