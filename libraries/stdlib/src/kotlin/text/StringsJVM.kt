@@ -296,7 +296,7 @@ public fun String.intern(): String = (this as java.lang.String).intern()
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
  */
-public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
+public fun CharSequence.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
 
 /**
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
