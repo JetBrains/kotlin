@@ -3,7 +3,7 @@
 val TOP_LEVEL = 5
 
 enum class MyEnum(value: Int) {
-    VALUE : MyEnum(TOP_LEVEL)
+    VALUE(TOP_LEVEL)
 }
 
 fun main(args: Array<String>) {
