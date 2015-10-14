@@ -30,17 +30,13 @@ import org.jetbrains.kotlin.utils.singletonOrEmptyList
 public abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D : Any> : JetIntentionActionsFactory() {
     protected abstract fun getElementOfInterest(diagnostic: Diagnostic): E?
 
-    protected open fun createQuickFix(
-            originalElementPointer: SmartPsiElementPointer<E>,
-            diagnostic: Diagnostic,
-            quickFixDataFactory: (SmartPsiElementPointer<E>) -> D?
-    ): QuickFixWithDelegateFactory? = null
+    protected open fun createQuickFix(diagnostic: Diagnostic, quickFixDataFactory: () -> D?): QuickFixWithDelegateFactory? = null
 
     protected open fun createQuickFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
-            quickFixDataFactory: (SmartPsiElementPointer<E>) -> D?
-    ): List<QuickFixWithDelegateFactory> = createQuickFix(originalElementPointer, diagnostic, quickFixDataFactory).singletonOrEmptyList()
+            quickFixDataFactory: () -> D?
+    ): List<QuickFixWithDelegateFactory> = createQuickFix(diagnostic, quickFixDataFactory).singletonOrEmptyList()
 
     protected abstract fun createQuickFixData(element: E, diagnostic: Diagnostic): D?
 
@@ -59,7 +55,7 @@ public abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D
         val actions: List<QuickFixWithDelegateFactory>
         try {
             actions = createQuickFixes(originalElementPointer, diagnostic) factory@ {
-                val element = it.element ?: return@factory null
+                val element = originalElementPointer.element ?: return@factory null
                 val diagnosticElement = diagnosticElementPointer.element ?: return@factory null
                 if (!diagnosticElement.isValid || !element.isValid) return@factory null
 

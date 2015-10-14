@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 
-import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.quickfix.NullQuickFix
-import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
+import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -34,16 +32,16 @@ data class CreateParameterData<E : JetElement>(
 
 abstract class CreateParameterFromUsageFactory<E : JetElement>: KotlinIntentionActionFactoryWithDelegate<E, CreateParameterData<E>>() {
     override fun createQuickFix(
-            originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
-            quickFixDataFactory: (SmartPsiElementPointer<E>) -> CreateParameterData<E>?
+            quickFixDataFactory: () -> CreateParameterData<E>?
     ): QuickFixWithDelegateFactory? {
         return QuickFixWithDelegateFactory {
-            quickFixDataFactory(originalElementPointer)?.let { data ->
-                CreateParameterFromUsageFix(data.parameterInfo.callableDescriptor as FunctionDescriptor,
+            quickFixDataFactory()?.let { data ->
+                CreateParameterFromUsageFix(
+                        data.parameterInfo.callableDescriptor as FunctionDescriptor,
                         data.parameterInfo,
-                                            data.originalExpression)
-            } ?: NullQuickFix
+                        data.originalExpression)
+            }
         }
     }
 }
