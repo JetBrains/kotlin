@@ -174,7 +174,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression) {
         val operand = expression.getOperand()
         val typeName = operand.getType().getCanonicalText()
-        val primitiveType = JvmPrimitiveType.values().firstOrNull { it.getName() == typeName }
+        val primitiveType = JvmPrimitiveType.values().firstOrNull { it.getJavaKeywordName() == typeName }
         val wrapperTypeName = if (primitiveType != null) {
             primitiveType.getWrapperFqName()
         }

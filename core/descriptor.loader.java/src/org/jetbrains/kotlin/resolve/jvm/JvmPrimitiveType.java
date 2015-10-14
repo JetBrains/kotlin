@@ -44,7 +44,7 @@ public enum JvmPrimitiveType {
 
         for (JvmPrimitiveType type : values()) {
             WRAPPERS_CLASS_NAMES.add(type.getWrapperFqName());
-            TYPE_BY_NAME.put(type.getName(), type);
+            TYPE_BY_NAME.put(type.getJavaKeywordName(), type);
             TYPE_BY_PRIMITIVE_TYPE.put(type.getPrimitiveType(), type);
         }
     }
@@ -85,7 +85,7 @@ public enum JvmPrimitiveType {
     }
 
     @NotNull
-    public String getName() {
+    public String getJavaKeywordName() {
         return name;
     }
 
