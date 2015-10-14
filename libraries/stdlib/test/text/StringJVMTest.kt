@@ -145,13 +145,13 @@ class StringJVMTest {
     }
 
     @test fun map() {
-        assertEquals(arrayListOf('a', 'b', 'c'), "abc".map({ it }))
+        assertEquals(listOf('a', 'b', 'c'), "abc".map { it })
 
-        assertEquals(arrayListOf(true, false, true), "AbC".map({ it.isUpperCase() }))
+        assertEquals(listOf(true, false, true), "AbC".map { it.isUpperCase() })
 
-        assertEquals(arrayListOf<Boolean>(), "".map({ it.isUpperCase() }))
+        assertEquals(listOf<Boolean>(), "".map { it.isUpperCase() })
 
-        assertEquals(arrayListOf(97, 98, 99), "abc".map({ it.toInt() }))
+        assertEquals(listOf(97, 98, 99), "abc".map { it.toInt() })
     }
 
     @test fun mapTo() {
@@ -347,9 +347,9 @@ class StringJVMTest {
         builder.append("abcd")
         // ABCDabcd
         // 01234567
-        assertEquals("BCDabc", builder.slice(1..6))
-        assertEquals("baD", builder.slice(5 downTo 3))
-        assertEquals("aDAB", builder.slice(iter))
+        assertEquals("BCDabc", builder.slice(1..6).toString())
+        assertEquals("baD", builder.slice(5 downTo 3).toString())
+        assertEquals("aDAB", builder.slice(iter).toString())
 
         assertFails {
             "abc".slice(listOf(1,4))
