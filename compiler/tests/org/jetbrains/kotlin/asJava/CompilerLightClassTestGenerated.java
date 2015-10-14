@@ -70,6 +70,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("EmptyFile.kt")
+        public void testEmptyFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/EmptyFile.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SingleFile.kt")
         public void testSingleFile() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/SingleFile.kt");

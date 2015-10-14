@@ -40,6 +40,14 @@ object LightClassTestCommon {
 
         val lightClass = findLightClass(fqName)
 
+        val actual = actualText(fqName, lightClass, normalizeText)
+        JetTestUtils.assertEqualsToFile(JetTestUtils.replaceExtension(testDataFile, "java"), actual)
+    }
+
+    private fun actualText(fqName: String?, lightClass: PsiClass?, normalizeText: (String) -> String): String {
+        if (lightClass == null) {
+            return "<not generated>"
+        }
         TestCase.assertTrue("Not a light class: $lightClass ($fqName)", lightClass is KotlinLightClass)
 
         val delegate = (lightClass as KotlinLightClass).getDelegate()
@@ -48,6 +56,6 @@ object LightClassTestCommon {
         val buffer = StringBuilder()
         (delegate as ClsElementImpl).appendMirrorText(0, buffer)
         val actual = normalizeText(buffer.toString())
-        JetTestUtils.assertEqualsToFile(JetTestUtils.replaceExtension(testDataFile, "java"), actual)
+        return actual
     }
 }
