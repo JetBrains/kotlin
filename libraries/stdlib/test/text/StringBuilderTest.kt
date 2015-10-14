@@ -25,4 +25,20 @@ class StringBuilderTest {
             append("element", 2, 4)
         }.toString())
     }
+
+    @test fun getAndSetChar() {
+        val sb = StringBuilder("abc")
+        sb[1] = 'z'
+
+        assertEquals("azc", sb.toString())
+        assertEquals('c', sb[2])
+    }
+
+    @test fun testLength() {
+        val sb = StringBuilder("abc")
+
+        assertEquals(3, sb.length)
+        sb.length = 2
+        assertEquals("ab", sb.toString())
+    }
 }
