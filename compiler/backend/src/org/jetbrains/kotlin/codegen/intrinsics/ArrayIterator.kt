@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 
@@ -23,6 +24,11 @@ public class ArrayIterator : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable =
             createUnaryIntrinsicCallable(method) {
                 val methodSignature = "(${method.owner.getDescriptor()})${returnType.getDescriptor()}"
-                it.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", methodSignature, false)
+                val intrinsicOwner =
+                        if (AsmUtil.isPrimitive(method.owner.elementType))
+                            "kotlin/jvm/internal/ArrayIteratorsKt"
+                        else
+                            "kotlin/jvm/internal/ArrayIteratorKt"
+                it.invokestatic(intrinsicOwner, "iterator", methodSignature, false)
             }
 }

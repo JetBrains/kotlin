@@ -42,36 +42,6 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testOldPackageKotlinInfo() throws Exception {
-        loadText("package " + PACKAGE_NAME + "\n" +
-                 "\n" +
-                 "fun foo() = 42\n" +
-                 "val bar = 239\n" +
-                 "\n" +
-                 "class A\n" +
-                 "class B\n" +
-                 "object C\n");
-        Class aClass = generateClass(PackageClassUtils.getPackageClassFqName(PACKAGE_NAME).asString());
-
-        Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(JvmAnnotationNames.KOTLIN_PACKAGE.asString());
-        assertTrue(aClass.isAnnotationPresent(annotationClass));
-
-        Annotation kotlinPackage = aClass.getAnnotation(annotationClass);
-
-        String[] data = (String[]) CodegenTestUtil.getAnnotationAttribute(kotlinPackage, "data");
-        assertNotNull(data);
-        String[] strings = (String[]) CodegenTestUtil.getAnnotationAttribute(kotlinPackage, "strings");
-        assertNotNull(strings);
-        PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data, strings);
-
-        Set<String> callableNames = collectCallableNames(
-                packageData.getPackageProto().getFunctionList(),
-                packageData.getPackageProto().getPropertyList(),
-                packageData.getNameResolver()
-        );
-        assertEmpty(callableNames);
-    }
-
     public void testPackagePartKotlinInfo() throws Exception {
         loadText("package " + PACKAGE_NAME + "\n" +
                  "\n" +
@@ -81,7 +51,7 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
                  "class A\n" +
                  "class B\n" +
                  "object C\n");
-        Class aClass = generateClass(PackagePartClassUtils.getPackagePartFqName(PACKAGE_NAME, DEFAULT_TEST_FILE_NAME).asString());
+        Class aClass = generateFileClass();
 
         Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(JvmAnnotationNames.KOTLIN_FILE_FACADE.asString());
         assertTrue(aClass.isAnnotationPresent(annotationClass));

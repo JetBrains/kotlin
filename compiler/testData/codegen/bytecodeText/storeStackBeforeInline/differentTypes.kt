@@ -7,10 +7,10 @@ fun foo() : String {
 }
 
 // 3 ISTORE
-// 11 ILOAD
+// 7 ILOAD
 // 2 ASTORE
-// 8 ALOAD
+// 6 ALOAD
 // 2 LSTORE
-// 6 LLOAD
+// 4 LLOAD
 // 1 MAXLOCALS = 10
 // 0 InlineMarker

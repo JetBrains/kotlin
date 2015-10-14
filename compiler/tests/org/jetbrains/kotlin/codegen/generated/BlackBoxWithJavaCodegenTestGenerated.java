@@ -255,12 +255,6 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
-        @TestMetadata("withPackageFacade")
-        public void testWithPackageFacade() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/fileClasses/withPackageFacade/");
-            doTestWithJava(fileName);
-        }
-
     }
 
     @TestMetadata("compiler/testData/codegen/boxWithJava/interfaces")

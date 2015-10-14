@@ -16,7 +16,7 @@ fun box(): String {
 
 /*
     3 return's are defined in functions
-    2 are from package facade
 */
 
-// 5 RETURN
+// 2 IRETURN
+// 1 ARETURN

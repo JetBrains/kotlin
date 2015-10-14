@@ -31,17 +31,6 @@ public class SourceInfoGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testSingleFilePackage() {
-        String producer = "foo1.kt";
-        loadFiles(TEST_FOLDER + producer);
-        assertEquals(producer, getProducerInfo("foo/FooPackage.class"));
-    }
-
-    public void testMultiFilePackage() {
-        loadFiles(TEST_FOLDER + "foo1.kt", TEST_FOLDER + "foo2.kt");
-        assertEquals(null, getProducerInfo("foo/FooPackage.class"));
-    }
-
     public void testSingleClass() {
         String producer = "singleClass.kt";
         loadFiles(TEST_FOLDER + producer);

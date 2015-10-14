@@ -107,12 +107,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
-    @TestMetadata("defaultDelegation.kt")
-    public void testDefaultDelegation() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/defaultDelegation.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("inlineFromOtherModule.kt")
     public void testInlineFromOtherModule() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineFromOtherModule.kt");

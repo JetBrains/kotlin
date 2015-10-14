@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AbstractLineNumberTest extends TestCaseWithTmpdir {
+public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
     private static final String LINE_NUMBER_FUN = "lineNumber";
     private static final Pattern TEST_LINE_NUMBER_PATTERN = Pattern.compile("^.*test." + LINE_NUMBER_FUN + "\\(\\).*$");
@@ -243,21 +243,5 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
             }
         }, ClassReader.SKIP_FRAMES);
         return result;
-    }
-
-    public void testStaticDelegate() {
-        JetFile foo = createPsiFile(getTestDataPath() + "/staticDelegate/foo.kt").getFirst();
-        JetFile bar = createPsiFile(getTestDataPath() + "/staticDelegate/bar.kt").getFirst();
-        GenerationState state = GenerationUtils.compileManyFilesGetGenerationStateForTest(foo.getProject(), Arrays.asList(foo, bar));
-        OutputFile file = state.getFactory().get(PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class");
-        assertNotNull(file);
-        ClassReader reader = new ClassReader(file.asByteArray());
-
-        // There must be exactly one line number attribute for each static delegate in package facade class, and it should point to the first
-        // line. There are two static delegates in this test, hence the [1, 1]
-        List<Integer> expectedLineNumbers = Arrays.asList(1, 1);
-        List<Integer> actualLineNumbers = readAllLineNumbers(reader);
-
-        assertSameElements(actualLineNumbers, expectedLineNumbers);
     }
 }

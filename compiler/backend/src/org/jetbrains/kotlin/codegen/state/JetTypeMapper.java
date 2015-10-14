@@ -270,7 +270,7 @@ public class JetTypeMapper {
 
     @Nullable
     private ContainingClassesInfo getPackageMemberContainingClassesInfo(@NotNull DeserializedCallableMemberDescriptor descriptor) {
-        // XXX This method (and getPackageMemberOwnerShortName) is a dirty hack.
+        // XXX This method is a dirty hack.
         // We need some safe, concise way to identify multifile facade and multifile part
         // from a deserialized package member descriptor.
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();

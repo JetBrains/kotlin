@@ -54,7 +54,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testDelegationToVal() throws Exception {
         loadFile("classes/delegationToVal.kt");
         GeneratedClassLoader loader = generateAndCreateClassLoader();
-        Class<?> aClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
+        Class<?> aClass = loader.loadClass("DelegationToValKt");
         assertEquals("OK", aClass.getMethod("box").invoke(null));
 
         Class<?> test = loader.loadClass("Test");

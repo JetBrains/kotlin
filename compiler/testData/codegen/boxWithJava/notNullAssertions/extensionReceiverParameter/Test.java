@@ -1,11 +1,11 @@
 public class Test {
     public static String invokeFoo() {
         try {
-            _DefaultPackage.foo(null);
+            ExtensionKt.foo(null);
         }
         catch (IllegalArgumentException e) {
             try {
-                _DefaultPackage.getBar(null);
+                ExtensionKt.getBar(null);
             }
             catch (IllegalArgumentException f) {
                 return "OK";
