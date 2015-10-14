@@ -30,9 +30,6 @@ public fun <K, V> Map.Entry<K, V>.getKey(): K = key
 @Deprecated("Use property 'value' instead", ReplaceWith("this.value"))
 public fun <K, V> Map.Entry<K, V>.getValue(): V = value
 
-@Deprecated("Use operator 'get' instead", ReplaceWith("this[index]"))
-public fun CharSequence.charAt(index: Int): Char = this[index]
-
 @Deprecated("Use 'removeAt' instead", ReplaceWith("this.removeAt(index)"))
 public fun <E> MutableList<E>.remove(index: Int): E = removeAt(index)
 

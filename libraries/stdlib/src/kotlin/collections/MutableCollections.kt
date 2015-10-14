@@ -3,6 +3,9 @@
 
 package kotlin
 
+@Deprecated("Use operator 'get' instead", ReplaceWith("this[index]"))
+public fun CharSequence.charAt(index: Int): Char = this[index]
+
 /**
  * Adds the specified [element] to this mutable collection.
  */
