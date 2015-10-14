@@ -28,13 +28,11 @@ public class JetObjectDeclaration : JetClassOrObject {
     public constructor(node: ASTNode) : super(node)
     public constructor(stub: KotlinObjectStub) : super(stub, JetStubElementTypes.OBJECT_DECLARATION)
 
-    override fun getStub(): KotlinObjectStub? = super.getStub() as? KotlinObjectStub
+    private val _stub: KotlinObjectStub?
+        get() = stub as? KotlinObjectStub
 
     override fun getName(): String? {
-        val stub = stub
-        if (stub != null) {
-            return stub.name
-        }
+        _stub?.name?.let { return it }
 
         val nameAsDeclaration = getNameAsDeclaration()
         if (nameAsDeclaration == null && isCompanion()) {
@@ -60,7 +58,7 @@ public class JetObjectDeclaration : JetClassOrObject {
         }
     }
 
-    public fun isCompanion(): Boolean = stub?.isCompanion() ?: hasModifier(JetTokens.COMPANION_KEYWORD)
+    public fun isCompanion(): Boolean = _stub?.isCompanion() ?: hasModifier(JetTokens.COMPANION_KEYWORD)
 
     override fun getTextOffset(): Int = nameIdentifier?.textRange?.startOffset
                                         ?: getObjectKeyword().textRange.startOffset
@@ -69,7 +67,7 @@ public class JetObjectDeclaration : JetClassOrObject {
         return visitor.visitObjectDeclaration(this, data)
     }
 
-    public fun isObjectLiteral(): Boolean = stub?.isObjectLiteral() ?: (parent is JetObjectLiteralExpression)
+    public fun isObjectLiteral(): Boolean = _stub?.isObjectLiteral() ?: (parent is JetObjectLiteralExpression)
 
     public fun getObjectKeyword(): PsiElement = findChildByType(JetTokens.OBJECT_KEYWORD)!!
 }

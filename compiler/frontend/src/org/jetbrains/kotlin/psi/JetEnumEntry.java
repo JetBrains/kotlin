@@ -17,16 +17,14 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiEnumConstant;
-import com.intellij.psi.PsiField;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -44,7 +42,7 @@ public class JetEnumEntry extends JetClass {
 
     @Override
     public String getName() {
-        KotlinClassStub classStub = getStub();
+        KotlinClassOrObjectStub<? extends JetClassOrObject> classStub = getStub();
         if (classStub != null) {
             return classStub.getName();
         }
