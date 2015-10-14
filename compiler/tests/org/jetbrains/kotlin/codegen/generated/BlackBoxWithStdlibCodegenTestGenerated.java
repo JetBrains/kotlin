@@ -1481,6 +1481,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/delegatedProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DelegatedProperty extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInDelegatedProperty() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("stackOverflowOnCallFromGetValue.kt")
+        public void testStackOverflowOnCallFromGetValue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/delegatedProperty/stackOverflowOnCallFromGetValue.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/enum")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

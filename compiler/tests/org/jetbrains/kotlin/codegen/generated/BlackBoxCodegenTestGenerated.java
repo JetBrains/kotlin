@@ -2971,6 +2971,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("useReflectionOnKProperty.kt")
+        public void testUseReflectionOnKProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/useReflectionOnKProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("valInInnerClass.kt")
         public void testValInInnerClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/valInInnerClass.kt");
