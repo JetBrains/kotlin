@@ -1,5 +1,5 @@
 open class A(n: Int)
 
-class B {
-    constructor(x: Int) : <selection>A</selection>(x + 1)
+class B : A {
+    constructor(x: Int) : <selection>super</selection>(x + 1)
 }
