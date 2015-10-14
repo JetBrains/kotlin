@@ -205,8 +205,13 @@ private fun createReflectionTypeForCallableDescriptor(
         trace: BindingTrace?,
         reportOn: JetExpression?
 ): JetType? {
-    val extensionReceiver = descriptor.getExtensionReceiverParameter()
-    val dispatchReceiver = descriptor.getDispatchReceiverParameter()
+    val extensionReceiver = descriptor.extensionReceiverParameter
+    val dispatchReceiver = descriptor.dispatchReceiverParameter?.let { dispatchReceiver ->
+        // See CallableDescriptor#getOwnerForEffectiveDispatchReceiverParameter
+        if ((descriptor as? CallableMemberDescriptor)?.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
+            DescriptorUtils.getDispatchReceiverParameterIfNeeded(descriptor.containingDeclaration)
+        else dispatchReceiver
+    }
 
     if (extensionReceiver != null && dispatchReceiver != null && descriptor is CallableMemberDescriptor) {
         if (reportOn != null) {

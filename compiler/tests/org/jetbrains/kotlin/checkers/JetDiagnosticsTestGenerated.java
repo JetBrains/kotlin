@@ -1721,6 +1721,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("fakeOverrideType.kt")
+                public void testFakeOverrideType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/fakeOverrideType.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("genericClassFromTopLevel.kt")
                 public void testGenericClassFromTopLevel() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/genericClassFromTopLevel.kt");
