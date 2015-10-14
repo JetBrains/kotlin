@@ -5,48 +5,48 @@ fun foo(a: Any): Int {
         a.get(0)
         a.set(0, 1)
         a.iterator()
-        return a.size()
+        return a.size
     }
     if (a is ShortArray) {
         a.get(0)
         a.set(0, 1)
         a.iterator()
-        return a.size()
+        return a.size
     }
     if (a is ByteArray) {
         a.get(0)
         a.set(0, 1)
         a.iterator()
-        return a.size()
+        return a.size
     }
     if (a is FloatArray) {
         a.get(0)
         a.set(0, 1.toFloat())
         a.iterator()
-        return a.size()
+        return a.size
     }
     if (a is DoubleArray) {
         a.get(0)
         a.set(0, 1.0)
         a.iterator()
-        return a.size()
+        return a.size
     }
     if (a is BooleanArray) {
         a.get(0)
         a.set(0, false)
         a.iterator()
-        return a.size()
+        return a.size
     }
     if (a is CharArray) {
         a.get(0)
         a.set(0, 'a')
         a.iterator()
-        return a.size()
+        return a.size
     }
     if (a is Array<*>) {
-        if (a.size() > 0) a.get(0)
+        if (a.size > 0) a.get(0)
         a.iterator()
-        return a.size()
+        return a.size
     }
 
     return 0

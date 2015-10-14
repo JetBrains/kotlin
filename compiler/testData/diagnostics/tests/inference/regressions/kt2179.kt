@@ -25,7 +25,7 @@ fun test() {
 
 //------------
 
-fun <T> arrayList(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size()))
+fun <T> arrayList(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))
 
 fun <T, R> Collection<T>.map(transform : (T) -> R) : List<R> {
     return mapTo(java.util.ArrayList<R>(this.size), transform)

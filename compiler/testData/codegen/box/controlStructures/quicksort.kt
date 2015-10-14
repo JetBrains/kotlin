@@ -4,7 +4,7 @@ fun IntArray.swap(i:Int, j:Int) {
     this[j] = temp
 }
 
-fun IntArray.quicksort() = quicksort(0, size()-1)
+fun IntArray.quicksort() = quicksort(0, size-1)
 
 fun IntArray.quicksort(L: Int, R:Int) {
     val m = this[(L + R) / 2]
@@ -34,7 +34,7 @@ fun box() : String {
         a[2*i+1] = -2*i-1
     }
     a.quicksort()
-    for(i in 0..a.size()-2) {
+    for(i in 0..a.size-2) {
         if (a[i] > a[i+1]) return "Fail $i: ${a[i]} > ${a[i+1]}"
     }
     return "OK"

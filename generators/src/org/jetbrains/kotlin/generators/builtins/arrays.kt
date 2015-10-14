@@ -39,7 +39,7 @@ class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.println("    public operator fun set(index: Int, value: $s): Unit")
             out.println()
             out.println("    /** Returns the number of elements in the array. */")
-            out.println("    public fun size(): Int")
+            out.println("    public val size: Int")
             out.println()
             out.println("    /** Creates an iterator over the elements of the array. */")
             out.println("    public operator fun iterator(): ${s}Iterator")

@@ -4,7 +4,7 @@ fun foo(i: Int): Int {
 }
 
 fun test() {
-    foo(a.size() + 1)
-    foo(a.size() + 1)
-    foo(a.size() + 1)
+    foo(a.size + 1)
+    foo(a.size + 1)
+    foo(a.size + 1)
 }

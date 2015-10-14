@@ -134,7 +134,7 @@ public class IntrinsicMethods {
             declareArrayMethodsForPrimitive(jvmPrimitiveType);
         }
 
-        declareIntrinsicFunction("Array", "size", 0, ARRAY_SIZE);
+        declareIntrinsicFunction("Array", "size", -1, ARRAY_SIZE);
         declareIntrinsicFunction("Array", "set", 2, ARRAY_SET);
         declareIntrinsicFunction("Array", "get", 1, ARRAY_GET);
         declareIntrinsicFunction("Array", "clone", 0, CLONE);
@@ -143,7 +143,7 @@ public class IntrinsicMethods {
 
     private void declareArrayMethodsForPrimitive(@NotNull JvmPrimitiveType jvmPrimitiveType) {
         String arrayTypeName = jvmPrimitiveType.getPrimitiveType().getArrayTypeName().asString();
-        declareIntrinsicFunction(arrayTypeName, "size", 0, ARRAY_SIZE);
+        declareIntrinsicFunction(arrayTypeName, "size", -1, ARRAY_SIZE);
         declareIntrinsicFunction(arrayTypeName, "set", 2, ARRAY_SET);
         declareIntrinsicFunction(arrayTypeName, "get", 1, ARRAY_GET);
         declareIntrinsicFunction(arrayTypeName, "clone", 0, CLONE);

@@ -1,7 +1,7 @@
 // See also KT-7186
 
 fun IntArray.forEachIndexed( op: (i: Int, value: Int) -> Unit) {
-    for (i in 0..this.size()-1)
+    for (i in 0..this.size)
         op(i, this[i])
 }
 

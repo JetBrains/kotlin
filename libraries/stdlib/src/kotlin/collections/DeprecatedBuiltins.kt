@@ -23,3 +23,30 @@ public inline fun Throwable.getMessage(): String? = message
 
 @Deprecated("Use property 'cause' instead", ReplaceWith("this.cause"))
 public inline fun Throwable.getCause(): Throwable? = cause
+
+@Deprecated("Use property 'size' instead", ReplaceWith("this.size"))
+public inline fun Array<*>.size() = size
+
+@Deprecated("Use property 'size' instead", ReplaceWith("this.size"))
+public inline fun ByteArray.size() = size
+
+@Deprecated("Use property 'size' instead", ReplaceWith("this.size"))
+public inline fun CharArray.size() = size
+
+@Deprecated("Use property 'size' instead", ReplaceWith("this.size"))
+public inline fun ShortArray.size() = size
+
+@Deprecated("Use property 'size' instead", ReplaceWith("this.size"))
+public inline fun IntArray.size() = size
+
+@Deprecated("Use property 'size' instead", ReplaceWith("this.size"))
+public inline fun LongArray.size() = size
+
+@Deprecated("Use property 'size' instead", ReplaceWith("this.size"))
+public inline fun FloatArray.size() = size
+
+@Deprecated("Use property 'size' instead", ReplaceWith("this.size"))
+public inline fun DoubleArray.size() = size
+
+@Deprecated("Use property 'size' instead", ReplaceWith("this.size"))
+public inline fun BooleanArray.size() = size

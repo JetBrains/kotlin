@@ -121,7 +121,7 @@ public final class ArrayFIF extends CompositeFIF {
     private ArrayFIF() {
         add(pattern(ARRAYS, "get"), GET_INTRINSIC);
         add(pattern(ARRAYS, "set"), SET_INTRINSIC);
-        add(pattern(ARRAYS, "size"), LENGTH_PROPERTY_INTRINSIC);
+        add(pattern(ARRAYS, "<get-size>"), LENGTH_PROPERTY_INTRINSIC);
         add(pattern(ARRAYS, "iterator"), new KotlinFunctionIntrinsic("arrayIterator"));
         add(pattern(NUMBER_ARRAY, "<init>"),new KotlinFunctionIntrinsic("numberArrayOfSize"));
         add(pattern(CHAR_ARRAY, "<init>"), new KotlinFunctionIntrinsic("charArrayOfSize"));

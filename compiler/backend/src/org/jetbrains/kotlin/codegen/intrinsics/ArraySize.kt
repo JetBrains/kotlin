@@ -16,12 +16,16 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.org.objectweb.asm.Type
 
-public class ArraySize : IntrinsicMethod() {
-    override fun toCallable(method: CallableMethod): Callable =
-            createUnaryIntrinsicCallable(method) { adapter ->
-                adapter.arraylength()
-            }
+public class ArraySize : IntrinsicPropertyGetter() {
+    override fun generate(
+            resolvedCall: ResolvedCall<*>?, codegen: ExpressionCodegen, returnType: Type, receiver: StackValue
+    ) = StackValue.operation(returnType) {
+        receiver.put(receiver.type, it)
+        it.arraylength()
+    }
 }

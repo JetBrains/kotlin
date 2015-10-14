@@ -19,7 +19,7 @@ fun box() : String {
     P(""""" """"", "\"\" \"\"")
   )
 
-  for (i in 0..data.size()-1) {
+  for (i in 0..data.size-1) {
     val p = data[i]
     if (p.actual != p.expected) return "Fail at #$i. actual='${p.actual}', expected='${p.expected}'"
   }

@@ -14,11 +14,12 @@ public open class Any {
 
 public final class Array</*0*/ T> : kotlin.Cloneable {
     /*primary*/ private constructor Array</*0*/ T>()
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.Array<T>
     public final operator fun get(/*0*/ index: kotlin.Int): T
     public final operator fun iterator(): kotlin.Iterator<T>
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: T): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
@@ -32,11 +33,12 @@ public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
 
 public final class BooleanArray : kotlin.Cloneable {
     /*primary*/ public constructor BooleanArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.BooleanArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Boolean
     public final operator fun iterator(): kotlin.BooleanIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Boolean): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class BooleanIterator : kotlin.Iterator<kotlin.Boolean> {
@@ -113,11 +115,12 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
 
 public final class ByteArray : kotlin.Cloneable {
     /*primary*/ public constructor ByteArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.ByteArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Byte
     public final operator fun iterator(): kotlin.ByteIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Byte): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class ByteIterator : kotlin.Iterator<kotlin.Byte> {
@@ -199,11 +202,12 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
 
 public final class CharArray : kotlin.Cloneable {
     /*primary*/ public constructor CharArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.CharArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public final operator fun iterator(): kotlin.CharIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Char): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class CharIterator : kotlin.Iterator<kotlin.Char> {
@@ -388,11 +392,12 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
 
 public final class DoubleArray : kotlin.Cloneable {
     /*primary*/ public constructor DoubleArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.DoubleArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Double
     public final operator fun iterator(): kotlin.DoubleIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Double): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class DoubleIterator : kotlin.Iterator<kotlin.Double> {
@@ -538,11 +543,12 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
 
 public final class FloatArray : kotlin.Cloneable {
     /*primary*/ public constructor FloatArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.FloatArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Float
     public final operator fun iterator(): kotlin.FloatIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Float): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class FloatIterator : kotlin.Iterator<kotlin.Float> {
@@ -691,11 +697,12 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
 
 public final class IntArray : kotlin.Cloneable {
     /*primary*/ public constructor IntArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.IntArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Int
     public final operator fun iterator(): kotlin.IntIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class IntIterator : kotlin.Iterator<kotlin.Int> {
@@ -867,11 +874,12 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
 
 public final class LongArray : kotlin.Cloneable {
     /*primary*/ public constructor LongArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.LongArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Long
     public final operator fun iterator(): kotlin.LongIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Long): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class LongIterator : kotlin.Iterator<kotlin.Long> {
@@ -1178,11 +1186,12 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
 
 public final class ShortArray : kotlin.Cloneable {
     /*primary*/ public constructor ShortArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.ShortArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Short
     public final operator fun iterator(): kotlin.ShortIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Short): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class ShortIterator : kotlin.Iterator<kotlin.Short> {
