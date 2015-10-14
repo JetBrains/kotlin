@@ -35,14 +35,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.JetCallElement
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 
@@ -76,18 +72,6 @@ abstract class ChangeFunctionSignatureFix(
         else {
             return KotlinNameSuggester.suggestNameByName("param", validator)
         }
-    }
-
-    protected fun getNewParameterInfo(
-            functionDescriptor: FunctionDescriptor,
-            argument: ValueArgument,
-            validator: Function1<String, Boolean>
-    ): JetParameterInfo {
-        val name = getNewArgumentName(argument, validator)
-        val expression = argument.getArgumentExpression()
-        val type = expression?.let { it.analyze().getType(it) } ?: functionDescriptor.builtIns.nullableAnyType
-        return JetParameterInfo(functionDescriptor, -1, name, type, null, null, JetValVar.None, null)
-                .apply { currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type) }
     }
 
     object Factory : JetSingleIntentionActionFactory() {
