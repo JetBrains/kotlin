@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
-import org.jetbrains.kotlin.asJava.AbstractKotlinLightClassTest
+import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
@@ -324,7 +324,7 @@ fun main(args: Array<String>) {
             model("evaluate/usesVariableAsConstant", testMethod = "doUsesVariableAsConstantTest")
         }
 
-        testClass<AbstractKotlinLightClassTest>() {
+        testClass<AbstractCompilerLightClassTest>() {
             model("asJava/lightClasses")
         }
 

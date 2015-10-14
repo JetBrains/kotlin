@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractKotlinLightClassTest extends KotlinMultiFileTestWithWithJava<Void, Void> {
+public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTestWithWithJava<Void, Void> {
     private static final Pattern SUBJECT_FQ_NAME_PATTERN = Pattern.compile("^//\\s*(.*)$", Pattern.MULTILINE);
 
     @Override

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/asJava/lightClasses")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest {
+public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassTest {
     public void testAllFilesPresentInLightClasses() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -38,7 +38,7 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
     @TestMetadata("compiler/testData/asJava/lightClasses/delegation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Delegation extends AbstractKotlinLightClassTest {
+    public static class Delegation extends AbstractCompilerLightClassTest {
         public void testAllFilesPresentInDelegation() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/delegation"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -65,7 +65,7 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
     @TestMetadata("compiler/testData/asJava/lightClasses/facades")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Facades extends AbstractKotlinLightClassTest {
+    public static class Facades extends AbstractCompilerLightClassTest {
         public void testAllFilesPresentInFacades() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -86,7 +86,7 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
     @TestMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class NullabilityAnnotations extends AbstractKotlinLightClassTest {
+    public static class NullabilityAnnotations extends AbstractCompilerLightClassTest {
         public void testAllFilesPresentInNullabilityAnnotations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/nullabilityAnnotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -215,7 +215,7 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
     @TestMetadata("compiler/testData/asJava/lightClasses/object")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Object extends AbstractKotlinLightClassTest {
+    public static class Object extends AbstractCompilerLightClassTest {
         public void testAllFilesPresentInObject() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/object"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -230,7 +230,7 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
     @TestMetadata("compiler/testData/asJava/lightClasses/publicField")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class PublicField extends AbstractKotlinLightClassTest {
+    public static class PublicField extends AbstractCompilerLightClassTest {
         public void testAllFilesPresentInPublicField() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/publicField"), Pattern.compile("^(.+)\\.kt$"), true);
         }
