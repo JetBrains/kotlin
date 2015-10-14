@@ -7,7 +7,7 @@ class ListOfT {
 
     public static void check() {
         List<String> list = new ArrayList<String>();
-        List<String> r = TestPackage.listOfT(list);
+        List<String> r = ListOfTKt.listOfT(list);
     }
 
 }

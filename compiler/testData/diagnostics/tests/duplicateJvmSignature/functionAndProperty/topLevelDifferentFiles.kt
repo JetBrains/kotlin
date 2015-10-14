@@ -1,5 +1,5 @@
 // FILE: a.kt
-<!CONFLICTING_JVM_DECLARATIONS!>val x<!> = 1
+val x = 1
 
 // FILE: b.kt
-<!CONFLICTING_JVM_DECLARATIONS!>fun getX()<!> = 1
+fun getX() = 1

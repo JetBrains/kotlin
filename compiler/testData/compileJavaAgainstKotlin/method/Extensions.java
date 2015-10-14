@@ -2,8 +2,8 @@ package test;
 
 class GenericArray {
     {
-        TestPackage.noParam("");
+        ExtensionsKt.noParam("");
 
-        TestPackage.param("", "");
+        ExtensionsKt.param("", "");
     }
 }

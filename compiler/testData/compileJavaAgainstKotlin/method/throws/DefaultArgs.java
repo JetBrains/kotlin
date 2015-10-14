@@ -13,12 +13,12 @@ class JavaClass {
         catch (E1 e) {}
 
         try {
-            TestPackage.one(1);
+            DefaultArgsKt.one(1);
         }
         catch (E1 e) {}
 
         try {
-            TestPackage.one();
+            DefaultArgsKt.one();
         }
         catch (E1 e) {}
     }

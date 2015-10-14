@@ -1,3 +1,3 @@
-// _DefaultPackage
+// NullableUnitReturnKt
 
 fun foo(): Unit? = null

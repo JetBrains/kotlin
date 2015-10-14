@@ -2,9 +2,9 @@ package test;
 
 class GenericArray {
     {
-        TestPackage.getVal_("");
+        ExtensionsKt.getVal_("");
 
-        TestPackage.getVar_("");
-        TestPackage.setVar_("", "");
+        ExtensionsKt.getVar_("");
+        ExtensionsKt.setVar_("", "");
     }
 }

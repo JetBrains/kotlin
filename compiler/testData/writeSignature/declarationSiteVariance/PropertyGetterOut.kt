@@ -3,6 +3,6 @@ class X
 
 val p: M<X> = throw Exception()
 
-// method: _DefaultPackage::getP
+// method: PropertyGetterOutKt::getP
 // jvm signature:     ()LM;
 // generic signature: ()LM<LX;>;

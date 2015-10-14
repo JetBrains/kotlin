@@ -10,7 +10,7 @@
             <fileset dir="${temp}/classes"/>
         </jar>
 
-        <java classname="hello.HelloPackage" fork="true">
+        <java classname="hello.HelloKt" fork="true">
             <classpath>
                 <pathelement location="${temp}/hello.jar"/>
                 <pathelement location="${kotlin.runtime.jar}"/>

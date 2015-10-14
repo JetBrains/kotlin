@@ -4,6 +4,6 @@ class X
 
 fun f(m: M<X, X>): M<X, X> = throw Exception()
 
-// method: _DefaultPackage::f
+// method: FunctionTwoTypeParametersKt::f
 // jvm signature:     (LM;)LM;
 // generic signature: (LM<-LX;+LX;>;)LM<LX;LX;>;

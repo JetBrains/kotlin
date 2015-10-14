@@ -3,6 +3,6 @@ package test;
 
 class IntWithDefault {
     {
-        int r = TestPackage.www(1);
+        int r = IntWithDefaultKt.www(1);
     }
 }

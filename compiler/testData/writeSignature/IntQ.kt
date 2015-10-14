@@ -1,5 +1,5 @@
 fun sometimes(): Int? = null
 
-// method: _DefaultPackage::sometimes
+// method: IntQKt::sometimes
 // jvm signature:     ()Ljava/lang/Integer;
 // generic signature: null

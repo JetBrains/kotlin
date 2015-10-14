@@ -44,7 +44,7 @@ public class K2JvmCliTest extends CliBaseTest {
     public void nonExistingClassPathAndAnnotationsPath() throws Exception {
         executeCompilerCompareOutputJVM();
 
-        Assert.assertTrue(new File(tmpdir.getTmpDir(), PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class").isFile());
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), "SimpleKt.class").isFile());
     }
 
     @Test

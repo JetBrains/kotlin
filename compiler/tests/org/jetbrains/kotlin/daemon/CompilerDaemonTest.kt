@@ -103,7 +103,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
             TestCase.assertTrue("Expecting that compilation 1 ($compileTime1 ms) is at least two times longer than compilation 2 ($compileTime2 ms)",
                                 compileTime1 > compileTime2 * 2)
             logFile.delete()
-            run("hello.run", "-cp", jar, "Hello.HelloPackage")
+            run("hello.run", "-cp", jar, "Hello.HelloKt")
         }
         finally {
             if (!daemonShotDown)

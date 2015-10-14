@@ -2,6 +2,6 @@ package test;
 
 class Any {
     {
-        Object r = TestPackage.anyany(new Object(), null);
+        Object r = AnyKt.anyany(new Object(), null);
     }
 }
