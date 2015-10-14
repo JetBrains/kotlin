@@ -222,10 +222,10 @@ public class QuickFixRegistrar : QuickFixContributor {
         COMPARE_TO_TYPE_MISMATCH.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForCompareToTypeMismatch())
         IMPLICIT_NOTHING_RETURN_TYPE.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForChangingReturnTypeToNothing())
 
-        TOO_MANY_ARGUMENTS.registerFactory(ChangeFunctionSignatureFix.Factory)
-        NO_VALUE_FOR_PARAMETER.registerFactory(ChangeFunctionSignatureFix.Factory)
-        UNUSED_PARAMETER.registerFactory(ChangeFunctionSignatureFix.FactoryForUnusedParameter)
-        EXPECTED_PARAMETERS_NUMBER_MISMATCH.registerFactory(ChangeFunctionSignatureFix.FactoryForParametersNumberMismatch)
+        TOO_MANY_ARGUMENTS.registerFactory(ChangeFunctionSignatureFix)
+        NO_VALUE_FOR_PARAMETER.registerFactory(ChangeFunctionSignatureFix)
+        UNUSED_PARAMETER.registerFactory(RemoveUnusedFunctionParameterFix)
+        EXPECTED_PARAMETERS_NUMBER_MISMATCH.registerFactory(ChangeFunctionLiteralSignatureFix)
 
         EXPECTED_PARAMETER_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch())
 

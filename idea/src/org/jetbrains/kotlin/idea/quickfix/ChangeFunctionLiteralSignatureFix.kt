@@ -20,6 +20,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
@@ -56,5 +59,27 @@ class ChangeFunctionLiteralSignatureFix(
                 },
                 context,
                 text)
+    }
+
+    companion object : KotlinIntentionActionFactoryWithDelegate<JetFunctionLiteral, Data>() {
+        data class Data(val functionLiteral: JetFunctionLiteral, val descriptor: FunctionDescriptor, val parameterTypes: List<JetType>)
+
+        override fun getElementOfInterest(diagnostic: Diagnostic): JetFunctionLiteral? {
+            val diagnosticWithParameters = Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH.cast(diagnostic)
+            return diagnosticWithParameters.psiElement as? JetFunctionLiteral
+        }
+
+        override fun createQuickFixData(element: JetFunctionLiteral, diagnostic: Diagnostic): Data? {
+            val descriptor = element.resolveToDescriptor() as? FunctionDescriptor ?: return null
+            val parameterTypes = Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH.cast(diagnostic).b
+            return Data(element, descriptor, parameterTypes)
+        }
+
+        override fun createQuickFix(diagnostic: Diagnostic, quickFixDataFactory: () -> Data?): QuickFixWithDelegateFactory? {
+            return QuickFixWithDelegateFactory {
+                val (functionLiteral, descriptor, parameterTypes) = quickFixDataFactory() ?: return@QuickFixWithDelegateFactory null
+                ChangeFunctionLiteralSignatureFix(functionLiteral, descriptor, parameterTypes)
+            }
+        }
     }
 }

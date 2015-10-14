@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.RemoveFunctionParametersFix" "false"
+// "class org.jetbrains.kotlin.idea.quickfix.ChangeFunctionSignatureFix" "false"
 //ERROR: No value passed for parameter other
 
 abstract class StringComparable {
