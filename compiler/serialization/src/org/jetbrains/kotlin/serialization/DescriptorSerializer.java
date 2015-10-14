@@ -125,7 +125,8 @@ public class DescriptorSerializer {
         ProtoBuf.Class.Builder builder = ProtoBuf.Class.newBuilder();
 
         int flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.getVisibility(), classDescriptor.getModality(),
-                                        classDescriptor.getKind(), classDescriptor.isInner(), classDescriptor.isCompanionObject());
+                                        classDescriptor.getKind(), classDescriptor.isInner(), classDescriptor.isCompanionObject(),
+                                        classDescriptor.isData());
         if (flags != builder.getFlags()) {
             builder.setFlags(flags);
         }

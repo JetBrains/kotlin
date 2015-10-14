@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
-import java.util.ArrayList
+import java.util.*
 
 /**
  * A [ClassDescriptor] representing the fictitious class for a function type, such as kotlin.Function1 or kotlin.reflect.KFunction2.
@@ -82,6 +82,7 @@ public class FunctionClassDescriptor(
     override fun getVisibility() = Visibilities.PUBLIC
     override fun isCompanionObject() = false
     override fun isInner() = false
+    override fun isData() = false
     override fun getAnnotations() = Annotations.EMPTY
     override fun getSource() = SourceElement.NO_SOURCE
 
