@@ -68,7 +68,7 @@ sealed class EffectiveVisibility(val name: String) {
 
         override fun hashCode() = container?.hashCode() ?: 0
 
-        override fun toString() = "${super.toString()}(${container?.name ?: '?'})"
+        override fun toString() = "${super.toString()} (in ${container?.name ?: '?'})"
 
         override fun relation(other: EffectiveVisibility) = when (other) {
             Public -> Permissiveness.LESS
@@ -98,7 +98,7 @@ sealed class EffectiveVisibility(val name: String) {
     }
 
     // Lower bound for all protected visibilities
-    object ProtectedBound : EffectiveVisibility("most protected") {
+    object ProtectedBound : EffectiveVisibility("protected (in different classes)") {
         override fun relation(other: EffectiveVisibility) = when (other) {
             Public, is Protected -> Permissiveness.LESS
             Private, InternalProtectedBound -> Permissiveness.MORE
@@ -114,13 +114,13 @@ sealed class EffectiveVisibility(val name: String) {
     }
 
     // Lower bound for internal and protected(C)
-    class InternalProtected(val container: ClassDescriptor?): EffectiveVisibility("protected & internal") {
+    class InternalProtected(val container: ClassDescriptor?): EffectiveVisibility("internal & protected") {
 
         override fun equals(other: Any?) = (other is InternalProtected && container == other.container)
 
         override fun hashCode() = container?.hashCode() ?: 0
 
-        override fun toString() = "${super.toString()}(${container?.name ?: '?'})"
+        override fun toString() = "${super.toString()} (in ${container?.name ?: '?'})"
 
         override fun relation(other: EffectiveVisibility) = when (other) {
             Public, Internal -> Permissiveness.LESS
@@ -146,7 +146,7 @@ sealed class EffectiveVisibility(val name: String) {
     }
 
     // Lower bound for internal and protected lower bound
-    object InternalProtectedBound : EffectiveVisibility("most protected & internal") {
+    object InternalProtectedBound : EffectiveVisibility("internal & protected (in different classes)") {
         override fun relation(other: EffectiveVisibility) = when (other) {
             Public, is Protected, is InternalProtected, ProtectedBound, Internal -> Permissiveness.LESS
             Private -> Permissiveness.MORE
