@@ -58,14 +58,6 @@ public class IdeStubIndexService extends StubIndexService {
             sink.occurrence(JetFilePartClassIndex.INSTANCE.getKey(), partFqName.asString());
         }
 
-        // TODO drop
-        JetFile jetFile = stub.getPsi();
-        if (jetFile != null) {
-            JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(jetFile);
-            sink.occurrence(JetFileFacadeFqNameIndex.INSTANCE.getKey(), fileClassInfo.getFacadeClassFqName().asString());
-            sink.occurrence(JetFilePartClassIndex.INSTANCE.getKey(), fileClassInfo.getFileClassFqName().asString());
-        }
-
         List<StringRef> partNames = ((KotlinFileStubForIde) stub).getFacadePartSimpleNames();
         if (partNames != null) {
             for (StringRef partName : partNames) {
