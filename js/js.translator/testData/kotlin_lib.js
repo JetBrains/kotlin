@@ -1029,9 +1029,20 @@
 
 
     Kotlin.StringBuilder = Kotlin.createClassNow(null,
-        function () {
-            this.string = "";
+        function (content) {
+            this.string = typeof(content) == "string" ? content : "";
         }, {
+        length: {
+            get: function() {
+                return this.string.length;
+            }
+        },
+        substring: function(start, end) {
+            return this.string.substring(start, end);
+        },
+        charAt: function(index) {
+            return this.string.charAt(index);
+        },
         append: function (obj, from, to) {
             if (from == void 0 && to == void 0) {
                 this.string = this.string + obj.toString();
