@@ -75,8 +75,9 @@ sealed class EffectiveVisibility(val name: String) {
             Private, ProtectedBound, InternalProtectedBound -> Permissiveness.MORE
             is Protected -> containerRelation(container, other.container)
             is InternalProtected -> when (containerRelation(container, other.container)) {
-                    Permissiveness.SAME, Permissiveness.LESS -> Permissiveness.LESS
-                    Permissiveness.UNKNOWN, Permissiveness.MORE -> Permissiveness.UNKNOWN
+                // Protected never can be less permissive than internal & protected
+                Permissiveness.SAME, Permissiveness.MORE -> Permissiveness.MORE
+                Permissiveness.UNKNOWN, Permissiveness.LESS -> Permissiveness.UNKNOWN
             }
             Internal -> Permissiveness.UNKNOWN
         }
@@ -127,8 +128,9 @@ sealed class EffectiveVisibility(val name: String) {
             Private, InternalProtectedBound -> Permissiveness.MORE
             is InternalProtected -> containerRelation(container, other.container)
             is Protected -> when (containerRelation(container, other.container)) {
-                Permissiveness.SAME, Permissiveness.MORE -> Permissiveness.MORE
-                Permissiveness.UNKNOWN, Permissiveness.LESS -> Permissiveness.UNKNOWN
+                // Internal & protected never can be more permissive than just protected
+                Permissiveness.SAME, Permissiveness.LESS -> Permissiveness.LESS
+                Permissiveness.UNKNOWN, Permissiveness.MORE -> Permissiveness.UNKNOWN
             }
             ProtectedBound -> Permissiveness.UNKNOWN
         }
