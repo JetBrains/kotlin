@@ -479,7 +479,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFunctionsForDataClasses() {
-        if (!KotlinBuiltIns.isData(descriptor)) return;
+        if (!descriptor.isData()) return;
 
         new DataClassMethodGeneratorImpl(myClass, bindingContext).generate();
     }
@@ -763,8 +763,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     new DefaultParameterValueLoader() {
                         @Override
                         public StackValue genValue(ValueParameterDescriptor valueParameter, ExpressionCodegen codegen) {
-                            assert KotlinBuiltIns.isData((ClassDescriptor) function.getContainingDeclaration())
-                                    : "Function container should be annotated with [data]: " + function;
+                            assert ((ClassDescriptor) function.getContainingDeclaration()).isData()
+                                    : "Function container must have [data] modifier: " + function;
                             PropertyDescriptor property = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter);
                             assert property != null : "Copy function doesn't correspond to any property: " + function;
                             return codegen.intermediateValueForProperty(property, false, null, StackValue.LOCAL_0);

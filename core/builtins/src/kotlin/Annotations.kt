@@ -21,16 +21,6 @@ import kotlin.annotation.AnnotationRetention.SOURCE
 import kotlin.annotation.AnnotationTarget.*
 
 /**
- * Marks the annotated class as a data class. The compiler automatically generates
- * equals()/hashCode(), toString(), componentN() and copy() functions for data classes.
- * See [the Kotlin language documentation](http://kotlinlang.org/docs/reference/data-classes.html)
- * for more information.
- */
-@Target(CLASS)
-@MustBeDocumented
-private annotation class data
-
-/**
  * Marks the annotated class, function, property, variable or parameter as deprecated.
  * @property message the message explaining the deprecation and recommending an alternative API to use.
  * @property replaceWith if present, specifies a code fragment which should be used as a replacement for

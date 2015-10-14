@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import com.google.common.collect.Lists
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
@@ -136,7 +135,7 @@ public open class LazyClassMemberScope(
     }
 
     private fun generateDataClassMethods(result: MutableCollection<FunctionDescriptor>, name: Name, location: LookupLocation) {
-        if (!KotlinBuiltIns.isData(thisDescriptor)) return
+        if (!thisDescriptor.isData) return
 
         val constructor = getPrimaryConstructor() ?: return
 
@@ -243,7 +242,7 @@ public open class LazyClassMemberScope(
     }
 
     private fun addDataClassMethods(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
-        if (!KotlinBuiltIns.isData(thisDescriptor)) return
+        if (!thisDescriptor.isData) return
 
         if (getPrimaryConstructor() == null) return
 
