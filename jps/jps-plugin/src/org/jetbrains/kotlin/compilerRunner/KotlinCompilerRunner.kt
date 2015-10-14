@@ -128,9 +128,9 @@ public object KotlinCompilerRunner {
     internal class DaemonConnection(public val daemon: CompileService?)
 
     internal object getDaemonConnection {
-        private var connection: DaemonConnection? = null
+        private @Volatile var connection: DaemonConnection? = null
 
-        operator fun invoke(environment: CompilerEnvironment, messageCollector: MessageCollector): DaemonConnection? {
+        @Synchronized operator fun invoke(environment: CompilerEnvironment, messageCollector: MessageCollector): DaemonConnection? {
             if (connection == null) {
                 val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, messageCollector)
                 val compilerId = CompilerId.makeCompilerId(File(libPath, "kotlin-compiler.jar"))
