@@ -30,16 +30,16 @@ abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : JetElement, D 
         private val isLowPriority: Boolean = false
 ) : KotlinIntentionActionFactoryWithDelegate<E, D>() {
 
-    protected abstract fun createQuickFix(data: D): IntentionAction?
+    protected abstract fun createFix(data: D): IntentionAction?
 
-    protected override final fun createQuickFixes(
+    protected override final fun createFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
             quickFixDataFactory: () -> D?
     ): List<QuickFixWithDelegateFactory> {
         fun createAction(): IntentionAction? {
             val data = quickFixDataFactory() ?: return null
-            return createQuickFix(data)
+            return createFix(data)
         }
 
         val delegateFactory = if (isLowPriority)
@@ -53,13 +53,13 @@ abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : JetElement, D 
 abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D : Any> : JetIntentionActionsFactory() {
     protected abstract fun getElementOfInterest(diagnostic: Diagnostic): E?
 
-    protected abstract fun createQuickFixes(
+    protected abstract fun createFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
             quickFixDataFactory: () -> D?
     ): List<QuickFixWithDelegateFactory>
 
-    protected abstract fun createQuickFixData(element: E, diagnostic: Diagnostic): D?
+    protected abstract fun extractFixData(element: E, diagnostic: Diagnostic): D?
 
     override final fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val diagnosticMessage = DefaultErrorMessages.render(diagnostic)
@@ -74,7 +74,7 @@ abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D : Any>
         // Cache null values
         var cachedData: Ref<D>? = null
         val actions: List<QuickFixWithDelegateFactory> = try {
-            createQuickFixes(originalElementPointer, diagnostic) factory@ {
+            createFixes(originalElementPointer, diagnostic) factory@ {
                 val element = originalElementPointer.element ?: return@factory null
                 val diagnosticElement = diagnosticElementPointer.element ?: return@factory null
                 if (!diagnosticElement.isValid || !element.isValid) return@factory null
@@ -85,7 +85,7 @@ abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D : Any>
                                 .forElement(diagnosticElement)
                                 .firstOrNull { DefaultErrorMessages.render(it) == diagnosticMessage } ?: return@factory null
                 if (cachedData == null) {
-                    cachedData = Ref(createQuickFixData(element, currentDiagnostic))
+                    cachedData = Ref(extractFixData(element, currentDiagnostic))
                 }
                 cachedData!!.get()
             }.filter { it.isAvailable(project, null, file) }

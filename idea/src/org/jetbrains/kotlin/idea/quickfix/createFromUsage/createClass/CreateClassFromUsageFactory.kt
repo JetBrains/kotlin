@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.JetElement
 abstract class CreateClassFromUsageFactory<E : JetElement> : KotlinIntentionActionFactoryWithDelegate<E, ClassInfo>() {
     protected abstract fun getPossibleClassKinds(element: E, diagnostic: Diagnostic): List<ClassKind>
 
-    override fun createQuickFixes(
+    override fun createFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
             quickFixDataFactory: () -> ClassInfo?

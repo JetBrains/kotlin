@@ -83,12 +83,12 @@ abstract class ChangeFunctionSignatureFix(
             return diagnostic.psiElement.getNonStrictParentOfType<JetCallElement>()
         }
 
-        override fun createQuickFixData(element: JetCallElement, diagnostic: Diagnostic): Data? {
+        override fun extractFixData(element: JetCallElement, diagnostic: Diagnostic): Data? {
             val descriptor = DiagnosticFactory.cast(diagnostic, Errors.TOO_MANY_ARGUMENTS, Errors.NO_VALUE_FOR_PARAMETER).a
             return Data(element, descriptor)
         }
 
-        override fun createQuickFix(data: Data) = createFix(data.callElement, data.callElement, data.descriptor)
+        override fun createFix(data: Data) = createFix(data.callElement, data.callElement, data.descriptor)
 
         private fun createFix(callElement: JetCallElement, context: PsiElement, descriptor: CallableDescriptor): ChangeFunctionSignatureFix? {
             val functionDescriptor = when (descriptor) {

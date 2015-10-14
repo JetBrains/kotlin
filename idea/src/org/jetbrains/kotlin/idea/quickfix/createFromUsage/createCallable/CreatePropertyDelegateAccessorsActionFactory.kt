@@ -39,7 +39,7 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
         return diagnostic.psiElement as? JetExpression
     }
 
-    override fun createQuickFixData(element: JetExpression, diagnostic: Diagnostic): List<CallableInfo> {
+    override fun extractFixData(element: JetExpression, diagnostic: Diagnostic): List<CallableInfo> {
         val context = element.analyze()
 
         fun isApplicableForAccessor(accessor: PropertyAccessorDescriptor?): Boolean =

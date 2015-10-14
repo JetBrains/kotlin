@@ -69,13 +69,13 @@ class ChangeFunctionLiteralSignatureFix(
             return diagnosticWithParameters.psiElement as? JetFunctionLiteral
         }
 
-        override fun createQuickFixData(element: JetFunctionLiteral, diagnostic: Diagnostic): Data? {
+        override fun extractFixData(element: JetFunctionLiteral, diagnostic: Diagnostic): Data? {
             val descriptor = element.resolveToDescriptor() as? FunctionDescriptor ?: return null
             val parameterTypes = Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH.cast(diagnostic).b
             return Data(element, descriptor, parameterTypes)
         }
 
-        override fun createQuickFix(data: Data)
+        override fun createFix(data: Data)
                 = ChangeFunctionLiteralSignatureFix(data.functionLiteral, data.descriptor, data.parameterTypes)
     }
 }

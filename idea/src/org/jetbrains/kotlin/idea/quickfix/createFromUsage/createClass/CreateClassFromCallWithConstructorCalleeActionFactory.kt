@@ -51,7 +51,7 @@ public object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClas
         return (if (element is JetAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS).singletonList()
     }
 
-    override fun createQuickFixData(element: JetCallElement, diagnostic: Diagnostic): ClassInfo? {
+    override fun extractFixData(element: JetCallElement, diagnostic: Diagnostic): ClassInfo? {
         val isAnnotation = element is JetAnnotationEntry
         val callee = element.calleeExpression as? JetConstructorCalleeExpression ?: return null
         val calleeRef = callee.constructorReferenceExpression ?: return null

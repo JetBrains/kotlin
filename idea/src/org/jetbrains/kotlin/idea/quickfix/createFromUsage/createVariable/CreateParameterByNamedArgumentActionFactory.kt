@@ -36,7 +36,7 @@ public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUs
         return if (argument.isNamed()) argument else null
     }
 
-    override fun createQuickFixData(element: JetValueArgument, diagnostic: Diagnostic): CreateParameterData<JetValueArgument>? {
+    override fun extractFixData(element: JetValueArgument, diagnostic: Diagnostic): CreateParameterData<JetValueArgument>? {
         val result = (diagnostic.psiFile as? JetFile)?.analyzeFullyAndGetResult() ?: return null
         val context = result.bindingContext
 

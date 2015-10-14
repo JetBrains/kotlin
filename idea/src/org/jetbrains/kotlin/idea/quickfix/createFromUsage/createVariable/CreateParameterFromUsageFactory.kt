@@ -30,7 +30,7 @@ data class CreateParameterData<E : JetElement>(
 )
 
 abstract class CreateParameterFromUsageFactory<E : JetElement>: KotlinSingleIntentionActionFactoryWithDelegate<E, CreateParameterData<E>>() {
-    override fun createQuickFix(data: CreateParameterData<E>): IntentionAction? {
+    override fun createFix(data: CreateParameterData<E>): IntentionAction? {
         return CreateParameterFromUsageFix(
                 data.parameterInfo.callableDescriptor as FunctionDescriptor,
                 data.parameterInfo,

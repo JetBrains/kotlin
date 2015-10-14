@@ -44,10 +44,10 @@ public abstract class CreateCallableMemberFromUsageFactory<E : JetElement>(
 
     protected open fun createCallableInfo(element: E, diagnostic: Diagnostic): CallableInfo? = null
 
-    override fun createQuickFixData(element: E, diagnostic: Diagnostic): List<CallableInfo>
+    override fun extractFixData(element: E, diagnostic: Diagnostic): List<CallableInfo>
             = createCallableInfo(element, diagnostic).singletonOrEmptyList()
 
-    override fun createQuickFixes(
+    override fun createFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
             quickFixDataFactory: () -> List<CallableInfo>?
