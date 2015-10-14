@@ -26,7 +26,6 @@ import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.JetNodeTypes
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
@@ -108,17 +107,7 @@ abstract public class JetClassOrObject :
 
     public fun getSecondaryConstructors(): List<JetSecondaryConstructor> = getBody()?.getSecondaryConstructors().orEmpty()
 
-    public fun isAnnotation(): Boolean =
-            getAnnotation(KotlinBuiltIns.FQ_NAMES.annotation.shortName().asString()) != null || hasModifier(JetTokens.ANNOTATION_KEYWORD)
-
-    private fun getAnnotation(name: String): JetAnnotationEntry? {
-        return getAnnotationEntries().firstOrNull() { entry ->
-            val typeReference = entry.getTypeReference()
-            val userType = typeReference?.getStubOrPsiChild(JetStubElementTypes.USER_TYPE)
-
-            name == userType?.getReferencedName()
-        }
-    }
+    public fun isAnnotation(): Boolean = hasModifier(JetTokens.ANNOTATION_KEYWORD)
 
     public override fun delete() {
         CheckUtil.checkWritable(this);

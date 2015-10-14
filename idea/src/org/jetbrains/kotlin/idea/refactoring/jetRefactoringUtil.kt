@@ -58,7 +58,6 @@ import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -450,8 +449,8 @@ private fun copyModifierListItems(from: PsiModifierList, to: PsiModifierList, wi
     }
     for (annotation in from.getAnnotations()) {
         val annotationName = annotation.getQualifiedName()!!
-        if (KotlinBuiltIns.FQ_NAMES.annotation.asString() != annotationName
-            && javaClass<Retention>().getName() != annotationName) {
+
+        if (javaClass<Retention>().getName() != annotationName) {
             to.addAnnotation(annotationName)
         }
     }

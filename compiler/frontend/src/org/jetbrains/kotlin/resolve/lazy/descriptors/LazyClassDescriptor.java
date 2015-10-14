@@ -165,7 +165,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.kind = storageManager.createLazyValue(new Function0<ClassKind>() {
             @Override
             public ClassKind invoke() {
-                return (syntaxKind == ClassKind.CLASS && KotlinBuiltIns.isAnnotation(descriptor)) ? ClassKind.ANNOTATION_CLASS : syntaxKind;
+                return (syntaxKind == ClassKind.CLASS && modifierList != null && modifierList.hasModifier(JetTokens.ANNOTATION_KEYWORD)) ? ClassKind.ANNOTATION_CLASS : syntaxKind;
             }
         });
 

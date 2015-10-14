@@ -26,11 +26,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 
 public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<JetAnnotationEntry> {
@@ -84,14 +84,13 @@ public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<JetAnnot
     public void invoke(@NotNull Project project, Editor editor, @NotNull JetFile file) throws IncorrectOperationException {
         JetPsiFactory factory = new JetPsiFactory(annotationClass.getProject());
         JetModifierList list = annotationClass.getModifierList();
-        String annotation = KotlinBuiltIns.FQ_NAMES.annotation.shortName().asString();
         PsiElement added;
         if (list == null) {
-            JetModifierList newModifierList = factory.createModifierList(annotation);
+            JetModifierList newModifierList = factory.createModifierList(JetTokens.ANNOTATION_KEYWORD);
             added = annotationClass.addBefore(newModifierList, annotationClass.getClassOrInterfaceKeyword());
         }
         else {
-            JetAnnotationEntry entry = factory.createAnnotationEntry(annotation);
+            PsiElement entry = factory.createModifier(JetTokens.ANNOTATION_KEYWORD);
             added = list.addBefore(entry, list.getFirstChild());
         }
         annotationClass.addAfter(factory.createWhiteSpace(), added);

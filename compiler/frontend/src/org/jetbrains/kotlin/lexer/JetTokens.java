@@ -218,7 +218,7 @@ public interface JetTokens {
 
     // Please synchronize this array with org.jetbrains.kotlin.descriptors.annotations.ANNOTATION_MODIFIERS_FQ_NAMES
     JetModifierKeywordToken[] ANNOTATION_MODIFIERS_KEYWORDS_ARRAY = new JetModifierKeywordToken[] {
-            INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD
+            INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, CROSSINLINE_KEYWORD
     };
 
     TokenSet MODIFIER_KEYWORDS = TokenSet.create(MODIFIER_KEYWORDS_ARRAY);

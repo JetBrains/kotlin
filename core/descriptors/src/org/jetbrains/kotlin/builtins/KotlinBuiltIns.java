@@ -145,7 +145,6 @@ public abstract class KotlinBuiltIns {
         public final FqName crossinline = fqName("crossinline");
         public final FqName extension = fqName("Extension");
         public final FqName target = annotationName("Target");
-        public final FqName annotation = annotationName("annotation");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
         public final FqName annotationRetention = annotationName("AnnotationRetention");
         public final FqName retention = annotationName("Retention");
@@ -426,11 +425,6 @@ public abstract class KotlinBuiltIns {
                 Name.identifier(retention.name()), NoLookupLocation.FROM_BUILTINS
         );
         return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
-    }
-
-    @NotNull
-    public ClassDescriptor getAnnotationAnnotation() {
-        return getAnnotationClassByName(FQ_NAMES.annotation.shortName());
     }
 
     @NotNull
@@ -1017,11 +1011,6 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isNonPrimitiveArray(@NotNull ClassDescriptor descriptor) {
         return FQ_NAMES.array.equals(getFqName(descriptor));
-    }
-
-    public static boolean isAnnotation(@NotNull ClassDescriptor descriptor) {
-        return DescriptorUtils.getFqName(descriptor) == FQ_NAMES.annotation.toUnsafe()
-               || containsAnnotation(descriptor, FQ_NAMES.annotation);
     }
 
     public static boolean isCloneable(@NotNull ClassDescriptor descriptor) {
