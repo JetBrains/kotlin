@@ -1,7 +1,7 @@
 package customLibClassName
 
 fun main(args: Array<String>) {
-    customLib.oneFunSameFileName.oneFunSameFileNameFun()
+    customLib.oneFunSameClassName.oneFunSameFileNameFun()
     customLib.twoFunDifferentSignature.twoFunDifferentSignatureFun()
     customLib.property.foo
     customLib.breakpointOnLocalProperty.breakpointOnLocalPropertyFun()

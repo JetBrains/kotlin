@@ -454,6 +454,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("stepIntoMultiFileFacade.kt")
+        public void testStepIntoMultiFileFacade() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/filters/stepIntoMultiFileFacade.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("stepIntoSpecificKotlinClasses.kt")
         public void testStepIntoSpecificKotlinClasses() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/filters/stepIntoSpecificKotlinClasses.kt");

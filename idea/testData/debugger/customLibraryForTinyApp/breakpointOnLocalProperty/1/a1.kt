@@ -1,3 +1,5 @@
+@file:JvmName("SameNameBreakpointOnLocalProperty")
+@file:JvmMultifileClass
 package customLib.breakpointOnLocalProperty
 
 public fun breakpointOnLocalPropertyFun(): Int {
