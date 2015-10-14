@@ -56,7 +56,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
         BindingContext bindingContext = ResolutionUtils.analyzeFully(file);
-        JetChangeSignatureKt.runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
+        JetChangeSignatureKt.runChangeSignature(project, getFunctionDescriptor(), new JetChangeSignatureConfiguration() {
             @NotNull
             @Override
             public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor, @NotNull BindingContext bindingContext) {
@@ -70,7 +70,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
                                 for (JetType type : parameterTypes) {
                                     String name = KotlinNameSuggester.INSTANCE$.suggestNamesByType(type, validator, "param").get(0);
                                     descriptor.addParameter(
-                                            new JetParameterInfo(functionDescriptor, -1, name, type, null, null, JetValVar.None, null)
+                                            new JetParameterInfo(getFunctionDescriptor(), -1, name, type, null, null, JetValVar.None, null)
                                     );
                                 }
                                 return null;
@@ -88,6 +88,6 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
             public boolean forcePerformForSelectedFunctionOnly() {
                 return false;
             }
-        }, bindingContext, context, getText());
+        }, bindingContext, getContext(), getText());
     }
 }

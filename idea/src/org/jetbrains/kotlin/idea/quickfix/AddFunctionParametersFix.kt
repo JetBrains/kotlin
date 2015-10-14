@@ -104,7 +104,7 @@ public class AddFunctionParametersFix(
                             }
                         }
                         else {
-                            val parameterInfo = ChangeFunctionSignatureFix.getNewParameterInfo(
+                            val parameterInfo = getNewParameterInfo(
                                     originalDescriptor.baseDescriptor as FunctionDescriptor,
                                     bindingContext,
                                     argument,

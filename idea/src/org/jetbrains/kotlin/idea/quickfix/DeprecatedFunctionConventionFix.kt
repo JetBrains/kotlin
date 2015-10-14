@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters3
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
 
 class DeprecatedFunctionConventionFix(
         element: JetNamedFunction,
         private val newName: String
-) : JetIntentionAction<JetNamedFunction>(element), CleanupFix {
+) : KotlinQuickFixAction<JetNamedFunction>(element), CleanupFix {
     override fun getText(): String = "Rename to '$newName'"
     override fun getFamilyName(): String = text
 
