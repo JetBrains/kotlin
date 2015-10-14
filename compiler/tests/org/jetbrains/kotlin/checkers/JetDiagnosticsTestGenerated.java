@@ -5808,9 +5808,27 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("internalFromLocal.kt")
+            public void testInternalFromLocal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/internalFromLocal.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("local.kt")
             public void testLocal() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/local.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localFromInternal.kt")
+            public void testLocalFromInternal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/localFromInternal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localFromPrivate.kt")
+            public void testLocalFromPrivate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/localFromPrivate.kt");
                 doTest(fileName);
             }
 
@@ -5835,6 +5853,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("nested.kt")
             public void testNested() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/nested.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateFromLocal.kt")
+            public void testPrivateFromLocal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/privateFromLocal.kt");
                 doTest(fileName);
             }
 

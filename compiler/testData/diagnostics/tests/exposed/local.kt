@@ -3,13 +3,13 @@ fun <T> run(f: () -> T): T {
 }
 
 // invalid, depends on local class
-fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>foo<!>() = run {
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>() = run {
     class A
     A()
 }
 
 // invalid, depends on local class
-fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>gav<!>() = {
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>gav<!>() = {
     class B
     B()
 }

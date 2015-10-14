@@ -16,13 +16,13 @@ class Foo {
       privateProperty.f2()
     }
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>protected val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>protectedProperty<!><!> = object : MyClass(), MyTrait {}
+    <!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>protected val protectedProperty<!> = object : MyClass(), MyTrait {}<!>
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>internalProperty<!><!> = object : MyClass(), MyTrait {}
+    <!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val internalProperty<!> = object : MyClass(), MyTrait {}<!>
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>internal2Property<!><!> = object : MyClass(), MyTrait {}
+    <!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal val internal2Property<!> = object : MyClass(), MyTrait {}<!>
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>publicProperty<!><!> = object : MyClass(), MyTrait {}
+    <!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public val publicProperty<!> = object : MyClass(), MyTrait {}<!>
 
 
     private fun privateFunction() = object : MyClass(), MyTrait {}
@@ -32,13 +32,13 @@ class Foo {
       privateFunction().f2()
     }
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>protected fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>protectedFunction<!>()<!> = object : MyClass(), MyTrait {}
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>protected fun <!EXPOSED_FUNCTION_RETURN_TYPE!>protectedFunction<!>()<!> = object : MyClass(), MyTrait {}
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>internalFunction<!>()<!> = object : MyClass(), MyTrait {}
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>fun <!EXPOSED_FUNCTION_RETURN_TYPE!>internalFunction<!>()<!> = object : MyClass(), MyTrait {}
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>internal2Function<!>()<!> = object : MyClass(), MyTrait {}
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal fun <!EXPOSED_FUNCTION_RETURN_TYPE!>internal2Function<!>()<!> = object : MyClass(), MyTrait {}
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>publicFunction<!>()<!> = object : MyClass(), MyTrait {}
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public fun <!EXPOSED_FUNCTION_RETURN_TYPE!>publicFunction<!>()<!> = object : MyClass(), MyTrait {}
 
 
 
@@ -50,13 +50,13 @@ class Foo {
         privatePropertyInner.f2()
     }
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>protected val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>protectedProperty<!><!> = object : MyClass(), MyTrait {}
+    <!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>protected val protectedProperty<!> = object : MyClass(), MyTrait {}<!>
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>internalProperty<!><!> = object : MyClass(), MyTrait {}
+    <!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val internalProperty<!> = object : MyClass(), MyTrait {}<!>
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>internal2Property<!><!> = object : MyClass(), MyTrait {}
+    <!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal val internal2Property<!> = object : MyClass(), MyTrait {}<!>
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>publicProperty<!><!> = object : MyClass(), MyTrait {}
+    <!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public val publicProperty<!> = object : MyClass(), MyTrait {}<!>
 
 
     private fun privateFunctionInner() = object : MyClass(), MyTrait {}
@@ -66,13 +66,13 @@ class Foo {
       privateFunctionInner().f2()
     }
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>protected fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>protectedFunction<!>()<!> = object : MyClass(), MyTrait {}
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>protected fun <!EXPOSED_FUNCTION_RETURN_TYPE!>protectedFunction<!>()<!> = object : MyClass(), MyTrait {}
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>internalFunction<!>()<!> = object : MyClass(), MyTrait {}
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>fun <!EXPOSED_FUNCTION_RETURN_TYPE!>internalFunction<!>()<!> = object : MyClass(), MyTrait {}
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>internal2Function<!>()<!> = object : MyClass(), MyTrait {}
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal fun <!EXPOSED_FUNCTION_RETURN_TYPE!>internal2Function<!>()<!> = object : MyClass(), MyTrait {}
 
-    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>publicFunction<!>()<!> = object : MyClass(), MyTrait {}
+    <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public fun <!EXPOSED_FUNCTION_RETURN_TYPE!>publicFunction<!>()<!> = object : MyClass(), MyTrait {}
 
   }
 
@@ -90,21 +90,21 @@ class Foo {
 
 <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>private val packagePrivateProperty<!> = object : MyClass(), MyTrait {}
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!><!WRONG_MODIFIER_TARGET!>protected<!> val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>packageProtectedProperty<!><!> = object : MyClass(), MyTrait {}
+<!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!><!WRONG_MODIFIER_TARGET!>protected<!> val packageProtectedProperty<!> = object : MyClass(), MyTrait {}<!>
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>packageInternalProperty<!><!> = object : MyClass(), MyTrait {}
+<!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val packageInternalProperty<!> = object : MyClass(), MyTrait {}<!>
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>packageInternal2Property<!><!> = object : MyClass(), MyTrait {}
+<!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal val packageInternal2Property<!> = object : MyClass(), MyTrait {}<!>
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public val <!PROPERTY_TYPE_DEPENDS_ON_LOCAL_CLASS!>packagePublicProperty<!><!> = object : MyClass(), MyTrait {}
+<!EXPOSED_PROPERTY_TYPE!><!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public val packagePublicProperty<!> = object : MyClass(), MyTrait {}<!>
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!><!WRONG_MODIFIER_TARGET!>protected<!> fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>packageProtectedFunction<!>()<!> = object : MyClass(), MyTrait {}
+<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!><!WRONG_MODIFIER_TARGET!>protected<!> fun <!EXPOSED_FUNCTION_RETURN_TYPE!>packageProtectedFunction<!>()<!> = object : MyClass(), MyTrait {}
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>packageInternalFunction<!>()<!> = object : MyClass(), MyTrait {}
+<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>fun <!EXPOSED_FUNCTION_RETURN_TYPE!>packageInternalFunction<!>()<!> = object : MyClass(), MyTrait {}
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>packageInternal2Function<!>()<!> = object : MyClass(), MyTrait {}
+<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>internal fun <!EXPOSED_FUNCTION_RETURN_TYPE!>packageInternal2Function<!>()<!> = object : MyClass(), MyTrait {}
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>packagePublicFunction<!>()<!> = object : MyClass(), MyTrait {}
+<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public fun <!EXPOSED_FUNCTION_RETURN_TYPE!>packagePublicFunction<!>()<!> = object : MyClass(), MyTrait {}
 
 fun fooPackage() {
     val packageLocalVar = object : MyClass(), MyTrait {}
