@@ -76,7 +76,7 @@ abstract class ChangeFunctionSignatureFix(
         }
     }
 
-    companion object : KotlinIntentionActionFactoryWithDelegate<JetCallElement, Data>() {
+    companion object : KotlinSingleIntentionActionFactoryWithDelegate<JetCallElement, Data>() {
         data class Data(val callElement: JetCallElement, val descriptor: CallableDescriptor)
 
         override fun getElementOfInterest(diagnostic: Diagnostic): JetCallElement? {

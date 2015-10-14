@@ -61,7 +61,7 @@ class ChangeFunctionLiteralSignatureFix(
                 text)
     }
 
-    companion object : KotlinIntentionActionFactoryWithDelegate<JetFunctionLiteral, Data>() {
+    companion object : KotlinSingleIntentionActionFactoryWithDelegate<JetFunctionLiteral, Data>() {
         data class Data(val functionLiteral: JetFunctionLiteral, val descriptor: FunctionDescriptor, val parameterTypes: List<JetType>)
 
         override fun getElementOfInterest(diagnostic: Diagnostic): JetFunctionLiteral? {

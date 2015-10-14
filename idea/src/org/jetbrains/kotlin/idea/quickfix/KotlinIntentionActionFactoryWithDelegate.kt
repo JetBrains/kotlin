@@ -27,16 +27,24 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-public abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D : Any> : JetIntentionActionsFactory() {
-    protected abstract fun getElementOfInterest(diagnostic: Diagnostic): E?
-
+abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : JetElement, D : Any> : KotlinIntentionActionFactoryWithDelegate<E, D>() {
     protected open fun createQuickFix(diagnostic: Diagnostic, quickFixDataFactory: () -> D?): QuickFixWithDelegateFactory? = null
 
-    protected open fun createQuickFixes(
+    protected override final fun createQuickFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
             quickFixDataFactory: () -> D?
     ): List<QuickFixWithDelegateFactory> = createQuickFix(diagnostic, quickFixDataFactory).singletonOrEmptyList()
+}
+
+abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D : Any> : JetIntentionActionsFactory() {
+    protected abstract fun getElementOfInterest(diagnostic: Diagnostic): E?
+
+    protected abstract fun createQuickFixes(
+            originalElementPointer: SmartPsiElementPointer<E>,
+            diagnostic: Diagnostic,
+            quickFixDataFactory: () -> D?
+    ): List<QuickFixWithDelegateFactory>
 
     protected abstract fun createQuickFixData(element: E, diagnostic: Diagnostic): D?
 

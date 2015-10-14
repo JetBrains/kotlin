@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
+import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.psi.JetElement
@@ -30,7 +30,7 @@ data class CreateParameterData<E : JetElement>(
         val originalExpression: E
 )
 
-abstract class CreateParameterFromUsageFactory<E : JetElement>: KotlinIntentionActionFactoryWithDelegate<E, CreateParameterData<E>>() {
+abstract class CreateParameterFromUsageFactory<E : JetElement>: KotlinSingleIntentionActionFactoryWithDelegate<E, CreateParameterData<E>>() {
     override fun createQuickFix(
             diagnostic: Diagnostic,
             quickFixDataFactory: () -> CreateParameterData<E>?
