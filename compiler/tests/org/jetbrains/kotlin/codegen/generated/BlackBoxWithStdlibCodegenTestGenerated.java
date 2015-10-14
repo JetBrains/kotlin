@@ -462,12 +462,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("enumNameMethod.kt")
-            public void testEnumNameMethod() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/enumNameMethod.kt");
-                doTestWithStdlib(fileName);
-            }
-
             @TestMetadata("enumValueOfMethod.kt")
             public void testEnumValueOfMethod() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/enumValueOfMethod.kt");
@@ -801,6 +795,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("delegatedMutable.kt")
             public void testDelegatedMutable() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/delegatedMutable.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("enumNameOrdinal.kt")
+            public void testEnumNameOrdinal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/enumNameOrdinal.kt");
                 doTestWithStdlib(fileName);
             }
 
