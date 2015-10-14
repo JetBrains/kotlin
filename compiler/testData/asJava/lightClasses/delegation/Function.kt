@@ -1,7 +1,7 @@
 // Derived
 
 interface Base {
-    fun baz(s: String): String
+    fun baz(g: String): String
 }
 
 class Derived(x: Base): Base by x

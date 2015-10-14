@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForRe
 import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
 import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
+import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeLightClassTest
 import org.jetbrains.kotlin.idea.codeInsight.*
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateTestSupportMethodActionTest
@@ -744,6 +745,12 @@ fun main(args: Array<String>) {
     testGroup("idea/tests", "compiler/testData") {
         testClass<AbstractResolveByStubTest>() {
             model("loadJava/compiledKotlin")
+        }
+    }
+
+    testGroup("idea/tests", "compiler/testData") {
+        testClass<AbstractIdeLightClassTest>() {
+            model("asJava/lightClasses", excludeDirs = listOf("delegation"))
         }
     }
 

@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.asJava;
 
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.search.GlobalSearchScope;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithWithJava;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -27,18 +26,15 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTestWithWithJava<Void, Void> {
-    private static final Pattern SUBJECT_FQ_NAME_PATTERN = Pattern.compile("^//\\s*(.*)$", Pattern.MULTILINE);
-
     @Override
     @NotNull
     protected CompilerConfiguration createCompilerConfiguration(File javaFilesDir) {
@@ -66,28 +62,17 @@ public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTest
 
     @Override
     protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<Void> files) throws IOException {
-        String text = FileUtil.loadFile(file, true);
-        Matcher matcher = SUBJECT_FQ_NAME_PATTERN.matcher(text);
-        assertTrue("No FqName specified. First line of the form '// f.q.Name' expected", matcher.find());
-        String fqName = matcher.group(1);
-
-        JavaElementFinder finder = createFinder(getEnvironment());
-
-        PsiClass psiClass = finder.findClass(fqName, GlobalSearchScope.allScope(getEnvironment().getProject()));
-        if (!(psiClass instanceof KotlinLightClass)) {
-            throw new IllegalStateException("Not a light class: " + psiClass + " (" + fqName + ")");
-        }
-
-        PsiClass delegate = ((KotlinLightClass) psiClass).getDelegate();
-        if (!(delegate instanceof ClsElementImpl)) {
-            throw new IllegalStateException("Not a CLS element: " + delegate);
-        }
-
-        StringBuilder buffer = new StringBuilder();
-        ((ClsElementImpl) delegate).appendMirrorText(0, buffer);
-        String actual = buffer.toString();
-
-        JetTestUtils.assertEqualsToFile(JetTestUtils.replaceExtension(file, "java"), actual);
+        LightClassTestCommon.INSTANCE.testLightClass(file, new Function1<String, PsiClass>() {
+            @Override
+            public PsiClass invoke(String s) {
+                try {
+                    return createFinder(getEnvironment()).findClass(s, GlobalSearchScope.allScope(getEnvironment().getProject()));
+                }
+                catch (IOException e) {
+                    throw ExceptionUtilsKt.rethrow(e);
+                }
+            }
+        });
     }
 
     @Override

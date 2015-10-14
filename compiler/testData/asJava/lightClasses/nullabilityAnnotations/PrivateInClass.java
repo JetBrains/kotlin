@@ -7,5 +7,5 @@ public final class PrivateInClass {
 
     private final java.lang.String bar(java.lang.String a, java.lang.String b) { /* compiled code */ }
 
-    private PrivateInClass(java.lang.String s) { /* compiled code */ }
+    private PrivateInClass(java.lang.String g) { /* compiled code */ }
 }

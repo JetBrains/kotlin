@@ -1,6 +1,6 @@
 // PrivateInClass
 
-class PrivateInClass private (s: String?) {
+class PrivateInClass private (g: String?) {
     private var nn: String
         get() = ""
         set(value) {}
