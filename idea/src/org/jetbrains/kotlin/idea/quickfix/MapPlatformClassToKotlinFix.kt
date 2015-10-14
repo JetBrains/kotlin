@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
@@ -147,15 +148,27 @@ class MapPlatformClassToKotlinFix(
         })
     }
 
-    companion object : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val typeExpr = getImportOrUsageFromDiagnostic(diagnostic) ?: return null
+    companion object : KotlinSingleIntentionActionFactoryWithDelegate<JetReferenceExpression, Data>() {
+        data class Data(val element: JetReferenceExpression,
+                        val platformClass: ClassDescriptor,
+                        val possibleClasses: Collection<ClassDescriptor>)
 
-            val context = typeExpr.analyze()
-            val platformClass = resolveToClass(typeExpr, context) ?: return null
+        override fun getElementOfInterest(diagnostic: Diagnostic): JetReferenceExpression?
+                = getImportOrUsageFromDiagnostic(diagnostic)
 
+        override fun extractFixData(element: JetReferenceExpression, diagnostic: Diagnostic): Data? {
+            val context = element.analyze(BodyResolveMode.PARTIAL)
+            val platformClass = resolveToClass(element, context) ?: return null
             val possibleClasses = Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN.cast(diagnostic).a
-            return MapPlatformClassToKotlinFix(typeExpr, platformClass, possibleClasses)
+            return Data(element, platformClass, possibleClasses)
+        }
+
+        override fun createFix(data: Data): IntentionAction? {
+            return MapPlatformClassToKotlinFix(data.element, data.platformClass, data.possibleClasses)
+        }
+
+        private fun resolveToClass(referenceExpression: JetReferenceExpression, context: BindingContext): ClassDescriptor? {
+            return referenceExpression.mainReference.resolveToDescriptors(context).firstIsInstanceOrNull<ClassDescriptor>()
         }
 
         private fun getImportOrUsageFromDiagnostic(diagnostic: Diagnostic): JetReferenceExpression? {
@@ -167,10 +180,5 @@ class MapPlatformClassToKotlinFix(
                 (diagnostic.psiElement.getNonStrictParentOfType<JetUserType>() ?: return null).referenceExpression
             }
         }
-
-        private fun resolveToClass(referenceExpression: JetReferenceExpression, context: BindingContext): ClassDescriptor? {
-            return referenceExpression.mainReference.resolveToDescriptors(context).firstIsInstanceOrNull<ClassDescriptor>()
-        }
-
     }
 }
