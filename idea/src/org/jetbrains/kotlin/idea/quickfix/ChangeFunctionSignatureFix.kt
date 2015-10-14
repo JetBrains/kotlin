@@ -34,11 +34,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetCallElement
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 
@@ -116,24 +117,19 @@ private fun createFix(callElement: JetCallElement?, context: PsiElement, descrip
         val arguments = callElement!!.valueArguments
 
         if (arguments.size > parameters.size) {
-            val hasTypeMismatches = hasTypeMismatches(parameters, arguments, callElement.analyze())
+            val bindingContext = callElement.analyze()
+            val call = callElement.getCall(bindingContext) ?: return null
+            val argumentToParameter = call.mapArgumentsToParameters(functionDescriptor)
+            val hasTypeMismatches = argumentToParameter.any {
+                val argument = it.key
+                val parameter = it.value
+                val argumentType = argument.getArgumentExpression()?.let { bindingContext.getType(it) }
+                argumentType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)
+            }
             return AddFunctionParametersFix(callElement, functionDescriptor, hasTypeMismatches)
         }
     }
 
     return null
-}
-
-private fun hasTypeMismatches(
-        parameters: List<ValueParameterDescriptor>,
-        arguments: List<ValueArgument>,
-        bindingContext: BindingContext
-): Boolean {
-    assert(parameters.size <= arguments.size) // number of parameters must not be greater than the number of arguments (it's called only for TOO_MANY_ARGUMENTS error)
-    for ((parameter, argument) in parameters.zip(arguments)) {
-        val argumentType = argument.getArgumentExpression()?.let { bindingContext.getType(it) }
-        if (argumentType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)) return true
-    }
-    return false
 }
 
