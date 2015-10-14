@@ -887,7 +887,11 @@ public class FunctionCodegen {
 
         iv.ifne(afterBarrier);
 
-        StackValue.none().put(bridge.getReturnType(), iv);
+        String shortName = getFqName(descriptor).shortName().asString();
+        StackValue returnValue =
+                ("indexOf".equals(shortName) || "lastIndexOf".equals(shortName)) ? StackValue.constant(-1, Type.INT_TYPE) : StackValue.none();
+
+        returnValue.put(bridge.getReturnType(), iv);
         iv.areturn(bridge.getReturnType());
 
         iv.visitLabel(afterBarrier);
