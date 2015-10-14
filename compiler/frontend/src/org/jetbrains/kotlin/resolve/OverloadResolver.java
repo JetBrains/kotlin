@@ -195,6 +195,8 @@ public class OverloadResolver {
             @NotNull Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations) {
         for (Pair<JetDeclaration, CallableMemberDescriptor> redeclaration : redeclarations) {
             CallableMemberDescriptor memberDescriptor = redeclaration.getSecond();
+            if (DescriptorUtils.isTopLevelMainFunction(memberDescriptor)) break;
+
             JetDeclaration jetDeclaration = redeclaration.getFirst();
             if (memberDescriptor instanceof PropertyDescriptor) {
                 trace.report(Errors.REDECLARATION.on(jetDeclaration, memberDescriptor.getName().asString()));

@@ -35,6 +35,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("CallToMainRedeclaredInMultiFile.kt")
+    public void testCallToMainRedeclaredInMultiFile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/CallToMainRedeclaredInMultiFile.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("commonCollections.kt")
     public void testCommonCollections() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/commonCollections.kt");
@@ -74,6 +80,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
     @TestMetadata("overrideWithFunctionalType.kt")
     public void testOverrideWithFunctionalType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/overrideWithFunctionalType.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("RedeclarationMainInMultiFileClass.kt")
+    public void testRedeclarationMainInMultiFileClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/RedeclarationMainInMultiFileClass.kt");
         doTest(fileName);
     }
 

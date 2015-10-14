@@ -136,3 +136,8 @@ public val JetFile.javaFileFacadeFqName: FqName
             CachedValueProvider.Result(facadeFqName, this)
         }
     }
+
+public fun JetDeclaration.isInsideJvmMultifileClassFile() = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(
+        getContainingJetFile(),
+        JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT
+) != null

@@ -630,6 +630,21 @@ public class DescriptorUtils {
         return SourceFile.NO_SOURCE_FILE;
     }
 
+    public static boolean isTopLevelMainFunction(@NotNull DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof FunctionDescriptor) ||
+            !isTopLevelDeclaration(descriptor) ||
+            !"main".equals(descriptor.getName().asString())) return false;
+
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+        List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
+        if (valueParameterDescriptors.size() != 1) return false;
+
+        JetType type = valueParameterDescriptors.get(0).getType();
+
+        return KotlinBuiltIns.isArray(type) && type.getArguments().size() == 1 && KotlinBuiltIns.isString(type.getArguments().get(0).getType());
+    }
+
+
     private static void getSubPackagesFqNames(PackageViewDescriptor packageView, Set<FqName> result) {
         FqName fqName = packageView.getFqName();
         if (!fqName.isRoot()) {

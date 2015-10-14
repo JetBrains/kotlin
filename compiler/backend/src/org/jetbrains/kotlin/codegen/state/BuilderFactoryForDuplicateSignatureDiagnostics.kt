@@ -19,20 +19,23 @@ package org.jetbrains.kotlin.codegen.state
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.SignatureCollectingClassBuilderFactory
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
-import java.util.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
+import org.jetbrains.kotlin.fileClasses.isInsideJvmMultifileClassFile
+import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 private val EXTERNAL_SOURCES_KINDS = arrayOf(
         JvmDeclarationOriginKind.DELEGATION_TO_DEFAULT_IMPLS,
@@ -61,9 +64,18 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         else {
             for (origin in data.signatureOrigins) {
                 var element = origin.element
+
+                // TODO Remove this code after dropping package facades
+                val descriptor = origin.descriptor
+                if (descriptor != null && element is JetDeclaration && DescriptorUtils.isTopLevelMainFunction(descriptor) &&
+                        !element.isInsideJvmMultifileClassFile()) {
+                    return
+                }
+
                 if (element == null || origin.originKind in EXTERNAL_SOURCES_KINDS) {
                     element = data.classOrigin.element
                 }
+
                 elements.addIfNotNull(element)
             }
         }
