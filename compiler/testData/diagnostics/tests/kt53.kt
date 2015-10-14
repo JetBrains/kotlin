@@ -1,4 +1,4 @@
-val <T, E> T.foo : E<!BASE_WITH_NULLABLE_UPPER_BOUND!>?<!>
+val <T> T.foo : T<!BASE_WITH_NULLABLE_UPPER_BOUND!>?<!>
     get() = null
 
 fun test(): Int? {

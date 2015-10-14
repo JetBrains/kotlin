@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -471,6 +472,33 @@ public class DeclarationsChecker {
         checkAccessors(property, propertyDescriptor);
         checkTypeParameterConstraints(property);
         checkPropertyExposedType(property, propertyDescriptor);
+        checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor);
+    }
+
+    private void checkPropertyTypeParametersAreUsedInReceiverType(@NotNull PropertyDescriptor descriptor) {
+        for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
+            if (isTypeParameterUsedInReceiverType(typeParameter, descriptor)) continue;
+
+            PsiElement typeParameterPsi = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameter);
+            if (typeParameterPsi instanceof JetTypeParameter) {
+                trace.report(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER.on((JetTypeParameter) typeParameterPsi));
+            }
+        }
+    }
+
+    private static boolean isTypeParameterUsedInReceiverType(
+            @NotNull final TypeParameterDescriptor parameter,
+            @NotNull PropertyDescriptor descriptor
+    ) {
+        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
+        if (receiverParameter == null) return false;
+
+        return TypeUtils.containsSpecialType(receiverParameter.getType(), new Function1<JetType, Boolean>() {
+            @Override
+            public Boolean invoke(JetType type) {
+                return parameter.equals(type.getConstructor().getDeclarationDescriptor());
+            }
+        });
     }
 
     private void checkPropertyLateInit(@NotNull JetCallableDeclaration property, @NotNull PropertyDescriptor propertyDescriptor) {

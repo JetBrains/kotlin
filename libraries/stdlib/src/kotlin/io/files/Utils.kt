@@ -61,24 +61,21 @@ public val File.parent: File?
 /**
  * Returns the canonical path of this file.
  */
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("canonicalPath"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("canonicalPath"), level = DeprecationLevel.HIDDEN)
 public val File.canonicalPath: String
     get() = getCanonicalPath()
 
 /**
  * Returns the file name.
  */
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"), level = DeprecationLevel.HIDDEN)
 public val File.name: String
     get() = getName()
 
 /**
  * Returns the file path.
  */
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("path"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("path"), level = DeprecationLevel.HIDDEN)
 public val File.path: String
     get() = getPath()
 

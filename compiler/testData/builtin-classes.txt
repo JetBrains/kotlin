@@ -457,10 +457,6 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     }
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.annotation() internal final class Exact : kotlin.Annotation {
-    /*primary*/ public constructor Exact()
-}
-
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class Extension : kotlin.Annotation {
     /*primary*/ public constructor Extension()
 }
@@ -613,7 +609,7 @@ public interface FloatingPointConstants</*0*/ T> {
 public interface Function</*0*/ out R> {
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class HiddenDeclaration : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented() @kotlin.Deprecated(message = "Use @Deprecated("...", level = DeprecationLevel.HIDDEN) instead", replaceWith = kotlin.ReplaceWith(expression = "@Deprecated(, level = DeprecationLevel.HIDDEN)", imports = {})) @kotlin.annotation.annotation() public final class HiddenDeclaration : kotlin.Annotation {
     /*primary*/ public constructor HiddenDeclaration()
 }
 
@@ -1053,10 +1049,6 @@ public interface MutableSet</*0*/ E> : kotlin.Set<E>, kotlin.MutableCollection<E
     public abstract override /*1*/ fun remove(/*0*/ o: E): kotlin.Boolean
     public abstract override /*1*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
     public abstract override /*1*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.annotation() internal final class NoInfer : kotlin.Annotation {
-    /*primary*/ public constructor NoInfer()
 }
 
 public final class Nothing {

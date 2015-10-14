@@ -32,7 +32,7 @@ fun assertAllEqual<T>(c: Iterable<out T>) {
 
 val hashCoder: (o: Any) -> Int = { o -> o.hashCode() }
 
-val <T> wrapInH = { t: T -> Holder(t) }
+fun <T> wrapInH(t: T) = Holder(t)
 
 fun box(): String {
 
@@ -53,14 +53,14 @@ fun box(): String {
     assertSomeNotEqual(differentOs.map(hashCoder))
 
     // Both Dat's and Obj's wrapped as Holder should retain their hashcode relations.
-    val sameHDs = sameDs.map(wrapInH)
+    val sameHDs = sameDs.map { wrapInH(it) }
     assertAllEqual(sameHDs.map(hashCoder))
-    val differentHDs = differentDs.map(wrapInH)
+    val differentHDs = differentDs.map { wrapInH(it) }
     assertSomeNotEqual(differentHDs.map(hashCoder))
 
-    val sameHOs = sameOs.map(wrapInH)
+    val sameHOs = sameOs.map { wrapInH(it) }
     assertSomeNotEqual(sameHOs.map(hashCoder))
-    val differentHOs = differentOs.map(wrapInH)
+    val differentHOs = differentOs.map { wrapInH(it) }
     assertSomeNotEqual(differentHOs.map(hashCoder))
 
     return "OK"

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types;
 
-import kotlin.jvm.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
@@ -30,7 +29,8 @@ import java.util.List;
  * @see JetTypeChecker#isSubtypeOf(JetType, JetType)
  */
 public interface JetType extends Annotated {
-    @NotNull TypeConstructor getConstructor();
+    @NotNull
+    TypeConstructor getConstructor();
 
     @NotNull
     @ReadOnly
@@ -49,7 +49,6 @@ public interface JetType extends Annotated {
     @Override
     boolean equals(Object other);
 
-    @KotlinSignature("fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T?")
     @Nullable
     <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass);
 

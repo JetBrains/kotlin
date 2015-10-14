@@ -269,6 +269,8 @@ public interface Errors {
     DiagnosticFactory0<JetDeclaration> TYPE_PARAMETERS_NOT_ALLOWED
             = DiagnosticFactory0.create(ERROR, TYPE_PARAMETERS_OR_DECLARATION_SIGNATURE);
 
+    DiagnosticFactory0<JetTypeParameter> TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory0<PsiElement> CYCLIC_GENERIC_UPPER_BOUND = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetTypeParameter> MISPLACED_TYPE_PARAMETER_CONSTRAINTS = DiagnosticFactory0.create(WARNING);
@@ -564,8 +566,8 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> UNDERSCORE_IS_DEPRECATED = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory0<PsiElement> INAPPLICABLE_OPERATOR_MODIFIER = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> INAPPLICABLE_INFIX_MODIFIER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_OPERATOR_MODIFIER = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_INFIX_MODIFIER = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory2<PsiElement, FunctionDescriptor, String> OPERATOR_MODIFIER_REQUIRED = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<JetOperationReferenceExpression, FunctionDescriptor, String> INFIX_MODIFIER_REQUIRED = DiagnosticFactory2.create(WARNING);
@@ -756,6 +758,9 @@ public interface Errors {
             TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS,
             TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR,
             TYPE_INFERENCE_UPPER_BOUND_VIOLATED, TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH);
+    ImmutableSet<? extends DiagnosticFactory<?>> MUST_BE_INITIALIZED_DIAGNOSTICS = ImmutableSet.of(
+            MUST_BE_INITIALIZED, MUST_BE_INITIALIZED_OR_BE_ABSTRACT
+    );
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

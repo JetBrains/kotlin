@@ -31,13 +31,11 @@ public val Node.nodeName: String
 public val Node.nodeValue: String
     get() = getNodeValue() ?: ""
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("nodeType"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("nodeType"), level = DeprecationLevel.HIDDEN)
 public val Node.nodeType: Short
     get() = getNodeType()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("parentNode"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("parentNode"), level = DeprecationLevel.HIDDEN)
 public val Node.parentNode: Node?
     get() = getParentNode()
 
@@ -45,38 +43,31 @@ public val Node.parentNode: Node?
 public val Node.childNodes: NodeList
     get() = getChildNodes()!!
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("firstChild"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("firstChild"), level = DeprecationLevel.HIDDEN)
 public val Node.firstChild: Node?
     get() = getFirstChild()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("lastChild"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("lastChild"), level = DeprecationLevel.HIDDEN)
 public val Node.lastChild: Node?
     get() = getLastChild()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("nextSibling"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("nextSibling"), level = DeprecationLevel.HIDDEN)
 public val Node.nextSibling: Node?
     get() = getNextSibling()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("previousSibling"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("previousSibling"), level = DeprecationLevel.HIDDEN)
 public val Node.previousSibling: Node?
     get() = getPreviousSibling()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("attributes"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("attributes"), level = DeprecationLevel.HIDDEN)
 public val Node.attributes: NamedNodeMap?
     get() = getAttributes()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("ownerDocument"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("ownerDocument"), level = DeprecationLevel.HIDDEN)
 public val Node.ownerDocument: Document?
     get() = getOwnerDocument()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("documentElement"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("documentElement"), level = DeprecationLevel.HIDDEN)
 public val Document.documentElement: Element?
     get() = this.getDocumentElement()
 
@@ -103,33 +94,27 @@ public var Node.textContent: String
         setTextContent(value)
     }
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"), level = DeprecationLevel.HIDDEN)
 public val DOMStringList.length: Int
     get() = this.getLength()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"), level = DeprecationLevel.HIDDEN)
 public val NameList.length: Int
     get() = this.getLength()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"), level = DeprecationLevel.HIDDEN)
 public val DOMImplementationList.length: Int
     get() = this.getLength()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"), level = DeprecationLevel.HIDDEN)
 public val NodeList.length: Int
     get() = this.getLength()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"), level = DeprecationLevel.HIDDEN)
 public val CharacterData.length: Int
     get() = this.getLength()
 
-@HiddenDeclaration
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"))
+@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("length"), level = DeprecationLevel.HIDDEN)
 public val NamedNodeMap.length: Int
     get() = this.getLength()
 

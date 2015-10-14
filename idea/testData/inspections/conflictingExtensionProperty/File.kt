@@ -15,6 +15,6 @@ class MyFile : File("")
 val MyFile.isFile: Boolean
     get() = isFile()
 
-@HiddenDeclaration
+@Deprecated("hidden", level = DeprecationLevel.HIDDEN)
 val Thread.priority: Int
     get() = getPriority()

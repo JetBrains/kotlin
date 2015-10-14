@@ -27,13 +27,13 @@ class TypeParams<in T1 : Any, out T2, T3 : (Int) -> Int, T4, T5 : Any?, T6 : T5,
     fun T1.withOwnParamExtensionAfterName<T1>(p: T1) {
     }
 
-    val <G1> withOwnParam: G1
+    val <G1> G1.withOwnParam: G1
         get() = throw IllegalStateException()
 
-    val <G1: Int?> withOwnBoundedParam: G1
+    val <G1: Int?> G1.withOwnBoundedParam: G1
         get() = throw IllegalStateException()
 
-    val <G1: T4> withOwnBoundedParamByOther: G1
+    val <G1: T4> G1.withOwnBoundedParamByOther: G1
         get() = throw IllegalStateException()
 
     val useSomeParam: T2

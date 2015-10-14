@@ -1,10 +1,4 @@
 <root>
-  <item
-      name='com.intellij.codeInsight.intention.IntentionAction boolean isAvailable(com.intellij.openapi.project.Project, com.intellij.openapi.editor.Editor, com.intellij.psi.PsiFile)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean&quot;"/>
-    </annotation>
-  </item>
     <item
       name='com.intellij.codeInsight.intention.PsiElementBaseIntentionAction boolean isAvailable(com.intellij.openapi.project.Project, com.intellij.openapi.editor.Editor, com.intellij.psi.PsiElement) 1'>
     <annotation name='org.jetbrains.annotations.NotNull'/>

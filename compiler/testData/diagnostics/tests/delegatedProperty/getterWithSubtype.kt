@@ -6,7 +6,7 @@ class Derived: Base()
 val a: Base by A()
 
 class A {
-  fun getValue(t: Any?, p: PropertyMetadata): Derived {
+  operator fun getValue(t: Any?, p: PropertyMetadata): Derived {
     return Derived()
   }
 }

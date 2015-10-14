@@ -142,20 +142,21 @@ private fun removeAfterOffset(offset: Int, whiteSpace: PsiWhiteSpace): PsiElemen
     return whiteSpace
 }
 
-public fun <T : JetDeclaration> generateMembers(
+public fun <T : JetDeclaration> insertMembersAfter(
         editor: Editor,
         classOrObject: JetClassOrObject,
-        generators: Collection<() -> T>
+        members: Collection<T>,
+        anchor: PsiElement? = null
 ): List<T> {
-    generators.ifEmpty { return emptyList() }
+    members.ifEmpty { return emptyList() }
 
     return runWriteAction<List<T>> {
         val body = classOrObject.getOrCreateBody()
 
-        var afterAnchor = findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList()
-        val insertedMembers = generators.mapTo(SmartList<T>()) {
+        var afterAnchor = anchor ?: findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList()
+        val insertedMembers = members.mapTo(SmartList<T>()) {
             @Suppress("UNCHECKED_CAST")
-            (body.addAfter(it(), afterAnchor) as T).apply { afterAnchor = this }
+            (body.addAfter(it, afterAnchor) as T).apply { afterAnchor = this }
         }
 
         ShortenReferences.DEFAULT.process(insertedMembers)
@@ -166,6 +167,6 @@ public fun <T : JetDeclaration> generateMembers(
     }
 }
 
-public fun <T : JetDeclaration> generateMember(editor: Editor, classOrObject: JetClassOrObject, declaration: T): T {
-    return generateMembers(editor, classOrObject, listOf({ declaration })).single()
+public fun <T : JetDeclaration> insertMember(editor: Editor, classOrObject: JetClassOrObject, declaration: T): T {
+    return insertMembersAfter(editor, classOrObject, listOf(declaration)).single()
 }

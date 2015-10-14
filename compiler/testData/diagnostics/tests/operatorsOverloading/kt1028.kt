@@ -7,8 +7,8 @@ class event<T>()
 {
     val callbacks = ArrayList< Function1<T, Unit> >() // Should be ArrayList<()->Unit>, bug posted
 
-    operator fun plusAssign(f : (T) -> Unit) = callbacks.add(f)
-    operator fun minusAssign(f : (T) -> Unit) = callbacks.remove(f)
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plusAssign(f : (T) -> Unit) = callbacks.add(f)
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun minusAssign(f : (T) -> Unit) = callbacks.remove(f)
     fun call(value : T) { for(c in callbacks) c(value) }
 }
 

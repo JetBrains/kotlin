@@ -10,7 +10,7 @@ interface A {
 // FILE: 1.kt
 
 class B : A {
-    override fun foo(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>kotlinName<!>: String) {}
+    override fun foo(kotlinName: String) {}
 }
 
 class C : A {

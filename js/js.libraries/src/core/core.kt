@@ -3,7 +3,8 @@ package kotlin.js
 import java.util.*;
 
 @native
-public val <T> noImpl: T = throw Exception()
+public val noImpl: Nothing
+    get() = throw Exception()
 
 @native
 public fun eval(expr: String): dynamic = noImpl

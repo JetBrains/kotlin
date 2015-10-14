@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsFunction;
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import com.intellij.util.SmartList;
-import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -44,7 +43,6 @@ import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDe
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes;
 
 public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
-    @KotlinSignature("val result: MutableList<JsPropertyInitializer>")
     protected final List<JsPropertyInitializer> result;
     protected final List<JsPropertyInitializer> staticResult;
     protected final List<JsPropertyInitializer> enumEntryList = new SmartList<JsPropertyInitializer>();

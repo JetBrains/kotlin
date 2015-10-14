@@ -1,5 +1,3 @@
 package
 
-public val </*0*/ reified T> v: T
-public fun </*0*/ T> id(/*0*/ p: T): T
-public fun </*0*/ A> main(): kotlin.Unit
+public val </*0*/ reified T> T.v: T

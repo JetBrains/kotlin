@@ -21,8 +21,8 @@ import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
-import org.jetbrains.kotlin.js.translate.utils.ID
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
+import org.jetbrains.kotlin.utils.identity
 
 public object NumberAndCharConversionFIF : CompositeFIF() {
     val USE_AS_IS = Predicates.or(
@@ -71,7 +71,7 @@ public object NumberAndCharConversionFIF : CompositeFIF() {
     }
 
     init {
-        add(USE_AS_IS!!, ConversionUnaryIntrinsic(ID))
+        add(USE_AS_IS!!, ConversionUnaryIntrinsic(identity()))
         for((stringPattern, intrinsic) in convertOperations) {
             add(pattern(stringPattern), intrinsic)
         }

@@ -2,10 +2,10 @@
 
 class Delegate() {
     @Deprecated("text")
-    fun getValue(instance: Any, property: PropertyMetadata) : Int = 1
+    operator fun getValue(instance: Any, property: PropertyMetadata) : Int = 1
 
     @Deprecated("text")
-    fun setValue(instance: Any, property: PropertyMetadata, value: Int) {}
+    operator fun setValue(instance: Any, property: PropertyMetadata, value: Int) {}
 }
 
 class PropertyHolder {

@@ -50,6 +50,9 @@ public interface ErrorsJvm {
 
     DiagnosticFactory1<JetAnnotationEntry, String> INAPPLICABLE_JVM_FIELD = DiagnosticFactory1.create(ERROR);
 
+    DiagnosticFactory0<JetAnnotationEntry> VOLATILE_ON_VALUE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetAnnotationEntry> SYNCHRONIZED_ON_ABSTRACT = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory0<JetDeclaration> OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
     DiagnosticFactory0<JetDeclaration> OVERLOADS_ABSTRACT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<JetDeclaration> OVERLOADS_PRIVATE = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
@@ -66,6 +69,8 @@ public interface ErrorsJvm {
     DiagnosticFactory1<JetAnnotationEntry, FqName> ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<JetElement> INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory0<JetElement> INAPPLICABLE_PUBLIC_FIELD = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetElement> NO_REFLECTION_IN_CLASS_PATH = DiagnosticFactory0.create(WARNING);
 

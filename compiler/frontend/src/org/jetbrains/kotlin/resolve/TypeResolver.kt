@@ -24,13 +24,14 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.PossiblyBareType.type
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider
-import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -239,6 +240,7 @@ public class TypeResolver(
                 val receiverTypeRef = type.getReceiverTypeReference()
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
+                type.parameters.forEach { checkParameterInFunctionType(it) }
                 val parameterTypes = type.getParameters().map { resolveType(c.noBareTypes(), it.getTypeReference()!!) }
 
                 val returnTypeRef = type.getReturnTypeReference()
@@ -261,6 +263,31 @@ public class TypeResolver(
 
             override fun visitJetElement(element: JetElement) {
                 c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"))
+            }
+
+            private fun checkParameterInFunctionType(param: JetParameter) {
+                if (param.hasDefaultValue()) {
+                    c.trace.report(Errors.UNSUPPORTED.on(param.defaultValue!!, "default value of parameter in function type"))
+                }
+
+                if (param.nameIdentifier != null) {
+                    for (annotationEntry in param.annotationEntries) {
+                        c.trace.report(Errors.UNSUPPORTED.on(annotationEntry, "annotation on parameter in function type"))
+                    }
+                }
+
+                val modifierList = param.modifierList
+                if (modifierList != null) {
+                    JetTokens.MODIFIER_KEYWORDS_ARRAY
+                            .map { modifierList.getModifier(it) }
+                            .filterNotNull()
+                            .forEach { c.trace.report(Errors.UNSUPPORTED.on(it, "modifier on parameter in function type"))
+                    }
+                }
+
+                param.valOrVarKeyword?.let {
+                    c.trace.report(Errors.UNSUPPORTED.on(it, "val or val on parameter in function type"))
+                }
             }
         })
 

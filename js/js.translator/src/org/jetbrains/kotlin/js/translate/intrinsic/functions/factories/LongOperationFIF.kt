@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories
 
-import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
-import org.jetbrains.kotlin.js.translate.utils.ID
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
+import org.jetbrains.kotlin.utils.identity as ID
 
 // TODO Move to FunctionCallCases
 public object LongOperationFIF : FunctionIntrinsicFactory {
@@ -88,17 +88,17 @@ public object LongOperationFIF : FunctionIntrinsicFactory {
            LONG_EQUALS_ANY.apply(descriptor) || LONG_BINARY_OPERATION_LONG.apply(descriptor) || LONG_BIT_SHIFTS.apply(descriptor) ->
                longBinaryIntrinsics[operationName]
            INTEGER_BINARY_OPERATION_LONG.apply(descriptor) ->
-               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], { longFromInt(it) }, ID)
+               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], { longFromInt(it) }, ID())
            LONG_BINARY_OPERATION_INTEGER.apply(descriptor) ->
-               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ID, { longFromInt(it) })
+               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ID(), { longFromInt(it) })
            CHAR_BINARY_OPERATION_LONG.apply(descriptor) ->
-               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], { longFromInt(charToInt(it)) }, ID)
+               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], { longFromInt(charToInt(it)) }, ID())
            LONG_BINARY_OPERATION_CHAR.apply(descriptor) ->
-               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ID, { longFromInt(charToInt(it)) })
+               wrapIntrinsicIfPresent(longBinaryIntrinsics[operationName], ID(), { longFromInt(charToInt(it)) })
            FLOATING_POINT_BINARY_OPERATION_LONG.apply(descriptor) ->
-               wrapIntrinsicIfPresent(floatBinaryIntrinsics[operationName], ID, { invokeMethod(it, Namer.LONG_TO_NUMBER) })
+               wrapIntrinsicIfPresent(floatBinaryIntrinsics[operationName], ID(), { invokeMethod(it, Namer.LONG_TO_NUMBER) })
            LONG_BINARY_OPERATION_FLOATING_POINT.apply(descriptor) ->
-               wrapIntrinsicIfPresent(floatBinaryIntrinsics[operationName], { invokeMethod(it, Namer.LONG_TO_NUMBER) }, ID)
+               wrapIntrinsicIfPresent(floatBinaryIntrinsics[operationName], { invokeMethod(it, Namer.LONG_TO_NUMBER) }, ID())
            else ->
                null
        }

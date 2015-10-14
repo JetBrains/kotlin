@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.descriptors;
 
-import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.types.JetType;
@@ -32,7 +31,6 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
     @Nullable
     ReceiverParameterDescriptor getDispatchReceiverParameter();
 
-    @KotlinSignature("fun getTypeParameters(): List<TypeParameterDescriptor>")
     @NotNull
     List<TypeParameterDescriptor> getTypeParameters();
 
@@ -49,7 +47,6 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
     @Override
     CallableDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
-    @KotlinSignature("fun getValueParameters(): List<ValueParameterDescriptor>")
     @NotNull
     List<ValueParameterDescriptor> getValueParameters();
 

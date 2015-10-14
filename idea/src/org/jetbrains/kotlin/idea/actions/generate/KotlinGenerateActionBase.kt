@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.actions.generate
 
+import com.intellij.codeInsight.CodeInsightActionHandler
 import com.intellij.codeInsight.actions.CodeInsightAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-abstract class KotlinGenerateActionBase() : CodeInsightAction() {
+abstract class KotlinGenerateActionBase() : CodeInsightAction(), CodeInsightActionHandler {
     override fun isValidForFile(project: Project, editor: Editor, file: PsiFile): Boolean {
         if (file !is JetFile || file.isCompiled) return false
 
@@ -38,4 +39,8 @@ abstract class KotlinGenerateActionBase() : CodeInsightAction() {
     }
 
     protected abstract fun isValidForClass(targetClass: JetClassOrObject): Boolean
+
+    override fun startInWriteAction() = false
+
+    override fun getHandler() = this
 }

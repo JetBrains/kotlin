@@ -1,9 +1,0 @@
-<root>
-    <item
-        name='com.intellij.xdebugger.settings.XDebuggerSettings java.util.Collection&lt;? extends com.intellij.openapi.options.Configurable&gt; createConfigurables(com.intellij.xdebugger.settings.DebuggerSettingsCategory)'>
-        <annotation name='kotlin.jvm.KotlinSignature'>
-            <val name="value"
-                 val="&quot;fun createConfigurables(category: DebuggerSettingsCategory): Collection&lt;out Configurable?&gt;&quot;"/>
-        </annotation>
-    </item>
-</root>

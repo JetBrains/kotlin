@@ -108,6 +108,7 @@ private annotation class tailrec
 @Target(FUNCTION, PROPERTY, CONSTRUCTOR)
 @Retention(BINARY)
 @MustBeDocumented
+@Deprecated("Use @Deprecated(\"...\", level = DeprecationLevel.HIDDEN) instead", replaceWith = ReplaceWith("@Deprecated(, level = DeprecationLevel.HIDDEN)"))
 public annotation class HiddenDeclaration
 
 /**
@@ -126,17 +127,3 @@ private annotation class external
 @Retention(SOURCE)
 @MustBeDocumented
 public annotation class UnsafeVariance
-
-/**
- * Specifies that the corresponding type should be ignored during type inference.
- */
-@Target(TYPE)
-@Retention(SOURCE)
-internal annotation class NoInfer
-
-/**
- * Specifies that the constraint built for the type during type inference should be an equality one.
- */
-@Target(TYPE)
-@Retention(SOURCE)
-internal annotation class Exact

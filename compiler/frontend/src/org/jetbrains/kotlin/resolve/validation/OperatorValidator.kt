@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.get
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -35,7 +34,7 @@ public class OperatorValidator : SymbolUsageValidator {
 
     override fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
         val functionDescriptor = targetDescriptor as? FunctionDescriptor ?: return
-        if (functionDescriptor.isDynamic() || ErrorUtils.isError(functionDescriptor)) return
+        if (!checkNotErrorOrDynamic(functionDescriptor)) return
 
         val jetElement = element as? JetElement ?: return
         val call = resolvedCall?.call ?: trace.bindingContext[BindingContext.CALL, jetElement]
@@ -71,9 +70,15 @@ public class OperatorValidator : SymbolUsageValidator {
 
     companion object {
         fun report(element: JetElement, descriptor: FunctionDescriptor, sink: DiagnosticSink) {
+            if (!checkNotErrorOrDynamic(descriptor)) return
+
             val containingDeclaration = descriptor.containingDeclaration
             val containingDeclarationName = containingDeclaration.fqNameUnsafe.asString()
             sink.report(Errors.OPERATOR_MODIFIER_REQUIRED.on(element, descriptor, containingDeclarationName))
+        }
+
+        private fun checkNotErrorOrDynamic(functionDescriptor: FunctionDescriptor): Boolean {
+            return (!functionDescriptor.isDynamic() && !ErrorUtils.isError(functionDescriptor))
         }
     }
 }

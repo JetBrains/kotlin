@@ -3,11 +3,11 @@
 var b: Int by Delegate()
 
 class Delegate {
-    fun getValue(t: Any?, p: PropertyMetadata): Int {
+    operator fun getValue(t: Any?, p: PropertyMetadata): Int {
       return 1
     }
 
-    fun setValue(t: Any?, p: PropertyMetadata, i: Int): Int {
+    operator fun setValue(t: Any?, p: PropertyMetadata, i: Int): Int {
       return i
     }
 }

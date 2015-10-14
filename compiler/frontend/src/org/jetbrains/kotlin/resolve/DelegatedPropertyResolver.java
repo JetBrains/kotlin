@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.validation.OperatorValidator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.JetType;
@@ -174,7 +175,7 @@ public class DelegatedPropertyResolver {
         trace.record(DELEGATED_PROPERTY_PD_RESOLVED_CALL, propertyDescriptor, functionResults.getResultingCall());
     }
 
-    /* Resolve get() or set() methods from delegate */
+    /* Resolve getValue() or setValue() methods from delegate */
     private void resolveDelegatedPropertyConventionMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull JetExpression delegateExpression,
@@ -211,6 +212,11 @@ public class DelegatedPropertyResolver {
                 trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType));
             }
             return;
+        }
+
+        FunctionDescriptor resultingDescriptor = functionResults.getResultingDescriptor();
+        if (!resultingDescriptor.isOperator()) {
+            OperatorValidator.Companion.report(delegateExpression, resultingDescriptor, trace);
         }
 
         ResolvedCall<FunctionDescriptor> resultingCall = functionResults.getResultingCall();

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.descriptors;
 
-import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
@@ -38,7 +37,7 @@ public interface DeclarationDescriptor extends Annotated, Named {
     @Nullable
     DeclarationDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
-    @KotlinSignature("fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R")
     <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data);
+
     void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor);
 }

@@ -50,7 +50,7 @@ public class ModifiersChecker {
     private enum InnerModifierCheckResult {
         ALLOWED,
         ILLEGAL_POSITION,
-        IN_TRAIT,
+        IN_INTERFACE,
         IN_OBJECT,
     }
 
@@ -78,7 +78,7 @@ public class ModifiersChecker {
         if (!(containingDeclaration instanceof ClassDescriptor)) return InnerModifierCheckResult.ILLEGAL_POSITION;
 
         if (DescriptorUtils.isInterface(containingDeclaration)) {
-            return InnerModifierCheckResult.IN_TRAIT;
+            return InnerModifierCheckResult.IN_INTERFACE;
         }
         else if (DescriptorUtils.isObject(containingDeclaration)) {
             return InnerModifierCheckResult.IN_OBJECT;

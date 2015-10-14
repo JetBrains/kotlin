@@ -129,12 +129,11 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                 assert mainFileDir != null;
 
                 final String mainFileName = mainFile.getName();
-                final String extraFileNamePrefix = mainFileName.replace(".Main.kt", ".").replace(".Main.java", ".");
                 File[] extraFiles = mainFileDir.listFiles(
                         new FilenameFilter() {
                             @Override
                             public boolean accept(@NotNull File dir, @NotNull String name) {
-                                return name.startsWith(extraFileNamePrefix) && !name.equals(mainFileName);
+                                return name.startsWith(extraFileNamePrefix(mainFileName)) && !name.equals(mainFileName);
                             }
                         }
                 );
@@ -209,7 +208,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                      "Infos:" + infos);
             }
             else {
-                DirectiveBasedActionUtils.INSTANCE$.checkAvailableActionsAreExpected((JetFile) getFile(), availableActions);
+                DirectiveBasedActionUtils.INSTANCE$.checkAvailableActionsAreExpected(getFile(), availableActions);
             }
         }
         else {
@@ -233,10 +232,9 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
             PsiFile mainFile = myFile;
             String mainFileName = mainFile.getName();
-            String extraFileNamePrefix = mainFileName.replace(".Main.kt", ".");
             for (PsiFile file : mainFile.getContainingDirectory().getFiles()) {
                 String fileName = file.getName();
-                if (fileName.equals(mainFileName) || !fileName.startsWith(extraFileNamePrefix)) continue;
+                if (fileName.equals(mainFileName) || !fileName.startsWith(extraFileNamePrefix(myFile.getName()))) continue;
 
                 myFile = file;
                 String extraFileFullPath = testFullPath.replace(mainFileName, fileName);
@@ -266,5 +264,10 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     @Override
     protected String getTestDataPath() {
         return JetTestUtils.getHomeDirectory() + "/";
+    }
+
+    @NotNull
+    private static String extraFileNamePrefix(@NotNull  String mainFileName) {
+        return mainFileName.replace(".Main.kt", ".").replace(".Main.java", ".");
     }
 }

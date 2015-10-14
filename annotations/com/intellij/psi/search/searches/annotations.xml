@@ -20,25 +20,12 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
-      name='com.intellij.psi.search.searches.ReferencesSearch com.intellij.util.Query&lt;com.intellij.psi.PsiReference&gt; search(com.intellij.psi.PsiElement)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun search(element: PsiElement): Query&lt;PsiReference&gt;&quot;"/>
-    </annotation>
-  </item>
-  <item
       name='com.intellij.psi.search.searches.ReferencesSearch com.intellij.util.Query&lt;com.intellij.psi.PsiReference&gt; search(com.intellij.psi.PsiElement, com.intellij.psi.search.SearchScope)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun search(element: PsiElement, searchScope: SearchScope): Query&lt;PsiReference&gt;&quot;"/>
-    </annotation>
   </item>
   <item
       name='com.intellij.psi.search.searches.ReferencesSearch com.intellij.util.Query&lt;com.intellij.psi.PsiReference&gt; search(com.intellij.psi.PsiElement, com.intellij.psi.search.SearchScope, boolean)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value"
-           val="&quot;fun search(element: PsiElement, searchScope: SearchScope, ignoreAccessScope: Boolean): Query&lt;PsiReference&gt;&quot;"/>
-    </annotation>
   </item>
   <item
       name='com.intellij.psi.search.searches.ReferencesSearch com.intellij.util.Query&lt;com.intellij.psi.PsiReference&gt; search(com.intellij.psi.search.searches.ReferencesSearch.SearchParameters)'>

@@ -7,8 +7,8 @@ class A {
 var aTopLevel: Int by Delegate()
 
 class Delegate {
-  fun getValue(t: Any?, p: PropertyMetadata): Int {
+  operator fun getValue(t: Any?, p: PropertyMetadata): Int {
     return 1
   }
-  fun setValue(t: Any?, p: PropertyMetadata, a: Int) {}
+  operator fun setValue(t: Any?, p: PropertyMetadata, a: Int) {}
 }

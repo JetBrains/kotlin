@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.ImmutableMap;
 import com.intellij.psi.PsiElement;
-import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
@@ -108,13 +107,11 @@ public interface BindingContext {
     WritableSlice<JetReferenceExpression, ClassDescriptor> SHORT_REFERENCE_TO_COMPANION_OBJECT =
             new BasicWritableSlice<JetReferenceExpression, ClassDescriptor>(DO_NOTHING);
 
-    @KotlinSignature("val RESOLVED_CALL: WritableSlice<Call, ResolvedCall<out CallableDescriptor>>")
     WritableSlice<Call, ResolvedCall<?>> RESOLVED_CALL = new BasicWritableSlice<Call, ResolvedCall<?>>(DO_NOTHING);
     WritableSlice<ResolvedCall<?>, TailRecursionKind> TAIL_RECURSION_CALL = Slices.createSimpleSlice();
     WritableSlice<JetElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<JetElement, ConstraintSystemCompleter>(DO_NOTHING);
     WritableSlice<JetElement, Call> CALL = new BasicWritableSlice<JetElement, Call>(DO_NOTHING);
 
-    @KotlinSignature("val AMBIGUOUS_REFERENCE_TARGET: WritableSlice<JetExpression, Collection<DeclarationDescriptor>>")
     WritableSlice<JetExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET =
             new BasicWritableSlice<JetExpression, Collection<? extends DeclarationDescriptor>>(DO_NOTHING);
 

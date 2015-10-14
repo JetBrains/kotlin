@@ -1111,6 +1111,81 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/deprecatedStaticField")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DeprecatedStaticField extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInDeprecatedStaticField() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/deprecatedStaticField"), Pattern.compile("^(\\w+)\\.before\\.Main\\.\\w+$"), true);
+            }
+
+            @TestMetadata("cleanUp.before.Main.java")
+            public void testCleanUp() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/cleanUp.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("companionObjectOfClass_const.before.Main.java")
+            public void testCompanionObjectOfClass_const() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfClass_const.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("companionObjectOfClass_getterReference.before.Main.java")
+            public void testCompanionObjectOfClass_getterReference() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfClass_getterReference.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("companionObjectOfClass_jvmField.before.Main.java")
+            public void testCompanionObjectOfClass_jvmField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfClass_jvmField.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("companionObjectOfInterface_const.before.Main.java")
+            public void testCompanionObjectOfInterface_const() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfInterface_const.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("companionObjectOfInterface_getterReference.before.Main.java")
+            public void testCompanionObjectOfInterface_getterReference() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfInterface_getterReference.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("companionObjectOfInterface_jvmField_unavailable.before.Main.java")
+            public void testCompanionObjectOfInterface_jvmField_unavailable() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfInterface_jvmField_unavailable.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("object_const.before.Main.java")
+            public void testObject_const() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/object_const.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("object_const_unavailable.before.Main.java")
+            public void testObject_const_unavailable() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/object_const_unavailable.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("object_getterReference.before.Main.java")
+            public void testObject_getterReference() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/object_getterReference.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("object_jvmField.before.Main.java")
+            public void testObject_jvmField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/object_jvmField.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/javaAnnotationPositionedArguments")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

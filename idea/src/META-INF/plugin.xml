@@ -169,6 +169,10 @@
       <action id="KotlinGenerateTearDownMethod"
               class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$TearDown"
               text="TearDown Function" />
+      <separator />
+      <action id="KotlinGenerateSecondaryConstructor"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction"
+              text="Secondary Constructor" />
 
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
@@ -1246,6 +1250,14 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedObjectInstanceFieldReferenceInspection"
                      displayName="Usage of deprecated 'INSTANCE$' field"
+                     groupName="Kotlin"
+                     language="JAVA"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedUsageOfStaticFieldInspection"
+                     displayName="This field will not be generated in future versions of Kotlin. Use 'const' modifier, '@JvmField' annotation or access data through corresponding object."
                      groupName="Kotlin"
                      language="JAVA"
                      enabledByDefault="true"

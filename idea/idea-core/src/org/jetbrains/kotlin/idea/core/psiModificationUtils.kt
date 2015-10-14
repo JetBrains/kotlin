@@ -21,8 +21,6 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -103,16 +101,21 @@ public fun JetCallExpression.moveFunctionLiteralOutsideParentheses() {
     }
 }
 
-public fun JetBlockExpression.appendElement(element: JetElement): JetElement {
+public fun JetBlockExpression.appendElement(element: JetElement, addNewLine: Boolean = false): JetElement {
     val rBrace = getRBrace()
+    val newLine = JetPsiFactory(this).createNewLine()
     val anchor = if (rBrace == null) {
         val lastChild = getLastChild()
-        if (lastChild !is PsiWhiteSpace) addAfter(JetPsiFactory(this).createNewLine(), lastChild)!! else lastChild
+        if (lastChild !is PsiWhiteSpace) addAfter(newLine, lastChild)!! else lastChild
     }
     else {
         rBrace.getPrevSibling()!!
     }
-    return addAfter(element, anchor)!! as JetElement
+    val addedElement = addAfter(element, anchor)!! as JetElement
+    if (addNewLine) {
+        addAfter(newLine, addedElement)
+    }
+    return addedElement
 }
 
 //TODO: git rid of this method

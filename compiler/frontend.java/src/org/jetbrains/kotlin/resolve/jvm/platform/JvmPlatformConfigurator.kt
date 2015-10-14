@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.jvm.RuntimeAssertionsTypeChecker
 import org.jetbrains.kotlin.load.kotlin.JavaAnnotationCallChecker
 import org.jetbrains.kotlin.load.kotlin.JavaAnnotationMethodCallChecker
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
-import org.jetbrains.kotlin.resolve.PlatformConfigurator
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
@@ -31,6 +31,8 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
         additionalDeclarationCheckers = listOf(
                 PlatformStaticAnnotationChecker(),
                 JvmNameAnnotationChecker(),
+                VolatileAnnotationChecker(),
+                SynchronizedAnnotationChecker(),
                 LocalFunInlineChecker(),
                 ReifiedTypeParameterAnnotationChecker(),
                 NativeFunChecker(),
@@ -67,3 +69,4 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
         container.useImpl<ReflectionAPICallChecker>()
     }
 }
+

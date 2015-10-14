@@ -60,4 +60,6 @@ val t1 = test2<<error>A</error>>(A())
 val t2 = test2<<error>B</error>>(C())
 val t3 = test2<C>(C())
 
-val <T, B : T> x : Int = 0
+val <T, B: T> Pair<T, B>.x : Int get() = 0
+
+class Pair<A, B>()

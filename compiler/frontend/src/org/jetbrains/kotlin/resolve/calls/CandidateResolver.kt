@@ -21,7 +21,6 @@ import com.google.common.collect.Sets
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT
 import org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.*
@@ -46,7 +45,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTask
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
@@ -118,16 +116,11 @@ public class CandidateResolver(
 
             val typeArguments = ArrayList<JetType>()
             for (projection in jetTypeArguments) {
-                if (projection.getProjectionKind() != JetProjectionKind.NONE) {
-                    trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection))
-                    ModifierCheckerCore.check(projection, trace, null)
-                }
-                val type = argumentTypeResolver.resolveTypeRefWithDefault(
-                        projection.getTypeReference(), scope, trace,
-                        ErrorUtils.createErrorType("Star projection in a call"))!!
-                ForceResolveUtil.forceResolveAllContents(type)
+                val type = projection.typeReference?.let { trace.bindingContext.get(BindingContext.TYPE, it) }
+                        ?: ErrorUtils.createErrorType("Star projection in a call")
                 typeArguments.add(type)
             }
+
             val expectedTypeArgumentCount = candidateDescriptor.getTypeParameters().size()
             for (index in jetTypeArguments.size()..expectedTypeArgumentCount - 1) {
                 typeArguments.add(ErrorUtils.createErrorType(

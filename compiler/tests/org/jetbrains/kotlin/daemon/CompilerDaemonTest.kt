@@ -200,6 +200,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val clientAliveFile = createTempFile("kotlin-daemon-transitive-run-test", ".run")
         val runFilesPath = File(tmpdir, getTestName(true)).absolutePath
         val daemonOptions = DaemonOptions(runFilesPath = runFilesPath, clientAliveFlagPath = clientAliveFile.absolutePath)
+        val jar = tmpdir.absolutePath + File.separator + "hello.jar"
         val args = listOf(
                         File(File(System.getProperty("java.home"), "bin"), "java").absolutePath,
                         "-D$COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY",
@@ -208,7 +209,8 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
                         KotlinCompilerClient::class.qualifiedName!!) +
                    daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                    compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
-                   File(getHelloAppBaseDir(), "hello.kt").absolutePath
+                   File(getHelloAppBaseDir(), "hello.kt").absolutePath +
+                   "-d" + jar
         try {
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
             var resOutput: String? = null

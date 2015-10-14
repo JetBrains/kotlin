@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-// ERROR: 'infix' modifier is inapplicable on this function
+// WARNING: 'infix' modifier is inapplicable on this function
 package ppp
 
 infix fun foo(p: String){}

@@ -25,7 +25,7 @@ public class CachedValueProperty<TValue : Any, TTimestamp : Any>(
     private var value: TValue? = null
     private var timestamp: TTimestamp? = null
 
-    public override fun get(thisRef: Any?, desc: PropertyMetadata): TValue {
+    public override fun getValue(thisRef: Any?, desc: PropertyMetadata): TValue {
         val currentTimestamp = timestampCalculator()
         if (value == null || timestamp != currentTimestamp) {
             value = calculator()

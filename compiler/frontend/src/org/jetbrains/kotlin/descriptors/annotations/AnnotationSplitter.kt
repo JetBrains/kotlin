@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.storage.get
+import org.jetbrains.kotlin.storage.getValue
 
 /*
     This class lazily splits Annotations into several different Annotations according to declaration site target priority on property.

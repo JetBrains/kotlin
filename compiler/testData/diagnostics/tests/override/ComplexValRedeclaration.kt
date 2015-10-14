@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER
 package override.generics
 
 abstract class MyAbstractClass<T> {

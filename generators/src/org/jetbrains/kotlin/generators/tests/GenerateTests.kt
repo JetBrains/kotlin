@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
 import org.jetbrains.kotlin.idea.codeInsight.*
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateActionTest
+import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateTestSupportMethodActionTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractCodeMoverTest
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
@@ -99,6 +100,7 @@ import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
+import org.jetbrains.kotlin.jps.build.AbstractIncrementalCacheVersionChangedTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalLazyCachesTest
 import org.jetbrains.kotlin.jps.build.AbstractLookupTrackerTest
@@ -729,8 +731,12 @@ fun main(args: Array<String>) {
             model("kdoc/typing")
         }
 
+        testClass<AbstractGenerateTestSupportMethodActionTest>() {
+            model("codeInsight/generate/testFrameworkSupport")
+        }
+
         testClass<AbstractGenerateActionTest>() {
-            model("codeInsight/generate")
+            model("codeInsight/generate/secondaryConstructors")
         }
     }
 
@@ -848,6 +854,10 @@ fun main(args: Array<String>) {
 
         testClass(AbstractIncrementalLazyCachesTest::class.java) {
             model("incremental/lazyKotlinCaches", extension = null, excludeParentDirs = true)
+        }
+
+        testClass(AbstractIncrementalCacheVersionChangedTest::class.java) {
+            model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
         }
     }
 

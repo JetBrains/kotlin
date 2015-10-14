@@ -1,5 +1,11 @@
 public final class A {
+    /**
+     * @deprecated
+     */
     public static final int c = 1;
+    /**
+     * @deprecated
+     */
     @org.jetbrains.annotations.NotNull
     public static java.lang.String v;
     public static final pack.A INSTANCE;

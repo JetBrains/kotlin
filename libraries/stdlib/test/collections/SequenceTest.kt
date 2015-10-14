@@ -73,6 +73,11 @@ public class SequenceTest {
         }
     }
 
+    @test fun mapIndexed() {
+        assertEquals(listOf(0, 1, 2, 6, 12), fibonacci().mapIndexed { index, value -> index * value }.takeWhile { i: Int -> i < 20 }.toList())
+    }
+
+
     @test fun mapAndJoinToString() {
         assertEquals("3, 5, 8", fibonacci().withIndex().filter { it.index > 3 }.take(3).joinToString { it.value.toString() })
     }
@@ -124,6 +129,11 @@ public class SequenceTest {
         expect(listOf("ab", "bc", "cd")) {
             sequenceOf("a", "b", "c").zip(sequenceOf("b", "c", "d")) { a, b -> a + b }.toList()
         }
+    }
+
+    @test fun zipPairs() {
+        val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).joinToString(limit = 10)
+        assertEquals("(0, 0), (1, 2), (1, 2), (2, 4), (3, 6), (5, 10), (8, 16), (13, 26), (21, 42), (34, 68), ...", pairStr)
     }
 
     @test fun toStringJoinsNoMoreThanTheFirstTenElements() {

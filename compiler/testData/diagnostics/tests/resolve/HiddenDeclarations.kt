@@ -4,34 +4,34 @@ package test
 import test.topLevelFun
 import test.topLevelProperty
 
-@HiddenDeclaration
+@Deprecated("hidden", level = DeprecationLevel.HIDDEN)
 fun topLevelFun(){}
 
-@HiddenDeclaration
+@Deprecated("hidden", level = DeprecationLevel.HIDDEN)
 var topLevelProperty = 1
 
-@HiddenDeclaration
+@Deprecated("hidden", level = DeprecationLevel.HIDDEN)
 fun String.topLevelExtensionFun(){}
 
-@HiddenDeclaration
+@Deprecated("hidden", level = DeprecationLevel.HIDDEN)
 val String.topLevelExtensionProperty: Int get() = 1
 
 open class A {
     constructor(<!UNUSED_PARAMETER!>p<!>: Int) : this(<!TYPE_MISMATCH!>""<!>) {}
 
-    @HiddenDeclaration
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     constructor(<!UNUSED_PARAMETER!>s<!>: String){}
 
-    @HiddenDeclaration
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     open fun memberFun(){}
 
-    @HiddenDeclaration
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     val memberProperty = 1
 
-    @HiddenDeclaration
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     fun String.memberExtensionFun(){}
 
-    @HiddenDeclaration
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     val String.memberExtensionProperty: Int get() = 1
 
     fun foo() {
@@ -50,10 +50,10 @@ open class A {
 }
 
 interface I {
-    @HiddenDeclaration
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     fun foo1()
 
-    @HiddenDeclaration
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     fun foo2()
 }
 

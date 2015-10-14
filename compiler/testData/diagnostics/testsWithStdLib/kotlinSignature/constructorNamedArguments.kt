@@ -9,4 +9,4 @@ public class A {
 
 // FILE: 1.kt
 
-val test = A(x = 1, y = "2")
+val test = A(<!NAMED_ARGUMENTS_NOT_ALLOWED!>x<!> = 1, <!NAMED_ARGUMENTS_NOT_ALLOWED!>y<!> = "2")

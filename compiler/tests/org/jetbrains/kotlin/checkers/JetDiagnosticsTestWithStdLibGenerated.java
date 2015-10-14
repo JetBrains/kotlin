@@ -103,9 +103,21 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             doTest(fileName);
         }
 
+        @TestMetadata("Synchronized.kt")
+        public void testSynchronized() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/Synchronized.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("targetuse.kt")
         public void testTargetuse() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/targetuse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Volatile.kt")
+        public void testVolatile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/Volatile.kt");
             doTest(fileName);
         }
 
@@ -602,6 +614,27 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         public void testKt4975() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/kt4975.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AnnotationsForResolve extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInAnnotationsForResolve() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("exactAnnotation.kt")
+            public void testExactAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/exactAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noInferAnnotation.kt")
+            public void testNoInferAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/noInferAnnotation.kt");
+                doTest(fileName);
+            }
         }
     }
 

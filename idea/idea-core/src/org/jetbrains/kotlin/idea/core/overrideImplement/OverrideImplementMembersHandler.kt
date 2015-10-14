@@ -26,7 +26,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.quickfix.generateMembers
+import org.jetbrains.kotlin.idea.quickfix.insertMembersAfter
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -90,7 +90,7 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
     companion object {
         public fun generateMembers(editor: Editor, classOrObject: JetClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
             val project = classOrObject.project
-            generateMembers(editor, classOrObject, selectedElements.map { chooser -> { chooser.generateMember(project) } })
+            insertMembersAfter(editor, classOrObject, selectedElements.map { it.generateMember(project) })
         }
     }
 }

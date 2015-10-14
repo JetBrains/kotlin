@@ -2660,18 +2660,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("inGenPropertyInitializerInClass.kt")
-                public void testInGenPropertyInitializerInClass() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inGenPropertyInitializerInClass.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("inGenPropertyInitializerInGenClass.kt")
-                public void testInGenPropertyInitializerInGenClass() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inGenPropertyInitializerInGenClass.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("inLambdaNoParams.kt")
                 public void testInLambdaNoParams() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inLambdaNoParams.kt");

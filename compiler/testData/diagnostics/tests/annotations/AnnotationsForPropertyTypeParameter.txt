@@ -1,6 +1,6 @@
 package
 
-public val </*0*/ T> topProp: kotlin.Int = 12
+public val </*0*/ T> T.topProp: kotlin.Int
 
 @kotlin.annotation.annotation() public final class A1 : kotlin.Annotation {
     public constructor A1()
@@ -19,7 +19,7 @@ public val </*0*/ T> topProp: kotlin.Int = 12
 
 public final class SomeClass {
     public constructor SomeClass()
-    public final val </*0*/ T> field: kotlin.Int = 12
+    public final val </*0*/ T> T.field: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

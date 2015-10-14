@@ -48,30 +48,8 @@ public class AddConstModifierFix(val property: JetProperty) : AddModifierFix(pro
 
     companion object {
         fun addConstModifier(property: JetProperty) {
-            val project = property.project
-            val getter = LightClassUtil.getLightClassPropertyMethods(property).getter
-
-            val javaScope = GlobalSearchScope.getScopeRestrictedByFileTypes(project.allScope(), JavaFileType.INSTANCE)
-            val getterUsages = if (getter != null)
-                ReferencesSearch.search(getter, javaScope).findAll()
-            else
-                emptyList()
-
+            replaceReferencesToGetterByReferenceToField(property)
             property.addModifier(JetTokens.CONST_KEYWORD)
-
-            val backingField = LightClassUtil.getLightClassPropertyMethods(property).backingField
-            if (backingField != null) {
-                val factory = PsiElementFactory.SERVICE.getInstance(project)
-                val fieldFQName = backingField.containingClass!!.qualifiedName + "." + backingField.name
-
-                getterUsages.forEach {
-                    val call = it.element.getNonStrictParentOfType<PsiMethodCallExpression>()
-                    if (call != null && it.element == call.methodExpression) {
-                        val fieldRef = factory.createExpressionFromText(fieldFQName, it.element)
-                        call.replace(fieldRef)
-                    }
-                }
-            }
         }
     }
 }
@@ -82,12 +60,18 @@ public class AddConstModifierIntention : JetSelfTargetingIntention<JetProperty>(
     }
 
     override fun isApplicableTo(element: JetProperty, caretOffset: Int): Boolean {
-        if (element.isLocal || element.isVar || element.hasDelegate() || element.initializer == null || element.getter?.hasBody() == true ||
-            element.receiverTypeReference != null) {
-            return false
+        return isApplicableTo(element)
+    }
+
+    companion object {
+        fun isApplicableTo(element: JetProperty): Boolean {
+            if (element.isLocal || element.isVar || element.hasDelegate() || element.initializer == null
+                    || element.getter?.hasBody() == true || element.receiverTypeReference != null) {
+                return false
+            }
+            val propertyDescriptor = element.descriptor as? VariableDescriptor ?: return false
+            return ConstModifierChecker.checkCanBeConst(element, element, propertyDescriptor) == null
         }
-        val propertyDescriptor = element.descriptor as? VariableDescriptor ?: return false
-        return ConstModifierChecker.checkCanBeConst(element, element, propertyDescriptor) == null
     }
 }
 
@@ -104,3 +88,29 @@ public object ConstFixFactory : JetSingleIntentionActionFactory() {
         return null
     }
 }
+
+fun replaceReferencesToGetterByReferenceToField(property: JetProperty) {
+    val project = property.project
+    val getter = LightClassUtil.getLightClassPropertyMethods(property).getter
+
+    val javaScope = GlobalSearchScope.getScopeRestrictedByFileTypes(project.allScope(), JavaFileType.INSTANCE)
+    val getterUsages = if (getter != null)
+        ReferencesSearch.search(getter, javaScope).findAll()
+    else
+        emptyList()
+
+    val backingField = LightClassUtil.getLightClassPropertyMethods(property).backingField
+    if (backingField != null) {
+        val factory = PsiElementFactory.SERVICE.getInstance(project)
+        val fieldFQName = backingField.containingClass!!.qualifiedName + "." + backingField.name
+
+        getterUsages.forEach {
+            val call = it.element.getNonStrictParentOfType<PsiMethodCallExpression>()
+            if (call != null && it.element == call.methodExpression) {
+                val fieldRef = factory.createExpressionFromText(fieldFQName, it.element)
+                call.replace(fieldRef)
+            }
+        }
+    }
+}
+

@@ -1,4 +1,7 @@
 public final class ClassObjectField {
+    /**
+     * @deprecated
+     */
     @org.jetbrains.annotations.Nullable
     public static final java.lang.String x = "";
     private static final java.lang.String y = "";

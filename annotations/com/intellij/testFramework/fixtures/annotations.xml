@@ -6,11 +6,6 @@
       name='com.intellij.testFramework.fixtures.CodeInsightTestFixture com.intellij.openapi.vfs.VirtualFile copyDirectoryToProject(java.lang.String, java.lang.String)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='com.intellij.testFramework.fixtures.CodeInsightTestFixture void assertPreferredCompletionItems(int, java.lang.String...)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun assertPreferredCompletionItems(selected: Int, vararg expected: String)&quot;"/>
-    </annotation>
-  </item>
   <item name='com.intellij.testFramework.fixtures.IdeaProjectTestFixture com.intellij.openapi.project.Project getProject()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

@@ -4,7 +4,7 @@ public interface TwoSuperclassesVarargAndNot {
 
     public interface Sub : test.TwoSuperclassesVarargAndNot.Super1, test.TwoSuperclassesVarargAndNot.Super2 {
         public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        public abstract override /*2*/ fun foo(/*0*/ s: kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+        public abstract override /*2*/ fun foo(/*0*/ p0: kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
     }
 
     public interface Super1 {
@@ -14,6 +14,6 @@ public interface TwoSuperclassesVarargAndNot {
 
     public interface Super2 {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun foo(/*0*/ s: kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+        public abstract fun foo(/*0*/ p0: kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
     }
 }
