@@ -523,15 +523,15 @@ public fun String.matches(regex: Regex): Boolean = regex.matches(this)
 
 
 /**
- * Returns `true` if this string starts with the specified character.
+ * Returns `true` if this char sequence starts with the specified character.
  */
-public fun String.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
+public fun CharSequence.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[0].equals(char, ignoreCase)
 
 /**
- * Returns `true` if this string ends with the specified character.
+ * Returns `true` if this char sequence ends with the specified character.
  */
-public fun String.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
+public fun CharSequence.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[lastIndex].equals(char, ignoreCase)
 
 
