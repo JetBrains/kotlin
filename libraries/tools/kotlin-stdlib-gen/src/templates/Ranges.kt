@@ -79,7 +79,7 @@ fun ranges(): List<GenericFunction> {
     }
 
     val numericPrimitives = PrimitiveType.numericPrimitives
-    val numericPermutations = numericPrimitives flatMap { fromType -> numericPrimitives map { toType -> fromType to toType }}
+    val numericPermutations = numericPrimitives.flatMap { fromType -> numericPrimitives.map { toType -> fromType to toType }}
     val primitivePermutations = numericPermutations + (PrimitiveType.Char to PrimitiveType.Char)
 
     templates addAll primitivePermutations.map { downTo(it.first, it.second) }

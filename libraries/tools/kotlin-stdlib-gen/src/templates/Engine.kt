@@ -42,8 +42,6 @@ enum class PrimitiveType {
     Float,
     Double;
 
-    val name: String get() = this.name()
-
     companion object {
         val defaultPrimitives = PrimitiveType.values().toSet()
         val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
@@ -178,7 +176,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     fun instantiate(vararg families: Family = Family.values()): List<ConcreteFunction> {
         return families
-                .sortedBy { it.name() }
+                .sortedBy { it.name }
                 .filter { buildFamilies.contains(it) }
                 .flatMap { family -> instantiate(family) }
     }
@@ -187,7 +185,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         val onlyPrimitives = buildFamilyPrimitives[f]
 
         if (f.isPrimitiveSpecialization || onlyPrimitives != null) {
-            return (onlyPrimitives ?: buildPrimitives).sortedBy { it.name() }
+            return (onlyPrimitives ?: buildPrimitives).sortedBy { it.name }
                     .map { primitive -> ConcreteFunction( { build(it, f, primitive) }, sourceFileFor(f) ) }
         } else {
             return listOf(ConcreteFunction( { build(it, f, null) }, sourceFileFor(f) ))
@@ -209,7 +207,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     fun build(vararg families: Family = Family.values()): String {
         val builder = StringBuilder()
-        for (family in families.sortedBy { it.name() }) {
+        for (family in families.sortedBy { it.name }) {
             if (buildFamilies.contains(family))
                 build(builder, family)
         }
@@ -219,7 +217,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     fun build(builder: StringBuilder, f: Family) {
         val onlyPrimitives = buildFamilyPrimitives[f]
         if (f.isPrimitiveSpecialization || onlyPrimitives != null) {
-            for (primitive in (onlyPrimitives ?: buildPrimitives).sortedBy { it.name() })
+            for (primitive in (onlyPrimitives ?: buildPrimitives).sortedBy { it.name })
                 build(builder, f, primitive)
         } else {
             build(builder, f, null)
@@ -237,7 +235,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
                 val token = t.nextToken()
                 answer.append(when (token) {
                                   "SELF" -> receiver
-                                  "PRIMITIVE" -> primitive?.name() ?: token
+                                  "PRIMITIVE" -> primitive?.name ?: token
                                   "SUM" -> {
                                       when (primitive) {
                                           PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Char -> "Int"
@@ -273,7 +271,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
                                           Generic -> "T"
                                           Strings -> "Char"
                                           Maps -> "Map.Entry<K, V>"
-                                          else -> primitive?.name() ?: token
+                                          else -> primitive?.name ?: token
                                       }
                                   }
                                   "TRange" -> {
@@ -307,9 +305,9 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             ArraysOfObjects -> "Array<${isAsteriskOrT.replace("T", "out T")}>"
             Strings -> "String"
             Ranges -> "Range<$isAsteriskOrT>"
-            ArraysOfPrimitives -> primitive?.let { it.name() + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
-            RangesOfPrimitives -> primitive?.let { it.name() + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
-            ProgressionsOfPrimitives -> primitive?.let { it.name() + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
+            ArraysOfPrimitives -> primitive?.let { it.name + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
+            RangesOfPrimitives -> primitive?.let { it.name + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
+            ProgressionsOfPrimitives -> primitive?.let { it.name + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
             Primitives -> primitive?.let { it.name } ?: throw IllegalArgumentException("Primitive should specify primitive type")
             Generic -> "T"
         }.let { renderType(it, it) }
@@ -404,12 +402,12 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         if (keyword == "fun") builder.append(" {")
 
         val body = (
-                customPrimitiveBodies[f to primitive] ?:
+                primitive?.let { customPrimitiveBodies[f to primitive] } ?:
                 body[f] ?:
                 deprecate[f]?.replaceWith?.let { "return $it" } ?:
                 throw RuntimeException("No body specified for $signature for ${f to primitive}")
         ).trim('\n')
-        val indent: Int = body.takeWhile { it == ' ' }.length()
+        val indent: Int = body.takeWhile { it == ' ' }.length
 
         builder.append('\n')
         body.lineSequence().forEach {
