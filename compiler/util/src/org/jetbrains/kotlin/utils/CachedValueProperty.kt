@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.utils
 
-import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 public class CachedValueProperty<TValue : Any, TTimestamp : Any>(
         private val calculator: () -> TValue,
         private val timestampCalculator: () -> TTimestamp
-) : ReadOnlyProperty<Any?, TValue> {
+) {
     private var value: TValue? = null
     private var timestamp: TTimestamp? = null
 
-    public override fun getValue(thisRef: Any?, desc: PropertyMetadata): TValue {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): TValue {
         val currentTimestamp = timestampCalculator()
         if (value == null || timestamp != currentTimestamp) {
             value = calculator()
