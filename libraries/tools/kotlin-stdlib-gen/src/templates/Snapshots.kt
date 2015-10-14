@@ -25,7 +25,7 @@ fun snapshots(): List<GenericFunction> {
         returns("Set<T>")
         body { "return toCollection(LinkedHashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(LinkedHashSet<T>())" }
-        body(Strings) { "return toCollection(LinkedHashSet<T>(mapCapacity(length())))" }
+        body(CharSequences) { "return toCollection(LinkedHashSet<T>(mapCapacity(length())))" }
         body(ArraysOfObjects, ArraysOfPrimitives) { "return toCollection(LinkedHashSet<T>(mapCapacity(size())))" }
     }
 
@@ -34,7 +34,7 @@ fun snapshots(): List<GenericFunction> {
         returns("HashSet<T>")
         body { "return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(HashSet<T>())" }
-        body(Strings) { "return toCollection(HashSet<T>(mapCapacity(length())))" }
+        body(CharSequences) { "return toCollection(HashSet<T>(mapCapacity(length())))" }
         body(ArraysOfObjects, ArraysOfPrimitives) { "return toCollection(HashSet<T>(mapCapacity(size())))" }
     }
 
@@ -56,7 +56,7 @@ fun snapshots(): List<GenericFunction> {
             """
         }
         body(Collections) { "return ArrayList(this)" }
-        body(Strings) { "return toCollection(ArrayList<T>(length()))" }
+        body(CharSequences) { "return toCollection(ArrayList<T>(length()))" }
         body(ArraysOfObjects) { "return this.asList().toArrayList()" }
         body(ArraysOfPrimitives) {
             """
@@ -95,7 +95,6 @@ fun snapshots(): List<GenericFunction> {
 
     templates add f("toMap(selector: (T) -> K)") {
         inline(true)
-        include(Strings)
         typeParam("K")
         returns("Map<K, T>")
         deprecate("Use toMapBy instead.")
@@ -138,7 +137,7 @@ fun snapshots(): List<GenericFunction> {
             return result
             """
         }
-        body(Strings) {
+        body(CharSequences) {
             """
             val capacity = (length()/.75f) + 1
             val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
@@ -196,7 +195,7 @@ fun snapshots(): List<GenericFunction> {
             return result
             """
         }
-        body(Strings) {
+        body(CharSequences) {
             """
             val capacity = (length()/.75f) + 1
             val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))

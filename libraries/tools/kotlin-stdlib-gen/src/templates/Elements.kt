@@ -17,7 +17,7 @@ fun elements(): List<GenericFunction> {
             return indexOf(element) >= 0
             """
         }
-        exclude(Strings, Lists, Collections)
+        exclude(CharSequences, Lists, Collections)
         body(ArraysOfPrimitives, ArraysOfObjects, Sequences) {
             """
             return indexOf(element) >= 0
@@ -26,7 +26,7 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("indexOf(element: T)") {
-        exclude(Strings, Lists) // has native implementation
+        exclude(CharSequences, Lists) // has native implementation
         doc { "Returns first index of [element], or -1 if the collection does not contain element." }
         returns("Int")
         body {
@@ -72,7 +72,7 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("lastIndexOf(element: T)") {
-        exclude(Strings, Lists) // has native implementation
+        exclude(CharSequences, Lists) // has native implementation
         doc { "Returns last index of [element], or -1 if the collection does not contain element." }
         returns("Int")
         body {

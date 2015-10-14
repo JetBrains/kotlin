@@ -6,7 +6,7 @@ fun numeric(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("sum()") {
-        exclude(Strings)
+        exclude(CharSequences)
         buildFamilies.forEach { family -> onlyPrimitives(family, numericPrimitives) }
         doc { "Returns the sum of all elements in the collection." }
         returns("SUM")
@@ -24,7 +24,7 @@ fun numeric(): List<GenericFunction> {
     }
 
     templates add f("average()") {
-        exclude(Strings)
+        exclude(CharSequences)
         buildFamilies.forEach { family -> onlyPrimitives(family, numericPrimitives) }
         doc { "Returns an average value of elements in the collection."}
         returns("Double")
