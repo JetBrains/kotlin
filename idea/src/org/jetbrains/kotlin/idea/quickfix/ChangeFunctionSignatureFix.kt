@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH
 import org.jetbrains.kotlin.diagnostics.Errors.UNUSED_PARAMETER
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -52,7 +51,7 @@ abstract class ChangeFunctionSignatureFix(
         protected val functionDescriptor: FunctionDescriptor
 ) : KotlinQuickFixAction<PsiElement>(context) {
 
-    override fun getFamilyName() = JetBundle.message("change.signature.family")
+    override fun getFamilyName() = "Change signature of function/constructor"
 
     override fun startInWriteAction() = false
 

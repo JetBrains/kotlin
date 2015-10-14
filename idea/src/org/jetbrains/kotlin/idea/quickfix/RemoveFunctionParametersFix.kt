@@ -21,7 +21,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
@@ -34,9 +33,7 @@ class RemoveFunctionParametersFix(
         private val parameterToRemove: ValueParameterDescriptor
 ) : ChangeFunctionSignatureFix(context, functionDescriptor) {
 
-    override fun getText(): String {
-        return JetBundle.message("remove.parameter", parameterToRemove.name.asString())
-    }
+    override fun getText() = "Remove parameter '${parameterToRemove.name.asString()}'"
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         runChangeSignature(
