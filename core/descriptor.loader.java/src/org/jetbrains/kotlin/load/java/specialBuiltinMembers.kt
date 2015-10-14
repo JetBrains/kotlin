@@ -238,7 +238,7 @@ private fun CallableMemberDescriptor.firstOverridden(
     )
 }
 
-private fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
+public fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
 
 private fun Map<FqName, Name>.getInversedShortNamesMap(): Map<Name, List<Name>> =
         entrySet().groupBy { it.value }.mapValues { entry -> entry.value.map { it.key.shortName() } }
