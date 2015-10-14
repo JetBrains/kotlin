@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.substitutions.getCallableSubstitutor
 
-private fun JetNamedDeclaration.getDeclarationBody(): JetElement? {
+fun JetNamedDeclaration.getDeclarationBody(): JetElement? {
     return when {
         this is JetClassOrObject -> getDelegationSpecifierList()
         this is JetPrimaryConstructor -> getContainingClassOrObject().getDelegationSpecifierList()

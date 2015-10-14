@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.JetExpression
 
-private fun getReferenceExpression(element: PsiElement?): JetSimpleNameExpression? {
+fun getReferenceExpression(element: PsiElement?): JetSimpleNameExpression? {
     return PsiTreeUtil.getParentOfType<JetSimpleNameExpression>(element, javaClass<JetSimpleNameExpression>())
 }
 
 // given 'R.a.b' returns info for all three parts of the expression 'a', 'b', 'R'
-private fun getInfo(
+fun getInfo(
         referenceExpression: JetSimpleNameExpression,
         facet: AndroidFacet
 ): AndroidResourceUtil.MyReferredResourceFieldInfo? {

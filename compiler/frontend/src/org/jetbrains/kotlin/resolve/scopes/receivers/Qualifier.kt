@@ -133,7 +133,7 @@ fun createQualifier(
     return qualifier
 }
 
-private fun QualifierReceiver.resolveAsStandaloneExpression(
+fun QualifierReceiver.resolveAsStandaloneExpression(
         context: ExpressionTypingContext,
         symbolUsageValidator: SymbolUsageValidator
 ): JetType? {
@@ -150,7 +150,7 @@ private fun QualifierReceiver.resolveAsStandaloneExpression(
     return null
 }
 
-private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(
+fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(
         context: ExpressionTypingContext,
         symbolUsageValidator: SymbolUsageValidator,
         selector: DeclarationDescriptor?

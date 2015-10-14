@@ -247,7 +247,7 @@ public fun Instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext: Bind
 public val Instruction.sideEffectFree: Boolean
     get() = owner.isSideEffectFree(this)
 
-private fun Instruction.calcSideEffectFree(): Boolean {
+fun Instruction.calcSideEffectFree(): Boolean {
     if (this !is InstructionWithValue) return false
     if (!inputValues.all { it.createdAt?.sideEffectFree ?: false }) return false
 
