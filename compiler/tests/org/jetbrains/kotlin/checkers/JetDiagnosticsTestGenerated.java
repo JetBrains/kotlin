@@ -1611,6 +1611,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("objectMembersUnsupported.kt")
+            public void testObjectMembersUnsupported() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/objectMembersUnsupported.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unused.kt")
             public void testUnused() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/unused.kt");

@@ -11,7 +11,7 @@ class C {
 }
 
 fun box(): String {
-    (Obj::foo).call(Obj)
-    (C.Companion::bar).call(C.Companion)
+    (Obj::class.members.single { it.name == "foo" }).call(Obj)
+    (C.Companion::class.members.single { it.name == "bar" }).call(C.Companion)
     return "OK"
 }

@@ -15,6 +15,8 @@ class A(val s1: String, val s2: String) {
 }
 
 
+/*
+// TODO: uncomment when callable references to object members are supported
 class AWithCompanion {
     companion object {
         @JvmField public val publicField = "1";
@@ -26,10 +28,11 @@ class AWithCompanion {
         }
     }
 }
+*/
 
 fun box(): String {
     A("1", "2").testAccessors()
-    AWithCompanion.testAccessors()
+    // AWithCompanion.testAccessors()
     return "OK"
 }
 

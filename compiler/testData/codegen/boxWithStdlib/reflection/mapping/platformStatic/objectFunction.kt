@@ -1,4 +1,5 @@
 import kotlin.jvm.JvmStatic as static
+import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 
@@ -7,7 +8,7 @@ object O {
 }
 
 fun box(): String {
-    val foo = O::foo
+    val foo = O::class.members.single { it.name == "foo" } as KFunction<*>
 
     val j = foo.javaMethod ?: return "Fail: no Java method found for O::foo"
     assertEquals(3, j.invoke(null, "abc"))

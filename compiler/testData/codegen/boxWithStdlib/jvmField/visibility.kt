@@ -2,6 +2,7 @@
 
 import java.lang.reflect.Field
 import kotlin.reflect.jvm.javaField
+import kotlin.reflect.KProperty
 import kotlin.test.assertNotEquals
 import java.lang.reflect.Modifier
 
@@ -32,10 +33,12 @@ class AWithCompanion {
         @JvmField internal val internalField = "OK";
         @JvmField protected val protectedfield = "OK";
 
+        operator fun get(name: String) = AWithCompanion.Companion::class.members.single { it.name == name } as KProperty<*>
+
         fun testVisibilities() {
-            checkVisibility(AWithCompanion.Companion::publicField.javaField!!, Modifier.PUBLIC)
-            checkVisibility(AWithCompanion.Companion::internalField.javaField!!, Modifier.PUBLIC)
-            checkVisibility(AWithCompanion.Companion::protectedfield.javaField!!, Modifier.PROTECTED)
+            checkVisibility(this["publicField"].javaField!!, Modifier.PUBLIC)
+            checkVisibility(this["internalField"].javaField!!, Modifier.PUBLIC)
+            checkVisibility(this["protectedfield"].javaField!!, Modifier.PROTECTED)
         }
     }
 }
@@ -45,10 +48,12 @@ object Object {
     @JvmField internal val internalField = "OK";
     @JvmField protected val protectedfield = "OK";
 
+    operator fun get(name: String) = Object::class.members.single { it.name == name } as KProperty<*>
+
     fun testVisibilities() {
-        checkVisibility(Object::publicField.javaField!!, Modifier.PUBLIC)
-        checkVisibility(Object::internalField.javaField!!, Modifier.PUBLIC)
-        checkVisibility(Object::protectedfield.javaField!!, Modifier.PROTECTED)
+        checkVisibility(this["publicField"].javaField!!, Modifier.PUBLIC)
+        checkVisibility(this["internalField"].javaField!!, Modifier.PUBLIC)
+        checkVisibility(this["protectedfield"].javaField!!, Modifier.PROTECTED)
     }
 }
 

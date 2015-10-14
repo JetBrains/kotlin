@@ -114,10 +114,6 @@ public final class FunctionCallableReferenceTest extends AbstractCallableReferen
         checkFooBoxIsOk();
     }
 
-    public void testClassMemberOverriddenInObject() throws Exception {
-        checkFooBoxIsOk();
-    }
-
     public void testClassMemberAndExtension() throws Exception {
         checkFooBoxIsOk();
     }

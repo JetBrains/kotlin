@@ -1,4 +1,5 @@
 import kotlin.jvm.JvmStatic as static
+import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 import kotlin.test.failsWith
@@ -10,7 +11,7 @@ class C {
 }
 
 fun box(): String {
-    val foo = C.Companion::foo
+    val foo = C.Companion::class.members.single { it.name == "foo" } as KFunction<*>
 
     val j = foo.javaMethod ?: return "Fail: no Java method found for C::foo"
     assertEquals(3, j.invoke(C, "abc"))

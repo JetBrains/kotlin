@@ -11,11 +11,13 @@ object O {
 }
 
 fun box(): String {
-    assertEquals(listOf(javaClass<A>(), javaClass<java.lang.Long>()), A::foo.parameters.map { it.type.javaType })
-    assertEquals(listOf(javaClass<O>(), javaClass<A>()), O::bar.parameters.map { it.type.javaType })
+    val foo = A::foo
+    assertEquals(listOf(javaClass<A>(), javaClass<java.lang.Long>()), foo.parameters.map { it.type.javaType })
+    assertEquals(java.lang.Long.TYPE, foo.returnType.javaType)
 
-    assertEquals(java.lang.Long.TYPE, A::foo.returnType.javaType)
-    assertEquals(javaClass<String>(), O::bar.returnType.javaType)
+    val bar = O::class.members.single { it.name == "bar" }
+    assertEquals(listOf(javaClass<O>(), javaClass<A>()), bar.parameters.map { it.type.javaType })
+    assertEquals(javaClass<String>(), bar.returnType.javaType)
 
     return "OK"
 }
