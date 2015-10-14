@@ -257,7 +257,6 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 "var"        { return JetTokens.VAR_KEYWORD ;}
 "fun"        { return JetTokens.FUN_KEYWORD ;}
 "for"        { return JetTokens.FOR_KEYWORD ;}
-//"new"        { return JetTokens.NEW_KEYWORD ;}
 "is"         { return JetTokens.IS_KEYWORD ;}
 "in"         { return JetTokens.IN_KEYWORD ;}
 "if"         { return JetTokens.IF_KEYWORD ;}
@@ -280,13 +279,8 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 ">="         { return JetTokens.GTEQ      ; }
 "=="         { return JetTokens.EQEQ      ; }
 "!="         { return JetTokens.EXCLEQ    ; }
-//"!!"         { return JetTokens.EXCLEXCL  ; }
 "&&"         { return JetTokens.ANDAND    ; }
 "||"         { return JetTokens.OROR      ; }
-//"?."         { return JetTokens.SAFE_ACCESS;}
-//"?:"         { return JetTokens.ELVIS     ; }
-//".*"         { return JetTokens.MAP       ; }
-//".?"         { return JetTokens.FILTER    ; }
 "*="         { return JetTokens.MULTEQ    ; }
 "/="         { return JetTokens.DIVEQ     ; }
 "%="         { return JetTokens.PERCEQ    ; }
