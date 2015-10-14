@@ -14,7 +14,7 @@ class RegexTest {
         assertFalse(input.matches(p))
         assertFalse(p.matches(input))
 
-        assertTrue(p.hasMatch(input))
+        assertTrue(p in input)
 
         val first = p.find(input)
         assertTrue(first != null); first!!

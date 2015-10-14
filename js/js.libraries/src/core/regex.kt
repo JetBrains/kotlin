@@ -59,11 +59,14 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
         return match != null && (match as RegExpMatch).index == 0 && nativePattern.lastIndex == input.length()
     }
 
-    /** Indicates whether the regular expression can find at least a match in the specified [input]. */
-    public fun hasMatch(input: CharSequence): Boolean {
+    /** Indicates whether the regular expression can find at least one match in the specified [input]. */
+    public fun containsMatchIn(input: CharSequence): Boolean {
         nativePattern.reset()
         return nativePattern.test(input.toString())
     }
+
+    @Deprecated("Use containsMatchIn() or 'in' operator instead.", ReplaceWith("this in input"))
+    public fun hasMatch(input: CharSequence): Boolean = containsMatchIn(input)
 
     /** Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
      *

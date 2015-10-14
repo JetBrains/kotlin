@@ -777,6 +777,12 @@ public operator fun String.contains(seq: CharSequence, ignoreCase: Boolean = fal
 public operator fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
         indexOf(char, ignoreCase = ignoreCase) >= 0
 
+/**
+ * Returns `true` if this string contains at least one match of the specified regular expression [regex].
+ */
+public operator fun CharSequence.contains(regex: Regex): Boolean = regex.containsMatchIn(this)
+
+
 // rangesDelimitedBy
 
 

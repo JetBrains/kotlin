@@ -114,8 +114,11 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
     /** Indicates whether the regular expression matches the entire [input]. */
     public fun matches(input: CharSequence): Boolean = nativePattern.matcher(input).matches()
 
-    /** Indicates whether the regular expression can find at least a match in the specified [input]. */
-    public fun hasMatch(input: CharSequence): Boolean = nativePattern.matcher(input).find()
+    /** Indicates whether the regular expression can find at least one match in the specified [input]. */
+    public fun containsMatchIn(input: CharSequence): Boolean = nativePattern.matcher(input).find()
+
+    @Deprecated("Use containsMatchIn() or 'in' operator instead.", ReplaceWith("this in input"))
+    public fun hasMatch(input: CharSequence): Boolean = containsMatchIn(input)
 
     /**
      * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
