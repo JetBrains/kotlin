@@ -6,7 +6,7 @@ public final class Outer {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    @kotlin.data() private final class Nested {
+    private final data class Nested {
         public constructor Nested(/*0*/ c: kotlin.Int)
         public final val c: kotlin.Int
         public final operator /*synthesized*/ fun component1(): kotlin.Int

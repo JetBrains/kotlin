@@ -2,7 +2,7 @@ package
 
 public fun foo(/*0*/ a: A): kotlin.Unit
 
-@kotlin.data() public final class A {
+public final data class A {
     public constructor A(/*0*/ component1: kotlin.Int)
     public final val component1: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int

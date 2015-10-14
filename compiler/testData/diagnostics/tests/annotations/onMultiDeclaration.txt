@@ -2,7 +2,7 @@ package
 
 public fun test(): kotlin.Any?
 
-@kotlin.data() public final class P {
+public final data class P {
     public constructor P(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int)
     public final val a: kotlin.Int
     public final val b: kotlin.Int

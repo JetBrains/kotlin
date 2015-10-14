@@ -3,7 +3,7 @@ package
 public fun bar(): kotlin.Array<A>
 public fun foo(): kotlin.Unit
 
-@kotlin.data() public final class A {
+public final data class A {
     public constructor A(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
     public final val x: kotlin.Int
     public final val y: kotlin.Int

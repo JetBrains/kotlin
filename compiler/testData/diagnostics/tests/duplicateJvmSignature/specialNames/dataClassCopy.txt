@@ -1,6 +1,6 @@
 package
 
-@kotlin.data() public final class C {
+public final data class C {
     public constructor C(/*0*/ c: kotlin.Int)
     public final val c: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int

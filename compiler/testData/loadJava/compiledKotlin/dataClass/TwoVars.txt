@@ -1,6 +1,6 @@
 package test
 
-@kotlin.data() public final class DataClass {
+public final data class DataClass {
     /*primary*/ public constructor DataClass(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Int)
     public final var x: kotlin.String
         public final fun <get-x>(): kotlin.String

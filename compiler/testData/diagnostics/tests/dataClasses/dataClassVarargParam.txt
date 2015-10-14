@@ -1,6 +1,6 @@
 package
 
-@kotlin.data() public final class My {
+public final data class My {
     public constructor My(/*0*/ x: kotlin.Int, /*1*/ vararg y: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     public final val x: kotlin.Int
     public final val y: kotlin.Array<out kotlin.String>
@@ -12,7 +12,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() public final class Your {
+public final data class Your {
     public constructor Your(/*0*/ vararg z: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     public final /*synthesized*/ fun copy(/*0*/ vararg z: kotlin.String /*kotlin.Array<out kotlin.String>*/): Your
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

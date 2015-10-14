@@ -4,7 +4,7 @@ public fun F(): kotlin.MutableMap<kotlin.String, kotlin.String>
 public fun hashMapOf(/*0*/ pair: StringPair): kotlin.MutableMap<kotlin.String, kotlin.String>
 public infix fun kotlin.String.to(/*0*/ second: kotlin.String): StringPair
 
-@kotlin.data() public final class StringPair {
+public final data class StringPair {
     public constructor StringPair(/*0*/ first: kotlin.String, /*1*/ second: kotlin.String)
     public final val first: kotlin.String
     public final val second: kotlin.String

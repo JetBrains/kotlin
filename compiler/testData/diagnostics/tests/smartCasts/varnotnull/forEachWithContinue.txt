@@ -2,7 +2,7 @@ package
 
 public fun list(/*0*/ start: SomeObject): SomeObject
 
-@kotlin.data() public final class SomeObject {
+public final data class SomeObject {
     public constructor SomeObject(/*0*/ n: SomeObject?)
     public final val n: SomeObject?
     public final operator /*synthesized*/ fun component1(): SomeObject?
