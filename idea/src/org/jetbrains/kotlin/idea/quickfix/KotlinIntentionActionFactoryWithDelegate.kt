@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : JetElement, D : Any>(
-        private val isLowPriority: Boolean = false
+        private val actionPriority: IntentionActionPriority = IntentionActionPriority.NORMAL
 ) : KotlinIntentionActionFactoryWithDelegate<E, D>() {
 
     protected abstract fun createFix(data: D): IntentionAction?
@@ -42,10 +42,11 @@ abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : JetElement, D 
             return createFix(data)
         }
 
-        val delegateFactory = if (isLowPriority)
-            LowPriorityQuickFixWithDelegateFactory(::createAction)
-        else
-            QuickFixWithDelegateFactory(::createAction)
+        val delegateFactory = when (actionPriority) {
+            IntentionActionPriority.NORMAL -> QuickFixWithDelegateFactory(::createAction)
+            IntentionActionPriority.HIGH -> HighPriorityQuickFixWithDelegateFactory(::createAction)
+            IntentionActionPriority.LOW -> LowPriorityQuickFixWithDelegateFactory(::createAction)
+        }
         return listOf(delegateFactory)
     }
 }

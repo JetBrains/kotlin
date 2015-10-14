@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
@@ -49,6 +50,11 @@ public open class QuickFixWithDelegateFactory(
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
         val action = delegateFactory() ?: return
+
+        assert(action.detectPriority() == this.detectPriority()) {
+            "Incorrect priority of QuickFixWithDelegateFactory wrapper for ${action.javaClass.name}"
+        }
+
         action.invoke(project, editor, file)
     }
 }
@@ -56,3 +62,19 @@ public open class QuickFixWithDelegateFactory(
 public class LowPriorityQuickFixWithDelegateFactory(
         delegateFactory: () -> IntentionAction?
 ): QuickFixWithDelegateFactory(delegateFactory), LowPriorityAction
+
+public class HighPriorityQuickFixWithDelegateFactory(
+        delegateFactory: () -> IntentionAction?
+): QuickFixWithDelegateFactory(delegateFactory), HighPriorityAction
+
+enum class IntentionActionPriority {
+    LOW, NORMAL, HIGH
+}
+
+fun IntentionAction.detectPriority(): IntentionActionPriority {
+    return when (this) {
+        is LowPriorityAction -> IntentionActionPriority.LOW
+        is HighPriorityAction -> IntentionActionPriority.HIGH
+        else -> IntentionActionPriority.NORMAL
+    }
+}
