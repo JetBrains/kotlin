@@ -114,14 +114,7 @@ public object KotlinCompilerClient {
     public fun compile(compilerService: CompileService, targetPlatform: CompileService.TargetPlatform, args: Array<out String>, out: OutputStream): Int {
 
         val outStrm = RemoteOutputStreamServer(out)
-        val servicesFacade = CompilerCallbackServicesFacadeServer()
-        try {
-            return compilerService.remoteCompile(targetPlatform, args, servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm)
-        }
-        finally {
-            servicesFacade.disconnect()
-            outStrm.disconnect()
-        }
+        return compilerService.remoteCompile(targetPlatform, args, CompilerCallbackServicesFacadeServer(), outStrm, CompileService.OutputFormat.PLAIN, outStrm)
     }
 
 
@@ -132,22 +125,15 @@ public object KotlinCompilerClient {
                                   compilerOut: OutputStream,
                                   daemonOut: OutputStream,
                                   profiler: Profiler = DummyProfiler()
-    ): Int {
-
-        val compilerOutStreamServer = RemoteOutputStreamServer(compilerOut)
-        val daemonOutStreamServer = RemoteOutputStreamServer(daemonOut)
-        val servicesFacade = CompilerCallbackServicesFacadeServer(incrementalCompilationComponents = callbackServices.incrementalCompilationComponents,
-                                                                  compilationCancelledStatus = callbackServices.compilationCanceledStatus)
-        try {
-            return profiler.withMeasure(this) {
-                compileService.remoteIncrementalCompile(targetPlatform, args, servicesFacade, compilerOutStreamServer, CompileService.OutputFormat.XML, daemonOutStreamServer)
-            }
-        }
-        finally {
-            servicesFacade.disconnect()
-            compilerOutStreamServer.disconnect()
-            daemonOutStreamServer.disconnect()
-        }
+    ): Int = profiler.withMeasure(this) {
+            compileService.remoteIncrementalCompile(
+                    targetPlatform,
+                    args,
+                    CompilerCallbackServicesFacadeServer(incrementalCompilationComponents = callbackServices.incrementalCompilationComponents,
+                                                         compilationCancelledStatus = callbackServices.compilationCanceledStatus),
+                    RemoteOutputStreamServer(compilerOut),
+                    CompileService.OutputFormat.XML,
+                    RemoteOutputStreamServer(daemonOut))
     }
 
     public val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
@@ -230,8 +216,9 @@ public object KotlinCompilerClient {
                     println("Used memory $memAfter (${"%+d".format(memAfter - memBefore)} kb)")
                 }
                 finally {
-                    servicesFacade.disconnect()
-                    outStrm.disconnect()
+                    // forcing RMI to unregister all objects and stop
+                    java.rmi.server.UnicastRemoteObject.unexportObject(servicesFacade, true)
+                    java.rmi.server.UnicastRemoteObject.unexportObject(outStrm, true)
                 }
             }
         }
@@ -284,7 +271,7 @@ public object KotlinCompilerClient {
                 }
                 .filterNotNull()
                 .toList()
-        return when (daemons.size()) {
+        return when (daemons.size) {
             0 -> null
             1 -> daemons.first()
             else -> throw IllegalStateException("Multiple daemons serving the same compiler, reset with the cleanup required")
@@ -311,13 +298,8 @@ public object KotlinCompilerClient {
 
 
     private fun startDaemon(compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, reportingTargets: DaemonReportingTargets) {
-        val javaExecutable = File(System.getProperty("java.home"), "bin").let {
-            val javaw = File(it, "javaw.exe")
-            // TODO: doesn't seem reliable enough, consider more checks if OS is of windows flavor, etc.
-            if (javaw.exists() && javaw.isFile && javaw.canExecute()) javaw else File(it, "java")
-        }
-        // TODO add os detection to specify option more precisely
-        val platformSpecificOptions = listOf("-Djava.awt.headless=true") // hide daemon in OS X
+        val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
+        val platformSpecificOptions = listOf("-Djava.awt.headless=true") // hide daemon window
         val args = listOf(
                    javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
                    platformSpecificOptions +

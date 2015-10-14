@@ -209,11 +209,4 @@ class CompileServiceImpl(
         if (!alive) throw IllegalStateException("Kotlin Compiler Service is not in alive state")
         body()
     }
-
-    // sometimes used for debugging
-    fun<R> spy(msg: String, body: () -> R): R {
-        val res = body()
-        log.info(msg + " = " + res.toString())
-        return res
-    }
 }
