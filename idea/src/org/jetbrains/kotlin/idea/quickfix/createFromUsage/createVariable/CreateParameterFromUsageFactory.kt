@@ -41,8 +41,7 @@ abstract class CreateParameterFromUsageFactory<E : JetElement>: CreateFromUsageF
         return QuickFixWithDelegateFactory {
             quickFixDataFactory(originalElementPointer)?.let { data ->
                 CreateParameterFromUsageFix(data.parameterInfo.callableDescriptor as FunctionDescriptor,
-                                            data.context,
-                                            data.parameterInfo,
+                        data.parameterInfo,
                                             data.originalExpression)
             } ?: NullQuickFix
         }

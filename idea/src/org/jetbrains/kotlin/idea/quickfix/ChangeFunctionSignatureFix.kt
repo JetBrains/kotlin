@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 
 abstract class ChangeFunctionSignatureFix(
@@ -92,13 +91,11 @@ abstract class ChangeFunctionSignatureFix(
 
     protected fun getNewParameterInfo(
             functionDescriptor: FunctionDescriptor,
-            bindingContext: BindingContext,
             argument: ValueArgument,
             validator: Function1<String, Boolean>): JetParameterInfo {
         val name = getNewArgumentName(argument, validator)
         val expression = argument.getArgumentExpression()
-        var type: JetType? = if (expression != null) bindingContext.getType(expression) else null
-        type = if (type != null) type else functionDescriptor.builtIns.nullableAnyType
+        val type = expression?.let { it.analyze().getType(it) } ?: functionDescriptor.builtIns.nullableAnyType
         val parameterInfo = JetParameterInfo(functionDescriptor, -1, name, type, null, null, JetValVar.None, null)
         parameterInfo.currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
 

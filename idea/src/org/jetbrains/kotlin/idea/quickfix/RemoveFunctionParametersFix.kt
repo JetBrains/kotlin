@@ -22,13 +22,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.BindingContext
 
 class RemoveFunctionParametersFix(
         context: PsiElement,
@@ -41,12 +39,11 @@ class RemoveFunctionParametersFix(
     }
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        val bindingContext = file.analyzeFully()
         runChangeSignature(
                 project,
                 functionDescriptor,
                 object : JetChangeSignatureConfiguration {
-                    override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
+                    override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
                         return originalDescriptor.modify { descriptor ->
                             val index = functionDescriptor.valueParameters.indexOf(parameterToRemove)
                             descriptor.removeParameter(if (descriptor.receiver != null) index + 1 else index)
@@ -56,7 +53,6 @@ class RemoveFunctionParametersFix(
                     override fun performSilently(affectedFunctions: Collection<PsiElement>) = false
                     override fun forcePerformForSelectedFunctionOnly() = false
                 },
-                bindingContext,
                 context,
                 text)
     }

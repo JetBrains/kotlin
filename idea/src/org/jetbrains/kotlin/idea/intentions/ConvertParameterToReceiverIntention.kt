@@ -40,7 +40,7 @@ public class ConvertParameterToReceiverIntention : JetSelfTargetingIntention<Jet
 
     private fun configureChangeSignature(parameterIndex: Int): JetChangeSignatureConfiguration {
         return object : JetChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
+            override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
                 return originalDescriptor.modify { it.receiver = originalDescriptor.getParameters()[parameterIndex] }
             }
 
@@ -55,6 +55,6 @@ public class ConvertParameterToReceiverIntention : JetSelfTargetingIntention<Jet
         val parameterIndex = function.getValueParameters().indexOf(element)
         val context = function.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return
-        runChangeSignature(element.getProject(), descriptor, configureChangeSignature(parameterIndex), context, element, getText())
+        runChangeSignature(element.project, descriptor, configureChangeSignature(parameterIndex), element, getText())
     }
 }

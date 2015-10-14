@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.project.Project
@@ -27,7 +26,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.changeSignature.ChangeSignatureHandler
@@ -151,7 +149,7 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
                 return
             }
 
-            runChangeSignature(project, callableDescriptor, JetChangeSignatureConfiguration.Empty, bindingContext, context, null)
+            runChangeSignature(project, callableDescriptor, JetChangeSignatureConfiguration.Empty, context, null)
         }
 
         private fun getDescriptor(bindingContext: BindingContext, element: PsiElement): DeclarationDescriptor? {

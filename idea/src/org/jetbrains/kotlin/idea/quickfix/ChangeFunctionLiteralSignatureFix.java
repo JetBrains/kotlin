@@ -55,11 +55,10 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
 
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
-        BindingContext bindingContext = ResolutionUtils.analyzeFully(file);
         JetChangeSignatureKt.runChangeSignature(project, getFunctionDescriptor(), new JetChangeSignatureConfiguration() {
             @NotNull
             @Override
-            public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor, @NotNull BindingContext bindingContext) {
+            public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor) {
                 return JetChangeSignatureKt.modify(
                         originalDescriptor,
                         new Function1<JetMutableMethodDescriptor, Unit>() {
@@ -88,6 +87,6 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
             public boolean forcePerformForSelectedFunctionOnly() {
                 return false;
             }
-        }, bindingContext, getContext(), getText());
+        }, getContext(), getText());
     }
 }

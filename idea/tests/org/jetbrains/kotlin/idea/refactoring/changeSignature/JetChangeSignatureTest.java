@@ -250,7 +250,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
             JetChangeSignatureConfiguration empty = new JetChangeSignatureConfiguration() {
                 @NotNull
                 @Override
-                public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor, @NotNull BindingContext bindingContext) {
+                public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor) {
                     return originalDescriptor;
                 }
 
@@ -264,10 +264,9 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                     return false;
                 }
             };
-            BindingContext context = ResolutionUtils.analyze(method, BodyResolveMode.FULL);
 
             JetChangeSignatureKt
-                    .runChangeSignature(getProject(), JetChangeInfoKt.getOriginalBaseFunctionDescriptor(changeInfo), empty, context, method, "test");
+                    .runChangeSignature(getProject(), JetChangeInfoKt.getOriginalBaseFunctionDescriptor(changeInfo), empty, method, "test");
         }
         catch (RuntimeException e) {
             assertTrue(e.getMessage().startsWith("Refactoring cannot be"));
@@ -1406,7 +1405,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         assertNotNull(callableDescriptor);
 
         return JetChangeSignatureKt.createChangeInfo(
-                project, callableDescriptor, JetChangeSignatureConfiguration.Empty.INSTANCE$, bindingContext, context
+                project, callableDescriptor, JetChangeSignatureConfiguration.Empty.INSTANCE$, context
         );
     }
 

@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
@@ -76,12 +76,12 @@ public class AddFunctionParametersFix(
     }
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        runChangeSignature(project, functionDescriptor, addParameterConfiguration(), callElement.analyzeFully(), callElement, text)
+        runChangeSignature(project, functionDescriptor, addParameterConfiguration(), callElement, text)
     }
 
     private fun addParameterConfiguration(): JetChangeSignatureConfiguration {
         return object : JetChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
+            override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
                 return originalDescriptor.modify {
                     val parameters = functionDescriptor.valueParameters
                     val arguments = callElement.valueArguments
@@ -94,6 +94,7 @@ public class AddFunctionParametersFix(
                         if (i < parameters.size()) {
                             validator.addName(parameters.get(i).name.asString())
                             val argumentType = expression?.let {
+                                val bindingContext = it.analyze()
                                 bindingContext[BindingContext.SMARTCAST, it] ?: bindingContext.getType(it)
                             }
                             val parameterType = parameters.get(i).type
@@ -106,7 +107,6 @@ public class AddFunctionParametersFix(
                         else {
                             val parameterInfo = getNewParameterInfo(
                                     originalDescriptor.baseDescriptor as FunctionDescriptor,
-                                    bindingContext,
                                     argument,
                                     validator
                             )

@@ -48,9 +48,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
@@ -60,9 +60,8 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
 
     private inner class Converter(
             project: Project,
-            descriptor: FunctionDescriptor,
-            context: BindingContext
-    ): CallableRefactoring<FunctionDescriptor>(project, descriptor, context, getText()) {
+            descriptor: FunctionDescriptor
+    ): CallableRefactoring<FunctionDescriptor>(project, descriptor, getText()) {
         private val elementsToShorten = ArrayList<JetElement>()
 
         private val newName: String by lazy {
@@ -123,7 +122,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
                         callable.typeFqNameToAdd = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeToInsert)
                     }
 
-                    callableDescriptor.getContainingScope(bindingContext)
+                    callableDescriptor.getContainingScope()
                             ?.getProperties(callableDescriptor.name, NoLookupLocation.FROM_IDE)
                             ?.firstOrNull()
                             ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
@@ -214,6 +213,6 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
     override fun applyTo(element: JetNamedFunction, editor: Editor) {
         val context = element.analyze(BodyResolveMode.PARTIAL)
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as FunctionDescriptor
-        Converter(element.getProject(), descriptor, context).run()
+        Converter(element.getProject(), descriptor).run()
     }
 }

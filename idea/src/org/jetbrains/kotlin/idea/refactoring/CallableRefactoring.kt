@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetBlockExpression
@@ -49,7 +50,6 @@ import java.util.*
 public abstract class CallableRefactoring<T: CallableDescriptor>(
         val project: Project,
         val callableDescriptor: T,
-        val bindingContext: BindingContext,
         val commandName: String) {
     private val LOG = Logger.getInstance(javaClass<CallableRefactoring<*>>())
 
@@ -183,11 +183,12 @@ fun getAffectedCallables(project: Project, descriptorsForChange: Collection<Call
     }
 }
 
-fun DeclarationDescriptor.getContainingScope(bindingContext: BindingContext): JetScope? {
+fun DeclarationDescriptor.getContainingScope(): JetScope? {
     val declaration = DescriptorToSourceUtils.descriptorToDeclaration(this)
     val block = declaration?.getParent() as? JetBlockExpression
     if (block != null) {
-        return bindingContext[BindingContext.RESOLUTION_SCOPE, block.getStatements().last()]
+        val lastStatement = block.statements.last()
+        return lastStatement.analyze()[BindingContext.RESOLUTION_SCOPE, lastStatement]
     }
     else {
         val containingDescriptor = getContainingDeclaration() ?: return null

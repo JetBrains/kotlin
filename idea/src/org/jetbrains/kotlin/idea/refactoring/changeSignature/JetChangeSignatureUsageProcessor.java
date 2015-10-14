@@ -621,7 +621,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         else if (function instanceof JetFunction)
             parametersScope = CallableRefactoringKt.getBodyScope((JetFunction) function, bindingContext);
 
-        JetScope callableScope = CallableRefactoringKt.getContainingScope(oldDescriptor, bindingContext);
+        JetScope callableScope = CallableRefactoringKt.getContainingScope(oldDescriptor);
 
         JetMethodDescriptor.Kind kind = JetChangeInfoKt.getKind(changeInfo);
         if (!kind.isConstructor() && callableScope != null && !info.getNewName().isEmpty()) {

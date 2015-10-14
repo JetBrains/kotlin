@@ -25,11 +25,9 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.BindingContext
 
 public class CreateParameterFromUsageFix<E : JetElement>(
         val functionDescriptor: FunctionDescriptor,
-        val bindingContext: BindingContext,
         val parameterInfo: JetParameterInfo,
         val defaultValueContext: E
 ) : CreateFromUsageFixBase<E>(defaultValueContext) {
@@ -41,13 +39,13 @@ public class CreateParameterFromUsageFix<E : JetElement>(
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         val config = object : JetChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
+            override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
                 return originalDescriptor.modify { it.addParameter(parameterInfo) }
             }
 
             override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = false
         }
 
-        runChangeSignature(project, functionDescriptor, config, bindingContext, defaultValueContext, text)
+        runChangeSignature(project, functionDescriptor, config, defaultValueContext, text)
     }
 }
