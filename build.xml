@@ -807,7 +807,7 @@
     </target>
 
     <target name="reflection">
-        <new-kotlinc output="${output}/classes/reflection" moduleName="kotlin-reflection" additionalOptions="-Xmultifile-package-facades">
+        <new-kotlinc output="${output}/classes/reflection" moduleName="kotlin-reflection">
             <src>
                 <include name="core/reflection.jvm/src"/>
             </src>
