@@ -419,6 +419,8 @@ fun generators(): List<GenericFunction> {
             """
         }
 
+        exclude(CharSequences)
+        include(Strings)
         doc(Strings) {
             """
             Splits the original string into pair of strings,
@@ -596,8 +598,8 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(other: String, transform: (Char, Char) -> V)") {
-        only(Strings)
+    templates add f("zip(other: CharSequence, transform: (Char, Char) -> V)") {
+        only(CharSequences)
         doc {
             """
             Returns a list of values built from characters of both strings with same indexes using provided [transform]. List has length of shortest string.

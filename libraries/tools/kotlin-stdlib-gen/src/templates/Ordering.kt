@@ -39,6 +39,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
+        include(Strings)
         doc(Strings) { "Returns a string with characters in reversed order." }
         returns(Strings) { "SELF" }
         body(Strings) {
@@ -48,7 +49,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        exclude(Sequences)
+        exclude(Sequences, CharSequences)
     }
 
     templates add f("reversedArray()") {
