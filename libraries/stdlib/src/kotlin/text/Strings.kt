@@ -210,17 +210,6 @@ public fun CharSequence.hasSurrogatePairAt(index: Int): Boolean {
 }
 
 /**
- * Returns a subsequence obtained by taking the characters at the given [indices] in this sequence.
- */
-public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
-    val sb = StringBuilder()
-    for (i in indices) {
-        sb.append(get(i))
-    }
-    return sb.toString()
-}
-
-/**
  * Returns a substring specified by the given [range].
  */
 public fun String.substring(range: IntRange): String = substring(range.start, range.end + 1)

@@ -385,13 +385,6 @@ public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.S
 public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
 
 /**
- * Returns a subsequence of this sequence specified by given [range].
- */
-public fun CharSequence.slice(range: IntRange): CharSequence {
-    return subSequence(range.start, range.end + 1) // inclusive
-}
-
-/**
  * Converts the string into a regular expression [Pattern] optionally
  * with the specified [flags] from [Pattern] or'd together
  * so that strings can be split or matched on.
