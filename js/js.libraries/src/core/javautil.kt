@@ -70,9 +70,7 @@ public open class LinkedList<E>() : AbstractList<E>() {
     override fun set(index: Int, element: E): E = noImpl
     override fun add(index: Int, element: E): Unit = noImpl
 
-    @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     public fun poll(): E? = noImpl
-    @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     public fun peek(): E? = noImpl
     public fun offer(e: E): Boolean = noImpl
 }
@@ -104,13 +102,10 @@ public open class LinkedHashSet<E>(
 public open class HashMap<K, V>(initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR) : MutableMap<K, V> {
     override val size: Int get() = noImpl
     override fun isEmpty(): Boolean = noImpl
-    @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     override fun get(key: K): V? = noImpl
     override fun containsKey(key: K): Boolean = noImpl
-    @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     override fun put(key: K, value: V): V? = noImpl
     override fun putAll(m: Map<out K, V>): Unit = noImpl
-    @Suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     override fun remove(key: K): V? = noImpl
     override fun clear(): Unit = noImpl
     override fun containsValue(value: V): Boolean = noImpl

@@ -3,7 +3,7 @@ fun <T> getJavaClass() : java.lang.Class<T> { return "" <!CAST_NEVER_SUCCEEDS!>a
 
 public class Throwables() {
     companion object {
-        public fun <X : Throwable?> propagateIfInstanceOf(throwable : Throwable?, declaredType : Class<X<!BASE_WITH_NULLABLE_UPPER_BOUND!>?<!>>?) {
+        public fun <X : Throwable?> propagateIfInstanceOf(throwable : Throwable?, declaredType : Class<X?>?) {
             if (((throwable != null) && declaredType?.isInstance(throwable)!!))
             {
                 throw declaredType?.cast(throwable)!!

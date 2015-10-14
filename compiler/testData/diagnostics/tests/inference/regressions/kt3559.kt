@@ -1,6 +1,6 @@
 // KT-3559 Strange inference failure error message
 
-public inline fun <T:Any, R> let(subj: T?, body: (T) -> R): R<!BASE_WITH_NULLABLE_UPPER_BOUND!>?<!> {
+public inline fun <T:Any, R> let(subj: T?, body: (T) -> R): R? {
     return if (subj != null) body(<!DEBUG_INFO_SMARTCAST!>subj<!>) else null
 }
 
