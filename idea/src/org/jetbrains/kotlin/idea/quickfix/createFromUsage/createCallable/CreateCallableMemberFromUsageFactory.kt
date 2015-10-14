@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.LowPriorityQuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.quickfix.NullQuickFix
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFactory
+import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public abstract class CreateCallableMemberFromUsageFactory<E : JetElement>(
         val extensionsSupported: Boolean = true
-) : CreateFromUsageFactory<E, List<CallableInfo>>() {
+) : KotlinIntentionActionFactoryWithDelegate<E, List<CallableInfo>>() {
     private fun newCallableQuickFix(
             originalElementPointer: SmartPsiElementPointer<E>,
             lowPriority: Boolean,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix.createFromUsage
+package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.util.Ref
@@ -22,14 +22,12 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
-import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-public abstract class CreateFromUsageFactory<E : JetElement, D : Any> : JetIntentionActionsFactory() {
+public abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D : Any> : JetIntentionActionsFactory() {
     protected abstract fun getElementOfInterest(diagnostic: Diagnostic): E?
 
     protected open fun createQuickFix(

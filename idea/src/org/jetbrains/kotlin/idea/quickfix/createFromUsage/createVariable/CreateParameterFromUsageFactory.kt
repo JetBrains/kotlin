@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.NullQuickFix
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFactory
+import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -32,7 +32,7 @@ data class CreateParameterData<E : JetElement>(
         val originalExpression: E
 )
 
-abstract class CreateParameterFromUsageFactory<E : JetElement>: CreateFromUsageFactory<E, CreateParameterData<E>>() {
+abstract class CreateParameterFromUsageFactory<E : JetElement>: KotlinIntentionActionFactoryWithDelegate<E, CreateParameterData<E>>() {
     override fun createQuickFix(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
