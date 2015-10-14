@@ -20,7 +20,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
@@ -34,7 +33,7 @@ class ChangeFunctionLiteralSignatureFix(
         private val parameterTypes: List<JetType>
 ) : ChangeFunctionSignatureFix(functionLiteral, functionDescriptor) {
 
-    override fun getText() = JetBundle.message("change.function.literal.signature")
+    override fun getText() = "Change the signature of function literal"
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         runChangeSignature(
