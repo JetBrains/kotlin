@@ -36,6 +36,18 @@ public fun <E> MutableList<E>.remove(index: Int): E = removeAt(index)
 @Deprecated("Use explicit cast to MutableCollection<Any?> instead", ReplaceWith("(this as MutableCollection<Any?>).remove(o)"))
 public fun <E> MutableCollection<E>.remove(o: Any?): Boolean = remove(o as E)
 
+@Deprecated("Use explicit cast to MutableCollection<Any?> instead", ReplaceWith("(this as MutableCollection<Any?>).removeAll(c)"))
+public fun <E> MutableCollection<E>.removeAll(c: Collection<Any?>): Boolean = removeAll(c as Collection<E>)
+
+@Deprecated("Use explicit cast to MutableCollection<Any?> instead", ReplaceWith("(this as MutableCollection<Any?>).retainAll(c)"))
+public fun <E> MutableCollection<E>.retainAll(c: Collection<Any?>): Boolean = retainAll(c as Collection<E>)
+
+@Deprecated("Use explicit cast to List<Any?> instead", ReplaceWith("(this as List<Any?>).indexOf(o)"))
+public fun <E> List<E>.indexOf(o: Any?): Int = indexOf(o as E)
+
+@Deprecated("Use explicit cast to List<Any?> instead", ReplaceWith("(this as List<Any?>).lastIndexOf(o)"))
+public fun <E> List<E>.lastIndexOf(o: Any?): Int = lastIndexOf(o as E)
+
 @Deprecated("Use property 'length' instead", ReplaceWith("this.length"))
 public fun CharSequence.length(): Int = length
 
