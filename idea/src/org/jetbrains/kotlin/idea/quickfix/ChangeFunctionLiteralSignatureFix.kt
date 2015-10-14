@@ -75,11 +75,7 @@ class ChangeFunctionLiteralSignatureFix(
             return Data(element, descriptor, parameterTypes)
         }
 
-        override fun createQuickFix(diagnostic: Diagnostic, quickFixDataFactory: () -> Data?): QuickFixWithDelegateFactory? {
-            return QuickFixWithDelegateFactory {
-                val (functionLiteral, descriptor, parameterTypes) = quickFixDataFactory() ?: return@QuickFixWithDelegateFactory null
-                ChangeFunctionLiteralSignatureFix(functionLiteral, descriptor, parameterTypes)
-            }
-        }
+        override fun createQuickFix(data: Data)
+                = ChangeFunctionLiteralSignatureFix(data.functionLiteral, data.descriptor, data.parameterTypes)
     }
 }

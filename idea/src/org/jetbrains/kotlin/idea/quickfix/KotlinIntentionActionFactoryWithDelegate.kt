@@ -25,16 +25,29 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : JetElement, D : Any> : KotlinIntentionActionFactoryWithDelegate<E, D>() {
-    protected open fun createQuickFix(diagnostic: Diagnostic, quickFixDataFactory: () -> D?): QuickFixWithDelegateFactory? = null
+abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : JetElement, D : Any>(
+        private val isLowPriority: Boolean = false
+) : KotlinIntentionActionFactoryWithDelegate<E, D>() {
+
+    protected abstract fun createQuickFix(data: D): IntentionAction?
 
     protected override final fun createQuickFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
             quickFixDataFactory: () -> D?
-    ): List<QuickFixWithDelegateFactory> = createQuickFix(diagnostic, quickFixDataFactory).singletonOrEmptyList()
+    ): List<QuickFixWithDelegateFactory> {
+        fun createAction(): IntentionAction? {
+            val data = quickFixDataFactory() ?: return null
+            return createQuickFix(data)
+        }
+
+        val delegateFactory = if (isLowPriority)
+            LowPriorityQuickFixWithDelegateFactory(::createAction)
+        else
+            QuickFixWithDelegateFactory(::createAction)
+        return listOf(delegateFactory)
+    }
 }
 
 abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D : Any> : JetIntentionActionsFactory() {
@@ -60,9 +73,8 @@ abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D : Any>
         // Cache data so that it can be shared between quick fixes bound to the same element & diagnostic
         // Cache null values
         var cachedData: Ref<D>? = null
-        val actions: List<QuickFixWithDelegateFactory>
-        try {
-            actions = createQuickFixes(originalElementPointer, diagnostic) factory@ {
+        val actions: List<QuickFixWithDelegateFactory> = try {
+            createQuickFixes(originalElementPointer, diagnostic) factory@ {
                 val element = originalElementPointer.element ?: return@factory null
                 val diagnosticElement = diagnosticElementPointer.element ?: return@factory null
                 if (!diagnosticElement.isValid || !element.isValid) return@factory null

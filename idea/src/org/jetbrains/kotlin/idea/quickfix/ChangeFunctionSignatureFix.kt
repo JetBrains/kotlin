@@ -88,12 +88,7 @@ abstract class ChangeFunctionSignatureFix(
             return Data(element, descriptor)
         }
 
-        override fun createQuickFix(diagnostic: Diagnostic, quickFixDataFactory: () -> Data?): QuickFixWithDelegateFactory {
-            return QuickFixWithDelegateFactory {
-                val (callElement, descriptor) = quickFixDataFactory() ?: return@QuickFixWithDelegateFactory null
-                createFix(callElement, callElement, descriptor)
-            }
-        }
+        override fun createQuickFix(data: Data) = createFix(data.callElement, data.callElement, data.descriptor)
 
         private fun createFix(callElement: JetCallElement, context: PsiElement, descriptor: CallableDescriptor): ChangeFunctionSignatureFix? {
             val functionDescriptor = when (descriptor) {
