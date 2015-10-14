@@ -41,7 +41,7 @@ fun box(): String {
     baz + A.bar
 
     if (metadatas.keys.size != 3)
-        return "Fail: only three instances of KProperty should have been created\n${metadatas.keySet()}"
+        return "Fail: only three instances of KProperty should have been created\n${metadatas.keys}"
 
     return "OK"
 }
