@@ -83,6 +83,12 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
         doTest(fileName);
     }
 
+    @TestMetadata("FileFacade.java")
+    public void testFileFacade() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/FileFacade.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("Getter.java")
     public void testGetter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/Getter.java");
@@ -98,12 +104,6 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
     @TestMetadata("ObjectInstance.java")
     public void testObjectInstance() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/ObjectInstance.java");
-        doTest(fileName);
-    }
-
-    @TestMetadata("PackageFacade.java")
-    public void testPackageFacade() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/PackageFacade.java");
         doTest(fileName);
     }
 

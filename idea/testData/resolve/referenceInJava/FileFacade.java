@@ -1,6 +1,6 @@
 public class PackageFacade {
     public static void foo() {
-        k.KP<caret>ackage.topLevelFunction()
+        k.Dep<caret>endenciesKt.topLevelFunction()
     }
 }
 
