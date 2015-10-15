@@ -106,5 +106,4 @@ fun foo(
 // 4 INVOKEVIRTUAL A[0-9]\.contains \(Ljava/lang/Object;\)Z
 // 2 INVOKEVIRTUAL A7\.contains \(I\)Z
 // 1 INVOKEINTERFACE java/util/Collection.contains \(Ljava/lang/Object;\)Z
-// 1 INVOKEINTERFACE I1.contains \(Ljava/lang/Object;\)Z
-// 1 INVOKEINTERFACE I2.contains \(Ljava/lang/String;\)Z
+// 2 INVOKEINTERFACE I[1-2].contains \(Ljava/lang/Object;\)Z

@@ -757,7 +757,7 @@ public class JetTypeMapper {
                 }
 
                 FunctionDescriptor overriddenSpecialBuiltinFunction =
-                        SpecialBuiltinMembers.<FunctionDescriptor>getOverriddenBuiltinWithDifferentJvmName(functionDescriptor.getOriginal());
+                        SpecialBuiltinMembers.<FunctionDescriptor>getOverriddenBuiltinWithDifferentJvmDescriptor(functionDescriptor.getOriginal());
                 FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null
                                                     ? overriddenSpecialBuiltinFunction.getOriginal()
                                                     : functionDescriptor.getOriginal();
