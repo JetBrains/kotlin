@@ -709,3 +709,5 @@ public fun KtClass.createPrimaryConstructorParameterListIfAbsent(): KtParameterL
     if (parameterList != null) return parameterList
     return constructor.add(KtPsiFactory(project).createParameterList("()")) as KtParameterList
 }
+
+fun PsiNamedElement.isInterfaceClass(): Boolean = this is KtClass && isInterface() || this is PsiClass && isInterface
