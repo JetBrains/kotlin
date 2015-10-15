@@ -27,7 +27,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiFile
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetParameterList
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.VisibilityUtil
@@ -53,31 +51,47 @@ import java.util.*
 /**
  * Fix that changes member function's signature to match one of super functions' signatures.
  */
-class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintAction<JetNamedFunction>(element) {
+class ChangeMemberFunctionSignatureFix private constructor(
+        element: JetNamedFunction,
+        private val signatures: List<ChangeMemberFunctionSignatureFix.Signature>
+) : JetHintAction<JetNamedFunction>(element) {
+
+    init {
+        assert(signatures.isNotEmpty())
+    }
+
+    private class Signature(function: FunctionDescriptor) {
+        val sourceCode = SIGNATURE_SOURCE_RENDERER.render(function)
+        val preview = SIGNATURE_PREVIEW_RENDERER.render(function)
+
+        companion object {
+            private val SIGNATURE_SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE.withOptions {
+                renderDefaultValues = false
+            }
+
+            private val SIGNATURE_PREVIEW_RENDERER = DescriptorRenderer.withOptions {
+                typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
+                withDefinedIn = false
+                modifiers = emptySet()
+                nameShortness = NameShortness.SHORT
+                unitReturnType = false
+                renderDefaultValues = false
+            }
+        }
+    }
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = diagnostic.psiElement as? JetNamedFunction ?: return null
-            return ChangeMemberFunctionSignatureFix(function)
-        }
-
-        private val SIGNATURE_SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE.withOptions {
-            renderDefaultValues = false
-        }
-
-        private val SIGNATURE_PREVIEW_RENDERER = DescriptorRenderer.withOptions {
-            typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
-            withDefinedIn = false
-            modifiers = emptySet<DescriptorRendererModifier>()
-            nameShortness = NameShortness.SHORT
-            unitReturnType = false
-            renderDefaultValues = false
+            val signatures = computePossibleSignatures(function)
+            if (signatures.isEmpty()) return null
+            return ChangeMemberFunctionSignatureFix(function, signatures)
         }
 
         /**
          * Computes all the signatures a 'functionElement' could be changed to in order to remove NOTHING_TO_OVERRIDE error.
          */
-        private fun computePossibleSignatures(functionElement: JetNamedFunction): List<FunctionDescriptor> {
+        private fun computePossibleSignatures(functionElement: JetNamedFunction): List<Signature> {
             if (functionElement.valueParameterList == null) {
                 // we won't be able to modify its signature
                 return emptyList()
@@ -86,20 +100,17 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
             val functionDescriptor = functionElement.resolveToDescriptor() as FunctionDescriptor
             val superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor)
 
-            val possibleSignatures: Map<String, FunctionDescriptor> = superFunctions
+            return superFunctions
                     .filter { it.kind.isReal }
-                    .map { changeSignatureToMatch(functionDescriptor, it) }
-                    .toMapBy { SIGNATURE_PREVIEW_RENDERER.render(it) }
-
-            return possibleSignatures.keys
-                    .sorted()
-                    .map { possibleSignatures[it]!! }
+                    .map { signatureToMatch(functionDescriptor, it) }
+                    .distinctBy { it.sourceCode }
+                    .sortedBy { it.preview }
         }
 
         /**
          * Changes function's signature to match superFunction's signature. Returns new descriptor.
          */
-        private fun changeSignatureToMatch(function: FunctionDescriptor, superFunction: FunctionDescriptor): FunctionDescriptor {
+        private fun signatureToMatch(function: FunctionDescriptor, superFunction: FunctionDescriptor): Signature {
             val superParameters = superFunction.valueParameters
             val parameters = function.valueParameters
             val newParameters = Lists.newArrayList(superParameters)
@@ -121,7 +132,8 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
                             /* copyOverrides = */ true),
                     newParameters)
             newFunction.addOverriddenDescriptor(superFunction)
-            return newFunction
+
+            return Signature(newFunction)
         }
 
         /**
@@ -182,27 +194,19 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
         }
     }
 
-    private val possibleSignatures = computePossibleSignatures(element)
-
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return super.isAvailable(project, editor, file) && !possibleSignatures.isEmpty()
-    }
-
     override fun getText(): String {
-        val single = possibleSignatures.singleOrNull()
-        if (single != null) {
-            return "Change function signature to '${SIGNATURE_PREVIEW_RENDERER.render(single)}'"
-        }
-        else {
-            return "Change function signature..."
-        }
+        val single = signatures.singleOrNull()
+        return if (single != null)
+            "Change function signature to '${single.preview}'"
+        else
+            "Change function signature..."
     }
 
     override fun getFamilyName() = "Change function signature"
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         CommandProcessor.getInstance().runUndoTransparentAction {
-            MyAction(project, editor, element, possibleSignatures).execute()
+            MyAction(project, editor, element, signatures).execute()
         }
     }
 
@@ -235,15 +239,13 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
 
     }
 
-    override fun showHint(editor: Editor): Boolean {
-        return possibleSignatures.isNotEmpty() && !HintManager.getInstance().hasShownHintsThatWillHideByOtherHint(true)
-    }
+    override fun showHint(editor: Editor) = !HintManager.getInstance().hasShownHintsThatWillHideByOtherHint(true)
 
     private class MyAction(
             private val project: Project,
             private val editor: Editor?,
             private val function: JetNamedFunction,
-            private val signatures: List<FunctionDescriptor>
+            private val signatures: List<Signature>
     ) {
         fun execute() {
             PsiDocumentManager.getInstance(project).commitAllDocuments()
@@ -258,31 +260,29 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
             }
         }
 
-        private val signaturePopup: BaseListPopupStep<FunctionDescriptor>
+        private val signaturePopup: BaseListPopupStep<Signature>
             get() {
-                return object : BaseListPopupStep<FunctionDescriptor>("Choose Signature", signatures) {
+                return object : BaseListPopupStep<Signature>("Choose Signature", signatures) {
                     override fun isAutoSelectionEnabled() = false
 
-                    override fun onChosen(selectedValue: FunctionDescriptor, finalChoice: Boolean): PopupStep<Any>? {
+                    override fun onChosen(selectedValue: Signature, finalChoice: Boolean): PopupStep<Any>? {
                         if (finalChoice) {
                             changeSignature(selectedValue)
                         }
                         return PopupStep.FINAL_CHOICE
                     }
 
-                    override fun getIconFor(aValue: FunctionDescriptor) = PlatformIcons.FUNCTION_ICON
+                    override fun getIconFor(aValue: Signature) = PlatformIcons.FUNCTION_ICON
 
-                    override fun getTextFor(aValue: FunctionDescriptor) = SIGNATURE_PREVIEW_RENDERER.render(aValue)
+                    override fun getTextFor(aValue: Signature) = aValue.preview
                 }
             }
 
-        private fun changeSignature(patternDescriptor: FunctionDescriptor) {
-            val signatureString = SIGNATURE_SOURCE_RENDERER.render(patternDescriptor)
-
+        private fun changeSignature(signature: Signature) {
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
             project.executeWriteCommand("Change Function Signature") {
-                val patternFunction = JetPsiFactory(project).createFunction(signatureString)
+                val patternFunction = JetPsiFactory(project).createFunction(signature.sourceCode)
 
                 val newTypeRef = function.setTypeReference(patternFunction.typeReference)
                 if (newTypeRef != null) {
