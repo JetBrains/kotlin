@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcod
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
-abstract class AbstractGenerateHashCodeAndEqualsActionTest : AbstractGenerateActionTest() {
+abstract class AbstractGenerateHashCodeAndEqualsActionTest : AbstractCodeInsightActionTest() {
     override fun createAction(fileText: String) = KotlinGenerateEqualsAndHashcodeAction()
 
     override fun doTest(path: String) {

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/codeInsight/generate/secondaryConstructors")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class GenerateActionTestGenerated extends AbstractGenerateActionTest {
+public class CodeInsightActionTestGenerated extends AbstractCodeInsightActionTest {
     public void testAllFilesPresentInSecondaryConstructors() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/generate/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
     }

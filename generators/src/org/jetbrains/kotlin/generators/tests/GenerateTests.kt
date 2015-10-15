@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeLightClassTest
 import org.jetbrains.kotlin.idea.codeInsight.*
-import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateActionTest
+import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractCodeInsightActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateHashCodeAndEqualsActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateTestSupportMethodActionTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractCodeMoverTest
@@ -746,7 +746,7 @@ fun main(args: Array<String>) {
             model("codeInsight/generate/equalsWithHashCode")
         }
 
-        testClass<AbstractGenerateActionTest>() {
+        testClass<AbstractCodeInsightActionTest>() {
             model("codeInsight/generate/secondaryConstructors")
         }
     }

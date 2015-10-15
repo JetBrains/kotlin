@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 
-abstract class AbstractGenerateActionTest : JetLightCodeInsightFixtureTestCase() {
+abstract class AbstractCodeInsightActionTest : JetLightCodeInsightFixtureTestCase() {
     protected open fun createAction(fileText: String): CodeInsightAction {
         val actionClassName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// ACTION_CLASS: ")
         return Class.forName(actionClassName).newInstance() as CodeInsightAction
