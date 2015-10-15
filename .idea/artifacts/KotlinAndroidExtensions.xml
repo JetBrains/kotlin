@@ -1,7 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <component name="ArtifactManager">
   <artifact name="KotlinAndroidExtensions">
     <output-path>$PROJECT_DIR$/out/artifacts/KotlinAndroidExtensions</output-path>
+    <properties id="ant-postprocessing">
+      <options enabled="true">
+        <file>file://$PROJECT_DIR$/idea-runner/runner.xml</file>
+        <target>copy-runtime-for-idea-plugin</target>
+      </options>
+    </properties>
     <root id="root">
       <element id="directory" name="lib">
         <element id="archive" name="kotlin-android-extensions.jar">
@@ -15,7 +20,6 @@
         <element id="archive" name="android-compiler-plugin.jar">
           <element id="module-output" name="android-compiler-plugin" />
         </element>
-        <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-runtime.jar" />
       </element>
     </root>
   </artifact>

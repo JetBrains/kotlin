@@ -48,8 +48,9 @@
         </condition>
 
         <!--suppress AntResolveInspection -->
-        <copy file="${runtime.to.copy}" tofile="${artifact.output.path}/lib/kotlin-runtime.jar"/>
-        <copy file="${reflect.to.copy}" tofile="${artifact.output.path}/lib/kotlin-reflect.jar"/>
+        <copy file="${runtime.to.copy}" tofile="${artifact.output.path}/lib/kotlin-runtime.jar" overwrite="true"/>
+        <!--suppress AntResolveInspection -->
+        <copy file="${reflect.to.copy}" tofile="${artifact.output.path}/lib/kotlin-reflect.jar" overwrite="true"/>
     </target>
 
     <target name="copy-runtime-for-jps-plugin" if="bootstrap.or.local.build">
