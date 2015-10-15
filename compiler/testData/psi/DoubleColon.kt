@@ -50,3 +50,11 @@ fun err2() {
 fun err3() {
     ::
 }
+
+fun typeArgumentsError() {
+    ::a<b>
+    ::a<b,c<*>>
+    a::b<c>
+
+    ::a<b>()
+}

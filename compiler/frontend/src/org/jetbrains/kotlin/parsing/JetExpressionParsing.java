@@ -370,7 +370,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * callableReference
-     *   : (userType "?"*)? "::" SimpleName
+     *   : (userType "?"*)? "::" SimpleName typeArguments?
      *   ;
      */
     private boolean parseDoubleColonExpression() {
@@ -396,6 +396,17 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
         else {
             parseSimpleNameExpression();
+
+            if (at(LT)) {
+                PsiBuilder.Marker typeArgumentList = mark();
+                if (myJetParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
+                    typeArgumentList.error("Type arguments are not allowed");
+                }
+                else {
+                    typeArgumentList.rollbackTo();
+                }
+            }
+
             expression.done(CALLABLE_REFERENCE_EXPRESSION);
         }
 
