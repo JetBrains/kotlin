@@ -46,14 +46,12 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
-class AddFunctionToSupertypeFix(element: JetNamedFunction) : JetHintAction<JetNamedFunction>(element) {
+class AddFunctionToSupertypeFix(element: JetNamedFunction) : KotlinQuickFixAction<JetNamedFunction>(element) {
     private val functionsToAdd = generateFunctionsToAdd(element)
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file) && !functionsToAdd.isEmpty()
     }
-
-    override fun showHint(editor: Editor) = false
 
     override fun getText(): String {
         val single = functionsToAdd.singleOrNull()

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.google.common.collect.Lists
-import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
@@ -53,7 +52,7 @@ import java.util.*
 class ChangeMemberFunctionSignatureFix private constructor(
         element: JetNamedFunction,
         private val signatures: List<ChangeMemberFunctionSignatureFix.Signature>
-) : JetHintAction<JetNamedFunction>(element) {
+) : KotlinQuickFixAction<JetNamedFunction>(element) {
 
     init {
         assert(signatures.isNotEmpty())
@@ -229,8 +228,6 @@ class ChangeMemberFunctionSignatureFix private constructor(
         }
 
     }
-
-    override fun showHint(editor: Editor) = !HintManager.getInstance().hasShownHintsThatWillHideByOtherHint(true)
 
     private class MyAction(
             private val project: Project,
