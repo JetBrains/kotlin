@@ -24,6 +24,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -443,6 +444,10 @@ public class BodyResolver {
             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
             if (classDescriptor != null) {
                 if (ErrorUtils.isError(classDescriptor)) continue;
+
+                if (KotlinBuiltIns.isExactExtensionFunctionType(supertype)) {
+                    trace.report(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE.on(typeReference));
+                }
 
                 if (classDescriptor.getKind() != ClassKind.INTERFACE) {
                     if (supertypeOwner.getKind() == ClassKind.ENUM_CLASS) {

@@ -172,6 +172,7 @@ public interface Errors {
 
     DiagnosticFactory0<JetTypeReference> DELEGATION_NOT_TO_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> SUPERTYPE_NOT_A_CLASS_OR_INTERFACE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = DiagnosticFactory0.create(ERROR);
 

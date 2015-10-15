@@ -43,5 +43,4 @@ class InheritingClasses {
     }
 
     abstract class InheritFunctionType : ((Int, String) -> Int)
-    abstract class InheritExtensionFunctionType : (E.(Int, String) -> Int)
 }
