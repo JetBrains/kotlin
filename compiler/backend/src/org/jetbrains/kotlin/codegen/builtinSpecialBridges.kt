@@ -18,9 +18,19 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.bridges.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinWithDifferentJvmDescriptor
+import org.jetbrains.kotlin.psi.JetCallElement
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetValueArgument
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -122,4 +132,24 @@ private fun needGenerateSpecialBridge(
     }
 
     return true
+}
+
+public fun isValueArgumentForCallToMethodWithTypeCheckBarrier(
+        element: JetElement,
+        bindingContext: BindingContext
+): Boolean {
+
+    val parentCall = element.getParentCall(bindingContext, strict = true) ?: return false
+    val argumentExpression = parentCall.valueArguments.singleOrNull()?.getArgumentExpression() ?: return false
+    if (JetPsiUtil.deparenthesize(argumentExpression) !== element) return false
+
+    val candidateDescriptor = parentCall.getResolvedCall(bindingContext)?.candidateDescriptor as CallableMemberDescriptor?
+                                ?: return false
+
+
+    if (candidateDescriptor.getSpecialSignatureInfo() == BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo.GENERIC_PARAMETER) {
+        return true
+    }
+
+    return false
 }

@@ -284,6 +284,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 runtimeAssertionInfo = bindingContext.get(BindingContextSlicesKt.getRUNTIME_ASSERTION_INFO(), (JetExpression) selector);
             }
 
+            if (BuiltinSpecialBridgesKt.isValueArgumentForCallToMethodWithTypeCheckBarrier(selector, bindingContext)) return stackValue;
+
             return genNotNullAssertions(state, stackValue, runtimeAssertionInfo);
         }
         catch (ProcessCanceledException e) {

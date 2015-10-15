@@ -197,6 +197,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("platformValueContains")
+        public void testPlatformValueContains() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/platformValueContains/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("removeAtInt")
         public void testRemoveAtInt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/removeAtInt/");
