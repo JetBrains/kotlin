@@ -1,4 +1,0 @@
-package facade
-
-fun foo() {
-}

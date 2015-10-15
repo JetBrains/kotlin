@@ -1252,14 +1252,6 @@
                        level="WARNING"
       />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedFacadeUsageInspection"
-                     displayName="Usage of deprecated Kotlin package facade"
-                     groupName="Kotlin"
-                     language="JAVA"
-                     enabledByDefault="true"
-                     cleanupTool="true"
-                     level="WARNING"/>
-
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedObjectInstanceFieldReferenceInspection"
                      displayName="Usage of deprecated 'INSTANCE$' field"
                      groupName="Kotlin"
