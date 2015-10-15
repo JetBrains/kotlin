@@ -24,6 +24,7 @@ import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -33,6 +34,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.xml.util.XmlStringUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -48,6 +50,8 @@ import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import java.lang.reflect.*
+import java.util.*
 
 public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
@@ -246,8 +250,45 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
             for (intentionActionsFactory in intentionActionsFactories.filterNotNull()) {
                 result.addAll(intentionActionsFactory.createActions(diagnostic))
             }
-            result.addAll(QuickFixes.getInstance().getActions(diagnostic.getFactory()))
+            result.addAll(QuickFixes.getInstance().getActions(diagnostic.factory))
+
+            result.forEach { check(it.javaClass) }
+
             return result
+        }
+
+        private val LOG = Logger.getInstance(JetPsiChecker::class.java)
+
+        private val checkedQuickFixClasses = HashSet<Class<*>>()
+
+        private fun check(quickFixClass: Class<*>) {
+            if (!checkedQuickFixClasses.add(quickFixClass)) return
+
+            for (field in quickFixClass.declaredFields) {
+                checkType(field.genericType, field)
+            }
+
+            quickFixClass.superclass?.let { check(it) }
+        }
+
+        private fun checkType(type: Type, field: Field) {
+            when (type) {
+                is Class<*> -> {
+                    if (DeclarationDescriptor::class.java.isAssignableFrom(type)) {
+                        LOG.error("QuickFix class ${field.declaringClass.name} contains field ${field.name} that holds DeclarationDescriptor")
+                    }
+                }
+
+                is GenericArrayType -> checkType(type.genericComponentType, field)
+
+                is ParameterizedType -> {
+                    if (Collection::class.java.isAssignableFrom(type.rawType as Class<*>)) {
+                        type.actualTypeArguments.forEach { checkType(it, field) }
+                    }
+                }
+
+                is WildcardType -> type.upperBounds.forEach { checkType(it, field) }
+            }
         }
     }
 }
