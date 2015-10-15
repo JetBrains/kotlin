@@ -30,7 +30,6 @@ import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
@@ -58,18 +57,13 @@ class AddFunctionToSupertypeFix(element: JetNamedFunction) : JetHintAction<JetNa
 
     override fun getText(): String {
         val single = functionsToAdd.singleOrNull()
-        if (single != null) {
-            val supertype = single.containingDeclaration as ClassDescriptor
-            return JetBundle.message("add.function.to.type.action.single",
-                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(single),
-                    supertype.name.toString())
-        }
-        else {
-            return JetBundle.message("add.function.to.supertype.action.multiple")
-        }
+        return if (single != null)
+            actionName(single)
+        else
+            "Add function to supertype..."
     }
 
-    override fun getFamilyName() = JetBundle.message("add.function.to.supertype.family")
+    override fun getFamilyName() = "Add function to supertype"
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         CommandProcessor.getInstance().runUndoTransparentAction(object : Runnable {
@@ -93,7 +87,7 @@ class AddFunctionToSupertypeFix(element: JetNamedFunction) : JetHintAction<JetNa
 
         val classifierDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, typeDescriptor) as JetClass
 
-        project.executeWriteCommand(JetBundle.message("add.function.to.type.action")) {
+        project.executeWriteCommand("Add Function to Type") {
             val body = classifierDeclaration.getOrCreateBody()
 
             var functionBody = ""
@@ -113,7 +107,7 @@ class AddFunctionToSupertypeFix(element: JetNamedFunction) : JetHintAction<JetNa
     }
 
     private fun createFunctionPopup(project: Project): ListPopupStep<*> {
-        return object : BaseListPopupStep<FunctionDescriptor>(JetBundle.message("add.function.to.type.action.type.chooser"), functionsToAdd) {
+        return object : BaseListPopupStep<FunctionDescriptor>("Choose Type", functionsToAdd) {
             override fun isAutoSelectionEnabled() = false
 
             override fun onChosen(selectedValue: FunctionDescriptor, finalChoice: Boolean): PopupStep<Any>? {
@@ -125,13 +119,14 @@ class AddFunctionToSupertypeFix(element: JetNamedFunction) : JetHintAction<JetNa
 
             override fun getIconFor(aValue: FunctionDescriptor) = PlatformIcons.FUNCTION_ICON
 
-            override fun getTextFor(functionDescriptor: FunctionDescriptor): String {
-                val type = functionDescriptor.containingDeclaration as ClassDescriptor
-                return JetBundle.message("add.function.to.type.action.single",
-                        IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(functionDescriptor),
-                        type.name.toString())
-            }
+            override fun getTextFor(functionDescriptor: FunctionDescriptor) = actionName(functionDescriptor)
         }
+    }
+
+    private fun actionName(functionDescriptor: FunctionDescriptor): String {
+        val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(functionDescriptor)
+        val className = functionDescriptor.containingDeclaration.name.asString()
+        return "Add '$signature' to '$className'"
     }
 
     companion object: JetSingleIntentionActionFactory() {
