@@ -1,6 +1,6 @@
 package target;
 
-import static target.TargetPackage.foo;
+import static target.TestKt.foo;
 
 class Test {
     static void test() {

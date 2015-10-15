@@ -1,5 +1,5 @@
 import source.Foo;
-import static source.SourcePackage.foo;
+import static source.TestKt.foo;
 
 class Test {
     static void test() {
