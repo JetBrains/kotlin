@@ -176,6 +176,9 @@ object BuiltinMethodsWithDifferentJvmName {
 
 @Suppress("UNCHECKED_CAST")
 fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmName(): T? {
+    if (name !in BuiltinMethodsWithDifferentJvmName.ORIGINAL_SHORT_NAMES
+            && propertyIfAccessor.name !in BuiltinSpecialProperties.SHORT_NAMES) return null
+
     return when (this) {
         is PropertyDescriptor, is PropertyAccessorDescriptor ->
             firstOverridden { BuiltinSpecialProperties.hasBuiltinSpecialPropertyFqName(it.propertyIfAccessor) } as T?
