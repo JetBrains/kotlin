@@ -45,8 +45,10 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.MultifileClassCodegen;
 import org.jetbrains.kotlin.codegen.PackageCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
+import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider;
 import org.jetbrains.kotlin.name.FqName;
@@ -374,7 +376,10 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     @Override
                     public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
                         PackageCodegen packageCodegen = state.getFactory().forPackage(getPackageFqName(), files);
-                        packageCodegen.generateClassOrObject(classOrObject);
+                        JetFile file = classOrObject.getContainingJetFile();
+                        Type packagePartType = FileClasses.getFileClassType(state.getFileClassesProvider(), file);
+                        PackageContext context = state.getRootContext().intoPackagePart(packageCodegen.getPackageFragment(), packagePartType);
+                        packageCodegen.generateClassOrObject(classOrObject, context);
                         state.getFactory().asList();
                     }
 

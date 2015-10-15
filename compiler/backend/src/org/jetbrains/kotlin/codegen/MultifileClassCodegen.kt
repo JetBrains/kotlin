@@ -147,11 +147,8 @@ public class MultifileClassCodegen(
         writeKotlinMultifileFacadeAnnotationIfNeeded(partFqNames)
     }
 
-    public fun generateClassOrObject(classOrObject: JetClassOrObject) {
-        val file = classOrObject.getContainingJetFile()
-        val partType = state.fileClassesProvider.getFileClassType(file)
-        val context = state.rootContext.intoMultifileClassPart(packageFragment!!, facadeClassType, partType)
-        MemberCodegen.genClassOrObject(context, classOrObject, state, null)
+    public fun generateClassOrObject(classOrObject: JetClassOrObject, packagePartContext: FieldOwnerContext<PackageFragmentDescriptor>) {
+        MemberCodegen.genClassOrObject(packagePartContext, classOrObject, state, null)
     }
 
     private fun generatePart(
@@ -173,7 +170,7 @@ public class MultifileClassCodegen(
             }
             else if (declaration is JetClassOrObject) {
                 if (state.generateDeclaredClassFilter.shouldGenerateClass(declaration)) {
-                    generateClassOrObject(declaration)
+                    generateClassOrObject(declaration, partContext)
                 }
             }
             else if (declaration is JetScript) {

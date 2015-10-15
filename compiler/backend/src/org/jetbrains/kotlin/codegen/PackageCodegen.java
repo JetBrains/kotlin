@@ -316,7 +316,7 @@ public class PackageCodegen {
             else if (declaration instanceof JetClassOrObject) {
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
                 if (state.getGenerateDeclaredClassFilter().shouldGenerateClass(classOrObject)) {
-                    generateClassOrObject(classOrObject);
+                    generateClassOrObject(classOrObject, packagePartContext);
                 }
             }
             else if (declaration instanceof JetScript) {
@@ -415,11 +415,8 @@ public class PackageCodegen {
         return fragments.get(0);
     }
 
-    public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        JetFile file = classOrObject.getContainingJetFile();
-        Type packagePartType = FileClasses.getFileClassType(state.getFileClassesProvider(), file);
-        CodegenContext context = state.getRootContext().intoPackagePart(packageFragment, packagePartType);
-        MemberCodegen.genClassOrObject(context, classOrObject, state, null);
+    public void generateClassOrObject(@NotNull JetClassOrObject classOrObject, @NotNull PackageContext packagePartContext) {
+        MemberCodegen.genClassOrObject(packagePartContext, classOrObject, state, null);
     }
 
     public void done() {
@@ -432,5 +429,9 @@ public class PackageCodegen {
 
     public Collection<JetFile> getFiles() {
         return files;
+    }
+
+    public PackageFragmentDescriptor getPackageFragment() {
+        return packageFragment;
     }
 }
