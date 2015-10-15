@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
-import com.google.common.collect.Lists
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
@@ -34,12 +33,12 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
 class AddFunctionToSupertypeFix(element: JetNamedFunction) : JetHintAction<JetNamedFunction>(element) {
-    private val functionsToAdd: List<FunctionDescriptor> = generateFunctionsToAdd(element)
+    private val functionsToAdd = generateFunctionsToAdd(element)
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file) && !functionsToAdd.isEmpty()
@@ -48,11 +47,11 @@ class AddFunctionToSupertypeFix(element: JetNamedFunction) : JetHintAction<JetNa
     override fun showHint(editor: Editor) = false
 
     override fun getText(): String {
-        if (functionsToAdd.size == 1) {
-            val newFunction = functionsToAdd.get(0)
-            val supertype = newFunction.containingDeclaration as ClassDescriptor
+        val single = functionsToAdd.singleOrNull()
+        if (single != null) {
+            val supertype = single.containingDeclaration as ClassDescriptor
             return JetBundle.message("add.function.to.type.action.single",
-                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(newFunction),
+                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(single),
                     supertype.name.toString())
         }
         else {
@@ -70,72 +69,52 @@ class AddFunctionToSupertypeFix(element: JetNamedFunction) : JetHintAction<JetNa
         })
     }
 
-    private fun createAction(project: Project, editor: Editor?): JetAddFunctionToClassifierAction {
-        return JetAddFunctionToClassifierAction(project, editor, functionsToAdd)
-    }
+    private fun createAction(project: Project, editor: Editor?)
+            = JetAddFunctionToClassifierAction(project, editor, functionsToAdd)
 
-    companion object {
+    companion object: JetSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val function = QuickFixUtil.getParentElementOfType(diagnostic, JetNamedFunction::class.java)
+            return if (function == null) null else AddFunctionToSupertypeFix(function)
+        }
 
         private fun generateFunctionsToAdd(functionElement: JetNamedFunction): List<FunctionDescriptor> {
             val functionDescriptor = functionElement.resolveToDescriptor() as FunctionDescriptor
 
             val containingClass = functionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
 
-            val functions = ArrayList<FunctionDescriptor>()
             // TODO: filter out impossible supertypes (for example when argument's type isn't visible in a superclass).
-            for (supertypeDescriptor in getSupertypes(containingClass)) {
-                if (KotlinBuiltIns.isAnyOrNullableAny(supertypeDescriptor.defaultType)) continue
-                functions.add(generateFunctionSignatureForType(functionDescriptor, supertypeDescriptor))
-            }
-            return functions
+            return getSupertypes(containingClass)
+                    .filterNot { KotlinBuiltIns.isAnyOrNullableAny(it.defaultType) }
+                    .map { generateFunctionSignatureForType(functionDescriptor, it) }
         }
 
         private fun getSupertypes(classDescriptor: ClassDescriptor): List<ClassDescriptor> {
-            val supertypes = Lists.newArrayList(TypeUtils.getAllSupertypes(classDescriptor.defaultType))
-            Collections.sort(supertypes, object : Comparator<JetType> {
+            val supertypes = classDescriptor.defaultType.supertypes().sortedWith(object : Comparator<JetType> {
                 override fun compare(o1: JetType, o2: JetType): Int {
-                    if (o1 == o2) {
-                        return 0
+                    return when {
+                        o1 == o2 -> 0
+                        JetTypeChecker.DEFAULT.isSubtypeOf(o1, o2) -> -1
+                        JetTypeChecker.DEFAULT.isSubtypeOf(o2, o1) -> 1
+                        else -> o1.toString().compareTo(o2.toString())
                     }
-                    if (JetTypeChecker.DEFAULT.isSubtypeOf(o1, o2)) {
-                        return -1
-                    }
-                    if (JetTypeChecker.DEFAULT.isSubtypeOf(o2, o1)) {
-                        return 1
-                    }
-                    return o1.toString().compareTo(o2.toString())
                 }
             })
-            val supertypesDescriptors = Lists.newArrayList<ClassDescriptor>()
-            for (supertype in supertypes) {
-                supertypesDescriptors.add(DescriptorUtils.getClassDescriptorForType(supertype))
-            }
-            return supertypesDescriptors
+
+            return supertypes.map { DescriptorUtils.getClassDescriptorForType(it) }
         }
 
-        private fun generateFunctionSignatureForType(
-                functionDescriptor: FunctionDescriptor,
-                typeDescriptor: ClassDescriptor): FunctionDescriptor {
+        private fun generateFunctionSignatureForType(functionDescriptor: FunctionDescriptor, typeDescriptor: ClassDescriptor): FunctionDescriptor {
             // TODO: support for generics.
-            var modality = typeDescriptor.modality
-            if (typeDescriptor.kind == ClassKind.INTERFACE) {
-                modality = Modality.OPEN
-            }
+
+            val modality = if (typeDescriptor.kind == ClassKind.INTERFACE) Modality.OPEN else typeDescriptor.modality
+
             return functionDescriptor.copy(
                     typeDescriptor,
                     modality,
                     functionDescriptor.visibility,
                     CallableMemberDescriptor.Kind.DECLARATION,
                     /* copyOverrides = */ false)
-        }
-
-        fun createFactory(): JetIntentionActionsFactory {
-            return object : JetSingleIntentionActionFactory() {
-                public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                    val function = QuickFixUtil.getParentElementOfType(diagnostic, JetNamedFunction::class.java)
-                    return if (function == null) null else AddFunctionToSupertypeFix(function)
-                }
-            }
         }
     }
 }
