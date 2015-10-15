@@ -152,7 +152,7 @@ public abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
                 ClassKind.INTERFACE -> "interface"
                 ClassKind.ENUM_CLASS -> "enum class"
                 ClassKind.OBJECT -> "object"
-                ClassKind.ANNOTATION_CLASS -> "class"
+                ClassKind.ANNOTATION_CLASS -> "annotation class"
                 ClassKind.ENUM_ENTRY -> "enum entry"
             }
         }
