@@ -125,7 +125,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                                         Messages.getQuestionIcon()) == Messages.YES
     }
 
-    override fun prepareMembersInfo(klass: JetClassOrObject, project: Project, editor: Editor): Info? {
+    override fun prepareMembersInfo(klass: JetClassOrObject, project: Project, editor: Editor?): Info? {
         if (klass !is JetClass) throw AssertionError("Not a class: ${klass.getElementTextWithContext()}")
 
         val context = klass.analyzeFully()
@@ -273,7 +273,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         }
     }
 
-    override fun generateMembers(project: Project, editor: Editor, info: Info): List<JetDeclaration> {
+    override fun generateMembers(project: Project, editor: Editor?, info: Info): List<JetDeclaration> {
         val targetClass = info.classDescriptor.source.getPsi() as JetClass
         val prototypes = ArrayList<JetDeclaration>(2)
                 .apply {
