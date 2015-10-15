@@ -63,22 +63,22 @@ class ConcreteFunction(val textBuilder: (Appendable) -> Unit, val sourceFile: So
 class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     open class SpecializedProperty<TKey: Any, TValue : Any>() {
-        private val values = HashMap<TKey?, TValue>()
+        private val valueBuilders = HashMap<TKey?, ((TKey) -> TValue)>()
 
-        operator fun get(key: TKey): TValue? = values.getOrElse(key, { values.getOrElse(null, { null }) })
+        operator fun get(key: TKey): TValue? = (valueBuilders[key] ?: valueBuilders[null] ?: null)?.let { it(key) }
 
-        operator fun set(keys: Collection<TKey>, value: TValue) {
+        operator fun set(keys: Collection<TKey>, value: (TKey)->TValue) {
             if (keys.isEmpty())
-                values[null] = value;
+                valueBuilders[null] = value;
             else
                 for (key in keys) {
-                    values[key] = value
+                    valueBuilders[key] = value
                     onKeySet(key)
                 }
         }
 
-        operator fun invoke(vararg keys: TKey, valueBuilder: () -> TValue) = set(keys.asList(), valueBuilder())
-        operator fun invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), value)
+        operator fun invoke(vararg keys: TKey, valueBuilder: (TKey) -> TValue) = set(keys.asList(), valueBuilder)
+        operator fun invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), { value })
 
         protected open fun onKeySet(key: TKey) {}
     }
@@ -87,7 +87,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     open class PrimitiveProperty<TValue: Any>() : SpecializedProperty<PrimitiveType, TValue>()
 
     class DeprecationProperty() : FamilyProperty<Deprecation>() {
-        operator fun invoke(value: String, vararg keys: Family) = set(keys.asList(), Deprecation(value))
+        operator fun invoke(value: String, vararg keys: Family) = set(keys.asList(), { Deprecation(value) })
     }
 
 
