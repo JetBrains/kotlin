@@ -1,5 +1,5 @@
 class RandomJavaClass {
     void g() {
-        foo.FooPackage.usedInJava();
+        foo.UsedInJavaKt.usedInJava();
     }
 }

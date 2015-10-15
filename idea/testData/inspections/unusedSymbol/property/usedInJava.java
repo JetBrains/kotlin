@@ -1,7 +1,7 @@
 package test;
 
-import foo.FooPackage;
 import foo.Obj;
+import foo.UsedInJavaKt;
 
 class usedInJava {
     public static void main(String[] args) {
