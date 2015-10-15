@@ -24,15 +24,12 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopupStep
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiFile
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -40,21 +37,28 @@ import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
-class AddFunctionToSupertypeFix(element: JetNamedFunction) : KotlinQuickFixAction<JetNamedFunction>(element) {
-    private val functionsToAdd = generateFunctionsToAdd(element)
+class AddFunctionToSupertypeFix private constructor(
+        element: JetNamedFunction,
+        private val functions: List<AddFunctionToSupertypeFix.FunctionData>
+) : KotlinQuickFixAction<JetNamedFunction>(element) {
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return super.isAvailable(project, editor, file) && !functionsToAdd.isEmpty()
+    init {
+        assert(functions.isNotEmpty())
     }
 
+    private class FunctionData(
+            val signaturePreview: String,
+            val sourceCode: String,
+            val targetClass: JetClass
+    )
+
     override fun getText(): String {
-        val single = functionsToAdd.singleOrNull()
+        val single = functions.singleOrNull()
         return if (single != null)
             actionName(single)
         else
@@ -66,8 +70,8 @@ class AddFunctionToSupertypeFix(element: JetNamedFunction) : KotlinQuickFixActio
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         CommandProcessor.getInstance().runUndoTransparentAction(object : Runnable {
             override fun run() {
-                if (functionsToAdd.size == 1 || editor == null || !editor.component.isShowing) {
-                    addFunction(functionsToAdd.first(), project)
+                if (functions.size == 1 || editor == null || !editor.component.isShowing) {
+                    addFunction(functions.first(), project)
                 }
                 else {
                     JBPopupFactory.getInstance().createListPopup(createFunctionPopup(project)).showInBestPositionFor(editor)
@@ -76,61 +80,69 @@ class AddFunctionToSupertypeFix(element: JetNamedFunction) : KotlinQuickFixActio
         })
     }
 
-    private fun addFunction(functionDescriptor: FunctionDescriptor, project: Project) {
-        val typeDescriptor = functionDescriptor.containingDeclaration as ClassDescriptor
-
-        val signatureString = IdeDescriptorRenderers.SOURCE_CODE.render(functionDescriptor)
-
-        PsiDocumentManager.getInstance(project).commitAllDocuments()
-
-        val classifierDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, typeDescriptor) as JetClass
-
+    private fun addFunction(functionData: FunctionData, project: Project) {
         project.executeWriteCommand("Add Function to Type") {
-            val body = classifierDeclaration.getOrCreateBody()
+            val classBody = functionData.targetClass.getOrCreateBody()
 
-            var functionBody = ""
-            if (typeDescriptor.kind != ClassKind.INTERFACE && functionDescriptor.modality != Modality.ABSTRACT) {
-                functionBody = "{}"
-                val returnType = functionDescriptor.returnType
-                if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) {
-                    functionBody = "{ throw UnsupportedOperationException() }"
-                }
-            }
-
-            val functionElement = JetPsiFactory(project).createFunction(signatureString + functionBody)
-            val insertedFunctionElement = body.addBefore(functionElement, body.rBrace) as JetNamedFunction
+            val functionElement = JetPsiFactory(project).createFunction(functionData.sourceCode)
+            val insertedFunctionElement = classBody.addBefore(functionElement, classBody.rBrace) as JetNamedFunction
 
             ShortenReferences.DEFAULT.process(insertedFunctionElement)
         }
     }
 
     private fun createFunctionPopup(project: Project): ListPopupStep<*> {
-        return object : BaseListPopupStep<FunctionDescriptor>("Choose Type", functionsToAdd) {
+        return object : BaseListPopupStep<FunctionData>("Choose Type", functions) {
             override fun isAutoSelectionEnabled() = false
 
-            override fun onChosen(selectedValue: FunctionDescriptor, finalChoice: Boolean): PopupStep<Any>? {
+            override fun onChosen(selectedValue: FunctionData, finalChoice: Boolean): PopupStep<*>? {
                 if (finalChoice) {
                     addFunction(selectedValue, project)
                 }
                 return PopupStep.FINAL_CHOICE
             }
 
-            override fun getIconFor(aValue: FunctionDescriptor) = PlatformIcons.FUNCTION_ICON
-
-            override fun getTextFor(functionDescriptor: FunctionDescriptor) = actionName(functionDescriptor)
+            override fun getIconFor(value: FunctionData) = PlatformIcons.FUNCTION_ICON
+            override fun getTextFor(value: FunctionData) = actionName(value)
         }
     }
 
-    private fun actionName(functionDescriptor: FunctionDescriptor): String {
-        val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(functionDescriptor)
-        val className = functionDescriptor.containingDeclaration.name.asString()
-        return "Add '$signature' to '$className'"
-    }
+    private fun actionName(functionData: FunctionData)
+            = "Add '${functionData.signaturePreview}' to '${functionData.targetClass.name}'"
 
     companion object: JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val function = QuickFixUtil.getParentElementOfType(diagnostic, JetNamedFunction::class.java)
-            return if (function == null) null else AddFunctionToSupertypeFix(function)
+            val function = diagnostic.psiElement as? JetNamedFunction ?: return null
+
+            val descriptors = generateFunctionsToAdd(function)
+            if (descriptors.isEmpty()) return null
+
+            val project = diagnostic.psiFile.project
+            val functionData = descriptors.map { createFunctionData(it, project) }.filterNotNull()
+            if (functionData.isEmpty()) return null
+
+            return AddFunctionToSupertypeFix(function, functionData)
+        }
+
+        private fun createFunctionData(functionDescriptor: FunctionDescriptor, project: Project): FunctionData? {
+            val classDescriptor = functionDescriptor.containingDeclaration as ClassDescriptor
+
+            var sourceCode = IdeDescriptorRenderers.SOURCE_CODE.render(functionDescriptor)
+            if (classDescriptor.kind != ClassKind.INTERFACE && functionDescriptor.modality != Modality.ABSTRACT) {
+                val returnType = functionDescriptor.returnType
+                if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) {
+                    sourceCode += "{ throw UnsupportedOperationException() }"
+                }
+                else {
+                    sourceCode += "{}"
+                }
+            }
+
+            val targetClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor) as? JetClass ?: return null
+            return FunctionData(
+                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(functionDescriptor),
+                    sourceCode,
+                    targetClass)
         }
 
         private fun generateFunctionsToAdd(functionElement: JetNamedFunction): List<FunctionDescriptor> {
@@ -139,12 +151,12 @@ class AddFunctionToSupertypeFix(element: JetNamedFunction) : KotlinQuickFixActio
             val containingClass = functionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
 
             // TODO: filter out impossible supertypes (for example when argument's type isn't visible in a superclass).
-            return getSupertypes(containingClass)
+            return getSuperClasses(containingClass)
                     .filterNot { KotlinBuiltIns.isAnyOrNullableAny(it.defaultType) }
                     .map { generateFunctionSignatureForType(functionDescriptor, it) }
         }
 
-        private fun getSupertypes(classDescriptor: ClassDescriptor): List<ClassDescriptor> {
+        private fun getSuperClasses(classDescriptor: ClassDescriptor): List<ClassDescriptor> {
             val supertypes = classDescriptor.defaultType.supertypes().sortedWith(object : Comparator<JetType> {
                 override fun compare(o1: JetType, o2: JetType): Int {
                     return when {
@@ -156,7 +168,9 @@ class AddFunctionToSupertypeFix(element: JetNamedFunction) : KotlinQuickFixActio
                 }
             })
 
-            return supertypes.map { DescriptorUtils.getClassDescriptorForType(it) }
+            return supertypes
+                    .map { it.constructor.declarationDescriptor as? ClassDescriptor }
+                    .filterNotNull()
         }
 
         private fun generateFunctionSignatureForType(functionDescriptor: FunctionDescriptor, typeDescriptor: ClassDescriptor): FunctionDescriptor {
