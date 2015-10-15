@@ -20,17 +20,27 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.ListPopupStep
+import com.intellij.openapi.ui.popup.PopupStep
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
+import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.actions.JetAddFunctionToClassifierAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
@@ -64,13 +74,65 @@ class AddFunctionToSupertypeFix(element: JetNamedFunction) : JetHintAction<JetNa
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         CommandProcessor.getInstance().runUndoTransparentAction(object : Runnable {
             override fun run() {
-                createAction(project, editor).execute()
+                if (functionsToAdd.size == 1 || editor == null || !editor.component.isShowing) {
+                    addFunction(functionsToAdd.first(), project)
+                }
+                else {
+                    JBPopupFactory.getInstance().createListPopup(createFunctionPopup(project)).showInBestPositionFor(editor)
+                }
             }
         })
     }
 
-    private fun createAction(project: Project, editor: Editor?)
-            = JetAddFunctionToClassifierAction(project, editor, functionsToAdd)
+    private fun addFunction(functionDescriptor: FunctionDescriptor, project: Project) {
+        val typeDescriptor = functionDescriptor.containingDeclaration as ClassDescriptor
+
+        val signatureString = IdeDescriptorRenderers.SOURCE_CODE.render(functionDescriptor)
+
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
+
+        val classifierDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, typeDescriptor) as JetClass
+
+        project.executeWriteCommand(JetBundle.message("add.function.to.type.action")) {
+            val body = classifierDeclaration.getOrCreateBody()
+
+            var functionBody = ""
+            if (typeDescriptor.kind != ClassKind.INTERFACE && functionDescriptor.modality != Modality.ABSTRACT) {
+                functionBody = "{}"
+                val returnType = functionDescriptor.returnType
+                if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) {
+                    functionBody = "{ throw UnsupportedOperationException() }"
+                }
+            }
+
+            val functionElement = JetPsiFactory(project).createFunction(signatureString + functionBody)
+            val insertedFunctionElement = body.addBefore(functionElement, body.rBrace) as JetNamedFunction
+
+            ShortenReferences.DEFAULT.process(insertedFunctionElement)
+        }
+    }
+
+    private fun createFunctionPopup(project: Project): ListPopupStep<*> {
+        return object : BaseListPopupStep<FunctionDescriptor>(JetBundle.message("add.function.to.type.action.type.chooser"), functionsToAdd) {
+            override fun isAutoSelectionEnabled() = false
+
+            override fun onChosen(selectedValue: FunctionDescriptor, finalChoice: Boolean): PopupStep<Any>? {
+                if (finalChoice) {
+                    addFunction(selectedValue, project)
+                }
+                return PopupStep.FINAL_CHOICE
+            }
+
+            override fun getIconFor(aValue: FunctionDescriptor) = PlatformIcons.FUNCTION_ICON
+
+            override fun getTextFor(functionDescriptor: FunctionDescriptor): String {
+                val type = functionDescriptor.containingDeclaration as ClassDescriptor
+                return JetBundle.message("add.function.to.type.action.single",
+                        IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(functionDescriptor),
+                        type.name.toString())
+            }
+        }
+    }
 
     companion object: JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
