@@ -50,7 +50,6 @@ public class StubClassBuilder extends AbstractClassBuilder {
     private final StubElement parent;
     private StubBuildingVisitor v;
     private final Stack<StubElement> parentStack;
-    private boolean isPackageClass = false;
 
     public StubClassBuilder(@NotNull Stack<StubElement> parentStack) {
         this.parentStack = parentStack;
@@ -79,18 +78,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
 
         super.defineClass(origin, version, access, name, signature, superName, interfaces);
 
-        if (origin instanceof JetFile) {
-            FqName packageName = ((JetFile) origin).getPackageFqName();
-            String packageClassName = PackageClassUtils.getPackageClassName(packageName);
-
-            if (name.equals(packageClassName) || name.endsWith("/" + packageClassName)) {
-                isPackageClass = true;
-            }
-        }
-
-        if (!isPackageClass) {
-            parentStack.push(v.getResult());
-        }
+        parentStack.push(v.getResult());
 
         ((StubBase) v.getResult()).putUserData(ClsWrapperStubPsiFactory.ORIGIN_ELEMENT, origin);
     }
@@ -149,10 +137,8 @@ public class StubClassBuilder extends AbstractClassBuilder {
 
     @Override
     public void done() {
-        if (!isPackageClass) {
-            StubElement pop = parentStack.pop();
-            assert pop == v.getResult();
-        }
+        StubElement pop = parentStack.pop();
+        assert pop == v.getResult();
         super.done();
     }
 }

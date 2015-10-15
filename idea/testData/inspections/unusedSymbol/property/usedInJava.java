@@ -5,8 +5,8 @@ import foo.Obj;
 
 class usedInJava {
     public static void main(String[] args) {
-        FooPackage.getUsedByGetter();
-        FooPackage.setUsedBySetter(":|");
+        UsedInJavaKt.getUsedByGetter();
+        UsedInJavaKt.setUsedBySetter(":|");
         System.out.println(Obj.CONST);
     }
 }

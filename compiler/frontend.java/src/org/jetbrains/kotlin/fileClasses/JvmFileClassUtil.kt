@@ -94,15 +94,6 @@ public object JvmFileClassUtil {
             file.packageFqName.child(Name.identifier(manglePartName(jvmFileClassAnnotations.name, file.name)))
 
     @JvmStatic
-    public fun getMultifilePackageFacadePartInfo(file: JetFile): JvmFileClassInfo {
-        val packageFqName = file.packageFqName
-        val packageFacadeFqName = PackageClassUtils.getPackageClassFqName(packageFqName)
-        val filePartName = manglePartName(packageFacadeFqName.shortName().asString(), file.name)
-        val filePartFqName = packageFqName.child(Name.identifier(filePartName))
-        return JvmMultifileClassPartInfo(filePartFqName, packageFacadeFqName)
-    }
-
-    @JvmStatic
     public fun manglePartName(facadeName: String, fileName: String): String =
             "${facadeName}__${PackagePartClassUtils.getFilePartShortName(fileName)}"
 

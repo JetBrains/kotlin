@@ -30,7 +30,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
@@ -237,23 +236,6 @@ public class KotlinLightClassForFacade private constructor(
     }
 
     companion object Factory {
-        public fun createForPackageFacade(
-                manager: PsiManager,
-                packageFqName: FqName,
-                searchScope: GlobalSearchScope,
-                files: Collection<JetFile> // this is redundant, but computing it multiple times is costly
-        ): KotlinLightClassForFacade? {
-            if (files.any { LightClassUtil.belongsToKotlinBuiltIns(it) }) {
-                return null
-            }
-
-            assert(files.isNotEmpty()) { "No files for package $packageFqName" }
-
-            val packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName)
-            val lightClassDataCache = PackageFacadeStubCache.getInstance(manager.project).get(packageFqName, searchScope)
-            return KotlinLightClassForFacade(manager, packageClassFqName, searchScope, lightClassDataCache, files, true)
-        }
-
         public fun createForFacade(
                 manager: PsiManager,
                 facadeClassFqName: FqName,

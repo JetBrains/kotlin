@@ -133,41 +133,6 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
         return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject)
     }
 
-    override fun getPackageClasses(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val filesWithCallables = PackagePartClassUtils.getFilesWithCallables(findFilesForPackage(packageFqName, scope))
-        val filesByModule = filesWithCallables.groupBy { it.getModuleInfo() }
-        return filesByModule.flatMap {
-            createLightClassForPackageFacade(it.value, it.key, packageFqName)
-        }
-    }
-
-    private fun createLightClassForPackageFacade(
-            files: List<JetFile>,
-            moduleInfo: IdeaModuleInfo,
-            packageFqName: FqName
-    ): List<PsiClass> {
-        if (moduleInfo is ModuleSourceInfo) {
-            val lightClassForFacade = KotlinLightClassForFacade.createForPackageFacade(
-                    psiManager, packageFqName, moduleInfo.contentScope(), files
-            )
-            return withFakeLightClasses(lightClassForFacade, files)
-
-        }
-        else {
-            val packageClassName = PackageClassUtils.getPackageClassName(packageFqName)
-            val virtualFileForPackageClass = files.asSequence().map {
-                it.virtualFile?.parent?.findChild("$packageClassName.class")
-            }.firstOrNull { it != null } ?: return emptyList()
-
-            val clsClassFromPackageClass = createClsJavaClassFromVirtualFile(
-                    mirrorFile = files.first(),
-                    classFile = virtualFileForPackageClass,
-                    correspondingClassOrObject = null
-            ) ?: return emptyList()
-            return listOf(KotlinLightClassForDecompiledDeclaration(clsClassFromPackageClass, null))
-        }
-    }
-
     private fun withFakeLightClasses(
             lightClassForFacade: KotlinLightClassForFacade?,
             facadeFiles: List<JetFile>

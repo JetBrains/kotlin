@@ -61,7 +61,7 @@ public class KotlinCodegenFacade {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        MultiMap<FqName, JetFile> filesInPackageClasses = new MultiMap<FqName, JetFile>();
+        MultiMap<FqName, JetFile> filesInPackages = new MultiMap<FqName, JetFile>();
         MultiMap<FqName, JetFile> filesInMultifileClasses = new MultiMap<FqName, JetFile>();
 
         for (JetFile file : state.getFiles()) {
@@ -72,14 +72,8 @@ public class KotlinCodegenFacade {
             if (fileClassInfo.getWithJvmMultifileClass()) {
                 filesInMultifileClasses.putValue(fileClassInfo.getFacadeClassFqName(), file);
             }
-
-            if (state.getPackageFacadesAsMultifileClasses()) {
-                if (!fileClassInfo.getWithJvmMultifileClass()) {
-                    filesInMultifileClasses.putValue(PackageClassUtils.getPackageClassFqName(file.getPackageFqName()), file);
-                }
-            }
             else {
-                filesInPackageClasses.putValue(file.getPackageFqName(), file);
+                filesInPackages.putValue(file.getPackageFqName(), file);
             }
         }
 
@@ -90,9 +84,9 @@ public class KotlinCodegenFacade {
         }
 
         Set<FqName> packagesWithObsoleteParts = new HashSet<FqName>(state.getPackagesWithObsoleteParts());
-        for (FqName packageFqName : Sets.union(packagesWithObsoleteParts, filesInPackageClasses.keySet())) {
+        for (FqName packageFqName : Sets.union(packagesWithObsoleteParts, filesInPackages.keySet())) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-            generatePackage(state, packageFqName, filesInPackageClasses.get(packageFqName), errorHandler);
+            generatePackage(state, packageFqName, filesInPackages.get(packageFqName), errorHandler);
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();

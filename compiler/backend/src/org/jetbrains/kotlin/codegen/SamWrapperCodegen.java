@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
@@ -169,16 +170,16 @@ public class SamWrapperCodegen {
 
     @NotNull
     private FqName getWrapperName(@NotNull JetFile containingFile) {
-        FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(containingFile.getPackageFqName());
+        FqName fileClassFqName = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile).getFileClassFqName();
         JavaClassDescriptor descriptor = samType.getJavaClassDescriptor();
         int hash = PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 +
                 DescriptorUtils.getFqNameSafe(descriptor).hashCode();
         String shortName = String.format(
                 "%s$sam$%s$%08x",
-                packageClassFqName.shortName().asString(),
+                fileClassFqName.shortName().asString(),
                 descriptor.getName().asString(),
                 hash
         );
-        return packageClassFqName.parent().child(Name.identifier(shortName));
+        return fileClassFqName.parent().child(Name.identifier(shortName));
     }
 }

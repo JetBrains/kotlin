@@ -50,16 +50,8 @@ public class SyntheticMethodForAnnotatedPropertyGenTest extends CodegenTestCase 
 
     public void testTopLevel() {
         loadFile();
-        String packageClassName = PackageClassUtils.getPackageClassName(FqName.ROOT);
-        for (OutputFile outputFile : generateClassesInFile().asList()) {
-            String filPath = outputFile.getRelativePath();
-
-            if (filPath.startsWith(packageClassName) && !filPath.equals(packageClassName + ".class")) {
-                // This should be package$src class
-                Class<?> a = generateClass(filPath.substring(0, filPath.length() - ".class".length()));
-                assertAnnotatedSyntheticMethodExistence(true, a);
-            }
-        }
+        Class<?> a = generateClass("TopLevelKt");
+        assertAnnotatedSyntheticMethodExistence(true, a);
     }
 
     public void testInTrait() throws ClassNotFoundException {

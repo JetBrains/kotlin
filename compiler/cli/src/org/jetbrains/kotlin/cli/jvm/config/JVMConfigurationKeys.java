@@ -39,8 +39,6 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("disable inline");
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =
             CompilerConfigurationKey.create("disable optimization");
-    public static final CompilerConfigurationKey<Boolean> PACKAGE_FACADES_AS_MULTIFILE_CLASSES =
-            CompilerConfigurationKey.create("compile package facades as multifile classes");
 
     public static final CompilerConfigurationKey<IncrementalCompilationComponents> INCREMENTAL_COMPILATION_COMPONENTS =
             CompilerConfigurationKey.create("incremental cache provider");

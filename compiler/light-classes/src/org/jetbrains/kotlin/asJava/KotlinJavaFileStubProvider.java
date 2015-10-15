@@ -435,7 +435,6 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     /*disableInline=*/false,
                     /*disableOptimization=*/false,
                     /*useTypeTableInSerializer=*/false,
-                    /*packageFacadesAsMultifileClasses=*/false,
                     forExtraDiagnostics
             );
             KotlinCodegenFacade.prepareForCompilation(state);

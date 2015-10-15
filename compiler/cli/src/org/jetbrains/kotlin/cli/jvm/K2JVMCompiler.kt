@@ -272,7 +272,6 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions)
             configuration.put(JVMConfigurationKeys.DISABLE_INLINE, arguments.noInline)
             configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
-            configuration.put(JVMConfigurationKeys.PACKAGE_FACADES_AS_MULTIFILE_CLASSES, arguments.packageFacadesAsMultifileClasses);
         }
 
         private fun getClasspath(paths: KotlinPaths, arguments: K2JVMCompilerArguments): List<File> {

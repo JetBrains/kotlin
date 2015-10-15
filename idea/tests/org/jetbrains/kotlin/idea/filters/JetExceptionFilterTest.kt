@@ -33,7 +33,6 @@ import com.intellij.testFramework.PsiTestUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassName
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -109,11 +108,11 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
     }
 
     public fun testBreakpointReachedAt() {
-        doTest("breakpointReachedAt.kt", 2, { getPackageClassName(FqName.ROOT) }, linePrefix = "Breakpoint reached at ")
+        doTest("breakpointReachedAt.kt", 2, { "BreakpointReachedAtKt" }, linePrefix = "Breakpoint reached at ")
     }
 
     public fun testSimple() {
-        doTest("simple.kt", 2, { getPackageClassName(FqName.ROOT) })
+        doTest("simple.kt", 2, { "SimpleKt" })
     }
 
     public fun testKt2489() {

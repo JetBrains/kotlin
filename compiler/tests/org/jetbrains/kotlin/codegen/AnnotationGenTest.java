@@ -38,10 +38,6 @@ public class AnnotationGenTest extends CodegenTestCase {
         return generateAndCreateClassLoader();
     }
 
-    private Class<?> getPackageClass(@NotNull ClassLoader loader) throws ClassNotFoundException {
-        return loader.loadClass(PackageClassUtils.getPackageClassName(myFiles.getPsiFile().getPackageFqName()));
-    }
-
     private Class<?> getPackageSrcClass(@NotNull ClassLoader loader) throws ClassNotFoundException {
         return loader.loadClass(PackagePartClassUtils.getPackagePartInternalName(myFiles.getPsiFile()));
     }

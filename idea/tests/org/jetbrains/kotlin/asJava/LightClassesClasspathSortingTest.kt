@@ -31,12 +31,8 @@ class LightClassesClasspathSortingTest : KotlinCodeInsightTestCase() {
         doTest("test1.A")
     }
 
-    fun testPackageClassOneFile() {
-        doTest("test2.Test2Package")
-    }
-
-    fun testPackageClassTwoFiles() {
-        doTest("test3.Test3Package")
+    fun testFileClass() {
+        doTest("test2.FileKt")
     }
 
     private fun doTest(fqName: String) {

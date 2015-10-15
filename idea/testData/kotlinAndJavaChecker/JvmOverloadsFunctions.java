@@ -1,6 +1,6 @@
 import test.kotlin.A;
 
-import static test.kotlin.KotlinPackage.foo;
+import static test.kotlin.JvmOverloadsFunctionsKt.foo;
 
 class JvmOverloadsFunctions {
     public static void main(String[] args) {

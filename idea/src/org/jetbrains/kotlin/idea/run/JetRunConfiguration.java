@@ -301,8 +301,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         if (StringUtil.isEmpty(MAIN_CLASS_NAME)) {
             return null;
         }
-        return StringUtil.trimEnd(MAIN_CLASS_NAME,
-                                  "." + PackageClassUtils.getPackageClassName(new FqName(MAIN_CLASS_NAME).parent()));
+        return MAIN_CLASS_NAME;
     }
 
     @NotNull
