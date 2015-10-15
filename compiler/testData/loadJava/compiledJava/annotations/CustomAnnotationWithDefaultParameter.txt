@@ -6,8 +6,6 @@ public interface CustomAnnotationWithDefaultParameter {
         public constructor MyAnnotation(/*0*/ first: kotlin.String, /*1*/ second: kotlin.String = ...)
         public final val first: kotlin.String
         public final val second: kotlin.String
-        public abstract fun first(): kotlin.String
-        public abstract fun second(): kotlin.String
     }
 
     @test.CustomAnnotationWithDefaultParameter.MyAnnotation(first = "f", second = "s") public open class MyTest {

@@ -6,7 +6,6 @@ public open class ClassObjectInParam {
     public final class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.reflect.KClass<*>)
         public final val value: kotlin.reflect.KClass<*>
-        public abstract fun value(): kotlin.reflect.KClass<*>
     }
 
     @test.ClassObjectInParam.Anno(value = test.ClassObjectInParam::class) public open class Nested {

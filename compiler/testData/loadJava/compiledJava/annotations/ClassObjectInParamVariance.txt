@@ -13,13 +13,5 @@ public open class ClassObjectInParamVariance {
         public final val arg6: kotlin.Array<kotlin.reflect.KClass<in java.lang.Class<*>!>>
         public final val arg7: kotlin.Array<kotlin.reflect.KClass<out java.lang.Class<kotlin.Int!>!>>
         public final val arg8: kotlin.Array<kotlin.reflect.KClass<in java.lang.Class<kotlin.Int!>!>>
-        public abstract fun arg1(): kotlin.reflect.KClass<out kotlin.Int!>
-        public abstract fun arg2(): kotlin.reflect.KClass<in kotlin.Int!>
-        public abstract fun arg3(): kotlin.Array<kotlin.reflect.KClass<out kotlin.Int!>>
-        public abstract fun arg4(): kotlin.Array<kotlin.reflect.KClass<in kotlin.Int!>>
-        public abstract fun arg5(): kotlin.Array<kotlin.reflect.KClass<out java.lang.Class<*>!>>
-        public abstract fun arg6(): kotlin.Array<kotlin.reflect.KClass<in java.lang.Class<*>!>>
-        public abstract fun arg7(): kotlin.Array<kotlin.reflect.KClass<out java.lang.Class<kotlin.Int!>!>>
-        public abstract fun arg8(): kotlin.Array<kotlin.reflect.KClass<in java.lang.Class<kotlin.Int!>!>>
     }
 }

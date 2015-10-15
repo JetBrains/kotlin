@@ -9,6 +9,5 @@ public interface ArrayOfStringInParam {
     public final class MyAnnotation : kotlin.Annotation {
         public constructor MyAnnotation(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/)
         public final val value: kotlin.Array<kotlin.String>
-        public abstract fun value(): kotlin.Array<kotlin.String>
     }
 }

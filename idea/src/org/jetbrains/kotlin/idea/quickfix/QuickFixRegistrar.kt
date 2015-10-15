@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
 
@@ -301,8 +300,6 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         EXPLICIT_DELEGATION_CALL_REQUIRED.registerFactory(InsertDelegationCallQuickfix.InsertThisDelegationCallFactory)
         EXPLICIT_DELEGATION_CALL_REQUIRED.registerFactory(InsertDelegationCallQuickfix.InsertSuperDelegationCallFactory)
-
-        DEPRECATED_ANNOTATION_METHOD_CALL.registerFactory(MigrateAnnotationMethodCallFix, MigrateAnnotationMethodCallInWholeFile)
 
         MISSING_CONSTRUCTOR_KEYWORD.registerFactory(MissingConstructorKeywordFix,
                                                MissingConstructorKeywordFix.createWholeProjectFixFactory())

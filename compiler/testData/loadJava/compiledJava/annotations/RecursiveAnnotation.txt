@@ -5,12 +5,10 @@ public interface RecursiveAnnotation {
     @test.RecursiveAnnotation.B(value = test.RecursiveAnnotation.A(value = "test")) public final class A : kotlin.Annotation {
         public constructor A(/*0*/ value: kotlin.String)
         public final val value: kotlin.String
-        public abstract fun value(): kotlin.String
     }
 
     @test.RecursiveAnnotation.B(value = test.RecursiveAnnotation.A(value = "test")) public final class B : kotlin.Annotation {
         public constructor B(/*0*/ value: test.RecursiveAnnotation.A)
         public final val value: test.RecursiveAnnotation.A
-        public abstract fun value(): test.RecursiveAnnotation.A
     }
 }

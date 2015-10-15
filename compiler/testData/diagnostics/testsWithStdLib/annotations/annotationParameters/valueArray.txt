@@ -17,7 +17,4 @@ public final class A : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public abstract fun value(): kotlin.Array<kotlin.String>
-    public abstract fun x(): kotlin.reflect.KClass<*>
-    public abstract fun y(): kotlin.Int
 }

@@ -7,10 +7,7 @@ public final class A : kotlin.Annotation {
     public final val a: kotlin.Int
     public final val b: kotlin.Double
     public final val x: kotlin.Boolean
-    public abstract fun a(): kotlin.Int
-    public abstract fun b(): kotlin.Double
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public abstract fun x(): kotlin.Boolean
 }

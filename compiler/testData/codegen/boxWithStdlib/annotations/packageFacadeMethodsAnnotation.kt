@@ -22,7 +22,7 @@ fun box(): String {
             throw AssertionError("Method ${method.name} has no ${kotlinDelegatedMethod.simpleName} annotation.")
         }
 
-        val implementationClassName = ann.implementationClassName()
+        val implementationClassName = ann.implementationClassName
         val implementationClass = try {
             Class.forName(implementationClassName)
         }

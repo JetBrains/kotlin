@@ -86,6 +86,9 @@ public class LazyJavaClassMemberScope(
     }
 
     override fun JavaMethodDescriptor.isVisibleAsFunction(): Boolean {
+        // Do not load Java annotation methods as Kotlin functions (load them as properties instead)
+        if (jClass.isAnnotationType) return false
+
         if (getPropertyNamesCandidatesByAccessorName(name).any {
             propertyName ->
             getPropertiesFromSupertypes(propertyName).any {
