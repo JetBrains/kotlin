@@ -98,7 +98,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     var toNullableT: Boolean = false
 
-    var receiverAsterisk = false
+    val receiverAsterisk = FamilyProperty<Boolean>()
 
     val buildFamilies = LinkedHashSet(defaultFamilies)
     val buildPrimitives = LinkedHashSet(defaultPrimitives)
@@ -130,10 +130,6 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     fun typeParam(t: String) {
         typeParams.add(t)
-    }
-
-    fun receiverAsterisk(v: Boolean) {
-        receiverAsterisk = v
     }
 
     fun exclude(vararg families: Family) {
@@ -293,7 +289,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             return answer.toString()
         }
 
-        val isAsteriskOrT = if (receiverAsterisk) "*" else "T"
+        val isAsteriskOrT = if (receiverAsterisk[f] == true) "*" else "T"
         val receiver = when (f) {
             Iterables -> "Iterable<$isAsteriskOrT>"
             Collections -> "Collection<$isAsteriskOrT>"
