@@ -250,7 +250,7 @@ public class ArgumentTypeResolver {
                         callableReferenceExpression, receiverType, context, ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS,
                         callResolver);
         return CallableReferencesResolutionUtilsKt.getResolvedCallableReferenceShapeType(
-                callableReferenceExpression, overloadResolutionResults, context, expectedTypeIsUnknown,
+                callableReferenceExpression, receiverType, overloadResolutionResults, context, expectedTypeIsUnknown,
                 reflectionTypes, builtIns, functionPlaceholders);
     }
 

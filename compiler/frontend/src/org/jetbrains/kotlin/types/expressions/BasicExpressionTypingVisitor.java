@@ -700,7 +700,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(CALLABLE_REFERENCE_TO_OBJECT_MEMBER.on(reference));
         }
 
-        return CallableReferencesResolutionUtilsKt.createReflectionTypeForResolvedCallableReference(expression, descriptor, context, components.reflectionTypes);
+        return CallableReferencesResolutionUtilsKt.createReflectionTypeForResolvedCallableReference(
+                expression, lhsType, descriptor, context, components.reflectionTypes
+        );
     }
 
     @Override

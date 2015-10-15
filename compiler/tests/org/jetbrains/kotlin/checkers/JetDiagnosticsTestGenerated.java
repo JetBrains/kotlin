@@ -1721,6 +1721,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("extensionToSupertype.kt")
+                public void testExtensionToSupertype() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/extensionToSupertype.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("fakeOverrideType.kt")
                 public void testFakeOverrideType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/fakeOverrideType.kt");
