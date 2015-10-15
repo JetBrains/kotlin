@@ -589,6 +589,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("StringPrefixAndSuffix.kt")
+        public void testStringPrefixAndSuffix() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/StringPrefixAndSuffix.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("StringTemplates.kt")
         public void testStringTemplates() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/StringTemplates.kt");
