@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.resolve.descriptorUtil
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.name.FqName
 
-private val NO_INFER_ANNOTATION_FQ_NAME = FqName("kotlin.NoInfer")
+private val NO_INFER_ANNOTATION_FQ_NAME = FqName("kotlin.internal.NoInfer")
 
 public fun Annotated.hasNoInferAnnotation(): Boolean = annotations.findAnnotation(NO_INFER_ANNOTATION_FQ_NAME) != null
 
-private val EXACT_ANNOTATION_FQ_NAME = FqName("kotlin.Exact")
+private val EXACT_ANNOTATION_FQ_NAME = FqName("kotlin.internal.Exact")
 
 public fun Annotated.hasExactAnnotation(): Boolean = annotations.findAnnotation(EXACT_ANNOTATION_FQ_NAME) != null

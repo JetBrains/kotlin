@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin
+package kotlin.internal
 
 /**
  * Specifies that the corresponding type should be ignored during type inference.
