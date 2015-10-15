@@ -16,4 +16,12 @@
 
 package kotlin
 
-public class UninitializedPropertyAccessException(name: String): RuntimeException("lateinit property $name has not been initialized")
+class UninitializedPropertyAccessException : RuntimeException {
+    constructor()
+
+    constructor(message: String) : super(message)
+
+    constructor(message: String, cause: Throwable) : super(message, cause)
+
+    constructor(cause: Throwable) : super(cause)
+}

@@ -18,9 +18,9 @@ package kotlin.jvm.internal;
 
 import kotlin.KotlinNullPointerException;
 import kotlin.UninitializedPropertyAccessException;
-import kotlin.jvm.internal.markers.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class Intrinsics {
@@ -35,8 +35,16 @@ public class Intrinsics {
         throw sanitizeStackTrace(new KotlinNullPointerException());
     }
 
+    public static void throwNpe(String message) {
+        throw sanitizeStackTrace(new KotlinNullPointerException(message));
+    }
+
+    public static void throwUninitializedProperty(String message) {
+        throw sanitizeStackTrace(new UninitializedPropertyAccessException(message));
+    }
+
     public static void throwUninitializedPropertyAccessException(String propertyName) {
-        throw sanitizeStackTrace(new UninitializedPropertyAccessException(propertyName));
+        throwUninitializedProperty("lateinit property " + propertyName + " has not been initialized");
     }
 
     public static void checkExpressionValueIsNotNull(Object value, String message) {
