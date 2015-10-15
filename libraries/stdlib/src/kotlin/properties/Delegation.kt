@@ -1,7 +1,7 @@
 package kotlin.properties
 
 import java.util.NoSuchElementException
-
+import kotlin.reflect.KProperty
 
 /**
  * Standard property delegates.
@@ -49,9 +49,9 @@ public object Delegates {
      * @param onChange the callback which is called after the change of the property is made. The value of the property
      *  has already been changed when this callback is invoked.
      */
-    public inline fun observable<T>(initialValue: T, crossinline onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Unit):
+    public inline fun observable<T>(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Unit):
         ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
-            override fun afterChange(property: PropertyMetadata, oldValue: T, newValue: T) = onChange(property, oldValue, newValue)
+            override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange(property, oldValue, newValue)
         }
 
     /**
@@ -63,9 +63,9 @@ public object Delegates {
      *  If the callback returns `true` the value of the property is being set to the new value,
      *  and if the callback returns `false` the new value is discarded and the property remains its old value.
      */
-    public inline fun vetoable<T>(initialValue: T, crossinline onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Boolean):
+    public inline fun vetoable<T>(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Boolean):
         ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
-            override fun beforeChange(property: PropertyMetadata, oldValue: T, newValue: T): Boolean = onChange(property, oldValue, newValue)
+            override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean = onChange(property, oldValue, newValue)
         }
 
     /**
@@ -115,20 +115,20 @@ public object Delegates {
 private class NotNullVar<T: Any>() : ReadWriteProperty<Any?, T> {
     private var value: T? = null
 
-    public override fun getValue(thisRef: Any?, property: PropertyMetadata): T {
+    public override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return value ?: throw IllegalStateException("Property ${property.name} should be initialized before get.")
     }
 
-    public override fun setValue(thisRef: Any?, property: PropertyMetadata, value: T) {
+    public override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         this.value = value
     }
 }
 
 
 @Deprecated("Use Delegates.vetoable() instead or construct implementation of abstract ObservableProperty", ReplaceWith("Delegates.vetoable(initialValue, onChange)"))
-public fun ObservableProperty<T>(initialValue: T, onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Boolean): ObservableProperty<T> =
+public fun ObservableProperty<T>(initialValue: T, onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Boolean): ObservableProperty<T> =
     object : ObservableProperty<T>(initialValue) {
-        override fun beforeChange(property: PropertyMetadata, oldValue: T, newValue: T): Boolean = onChange(property, oldValue, newValue)
+        override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean = onChange(property, oldValue, newValue)
     }
 
 /**
@@ -144,19 +144,19 @@ public abstract class ObservableProperty<T>(initialValue: T) : ReadWriteProperty
      *  If the callback returns `true` the value of the property is being set to the new value,
      *  and if the callback returns `false` the new value is discarded and the property remains its old value.
      */
-    protected open fun beforeChange(property: PropertyMetadata, oldValue: T, newValue: T): Boolean = true
+    protected open fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean = true
 
     /**
      * The callback which is called after the change of the property is made. The value of the property
      * has already been changed when this callback is invoked.
      */
-    protected open fun afterChange (property: PropertyMetadata, oldValue: T, newValue: T): Unit {}
+    protected open fun afterChange (property: KProperty<*>, oldValue: T, newValue: T): Unit {}
 
-    public override fun getValue(thisRef: Any?, property: PropertyMetadata): T {
+    public override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return value
     }
 
-    public override fun setValue(thisRef: Any?, property: PropertyMetadata, value: T) {
+    public override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         val oldValue = this.value
         if (!beforeChange(property, oldValue, value)) {
             return
@@ -179,7 +179,7 @@ private fun unescape(value: Any?): Any? {
 private class LazyVal<T>(private val initializer: () -> T) : ReadOnlyProperty<Any?, T> {
     private var value: Any? = null
 
-    public override fun getValue(thisRef: Any?, property: PropertyMetadata): T {
+    public override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         if (value == null) {
             value = escape(initializer())
         }
@@ -191,7 +191,7 @@ private class BlockingLazyVal<T>(lock: Any?, private val initializer: () -> T) :
     private val lock = lock ?: this
     @Volatile private var value: Any? = null
 
-    public override fun getValue(thisRef: Any?, property: PropertyMetadata): T {
+    public override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         val _v1 = value
         if (_v1 != null) {
             return unescape(_v1) as T
@@ -226,20 +226,20 @@ public abstract class MapVal<T, K, out V>() : ReadOnlyProperty<T, V> {
 
     /**
      * Returns the map key used to store the values of the given property.
-     * @param desc the property for which the key is requested.
+     * @param property the property for which the key is requested.
      */
-    protected abstract fun key(desc: PropertyMetadata): K
+    protected abstract fun key(property: KProperty<*>): K
 
     /**
      * Returns the property value to be used when the map does not contain the corresponding key.
      * @param ref the object instance for which the value was requested.
      * @param property the property for which the value was requested.
      */
-    protected open fun default(ref: T, property: PropertyMetadata): V {
+    protected open fun default(ref: T, property: KProperty<*>): V {
         throw NoSuchElementException("The value for property ${property.name} is missing in $ref.")
     }
 
-    public override fun getValue(thisRef: T, property: PropertyMetadata) : V {
+    public override fun getValue(thisRef: T, property: KProperty<*>) : V {
         val map = map(thisRef)
         val key = key(property)
         return map.getOrElse(key, { default(thisRef, property) }) as V
@@ -255,17 +255,17 @@ public abstract class MapVal<T, K, out V>() : ReadOnlyProperty<T, V> {
 public abstract class MapVar<T, K, V>() : MapVal<T, K, V>(), ReadWriteProperty<T, V> {
     protected abstract override fun map(ref: T): MutableMap<in K, Any?>
 
-    public override fun setValue(thisRef: T, property: PropertyMetadata, value: V) {
+    public override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
         val map = map(thisRef)
         map.put(key(property), value)
     }
 
-    override fun getValue(thisRef: T, property: PropertyMetadata): V {
+    override fun getValue(thisRef: T, property: KProperty<*>): V {
         return super<MapVal>.getValue(thisRef, property)
     }
 }
 
-private val propertyNameSelector: (PropertyMetadata) -> String = {it.name}
+private val propertyNameSelector: (KProperty<*>) -> String = {it.name}
 private val throwKeyNotFound: (Any?, Any?) -> Nothing = {thisRef, key -> throw NoSuchElementException("The value for key $key is missing from $thisRef.") }
 
 /**
@@ -275,18 +275,20 @@ private val throwKeyNotFound: (Any?, Any?) -> Nothing = {thisRef, key -> throw N
  * @param key the function to calculate the map key from a property metadata object.
  * @param default the function returning the value of the property for a given object if it's missing from the given map.
  */
-public open class FixedMapVal<T, K, out V>(private val map: Map<in K, Any?>,
-                                              private val key: (PropertyMetadata) -> K,
-                                              private val default: (ref: T, key: K) -> V = throwKeyNotFound) : MapVal<T, K, V>() {
+public open class FixedMapVal<T, K, out V>(
+        private val map: Map<in K, Any?>,
+        private val key: (KProperty<*>) -> K,
+        private val default: (ref: T, key: K) -> V = throwKeyNotFound
+) : MapVal<T, K, V>() {
     protected override fun map(ref: T): Map<in K, Any?> {
         return map
     }
 
-    protected override fun key(desc: PropertyMetadata): K {
-        return (key)(desc)
+    protected override fun key(property: KProperty<*>): K {
+        return (key)(property)
     }
 
-    protected override fun default(ref: T, property: PropertyMetadata): V {
+    protected override fun default(ref: T, property: KProperty<*>): V {
         return (default)(ref, key(property))
     }
 }
@@ -298,18 +300,20 @@ public open class FixedMapVal<T, K, out V>(private val map: Map<in K, Any?>,
  * @param key the function to calculate the map key from a property metadata object.
  * @param default the function returning the value of the property for a given object if it's missing from the given map.
  */
-public open class FixedMapVar<T, K, V>(private val map: MutableMap<in K, Any?>,
-                                          private val key: (PropertyMetadata) -> K,
-                                          private val default: (ref: T, key: K) -> V = throwKeyNotFound) : MapVar<T, K, V>() {
+public open class FixedMapVar<T, K, V>(
+        private val map: MutableMap<in K, Any?>,
+        private val key: (KProperty<*>) -> K,
+        private val default: (ref: T, key: K) -> V = throwKeyNotFound
+) : MapVar<T, K, V>() {
     protected override fun map(ref: T): MutableMap<in K, Any?> {
         return map
     }
 
-    protected override fun key(desc: PropertyMetadata): K {
+    protected override fun key(desc: KProperty<*>): K {
         return (key)(desc)
     }
 
-    protected override fun default(ref: T, property: PropertyMetadata): V {
+    protected override fun default(ref: T, property: KProperty<*>): V {
         return (default)(ref, key(property))
     }
 }

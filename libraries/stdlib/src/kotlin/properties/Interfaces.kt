@@ -1,5 +1,6 @@
 package kotlin.properties
 
+import kotlin.reflect.KProperty
 
 /**
  * Base interface that can be used for implementing property delegates of read-only properties.
@@ -17,7 +18,7 @@ public interface ReadOnlyProperty<in R, out T> {
      * @param property the metadata for the property.
      * @return the property value.
      */
-    public operator fun getValue(thisRef: R, property: PropertyMetadata): T
+    public operator fun getValue(thisRef: R, property: KProperty<*>): T
 }
 
 /**
@@ -36,7 +37,7 @@ public interface ReadWriteProperty<in R, T> {
      * @param property the metadata for the property.
      * @return the property value.
      */
-    public operator fun getValue(thisRef: R, property: PropertyMetadata): T
+    public operator fun getValue(thisRef: R, property: KProperty<*>): T
 
     /**
      * Sets the value of the property for the given object.
@@ -44,5 +45,5 @@ public interface ReadWriteProperty<in R, T> {
      * @param property the metadata for the property.
      * @param value the value to set.
      */
-    public operator fun setValue(thisRef: R, property: PropertyMetadata, value: T)
+    public operator fun setValue(thisRef: R, property: KProperty<*>, value: T)
 }

@@ -3,6 +3,7 @@ package test.properties.delegation.map
 import org.junit.Test as test
 import java.util.HashMap
 import kotlin.properties.*
+import kotlin.reflect.KProperty
 import kotlin.test.*
 
 data class B(val a: Int)
@@ -125,15 +126,14 @@ class MapPropertyFunctionTest() {
     }
 }
 
-// TODO Remove explicit types when KT-9072 will be fixed
-val mapVal: MapVal<MapPropertyCustomTest, String, String> = object: MapVal<MapPropertyCustomTest, String, String>() {
+val mapVal = object : MapVal<MapPropertyCustomTest, String, String>() {
     override fun map(ref: MapPropertyCustomTest) = ref.map
-    override fun key(desc: PropertyMetadata) = "${desc.name}Desc"
+    override fun key(property: KProperty<*>) = "${property.name}Desc"
 }
 
-val mapVar: MapVar<MapPropertyCustomTest, String, String> = object : MapVar<MapPropertyCustomTest, String, String>() {
+val mapVar = object : MapVar<MapPropertyCustomTest, String, String>() {
     override fun map(ref: MapPropertyCustomTest) = ref.map
-    override fun key(desc: PropertyMetadata) = "${desc.name}Desc"
+    override fun key(property: KProperty<*>) = "${property.name}Desc"
 }
 
 class MapPropertyCustomTest() {
@@ -148,18 +148,18 @@ class MapPropertyCustomTest() {
     }
 }
 
-val mapValWithDefault: MapVal<MapPropertyCustomWithDefaultTest, String, String> = object : MapVal<MapPropertyCustomWithDefaultTest, String, String>() {
+val mapValWithDefault = object : MapVal<MapPropertyCustomWithDefaultTest, String, String>() {
     override fun map(ref: MapPropertyCustomWithDefaultTest) = ref.map
-    override fun key(desc: PropertyMetadata) = desc.name
+    override fun key(property: KProperty<*>) = property.name
 
-    override fun default(ref: MapPropertyCustomWithDefaultTest, key: PropertyMetadata) = "default"
+    override fun default(ref: MapPropertyCustomWithDefaultTest, key: KProperty<*>) = "default"
 }
 
-val mapVarWithDefault: MapVar<MapPropertyCustomWithDefaultTest, String, String> = object : MapVar<MapPropertyCustomWithDefaultTest, String, String>() {
+val mapVarWithDefault = object : MapVar<MapPropertyCustomWithDefaultTest, String, String>() {
     override fun map(ref: MapPropertyCustomWithDefaultTest) = ref.map
-    override fun key(desc: PropertyMetadata) = desc.name
+    override fun key(property: KProperty<*>) = property.name
 
-    override fun default(ref: MapPropertyCustomWithDefaultTest, key: PropertyMetadata) = "default"
+    override fun default(ref: MapPropertyCustomWithDefaultTest, key: KProperty<*>) = "default"
 }
 
 class MapPropertyCustomWithDefaultTest() {
