@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.DATA
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.INNER
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.MODALITY
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.VISIBILITY
@@ -87,6 +88,7 @@ private class ClassClsStubBuilder(
         val relevantFlags = arrayListOf(VISIBILITY)
         if (isClass()) {
             relevantFlags.add(INNER)
+            relevantFlags.add(DATA)
             relevantFlags.add(MODALITY)
         }
         val additionalModifiers = when (classKind) {

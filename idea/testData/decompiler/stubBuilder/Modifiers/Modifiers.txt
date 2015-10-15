@@ -1,0 +1,10 @@
+PsiJetFileStubImpl[package=test]
+  PACKAGE_DIRECTIVE:
+    REFERENCE_EXPRESSION:[referencedName=test]
+  IMPORT_LIST:
+  CLASS:[fqName=test.Modifiers, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Modifiers, superNames=[]]
+    MODIFIER_LIST:[public final data]
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[public]
+      VALUE_PARAMETER_LIST:
+    CLASS_BODY:

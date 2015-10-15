@@ -113,6 +113,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("Modifiers")
+    public void testModifiers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Modifiers/");
+        doTest(fileName);
+    }
+
     @TestMetadata("MultifileClass")
     public void testMultifileClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/MultifileClass/");
