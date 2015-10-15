@@ -166,6 +166,8 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
     }
 
     override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<JetFile> {
+        if (facadeFqName.isRoot) return emptyList()
+
         return PackagePartClassUtils.getFilesWithCallables(findFilesForPackage(facadeFqName.parent(), scope)).filter {
             JvmFileClassUtil.getFileClassInfoNoResolve(it).facadeClassFqName == facadeFqName
         }
