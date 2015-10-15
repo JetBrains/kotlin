@@ -280,7 +280,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         mv.visitCode();
 
         InstructionAdapter iv = new InstructionAdapter(mv);
-        ImplementationBodyCodegen.markLineNumberForSyntheticFunction(DescriptorUtils.getParentOfType(funDescriptor, ClassDescriptor.class), iv);
+        MemberCodegen.markLineNumberForSyntheticFunction(DescriptorUtils.getParentOfType(funDescriptor, ClassDescriptor.class), iv);
 
         iv.load(0, asmType);
 

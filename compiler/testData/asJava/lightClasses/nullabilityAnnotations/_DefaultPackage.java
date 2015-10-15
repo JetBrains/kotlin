@@ -54,14 +54,6 @@ public final class _DefaultPackage {
     public static final void setNullableVarWithGetSet(@org.jetbrains.annotations.Nullable java.lang.String v) { /* compiled code */ }
 
     @kotlin.jvm.internal.KotlinDelegatedMethod(implementationClassName = "_DefaultPackageKt")
-    @org.jetbrains.annotations.Nullable
-    static final java.lang.String getPrivateN() { /* compiled code */ }
-
-    @kotlin.jvm.internal.KotlinDelegatedMethod(implementationClassName = "_DefaultPackageKt")
-    @org.jetbrains.annotations.NotNull
-    static final java.lang.String getPrivateNn() { /* compiled code */ }
-
-    @kotlin.jvm.internal.KotlinDelegatedMethod(implementationClassName = "_DefaultPackageKt")
     @org.jetbrains.annotations.NotNull
     public static final java.lang.String notNull(@org.jetbrains.annotations.NotNull java.lang.String a) { /* compiled code */ }
 
@@ -88,6 +80,5 @@ public final class _DefaultPackage {
     public static final java.lang.String nullableWithNN() { /* compiled code */ }
 
     @kotlin.jvm.internal.KotlinDelegatedMethod(implementationClassName = "_DefaultPackageKt")
-    @org.jetbrains.annotations.Nullable
-    static final java.lang.String privateFun(@org.jetbrains.annotations.NotNull java.lang.String a, @org.jetbrains.annotations.Nullable java.lang.String b) { /* compiled code */ }
+    private static final java.lang.String privateFun(java.lang.String a, java.lang.String b) { /* compiled code */ }
 }

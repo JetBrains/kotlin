@@ -131,4 +131,9 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
         writeModuleName(av, state);
         av.visitEnd();
     }
+
+    @Override
+    protected void generateSyntheticParts() {
+        generateSyntheticAccessors();
+    }
 }

@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.JetTokens;
@@ -49,7 +48,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
@@ -57,7 +55,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
@@ -835,144 +832,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         FunctionCodegen.endVisit(mv, "valueOf()", myClass);
     }
 
-    protected void generateSyntheticAccessors() {
-        for (AccessorForCallableDescriptor<?> accessor : ((CodegenContext<?>) context).getAccessors()) {
-            generateSyntheticAccessor(accessor);
-        }
-    }
-
-    private void generateSyntheticAccessor(@NotNull AccessorForCallableDescriptor<?> accessorForCallableDescriptor) {
-        if (accessorForCallableDescriptor instanceof FunctionDescriptor) {
-            final FunctionDescriptor accessor = (FunctionDescriptor) accessorForCallableDescriptor;
-            final FunctionDescriptor original = (FunctionDescriptor) accessorForCallableDescriptor.getCalleeDescriptor();
-            functionCodegen.generateMethod(
-                    JvmDeclarationOriginKt.Synthetic(null, original), accessor,
-                    new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, accessor) {
-                        @Override
-                        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                            markLineNumberForSyntheticFunction(descriptor, codegen.v);
-
-                            generateMethodCallTo(original, accessor, codegen.v);
-                            codegen.v.areturn(signature.getReturnType());
-                        }
-                    }
-            );
-        }
-        else if (accessorForCallableDescriptor instanceof AccessorForPropertyDescriptor) {
-            final AccessorForPropertyDescriptor accessor = (AccessorForPropertyDescriptor) accessorForCallableDescriptor;
-            final PropertyDescriptor original = accessor.getCalleeDescriptor();
-
-            class PropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased<PropertyAccessorDescriptor> {
-                public PropertyAccessorStrategy(@NotNull PropertyAccessorDescriptor callableDescriptor) {
-                    super(ImplementationBodyCodegen.this.state, callableDescriptor);
-                }
-
-                @Override
-                public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                    boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
-                                         !isCompanionObject(accessor.getContainingDeclaration());
-                    StackValue property = codegen.intermediateValueForProperty(
-                            original, forceField, accessor.getSuperCallExpression(), true, StackValue.none()
-                    );
-
-                    InstructionAdapter iv = codegen.v;
-
-                    markLineNumberForSyntheticFunction(descriptor, iv);
-
-                    Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
-                    for (int i = 0, reg = 0; i < argTypes.length; i++) {
-                        Type argType = argTypes[i];
-                        iv.load(reg, argType);
-                        //noinspection AssignmentToForLoopParameter
-                        reg += argType.getSize();
-                    }
-
-                    if (callableDescriptor instanceof PropertyGetterDescriptor) {
-                        property.put(property.type, iv);
-                    }
-                    else {
-                        property.store(StackValue.onStack(property.type), iv, true);
-                    }
-
-                    iv.areturn(signature.getReturnType());
-                }
-            }
-
-            PropertyGetterDescriptor getter = accessor.getGetter();
-            assert getter != null;
-            functionCodegen.generateMethod(
-                    JvmDeclarationOriginKt.Synthetic(null, original.getGetter() != null ? original.getGetter() : original),
-                    getter, new PropertyAccessorStrategy(getter));
-
-
-            if (accessor.isVar()) {
-                PropertySetterDescriptor setter = accessor.getSetter();
-                assert setter != null;
-
-                functionCodegen.generateMethod(
-                        JvmDeclarationOriginKt.Synthetic(null, original.getSetter() != null ? original.getSetter() : original),
-                        setter, new PropertyAccessorStrategy(setter));
-            }
-        }
-        else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    public static void markLineNumberForSyntheticFunction(@Nullable ClassDescriptor declarationDescriptor, @NotNull InstructionAdapter v) {
-        if (declarationDescriptor == null) {
-            return;
-        }
-
-        PsiElement classElement = DescriptorToSourceUtils.getSourceFromDescriptor(declarationDescriptor);
-        if (classElement != null) {
-            Integer lineNumber = CodegenUtil.getLineNumberForElement(classElement, false);
-            if (lineNumber != null) {
-                Label label = new Label();
-                v.visitLabel(label);
-                v.visitLineNumber(lineNumber, label);
-            }
-        }
-    }
-
-    private void generateMethodCallTo(
-            @NotNull FunctionDescriptor functionDescriptor,
-            @Nullable FunctionDescriptor accessorDescriptor,
-            @NotNull InstructionAdapter iv
-    ) {
-        CallableMethod callableMethod = typeMapper.mapToCallableMethod(
-                functionDescriptor,
-                accessorDescriptor instanceof AccessorForCallableDescriptor &&
-                ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallExpression() != null
-        );
-
-        int reg = 1;
-
-        boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
-        if (!accessorIsConstructor && functionDescriptor instanceof ConstructorDescriptor) {
-            iv.anew(callableMethod.getOwner());
-            iv.dup();
-            reg = 0;
-        }
-        else if (accessorIsConstructor || (accessorDescriptor != null && JetTypeMapper.isAccessor(accessorDescriptor))) {
-            if (!AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor)) {
-                iv.load(0, OBJECT_TYPE);
-            }
-        }
-
-        for (Type argType : callableMethod.getParameterTypes()) {
-            if (AsmTypes.DEFAULT_CONSTRUCTOR_MARKER.equals(argType)) {
-                iv.aconst(null);
-            }
-            else {
-                iv.load(reg, argType);
-                reg += argType.getSize();
-            }
-        }
-
-        callableMethod.genInvokeInstruction(iv);
-    }
-
     private void generateFieldForSingleton() {
         if (isEnumEntry(descriptor)) return;
 
@@ -989,7 +848,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
-            markLineNumberForSyntheticFunction(descriptor, v);
+            markLineNumberForSyntheticFunction(element, v);
             v.anew(classAsmType);
             v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
             if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {

@@ -846,7 +846,7 @@ public class FunctionCodegen {
         Type[] originalArgTypes = delegateTo.getArgumentTypes();
 
         InstructionAdapter iv = new InstructionAdapter(mv);
-        ImplementationBodyCodegen.markLineNumberForSyntheticFunction(owner.getThisDescriptor(), iv);
+        MemberCodegen.markLineNumberForSyntheticFunction(owner.getThisDescriptor(), iv);
 
         generateInstanceOfBarrierIfNeeded(iv, descriptor, bridge, delegateTo);
 

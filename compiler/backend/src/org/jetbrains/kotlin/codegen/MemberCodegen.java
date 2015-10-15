@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.psi.PsiElement;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -35,15 +37,14 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
+import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -62,8 +64,12 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlag
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTopLevelDeclaration;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclarationContainer*/> {
@@ -136,6 +142,26 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     @Nullable
     protected ClassDescriptor classForInnerClassRecord() {
         return null;
+    }
+
+    public static void markLineNumberForSyntheticFunction(@Nullable ClassDescriptor declarationDescriptor, @NotNull InstructionAdapter v) {
+        if (declarationDescriptor == null) {
+            return;
+        }
+
+        PsiElement classElement = DescriptorToSourceUtils.getSourceFromDescriptor(declarationDescriptor);
+        if (classElement != null) {
+            markLineNumberForSyntheticFunction(classElement, v);
+        }
+    }
+
+    public static void markLineNumberForSyntheticFunction(@NotNull PsiElement element, @NotNull InstructionAdapter v) {
+        Integer lineNumber = CodegenUtil.getLineNumberForElement(element, false);
+        if (lineNumber != null) {
+            Label label = new Label();
+            v.visitLabel(label);
+            v.visitLineNumber(lineNumber, label);
+        }
     }
 
     protected void done() {
@@ -551,5 +577,125 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             initialization.invoke(iv);
             iv.putstatic(thisAsmType.getInternalName(), JvmAbi.INSTANCE_FIELD, fieldAsmType.getDescriptor());
         }
+    }
+
+    protected void generateSyntheticAccessors() {
+        for (AccessorForCallableDescriptor<?> accessor : ((CodegenContext<?>) context).getAccessors()) {
+            generateSyntheticAccessor(accessor);
+        }
+    }
+
+    private void generateSyntheticAccessor(@NotNull AccessorForCallableDescriptor<?> accessorForCallableDescriptor) {
+        if (accessorForCallableDescriptor instanceof FunctionDescriptor) {
+            final FunctionDescriptor accessor = (FunctionDescriptor) accessorForCallableDescriptor;
+            final FunctionDescriptor original = (FunctionDescriptor) accessorForCallableDescriptor.getCalleeDescriptor();
+            functionCodegen.generateMethod(
+                    Synthetic(null, original), accessor,
+                    new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, accessor) {
+                        @Override
+                        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
+                            markLineNumberForSyntheticFunction(element, codegen.v);
+
+                            generateMethodCallTo(original, accessor, codegen.v);
+                            codegen.v.areturn(signature.getReturnType());
+                        }
+                    }
+            );
+        }
+        else if (accessorForCallableDescriptor instanceof AccessorForPropertyDescriptor) {
+            final AccessorForPropertyDescriptor accessor = (AccessorForPropertyDescriptor) accessorForCallableDescriptor;
+            final PropertyDescriptor original = accessor.getCalleeDescriptor();
+
+            class PropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased<PropertyAccessorDescriptor> {
+                public PropertyAccessorStrategy(@NotNull PropertyAccessorDescriptor callableDescriptor) {
+                    super(MemberCodegen.this.state, callableDescriptor);
+                }
+
+                @Override
+                public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
+                    boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
+                                         !isCompanionObject(accessor.getContainingDeclaration());
+                    StackValue property = codegen.intermediateValueForProperty(
+                            original, forceField, accessor.getSuperCallExpression(), true, StackValue.none()
+                    );
+
+                    InstructionAdapter iv = codegen.v;
+
+                    markLineNumberForSyntheticFunction(element, iv);
+
+                    Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
+                    for (int i = 0, reg = 0; i < argTypes.length; i++) {
+                        Type argType = argTypes[i];
+                        iv.load(reg, argType);
+                        //noinspection AssignmentToForLoopParameter
+                        reg += argType.getSize();
+                    }
+
+                    if (callableDescriptor instanceof PropertyGetterDescriptor) {
+                        property.put(property.type, iv);
+                    }
+                    else {
+                        property.store(StackValue.onStack(property.type), iv, true);
+                    }
+
+                    iv.areturn(signature.getReturnType());
+                }
+            }
+
+            PropertyGetterDescriptor getter = accessor.getGetter();
+            assert getter != null;
+            functionCodegen.generateMethod(Synthetic(null, original.getGetter() != null ? original.getGetter() : original),
+                                           getter, new PropertyAccessorStrategy(getter));
+
+
+            if (accessor.isVar()) {
+                PropertySetterDescriptor setter = accessor.getSetter();
+                assert setter != null;
+
+                functionCodegen.generateMethod(Synthetic(null, original.getSetter() != null ? original.getSetter() : original),
+                                               setter, new PropertyAccessorStrategy(setter));
+            }
+        }
+        else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private void generateMethodCallTo(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @Nullable FunctionDescriptor accessorDescriptor,
+            @NotNull InstructionAdapter iv
+    ) {
+        CallableMethod callableMethod = typeMapper.mapToCallableMethod(
+                functionDescriptor,
+                accessorDescriptor instanceof AccessorForCallableDescriptor &&
+                ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallExpression() != null
+        );
+
+        boolean isTopLevelDeclaration = isTopLevelDeclaration(functionDescriptor);
+        int reg = isTopLevelDeclaration ? 0 : 1;
+        boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
+        if (!accessorIsConstructor && functionDescriptor instanceof ConstructorDescriptor) {
+            iv.anew(callableMethod.getOwner());
+            iv.dup();
+            reg = 0;
+        }
+        else if (accessorIsConstructor || (accessorDescriptor != null && JetTypeMapper.isAccessor(accessorDescriptor) && !isTopLevelDeclaration)) {
+            if (!AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor)) {
+                iv.load(0, OBJECT_TYPE);
+            }
+        }
+
+        for (Type argType : callableMethod.getParameterTypes()) {
+            if (AsmTypes.DEFAULT_CONSTRUCTOR_MARKER.equals(argType)) {
+                iv.aconst(null);
+            }
+            else {
+                iv.load(reg, argType);
+                reg += argType.getSize();
+            }
+        }
+
+        callableMethod.genInvokeInstruction(iv);
     }
 }

@@ -174,6 +174,9 @@ public class JetTypeMapper {
 
     @NotNull
     private String internalNameForPackageMemberOwner(@NotNull CallableMemberDescriptor descriptor, boolean isImplementation) {
+        if (descriptor instanceof AccessorForCallableDescriptor) {
+            descriptor = ((AccessorForCallableDescriptor) descriptor).getCalleeDescriptor();
+        }
         JetFile file = DescriptorToSourceUtils.getContainingFile(descriptor);
         if (file != null) {
             Visibility visibility = descriptor.getVisibility();
