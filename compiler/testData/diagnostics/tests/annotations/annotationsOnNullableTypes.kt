@@ -37,7 +37,7 @@ val baz2: @[a b(1)] Int? = 1
 
 fun foo3(i: <!WRONG_ANNOTATION_TARGET!>@c<!> Int?) {}
 
-fun foo3(l: List<@c Int?>) {}
+fun foo3(l: List<<!WRONG_ANNOTATION_TARGET!>@c<!> Int?>) {}
 
 fun <!WRONG_ANNOTATION_TARGET!>@c<!> Int?.bar3() {}
 

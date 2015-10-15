@@ -42,6 +42,9 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             annotated.typeReference?.let { check(it, trace) }
             annotated.receiverTypeReference?.let { check(it, trace) }
         }
+        if (annotated is JetTypeReference) {
+            annotated.typeElement?.typeArgumentsAsTypes?.filterNotNull()?.forEach { check(it, trace) }
+        }
         if (annotated is JetDeclarationWithBody) {
             // JetFunction or JetPropertyAccessor
             for (parameter in annotated.valueParameters) {
