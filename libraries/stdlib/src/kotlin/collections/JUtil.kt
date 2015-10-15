@@ -44,29 +44,38 @@ internal object EmptyList : List<Nothing>, Serializable {
     private fun readResolve(): Any = EmptyList
 }
 
-
+private class ArrayAsCollection<T>(val values: Array<out T>): Collection<T> {
+    override val size: Int get() = values.size()
+    override fun isEmpty(): Boolean = values.isEmpty()
+    override fun contains(o: T): Boolean = values.contains(o)
+    override fun containsAll(c: Collection<T>): Boolean = c.all { contains(it) }
+    override fun iterator(): Iterator<T> = values.iterator()
+    // override of hidden toArray method implementation to prevent copying of values array
+    public fun toArray(): Array<out Any?> = values
+}
 
 /** Returns an empty read-only list.  The returned list is serializable (JVM). */
-public fun emptyList<T>(): List<T> = EmptyList
+public fun <T> emptyList(): List<T> = EmptyList
 
 /** Returns a new read-only list of given elements.  The returned list is serializable (JVM). */
-public fun listOf<T>(vararg values: T): List<T> = if (values.size() > 0) arrayListOf(*values) else emptyList()
+public fun <T> listOf(vararg values: T): List<T> = if (values.size() > 0) values.asList() else emptyList()
 
 /** Returns an empty read-only list.  The returned list is serializable (JVM). */
-public fun listOf<T>(): List<T> = emptyList()
+public fun <T> listOf(): List<T> = emptyList()
 
 /**
  * Returns an immutable list containing only the specified object [value].
  * The returned list is serializable.
  */
 @JvmVersion
-public fun listOf<T>(value: T): List<T> = Collections.singletonList(value)
+public fun <T> listOf(value: T): List<T> = Collections.singletonList(value)
 
 /** Returns a new [LinkedList] with the given elements. */
-public fun linkedListOf<T>(vararg values: T): LinkedList<T> = values.toCollection(LinkedList<T>())
+@JvmVersion
+public fun <T> linkedListOf(vararg values: T): LinkedList<T> = LinkedList(ArrayAsCollection(values))
 
 /** Returns a new [ArrayList] with the given elements. */
-public fun arrayListOf<T>(vararg values: T): ArrayList<T> = values.toCollection(ArrayList(values.size()))
+public fun <T> arrayListOf(vararg values: T): ArrayList<T> = ArrayList(ArrayAsCollection(values))
 
 /** Returns a new read-only list either of single given element, if it is not null, or empty list it the element is null. The returned list is serializable (JVM). */
 public fun <T : Any> listOfNotNull(value: T?): List<T> = if (value != null) listOf(value) else emptyList()
