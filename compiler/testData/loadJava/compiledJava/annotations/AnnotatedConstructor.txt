@@ -3,7 +3,7 @@ package test
 public open class AnnotatedConstructor {
     @test.AnnotatedConstructor.Anno(value = "constructor") public constructor AnnotatedConstructor()
 
-    public final class Anno : kotlin.Annotation {
+    public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.String)
         public final val value: kotlin.String
     }

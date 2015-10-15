@@ -3,6 +3,6 @@ package test
 @test.Anno() public val x: kotlin.Int
     public fun <get-x>(): kotlin.Int
 
-@kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
+public final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }

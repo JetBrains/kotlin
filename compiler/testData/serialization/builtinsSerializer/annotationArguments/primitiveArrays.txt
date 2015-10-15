@@ -8,7 +8,7 @@ package test
     public constructor C2()
 }
 
-@kotlin.annotation.annotation() public final class PrimitiveArrays : kotlin.Annotation {
+public final annotation class PrimitiveArrays : kotlin.Annotation {
     public constructor PrimitiveArrays(/*0*/ byteArray: kotlin.ByteArray, /*1*/ charArray: kotlin.CharArray, /*2*/ shortArray: kotlin.ShortArray, /*3*/ intArray: kotlin.IntArray, /*4*/ longArray: kotlin.LongArray, /*5*/ floatArray: kotlin.FloatArray, /*6*/ doubleArray: kotlin.DoubleArray, /*7*/ booleanArray: kotlin.BooleanArray)
     public final val booleanArray: kotlin.BooleanArray
     public final val byteArray: kotlin.ByteArray

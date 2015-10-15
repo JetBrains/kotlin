@@ -2,7 +2,7 @@ package
 
 @A(x = 1, y = "2") public fun test(): kotlin.Unit
 
-public final class A : kotlin.Annotation {
+public final annotation class A : kotlin.Annotation {
     public constructor A(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String)
     public final val x: kotlin.Int
     public final val y: kotlin.String

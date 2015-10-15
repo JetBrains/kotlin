@@ -1,6 +1,6 @@
 package
 
-@kotlin.annotation.annotation() public final class His : Your {
+public final annotation class His : Your {
     public constructor His(/*0*/ x: kotlin.Int)
     public open override /*1*/ val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -8,7 +8,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class My : kotlin.Annotation {
+public final annotation class My : kotlin.Annotation {
     public constructor My(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int, /*2*/ z: kotlin.Int, /*3*/ w: kotlin.Int)
     private final val w: kotlin.Int
     public final val x: kotlin.Int

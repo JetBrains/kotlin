@@ -2,7 +2,7 @@ package
 
 @A(a = false, b = 1.0.toDouble(), x = false) public fun foo1(): kotlin.Unit
 
-public final class A : kotlin.Annotation {
+public final annotation class A : kotlin.Annotation {
     public constructor A(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Double, /*2*/ x: kotlin.Boolean)
     public final val a: kotlin.Int
     public final val b: kotlin.Double

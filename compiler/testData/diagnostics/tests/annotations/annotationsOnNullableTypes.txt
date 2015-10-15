@@ -17,14 +17,14 @@ public fun @b(i = 1) kotlin.Int?.bar1(): kotlin.Unit
 public fun @a() @b(i = 1) kotlin.Int?.bar2(): kotlin.Unit
 public fun @c() kotlin.Int?.bar3(): kotlin.Unit
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.annotation() public final class a : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class a : kotlin.Annotation {
     public constructor a()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.annotation() public final class b : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class b : kotlin.Annotation {
     public constructor b(/*0*/ i: kotlin.Int)
     public final val i: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -32,7 +32,7 @@ public fun @c() kotlin.Int?.bar3(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class c : kotlin.Annotation {
+public final annotation class c : kotlin.Annotation {
     public constructor c()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -2,7 +2,7 @@ package
 
 @B(args = {1, "b"}) public fun test(): kotlin.Unit
 
-@kotlin.annotation.annotation() public final class B : kotlin.Annotation {
+public final annotation class B : kotlin.Annotation {
     public constructor B(/*0*/ vararg args: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     public final val args: kotlin.Array<out kotlin.String>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

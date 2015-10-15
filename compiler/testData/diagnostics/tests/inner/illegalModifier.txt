@@ -73,7 +73,7 @@ public final class D {
         @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<D.R>
     }
 
-    @kotlin.annotation.annotation() public final class S : kotlin.Annotation {
+    public final annotation class S : kotlin.Annotation {
         public constructor S()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

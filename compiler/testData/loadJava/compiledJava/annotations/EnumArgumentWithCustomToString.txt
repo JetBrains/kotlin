@@ -19,12 +19,12 @@ public open class EnumArgumentWithCustomToString {
         @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<test.EnumArgumentWithCustomToString.E>
     }
 
-    public final class EnumAnno : kotlin.Annotation {
+    public final annotation class EnumAnno : kotlin.Annotation {
         public constructor EnumAnno(/*0*/ value: test.EnumArgumentWithCustomToString.E)
         public final val value: test.EnumArgumentWithCustomToString.E
     }
 
-    public final class EnumArrayAnno : kotlin.Annotation {
+    public final annotation class EnumArrayAnno : kotlin.Annotation {
         public constructor EnumArrayAnno(/*0*/ vararg value: test.EnumArgumentWithCustomToString.E /*kotlin.Array<out test.EnumArgumentWithCustomToString.E>*/)
         public final val value: kotlin.Array<test.EnumArgumentWithCustomToString.E>
     }

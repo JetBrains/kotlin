@@ -21,7 +21,7 @@ public final enum class E : kotlin.Enum<E> {
 
     enum entry INNER
 
-    @kotlin.annotation.annotation() enum entry ANNOTATION
+    enum entry ANNOTATION
 
     enum entry ENUM
 

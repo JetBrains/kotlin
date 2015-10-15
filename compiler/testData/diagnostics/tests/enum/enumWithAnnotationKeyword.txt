@@ -1,6 +1,6 @@
 package
 
-@kotlin.annotation.annotation() public final enum class E : kotlin.Enum<E> {
+public final enum class E : kotlin.Enum<E> {
     enum entry D
 
     private constructor E()

@@ -2,7 +2,7 @@ package test
 
 public interface ArrayOfEnumInParam {
 
-    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FIELD, AnnotationTarget.CONSTRUCTOR}) public final class targetAnnotation : kotlin.Annotation {
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FIELD, AnnotationTarget.CONSTRUCTOR}) public final annotation class targetAnnotation : kotlin.Annotation {
         public constructor targetAnnotation(/*0*/ value: kotlin.String)
         public final val value: kotlin.String
     }

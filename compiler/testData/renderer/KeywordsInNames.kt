@@ -17,7 +17,7 @@ val AS_SAFE = 1
 val NOT_IN = 2
 val NOT_IS = 3
 
-//@kotlin.annotation.annotation public final class `true` : kotlin.Annotation defined in root package
+//public final annotation class `true` : kotlin.Annotation defined in root package
 //public constructor `true`() defined in `true`
 //public val `val`: kotlin.Int defined in root package
 //@`true` public interface `interface` defined in root package

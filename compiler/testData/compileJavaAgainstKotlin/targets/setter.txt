@@ -1,5 +1,5 @@
 package test
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY_SETTER}) @kotlin.annotation.annotation() public final class setter : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY_SETTER}) public final annotation class setter : kotlin.Annotation {
     public constructor setter()
 }

@@ -8,12 +8,12 @@ package test
     public constructor C2()
 }
 
-@kotlin.annotation.annotation() public final class JustString : kotlin.Annotation {
+public final annotation class JustString : kotlin.Annotation {
     public constructor JustString(/*0*/ string: kotlin.String)
     public final val string: kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class StringArray : kotlin.Annotation {
+public final annotation class StringArray : kotlin.Annotation {
     public constructor StringArray(/*0*/ stringArray: kotlin.Array<kotlin.String>)
     public final val stringArray: kotlin.Array<kotlin.String>
 }

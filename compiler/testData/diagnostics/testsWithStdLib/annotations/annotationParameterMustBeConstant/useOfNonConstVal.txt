@@ -6,7 +6,7 @@ public val nonConst: kotlin.Int = 1
 @Ann(x = 4, y = "3") public fun foo2(): kotlin.Unit
 @ArrayAnn(x = {1, 3, 1}) public fun foo3(): kotlin.Unit
 
-@kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
+public final annotation class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String)
     public final val x: kotlin.Int
     public final val y: kotlin.String
@@ -15,7 +15,7 @@ public val nonConst: kotlin.Int = 1
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class ArrayAnn : kotlin.Annotation {
+public final annotation class ArrayAnn : kotlin.Annotation {
     public constructor ArrayAnn(/*0*/ x: kotlin.IntArray)
     public final val x: kotlin.IntArray
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

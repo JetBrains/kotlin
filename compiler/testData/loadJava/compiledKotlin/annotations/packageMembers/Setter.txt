@@ -4,6 +4,6 @@ public var property: kotlin.Int
     public fun <get-property>(): kotlin.Int
     @test.Anno() public fun <set-property>(/*0*/ value: kotlin.Int): kotlin.Unit
 
-@kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
+public final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }

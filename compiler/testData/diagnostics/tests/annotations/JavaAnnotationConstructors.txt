@@ -1,13 +1,13 @@
 package
 
-@java.lang.annotation.Retention(value = RetentionPolicy.CLASS) @kotlin.annotation.annotation() public final class my : kotlin.Annotation {
+@java.lang.annotation.Retention(value = RetentionPolicy.CLASS) public final annotation class my : kotlin.Annotation {
     public constructor my()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME) @java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR}) @kotlin.annotation.annotation() public final class my1 : kotlin.Annotation {
+@java.lang.annotation.Retention(value = RetentionPolicy.RUNTIME) @java.lang.annotation.Target(value = {ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR}) public final annotation class my1 : kotlin.Annotation {
     public constructor my1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

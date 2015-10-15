@@ -9,14 +9,14 @@ public final class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class Ann1 : kotlin.Annotation {
+public final annotation class Ann1 : kotlin.Annotation {
     public constructor Ann1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class Ann2 : kotlin.Annotation {
+public final annotation class Ann2 : kotlin.Annotation {
     public constructor Ann2(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

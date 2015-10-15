@@ -12,7 +12,7 @@ public final class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.annotation() public final class x : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class x : kotlin.Annotation {
     public constructor x()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -2,7 +2,7 @@ package test
 
 public interface CustomAnnotationWithDefaultParameter {
 
-    public final class MyAnnotation : kotlin.Annotation {
+    public final annotation class MyAnnotation : kotlin.Annotation {
         public constructor MyAnnotation(/*0*/ first: kotlin.String, /*1*/ second: kotlin.String = ...)
         public final val first: kotlin.String
         public final val second: kotlin.String

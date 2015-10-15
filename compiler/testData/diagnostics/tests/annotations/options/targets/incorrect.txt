@@ -32,14 +32,14 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@incorrect() @kotlin.annotation.annotation() public final class derived : kotlin.Annotation {
+@incorrect() public final annotation class derived : kotlin.Annotation {
     public constructor derived()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.annotation() public final class incorrect : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {}) public final annotation class incorrect : kotlin.Annotation {
     public constructor incorrect()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

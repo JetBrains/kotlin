@@ -4,7 +4,7 @@ public val bas: () -> kotlin.Unit
 public fun bar(/*0*/ a: kotlin.Any): () -> kotlin.Unit
 public fun outer(): kotlin.Unit
 
-@kotlin.annotation.annotation() public final class ann : kotlin.Annotation {
+public final annotation class ann : kotlin.Annotation {
     public constructor ann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

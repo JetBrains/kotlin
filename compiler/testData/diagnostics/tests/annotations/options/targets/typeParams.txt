@@ -7,14 +7,14 @@ public fun </*0*/ T> test(/*0*/ t: @A() T): T
 public fun </*0*/ T> test2(/*0*/ t: T): T
 public fun </*0*/ T> topFun(): kotlin.Int
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) @kotlin.annotation.annotation() public final class A : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) public final annotation class A : kotlin.Annotation {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) @kotlin.annotation.annotation() public final class B : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) public final annotation class B : kotlin.Annotation {
     public constructor B(/*0*/ i: kotlin.Int = ...)
     public final val i: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -22,7 +22,7 @@ public fun </*0*/ T> topFun(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.annotation() internal final class C : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) internal final annotation class C : kotlin.Annotation {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -4,7 +4,7 @@ package test
     public constructor C()
 }
 
-@kotlin.annotation.annotation() public final class Primitives : kotlin.Annotation {
+public final annotation class Primitives : kotlin.Annotation {
     public constructor Primitives(/*0*/ byte: kotlin.Byte, /*1*/ char: kotlin.Char, /*2*/ short: kotlin.Short, /*3*/ int: kotlin.Int, /*4*/ long: kotlin.Long, /*5*/ float: kotlin.Float, /*6*/ double: kotlin.Double, /*7*/ boolean: kotlin.Boolean)
     public final val boolean: kotlin.Boolean
     public final val byte: kotlin.Byte

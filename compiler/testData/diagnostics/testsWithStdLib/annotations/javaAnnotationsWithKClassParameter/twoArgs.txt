@@ -1,6 +1,6 @@
 package
 
-public final class A : kotlin.Annotation {
+public final annotation class A : kotlin.Annotation {
     public constructor A(/*0*/ arg1: kotlin.reflect.KClass<*>, /*1*/ arg2: kotlin.reflect.KClass<*>)
     public final val arg1: kotlin.reflect.KClass<*>
     public final val arg2: kotlin.reflect.KClass<*>

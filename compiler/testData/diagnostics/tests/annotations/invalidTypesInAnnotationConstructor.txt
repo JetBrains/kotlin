@@ -2,7 +2,7 @@ package
 
 package test {
 
-    @kotlin.annotation.annotation() public final class Ann1 : kotlin.Annotation {
+    public final annotation class Ann1 : kotlin.Annotation {
         public constructor Ann1(/*0*/ p1: kotlin.Int, /*1*/ p2: kotlin.Byte, /*2*/ p3: kotlin.Short, /*3*/ p4: kotlin.Long, /*4*/ p5: kotlin.Double, /*5*/ p6: kotlin.Float, /*6*/ p7: kotlin.Char, /*7*/ p8: kotlin.Boolean)
         public final val p1: kotlin.Int
         public final val p2: kotlin.Byte
@@ -17,7 +17,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class Ann2 : kotlin.Annotation {
+    public final annotation class Ann2 : kotlin.Annotation {
         public constructor Ann2(/*0*/ p1: kotlin.String)
         public final val p1: kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -25,7 +25,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class Ann3 : kotlin.Annotation {
+    public final annotation class Ann3 : kotlin.Annotation {
         public constructor Ann3(/*0*/ p1: test.Ann1)
         public final val p1: test.Ann1
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -33,7 +33,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class Ann4 : kotlin.Annotation {
+    public final annotation class Ann4 : kotlin.Annotation {
         public constructor Ann4(/*0*/ p1: kotlin.IntArray, /*1*/ p2: kotlin.ByteArray, /*2*/ p3: kotlin.ShortArray, /*3*/ p4: kotlin.LongArray, /*4*/ p5: kotlin.DoubleArray, /*5*/ p6: kotlin.FloatArray, /*6*/ p7: kotlin.CharArray, /*7*/ p8: kotlin.BooleanArray)
         public final val p1: kotlin.IntArray
         public final val p2: kotlin.ByteArray
@@ -48,7 +48,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class Ann5 : kotlin.Annotation {
+    public final annotation class Ann5 : kotlin.Annotation {
         public constructor Ann5(/*0*/ p1: test.MyEnum)
         public final val p1: test.MyEnum
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -56,7 +56,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class Ann6 : kotlin.Annotation {
+    public final annotation class Ann6 : kotlin.Annotation {
         public constructor Ann6(/*0*/ p: java.lang.Class<*>)
         public final val p: java.lang.Class<*>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -64,7 +64,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class Ann7 : kotlin.Annotation {
+    public final annotation class Ann7 : kotlin.Annotation {
         public constructor Ann7(/*0*/ p: java.lang.annotation.RetentionPolicy)
         public final val p: java.lang.annotation.RetentionPolicy
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -72,7 +72,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class Ann8 : kotlin.Annotation {
+    public final annotation class Ann8 : kotlin.Annotation {
         public constructor Ann8(/*0*/ p1: kotlin.Array<kotlin.String>, /*1*/ p2: kotlin.Array<java.lang.Class<*>>, /*2*/ p3: kotlin.Array<test.MyEnum>, /*3*/ p4: kotlin.Array<test.Ann1>)
         public final val p1: kotlin.Array<kotlin.String>
         public final val p2: kotlin.Array<java.lang.Class<*>>
@@ -83,7 +83,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class Ann9 : kotlin.Annotation {
+    public final annotation class Ann9 : kotlin.Annotation {
         public constructor Ann9(/*0*/ vararg p1: kotlin.String /*kotlin.Array<out kotlin.String>*/, /*1*/ vararg p2: java.lang.Class<*> /*kotlin.Array<out java.lang.Class<*>>*/, /*2*/ vararg p3: test.MyEnum /*kotlin.Array<out test.MyEnum>*/, /*3*/ vararg p4: test.Ann1 /*kotlin.Array<out test.Ann1>*/, /*4*/ vararg p5: kotlin.Int /*kotlin.IntArray*/)
         public final val p1: kotlin.Array<out kotlin.String>
         public final val p2: kotlin.Array<out java.lang.Class<*>>
@@ -95,7 +95,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class InAnn1 : kotlin.Annotation {
+    public final annotation class InAnn1 : kotlin.Annotation {
         public constructor InAnn1(/*0*/ p1: kotlin.Int?, /*1*/ p3: kotlin.Short?, /*2*/ p4: kotlin.Long?, /*3*/ p5: kotlin.Double?, /*4*/ p6: kotlin.Float?, /*5*/ p7: kotlin.Char?, /*6*/ p8: kotlin.Boolean?)
         public final val p1: kotlin.Int?
         public final val p3: kotlin.Short?
@@ -109,7 +109,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class InAnn10 : kotlin.Annotation {
+    public final annotation class InAnn10 : kotlin.Annotation {
         public constructor InAnn10(/*0*/ p1: kotlin.String?)
         public final val p1: kotlin.String?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -117,7 +117,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class InAnn11 : kotlin.Annotation {
+    public final annotation class InAnn11 : kotlin.Annotation {
         public constructor InAnn11(/*0*/ p1: test.Ann1?)
         public final val p1: test.Ann1?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -125,7 +125,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class InAnn12 : kotlin.Annotation {
+    public final annotation class InAnn12 : kotlin.Annotation {
         public constructor InAnn12(/*0*/ p1: test.MyEnum?)
         public final val p1: test.MyEnum?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -133,7 +133,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class InAnn4 : kotlin.Annotation {
+    public final annotation class InAnn4 : kotlin.Annotation {
         public constructor InAnn4(/*0*/ p1: kotlin.Array<kotlin.Int>, /*1*/ p2: kotlin.Array<kotlin.Int>?)
         public final val p1: kotlin.Array<kotlin.Int>
         public final val p2: kotlin.Array<kotlin.Int>?
@@ -142,7 +142,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class InAnn6 : kotlin.Annotation {
+    public final annotation class InAnn6 : kotlin.Annotation {
         public constructor InAnn6(/*0*/ p: java.lang.Class<*>?)
         public final val p: java.lang.Class<*>?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -150,7 +150,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class InAnn7 : kotlin.Annotation {
+    public final annotation class InAnn7 : kotlin.Annotation {
         public constructor InAnn7(/*0*/ p: java.lang.annotation.RetentionPolicy?)
         public final val p: java.lang.annotation.RetentionPolicy?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -158,7 +158,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class InAnn8 : kotlin.Annotation {
+    public final annotation class InAnn8 : kotlin.Annotation {
         public constructor InAnn8(/*0*/ p1: kotlin.Array<kotlin.Int>, /*1*/ p2: kotlin.Array<kotlin.Int?>, /*2*/ p3: kotlin.Array<test.MyClass>, /*3*/ p4: kotlin.Array<kotlin.IntArray>)
         public final val p1: kotlin.Array<kotlin.Int>
         public final val p2: kotlin.Array<kotlin.Int?>
@@ -169,7 +169,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class InAnn9 : kotlin.Annotation {
+    public final annotation class InAnn9 : kotlin.Annotation {
         public constructor InAnn9(/*0*/ p: test.MyClass)
         public final val p: test.MyClass
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -1,8 +1,8 @@
 package
 
-@kotlin.annotation.annotation() public val x: kotlin.Int = 0
-@kotlin.annotation.annotation() public var y: kotlin.Int
-@kotlin.annotation.annotation() public fun f(): kotlin.Int
+public val x: kotlin.Int = 0
+public var y: kotlin.Int
+public fun f(): kotlin.Int
 
 public final class A {
     public constructor A()
@@ -10,7 +10,7 @@ public final class A {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    @kotlin.annotation.annotation() public companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -18,21 +18,21 @@ public final class A {
     }
 }
 
-@kotlin.annotation.annotation() public final class B : kotlin.Annotation {
+public final annotation class B : kotlin.Annotation {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public object O {
+public object O {
     private constructor O()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public interface T {
+public interface T {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

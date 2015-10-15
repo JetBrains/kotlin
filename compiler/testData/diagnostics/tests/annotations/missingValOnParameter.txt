@@ -1,6 +1,6 @@
 package
 
-@kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
+public final annotation class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.String)
     public final val a: kotlin.Int
     public final var b: kotlin.Int

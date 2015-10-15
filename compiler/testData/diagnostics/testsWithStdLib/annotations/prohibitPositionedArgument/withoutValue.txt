@@ -4,7 +4,7 @@ package
 @A(a = 2, b = 2.0.toDouble(), x = true) public fun foo2(): kotlin.Unit
 @A(a = 4, b = 3.0.toDouble(), x = true) public fun foo3(): kotlin.Unit
 
-public final class A : kotlin.Annotation {
+public final annotation class A : kotlin.Annotation {
     public constructor A(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Double, /*2*/ x: kotlin.Boolean)
     public final val a: kotlin.Int
     public final val b: kotlin.Double

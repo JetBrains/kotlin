@@ -13,7 +13,7 @@ package a {
                 public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-                @kotlin.annotation.annotation() public final class IAnn : kotlin.Annotation {
+                public final annotation class IAnn : kotlin.Annotation {
                     public constructor IAnn()
                     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -21,7 +21,7 @@ package a {
                 }
             }
 
-            @kotlin.annotation.annotation() public final class ann1 : kotlin.Annotation {
+            public final annotation class ann1 : kotlin.Annotation {
                 public constructor ann1(/*0*/ p: kotlin.Deprecated = ...)
                 public final val p: kotlin.Deprecated
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -29,7 +29,7 @@ package a {
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
 
-            @kotlin.annotation.annotation() public final class ann2 : kotlin.Annotation {
+            public final annotation class ann2 : kotlin.Annotation {
                 public constructor ann2(/*0*/ p: a.b.c.ann1 = ...)
                 public final val p: a.b.c.ann1
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -37,7 +37,7 @@ package a {
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
 
-            @kotlin.annotation.annotation() public final class ann3 : kotlin.Annotation {
+            public final annotation class ann3 : kotlin.Annotation {
                 public constructor ann3(/*0*/ p: a.b.c.A.IAnn = ..., /*1*/ p2: a.b.c.A.IAnn = ...)
                 public final val p: a.b.c.A.IAnn
                 public final val p2: a.b.c.A.IAnn
@@ -46,7 +46,7 @@ package a {
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             }
 
-            @kotlin.annotation.annotation() public final class annArray : kotlin.Annotation {
+            public final annotation class annArray : kotlin.Annotation {
                 public constructor annArray(/*0*/ p: kotlin.Array<kotlin.String> = ...)
                 public final val p: kotlin.Array<kotlin.String>
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

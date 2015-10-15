@@ -12,7 +12,7 @@ public final class KotlinClass {
 public open class kt3698 {
     public constructor kt3698()
 
-    public/*package*/ final class Foo : kotlin.Annotation {
+    public/*package*/ final annotation class Foo : kotlin.Annotation {
         public/*package*/ constructor Foo(/*0*/ kotlin.Int)
         public final val value: kotlin.Int
     }

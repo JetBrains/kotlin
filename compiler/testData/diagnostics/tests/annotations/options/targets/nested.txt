@@ -7,7 +7,7 @@ package
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    @base() @meta() @kotlin.annotation.annotation() public final class Annotated : kotlin.Annotation {
+    @base() @meta() public final annotation class Annotated : kotlin.Annotation {
         public constructor Annotated()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -22,14 +22,14 @@ package
     }
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.annotation() public final class base : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) public final annotation class base : kotlin.Annotation {
     public constructor base()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) @kotlin.annotation.annotation() public final class meta : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) public final annotation class meta : kotlin.Annotation {
     public constructor meta()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
