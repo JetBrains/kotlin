@@ -241,6 +241,7 @@ public fun <T> List<T>.getOrNull(index: Int): T? {
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun <T> Iterable<T>.indexOf(element: T): Int {
+    if (this is List) return this.indexOf(element)
     var index = 0
     for (item in this) {
         if (element == item)
@@ -370,6 +371,7 @@ public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
+    if (this is List) return this.lastIndexOf(element)
     var lastIndex = -1
     var index = 0
     for (item in this) {
