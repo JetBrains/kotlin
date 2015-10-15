@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.google.common.collect.Lists
-import com.google.common.collect.Queues
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.command.CommandProcessor
@@ -42,7 +41,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
-import org.jetbrains.kotlin.resolve.VisibilityUtil
+import org.jetbrains.kotlin.resolve.findMemberWithMaxVisibility
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -127,21 +126,13 @@ class ChangeMemberFunctionSignatureFix private constructor(
                     superFunction.copy(
                             function.containingDeclaration,
                             Modality.OPEN,
-                            getVisibility(function, superFunction),
+                            findMemberWithMaxVisibility(listOf(superFunction, function)).visibility,
                             CallableMemberDescriptor.Kind.DELEGATION,
                             /* copyOverrides = */ true),
                     newParameters)
             newFunction.addOverriddenDescriptor(superFunction)
 
             return Signature(newFunction)
-        }
-
-        /**
-         * Returns new visibility for 'function' modified to override 'superFunction'.
-         */
-        private fun getVisibility(function: FunctionDescriptor, superFunction: FunctionDescriptor): Visibility {
-            val descriptors = Queues.newArrayDeque<CallableMemberDescriptor>(listOf(superFunction, function))
-            return VisibilityUtil.findMemberWithMaxVisibility(descriptors).visibility
         }
 
         /**
