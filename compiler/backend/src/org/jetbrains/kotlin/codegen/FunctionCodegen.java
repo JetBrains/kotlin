@@ -801,9 +801,10 @@ public class FunctionCodegen {
             @NotNull Method bridge,
             @NotNull Method delegateTo,
             boolean isSpecialBridge,
-            boolean superCallNeeded
+            boolean isStubDeclarationWithDelegationToSuper
     ) {
-        int flags = ACC_PUBLIC | ACC_BRIDGE | (!isSpecialBridge ? ACC_SYNTHETIC : 0) | (isSpecialBridge ? ACC_FINAL : 0); // TODO.
+        boolean isSpecialOrDelegationToSuper = isSpecialBridge || isStubDeclarationWithDelegationToSuper;
+        int flags = ACC_PUBLIC | ACC_BRIDGE | (!isSpecialOrDelegationToSuper ? ACC_SYNTHETIC : 0) | (isSpecialBridge ? ACC_FINAL : 0); // TODO.
 
         MethodVisitor mv =
                 v.newMethod(JvmDeclarationOriginKt.Bridge(descriptor, origin), flags, bridge.getName(), bridge.getDescriptor(), null, null);
@@ -826,7 +827,7 @@ public class FunctionCodegen {
             reg += argTypes[i].getSize();
         }
 
-        if (superCallNeeded) {
+        if (isStubDeclarationWithDelegationToSuper) {
             ClassDescriptor parentClass = getSuperClassDescriptor((ClassDescriptor) descriptor.getContainingDeclaration());
             assert parentClass != null;
             String parentInternalName = typeMapper.mapClass(parentClass).getInternalName();

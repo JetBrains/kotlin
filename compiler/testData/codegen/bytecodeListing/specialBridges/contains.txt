@@ -24,13 +24,13 @@
 
 @kotlin.jvm.internal.KotlinClass A3 {
     public method <init>(): void
-    public synthetic method contains(p0: java.lang.Object): boolean
+    public method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
-    public synthetic method indexOf(p0: java.lang.Object): int
-    public synthetic method lastIndexOf(p0: java.lang.Object): int
+    public method indexOf(p0: java.lang.Object): int
+    public method lastIndexOf(p0: java.lang.Object): int
     public final method remove(p0: int): java.lang.Object
-    public synthetic method remove(p0: java.lang.Object): boolean
-    public synthetic method removeAt(p0: int): java.lang.Object
+    public method remove(p0: java.lang.Object): boolean
+    public method removeAt(p0: int): java.lang.Object
     public final method size(): int
 }
 
@@ -39,27 +39,27 @@
     public method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public abstract method getSize(): int
-    public synthetic method indexOf(p0: java.lang.Object): int
-    public synthetic method lastIndexOf(p0: java.lang.Object): int
+    public method indexOf(p0: java.lang.Object): int
+    public method lastIndexOf(p0: java.lang.Object): int
     public final method remove(p0: int): java.lang.Object
-    public synthetic method remove(p0: java.lang.Object): boolean
-    public synthetic method removeAt(p0: int): java.lang.Object
+    public method remove(p0: java.lang.Object): boolean
+    public method removeAt(p0: int): java.lang.Object
     public final method size(): int
 }
 
 @kotlin.jvm.internal.KotlinClass A5 {
     public method <init>(): void
     public final method contains(p0: java.lang.Object): boolean
-    public synthetic method contains(p0: java.lang.String): boolean
+    public method contains(p0: java.lang.String): boolean
     public abstract method getSize(): int
     public final method indexOf(p0: java.lang.Object): int
-    public synthetic method indexOf(p0: java.lang.String): int
+    public method indexOf(p0: java.lang.String): int
     public final method lastIndexOf(p0: java.lang.Object): int
-    public synthetic method lastIndexOf(p0: java.lang.String): int
+    public method lastIndexOf(p0: java.lang.String): int
     public final method remove(p0: int): java.lang.String
     public final method remove(p0: java.lang.Object): boolean
-    public synthetic method remove(p0: java.lang.String): boolean
-    public synthetic method removeAt(p0: int): java.lang.String
+    public method remove(p0: java.lang.String): boolean
+    public method removeAt(p0: int): java.lang.String
     public final method size(): int
 }
 
@@ -70,13 +70,13 @@
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public abstract method getSize(): int
     public final method indexOf(p0: java.lang.Object): int
-    public synthetic method indexOf(p0: java.lang.String): int
+    public method indexOf(p0: java.lang.String): int
     public final method lastIndexOf(p0: java.lang.Object): int
-    public synthetic method lastIndexOf(p0: java.lang.String): int
+    public method lastIndexOf(p0: java.lang.String): int
     public final method remove(p0: int): java.lang.String
     public final method remove(p0: java.lang.Object): boolean
-    public synthetic method remove(p0: java.lang.String): boolean
-    public synthetic method removeAt(p0: int): java.lang.String
+    public method remove(p0: java.lang.String): boolean
+    public method removeAt(p0: int): java.lang.String
     public final method size(): int
 }
 
