@@ -28,11 +28,13 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
@@ -1040,7 +1042,10 @@ public abstract class StackValue {
             if (getter == null) {
                 assert fieldName != null : "Property should have either a getter or a field name: " + descriptor;
                 assert backingFieldOwner != null : "Property should have either a getter or a backingFieldOwner: " + descriptor;
-                v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
+                if (inlineJavaConstantIfNeeded(type, v)) return;
+
+                v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD,
+                                 backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
                 if (!genNotNullAssertionForField(v, state, descriptor)) {
                     genNotNullAssertionForLateInitIfNeeded(v);
                 }
@@ -1050,6 +1055,25 @@ public abstract class StackValue {
                 getter.genInvokeInstruction(v);
                 coerce(getter.getReturnType(), type, v);
             }
+        }
+
+        private boolean inlineJavaConstantIfNeeded(@NotNull Type type, @NotNull InstructionAdapter v) {
+            if (!isStaticPut) return false;
+            if (!(descriptor instanceof JavaPropertyDescriptor)) return false;
+            if (!AsmUtil.isPrimitive(this.type) && !this.type.equals(Type.getObjectType("java/lang/String"))) return false;
+
+            JavaPropertyDescriptor javaPropertyDescriptor = (JavaPropertyDescriptor) descriptor;
+            ConstantValue<?> constantValue = javaPropertyDescriptor.getCompileTimeInitializer();
+            if (constantValue == null) return false;
+
+            Object value = constantValue.getValue();
+            if (this.type == Type.FLOAT_TYPE && value instanceof Double) {
+                value = ((Double) value).floatValue();
+            }
+
+            new Constant(value, this.type).putSelector(type, v);
+
+            return true;
         }
 
         private void genNotNullAssertionForLateInitIfNeeded(@NotNull InstructionAdapter v) {
