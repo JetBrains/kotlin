@@ -17,26 +17,21 @@
 package kotlin.jvm.internal;
 
 public class InlineMarker {
+    public static void mark(int i) {
+    }
+
+    public static void mark(String name) {
+    }
 
     public static void beforeInlineCall() {
-
     }
 
     public static void afterInlineCall() {
-
-    }
-
-    //TODO: remove on ABI increment, kept only for compability
-    @Deprecated
-    public static void goToTryCatchBlockEnd() {
-
     }
 
     public static void finallyStart(int finallyDepth) {
-
     }
 
     public static void finallyEnd(int finallyDepth) {
-
     }
 }
