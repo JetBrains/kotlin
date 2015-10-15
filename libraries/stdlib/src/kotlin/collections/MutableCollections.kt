@@ -15,38 +15,76 @@ public inline fun Map<*, *>.size() = size
 @Deprecated("Use property 'key' instead", ReplaceWith("this.key"))
 public fun <K, V> Map.Entry<K, V>.getKey(): K = key
 
+
+@Deprecated("Use containsAllRaw() instead.", ReplaceWith("containsAllRaw(collection)"))
+public fun <E> Collection<E>.containsAll(collection: Collection<Any?>): Boolean = containsAllRaw(collection)
+
+
+/*
+@kotlin.jvm.JvmName("containsAny")
+@Deprecated("Use containsRaw() instead.", ReplaceWith("containsRaw(element)"))
+public operator fun <T> Array<T>.contains(element: Any?): Boolean = containsRaw(element)
+
+
+@kotlin.jvm.JvmName("containsAny")
+@Deprecated("Use containsRaw() instead.", ReplaceWith("containsRaw(element)"))
+public operator fun Iterable<*>.contains(element: Any?): Boolean = containsRaw(element)
+
+
+@kotlin.jvm.JvmName("containsAny")
+@Deprecated("Use containsRaw() instead.", ReplaceWith("containsRaw(element)"))
+public operator fun <T> Sequence<T>.contains(element: Any?): Boolean = containsRaw(element)
+*/
+
+/**
+ * Checks if all elements in the specified collection are contained in this collection.
+ */
+public fun Collection<*>.containsAllRaw(collection: Collection<Any?>): Boolean = (this as Collection<Any?>).containsAll(collection)
+
+public fun <E> MutableCollection<E>.removeRaw(element: Any?): Boolean = (this as MutableCollection<Any?>).remove(element)
+
+public fun <E> MutableCollection<E>.removeAllRaw(collection: Collection<Any?>): Boolean = (this as MutableCollection<Any?>).removeAll(collection)
+
+public fun <E> MutableCollection<E>.retainAllRaw(collection: Collection<Any?>): Boolean = (this as MutableCollection<Any?>).retainAll(collection)
+
+public fun <K, V> Map<K, V>.getRaw(key: Any?): V? = (this as Map<Any?, V>).get(key)
+
+public fun <K> Map<K, *>.containsKeyRaw(key: Any?): Boolean = (this as Map<Any?, *>).containsKey(key)
+
+public fun <K> Map<K, *>.containsValueRaw(value: Any?): Boolean = (this as Map<K, Any?>).containsValue(value)
+
 @Deprecated("Use property 'value' instead", ReplaceWith("this.value"))
 public fun <K, V> Map.Entry<K, V>.getValue(): V = value
 
 @Deprecated("Use 'removeAt' instead", ReplaceWith("this.removeAt(index)"))
 public fun <E> MutableList<E>.remove(index: Int): E = removeAt(index)
 
-@Deprecated("Use explicit cast to MutableCollection<Any?> instead", ReplaceWith("(this as MutableCollection<Any?>).remove(o)"))
-public fun <E> MutableCollection<E>.remove(o: Any?): Boolean = remove(o as E)
+@Deprecated("Use explicit cast to MutableCollection<Any?> instead.", ReplaceWith("this.removeRaw(o)"))
+public fun <E> MutableCollection<E>.remove(o: Any?): Boolean = removeRaw(o)
 
-@Deprecated("Use explicit cast to MutableCollection<Any?> instead", ReplaceWith("(this as MutableCollection<Any?>).removeAll(c)"))
-public fun <E> MutableCollection<E>.removeAll(c: Collection<Any?>): Boolean = removeAll(c as Collection<E>)
+@Deprecated("Use explicit cast to MutableCollection<Any?> instead", ReplaceWith("removeAllRaw(c)"))
+public fun <E> MutableCollection<E>.removeAll(c: Collection<Any?>): Boolean = removeAllRaw(c)
 
-@Deprecated("Use explicit cast to MutableCollection<Any?> instead", ReplaceWith("(this as MutableCollection<Any?>).retainAll(c)"))
-public fun <E> MutableCollection<E>.retainAll(c: Collection<Any?>): Boolean = retainAll(c as Collection<E>)
+@Deprecated("Use explicit cast to MutableCollection<Any?> instead", ReplaceWith("retainAllRaw(c)"))
+public fun <E> MutableCollection<E>.retainAll(c: Collection<Any?>): Boolean = retainAllRaw(c)
 
-@Deprecated("Use explicit cast to List<Any?> instead", ReplaceWith("(this as List<Any?>).indexOf(o)"))
-public fun <E> List<E>.indexOf(o: Any?): Int = indexOf(o as E)
+@Deprecated("Use explicit cast to List<Any?> instead", ReplaceWith("indexOfRaw(o)"))
+public fun <E> List<E>.indexOf(o: Any?): Int = indexOfRaw(o)
 
-@Deprecated("Use explicit cast to List<Any?> instead", ReplaceWith("(this as List<Any?>).lastIndexOf(o)"))
-public fun <E> List<E>.lastIndexOf(o: Any?): Int = lastIndexOf(o as E)
+@Deprecated("Use explicit cast to List<Any?> instead", ReplaceWith("lastIndexOfRaw(o)"))
+public fun <E> List<E>.lastIndexOf(o: Any?): Int = lastIndexOfRaw(o)
 
 @Deprecated("Use property 'length' instead", ReplaceWith("this.length"))
 public fun CharSequence.length(): Int = length
 
-@Deprecated("Use explicit cast to Map<Any?, V> instead", ReplaceWith("(this as Map<Any?, V>).get(o)"))
-public inline operator fun <K, V> Map<K, V>.get(o: Any?): V? = get(o as K)
+@Deprecated("Use explicit cast to Map<Any?, V> instead", ReplaceWith("getRaw(key)"))
+public inline operator fun <K, V> Map<K, V>.get(key: Any?): V? = getRaw(key)
 
-@Deprecated("Use explicit cast to Map<Any?, V> instead", ReplaceWith("(this as Map<Any?, V>).containsKey(o)"))
-public inline fun <K, V> Map<K, V>.containsKey(o: Any?): Boolean = containsKey(o as K)
+@Deprecated("Use explicit cast to Map<Any?, V> instead", ReplaceWith("containsKeyRaw(key)"))
+public inline fun <K, V> Map<K, V>.containsKey(key: Any?): Boolean = containsKeyRaw(key)
 
-@Deprecated("Use explicit cast to Map<K, Any?> instead", ReplaceWith("(this as Map<K, Any?>).containsValue(o)"))
-public inline fun <K, V> Map<K, V>.containsValue(o: Any?): Boolean = containsValue(o as V)
+@Deprecated("Use explicit cast to Map<K, Any?> instead", ReplaceWith("containsValueRaw(value)"))
+public inline fun <K, V> Map<K, V>.containsValue(value: Any?): Boolean = containsValueRaw(value)
 
 @Deprecated("Use property 'keys' instead", ReplaceWith("this.keys"))
 public inline fun <K, V> Map<K, V>.keySet(): Set<K> = keys
