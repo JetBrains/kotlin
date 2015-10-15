@@ -2,6 +2,6 @@ package test;
 
 class B {
     void bar(A a) {
-        TestPackage.foo(a, 1, "!");
+        SafeUsagesExt2Kt.foo(a, 1, "!");
     }
 }
