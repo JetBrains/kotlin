@@ -1,8 +1,8 @@
 class JA {
-    public String name = _DefaultPackage.getPackageVal();
+    public String name = Main0Kt.getPackageVal();
 
     public String getName() {
-        _DefaultPackage.setPackageVal("");
-        return _DefaultPackage.getPackageVal();
+        Main0Kt.setPackageVal("");
+        return Main0Kt.getPackageVal();
     }
 }
