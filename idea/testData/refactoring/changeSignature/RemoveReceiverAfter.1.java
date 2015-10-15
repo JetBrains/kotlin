@@ -1,5 +1,5 @@
 class J {
     void test() {
-        _DefaultPackage.foo("1", 2);
+        RemoveReceiverBeforeKt.foo("1", 2);
     }
 }
