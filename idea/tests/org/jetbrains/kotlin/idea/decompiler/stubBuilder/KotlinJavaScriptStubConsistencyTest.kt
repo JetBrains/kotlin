@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledTextFromJsMetadata
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
-import kotlin.properties.Delegates
 
 public class KotlinJavaScriptStubConsistencyTest : StubConsistencyBaseTest() {
     override fun setUp() {
@@ -32,9 +31,10 @@ public class KotlinJavaScriptStubConsistencyTest : StubConsistencyBaseTest() {
         KotlinJavaScriptLibraryManager.getInstance(getProject()).syncUpdateProjectLibrary()
     }
 
-    override fun getPackages(): List<FqName> = listOf(
+    override fun getFileIds() = listOf(
             "java.util", "jquery", "jquery.ui",
-            "kotlin", "kotlin.browser", "kotlin.dom", "kotlin.js").map { FqName(it) }
+            "kotlin", "kotlin.browser", "kotlin.dom", "kotlin.js"
+    ).map { PackageClassUtils.getPackageClassId(FqName(it)) }
 
     override fun getVirtualFileFinder(): VirtualFileFinder =
         JsVirtualFileFinder.SERVICE.getInstance(getProject())
