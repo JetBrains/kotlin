@@ -551,7 +551,7 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> ITERATOR_AMBIGUITY = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory2<JetExpression, String, JetType> DELEGATE_SPECIAL_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory3<JetExpression, FunctionDescriptor, JetType, String> DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION = DiagnosticFactory3.create(WARNING);
+    DiagnosticFactory3<PsiElement, FunctionDescriptor, JetType, String> DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION = DiagnosticFactory3.create(WARNING);
     DiagnosticFactory2<JetExpression, String, Collection<? extends ResolvedCall<?>>> DELEGATE_SPECIAL_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<JetExpression, String, Collection<? extends ResolvedCall<?>>> DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory3<JetExpression, String, JetType, JetType> DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);

@@ -69,7 +69,7 @@ public class OperatorValidator : SymbolUsageValidator {
     }
 
     companion object {
-        fun report(element: JetElement, descriptor: FunctionDescriptor, sink: DiagnosticSink) {
+        fun report(element: PsiElement, descriptor: FunctionDescriptor, sink: DiagnosticSink) {
             if (!checkNotErrorOrDynamic(descriptor)) return
 
             val containingDeclaration = descriptor.containingDeclaration

@@ -208,9 +208,6 @@ public class DelegatedPropertyResolver {
         }
 
         FunctionDescriptor resultingDescriptor = functionResults.getResultingDescriptor();
-        if (!resultingDescriptor.isOperator()) {
-            OperatorValidator.Companion.report(delegateExpression, resultingDescriptor, trace);
-        }
 
         ResolvedCall<FunctionDescriptor> resultingCall = functionResults.getResultingCall();
         PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
@@ -219,6 +216,11 @@ public class DelegatedPropertyResolver {
             JetPropertyDelegate delegate = property.getDelegate();
             if (delegate != null) {
                 PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
+
+                if (!resultingDescriptor.isOperator()) {
+                    OperatorValidator.Companion.report(byKeyword, resultingDescriptor, trace);
+                }
+
                 symbolUsageValidator.validateCall(resultingCall, resultingCall.getResultingDescriptor(), trace, byKeyword);
             }
         }
@@ -276,8 +278,19 @@ public class DelegatedPropertyResolver {
                     fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, oldFunctionName, delegateExpression);
             if (additionalResolutionResult.getSecond().isSuccess()) {
                 FunctionDescriptor resultingDescriptor = additionalResolutionResult.getSecond().getResultingDescriptor();
-                trace.report(DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION.on(
-                        delegateExpression, resultingDescriptor, delegateType, functionName.asString()));
+
+                PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
+                if (declaration instanceof JetProperty) {
+                    JetProperty property = (JetProperty) declaration;
+                    JetPropertyDelegate delegate = property.getDelegate();
+                    if (delegate != null) {
+                        PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
+
+                        trace.report(DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION.on(
+                                byKeyword, resultingDescriptor, delegateType, functionName.asString()));
+                    }
+                }
+
                 trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, additionalResolutionResult.getFirst());
                 return additionalResolutionResult.getSecond();
             }

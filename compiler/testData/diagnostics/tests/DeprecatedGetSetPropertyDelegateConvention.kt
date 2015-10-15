@@ -33,8 +33,8 @@ operator fun CustomDelegate3.setValue(thisRef: Any?, prop: <!DEPRECATION!>Proper
 
 class Example {
 
-    var a by <!DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION, DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION!>CustomDelegate()<!>
-    val aval by <!DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION!>CustomDelegate()<!>
+    var a <!DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION, DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION!>by<!> CustomDelegate()
+    val aval <!DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION!>by<!> CustomDelegate()
     var b by OkDelegate()
     var c by CustomDelegate2()
     var d by CustomDelegate3()

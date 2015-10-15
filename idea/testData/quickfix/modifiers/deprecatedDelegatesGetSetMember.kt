@@ -5,5 +5,5 @@ class CustomDelegate {
 }
 
 class Example {
-    var a: String by <caret>CustomDelegate()
+    var a: String <caret>by CustomDelegate()
 }
