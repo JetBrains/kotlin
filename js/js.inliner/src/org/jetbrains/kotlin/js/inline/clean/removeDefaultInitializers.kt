@@ -43,9 +43,9 @@ public fun removeDefaultInitializers(arguments: List<JsExpression>, parameters: 
         }
 
         when {
-            name in toRemove ->
+            name != null && name in toRemove ->
                 listOf<JsStatement>()
-            name in toExpand ->
+            name != null && name in toExpand ->
                 flattenStatement((it as JsIf).getThenStatement()!!)
             else ->
                 listOf(it)

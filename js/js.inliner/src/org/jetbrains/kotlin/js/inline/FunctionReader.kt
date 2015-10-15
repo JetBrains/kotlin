@@ -162,10 +162,10 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
                 namesSet = inlineFuns
             }
 
-            val name = (qualifier as? JsNameRef)?.getName()
-
-            if (name in namesSet) {
-                x.inlineStrategy = InlineStrategy.IN_PLACE
+            (qualifier as? JsNameRef)?.name?.let { name ->
+                if (name in namesSet) {
+                    x.inlineStrategy = InlineStrategy.IN_PLACE
+                }
             }
         }
     }
