@@ -69,7 +69,7 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                 else {
                     "$;val v:"  // if we have no reference in the current context we have a more complicated prefix to get one
                 }
-                val tempSuffix = ".xxx" // we add "xxx" after dot because of some bugs in resolve (see KT-5145)
+                val tempSuffix = ".xxx" // we add "xxx" after dot because of KT-9606
                 document.replaceString(startOffset, context.getTailOffset(), tempPrefix + qualifiedName + tempSuffix)
 
                 psiDocumentManager.commitAllDocuments()
