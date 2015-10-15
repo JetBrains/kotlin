@@ -436,6 +436,14 @@ public operator fun ShortArray.contains(element: Short): Boolean {
 }
 
 /**
+ * Returns `true` if [element] is found in the collection.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.containsRaw(element: Any?): Boolean {
+    return contains<Any?>(element)
+}
+
+/**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
  */
 public fun <T> Array<out T>.elementAt(index: Int): T {
@@ -1515,6 +1523,14 @@ public inline fun ShortArray.indexOfLast(predicate: (Short) -> Boolean): Int {
 }
 
 /**
+ * Returns first index of [element], or -1 if the collection does not contain element.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.indexOfRaw(element: Any?): Int {
+    return indexOf<Any?>(element)
+}
+
+/**
  * Returns the last element.
  * @throws [NoSuchElementException] if the collection is empty.
  */
@@ -1826,6 +1842,14 @@ public fun ShortArray.lastIndexOf(element: Short): Int {
         }
     }
     return -1
+}
+
+/**
+ * Returns last index of [element], or -1 if the collection does not contain element.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.lastIndexOfRaw(element: Any?): Int {
+    return lastIndexOf<Any?>(element)
 }
 
 /**

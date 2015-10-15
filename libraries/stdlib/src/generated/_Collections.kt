@@ -62,6 +62,14 @@ public operator fun <T> Iterable<T>.contains(element: T): Boolean {
 }
 
 /**
+ * Returns `true` if [element] is found in the collection.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Iterable<*>.containsRaw(element: Any?): Boolean {
+    return contains<Any?>(element)
+}
+
+/**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
  */
 public fun <T> Iterable<T>.elementAt(index: Int): T {
@@ -303,6 +311,22 @@ public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 }
 
 /**
+ * Returns first index of [element], or -1 if the collection does not contain element.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Iterable<*>.indexOfRaw(element: Any?): Int {
+    return indexOf<Any?>(element)
+}
+
+/**
+ * Returns first index of [element], or -1 if the collection does not contain element.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> List<T>.indexOfRaw(element: Any?): Int {
+    return (this as List<Any?>).indexOf(element)
+}
+
+/**
  * Returns the last element.
  * @throws [NoSuchElementException] if the collection is empty.
  */
@@ -380,6 +404,22 @@ public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
         index++
     }
     return lastIndex
+}
+
+/**
+ * Returns last index of [element], or -1 if the collection does not contain element.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Iterable<*>.lastIndexOfRaw(element: Any?): Int {
+    return lastIndexOf<Any?>(element)
+}
+
+/**
+ * Returns last index of [element], or -1 if the collection does not contain element.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> List<T>.lastIndexOfRaw(element: Any?): Int {
+    return (this as List<Any?>).lastIndexOf(element)
 }
 
 /**

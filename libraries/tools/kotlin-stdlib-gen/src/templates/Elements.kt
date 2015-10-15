@@ -25,6 +25,16 @@ fun elements(): List<GenericFunction> {
         }
     }
 
+    templates add f("containsRaw(element: Any?)") {
+        only(Iterables, Sequences, ArraysOfObjects)
+        doc { "Returns `true` if [element] is found in the collection." }
+        receiverAsterisk(Iterables, Sequences) { true }
+        inline(true)
+        annotations("""@Suppress("NOTHING_TO_INLINE")""")
+        returns("Boolean")
+        body { "return contains<Any?>(element)" }
+    }
+
     templates add f("indexOf(element: T)") {
         exclude(Strings, Lists) // has native implementation
         doc { "Returns first index of [element], or -1 if the collection does not contain element." }
@@ -70,6 +80,17 @@ fun elements(): List<GenericFunction> {
             return -1
            """
         }
+    }
+
+    templates add f("indexOfRaw(element: Any?)") {
+        only(Iterables, Sequences, ArraysOfObjects, Lists)
+        doc { "Returns first index of [element], or -1 if the collection does not contain element." }
+        receiverAsterisk(Iterables, Sequences) { true }
+        inline(true)
+        annotations("""@Suppress("NOTHING_TO_INLINE")""")
+        returns("Int")
+        body { "return indexOf<Any?>(element)" }
+        body(Lists) { "return (this as List<Any?>).indexOf(element)" }
     }
 
     templates add f("lastIndexOf(element: T)") {
@@ -118,6 +139,17 @@ fun elements(): List<GenericFunction> {
             return -1
            """
         }
+    }
+
+    templates add f("lastIndexOfRaw(element: Any?)") {
+        only(Iterables, Sequences, ArraysOfObjects, Lists)
+        doc { "Returns last index of [element], or -1 if the collection does not contain element." }
+        receiverAsterisk(Iterables, Sequences) { true }
+        inline(true)
+        annotations("""@Suppress("NOTHING_TO_INLINE")""")
+        returns("Int")
+        body { "return lastIndexOf<Any?>(element)" }
+        body(Lists) { "return (this as List<Any?>).lastIndexOf(element)" }
     }
 
     templates add f("indexOfFirst(predicate: (T) -> Boolean)") {
