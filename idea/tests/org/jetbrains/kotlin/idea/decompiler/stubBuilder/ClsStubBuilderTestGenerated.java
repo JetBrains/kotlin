@@ -167,12 +167,6 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
-    @TestMetadata("TopLevelMembersPackage")
-    public void testTopLevelMembersPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TopLevelMembersPackage/");
-        doTest(fileName);
-    }
-
     @TestMetadata("TypeBoundsAndDelegationSpecifiers")
     public void testTypeBoundsAndDelegationSpecifiers() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TypeBoundsAndDelegationSpecifiers/");

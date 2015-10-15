@@ -47,10 +47,4 @@ public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTes
         doTest(fileName);
     }
 
-    @TestMetadata("TestPackage")
-    public void testTestPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/TestPackage/");
-        doTest(fileName);
-    }
-
 }
