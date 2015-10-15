@@ -50,6 +50,29 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 import java.util.*
 
+private tailrec fun ClassDescriptor.findDeclaredFunction (
+        name: String,
+        checkSuperClasses: Boolean,
+        filter: (FunctionDescriptor) -> Boolean
+): FunctionDescriptor? {
+    unsubstitutedMemberScope
+            .getFunctions(Name.identifier(name), NoLookupLocation.FROM_IDE)
+            .firstOrNull { it.containingDeclaration == this && it.kind == CallableMemberDescriptor.Kind.DECLARATION && filter(it) }
+            ?.let { return it }
+
+    return if (checkSuperClasses) getSuperClassOrAny().findDeclaredFunction(name, checkSuperClasses, filter) else null
+}
+
+fun ClassDescriptor.findDeclaredEquals(checkSupers: Boolean): FunctionDescriptor? {
+    return findDeclaredFunction("equals", checkSupers) {
+        it.valueParameters.singleOrNull()?.type == it.builtIns.nullableAnyType && it.typeParameters.isEmpty()
+    }
+}
+
+fun ClassDescriptor.findDeclaredHashCode(checkSupers: Boolean): FunctionDescriptor? {
+    return findDeclaredFunction("hashCode", checkSupers) { it.valueParameters.isEmpty() && it.typeParameters.isEmpty() }
+}
+
 class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<KotlinGenerateEqualsAndHashcodeAction.Info>() {
     companion object {
         private val LOG = Logger.getInstance(KotlinGenerateEqualsAndHashcodeAction::class.java)
@@ -73,29 +96,6 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         return targetClass is JetClass && targetClass !is JetEnumEntry && !targetClass.isAnnotation()
                 && !targetClass.hasModifier(JetTokens.DATA_KEYWORD)
                 && targetClass.getPropertiesToUse().isNotEmpty()
-    }
-
-    private tailrec fun ClassDescriptor.findDeclaredFunction(
-            name: String,
-            checkSuperClasses: Boolean,
-            filter: (FunctionDescriptor) -> Boolean
-    ): FunctionDescriptor? {
-        unsubstitutedMemberScope
-                .getFunctions(Name.identifier(name), NoLookupLocation.FROM_IDE)
-                .firstOrNull { it.containingDeclaration == this && it.kind == CallableMemberDescriptor.Kind.DECLARATION && filter(it) }
-                ?.let { return it }
-
-        return if (checkSuperClasses) getSuperClassOrAny().findDeclaredFunction(name, checkSuperClasses, filter) else null
-    }
-
-    private fun ClassDescriptor.findDeclaredEquals(checkSupers: Boolean): FunctionDescriptor? {
-        return findDeclaredFunction("equals", checkSupers) {
-            it.valueParameters.singleOrNull()?.type == it.builtIns.nullableAnyType && it.typeParameters.isEmpty()
-        }
-    }
-
-    private fun ClassDescriptor.findDeclaredHashCode(checkSupers: Boolean): FunctionDescriptor? {
-        return findDeclaredFunction("hashCode", checkSupers) { it.valueParameters.isEmpty() && it.typeParameters.isEmpty() }
     }
 
     private fun JetClassOrObject.getPropertiesToUse(): List<JetNamedDeclaration> {

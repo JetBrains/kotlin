@@ -1271,6 +1271,12 @@
                      cleanupTool="true"
                      level="WARNING"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.EqualsOrHashCodeInspection"
+                     displayName="equals() and hashCode() not paired"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"/>
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
