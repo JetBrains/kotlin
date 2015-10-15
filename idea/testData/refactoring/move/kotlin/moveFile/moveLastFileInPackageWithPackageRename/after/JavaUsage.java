@@ -1,8 +1,8 @@
-import newPackage.NewPackagePackage;
+import newPackage.StuffKt;
 
 class JavaUsage {
     public static void main(String[] args) {
-        NewPackagePackage.foo();
-        NewPackagePackage.getProp();
+        StuffKt.foo();
+        StuffKt.getProp();
     }
 }

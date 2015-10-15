@@ -1,6 +1,6 @@
 package c;
 
-import static a.APackage.test;
+import static a.MainKt.test;
 
 class J {
     void bar() {

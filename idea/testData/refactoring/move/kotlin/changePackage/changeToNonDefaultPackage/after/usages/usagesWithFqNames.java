@@ -1,11 +1,11 @@
 package usages;
 
 import target.Foo;
-import target.TargetPackage;
+import target.TestKt;
 
 class Test {
     static void test() {
         new Foo();
-        TargetPackage.foo();
+        TestKt.foo();
     }
 }

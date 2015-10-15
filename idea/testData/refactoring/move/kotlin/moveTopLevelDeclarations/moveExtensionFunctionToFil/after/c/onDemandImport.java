@@ -1,10 +1,10 @@
 package c;
 
 import a.*;
-import b.BPackage;
+import b.DependencyKt;
 
 class J {
     void bar() {
-        BPackage.test(new Test());
+        DependencyKt.test(new Test());
     }
 }

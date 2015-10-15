@@ -1,10 +1,10 @@
 package c;
 
-import b.BPackage;
+import b.DependencyKt;
 
 class J {
     void bar() {
-        BPackage.setTest("");
-        System.out.println(BPackage.getTest());
+        DependencyKt.setTest("");
+        System.out.println(DependencyKt.getTest());
     }
 }
