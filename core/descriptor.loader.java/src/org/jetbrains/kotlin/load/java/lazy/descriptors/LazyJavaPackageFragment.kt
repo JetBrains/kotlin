@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.getValue
 
 class LazyJavaPackageFragment(
@@ -40,6 +42,14 @@ class LazyJavaPackageFragment(
         c.components.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(fqName))
     }
 
+    internal val kotlinBinaryClasses by c.storageManager.createLazyValue {
+        val simpleNames = c.components.packageMapper.findPackageParts(fqName.asString())
+        simpleNames.map {
+            val classId = ClassId(fqName, Name.identifier(it))
+            c.components.kotlinClassFinder.findKotlinClass(classId)
+        }.filterNotNull()
+    }
+
     internal fun resolveTopLevelClass(javaClass: JavaClass) = topLevelClasses(javaClass)
 
     override fun getMemberScope() = scope
@@ -47,6 +57,8 @@ class LazyJavaPackageFragment(
     override fun toString() = "lazy java package fragment: $fqName"
 
     override fun getSource(): SourceElement {
-        return KotlinJvmBinarySourceElement(oldPackageFacade ?: return SourceElement.NO_SOURCE)
+        // TODO source element for a bunch of Kotlin binary classes containing members of the same package
+        val representativeClass = kotlinBinaryClasses.firstOrNull() ?: return SourceElement.NO_SOURCE
+        return KotlinJvmBinarySourceElement(representativeClass)
     }
 }

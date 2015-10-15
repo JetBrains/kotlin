@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.load.java.lazy.resolveKotlinBinaryClass
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -41,21 +41,11 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 public class LazyJavaPackageScope(
         c: LazyJavaResolverContext,
         private val jPackage: JavaPackage,
-        containingDeclaration: LazyJavaPackageFragment
+        private val containingDeclaration: LazyJavaPackageFragment
 ) : LazyJavaStaticScope(c, containingDeclaration) {
-    private val kotlinBinaryClasses = c.storageManager.createLazyValue {
-        val simpleNames = c.components.packageMapper.findPackageParts(jPackage.getFqName().asString())
-        val packageClassId = PackageClassUtils.getPackageClassId(packageFragment.fqName).packageFqName
-
-        simpleNames.map {
-            val classId = ClassId(packageClassId, Name.identifier(it))
-            c.components.kotlinClassFinder.findKotlinClass(classId)
-        }.filterNotNull()
-    }
-
     private val partToFacade = c.storageManager.createLazyValue {
         val result = hashMapOf<String, String>()
-        kotlinClasses@for (kotlinClass in kotlinBinaryClasses()) {
+        kotlinClasses@for (kotlinClass in containingDeclaration.kotlinBinaryClasses) {
             val header = kotlinClass.classHeader
             when (header.kind) {
                 KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
@@ -77,7 +67,7 @@ public class LazyJavaPackageScope(
             partToFacade()[partName]
 
     private val deserializedPackageScope = c.storageManager.createLazyValue {
-        if (kotlinBinaryClasses().isEmpty()) {
+        if (containingDeclaration.kotlinBinaryClasses.isEmpty()) {
             // If the scope is queried but no package parts are found, there's a possibility that we're trying to load symbols
             // from an old package with the binary-incompatible facade.
             // We try to read the old package facade if there is one, to report the "incompatible ABI version" message.
@@ -88,7 +78,7 @@ public class LazyJavaPackageScope(
             JetScope.Empty
         }
         else {
-            c.components.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClasses())
+            c.components.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, containingDeclaration.kotlinBinaryClasses)
         }
     }
 
