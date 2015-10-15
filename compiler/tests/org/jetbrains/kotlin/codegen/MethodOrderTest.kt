@@ -99,10 +99,10 @@ public class MethodOrderTest: CodegenTestCase() {
                 listOf(
                         "c()V",
                         "<init>(ILjava/lang/String;)V",
-                        "access\$getB$0(LOuter;)Ljava/lang/String;",
-                        "access\$setB$0(LOuter;Ljava/lang/String;)V",
-                        "access\$getA$1(LOuter;)I",
-                        "access\$c$2(LOuter;)V"
+                        "access\$getB\$p(LOuter;)Ljava/lang/String;",
+                        "access\$setB\$p(LOuter;Ljava/lang/String;)V",
+                        "access\$getA\$p(LOuter;)I",
+                        "access\$c(LOuter;)V"
                 )
         )
     }

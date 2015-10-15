@@ -26,9 +26,9 @@ public class AccessorForPropertyBackingFieldInOuterClass extends AccessorForProp
     public AccessorForPropertyBackingFieldInOuterClass(
             @NotNull PropertyDescriptor property,
             @NotNull DeclarationDescriptor containingDeclaration,
-            int index,
-            @Nullable JetType delegationType
+            @Nullable JetType delegationType,
+            @NotNull String nameSuffix
     ) {
-        super(property, delegationType != null ? delegationType : property.getType(), null, null, containingDeclaration, index, null);
+        super(property, delegationType != null ? delegationType : property.getType(), null, null, containingDeclaration, null, nameSuffix);
     }
 }

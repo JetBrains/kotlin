@@ -31,11 +31,11 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
     public AccessorForFunctionDescriptor(
             @NotNull FunctionDescriptor descriptor,
             @NotNull DeclarationDescriptor containingDeclaration,
-            int index,
-            @Nullable JetSuperExpression superCallExpression
+            @Nullable JetSuperExpression superCallExpression,
+            @NotNull String nameSuffix
     ) {
         super(containingDeclaration,
-              Name.identifier("access$" + (descriptor instanceof ConstructorDescriptor ? "init" : descriptor.getName()) + "$" + index));
+              Name.identifier("access$" + nameSuffix));
         this.calleeDescriptor = descriptor;
         this.superCallExpression = superCallExpression;
 

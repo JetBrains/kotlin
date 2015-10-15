@@ -33,14 +33,14 @@ compiler/testData/cli/jvm/signatureClash.kt:20:5: error: platform declaration cl
     fun getTr(): kotlin.Int
     val tr = 1
     ^
-compiler/testData/cli/jvm/signatureClash.kt:24:7: error: platform declaration clash: The following declarations have the same JVM signature (access$f$0(LC;)V):
-    fun `access$f$0`(c: C): kotlin.Unit
+compiler/testData/cli/jvm/signatureClash.kt:24:7: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
+    fun `access$f`(c: C): kotlin.Unit
     fun f(): kotlin.Unit
 class C {
       ^
-compiler/testData/cli/jvm/signatureClash.kt:26:5: error: platform declaration clash: The following declarations have the same JVM signature (access$f$0(LC;)V):
-    fun `access$f$0`(c: C): kotlin.Unit
+compiler/testData/cli/jvm/signatureClash.kt:26:5: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
+    fun `access$f`(c: C): kotlin.Unit
     fun f(): kotlin.Unit
-    fun `access$f$0`(c: C) {}
+    fun `access$f`(c: C) {}
     ^
 COMPILATION_ERROR

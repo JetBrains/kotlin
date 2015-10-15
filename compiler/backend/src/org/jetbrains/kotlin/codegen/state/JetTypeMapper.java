@@ -858,7 +858,7 @@ public class JetTypeMapper {
 
             boolean isAccessor = property instanceof AccessorForPropertyDescriptor;
             String propertyName = isAccessor
-                                  ? ((AccessorForPropertyDescriptor) property).getIndexedAccessorSuffix()
+                                  ? ((AccessorForPropertyDescriptor) property).getAccessorSuffix()
                                   : property.getName().asString();
 
             String accessorName = descriptor instanceof PropertyGetterDescriptor

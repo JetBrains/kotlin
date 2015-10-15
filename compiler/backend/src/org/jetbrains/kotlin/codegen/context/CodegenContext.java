@@ -303,11 +303,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                    accessor instanceof AccessorForPropertyBackingFieldInOuterClass : "There is already exists accessor with isForBackingFieldInOuterClass = false in this context";
             return (D) accessor;
         }
-
-        int accessorIndex = accessors.size();
+        String nameSuffix = SyntheticAccessorUtilKt.getAccessorNameSuffix(descriptor, key.superCallLabelTarget, isForBackingFieldInOuterClass);
         if (descriptor instanceof SimpleFunctionDescriptor) {
             accessor = new AccessorForFunctionDescriptor(
-                    (FunctionDescriptor) descriptor, contextDescriptor, accessorIndex, superCallExpression
+                    (FunctionDescriptor) descriptor, contextDescriptor, superCallExpression, nameSuffix
             );
         }
         else if (descriptor instanceof ConstructorDescriptor) {
@@ -316,11 +315,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         else if (descriptor instanceof PropertyDescriptor) {
             if (isForBackingFieldInOuterClass) {
                 accessor = new AccessorForPropertyBackingFieldInOuterClass((PropertyDescriptor) descriptor, contextDescriptor,
-                                                                           accessorIndex, delegateType);
+                                                                           delegateType, nameSuffix);
             }
             else {
                 accessor = new AccessorForPropertyDescriptor((PropertyDescriptor) descriptor, contextDescriptor,
-                                                             accessorIndex, superCallExpression);
+                                                             superCallExpression, nameSuffix);
             }
         }
         else {
