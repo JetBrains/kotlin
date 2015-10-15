@@ -1,4 +1,4 @@
-import static test.TestPackage.getFoo;
+import static test.JavaUsagesKt.getFoo;
 
 class J {
     void test() {
