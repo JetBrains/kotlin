@@ -79,6 +79,7 @@ class BuiltInsAnnotationAndConstantLoader(
             proto: ProtoBuf.Property,
             expectedType: JetType
     ): ConstantValue<*>? {
+        if (!proto.hasExtension(BuiltInsProtoBuf.compileTimeValue)) return null
         val value = proto.getExtension(BuiltInsProtoBuf.compileTimeValue)
         return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }

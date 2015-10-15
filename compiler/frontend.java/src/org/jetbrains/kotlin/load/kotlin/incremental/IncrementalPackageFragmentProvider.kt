@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
@@ -167,28 +167,22 @@ public class IncrementalPackageFragmentProvider(
                 this@IncrementalPackageFragment, packageData.packageProto, packageData.nameResolver, deserializationComponents,
                 { listOf() }
         ) {
-            override fun filteredFunctionProtos(protos: Collection<ProtoBuf.Function>): Collection<ProtoBuf.Function> {
-                return filteredMemberProtos(protos) {
-                    it.getExtension(JvmProtoBuf.methodImplClassName)?.let { packageData.nameResolver.getName(it) }
-                }
-            }
+            override fun filteredFunctionProtos(protos: Collection<ProtoBuf.Function>): Collection<ProtoBuf.Function> =
+                    filteredMemberProtos(protos)
 
-            override fun filteredPropertyProtos(protos: Collection<ProtoBuf.Property>): Collection<ProtoBuf.Property> {
-                return filteredMemberProtos(protos) {
-                    it.getExtension(JvmProtoBuf.propertyImplClassName)?.let { packageData.nameResolver.getName(it) }
-                }
-            }
+            override fun filteredPropertyProtos(protos: Collection<ProtoBuf.Property>): Collection<ProtoBuf.Property> =
+                    filteredMemberProtos(protos)
 
-            private fun <M : MessageLite> filteredMemberProtos(
-                    allMemberProtos: Collection<M>,
-                    getPackagePart: (M) -> Name?
-            ): Collection<M> {
+            private fun <M : MessageLite> filteredMemberProtos(allMemberProtos: Collection<M>): Collection<M> {
+                fun getPackagePart(callable: MessageLite): Name? =
+                        JvmFileClassUtil.getImplClassName(callable, packageData.nameResolver)
+
                 fun shouldSkipPackagePart(name: Name) =
                         JvmClassName.byFqNameWithoutInnerClasses(fqName.child(name)).internalName in obsoletePackageParts
 
                 if (LOG.isDebugEnabled) {
                     val allPackageParts = allMemberProtos
-                            .map(getPackagePart)
+                            .map(::getPackagePart)
                             .filterNotNull()
                             .toSet()
                     val skippedPackageParts = allPackageParts.filter { shouldSkipPackagePart(it) }

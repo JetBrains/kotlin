@@ -79,6 +79,7 @@ class KotlinJavascriptAnnotationAndConstantLoader(
             proto: ProtoBuf.Property,
             expectedType: JetType
     ): ConstantValue<*>? {
+        if (!proto.hasExtension(JsProtoBuf.compileTimeValue)) return null
         val value = proto.getExtension(JsProtoBuf.compileTimeValue)
         return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }
