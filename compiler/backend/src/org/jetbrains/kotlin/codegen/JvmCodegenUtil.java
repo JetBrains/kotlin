@@ -23,10 +23,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
-import org.jetbrains.kotlin.codegen.context.CodegenContext;
-import org.jetbrains.kotlin.codegen.context.MethodContext;
-import org.jetbrains.kotlin.codegen.context.PackageContext;
-import org.jetbrains.kotlin.codegen.context.RootContext;
+import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -80,7 +77,7 @@ public class JvmCodegenUtil {
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
-                 (context.getParentContext() instanceof PackageContext
+                 ((context.getParentContext() instanceof PackageContext || context.getParentContext() instanceof MultifileClassPartContext)
                   && isSamePackageInSameModule(context.getParentContext().getContextDescriptor(), containingDeclaration)))
                 && context.getContextKind() != OwnerKind.DEFAULT_IMPLS);
     }
