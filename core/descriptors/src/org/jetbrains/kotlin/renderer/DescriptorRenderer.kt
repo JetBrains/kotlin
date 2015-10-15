@@ -221,7 +221,8 @@ public enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
     OVERRIDE(true),
     ANNOTATIONS(false),
     INNER(true),
-    MEMBER_KIND(true)
+    MEMBER_KIND(true),
+    DATA(true)
 
     ;
 
