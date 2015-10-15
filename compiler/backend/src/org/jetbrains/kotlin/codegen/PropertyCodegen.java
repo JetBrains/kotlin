@@ -412,6 +412,10 @@ public class PropertyCodegen {
             @Nullable JetPropertyAccessor accessor,
             @NotNull PropertyAccessorDescriptor accessorDescriptor
     ) {
+        if (context instanceof MultifileClassFacadeContext && Visibilities.isPrivate(accessorDescriptor.getVisibility())) {
+            return;
+        }
+
         FunctionGenerationStrategy strategy;
         if (accessor == null || !accessor.hasBody()) {
             if (p instanceof JetProperty && ((JetProperty) p).hasDelegate()) {

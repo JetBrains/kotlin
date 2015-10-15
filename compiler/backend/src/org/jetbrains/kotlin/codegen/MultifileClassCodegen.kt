@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.getFileClassType
@@ -201,8 +202,9 @@ public class MultifileClassCodegen(
             if (declaration is JetNamedFunction || declaration is JetProperty) {
                 val descriptor = state.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
                 assert(descriptor is CallableMemberDescriptor) { "Expected callable member, was " + descriptor + " for " + declaration.text }
-                generateCallableMemberTasks.put(descriptor as CallableMemberDescriptor,
-                                                { memberCodegen.genFunctionOrProperty(declaration) })
+                if (!Visibilities.isPrivate((descriptor as CallableMemberDescriptor).visibility)) {
+                    generateCallableMemberTasks.put(descriptor, { memberCodegen.genFunctionOrProperty(declaration) })
+                }
             }
         }
     }

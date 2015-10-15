@@ -78,7 +78,4 @@ public final class _DefaultPackage {
     @org.jetbrains.annotations.NotNull
     @org.jetbrains.annotations.Nullable
     public static final java.lang.String nullableWithNN() { /* compiled code */ }
-
-    @kotlin.jvm.internal.KotlinDelegatedMethod(implementationClassName = "_DefaultPackageKt")
-    private static final java.lang.String privateFun(java.lang.String a, java.lang.String b) { /* compiled code */ }
 }
