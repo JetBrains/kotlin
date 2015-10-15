@@ -17,7 +17,10 @@
 package kotlin;
 
 public class TypeCastException extends ClassCastException {
-    public TypeCastException(String s) {
-        super(s);
+    public TypeCastException() {
+    }
+
+    public TypeCastException(String message) {
+        super(message);
     }
 }
