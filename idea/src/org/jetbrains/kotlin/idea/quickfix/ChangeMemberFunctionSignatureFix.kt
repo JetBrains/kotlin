@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
-import com.google.common.base.Function
-import com.google.common.collect.Collections2
 import com.google.common.collect.Lists
-import com.google.common.collect.Maps
 import com.google.common.collect.Queues
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.intention.IntentionAction
@@ -34,9 +31,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -50,17 +45,22 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.VisibilityUtil
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.supertypes
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
-import javax.swing.Icon
 
 /**
  * Fix that changes member function's signature to match one of super functions' signatures.
  */
 class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintAction<JetNamedFunction>(element) {
 
-    companion object {
+    companion object : JetSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val function = diagnostic.psiElement as? JetNamedFunction ?: return null
+            return ChangeMemberFunctionSignatureFix(function)
+        }
+
         private val SIGNATURE_SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE.withOptions {
             renderDefaultValues = false
         }
@@ -85,19 +85,15 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
 
             val functionDescriptor = functionElement.resolveToDescriptor() as FunctionDescriptor
             val superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor)
-            val possibleSignatures = Maps.newHashMap<String, FunctionDescriptor>()
-            for (superFunction in superFunctions) {
-                if (!superFunction.kind.isReal) continue
-                val signature = changeSignatureToMatch(functionDescriptor, superFunction)
-                possibleSignatures.put(SIGNATURE_PREVIEW_RENDERER.render(signature), signature)
-            }
-            val keys = ArrayList(possibleSignatures.keys)
-            Collections.sort(keys)
-            return ArrayList(Collections2.transform(keys, object : Function<String, FunctionDescriptor> {
-                override fun apply(key: String?): FunctionDescriptor? {
-                    return possibleSignatures.get(key)
-                }
-            }))
+
+            val possibleSignatures: Map<String, FunctionDescriptor> = superFunctions
+                    .filter { it.kind.isReal }
+                    .map { changeSignatureToMatch(functionDescriptor, it) }
+                    .toMapBy { SIGNATURE_PREVIEW_RENDERER.render(it) }
+
+            return possibleSignatures.keys
+                    .sorted()
+                    .map { possibleSignatures[it]!! }
         }
 
         /**
@@ -113,8 +109,8 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
             // Parameters in this function, which are used in new function signature:
             val used = BitSet(superParameters.size)
 
-            matchParameters(MATCH_NAMES, superParameters, parameters, newParameters, matched, used)
-            matchParameters(MATCH_TYPES, superParameters, parameters, newParameters, matched, used)
+            matchParameters(ParameterChooser.MatchNames, superParameters, parameters, newParameters, matched, used)
+            matchParameters(ParameterChooser.MatchTypes, superParameters, parameters, newParameters, matched, used)
 
             val newFunction = FunctionDescriptorUtil.replaceFunctionParameters(
                     superFunction.copy(
@@ -132,30 +128,8 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
          * Returns new visibility for 'function' modified to override 'superFunction'.
          */
         private fun getVisibility(function: FunctionDescriptor, superFunction: FunctionDescriptor): Visibility {
-            val descriptors = Queues.newArrayDeque<CallableMemberDescriptor>(Arrays.asList(superFunction, function))
+            val descriptors = Queues.newArrayDeque<CallableMemberDescriptor>(listOf(superFunction, function))
             return VisibilityUtil.findMemberWithMaxVisibility(descriptors).visibility
-        }
-
-        private val MATCH_NAMES = object : ParameterChooser {
-            override fun choose(
-                    parameter: ValueParameterDescriptor,
-                    superParameter: ValueParameterDescriptor): ValueParameterDescriptor? {
-                return if (parameter.name == superParameter.name) superParameter else null
-            }
-        }
-
-        private val MATCH_TYPES = object : ParameterChooser {
-            override fun choose(
-                    parameter: ValueParameterDescriptor,
-                    superParameter: ValueParameterDescriptor): ValueParameterDescriptor? {
-                // TODO: support for generic functions
-                if (JetTypeChecker.DEFAULT.equalTypes(parameter.type, superParameter.type)) {
-                    return superParameter.copy(parameter.containingDeclaration, parameter.name)
-                }
-                else {
-                    return null
-                }
-            }
         }
 
         /**
@@ -177,15 +151,16 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
                 parameters: List<ValueParameterDescriptor>,
                 newParameters: MutableList<ValueParameterDescriptor>,
                 matched: BitSet,
-                used: BitSet) {
+                used: BitSet
+        ) {
             for (superParameter in superParameters) {
-                if (!matched.get(superParameter.index)) {
+                if (!matched[superParameter.index]) {
                     for (parameter in parameters) {
                         val choice = parameterChooser.choose(parameter, superParameter)
-                        if (!used.get(parameter.index) && choice != null) {
-                            used.set(parameter.index, true)
-                            matched.set(superParameter.index, true)
-                            newParameters.set(superParameter.index, choice)
+                        if (choice != null && !used[parameter.index]) {
+                            used[parameter.index] = true
+                            matched[superParameter.index] = true
+                            newParameters[superParameter.index] = choice
                             break
                         }
                     }
@@ -198,29 +173,12 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
          * different parameters/return type).
          */
         private fun getPossibleSuperFunctionsDescriptors(functionDescriptor: FunctionDescriptor): List<FunctionDescriptor> {
-            val containingDeclaration = functionDescriptor.containingDeclaration
-            val superFunctions = Lists.newArrayList<FunctionDescriptor>()
-            if (containingDeclaration !is ClassDescriptor) return superFunctions
+            val containingClass = functionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
 
             val name = functionDescriptor.name
-            for (type in TypeUtils.getAllSupertypes(containingDeclaration.defaultType)) {
-                val scope = type.memberScope
-                for (function in scope.getFunctions(name, NoLookupLocation.FROM_IDE)) {
-                    if (!function.kind.isReal) continue
-                    if (function.modality.isOverridable)
-                        superFunctions.add(function)
-                }
-            }
-            return superFunctions
-        }
-
-        fun createFactory(): JetSingleIntentionActionFactory {
-            return object : JetSingleIntentionActionFactory() {
-                public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                    val function = QuickFixUtil.getParentElementOfType(diagnostic, JetNamedFunction::class.java)
-                    return if (function == null) null else ChangeMemberFunctionSignatureFix(function)
-                }
-            }
+            return containingClass.defaultType.supertypes()
+                    .flatMap { supertype -> supertype.memberScope.getFunctions(name, NoLookupLocation.FROM_IDE) }
+                    .filter { it.kind.isReal && it.modality.isOverridable }
         }
     }
 
@@ -231,24 +189,21 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
     }
 
     override fun getText(): String {
-        if (possibleSignatures.size == 1) {
-            return JetBundle.message("change.function.signature.action.single", SIGNATURE_PREVIEW_RENDERER.render(possibleSignatures.get(0)))
+        val single = possibleSignatures.singleOrNull()
+        if (single != null) {
+            return "Change function signature to '${SIGNATURE_PREVIEW_RENDERER.render(single)}'"
         }
         else {
-            return JetBundle.message("change.function.signature.action.multiple")
+            return "Change function signature..."
         }
     }
 
-    override fun getFamilyName(): String {
-        return JetBundle.message("change.function.signature.family")
-    }
+    override fun getFamilyName() = "Change function signature"
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        CommandProcessor.getInstance().runUndoTransparentAction(object : Runnable {
-            override fun run() {
-                MyAction(project, editor, element, possibleSignatures).execute()
-            }
-        })
+        CommandProcessor.getInstance().runUndoTransparentAction {
+            MyAction(project, editor, element, possibleSignatures).execute()
+        }
     }
 
     /** Helper interface for matchParameters(..) method.  */
@@ -259,6 +214,25 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
          * If not, returns null.
          */
         fun choose(parameter: ValueParameterDescriptor, superParameter: ValueParameterDescriptor): ValueParameterDescriptor?
+
+        object MatchNames : ParameterChooser {
+            override fun choose(parameter: ValueParameterDescriptor, superParameter: ValueParameterDescriptor): ValueParameterDescriptor? {
+                return superParameter.check { parameter.name == superParameter.name }
+            }
+        }
+
+        object MatchTypes : ParameterChooser {
+            override fun choose(parameter: ValueParameterDescriptor, superParameter: ValueParameterDescriptor): ValueParameterDescriptor? {
+                // TODO: support for generic functions
+                if (JetTypeChecker.DEFAULT.equalTypes(parameter.type, superParameter.type)) {
+                    return superParameter.copy(parameter.containingDeclaration, parameter.name)
+                }
+                else {
+                    return null
+                }
+            }
+        }
+
     }
 
     override fun showHint(editor: Editor): Boolean {
@@ -269,29 +243,25 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
             private val project: Project,
             private val editor: Editor?,
             private val function: JetNamedFunction,
-            private val signatures: List<FunctionDescriptor>) {
-
-        fun execute(): Boolean {
+            private val signatures: List<FunctionDescriptor>
+    ) {
+        fun execute() {
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-            if (!function.isValid || signatures.isEmpty()) return false
+            if (!function.isValid || signatures.isEmpty()) return
 
             if (signatures.size == 1 || editor == null || !editor.component.isShowing) {
-                changeSignature(signatures.get(0))
+                changeSignature(signatures.first())
             }
             else {
                 chooseSignatureAndChange()
             }
-
-            return true
         }
 
         private val signaturePopup: BaseListPopupStep<FunctionDescriptor>
             get() {
-                return object : BaseListPopupStep<FunctionDescriptor>(JetBundle.message("change.function.signature.chooser.title"), signatures) {
-                    override fun isAutoSelectionEnabled(): Boolean {
-                        return false
-                    }
+                return object : BaseListPopupStep<FunctionDescriptor>("Choose Signature", signatures) {
+                    override fun isAutoSelectionEnabled() = false
 
                     override fun onChosen(selectedValue: FunctionDescriptor, finalChoice: Boolean): PopupStep<Any>? {
                         if (finalChoice) {
@@ -300,13 +270,9 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
                         return PopupStep.FINAL_CHOICE
                     }
 
-                    override fun getIconFor(aValue: FunctionDescriptor): Icon? {
-                        return PlatformIcons.FUNCTION_ICON
-                    }
+                    override fun getIconFor(aValue: FunctionDescriptor) = PlatformIcons.FUNCTION_ICON
 
-                    override fun getTextFor(aValue: FunctionDescriptor): String {
-                        return SIGNATURE_PREVIEW_RENDERER.render(aValue)
-                    }
+                    override fun getTextFor(aValue: FunctionDescriptor) = SIGNATURE_PREVIEW_RENDERER.render(aValue)
                 }
             }
 
@@ -315,9 +281,8 @@ class ChangeMemberFunctionSignatureFix(element: JetNamedFunction) : JetHintActio
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-            val psiFactory = JetPsiFactory(project)
-            project.executeWriteCommand(JetBundle.message("change.function.signature.action")) {
-                val patternFunction = psiFactory.createFunction(signatureString)
+            project.executeWriteCommand("Change Function Signature") {
+                val patternFunction = JetPsiFactory(project).createFunction(signatureString)
 
                 val newTypeRef = function.setTypeReference(patternFunction.typeReference)
                 if (newTypeRef != null) {

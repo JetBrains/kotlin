@@ -90,7 +90,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         NON_MEMBER_FUNCTION_NO_BODY.registerFactory(addFunctionBodyFactory)
 
         NOTHING_TO_OVERRIDE.registerFactory( RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OVERRIDE_KEYWORD),
-                                        ChangeMemberFunctionSignatureFix.createFactory(),
+                                        ChangeMemberFunctionSignatureFix,
                                         AddFunctionToSupertypeFix.createFactory())
         VIRTUAL_MEMBER_HIDDEN.registerFactory(AddModifierFix.createFactory(OVERRIDE_KEYWORD))
 
