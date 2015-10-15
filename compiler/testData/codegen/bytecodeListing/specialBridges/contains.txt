@@ -3,6 +3,7 @@
     public method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public abstract method getSize(): int
+    public abstract method remove(p0: java.lang.Object): boolean
     public final method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
@@ -14,6 +15,8 @@
     public final method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public abstract method getSize(): int
+    public final method remove(p0: java.lang.Object): boolean
+    public abstract method remove(p0: java.lang.String): boolean
     public final method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
@@ -21,8 +24,12 @@
 
 @kotlin.jvm.internal.KotlinClass A3 {
     public method <init>(): void
+    public synthetic method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
+    public synthetic method indexOf(p0: java.lang.Object): int
+    public synthetic method lastIndexOf(p0: java.lang.Object): int
     public final method remove(p0: int): java.lang.Object
+    public synthetic method remove(p0: java.lang.Object): boolean
     public synthetic method removeAt(p0: int): java.lang.Object
     public final method size(): int
 }
@@ -32,15 +39,26 @@
     public method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public abstract method getSize(): int
+    public synthetic method indexOf(p0: java.lang.Object): int
+    public synthetic method lastIndexOf(p0: java.lang.Object): int
     public final method remove(p0: int): java.lang.Object
+    public synthetic method remove(p0: java.lang.Object): boolean
     public synthetic method removeAt(p0: int): java.lang.Object
     public final method size(): int
 }
 
 @kotlin.jvm.internal.KotlinClass A5 {
     public method <init>(): void
+    public final method contains(p0: java.lang.Object): boolean
+    public synthetic method contains(p0: java.lang.String): boolean
     public abstract method getSize(): int
+    public final method indexOf(p0: java.lang.Object): int
+    public synthetic method indexOf(p0: java.lang.String): int
+    public final method lastIndexOf(p0: java.lang.Object): int
+    public synthetic method lastIndexOf(p0: java.lang.String): int
     public final method remove(p0: int): java.lang.String
+    public final method remove(p0: java.lang.Object): boolean
+    public synthetic method remove(p0: java.lang.String): boolean
     public synthetic method removeAt(p0: int): java.lang.String
     public final method size(): int
 }
@@ -51,7 +69,13 @@
     public final method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public abstract method getSize(): int
+    public final method indexOf(p0: java.lang.Object): int
+    public synthetic method indexOf(p0: java.lang.String): int
+    public final method lastIndexOf(p0: java.lang.Object): int
+    public synthetic method lastIndexOf(p0: java.lang.String): int
     public final method remove(p0: int): java.lang.String
+    public final method remove(p0: java.lang.Object): boolean
+    public synthetic method remove(p0: java.lang.String): boolean
     public synthetic method removeAt(p0: int): java.lang.String
     public final method size(): int
 }
@@ -61,6 +85,8 @@
     public method contains(p0: int): boolean
     public final method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
+    public abstract method remove(p0: java.lang.Integer): boolean
+    public final method remove(p0: java.lang.Object): boolean
     public final method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
@@ -70,6 +96,7 @@
     public method <init>(): void
     public method contains(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public abstract method getSize(): int
+    public abstract method remove(p0: java.lang.Object): boolean
     public final method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]

@@ -516,7 +516,7 @@ public class FunctionCodegen {
         // If the function doesn't have a physical declaration among super-functions, it's a SAM adapter or alike and doesn't need bridges
         if (CallResolverUtilKt.isOrOverridesSynthesized(descriptor)) return;
 
-        boolean isSpecial = SpecialBuiltinMembers.doesOverrideBuiltinWithDifferentJvmName(descriptor);
+        boolean isSpecial = SpecialBuiltinMembers.getOverriddenBuiltinWithDifferentJvmDescriptor(descriptor) != null;
 
         Set<Bridge<Method>> bridgesToGenerate;
         if (!isSpecial) {
@@ -560,7 +560,7 @@ public class FunctionCodegen {
             }
 
             if (!descriptor.getKind().isReal() && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION)) {
-                CallableDescriptor overridden = SpecialBuiltinMembers.getOverriddenBuiltinWithDifferentJvmName(descriptor);
+                CallableDescriptor overridden = SpecialBuiltinMembers.getOverriddenBuiltinWithDifferentJvmDescriptor(descriptor);
                 assert overridden != null;
 
                 Method method = typeMapper.mapSignature(descriptor).getAsmMethod();
@@ -851,6 +851,8 @@ public class FunctionCodegen {
         if (BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) == null) return;
 
         assert descriptor.getValueParameters().size() == 1 : "Should be descriptor with one value parameter, but found: " + descriptor;
+
+        if (bridge.getArgumentTypes()[0].getSort() != Type.OBJECT) return;
 
         iv.load(1, OBJECT_TYPE);
 

@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 object BuiltinSpecialProperties {
@@ -47,7 +49,7 @@ object BuiltinSpecialProperties {
             PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.getInversedShortNamesMap()
 
     private val FQ_NAMES = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keySet()
-    private val SHORT_NAMES = FQ_NAMES.map { it.shortName() }.toSet()
+    internal val SHORT_NAMES = FQ_NAMES.map { it.shortName() }.toSet()
 
     fun hasBuiltinSpecialPropertyFqName(callableMemberDescriptor: CallableMemberDescriptor): Boolean {
         if (callableMemberDescriptor.name !in SHORT_NAMES) return false
@@ -182,6 +184,18 @@ fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmName():
 }
 
 fun CallableMemberDescriptor.doesOverrideBuiltinWithDifferentJvmName(): Boolean = getOverriddenBuiltinWithDifferentJvmName() != null
+
+@Suppress("UNCHECKED_CAST")
+fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmDescriptor(): T? {
+    getOverriddenBuiltinWithDifferentJvmName()?.let { return it }
+
+    if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
+
+    return firstOverridden {
+        it.isFromBuiltins()
+                && it.getSpecialSignatureInfo() == BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo.GENERIC_PARAMETER
+    }?.original as T?
+}
 
 fun getJvmMethodNameIfSpecial(callableMemberDescriptor: CallableMemberDescriptor): String? {
     val builtinOverridden = getBuiltinOverriddenThatAffectsJvmName(callableMemberDescriptor)?.propertyIfAccessor
