@@ -106,7 +106,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
                 enhancedReceiverType,
                 getDispatchReceiverParameter(),
                 getTypeParameters(),
-                DescriptorsPackage.createEnhancedValueParameters(enhancedValueParametersTypes, getValueParameters(), enhanced),
+                DescriptorsPackage.copyValueParameters(enhancedValueParametersTypes, getValueParameters(), enhanced),
                 enhancedReturnType,
                 getModality(),
                 getVisibility()

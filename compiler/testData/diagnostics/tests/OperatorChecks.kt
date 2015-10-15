@@ -1,3 +1,5 @@
+import kotlin.reflect.KProperty
+
 interface Example {
     operator fun plus(o: Example): Example
     operator fun div(o: Example): Example
@@ -59,8 +61,8 @@ interface Example {
 }
 
 class OkDelegates {
-    operator fun getValue(thisRef: Any?, prop: PropertyMetadata): String = ""
-    operator fun setValue(thisRef: Any?, prop: PropertyMetadata, s: String): String = ""
+    operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = ""
+    operator fun setValue(thisRef: Any?, prop: KProperty<*>, s: String): String = ""
     operator fun setValue(thisRef: Any?, prop: Any, n: Int) {}
     operator fun setValue(thisRef: Any?, prop: Any?, s: String) {}
 }
@@ -69,11 +71,11 @@ class DelegatesWithErrors {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun getValue(thisRef: Any?, prop: String): String = ""
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun setValue(thisRef: Any?, prop: String, value: String) {}
 
-    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun setValue(thisRef: Any?, prop: PropertyMetadata, vararg n: Int) {}
-    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun setValue(thisRef: Any?, prop: PropertyMetadata, f: Float = 0.0f) {}
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun setValue(thisRef: Any?, prop: KProperty<*>, vararg n: Int) {}
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun setValue(thisRef: Any?, prop: KProperty<*>, f: Float = 0.0f) {}
 
-    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun getValue(prop: PropertyMetadata): String = ""
-    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun setValue(prop: PropertyMetadata, value: String) {}
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun getValue(prop: KProperty<*>): String = ""
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun setValue(prop: KProperty<*>, value: String) {}
 }
 
 interface Example2 {

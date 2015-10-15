@@ -24,7 +24,7 @@ package kotlin.reflect
  *
  * @param R the type of the property.
  */
-public interface KProperty<out R> : KCallable<R> {
+public interface KProperty<out R> : KCallable<R>, PropertyMetadata {
     /** The getter of this property, used to obtain the value of the property. */
     public val getter: Getter<R>
 

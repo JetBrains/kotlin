@@ -43,7 +43,7 @@ abstract class TargetPlatform(
         override val builtIns: KotlinBuiltIns
             get() = DefaultBuiltIns.Instance
         override val defaultModuleParameters = ModuleParameters.Empty
-        override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf())
+        override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(), IdentifierChecker.DEFAULT)
     }
 }
 
@@ -51,6 +51,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
         DataClassAnnotationChecker(),
         ConstModifierChecker,
         UnderscoreChecker,
+        InlineParameterChecker,
         OperatorModifierChecker(),
         InfixModifierChecker())
 
@@ -65,7 +66,8 @@ open class PlatformConfigurator(
         additionalCallCheckers: List<CallChecker>,
         additionalTypeCheckers: List<AdditionalTypeChecker>,
         additionalSymbolUsageValidators: List<SymbolUsageValidator>,
-        private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>
+        private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
+        private val identifierChecker: IdentifierChecker
 ) {
 
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
@@ -81,6 +83,7 @@ open class PlatformConfigurator(
             typeCheckers.forEach { useInstance(it) }
             useInstance(symbolUsageValidator)
             additionalAnnotationCheckers.forEach { useInstance(it) }
+            useInstance(identifierChecker)
         }
     }
 }

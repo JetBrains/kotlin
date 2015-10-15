@@ -16,8 +16,8 @@ fun test() : Unit {
   checkSubtype<Int?>(y as? Int?)
 
   val <!UNUSED_VARIABLE!>s<!> = "" <!USELESS_CAST!>as Any<!>
-  ("" as String?)?.length()
-  (data@("" as String?))?.length()
-  (<!WRONG_ANNOTATION_TARGET!>@MustBeDocumented()<!>( "" as String?))?.length()
+  ("" as String?)?.length
+  (data@("" as String?))?.length
+  (<!WRONG_ANNOTATION_TARGET!>@MustBeDocumented()<!>( "" as String?))?.length
   Unit
 }

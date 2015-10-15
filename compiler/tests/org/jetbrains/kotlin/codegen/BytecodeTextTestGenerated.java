@@ -149,6 +149,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("isArrayOf.kt")
+    public void testIsArrayOf() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/isArrayOf.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("javaExtensionPropertyIntrinsic.kt")
     public void testJavaExtensionPropertyIntrinsic() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/javaExtensionPropertyIntrinsic.kt");

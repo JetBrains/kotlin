@@ -21,13 +21,13 @@ internal object EmptyList : List<Nothing>, Serializable {
     override fun toString(): String = "[]"
 
     override val size: Int get() = 0
-    override val isEmpty: Boolean get() = true
+    override fun isEmpty(): Boolean = true
     override fun contains(o: Nothing): Boolean = false
     override fun containsAll(c: Collection<Nothing>): Boolean = c.isEmpty()
 
     override fun get(index: Int): Nothing = throw IndexOutOfBoundsException("Index $index is out of bound of empty list.")
-    override fun indexOf(o: Any?): Int = -1
-    override fun lastIndexOf(o: Any?): Int = -1
+    override fun indexOf(o: Nothing): Int = -1
+    override fun lastIndexOf(o: Nothing): Int = -1
 
     override fun iterator(): Iterator<Nothing> = EmptyIterator
     override fun listIterator(): ListIterator<Nothing> = EmptyIterator

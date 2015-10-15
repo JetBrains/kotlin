@@ -1,6 +1,8 @@
 // "Create member function 'setValue'" "true"
+import kotlin.reflect.KProperty
+
 class F {
-    fun getValue(x: X, propertyMetadata: PropertyMetadata): Int = 1
+    fun getValue(x: X, property: KProperty<*>): Int = 1
 }
 
 class X {

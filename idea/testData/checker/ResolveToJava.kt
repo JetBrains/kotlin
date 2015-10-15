@@ -35,7 +35,7 @@ fun test(<warning>l</warning> : List<Int>) {
     // ...
   }
   catch(e: Exception) {
-    System.out.println(e.getMessage())
+    System.out.println(e.message)
   }
 
   PrintStream("sdf")

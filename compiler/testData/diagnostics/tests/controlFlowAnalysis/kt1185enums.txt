@@ -28,13 +28,13 @@ package kt1185 {
         enum entry BLUE
 
         private constructor Color(/*0*/ rgb: kotlin.Int)
+        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         public final val rgb: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Color): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
@@ -52,12 +52,12 @@ package kt1185 {
         enum entry EAST
 
         private constructor Direction()
+        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1185.Direction): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members

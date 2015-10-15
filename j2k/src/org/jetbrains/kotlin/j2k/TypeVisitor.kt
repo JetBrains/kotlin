@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
-private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
+private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getJavaKeywordName() }
 
 class TypeVisitor(
         private val converter: Converter,

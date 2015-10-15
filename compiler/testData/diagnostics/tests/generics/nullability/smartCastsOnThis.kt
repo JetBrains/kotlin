@@ -10,8 +10,8 @@ fun <T : String?> T.foo() {
     if (this != null) {
         if (<!SENSELESS_COMPARISON!>this != null<!>) {}
 
-        length()
-        this<!UNNECESSARY_SAFE_CALL!>?.<!>length()
+        length
+        this<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         bar1()
         bar2()
@@ -22,11 +22,11 @@ fun <T : String?> T.foo() {
         this<!UNNECESSARY_SAFE_CALL!>?.<!>bar1()
     }
 
-    <!UNSAFE_CALL!>length<!>()
+    <!UNSAFE_CALL!>length<!>
 
     if (this is String) {
-        length()
-        this<!UNNECESSARY_SAFE_CALL!>?.<!>length()
+        length
+        this<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         bar1()
         bar2()

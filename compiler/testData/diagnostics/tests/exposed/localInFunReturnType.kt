@@ -6,21 +6,21 @@ class My<T>(val value: T)
 
 open class Base
 
-fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>invalid1<!>() = run {
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>invalid1<!>() = run {
     class Local
     My(Local())
 }
 
-fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>invalid2<!>() = My(object {})
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>invalid2<!>() = My(object {})
 
-fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>invalid3<!>() = My(object : Base() {})
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>invalid3<!>() = My(object : Base() {})
 
-fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>invalid4<!>() = run {
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>invalid4<!>() = run {
     class Local
     My(My(Local()))
 }
 
-fun <!FUNCTION_RETURN_TYPE_DEPENDS_ON_LOCAL_CLASS!>invalid5<!>() = run {
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>invalid5<!>() = run {
     fun invalid5a() = run {
         class Local
         Local()

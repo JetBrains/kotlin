@@ -137,7 +137,7 @@ private fun getCallNameFromPsi(element: JetElement): Name? {
         is JetSimpleNameExpression -> {
             val elementParent = element.getParent()
             when (elementParent) {
-                is JetCallExpression -> return Name.identifierNoValidate(element.getText())
+                is JetCallExpression -> return Name.identifier(element.getText())
                 is JetOperationExpression -> {
                     val operationReference = elementParent.getOperationReference()
                     if (element == operationReference) {
@@ -148,10 +148,10 @@ private fun getCallNameFromPsi(element: JetElement): Name? {
                             else
                                 OperatorConventions.getNameForOperationSymbol(node)
 
-                            conventionName ?: Name.identifierNoValidate(element.getText())
+                            conventionName ?: Name.identifier(element.getText())
                         }
                         else {
-                            Name.identifierNoValidate(element.getText())
+                            Name.identifier(element.getText())
                         }
                     }
                 }

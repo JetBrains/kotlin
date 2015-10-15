@@ -1,0 +1,8 @@
+// "Rename to 'getValue'" "true"
+class CustomDelegate
+
+operator fun CustomDelegate.getValue(thisRef: Any?, prop: PropertyMetadata): String = ""
+
+class Example {
+    val a: String by CustomDelegate()
+}

@@ -1,5 +1,6 @@
 package
 
+public fun bar(/*0*/ x: C1, /*1*/ y: D1): kotlin.Unit
 public fun foo(/*0*/ x: C, /*1*/ y: D): kotlin.Unit
 
 public interface A {
@@ -23,9 +24,25 @@ public interface C : A, B {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public abstract class C1 : A, B {
+    public constructor C1()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ y: kotlin.Int): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public interface D : B, A {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class D1 : A, B {
+    public constructor D1()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ y: kotlin.Int): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }

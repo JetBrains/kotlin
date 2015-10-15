@@ -259,7 +259,8 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         fun createCodeFragmentForLabeledObjects(project: Project, markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, Value>> {
             val sb = StringBuilder()
             val labeledObjects = HashMap<String, Value>()
-            for ((value, markup) in markupMap.entrySet()) {
+            val entrySet: Set<Map.Entry<*, ValueMarkup>> = markupMap.entrySet()
+            for ((value, markup) in entrySet) {
                 val labelName = markup.text
                 if (!Name.isValidIdentifier(labelName)) continue
 

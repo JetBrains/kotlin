@@ -44,7 +44,10 @@ public interface Appendable {
 }
 
 @library
-public class StringBuilder(capacity: Int? = null) : Appendable {
+public class StringBuilder(content: String = "") : Appendable, CharSequence {
+    override val length: Int = noImpl
+    override fun get(index: Int): Char = noImpl
+    override fun subSequence(start: Int, end: Int): CharSequence = noImpl
     override fun append(c: Char): StringBuilder = noImpl
     override fun append(csq: CharSequence?): StringBuilder = noImpl
     override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder = noImpl
@@ -52,3 +55,6 @@ public class StringBuilder(capacity: Int? = null) : Appendable {
     public fun reverse(): StringBuilder = noImpl
     override fun toString(): String = noImpl
 }
+
+public inline fun StringBuilder(capacity: Int): StringBuilder = StringBuilder()
+public inline fun StringBuilder(content: CharSequence): StringBuilder = StringBuilder(content.toString())

@@ -7,7 +7,7 @@ public fun foo(x: String?, z: String?): Int {
         gav(z!!, if (x == null) break else <!DEBUG_INFO_SMARTCAST!>x<!>)
     } while (bar())
     // z is not null because of z!!
-    <!DEBUG_INFO_SMARTCAST!>z<!>.length()
+    <!DEBUG_INFO_SMARTCAST!>z<!>.length
     // x is null because of the break
-    return x<!UNSAFE_CALL!>.<!>length()
+    return x<!UNSAFE_CALL!>.<!>length
 }

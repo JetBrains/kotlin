@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.CodeBuilder
 
-enum class Modifier(val name: String) {
+enum class Modifier(private val str: String) {
     PUBLIC("public"),
     PROTECTED("protected"),
     PRIVATE("private"),
@@ -29,7 +29,7 @@ enum class Modifier(val name: String) {
     OVERRIDE("override"),
     INNER("inner");
 
-    public fun toKotlin(): String = name
+    public fun toKotlin(): String = str
 }
 
 val ACCESS_MODIFIERS = setOf(Modifier.PUBLIC, Modifier.PROTECTED, Modifier.PRIVATE, Modifier.INTERNAL)

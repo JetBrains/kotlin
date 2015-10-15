@@ -520,7 +520,7 @@ public class PropertyCodegen {
                     @Override
                     public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
                         Field array = StackValue
-                                .field(Type.getType("[" + PROPERTY_METADATA_TYPE), owner, JvmAbi.PROPERTY_METADATA_ARRAY_NAME, true,
+                                .field(Type.getType("[" + PROPERTY_METADATA_TYPE), owner, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, true,
                                        StackValue.none());
                         StackValue.arrayElement(PROPERTY_METADATA_TYPE, array, StackValue.constant(indexInPropertyMetadataArray, Type.INT_TYPE)).put(type, v);
                     }

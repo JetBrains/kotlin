@@ -19,16 +19,10 @@ package kotlin
 /**
  * Represents a property in a Kotlin class.
  */
+@Deprecated("Please use KProperty instead.", ReplaceWith("KProperty<*>", "kotlin.reflect.KProperty"))
 public interface PropertyMetadata {
     /**
      * The name of the property.
      */
     public val name: String
-}
-
-/**
- * @suppress
- */
-public data class PropertyMetadataImpl(override val name: String): PropertyMetadata {
-    override fun toString() = "PropertyMetadata(name=$name)"
 }

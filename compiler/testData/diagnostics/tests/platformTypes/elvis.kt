@@ -12,5 +12,5 @@ public class J {
 import p.*
 
 fun test(j: J) {
-    j.s()?.length() ?: ""
+    j.s()?.length ?: ""
 }

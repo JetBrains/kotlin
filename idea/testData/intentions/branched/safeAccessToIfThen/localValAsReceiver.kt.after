@@ -1,4 +1,4 @@
 fun main(args: Array<String>) {
     val x: String? = "abc"
-    if (x != null) x.length()
+    if (x != null) x.length
 }

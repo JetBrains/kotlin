@@ -1,10 +1,12 @@
+import kotlin.reflect.KProperty
+
 interface In<in T>
 interface Out<out T>
 interface Inv<T>
 
 class Delegate<T> {
-    operator fun getValue(t: Any, p: PropertyMetadata): T = null!!
-    operator fun setValue(t: Any, p: PropertyMetadata, varue: T) {}
+    operator fun getValue(t: Any, p: KProperty<*>): T = null!!
+    operator fun setValue(t: Any, p: KProperty<*>, varue: T) {}
 }
 
 fun <T> getT(): T = null!!

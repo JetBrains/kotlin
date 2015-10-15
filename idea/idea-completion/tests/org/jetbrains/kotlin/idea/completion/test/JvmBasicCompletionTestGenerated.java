@@ -2272,6 +2272,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("KProperty.kt")
+        public void testKProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/KProperty.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoDuplicationForImportedJavaClass.kt")
         public void testNoDuplicationForImportedJavaClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/NoDuplicationForImportedJavaClass.kt");
@@ -2293,12 +2299,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("PackageDirective.kt")
         public void testPackageDirective() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/PackageDirective.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("PropertyMetadata.kt")
-        public void testPropertyMetadata() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/PropertyMetadata.kt");
             doTest(fileName);
         }
 

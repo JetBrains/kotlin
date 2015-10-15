@@ -1,6 +1,6 @@
 >>> Integer.valueOf(42)
 42
->>> Integer(239).intValue()
+>>> Integer(239).toInt()
 239
 >>> java.lang.Long.MIN_VALUE as Any
 -9223372036854775808

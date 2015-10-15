@@ -334,7 +334,7 @@ data class ExtractableCodeDescriptor(
     val duplicates: List<DuplicateInfo> by lazy { findDuplicates() }
 }
 
-enum class ExtractionTarget(val name: String) {
+enum class ExtractionTarget(val targetName: String) {
     FUNCTION("function") {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor) = true
     },

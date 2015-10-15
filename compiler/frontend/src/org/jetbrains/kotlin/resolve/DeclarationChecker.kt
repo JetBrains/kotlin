@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.psi.JetDeclaration
 
 public interface DeclarationChecker {
 

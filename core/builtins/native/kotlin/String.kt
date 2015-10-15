@@ -28,7 +28,7 @@ public class String : Comparable<String>, CharSequence {
      */
     public operator fun plus(other: Any?): String
 
-    public override fun length(): Int
+    public override val length: Int
 
     public override fun get(index: Int): Char
 

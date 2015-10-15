@@ -52,7 +52,8 @@ public class TypeResolver(
         private val storageManager: StorageManager,
         private val lazinessToken: TypeLazinessToken,
         private val dynamicTypesSettings: DynamicTypesSettings,
-        private val dynamicCallableDescriptors: DynamicCallableDescriptors
+        private val dynamicCallableDescriptors: DynamicCallableDescriptors,
+        private val identifierChecker: IdentifierChecker
 ) {
 
     public open class FlexibleTypeCapabilitiesProvider {
@@ -230,14 +231,12 @@ public class TypeResolver(
                 if (baseType.isNullable() || innerType is JetNullableType || innerType is JetDynamicType) {
                     c.trace.report(REDUNDANT_NULLABLE.on(nullableType))
                 }
-                else if (c.checkBounds && !baseType.isBare() && TypeUtils.hasNullableSuperType(baseType.getActualType())) {
-                    c.trace.report(BASE_WITH_NULLABLE_UPPER_BOUND.on(nullableType, baseType.getActualType()))
-                }
                 result = baseType.makeNullable()
             }
 
             override fun visitFunctionType(type: JetFunctionType) {
                 val receiverTypeRef = type.getReceiverTypeReference()
+                type.parameters.forEach { identifierChecker.checkDeclaration(it, c.trace) }
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
                 type.parameters.forEach { checkParameterInFunctionType(it) }

@@ -1,31 +1,31 @@
 class A : Map<String, String> {
     override val size: Int get() = 56
 
-    override val isEmpty: Boolean get() {
+    override fun isEmpty(): Boolean {
         throw UnsupportedOperationException()
     }
 
-    override fun containsKey(key: Any?): Boolean {
+    override fun containsKey(key: String): Boolean {
         throw UnsupportedOperationException()
     }
 
-    override fun containsValue(value: Any?): Boolean {
+    override fun containsValue(value: String): Boolean {
         throw UnsupportedOperationException()
     }
 
-    override fun get(key: Any?): String? {
+    override fun get(key: String): String? {
         throw UnsupportedOperationException()
     }
 
-    override fun keySet(): Set<String> {
+    override val keys: Set<String> get() {
         throw UnsupportedOperationException()
     }
 
-    override fun values(): Collection<String> {
+    override val values: Collection<String> get() {
         throw UnsupportedOperationException()
     }
 
-    override fun entrySet(): Set<Map.Entry<String, String>> {
+    override val entries: Set<Map.Entry<String, String>> get() {
         throw UnsupportedOperationException()
     }
 }

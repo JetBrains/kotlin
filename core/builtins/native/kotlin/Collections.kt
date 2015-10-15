@@ -54,7 +54,7 @@ public interface Collection<out E> : Iterable<E> {
     /**
      * Returns `true` if the collection is empty (contains no elements), `false` otherwise.
      */
-    public val isEmpty: Boolean
+    public fun isEmpty(): Boolean
 
     /**
      * Checks if the specified element is contained in this collection.
@@ -106,14 +106,14 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
      *
      * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
      */
-    public fun removeAll(c: Collection<Any?>): Boolean
+    public fun removeAll(c: Collection<E>): Boolean
 
     /**
      * Retains only the elements in this collection that are contained in the specified collection.
      *
      * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
      */
-    public fun retainAll(c: Collection<Any?>): Boolean
+    public fun retainAll(c: Collection<E>): Boolean
 
     /**
      * Removes all elements from this collection.
@@ -129,7 +129,7 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
 public interface List<out E> : Collection<E> {
     // Query Operations
     override val size: Int
-    override val isEmpty: Boolean
+    override fun isEmpty(): Boolean
     override fun contains(o: @UnsafeVariance E): Boolean
     override fun iterator(): Iterator<E>
 
@@ -147,13 +147,13 @@ public interface List<out E> : Collection<E> {
      * Returns the index of the first occurrence of the specified element in the list, or -1 if the specified
      * element is not contained in the list.
      */
-    public fun indexOf(o: Any?): Int
+    public fun indexOf(o: @UnsafeVariance E): Int
 
     /**
      * Returns the index of the last occurrence of the specified element in the list, or -1 if the specified
      * element is not contained in the list.
      */
-    public fun lastIndexOf(o: Any?): Int
+    public fun lastIndexOf(o: @UnsafeVariance E): Int
 
     // List Iterators
     /**
@@ -192,8 +192,8 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
      * @return `true` if the list was changed as the result of the operation.
      */
     public fun addAll(index: Int, c: Collection<E>): Boolean
-    override fun removeAll(c: Collection<Any?>): Boolean
-    override fun retainAll(c: Collection<Any?>): Boolean
+    override fun removeAll(c: Collection<E>): Boolean
+    override fun retainAll(c: Collection<E>): Boolean
     override fun clear(): Unit
 
     // Positional Access Operations
@@ -233,7 +233,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
 public interface Set<out E> : Collection<E> {
     // Query Operations
     override val size: Int
-    override val isEmpty: Boolean
+    override fun isEmpty(): Boolean
     override fun contains(o: @UnsafeVariance E): Boolean
     override fun iterator(): Iterator<E>
 
@@ -256,8 +256,8 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
 
     // Bulk Modification Operations
     override fun addAll(c: Collection<E>): Boolean
-    override fun removeAll(c: Collection<Any?>): Boolean
-    override fun retainAll(c: Collection<Any?>): Boolean
+    override fun removeAll(c: Collection<E>): Boolean
+    override fun retainAll(c: Collection<E>): Boolean
     override fun clear(): Unit
 }
 
@@ -279,38 +279,38 @@ public interface Map<K, out V> {
     /**
      * Returns `true` if the map is empty (contains no elements), `false` otherwise.
      */
-    public val isEmpty: Boolean
+    public fun isEmpty(): Boolean
 
     /**
      * Returns `true` if the map contains the specified [key].
      */
-    public fun containsKey(key: Any?): Boolean
+    public fun containsKey(key: K): Boolean
 
     /**
      * Returns `true` if the map maps one or more keys to the specified [value].
      */
-    public fun containsValue(value: Any?): Boolean
+    public fun containsValue(value: @UnsafeVariance V): Boolean
 
     /**
      * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
      */
-    public operator fun get(key: Any?): V?
+    public operator fun get(key: K): V?
 
     // Views
     /**
      * Returns a [Set] of all keys in this map.
      */
-    public fun keySet(): Set<K>
+    public val keys: Set<K>
 
     /**
      * Returns a [Collection] of all values in this map. Note that this collection may contain duplicate values.
      */
-    public fun values(): Collection<V>
+    public val values: Collection<V>
 
     /**
      * Returns a [Set] of all key/value pairs in this map.
      */
-    public fun entrySet(): Set<Map.Entry<K, V>>
+    public val entries: Set<Map.Entry<K, V>>
 
     /**
      * Represents a key/value pair held by a [Map].
@@ -348,7 +348,7 @@ public interface MutableMap<K, V> : Map<K, V> {
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
-    public fun remove(key: Any?): V?
+    public fun remove(key: K): V?
 
     // Bulk Modification Operations
     /**
@@ -362,9 +362,9 @@ public interface MutableMap<K, V> : Map<K, V> {
     public fun clear(): Unit
 
     // Views
-    override fun keySet(): MutableSet<K>
-    override fun values(): MutableCollection<V>
-    override fun entrySet(): MutableSet<MutableMap.MutableEntry<K, V>>
+    override val keys: MutableSet<K>
+    override val values: MutableCollection<V>
+    override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
 
     /**
      * Represents a key/value pair held by a [MutableMap].

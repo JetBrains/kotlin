@@ -1,5 +1,7 @@
 package foo
 
+import kotlin.reflect.KProperty
+
 open class A {
     val B.w: Int by <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>MyProperty<!>()
 }
@@ -13,7 +15,7 @@ class B {
 }
 
 class MyProperty<R : A, T> {
-    operator fun getValue(thisRef: R, desc: PropertyMetadata): T {
+    operator fun getValue(thisRef: R, desc: KProperty<*>): T {
         throw Exception("$thisRef $desc")
     }
 }

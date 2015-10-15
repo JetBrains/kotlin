@@ -1,5 +1,5 @@
 fun foo(x : Any): String {
-    return if(x is Array<String>) x[0] else "fail"
+    return if(x is Array<*> && x.isArrayOf<String>()) (x as Array<String>)[0] else "fail"
 }
 
 fun box(): String {

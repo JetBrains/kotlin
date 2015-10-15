@@ -1,4 +1,5 @@
 import kotlin.test.assertEquals
+import kotlin.reflect.KProperty
 
 class Project {
     fun <T> getInstance(cls: Class<T>): T =
@@ -9,7 +10,7 @@ class Project {
         }
 }
 
-inline fun <reified T : Any> Project.getValue(t: Any?, p: PropertyMetadata): T = getInstance(javaClass<T>())
+inline fun <reified T : Any> Project.getValue(t: Any?, p: KProperty<*>): T = getInstance(javaClass<T>())
 
 val project = Project()
 val x1: Int by project

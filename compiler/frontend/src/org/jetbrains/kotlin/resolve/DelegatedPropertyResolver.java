@@ -127,15 +127,8 @@ public class DelegatedPropertyResolver {
     }
 
     @NotNull
-    private JetExpression createExpressionForPropertyMetadata(
-            @NotNull JetPsiFactory psiFactory,
-            @NotNull PropertyDescriptor propertyDescriptor
-    ) {
-        return psiFactory.createExpression(builtIns.getPropertyMetadataImpl().getName().asString() +
-                                           "(\"" +
-                                           propertyDescriptor.getName().asString() +
-                                           "\") as " +
-                                           builtIns.getPropertyMetadata().getName().asString());
+    private static JetExpression createExpressionForProperty(@NotNull JetPsiFactory psiFactory) {
+        return psiFactory.createExpression("null as " + KotlinBuiltIns.FQ_NAMES.kProperty.asSingleFqName().asString() + "<*>");
     }
 
     public void resolveDelegatedPropertyPDMethod(
@@ -151,7 +144,7 @@ public class DelegatedPropertyResolver {
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
-        List<JetExpression> arguments = Collections.singletonList(createExpressionForPropertyMetadata(psiFactory, propertyDescriptor));
+        List<JetExpression> arguments = Collections.singletonList(createExpressionForProperty(psiFactory));
         ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
 
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
@@ -257,7 +250,7 @@ public class DelegatedPropertyResolver {
         List<JetExpression> arguments = Lists.newArrayList();
         JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
         arguments.add(psiFactory.createExpression(hasThis ? "this" : "null"));
-        arguments.add(createExpressionForPropertyMetadata(psiFactory, propertyDescriptor));
+        arguments.add(createExpressionForProperty(psiFactory));
 
         if (!isGet) {
             JetReferenceExpression fakeArgument = (JetReferenceExpression) createFakeExpressionOfType(delegateExpression.getProject(), trace,

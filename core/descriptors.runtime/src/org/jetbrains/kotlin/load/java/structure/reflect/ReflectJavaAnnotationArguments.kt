@@ -27,7 +27,7 @@ abstract class ReflectJavaAnnotationArgument(
             return when {
                 value.javaClass.isEnumClassOrSpecializedEnumEntryClass() -> ReflectJavaEnumValueAnnotationArgument(name, value as Enum<*>)
                 value is Annotation -> ReflectJavaAnnotationAsAnnotationArgument(name, value)
-                value is Array<Any> -> ReflectJavaArrayAnnotationArgument(name, value)
+                value is Array<*> -> ReflectJavaArrayAnnotationArgument(name, value)
                 value is Class<*> -> ReflectJavaClassObjectAnnotationArgument(name, value)
                 else -> ReflectJavaLiteralAnnotationArgument(name, value)
             }
@@ -42,9 +42,9 @@ class ReflectJavaLiteralAnnotationArgument(
 
 class ReflectJavaArrayAnnotationArgument(
         name: Name?,
-        private val values: Array<Any>
+        private val values: Array<*>
 ) : ReflectJavaAnnotationArgument(name), JavaArrayAnnotationArgument {
-    override fun getElements() = values.map { ReflectJavaAnnotationArgument.create(it, null) }
+    override fun getElements() = values.map { ReflectJavaAnnotationArgument.create(it!!, null) }
 }
 
 class ReflectJavaEnumValueAnnotationArgument(

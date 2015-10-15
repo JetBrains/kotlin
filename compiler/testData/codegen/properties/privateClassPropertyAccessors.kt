@@ -1,3 +1,5 @@
+import kotlin.reflect.KProperty
+
 class C {
     // All these properties should have corresponding accessors
     private val valWithGet: String
@@ -25,7 +27,7 @@ class C {
 
 
 object Delegate {
-    fun getValue(x: C, p: PropertyMetadata) = throw AssertionError()
+    fun getValue(x: C, p: KProperty<*>) = throw AssertionError()
 
-    fun setValue(x: C, p: PropertyMetadata, value: Int) = throw AssertionError()
+    fun setValue(x: C, p: KProperty<*>, value: Int) = throw AssertionError()
 }

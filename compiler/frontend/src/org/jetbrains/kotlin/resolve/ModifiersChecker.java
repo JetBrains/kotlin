@@ -179,10 +179,10 @@ public class ModifiersChecker {
         }
 
         private void checkModifierListCommon(@NotNull JetDeclaration modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
-            AnnotationUseSiteTargetChecker.INSTANCE$.check(modifierListOwner, descriptor, trace);
+            AnnotationUseSiteTargetChecker.INSTANCE.check(modifierListOwner, descriptor, trace);
             runDeclarationCheckers(modifierListOwner, descriptor);
             annotationChecker.check(modifierListOwner, trace, descriptor);
-            ModifierCheckerCore.INSTANCE$.check(modifierListOwner, trace, descriptor);
+            ModifierCheckerCore.INSTANCE.check(modifierListOwner, trace, descriptor);
         }
 
         public void checkModifiersForLocalDeclaration(
@@ -194,11 +194,11 @@ public class ModifiersChecker {
 
         public void checkModifiersForMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration) {
             annotationChecker.check(multiDeclaration, trace, null);
-            ModifierCheckerCore.INSTANCE$.check(multiDeclaration, trace, null);
+            ModifierCheckerCore.INSTANCE.check(multiDeclaration, trace, null);
             for (JetMultiDeclarationEntry multiEntry: multiDeclaration.getEntries()) {
                 annotationChecker.check(multiEntry, trace, null);
-                ModifierCheckerCore.INSTANCE$.check(multiEntry, trace, null);
-                UnderscoreChecker.INSTANCE$.checkNamed(multiEntry, trace);
+                ModifierCheckerCore.INSTANCE.check(multiEntry, trace, null);
+                UnderscoreChecker.INSTANCE.checkNamed(multiEntry, trace);
             }
         }
 
@@ -238,7 +238,7 @@ public class ModifiersChecker {
             if (!(modifierListOwner instanceof JetTypeParameterListOwner)) return;
             List<JetTypeParameter> typeParameters = ((JetTypeParameterListOwner) modifierListOwner).getTypeParameters();
             for (JetTypeParameter typeParameter : typeParameters) {
-                ModifierCheckerCore.INSTANCE$.check(typeParameter, trace, null);
+                ModifierCheckerCore.INSTANCE.check(typeParameter, trace, null);
             }
         }
     }

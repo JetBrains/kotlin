@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
+
 public object JvmPlatformConfigurator : PlatformConfigurator(
         DynamicTypesSettings(),
         additionalDeclarationCheckers = listOf(
@@ -60,7 +61,9 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
         additionalAnnotationCheckers = listOf(
                 RepeatableAnnotationChecker,
                 FileClassAnnotationsChecker
-        )
+        ),
+
+        identifierChecker = JvmSimpleNameBacktickChecker
 ) {
 
     override fun configure(container: StorageComponentContainer) {
@@ -69,4 +72,3 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
         container.useImpl<ReflectionAPICallChecker>()
     }
 }
-

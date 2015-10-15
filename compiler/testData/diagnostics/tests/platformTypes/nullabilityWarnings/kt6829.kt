@@ -16,7 +16,7 @@ public class J {
 
 fun foo(collection: Collection<J>) {
     val mapped = collection.map { it.method() }
-    mapped[0]<!UNSAFE_CALL!>.<!>length()
+    mapped[0]<!UNSAFE_CALL!>.<!>length
 }
 
 public fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {

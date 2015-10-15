@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getPropertyNameCandidatesBySpecialGetterName
+
 
 fun propertyNameByGetMethodName(methodName: Name): Name?
         = propertyNameFromAccessorMethodName(methodName, "get") ?: propertyNameFromAccessorMethodName(methodName, "is", removePrefix = false)
@@ -44,4 +47,18 @@ private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String,
     val name = identifier.removePrefix(prefix).decapitalizeSmart(asciiOnly = true)
     if (!Name.isValidIdentifier(name)) return null
     return Name.identifier(name)
+}
+
+fun getPropertyNamesCandidatesByAccessorName(name: Name): List<Name> {
+    val nameAsString = name.asString()
+
+    if (JvmAbi.isGetterName(nameAsString)) {
+        return propertyNameByGetMethodName(name).singletonOrEmptyList()
+    }
+
+    if (JvmAbi.isSetterName(nameAsString)) {
+        return propertyNamesBySetMethodName(name)
+    }
+
+    return getPropertyNameCandidatesBySpecialGetterName(name)
 }

@@ -1,5 +1,5 @@
 interface Named {
-    fun name(): String
+    val name: String
 }
 
 enum class E : Named {
@@ -7,5 +7,5 @@ enum class E : Named {
 }
 
 fun box(): String {
-    return (Named::name)(E.OK)
+    return E.OK.name
 }

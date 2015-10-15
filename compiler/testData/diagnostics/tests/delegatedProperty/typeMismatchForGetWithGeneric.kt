@@ -1,4 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+
+import kotlin.reflect.KProperty
+
 class A
 
 class B {
@@ -14,7 +17,7 @@ class C {
 val cTopLevel: Int by Delegate<Nothing?>()
 
 class Delegate<T> {
-  operator fun getValue(t: T, p: PropertyMetadata): Int {
+  operator fun getValue(t: T, p: KProperty<*>): Int {
     return 1
   }
 }

@@ -1,6 +1,6 @@
 package
 
-@kotlin.inline() public fun </*0*/ reified T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
+@kotlin.Suppress(names = {"UNCHECKED_CAST"}) @kotlin.inline() public fun </*0*/ reified T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
 public fun box(): kotlin.String
 public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 

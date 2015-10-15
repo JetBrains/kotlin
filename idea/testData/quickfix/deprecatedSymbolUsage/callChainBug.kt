@@ -6,5 +6,5 @@ fun oldFun(): String = ""
 fun newFun(): String = ""
 
 fun foo() {
-    val value = <caret>oldFun().length()
+    val value = <caret>oldFun().length
 }

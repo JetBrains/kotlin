@@ -165,6 +165,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         scope.addVariableDescriptor(propertyDescriptor);
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(property, propertyDescriptor);
+        components.identifierChecker.checkDeclaration(property, context.trace);
         return typeInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(property, context));
     }
 
@@ -185,6 +186,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         }
         components.multiDeclarationResolver.defineLocalVariablesFromMultiDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
         components.modifiersChecker.withTrace(context.trace).checkModifiersForMultiDeclaration(multiDeclaration);
+        components.identifierChecker.checkDeclaration(multiDeclaration, context.trace);
         return typeInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(multiDeclaration, context));
     }
 

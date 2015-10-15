@@ -1,5 +1,6 @@
 import pack.bar
 import pack.oldFun2 // should not be removed for non-deprecated overload used
+import kotlin.reflect.KProperty
 
 class A private constructor()
 
@@ -23,11 +24,11 @@ fun foo() {
 }
 
 fun unnecessarySafeCall(x: String) {
-    x.length()
+    x.length
 }
 
 fun unnecessaryExclExcl(x: String) {
-    x.length()
+    x.length
 }
 
 fun unnecessaryCast(x: String) = x
@@ -40,7 +41,7 @@ const val i = 1
 
 annotation class Fancy(val param: Int)
 
-@Fancy(<caret>i) class D
+@Fancy(i) class D
 
 class Foo {
     var x: Int = 0
@@ -48,7 +49,14 @@ class Foo {
         set(value) { field = value }
 }
 
+class CustomDelegate {
+    operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = ""
+    operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: String) {}
+}
+
 class B {
+    var a: String by CustomDelegate()
+
     operator fun plus(a: A): A = A()
 }
 

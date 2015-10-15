@@ -17,7 +17,7 @@ import a.X
 public fun X.gav(): Int {
     if (x != null)
         // Smart cast is not possible if definition is in another module
-        return x<!UNSAFE_CALL!>.<!>length()
+        return x<!UNSAFE_CALL!>.<!>length
     else
         return 0
 }
@@ -29,7 +29,7 @@ package a
 public fun X.gav(): Int {
     if (x != null)
         // Even if it's in the same package
-        return x<!UNSAFE_CALL!>.<!>length() 
+        return x<!UNSAFE_CALL!>.<!>length
     else
         return 0
 }

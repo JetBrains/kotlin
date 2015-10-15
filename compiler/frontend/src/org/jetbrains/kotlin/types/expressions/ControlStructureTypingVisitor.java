@@ -393,6 +393,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (loopParameter != null) {
             VariableDescriptor variableDescriptor = createLoopParameterDescriptor(loopParameter, expectedParameterType, context);
             components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(loopParameter, variableDescriptor);
+            components.identifierChecker.checkDeclaration(loopParameter, context.trace);
 
             loopScope.addVariableDescriptor(variableDescriptor);
         }
@@ -406,6 +407,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                         loopScope, multiParameter, iteratorNextAsReceiver, loopRange, context
                 );
                 components.modifiersChecker.withTrace(context.trace).checkModifiersForMultiDeclaration(multiParameter);
+                components.identifierChecker.checkDeclaration(multiParameter, context.trace);
             }
         }
 
@@ -473,6 +475,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetParameter catchParameter = catchClause.getCatchParameter();
             JetExpression catchBody = catchClause.getCatchBody();
             if (catchParameter != null) {
+                components.identifierChecker.checkDeclaration(catchParameter, context.trace);
                 ModifiersChecker.ModifiersCheckingProcedure modifiersChecking = components.modifiersChecker.withTrace(context.trace);
                 modifiersChecking.checkParameterHasNoValOrVar(catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
                 ModifierCheckerCore.INSTANCE$.check(catchParameter, context.trace, null);

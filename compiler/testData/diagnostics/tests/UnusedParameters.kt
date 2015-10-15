@@ -1,3 +1,5 @@
+import kotlin.reflect.KProperty
+
 class C(a: Int, b: Int, c: Int, d: Int, <!UNUSED_PARAMETER!>e<!>: Int = d, val f: String) {
     init {
         a + a
@@ -14,11 +16,11 @@ fun f(a: Int, b: Int, <!UNUSED_PARAMETER!>c<!>: Int = b) {
     a + a
 }
 
-fun Any.getValue(thisRef: Any?, prop: PropertyMetadata): String = ":)"
-fun Any.setValue(thisRef: Any?, prop: PropertyMetadata, value: String) {
+fun Any.getValue(thisRef: Any?, prop: KProperty<*>): String = ":)"
+fun Any.setValue(thisRef: Any?, prop: KProperty<*>, value: String) {
 }
 
-fun Any.propertyDelegated(prop: PropertyMetadata) {
+fun Any.propertyDelegated(prop: KProperty<*>) {
 }
 
 fun get(<!UNUSED_PARAMETER!>p<!>: Any) {

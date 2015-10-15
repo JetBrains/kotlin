@@ -15,11 +15,11 @@ open class KList<E> : MutableList<E> {
         throw UnsupportedOperationException()
     }
 
-    override fun removeAll(c: Collection<Any?>): Boolean {
+    override fun removeAll(c: Collection<E>): Boolean {
         throw UnsupportedOperationException()
     }
 
-    override fun retainAll(c: Collection<Any?>): Boolean {
+    override fun retainAll(c: Collection<E>): Boolean {
         throw UnsupportedOperationException()
     }
 
@@ -58,7 +58,7 @@ open class KList<E> : MutableList<E> {
     override val size: Int
         get() = throw UnsupportedOperationException()
 
-    override val isEmpty: Boolean get() {
+    override fun isEmpty(): Boolean {
         throw UnsupportedOperationException()
     }
 
@@ -69,11 +69,11 @@ open class KList<E> : MutableList<E> {
         throw UnsupportedOperationException()
     }
 
-    override fun indexOf(o: Any?): Int {
+    override fun indexOf(o: E): Int {
         throw UnsupportedOperationException()
     }
 
-    override fun lastIndexOf(o: Any?): Int {
+    override fun lastIndexOf(o: E): Int {
         throw UnsupportedOperationException()
     }
 }

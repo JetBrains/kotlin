@@ -324,11 +324,15 @@
             this.name$ = void 0;
             this.ordinal$ = void 0;
         }, {
-            name: function () {
-                return this.name$;
+            name: {
+                get: function () {
+                    return this.name$;
+                }
             },
-            ordinal: function () {
-                return this.ordinal$;
+            ordinal: {
+                get: function () {
+                    return this.ordinal$;
+                }
             },
             equals_za3rmp$: function (o) {
                 return this === o;
@@ -340,7 +344,7 @@
                 return this.ordinal$ < o.ordinal$ ? -1 : this.ordinal$ > o.ordinal$ ? 1 : 0;
             },
             toString: function () {
-                return this.name();
+                return this.name;
             }
         }
     );
@@ -398,10 +402,8 @@
             }
             return true;
         },
-        isEmpty: {
-            get: function () {
-                return this.size === 0;
-            }
+        isEmpty: function () {
+            return this.size === 0;
         },
         iterator: function () {
             // TODO: Do not implement mutable iterator() this way, make abstract
@@ -972,7 +974,7 @@
     });
 
     Kotlin.collectionsMax = function (c, comp) {
-        if (c.isEmpty) {
+        if (c.isEmpty()) {
             //TODO: which exception?
             throw new Error();
         }
@@ -1027,9 +1029,20 @@
 
 
     Kotlin.StringBuilder = Kotlin.createClassNow(null,
-        function () {
-            this.string = "";
+        function (content) {
+            this.string = typeof(content) == "string" ? content : "";
         }, {
+        length: {
+            get: function() {
+                return this.string.length;
+            }
+        },
+        substring: function(start, end) {
+            return this.string.substring(start, end);
+        },
+        charAt: function(index) {
+            return this.string.charAt(index);
+        },
         append: function (obj, from, to) {
             if (from == void 0 && to == void 0) {
                 this.string = this.string + obj.toString();

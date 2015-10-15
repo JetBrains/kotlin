@@ -10,7 +10,7 @@ public fun foo(x: String?): Int {
             null -> break@loop
             "abc" -> return 0
             "xyz" -> return 1
-            else -> <!DEBUG_INFO_SMARTCAST!>x<!>.length()
+            else -> <!DEBUG_INFO_SMARTCAST!>x<!>.length
         }         
         // y is always Int after when
         checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>y<!>)
@@ -18,5 +18,5 @@ public fun foo(x: String?): Int {
     // y is always Int even here
     checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>y<!>)
     // x is null because of the break
-    return x<!UNSAFE_CALL!>.<!>length()
+    return x<!UNSAFE_CALL!>.<!>length
 }

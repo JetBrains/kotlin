@@ -1,3 +1,0 @@
-package
-
-public fun f(/*0*/ a: kotlin.Array<out kotlin.Number>): kotlin.Boolean

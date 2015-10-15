@@ -10,5 +10,6 @@ interface B {
 }
 
 fun test(c: C) {
+    c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>a<!> = 1)
     c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>b<!> = 1)
 }

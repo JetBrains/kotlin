@@ -1,17 +1,17 @@
 package test.text
 
 import kotlin.test.*
-import org.junit.Test as test
+import org.junit.Test
 
 
 class RegexJVMTest {
 
-    @test fun matchGroups() {
+    @Test fun matchGroups() {
         val input = "1a 2b 3c"
         val regex = "(\\d)(\\w)".toRegex()
 
-        val matches = regex.matchAll(input).toList()
-        assertTrue(matches.all { it.groups.size() == 3 })
+        val matches = regex.findAll(input).toList()
+        assertTrue(matches.all { it.groups.size == 3 })
         val m1 = matches[0]
         assertEquals("1a", m1.groups[0]?.value)
         assertEquals(0..1, m1.groups[0]?.range)

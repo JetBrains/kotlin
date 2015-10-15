@@ -1,3 +1,5 @@
+import kotlin.reflect.KProperty
+
 fun foo() {
     a<caret>
 }
@@ -5,7 +7,7 @@ fun foo() {
 val a by Delegate()
 
 class Delegate {
-    fun getValue(t: Any?, p: PropertyMetadata) = 1
+    fun getValue(t: Any?, p: KProperty<*>) = 1
 }
 
-// EXISTS: a.getValue(Any?\, PropertyMetadata)
+// EXISTS: a.getValue(Any?\, KProperty<*>)

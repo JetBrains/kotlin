@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
@@ -41,7 +42,7 @@ import java.io.InputStream;
 import java.util.*;
 
 import static kotlin.CollectionsKt.*;
-import static kotlin.SetsKt.*;
+import static kotlin.SetsKt.setOf;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
@@ -157,7 +158,9 @@ public abstract class KotlinBuiltIns {
         public final FqName mutableSet = fqName("MutableSet");
         public final FqName mutableMap = fqName("MutableMap");
 
-        public final FqNameUnsafe kClass = new FqName("kotlin.reflect.KClass").toUnsafe();
+        public final FqNameUnsafe kClass = reflect("KClass");
+        public final FqNameUnsafe kCallable = reflect("KCallable");
+        public final ClassId kProperty = ClassId.topLevel(reflect("KProperty").toSafe());
 
         public final Map<FqNameUnsafe, PrimitiveType> fqNameToPrimitiveType;
         public final Map<FqNameUnsafe, PrimitiveType> arrayClassFqNameToPrimitiveType;
@@ -178,6 +181,11 @@ public abstract class KotlinBuiltIns {
         @NotNull
         private static FqName fqName(@NotNull String simpleName) {
             return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName));
+        }
+
+        @NotNull
+        private static FqNameUnsafe reflect(@NotNull String simpleName) {
+            return ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME().child(Name.identifier(simpleName)).toUnsafe();
         }
 
         @NotNull
@@ -695,16 +703,6 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public JetType getAnnotationType() {
         return getAnnotation().getDefaultType();
-    }
-
-    @NotNull
-    public ClassDescriptor getPropertyMetadata() {
-        return getBuiltInClassByName("PropertyMetadata");
-    }
-
-    @NotNull
-    public ClassDescriptor getPropertyMetadataImpl() {
-        return getBuiltInClassByName("PropertyMetadataImpl");
     }
 
     @NotNull

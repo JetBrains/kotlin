@@ -1,5 +1,7 @@
+import kotlin.reflect.KProperty
+
 class SomeProp() {
-    fun getValue(t: Any, metadata: PropertyMetadataImpl) = 42
+    fun getValue(t: Any, metadata: KProperty<*>) = 42
 }
 
 class Some<caret>() {

@@ -1,18 +1,20 @@
 package foo
 
+import kotlin.reflect.KProperty
+
 interface Getter<T> {
     fun get(): T
 }
 
 class Delegate<T>(val getter: Getter<T>) {
     var t: T? = null
-    fun getValue(obj: Any, property: PropertyMetadata): T {
+    fun getValue(obj: Any, property: KProperty<*>): T {
         if (t != null) {
             return t!!
         }
         return getter.get()
     }
-    fun setValue(obj: Any, property: PropertyMetadata, value: T) {
+    fun setValue(obj: Any, property: KProperty<*>, value: T) {
         t = value
     }
 }

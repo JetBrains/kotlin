@@ -9,5 +9,5 @@ class B {
 }
 
 // MULTIRESOLVE
-// REF: (for T in dependency).getValue(R,kotlin.PropertyMetadata)
-// REF: (for T in dependency).setValue(R,kotlin.PropertyMetadata,kotlin.Int)
+// REF: (for T in dependency).getValue(R,kotlin.reflect.KProperty<*>)
+// REF: (for T in dependency).setValue(R,kotlin.reflect.KProperty<*>,kotlin.Int)

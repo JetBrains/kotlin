@@ -1,8 +1,10 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 
+import kotlin.reflect.KProperty
+
 class UsefulClass(val param: Int = 2) {
-    operator fun getValue(instance: Any, property: PropertyMetadata) : Int = 1
-    operator fun setValue(instance: Any, property: PropertyMetadata, value: Int) {}
+    operator fun getValue(instance: Any, property: KProperty<*>) : Int = 1
+    operator fun setValue(instance: Any, property: KProperty<*>, value: Int) {}
 
     @Deprecated("message")
     fun member() {}

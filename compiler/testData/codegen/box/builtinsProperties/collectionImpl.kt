@@ -2,7 +2,7 @@ class A1 : MutableCollection<String> {
     override val size: Int
         get() = 56
 
-    override val isEmpty: Boolean get() {
+    override fun isEmpty(): Boolean {
         throw UnsupportedOperationException()
     }
 
@@ -30,11 +30,11 @@ class A1 : MutableCollection<String> {
         throw UnsupportedOperationException()
     }
 
-    override fun removeAll(c: Collection<Any?>): Boolean {
+    override fun removeAll(c: Collection<String>): Boolean {
         throw UnsupportedOperationException()
     }
 
-    override fun retainAll(c: Collection<Any?>): Boolean {
+    override fun retainAll(c: Collection<String>): Boolean {
         throw UnsupportedOperationException()
     }
 

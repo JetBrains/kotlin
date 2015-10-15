@@ -3,6 +3,6 @@
 fun main(args: Array<String>) {
     val foo: String? = "foo"
     if<caret> {
-        foo.length()
+        foo.length
     } else null
 }

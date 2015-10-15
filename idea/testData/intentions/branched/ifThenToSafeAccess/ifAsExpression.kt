@@ -8,6 +8,6 @@ fun main(args: Array<String>) {
         null
     }
     else {
-        foo.length()
+        foo.length
     }
 }

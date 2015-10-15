@@ -1,15 +1,15 @@
 class MyMap<K, V>: Map<K, V> {
     override val size: Int get() = 0
-    override val isEmpty: Boolean get() = true
-    override fun containsKey(key: Any?): Boolean = false
-    override fun containsValue(value: Any?): Boolean = false
-    override fun get(key: Any?): V? = null
-    override fun keySet(): Set<K> = throw UnsupportedOperationException()
-    override fun values(): Collection<V> = throw UnsupportedOperationException()
-    override fun entrySet(): Set<Map.Entry<K, V>> = throw UnsupportedOperationException()
+    override fun isEmpty(): Boolean = true
+    override fun containsKey(key: K): Boolean = false
+    override fun containsValue(value: V): Boolean = false
+    override fun get(key: K): V? = null
+    override val keys: Set<K> get() = throw UnsupportedOperationException()
+    override val values: Collection<V> get() = throw UnsupportedOperationException()
+    override val entries: Set<Map.Entry<K, V>> get() = throw UnsupportedOperationException()
 
     public fun put(key: K, value: V): V? = null
-    public fun remove(key: Any?): V? = null
+    public fun remove(key: K): V? = null
     public fun putAll(m: Map<out K, V>) {}
     public fun clear() {}
 }

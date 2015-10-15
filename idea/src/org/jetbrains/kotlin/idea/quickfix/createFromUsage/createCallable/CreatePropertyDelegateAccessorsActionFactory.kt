@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.Variance
 
 object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUsageFactory<JetExpression>() {
@@ -54,7 +55,8 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
         val accessorReceiverType = TypeInfo(element, Variance.IN_VARIANCE)
         val builtIns = propertyDescriptor.builtIns
         val thisRefParam = ParameterInfo(TypeInfo(propertyReceiver?.type ?: builtIns.nullableNothingType, Variance.IN_VARIANCE))
-        val metadataParam = ParameterInfo(TypeInfo(builtIns.propertyMetadata.defaultType, Variance.IN_VARIANCE))
+        val kPropertyStarType = ReflectionTypes.createKPropertyStarType(propertyDescriptor.module) ?: return emptyList()
+        val metadataParam = ParameterInfo(TypeInfo(kPropertyStarType, Variance.IN_VARIANCE), "property")
 
         val callableInfos = SmartList<CallableInfo>()
 

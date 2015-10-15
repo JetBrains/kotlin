@@ -1,12 +1,14 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.JetNamedFunction
 // OPTIONS: usages
 
+import kotlin.reflect.KProperty
+
 class Delegate() {
-    fun getValue(thisRef: Any?, propertyMetadata: PropertyMetadata): String = ":)"
-    fun setValue(thisRef: Any?, propertyMetadata: PropertyMetadata, value: String) {
+    fun getValue(thisRef: Any?, property: KProperty<*>): String = ":)"
+    fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {
     }
 
-    fun <caret>propertyDelegated(propertyMetadata: PropertyMetadata) {
+    fun <caret>propertyDelegated(property: KProperty<*>) {
     }
 }
 

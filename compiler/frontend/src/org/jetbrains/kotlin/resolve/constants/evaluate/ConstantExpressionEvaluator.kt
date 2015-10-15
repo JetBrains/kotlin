@@ -565,6 +565,11 @@ private class ConstantExpressionEvaluatorVisitor(
             return evaluateCall(calleeExpression, receiverExpression, expectedType)
         }
 
+        if (selectorExpression is JetSimpleNameExpression) {
+            val result = evaluateCall(selectorExpression, expression.receiverExpression, expectedType)
+            if (result != null) return result
+        }
+
         // MyEnum.A, Integer.MAX_VALUE
         if (selectorExpression != null) {
             return evaluate(selectorExpression, expectedType)

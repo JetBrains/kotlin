@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.types.*
 import java.util.*
 
@@ -115,8 +115,6 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             return containingPackage != null && containingPackage.fqName == KOTLIN_REFLECT_FQ_NAME
         }
 
-        private val K_CALLABLE_FQ_NAME = FqNameUnsafe("kotlin.reflect.KCallable")
-
         public fun isCallableType(type: JetType): Boolean =
                 KotlinBuiltIns.isFunctionOrExtensionFunctionType(type) || isKCallableType(type)
 
@@ -126,7 +124,15 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
 
         private fun isExactKCallableType(type: JetType): Boolean {
             val descriptor = type.constructor.declarationDescriptor
-            return descriptor is ClassDescriptor && DescriptorUtils.getFqName(descriptor) == K_CALLABLE_FQ_NAME
+            return descriptor is ClassDescriptor && DescriptorUtils.getFqName(descriptor) == KotlinBuiltIns.FQ_NAMES.kCallable
+        }
+
+        public fun createKPropertyStarType(module: ModuleDescriptor): JetType? {
+            val kPropertyClass = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.kProperty) ?: return null
+            return JetTypeImpl.create(
+                    Annotations.EMPTY, kPropertyClass, false,
+                    listOf(StarProjectionImpl(kPropertyClass.typeConstructor.parameters.single()))
+            )
         }
     }
 }

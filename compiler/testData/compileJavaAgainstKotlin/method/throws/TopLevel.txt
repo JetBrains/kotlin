@@ -6,15 +6,15 @@ public fun two(): kotlin.Unit
 
 public final class E1 : java.lang.Exception {
     public constructor E1()
-    public final /*fake_override*/ fun getCause(): kotlin.Throwable?
-    public final /*fake_override*/ fun getMessage(): kotlin.String?
+    public final /*fake_override*/ val cause: kotlin.Throwable?
+    public final /*fake_override*/ val message: kotlin.String?
     public final /*fake_override*/ fun printStackTrace(): kotlin.Unit
 }
 
 public final class E2 : java.lang.Exception {
     public constructor E2()
-    public final /*fake_override*/ fun getCause(): kotlin.Throwable?
-    public final /*fake_override*/ fun getMessage(): kotlin.String?
+    public final /*fake_override*/ val cause: kotlin.Throwable?
+    public final /*fake_override*/ val message: kotlin.String?
     public final /*fake_override*/ fun printStackTrace(): kotlin.Unit
 }
 

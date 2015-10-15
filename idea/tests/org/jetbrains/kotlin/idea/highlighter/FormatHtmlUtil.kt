@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter.formatHtml
 
-private fun formatHtml(html: String): String {
+fun formatHtml(html: String): String {
     var message = html
     fun wrapTagWithNewLines(tagName: String, isSubTag: Boolean) {
         val openTagPart = "<$tagName"

@@ -1,5 +1,7 @@
+import kotlin.reflect.KProperty
+
 class CustomDelegate {
-    operator fun getValue(thisRef: Any?, prop: PropertyMetadata): String = prop.name
+    operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = prop.name
 }
 
 public abstract class A<T: Any, V: String?>(<!INAPPLICABLE_LATEINIT_MODIFIER_PRIMARY_CONSTRUCTOR_PARAMETER!>lateinit<!> var p2: String) {
@@ -60,6 +62,6 @@ public class B {
     lateinit var a: String
 
     init {
-        a.length()
+        a.length
     }
 }

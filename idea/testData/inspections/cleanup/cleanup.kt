@@ -24,11 +24,11 @@ fun foo() {
 }
 
 fun unnecessarySafeCall(x: String) {
-    x?.length()
+    x?.length
 }
 
 fun unnecessaryExclExcl(x: String) {
-    x!!.length()
+    x!!.length
 }
 
 fun unnecessaryCast(x: String) = x as String
@@ -49,7 +49,14 @@ class Foo {
         set(value) { $x = value }
 }
 
+class CustomDelegate {
+    operator fun get(thisRef: Any?, prop: PropertyMetadata): String = ""
+    operator fun set(thisRef: Any?, prop: PropertyMetadata, value: String) {}
+}
+
 class B {
+    var a: String by CustomDelegate()
+
     fun plus(a: A): A = A()
 }
 

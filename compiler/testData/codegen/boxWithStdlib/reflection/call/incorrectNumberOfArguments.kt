@@ -1,6 +1,8 @@
 import kotlin.jvm.JvmStatic as static
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.KCallable
+import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty
 
 var foo: String = ""
 
@@ -11,7 +13,9 @@ class A(private var bar: String = "") {
 object O {
     private @static var baz: String = ""
 
-    @static fun getBaz() = O::baz.apply { isAccessible = true }
+    @static fun getBaz() = (O::class.members.single { it.name == "baz" } as KMutableProperty<*>).apply { isAccessible = true }
+
+    fun getGetBaz() = O::class.members.single { it.name == "getBaz" } as KFunction<*>
 }
 
 fun check(callable: KCallable<*>, vararg args: Any?) {
@@ -44,8 +48,8 @@ fun box(): String {
     check(::A)
     check(::A, null, "")
 
-    check(O::getBaz)
-    check(O::getBaz, null, "")
+    check(O.getGetBaz())
+    check(O.getGetBaz(), null, "")
 
 
     val f = ::foo

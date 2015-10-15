@@ -4,9 +4,9 @@ public fun </*0*/ T : kotlin.Any> T.getJavaClass(): java.lang.Class<T>
 
 public final class IdUnavailableException : java.lang.Exception {
     public constructor IdUnavailableException()
+    public final override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
+    public final override /*1*/ /*fake_override*/ val message: kotlin.String?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final override /*1*/ /*fake_override*/ fun getCause(): kotlin.Throwable?
-    public final override /*1*/ /*fake_override*/ fun getMessage(): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

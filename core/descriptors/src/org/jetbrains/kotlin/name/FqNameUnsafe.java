@@ -41,29 +41,16 @@ public final class FqNameUnsafe extends FqNameBase {
     FqNameUnsafe(@NotNull String fqName, @NotNull FqName safe) {
         this.fqName = fqName;
         this.safe = safe;
-
-        validateFqName();
     }
 
     public FqNameUnsafe(@NotNull String fqName) {
         this.fqName = fqName;
-
-        validateFqName();
     }
 
     private FqNameUnsafe(@NotNull String fqName, FqNameUnsafe parent, Name shortName) {
         this.fqName = fqName;
         this.parent = parent;
         this.shortName = shortName;
-
-        validateFqName();
-    }
-
-
-    private void validateFqName() {
-        if (!isValid(fqName)) {
-            throw new IllegalArgumentException("incorrect fq name: " + fqName);
-        }
     }
 
     public static boolean isValid(@Nullable String qualifiedName) {

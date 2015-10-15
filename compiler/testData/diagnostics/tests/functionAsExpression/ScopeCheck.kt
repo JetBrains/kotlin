@@ -8,7 +8,7 @@ fun test(param: String) {
 
     val local_val = 4
     val bar = fun B.(fun_param: Int) {
-        param.length()
+        param.length
         b_fun()
         val inner_bar = local_val + fun_param
 

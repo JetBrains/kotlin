@@ -1,5 +1,7 @@
 package baz
 
+import kotlin.reflect.KProperty
+
 class A(outer: Outer) {
     var i: String by  + getMyConcreteProperty()
     var d: String by  getMyConcreteProperty() - 1
@@ -21,12 +23,12 @@ fun getMyConcreteProperty() = MyProperty<Any?, String>()
 
 class MyProperty<R, T> {
 
-    operator fun getValue(thisRef: R, desc: PropertyMetadata): T {
+    operator fun getValue(thisRef: R, desc: KProperty<*>): T {
         println("get $thisRef ${desc.name}")
         return null as T
     }
 
-    operator fun setValue(thisRef: R, desc: PropertyMetadata, value: T) {
+    operator fun setValue(thisRef: R, desc: KProperty<*>, value: T) {
         println("set $thisRef ${desc.name} $value")
     }
 }

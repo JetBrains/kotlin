@@ -1,5 +1,5 @@
 fun <caret>foo(s: String, x: X, k: Int): Boolean {
-    return x.k + s.length() - k > 0
+    return x.k + s.length - k > 0
 }
 
 class X(val k: Int)

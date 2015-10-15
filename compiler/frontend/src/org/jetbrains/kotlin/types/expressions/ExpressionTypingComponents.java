@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
-import org.jetbrains.kotlin.types.TypeIntersector;
 
 import javax.inject.Inject;
 
@@ -55,6 +54,7 @@ public class ExpressionTypingComponents {
     /*package*/ ModifiersChecker modifiersChecker;
     /*package*/ DataFlowAnalyzer dataFlowAnalyzer;
     /*package*/ Iterable<CallChecker> callCheckers;
+    /*package*/ IdentifierChecker identifierChecker;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -159,6 +159,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setModifiersChecker(@NotNull ModifiersChecker modifiersChecker) {
         this.modifiersChecker = modifiersChecker;
+    }
+
+    @Inject
+    public void setIdentifierChecker(@NotNull IdentifierChecker identifierChecker) {
+        this.identifierChecker = identifierChecker;
     }
 
     @Inject

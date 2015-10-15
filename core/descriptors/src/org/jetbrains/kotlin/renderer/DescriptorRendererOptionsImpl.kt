@@ -22,6 +22,9 @@ import java.lang.reflect.Modifier
 import kotlin.properties.Delegates
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty
+import kotlin.reflect.KType
 
 internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     public var isLocked: Boolean = false
@@ -35,12 +38,27 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     public fun copy(): DescriptorRendererOptionsImpl {
         val copy = DescriptorRendererOptionsImpl()
 
-        //TODO: use Kotlin reflection when it's ready
-        for (field in this.javaClass.getDeclaredFields()) {
-            if (field.getModifiers().and(Modifier.STATIC) != 0) continue
-            field.setAccessible(true)
+        //TODO: use Kotlin reflection
+        for (field in this.javaClass.declaredFields) {
+            if (field.modifiers.and(Modifier.STATIC) != 0) continue
+            field.isAccessible = true
             val property = field.get(this) as? ObservableProperty<*> ?: continue
-            val value = property.getValue(this, PropertyMetadataImpl("")/* not used*/)
+            val value = property.getValue(this, object : KProperty<Any?>, PropertyMetadata {
+                override val parameters: List<KParameter>
+                    get() = error("Should not be called")
+                override val returnType: KType
+                    get() = error("Should not be called")
+                override val getter: KProperty.Getter<Any?>
+                    get() = error("Should not be called")
+                override val annotations: List<Annotation>
+                    get() = error("Should not be called")
+
+                override fun call(vararg args: Any?): Any? = error("Should not be called")
+
+                override fun callBy(args: Map<KParameter, Any?>): Any? = error("Should not be called")
+
+                override val name = "" /* not used */
+            })
             field.set(copy, copy.property(value as Any))
         }
 

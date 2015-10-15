@@ -1,8 +1,10 @@
+import kotlin.reflect.KProperty
+
 annotation class Ann
 
 class CustomDelegate {
-    operator fun getValue(thisRef: Any?, prop: PropertyMetadata): String = prop.name
-    operator fun setValue(thisRef: Any?, prop: PropertyMetadata, value: String) {}
+    operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = prop.name
+    operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: String) {}
 }
 
 <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@set:Ann<!>

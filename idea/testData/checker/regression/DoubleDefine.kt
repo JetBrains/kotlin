@@ -9,7 +9,7 @@ fun takeFirst(expr: StringBuilder): Char {
 }
 
 fun evaluateArg(expr: CharSequence, numbers: ArrayList<Int>): Int {
-  if (expr.length() == 0) throw Exception("Syntax error: Character expected");
+  if (expr.length == 0) throw Exception("Syntax error: Character expected");
   val c = takeFirst(<error>expr</error>)
   if (c >= '0' && c <= '9') {
     val n = c - '0'
@@ -22,7 +22,7 @@ fun evaluateArg(expr: CharSequence, numbers: ArrayList<Int>): Int {
 
 fun evaluateAdd(expr: StringBuilder, numbers: ArrayList<Int>): Int {
   val lhs = evaluateArg(expr, numbers)
-  if (expr.length() > 0) {
+  if (expr.length > 0) {
 
   }
   return lhs
@@ -30,7 +30,7 @@ fun evaluateAdd(expr: StringBuilder, numbers: ArrayList<Int>): Int {
 
 fun evaluate(expr: StringBuilder, numbers: ArrayList<Int>): Int {
   val lhs = evaluateAdd(expr, numbers)
-  if (expr.length() > 0) {
+  if (expr.length > 0) {
     val <warning>c</warning> = expr.get(0)
     expr.deleteCharAt(0)
   }
@@ -60,6 +60,6 @@ fun main(args: Array<String>) {
       System.out.println("You won!");
   }
   catch(e: Throwable) {
-    System.out.println(e.getMessage())
+    System.out.println(e.message)
   }
 }

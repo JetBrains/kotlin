@@ -85,7 +85,7 @@ abstract class Tag(val name : String) : Element() {
 
   private fun renderAttributes() : String? {
     val builder = StringBuilder()
-    for (a in attributes.keySet()) {
+    for (a in attributes.keys) {
       builder.append(" $a=\"${attributes[a]}\"")
     }
     return builder.toString()

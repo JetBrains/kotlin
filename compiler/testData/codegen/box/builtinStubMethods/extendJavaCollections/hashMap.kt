@@ -12,9 +12,9 @@ fun box(): String {
     a.putAll(b)
     a.clear()
 
-    a.keySet()
-    a.values()
-    a.entrySet()
+    a.keys
+    a.values
+    a.entries
 
     return "OK"
 }

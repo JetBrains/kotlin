@@ -15,6 +15,10 @@ interface B {
 
 fun test(c: C) {
     c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>b1<!> = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b2<!> = 1.0)
+    c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>a1<!> = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b2<!> = 1.0)
+    c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>a1<!> = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>a2<!> = 1.0)
+    c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>a1<!> = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>a2<!> = 1.0)
     c.bar(a1 = 1, a2 = 1.0, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b3<!>= "")
     c.baz(a1 = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b2<!> = 1.0, a3 = "", <!NAME_FOR_AMBIGUOUS_PARAMETER!>b4<!> = 2, a5 = "")
+    c.baz(a1 = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>a2<!> = 1.0, a3 = "", <!NAME_FOR_AMBIGUOUS_PARAMETER!>b4<!> = 2, a5 = "")
 }

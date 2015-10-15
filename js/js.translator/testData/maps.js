@@ -52,7 +52,7 @@
     };
 
     function hashMapPutAll (fromMap) {
-        var entries = fromMap.entrySet();
+        var entries = fromMap.entries;
         var it = entries.iterator();
         while (it.hasNext()) {
             var e = it.next();
@@ -347,11 +347,9 @@
             bucketsByHash = {};
         };
 
-        Object.defineProperty(this, "isEmpty", {
-            get: function () {
-                return !buckets.length;
-            }
-        });
+        this.isEmpty = function () {
+            return !buckets.length;
+        };
 
         var createBucketAggregator = function (bucketFuncName) {
             return function () {
@@ -367,15 +365,19 @@
         this._values = createBucketAggregator("values");
         this._entries = createBucketAggregator("getEntries");
 
-        this.values = function () {
-            var values = this._values();
-            var i = values.length;
-            var result = new Kotlin.ArrayList();
-            while (i--) {
-                result.add_za3rmp$(values[i]);
-            }
-            return result;
-        };
+        Object.defineProperty(this, "values", {
+            get: function () {
+                var values = this._values();
+                var i = values.length;
+                var result = new Kotlin.ArrayList();
+                while (i--) {
+                    result.add_za3rmp$(values[i]);
+                }
+                return result;
+            },
+            configurable: true
+        });
+
 
         this.remove_za3rmp$ = function (key) {
             var hash = hashingFunction(key), bucketIndex, oldValue = null, result = null;
@@ -430,27 +432,33 @@
             return clone;
         };
 
-        this.keySet = function () {
-            var res = new Kotlin.ComplexHashSet();
-            var keys = this._keys();
-            var i = keys.length;
-            while (i--) {
-                res.add_za3rmp$(keys[i]);
-            }
-            return res;
-        };
+        Object.defineProperty(this, "keys", {
+            get: function () {
+                 var res = new Kotlin.ComplexHashSet();
+                 var keys = this._keys();
+                 var i = keys.length;
+                 while (i--) {
+                     res.add_za3rmp$(keys[i]);
+                 }
+                 return res;
+            },
+            configurable: true
+        });
 
-        this.entrySet = function () {
-            var result = new Kotlin.ComplexHashSet();
-            var entries = this._entries();
-            var i = entries.length;
-            while (i--) {
-                var entry = entries[i];
-                result.add_za3rmp$(new Entry(entry[0], entry[1]));
-            }
+        Object.defineProperty(this, "entries", {
+            get: function () {
+                 var result = new Kotlin.ComplexHashSet();
+                 var entries = this._entries();
+                 var i = entries.length;
+                 while (i--) {
+                     var entry = entries[i];
+                     result.add_za3rmp$(new Entry(entry[0], entry[1]));
+                 }
 
-            return result;
-        };
+                 return result;
+            },
+            configurable: true
+        });
 
         this.hashCode = function() {
             var h = 0;
@@ -564,10 +572,8 @@
             iterator: function () {
                 return new Kotlin.PrimitiveHashMapValuesIterator(this.map.map, Object.keys(this.map.map));
             },
-            isEmpty: {
-                get: function () {
-                    return this.map.isEmpty;
-                }
+            isEmpty: function () {
+                return this.map.isEmpty();
             },
             size: {
                 get: function () {
@@ -598,10 +604,8 @@
                     return this.$size;
                 }
             },
-            isEmpty: {
-                get: function () {
-                    return this.$size === 0;
-                }
+            isEmpty: function () {
+                return this.$size === 0;
             },
             containsKey_za3rmp$: function (key) {
                 // TODO: should process "__proto__" separately?
@@ -642,15 +646,17 @@
                 this.map = {};
             },
             putAll_48yl7j$: hashMapPutAll,
-            entrySet: function () {
-                var result = new Kotlin.ComplexHashSet();
-                var map = this.map;
-                for (var key in map) {
-                    //noinspection JSUnfilteredForInLoop
-                    result.add_za3rmp$(new Entry(this.convertKeyToKeyType(key), map[key]));
-                }
+            entries: {
+                get: function () {
+                    var result = new Kotlin.ComplexHashSet();
+                    var map = this.map;
+                    for (var key in map) {
+                        //noinspection JSUnfilteredForInLoop
+                        result.add_za3rmp$(new Entry(this.convertKeyToKeyType(key), map[key]));
+                    }
 
-                return result;
+                    return result;
+                }
             },
             getKeySetClass: function () {
                 throw new Error("Kotlin.AbstractPrimitiveHashMap.getKetSetClass is abstract");
@@ -658,24 +664,28 @@
             convertKeyToKeyType: function(key) {
                 throw new Error("Kotlin.AbstractPrimitiveHashMap.convertKeyToKeyType is abstract");
             },
-            keySet: function () {
-                var result = new (this.getKeySetClass())();
-                var map = this.map;
-                for (var key in map) {
-                    //noinspection JSUnfilteredForInLoop
-                    result.add_za3rmp$(key);
-                }
+            keys: {
+                get: function () {
+                    var result = new (this.getKeySetClass())();
+                    var map = this.map;
+                    for (var key in map) {
+                        //noinspection JSUnfilteredForInLoop
+                        result.add_za3rmp$(key);
+                    }
 
-                return result;
+                    return result;
+                }
             },
-            values: function () {
-                return new Kotlin.PrimitiveHashMapValues(this);
+            values: {
+                get: function () {
+                    return new Kotlin.PrimitiveHashMapValues(this);
+                }
             },
             toJSON: function () {
                 return this.map;
             },
             toString: function() {
-                if (this.isEmpty) return "{}";
+                if (this.isEmpty()) return "{}";
                 var map = this.map;
                 var isFirst = true;
                 var builder = "{";
@@ -785,32 +795,38 @@
             this.orderedKeys = [];
         };
 
-        this.keySet = function() {
-            // TODO return special Set which unsupported adding
-            var set = new Kotlin.LinkedHashSet();
-            set.map = this;
-            return set;
-        };
-
-        this.values = function() {
-            var result = new Kotlin.ArrayList();
-
-            for (var i = 0, c = this.orderedKeys, l = c.length; i < l; i++) {
-                result.add_za3rmp$(this.get_za3rmp$(c[i]));
+        Object.defineProperty(this, "keys", {
+            get: function () {
+                // TODO return special Set which unsupported adding
+                var set = new Kotlin.LinkedHashSet();
+                set.map = this;
+                return set;
             }
+        });
 
-            return result;
-        };
+        Object.defineProperty(this, "entries", {
+            get: function () {
+                var result = new Kotlin.ArrayList();
 
-        this.entrySet = function() {
-            var set = new Kotlin.LinkedHashSet();
+                for (var i = 0, c = this.orderedKeys, l = c.length; i < l; i++) {
+                    result.add_za3rmp$(this.get_za3rmp$(c[i]));
+                }
 
-            for (var i = 0, c = this.orderedKeys, l = c.length; i < l; i++) {
-                set.add_za3rmp$(new Entry(c[i], this.get_za3rmp$(c[i])));
+                return result;
             }
+        });
 
-            return set;
-        };
+        Object.defineProperty(this, "entries", {
+            get: function () {
+                var set = new Kotlin.LinkedHashSet();
+
+                for (var i = 0, c = this.orderedKeys, l = c.length; i < l; i++) {
+                    set.add_za3rmp$(new Entry(c[i], this.get_za3rmp$(c[i])));
+                }
+
+                return set;
+            }
+        });
     }
 
     lazyInitClasses.LinkedHashMap = Kotlin.createClass(
@@ -1045,9 +1061,9 @@
             return hashTable.size;
         }});
 
-        Object.defineProperty(this, "isEmpty", { get: function () {
-            return hashTable.isEmpty;
-        }});
+        this.isEmpty = function () {
+            return hashTable.isEmpty();
+        };
 
         this.clone = function () {
             var h = new HashSet(hashingFunction, equalityFunction);
@@ -1076,7 +1092,7 @@
 
         this.intersection = function (hashSet) {
             var intersection = new HashSet(hashingFunction, equalityFunction);
-            var values = hashSet.values(), i = values.length, val;
+            var values = hashSet.values, i = values.length, val;
             while (i--) {
                 val = values[i];
                 if (hashTable.containsKey_za3rmp$(val)) {
@@ -1088,7 +1104,7 @@
 
         this.union = function (hashSet) {
             var union = this.clone();
-            var values = hashSet.values(), i = values.length, val;
+            var values = hashSet.values, i = values.length, val;
             while (i--) {
                 val = values[i];
                 if (!hashTable.containsKey_za3rmp$(val)) {

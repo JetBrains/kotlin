@@ -25,22 +25,22 @@ import java.util.*
  * Also, [iterator] returns an iterator which does not support [MutableIterator.remove].
  */
 @Suppress("UNCHECKED_CAST")
-class SmartSet<T> private constructor() /* : AbstractSet<T>() */ {
+class SmartSet<T> private constructor() : AbstractSet<T>() {
     companion object {
         private val ARRAY_THRESHOLD = 5
 
         @JvmStatic
-        fun create<T>(): MutableSet<T> = LinkedHashSet()
+        fun <T> create() = SmartSet<T>()
 
         @JvmStatic
-        fun create<T>(set: Set<T>): MutableSet<T> = LinkedHashSet(set)
+        fun <T> create(set: Set<T>) = SmartSet<T>().apply { this.addAll(set) }
     }
 
     // null if size = 0, object if size = 1, array of objects if size < threshold, linked hash set otherwise
     private var data: Any? = null
 
-    private var size: Int = 0
-/*
+    override var size: Int = 0
+
     override fun iterator(): MutableIterator<T> = when {
             size == 0 -> Collections.emptySet<T>().iterator()
             size == 1 -> SingletonIterator(data as T)
@@ -78,15 +78,13 @@ class SmartSet<T> private constructor() /* : AbstractSet<T>() */ {
         size = 0
     }
 
-    override fun size(): Int = size
-
-    override fun contains(o: Any?): Boolean = when {
+    override fun contains(o: T): Boolean = when {
         size == 0 -> false
         size == 1 -> data == o
         size < ARRAY_THRESHOLD -> o in data as Array<T>
         else -> o in data as Set<T>
     }
-*/
+
     private class SingletonIterator<T>(private val element: T) : MutableIterator<T> {
         private var hasNext = true
 

@@ -206,7 +206,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
             file as JetFile
 
             val extractionTarget = propertyTargets.single {
-                it.name == InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// EXTRACTION_TARGET: ")
+                it.targetName == InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// EXTRACTION_TARGET: ")
             }
             val explicitPreviousSibling = file.findElementByCommentPrefix("// SIBLING:")
             val helper = object : ExtractionEngineHelper(INTRODUCE_PROPERTY) {

@@ -1,1 +1,0 @@
-fun ff(a: Any) = a is Array<String>

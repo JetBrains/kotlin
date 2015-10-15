@@ -401,11 +401,6 @@ class CollectionTest {
         val arr = data.toTypedArray()
         println("Got array ${arr}")
         assertEquals(2, arr.size())
-        todo {
-            assertTrue {
-                arr is Array<String>
-            }
-        }
     }
 
     @test fun count() {

@@ -399,7 +399,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         val indent: Int = body.takeWhile { it == ' ' }.length()
 
         builder.append('\n')
-        StringReader(body).forEachLine {
+        body.lineSequence().forEach {
             var count = indent
             val line = it.dropWhile { count-- > 0 && it == ' ' }.renderType()
             if (!line.isEmpty()) {

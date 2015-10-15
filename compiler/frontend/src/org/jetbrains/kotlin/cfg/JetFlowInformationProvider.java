@@ -70,6 +70,7 @@ import static org.jetbrains.kotlin.cfg.TailRecursionKind.*;
 import static org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.FORWARD;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE;
+import static org.jetbrains.kotlin.resolve.BindingContext.IS_UNINITIALIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.TAIL_RECURSION_CALL;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -495,12 +496,14 @@ public class JetFlowInformationProvider {
     private boolean checkInitializationUsingBackingField(@NotNull VariableInitContext ctxt, @NotNull JetExpression expression) {
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
         if (variableDescriptor instanceof PropertyDescriptor
-            && !ctxt.enterInitState.mayBeInitialized() && ctxt.exitInitState.mayBeInitialized()) {
+            && !ctxt.enterInitState.mayBeInitialized()
+            && ctxt.exitInitState.mayBeInitialized()) {
             if (!variableDescriptor.isVar()) return false;
             if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) return false;
             PsiElement property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
             assert property instanceof JetProperty;
-            if (((PropertyDescriptor) variableDescriptor).getModality() == Modality.FINAL && ((JetProperty) property).getSetter() == null) {
+            JetPropertyAccessor setter = ((JetProperty) property).getSetter();
+            if (((PropertyDescriptor) variableDescriptor).getModality() == Modality.FINAL && (setter == null || !setter.hasBody())) {
                 return false;
             }
             JetExpression variable = expression;
@@ -512,12 +515,7 @@ public class JetFlowInformationProvider {
             if (variable instanceof JetSimpleNameExpression) {
                 JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) variable;
                 if (simpleNameExpression.getReferencedNameElementType() != JetTokens.FIELD_IDENTIFIER) {
-                    if (((PropertyDescriptor) variableDescriptor).getModality() != Modality.FINAL) {
-                        report(Errors.INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER.on(expression, variableDescriptor), ctxt);
-                    }
-                    else {
-                        report(Errors.INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER.on(expression, variableDescriptor), ctxt);
-                    }
+                    trace.record(IS_UNINITIALIZED, (PropertyDescriptor) variableDescriptor);
                     return true;
                 }
             }

@@ -5,5 +5,5 @@ enum class E {
 }
 
 fun box(): String {
-    return E.OK.name()
+    return E.OK.name
 }

@@ -13,7 +13,7 @@ fun box(): String =
             "e2"
         }
         catch (e3: Exception3) {
-            e3.getMessage()
+            e3.message
         }
         catch (e: Exception) {
             "e"

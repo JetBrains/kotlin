@@ -2,10 +2,10 @@ interface A<T> {
     open fun foo(t: T) = "A"
 }
 
-enum class Z(val name: String) : A<String> {
+enum class Z(val aname: String) : A<String> {
     Z1("Z1"),
     Z2("Z2");
-    override fun foo(t: String) = name
+    override fun foo(t: String) = aname
 }
 
 

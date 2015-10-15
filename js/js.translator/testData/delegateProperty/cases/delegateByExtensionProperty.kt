@@ -1,5 +1,7 @@
 package foo
 
+import kotlin.reflect.KProperty
+
 class State(var realValue: Int)
 
 fun format(event: String, property: String, value: Int): String
@@ -8,12 +10,12 @@ fun format(event: String, property: String, value: Int): String
 object LoggerDelegate {
     var log = ""
 
-    fun getValue(state: State, desc: PropertyMetadata): Int {
+    fun getValue(state: State, desc: KProperty<*>): Int {
         log += format("get", desc.name, state.realValue)
         return state.realValue
     }
 
-    fun setValue(state: State, desc: PropertyMetadata, value: Int) {
+    fun setValue(state: State, desc: KProperty<*>, value: Int) {
         log += format("set", desc.name, value)
         state.realValue = value
     }

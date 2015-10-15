@@ -205,6 +205,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("EmptyName.kt")
+        public void testEmptyName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EmptyName.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("EnumCommas.kt")
         public void testEnumCommas() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumCommas.kt");

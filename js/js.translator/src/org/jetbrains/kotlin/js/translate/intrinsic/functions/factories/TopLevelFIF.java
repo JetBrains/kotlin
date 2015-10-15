@@ -130,17 +130,6 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
-    private static final FunctionIntrinsic PROPERTY_METADATA_IMPL = new FunctionIntrinsic() {
-        @NotNull
-        @Override
-        public JsExpression apply(
-                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
-        ) {
-            JsNameRef functionRef = new JsNameRef("PropertyMetadata", Namer.KOTLIN_NAME);
-            return new JsNew(functionRef, arguments);
-        }
-    };
-
     @NotNull
     public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
 
@@ -156,7 +145,6 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), KOTLIN_EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), KOTLIN_EQUALS);
         add(pattern("kotlin", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
-        add(pattern("kotlin", "PropertyMetadataImpl", "<init>"), PROPERTY_METADATA_IMPL);
         add(pattern("kotlin", "iterator").isExtensionOf("kotlin.Iterator"), RETURN_RECEIVER_INTRINSIC);
 
         add(pattern("kotlin", "Map", "get").checkOverridden(), NATIVE_MAP_GET);

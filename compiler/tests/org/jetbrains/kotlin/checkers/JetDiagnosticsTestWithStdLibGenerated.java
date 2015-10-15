@@ -35,6 +35,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("commonCollections.kt")
+    public void testCommonCollections() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/commonCollections.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("elvisOnUnitInLet.kt")
     public void testElvisOnUnitInLet() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/elvisOnUnitInLet.kt");
@@ -521,6 +527,27 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/prohibitPositionedArgument/withoutValue.kt");
                 doTest(fileName);
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/cast")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Cast extends AbstractJetDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInCast() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/cast"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("IsArray.kt")
+        public void testIsArray() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/cast/IsArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IsReified.kt")
+        public void testIsReified() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/cast/IsReified.kt");
+            doTest(fileName);
         }
     }
 

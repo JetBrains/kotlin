@@ -21,8 +21,8 @@ fun test(j: J) {
     j.j()!!.j()
 
     val ann = j.foo<String>()
-    ann!!.length()
-    ann.length()
+    ann!!.length
+    ann.length
 
     val a = j.foo<J>()
     a!!.j()

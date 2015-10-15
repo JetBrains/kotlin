@@ -345,7 +345,7 @@ class StringTest {
         val s = "sample"
         assertEquals(listOf(s.indices), s.rangesDelimitedBy("-").toList())
         assertEquals(listOf(s.indices), s.rangesDelimitedBy("-", startIndex = -1).toList())
-        assertTrue(s.rangesDelimitedBy("-", startIndex = s.length()).single().isEmpty())
+        assertTrue(s.rangesDelimitedBy("-", startIndex = s.length).single().isEmpty())
     }
     */
 
@@ -470,7 +470,7 @@ class StringTest {
         assertEquals(4, string.lastIndexOf('e'))
         assertEquals(2, string.lastIndexOf('e', 3))
 
-        for (startIndex in -1..string.length()+1) {
+        for (startIndex in -1..string.length+1) {
             assertEquals(string.indexOfAny(charArrayOf('e'), startIndex), string.indexOf('e', startIndex))
             assertEquals(string.lastIndexOfAny(charArrayOf('e'), startIndex), string.lastIndexOf('e', startIndex))
         }
@@ -487,7 +487,7 @@ class StringTest {
         assertEquals(2, string.lastIndexOf('e', 3, ignoreCase = true))
 
 
-        for (startIndex in -1..string.length()+1){
+        for (startIndex in -1..string.length+1){
             assertEquals(string.indexOfAny(charArrayOf('e'), startIndex, ignoreCase = true), string.indexOf('E', startIndex, ignoreCase = true))
             assertEquals(string.lastIndexOfAny(charArrayOf('E'), startIndex, ignoreCase = true), string.lastIndexOf('e', startIndex, ignoreCase = true))
         }
@@ -528,6 +528,10 @@ class StringTest {
     @test fun equalsIgnoreCase() {
         assertFalse("sample".equals("Sample", ignoreCase = false))
         assertTrue("sample".equals("Sample", ignoreCase = true))
+        assertFalse("sample".equals(null, ignoreCase = false))
+        assertFalse("sample".equals(null, ignoreCase = true))
+        assertTrue(null.equals(null, ignoreCase = true))
+        assertTrue(null.equals(null, ignoreCase = false))
     }
 
 
@@ -660,7 +664,7 @@ ${"    "}
         """.trimIndent()
 
         assertEquals(23, deindented.lines().size())
-        val indents = deindented.lines().map { "^\\s*".toRegex().match(it)!!.value.length() }
+        val indents = deindented.lines().map { "^\\s*".toRegex().find(it)!!.value.length }
         assertEquals(0, indents.min())
         assertEquals(42, indents.max())
         assertEquals(1, deindented.lines().count { it.isEmpty() })

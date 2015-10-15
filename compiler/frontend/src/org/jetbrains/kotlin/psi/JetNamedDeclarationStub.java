@@ -85,7 +85,7 @@ abstract class JetNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extend
         JetModifierList modifierList = getModifierList();
         if (modifierList != null &&
             modifierList.hasModifier(JetTokens.OPERATOR_KEYWORD) &&
-            !OperatorConventions.isConventionName(Name.identifierNoValidate(name))) {
+            !OperatorConventions.isConventionName(Name.identifier(name))) {
             removeModifier(JetTokens.OPERATOR_KEYWORD);
         }
 

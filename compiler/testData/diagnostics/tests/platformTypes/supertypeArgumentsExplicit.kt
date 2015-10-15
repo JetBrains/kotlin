@@ -1,5 +1,4 @@
 // !EXPLICIT_FLEXIBLE_TYPES
-// !DIAGNOSTICS: -BASE_WITH_NULLABLE_UPPER_BOUND
 
 interface A<T>
 interface B<T>: A<ft<T, T?>>

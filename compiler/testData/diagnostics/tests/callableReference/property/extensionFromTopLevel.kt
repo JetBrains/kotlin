@@ -3,7 +3,7 @@
 import kotlin.reflect.*
 
 val String.countCharacters: Int
-    get() = length()
+    get() = length
 
 var Int.meaning: Long
     get() = 42L

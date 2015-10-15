@@ -1,14 +1,16 @@
 // This test was adapted from compiler/testData/codegen/boxWithStdlib/callableReference/property/.
 package foo
 
+import kotlin.reflect.KProperty
+
 object Delegate {
     var value = "lol"
 
-    fun getValue(instance: Any?, data: PropertyMetadata): String {
+    fun getValue(instance: Any?, data: KProperty<*>): String {
         return value
     }
 
-    fun setValue(instance: Any?, data: PropertyMetadata, newValue: String) {
+    fun setValue(instance: Any?, data: KProperty<*>, newValue: String) {
         value = newValue
     }
 }

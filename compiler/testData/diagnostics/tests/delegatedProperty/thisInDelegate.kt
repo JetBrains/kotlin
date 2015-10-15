@@ -1,5 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
+import kotlin.reflect.KProperty
+
 val Int.a by Delegate(<!NO_THIS!>this<!>)
 
 class A {
@@ -7,7 +9,7 @@ class A {
 }
 
 class Delegate(i: Int) {
-  operator fun getValue(t: Any?, p: PropertyMetadata): Int {
+  operator fun getValue(t: Any?, p: KProperty<*>): Int {
     return 1
   }
 }

@@ -19,17 +19,23 @@ package org.jetbrains.kotlin.js.translate.declaration.propertyTranslator
 import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetPropertyAccessor
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
+import org.jetbrains.kotlin.js.translate.context.Namer
+import org.jetbrains.kotlin.js.translate.context.Namer.getDelegateNameRef
+import org.jetbrains.kotlin.js.translate.context.Namer.getReceiverParameterName
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
-import org.jetbrains.kotlin.js.translate.context.Namer.*
-import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.*
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.assignmentToBackingField
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.backingFieldReference
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateFunctionAsEcma5PropertyDescriptor
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.addParameter
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.addStatement
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetPropertyAccessor
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
@@ -135,7 +141,9 @@ private class PropertyTranslator(
         val function = JsFunction(scope, JsBlock(), accessorDescription(getterDescriptor))
 
         val delegateRef = getDelegateNameRef(propertyName)
-        val delegatedJsCall = CallTranslator.translate(context(), delegatedCall, delegateRef)
+        val delegatedJsCall = CallTranslator.translate(
+                contextWithPropertyMetadataCreationIntrinsified(context(), delegatedCall, getterDescriptor), delegatedCall, delegateRef
+        )
 
         if (getterDescriptor.isExtension) {
             val receiver = function.addParameter(getReceiverParameterName()).getName()
@@ -146,6 +154,18 @@ private class PropertyTranslator(
         val returnResult = JsReturn(delegatedJsCall)
         function.addStatement(returnResult)
         return function
+    }
+
+    private fun contextWithPropertyMetadataCreationIntrinsified(
+            context: TranslationContext, delegatedCall: ResolvedCall<FunctionDescriptor>, accessor: PropertyAccessorDescriptor
+    ): TranslationContext {
+        val propertyNameLiteral = context.program().getStringLiteral(accessor.correspondingProperty.name.asString())
+        // 0th argument is instance, 1st is KProperty, 2nd (for setter) is value
+        val fakeArgumentExpression =
+                (delegatedCall.valueArgumentsByIndex!![1] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()
+        return context.innerContextWithAliasesForExpressions(mapOf(
+                fakeArgumentExpression to JsNew(JsNameRef("PropertyMetadata", Namer.KOTLIN_NAME), listOf(propertyNameLiteral))
+        ))
     }
 
     private fun generateDefaultSetter(): JsPropertyInitializer {
@@ -164,14 +184,18 @@ private class PropertyTranslator(
         val delegatedCall = context().bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, setterDescriptor)
 
         if (delegatedCall != null) {
-            val delegatedJsCall = CallTranslator.translate(withAliased, delegatedCall, getDelegateNameRef(correspondingPropertyName))
+            val delegatedJsCall = CallTranslator.translate(
+                    contextWithPropertyMetadataCreationIntrinsified(withAliased, delegatedCall, setterDescriptor),
+                    delegatedCall, getDelegateNameRef(correspondingPropertyName)
+            )
             function.addStatement(delegatedJsCall.makeStmt())
 
             if (setterDescriptor.isExtension) {
                 val receiver = function.addParameter(getReceiverParameterName(), 0).getName()
                 (delegatedJsCall as JsInvocation).getArguments().set(0, receiver.makeRef())
             }
-        } else {
+        }
+        else {
             assert(!descriptor.isExtension) { "Unexpected extension property $descriptor}" }
             val assignment = assignmentToBackingField(withAliased, descriptor, valueParameter.makeRef())
             function.addStatement(assignment.makeStmt())

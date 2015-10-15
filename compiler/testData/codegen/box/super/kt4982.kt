@@ -13,7 +13,7 @@ fun box(): String {
 
         override fun condition(): Boolean {
             result = "OK"
-            return result.length() == 2
+            return result.length== 2
         }
     }
 

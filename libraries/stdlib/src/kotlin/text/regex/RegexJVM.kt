@@ -114,8 +114,11 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
     /** Indicates whether the regular expression matches the entire [input]. */
     public fun matches(input: CharSequence): Boolean = nativePattern.matcher(input).matches()
 
-    /** Indicates whether the regular expression can find at least a match in the specified [input]. */
-    public fun hasMatch(input: CharSequence): Boolean = nativePattern.matcher(input).find()
+    /** Indicates whether the regular expression can find at least one match in the specified [input]. */
+    public fun containsMatchIn(input: CharSequence): Boolean = nativePattern.matcher(input).find()
+
+    @Deprecated("Use containsMatchIn() or 'in' operator instead.", ReplaceWith("this in input"))
+    public fun hasMatch(input: CharSequence): Boolean = containsMatchIn(input)
 
     /**
      * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
@@ -123,12 +126,25 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
      */
-    public fun match(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex, input)
+    public fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex, input)
+
+    @Deprecated("Use find() instead.", ReplaceWith("find(input, startIndex)"))
+    public fun match(input: CharSequence, startIndex: Int = 0): MatchResult? = find(input, startIndex)
 
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
-    public fun matchAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = sequence({ match(input, startIndex) }, { match -> match.next() })
+    public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = sequence({ find(input, startIndex) }, { match -> match.next() })
+
+    @Deprecated("Use findAll() instead.", ReplaceWith("findAll(input, startIndex)"))
+    public fun matchAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = findAll(input, startIndex)
+
+    /**
+     * Attempts to match the entire [input] CharSequence against the pattern.
+     *
+     * @return An instance of [MatchResult] if the entire input matches or `null` otherwise.
+     */
+    public fun matchEntire(input: CharSequence): MatchResult? = nativePattern.matcher(input).matchEntire(input)
 
     /**
      * Replaces all occurrences of this regular expression in the specified [input] string with specified [replacement] expression.
@@ -143,8 +159,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
      * replacement for that match.
      */
     public inline fun replace(input: CharSequence, transform: (MatchResult) -> String): String {
-        var match = match(input)
-        if (match == null) return input.toString()
+        var match: MatchResult? = find(input) ?: return input.toString()
 
         var lastStart = 0
         val length = input.length()
@@ -212,6 +227,10 @@ private fun Matcher.findNext(from: Int, input: CharSequence): MatchResult? {
     return if (!find(from)) null else MatcherMatchResult(this, input)
 }
 
+private fun Matcher.matchEntire(input: CharSequence): MatchResult? {
+    return if (!matches()) null else MatcherMatchResult(this, input)
+}
+
 private class MatcherMatchResult(private val matcher: Matcher, private val input: CharSequence) : MatchResult {
     private val matchResult = matcher.toMatchResult()
     override val range: IntRange
@@ -221,7 +240,7 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
 
     override val groups: MatchGroupCollection = object : MatchGroupCollection {
         override val size: Int get() = matchResult.groupCount() + 1
-        override val isEmpty: Boolean get() = false
+        override fun isEmpty(): Boolean = false
         override fun contains(o: MatchGroup?): Boolean = this.any({ it == o })
         override fun containsAll(c: Collection<MatchGroup?>): Boolean = c.all({contains(it)})
 

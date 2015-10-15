@@ -6,5 +6,5 @@ public fun foo(p: String?): Int {
         if (p != null) break
     } while (!x())
     // p can be null despite of the break
-    return p<!UNSAFE_CALL!>.<!>length()
+    return p<!UNSAFE_CALL!>.<!>length
 }

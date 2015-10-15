@@ -1,5 +1,3 @@
-// !DIAGNOSTICS: -BASE_WITH_NULLABLE_UPPER_BOUND
-
 // MODULE: m1
 // FILE: a.kt
 package p

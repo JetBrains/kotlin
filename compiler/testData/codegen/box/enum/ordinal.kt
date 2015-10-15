@@ -5,4 +5,4 @@ enum class State {
   _3
 }
 
-fun box() = if(State._0.ordinal()==0 && State._1.ordinal() == 1 &&  State._2.ordinal() == 2 &&  State._3.ordinal() == 3) "OK" else "fail"
+fun box() = if(State._0.ordinal == 0 && State._1.ordinal == 1 &&  State._2.ordinal == 2 &&  State._3.ordinal == 3) "OK" else "fail"

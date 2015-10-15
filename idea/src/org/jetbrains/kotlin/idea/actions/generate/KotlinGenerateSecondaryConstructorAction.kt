@@ -88,7 +88,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
                 .filter { it.isVar || context.diagnostics.forElement(it).any { it.factory in Errors.MUST_BE_INITIALIZED_DIAGNOSTICS } }
                 .map { context.get(BindingContext.VARIABLE, it) as PropertyDescriptor }
                 .map { DescriptorMemberChooserObject(it.source.getPsi()!!, it) }
-        if (ApplicationManager.getApplication().isUnitTestMode || candidates.isEmpty) return candidates
+        if (ApplicationManager.getApplication().isUnitTestMode || candidates.isEmpty()) return candidates
 
         return with(MemberChooser(candidates.toTypedArray(), true, true, klass.project, false, null)) {
             title = "Choose Properties to Initialize by Constructor"
@@ -126,7 +126,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
                 generateConstructor(classDescriptor, propertiesToInitialize, null).singletonOrEmptyList()
             }
 
-            if (prototypes.isEmpty) {
+            if (prototypes.isEmpty()) {
                 CommonRefactoringUtil.showErrorHint(targetClass.project, editor, "Constructor already exists", commandName, null)
                 return emptyList()
             }

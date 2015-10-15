@@ -7,14 +7,14 @@ annotation class Ann
 class A {
 
     fun @receiver:Ann String.myLength(@Ann q:String): Int {
-        return length()
+        return length
     }
 
     val @receiver:Ann String.myLength2: Int
-        get() = length()
+        get() = length
 
     var @receiver:[Ann] String.myLength3: Int
-        get() = length()
+        get() = length
         set(v) {}
 
 }

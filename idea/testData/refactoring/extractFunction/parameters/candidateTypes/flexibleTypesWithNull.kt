@@ -4,5 +4,5 @@
 // PARAM_DESCRIPTOR: val property: (kotlin.String..kotlin.String?) defined in test
 fun test() {
     val property = System.getProperty("some")
-    val n = <selection>property?.length()</selection>
+    val n = <selection>property?.length</selection>
 }

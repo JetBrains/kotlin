@@ -579,6 +579,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         TypeConstructor typeConstructor = type.getConstructor();
         ClassifierDescriptor typeDeclarationDescriptor = typeConstructor.getDeclarationDescriptor();
+        boolean typeIsArray = KotlinBuiltIns.isArray(type);
 
         if (typeDeclarationDescriptor instanceof ClassDescriptor) {
             List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
@@ -586,8 +587,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
             Iterator<TypeProjection> typeArgumentsIterator = type.getArguments().iterator();
             for (TypeParameterDescriptor parameter : parameters) {
-                if (!parameter.isReified()) return false;
+                if (!typeIsArray && !parameter.isReified()) return false;
+
                 TypeProjection typeArgument = typeArgumentsIterator.next();
+
                 if (typeArgument == null) return false;
                 if (typeArgument.isStarProjection()) return false;
                 if (!isClassAvailableAtRuntime(typeArgument.getType(), true)) return false;
@@ -691,6 +694,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (expression.getTypeReference() == null &&
             (descriptor.getDispatchReceiverParameter() != null || descriptor.getExtensionReceiverParameter() != null)) {
             context.trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(reference));
+        }
+
+        if (DescriptorUtils.isObject(descriptor.getContainingDeclaration())) {
+            context.trace.report(CALLABLE_REFERENCE_TO_OBJECT_MEMBER.on(reference));
         }
 
         return CallableReferencesPackage.createReflectionTypeForResolvedCallableReference(expression, descriptor, context, components.reflectionTypes);

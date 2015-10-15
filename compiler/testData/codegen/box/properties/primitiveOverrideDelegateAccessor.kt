@@ -1,6 +1,8 @@
+import kotlin.reflect.KProperty
+
 class Holder(var value: Int) {
-    fun getValue(that: Any?, desc: PropertyMetadata) = value
-    fun setValue(that: Any?, desc: PropertyMetadata, newValue: Int) { value = newValue }
+    fun getValue(that: Any?, desc: KProperty<*>) = value
+    fun setValue(that: Any?, desc: KProperty<*>, newValue: Int) { value = newValue }
 }
 
 interface R<T: Comparable<T>> {

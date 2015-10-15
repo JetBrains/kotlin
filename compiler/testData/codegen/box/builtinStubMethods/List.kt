@@ -1,12 +1,12 @@
 class MyList<T>: List<T> {
     override val size: Int get() = 0
-    override val isEmpty: Boolean get() = true
+    override fun isEmpty(): Boolean = true
     override fun contains(o: T): Boolean = false
     override fun iterator(): Iterator<T> = throw Error()
     override fun containsAll(c: Collection<T>): Boolean = false
     override fun get(index: Int): T = throw IndexOutOfBoundsException()
-    override fun indexOf(o: Any?): Int = -1
-    override fun lastIndexOf(o: Any?): Int = -1
+    override fun indexOf(o: T): Int = -1
+    override fun lastIndexOf(o: T): Int = -1
     override fun listIterator(): ListIterator<T> = throw Error()
     override fun listIterator(index: Int): ListIterator<T> = throw Error()
     override fun subList(fromIndex: Int, toIndex: Int): List<T> = this

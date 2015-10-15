@@ -5,5 +5,5 @@ fun foo(s: String?): Int {
         if (bar()) break
     } while (s==null)
     // This call is unsafe due to break
-    return s<!UNSAFE_CALL!>.<!>length()
+    return s<!UNSAFE_CALL!>.<!>length
 }

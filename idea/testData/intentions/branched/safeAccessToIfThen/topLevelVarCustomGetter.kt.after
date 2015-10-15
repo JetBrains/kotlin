@@ -4,5 +4,5 @@ var a: String?
 
 fun main(args: Array<String>) {
     val a1 = a
-    if (a1 != null) a1.length()
+    if (a1 != null) a1.length
 }

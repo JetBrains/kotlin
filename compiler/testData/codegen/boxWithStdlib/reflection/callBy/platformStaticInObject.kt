@@ -6,7 +6,7 @@ object Obj {
 }
 
 fun box(): String {
-    val f = Obj::foo
+    val f = Obj::class.members.single { it.name == "foo" }
 
     // Any object method currently requires the object instance passed
     try {

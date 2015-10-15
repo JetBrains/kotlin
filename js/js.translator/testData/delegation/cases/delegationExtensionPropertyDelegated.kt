@@ -1,5 +1,7 @@
 package foo
 
+import kotlin.reflect.KProperty
+
 class State(var value: Int)
 
 interface Base {
@@ -7,9 +9,9 @@ interface Base {
 }
 
 class Delegate(val multiplier: Int) {
-    fun getValue(state: State, desc: PropertyMetadata): Int  = multiplier * state.value
+    fun getValue(state: State, desc: KProperty<*>): Int  = multiplier * state.value
 
-    fun setValue(state: State, desc: PropertyMetadata, value: Int) {
+    fun setValue(state: State, desc: KProperty<*>, value: Int) {
         state.value = value / multiplier
     }
 

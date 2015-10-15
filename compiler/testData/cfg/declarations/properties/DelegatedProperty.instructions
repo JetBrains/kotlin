@@ -1,6 +1,6 @@
 == Delegate ==
 class Delegate {
-    fun getValue(_this: Nothing?, p: PropertyMetadata): Int = 0
+    fun getValue(_this: Nothing?, p: KProperty<*>): Int = 0
 }
 ---------------------
 L0:
@@ -13,24 +13,24 @@ sink:
     <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == getValue ==
-fun getValue(_this: Nothing?, p: PropertyMetadata): Int = 0
+fun getValue(_this: Nothing?, p: KProperty<*>): Int = 0
 ---------------------
 L0:
   1 <START>
     v(_this: Nothing?)
     magic[FAKE_INITIALIZER](_this: Nothing?) -> <v0>
     w(_this|<v0>)
-    v(p: PropertyMetadata)
-    magic[FAKE_INITIALIZER](p: PropertyMetadata) -> <v1>
+    v(p: KProperty<*>)
+    magic[FAKE_INITIALIZER](p: KProperty<*>) -> <v1>
     w(p|<v1>)
     r(0) -> <v2>
     ret(*|<v2>) L1
 L1:
-    <END>                                                   NEXT:[<SINK>]
+    <END>                                               NEXT:[<SINK>]
 error:
-    <ERROR>                                                 PREV:[]
+    <ERROR>                                             PREV:[]
 sink:
-    <SINK>                                                  PREV:[<ERROR>, <END>]
+    <SINK>                                              PREV:[<ERROR>, <END>]
 =====================
 == a ==
 val a = Delegate()

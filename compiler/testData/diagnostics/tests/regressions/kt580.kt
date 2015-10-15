@@ -11,9 +11,9 @@ fun main() {
     val diffs = ArrayList<Int>()
     for (i in vals.indices) {
         for (j in i..vals.lastIndex())  // Type inference failed
-             diffs.add(vals[i].length() - vals[j].length())
+             diffs.add(vals[i].length - vals[j].length)
         for (j in i..vals.lastIndex)  // Type inference failed
-             diffs.add(vals[i].length() - vals[j].length())
+             diffs.add(vals[i].length - vals[j].length)
     }
 }
 

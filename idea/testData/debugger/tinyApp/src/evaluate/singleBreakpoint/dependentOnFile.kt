@@ -1,5 +1,7 @@
 package dependentOnFile
 
+import kotlin.reflect.KProperty
+
 fun main(args: Array<String>) {
     //Breakpoint!
     args.size()
@@ -25,7 +27,7 @@ val Int.testExtVal: Int get() = 1
 val testDelVal by Delegate()
 
 class Delegate {
-    fun getValue(a: Any?, b: PropertyMetadata) = 1
+    fun getValue(a: Any?, b: KProperty<*>) = 1
 }
 
 // EXPRESSION: TestClass().testFun()

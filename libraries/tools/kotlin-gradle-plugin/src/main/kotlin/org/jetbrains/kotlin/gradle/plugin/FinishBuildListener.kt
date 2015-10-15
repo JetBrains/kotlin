@@ -32,7 +32,7 @@ internal fun getUsedMemoryKb(): Long {
 private fun comparableVersionStr(version: String) =
         "(\\d+)\\.(\\d+).*"
                 .toRegex()
-                .match(version)
+                .find(version)
                 ?.groups
                 ?.drop(1)?.take(2)
                 // checking if two subexpression groups are found and length of each is >0 and <4

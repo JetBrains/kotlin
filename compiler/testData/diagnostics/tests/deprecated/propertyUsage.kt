@@ -1,11 +1,13 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 
+import kotlin.reflect.KProperty
+
 class Delegate() {
     @Deprecated("text")
-    operator fun getValue(instance: Any, property: PropertyMetadata) : Int = 1
+    operator fun getValue(instance: Any, property: KProperty<*>) : Int = 1
 
     @Deprecated("text")
-    operator fun setValue(instance: Any, property: PropertyMetadata, value: Int) {}
+    operator fun setValue(instance: Any, property: KProperty<*>, value: Int) {}
 }
 
 class PropertyHolder {

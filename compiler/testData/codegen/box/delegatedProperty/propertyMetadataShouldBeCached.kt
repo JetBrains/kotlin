@@ -1,4 +1,5 @@
 import java.util.IdentityHashMap
+import kotlin.reflect.KProperty
 
 class A {
     var foo: Int by IntHandler
@@ -12,35 +13,35 @@ val baz: String by StringHandler
 
 
 
-val metadatas = IdentityHashMap<PropertyMetadata, Unit>()
+val metadatas = IdentityHashMap<KProperty<*>, Unit>()
 
-fun record(p: PropertyMetadata) = metadatas.put(p, Unit)
+fun record(p: KProperty<*>) = metadatas.put(p, Unit)
 
 object IntHandler {
-    fun getValue(t: Any?, p: PropertyMetadata): Int { record(p); return 42 }
-    fun setValue(t: Any?, p: PropertyMetadata, value: Int) { record(p) }
+    fun getValue(t: Any?, p: KProperty<*>): Int { record(p); return 42 }
+    fun setValue(t: Any?, p: KProperty<*>, value: Int) { record(p) }
 }
 
 object AnyHandler {
-    fun getValue(t: Any?, p: PropertyMetadata): Any? { record(p); return 3.14 }
-    fun setValue(t: Any?, p: PropertyMetadata, value: Any?) { record(p) }
+    fun getValue(t: Any?, p: KProperty<*>): Any? { record(p); return 3.14 }
+    fun setValue(t: Any?, p: KProperty<*>, value: Any?) { record(p) }
 }
 
 object StringHandler {
-    fun getValue(t: Any?, p: PropertyMetadata): String { record(p); return p.name }
-    fun setValue(t: Any?, p: PropertyMetadata, value: String) { record(p) }
+    fun getValue(t: Any?, p: KProperty<*>): String { record(p); return p.name }
+    fun setValue(t: Any?, p: KProperty<*>, value: String) { record(p) }
 }
 
 fun box(): String {
     val a = A()
     a.foo = 42
-    a.foo = a.foo + baz.length()
+    a.foo = a.foo + baz.length
     a.foo = 239
     A.bar = baz + a.foo
     baz + A.bar
 
-    if (metadatas.keySet().size != 3)
-        return "Fail: only three instances of PropertyMetadata should have been created\n${metadatas.keySet()}"
+    if (metadatas.keys.size != 3)
+        return "Fail: only three instances of KProperty should have been created\n${metadatas.keys}"
 
     return "OK"
 }

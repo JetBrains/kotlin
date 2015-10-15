@@ -1,14 +1,16 @@
 package foo
 
+import kotlin.reflect.KProperty
+
 interface WithNumber {
     var number: Int
 }
 
 class IncNumber(val inc: Int) {
-    fun getValue(withNumber: WithNumber, property: PropertyMetadata): Int {
+    fun getValue(withNumber: WithNumber, property: KProperty<*>): Int {
         return withNumber.number + inc;
     }
-    fun setValue(withNumber: WithNumber, property: PropertyMetadata, value: Int) {
+    fun setValue(withNumber: WithNumber, property: KProperty<*>, value: Int) {
         withNumber.number = value;
     }
 }

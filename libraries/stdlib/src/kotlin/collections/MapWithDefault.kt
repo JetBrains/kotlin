@@ -65,13 +65,13 @@ private class MapWithDefaultImpl<K, out V>(public override val map: Map<K,V>, pr
     override fun hashCode(): Int = map.hashCode()
     override fun toString(): String = map.toString()
     override val size: Int get() = map.size()
-    override val isEmpty: Boolean get() = map.isEmpty()
-    override fun containsKey(key: Any?): Boolean = map.containsKey(key)
-    override fun containsValue(value: Any?): Boolean = map.containsValue(value)
-    override fun get(key: Any?): V? = map.get(key)
-    override fun keySet(): Set<K> = map.keySet()
-    override fun values(): Collection<V> = map.values()
-    override fun entrySet(): Set<Map.Entry<K, V>> = map.entrySet()
+    override fun isEmpty(): Boolean = map.isEmpty()
+    override fun containsKey(key: K): Boolean = map.containsKey(key)
+    override fun containsValue(value: @UnsafeVariance V): Boolean = map.containsValue(value)
+    override fun get(key: K): V? = map.get(key)
+    override val keys: Set<K> get() = map.keys
+    override val values: Collection<V> get() = map.values
+    override val entries: Set<Map.Entry<K, V>> get() = map.entries
 
     override fun getOrImplicitDefault(key: K): V = map.getOrElse(key, { default(key) })
 }
@@ -81,16 +81,16 @@ private class MutableMapWithDefaultImpl<K, V>(public override val map: MutableMa
     override fun hashCode(): Int = map.hashCode()
     override fun toString(): String = map.toString()
     override val size: Int get() = map.size()
-    override val isEmpty: Boolean get() = map.isEmpty()
-    override fun containsKey(key: Any?): Boolean = map.containsKey(key)
-    override fun containsValue(value: Any?): Boolean = map.containsValue(value)
-    override fun get(key: Any?): V? = map.get(key)
-    override fun keySet(): MutableSet<K> = map.keySet()
-    override fun values(): MutableCollection<V> = map.values()
-    override fun entrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = map.entrySet()
+    override fun isEmpty(): Boolean = map.isEmpty()
+    override fun containsKey(key: K): Boolean = map.containsKey(key)
+    override fun containsValue(value: @UnsafeVariance V): Boolean = map.containsValue(value)
+    override fun get(key: K): V? = map.get(key)
+    override val keys: MutableSet<K> get() = map.keys
+    override val values: MutableCollection<V> get() = map.values
+    override val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() = map.entries
 
     override fun put(key: K, value: V): V? = map.put(key, value)
-    override fun remove(key: Any?): V? = map.remove(key)
+    override fun remove(key: K): V? = map.remove(key)
     override fun putAll(m: Map<out K, V>) = map.putAll(m)
     override fun clear() = map.clear()
 
