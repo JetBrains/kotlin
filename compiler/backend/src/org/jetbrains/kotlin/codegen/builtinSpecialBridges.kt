@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.bridges.*
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.java.getBuiltinSpecialOverridden
+import org.jetbrains.kotlin.load.java.getOverriddenBuiltinWithDifferentJvmName
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -41,7 +41,7 @@ object BuiltinSpecialBridgesUtil {
 
         val functionHandle = DescriptorBasedFunctionHandle(function)
         val fake = !functionHandle.isDeclaration
-        val overriddenBuiltin = function.getBuiltinSpecialOverridden()!!
+        val overriddenBuiltin = function.getOverriddenBuiltinWithDifferentJvmName()!!
 
         val reachableDeclarations = findAllReachableDeclarations(function)
         val needGenerateSpecialBridge = needGenerateSpecialBridge(function, reachableDeclarations, overriddenBuiltin)

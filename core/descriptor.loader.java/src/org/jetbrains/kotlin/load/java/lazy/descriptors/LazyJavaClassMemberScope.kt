@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
-import org.jetbrains.kotlin.load.java.BuiltinSpecialMethods.sameAsRenamedInJvmBuiltin
-import org.jetbrains.kotlin.load.java.BuiltinSpecialMethods.isRemoveAtByIndex
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature.sameAsBuiltinMethodWithErasedValueParameters
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.sameAsRenamedInJvmBuiltin
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.isRemoveAtByIndex
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
@@ -119,10 +119,10 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun JavaMethod.doesOverrideRenamedBuiltins(): Boolean {
-        return BuiltinSpecialMethods.getSpecialBuiltinFunctionsByJvmName(name).any {
+        return BuiltinMethodsWithDifferentJvmName.getBuiltinFunctionNamesByJvmName(name).any {
             builtinName ->
             val builtinSpecialFromSuperTypes =
-                    getFunctionsFromSupertypes(builtinName).filter { it.overridesBuiltinSpecialDeclaration() }
+                    getFunctionsFromSupertypes(builtinName).filter { it.doesOverrideBuiltinWithDifferentJvmName() }
             if (builtinSpecialFromSuperTypes.isEmpty()) return@any false
 
             val methodDescriptor = resolveMethodToFunctionDescriptorWithName(this, builtinName)
@@ -148,7 +148,7 @@ public class LazyJavaClassMemberScope(
         val commonProperty = findGetterByName(JvmAbi.getterName(name.asString()))
         if (commonProperty != null) return commonProperty
 
-        val specialGetterName = getter?.getBuiltinSpecialOverridden()?.getBuiltinSpecialPropertyGetterName() ?: return null
+        val specialGetterName = getter?.getOverriddenBuiltinWithDifferentJvmName()?.getBuiltinSpecialPropertyGetterName() ?: return null
         return findGetterByName(specialGetterName)
     }
 
@@ -204,7 +204,7 @@ public class LazyJavaClassMemberScope(
                 name, functionsFromSupertypes, emptyList(), getContainingDeclaration(), ErrorReporter.DO_NOTHING)
 
         for (descriptor in mergedFunctionFromSuperTypes) {
-            val overriddenBuiltin = descriptor.getBuiltinSpecialOverridden() ?: continue
+            val overriddenBuiltin = descriptor.getOverriddenBuiltinWithDifferentJvmName() ?: continue
 
             if (result.any { it.doesOverride(overriddenBuiltin) }) continue
 
@@ -375,7 +375,7 @@ public class LazyJavaClassMemberScope(
     ): FunctionDescriptor? {
         val candidatesToOverride =
                 getFunctionsFromSupertypes(javaMethodDescriptor.name).map {
-                    BuiltinMethodsWithSpecialJvmSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(it)
+                    BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(it)
                 }.filterNotNull()
 
         if (candidatesToOverride.isEmpty()) return null

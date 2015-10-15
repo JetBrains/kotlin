@@ -36,10 +36,10 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature;
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature.SpecialSignatureInfo;
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
@@ -757,7 +757,7 @@ public class JetTypeMapper {
                 }
 
                 FunctionDescriptor overriddenSpecialBuiltinFunction =
-                        SpecialBuiltinMembers.<FunctionDescriptor>getBuiltinSpecialOverridden(functionDescriptor.getOriginal());
+                        SpecialBuiltinMembers.<FunctionDescriptor>getOverriddenBuiltinWithDifferentJvmName(functionDescriptor.getOriginal());
                 FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null
                                                     ? overriddenSpecialBuiltinFunction.getOriginal()
                                                     : functionDescriptor.getOriginal();
@@ -973,7 +973,7 @@ public class JetTypeMapper {
 
 
         if (kind != OwnerKind.DEFAULT_IMPLS) {
-            SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialJvmSignature.getSpecialSignatureInfo(f);
+            SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);
 
             if (specialSignatureInfo != null) {
                 return new JvmMethodSignature(
@@ -990,7 +990,7 @@ public class JetTypeMapper {
             @NotNull  BothSignatureWriter sw
     ) {
         FunctionDescriptor overridden =
-                BuiltinMethodsWithSpecialJvmSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f);
+                BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f);
         if (overridden == null) return false;
         if (SpecialBuiltinMembers.isFromJavaOrBuiltins(f)) return false;
 
