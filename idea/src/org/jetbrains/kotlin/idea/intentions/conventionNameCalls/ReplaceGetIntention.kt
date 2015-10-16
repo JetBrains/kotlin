@@ -19,20 +19,26 @@ package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
-import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
+import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.buildExpression
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 
 public class ExplicitGetInspection : IntentionBasedInspection<JetDotQualifiedExpression>(ReplaceGetIntention())
 
 public class ReplaceGetIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'get' call with index operator"), HighPriorityAction {
     override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
-        if (element.calleeName != "get") return null
+        val resolvedCall = element.toResolvedCall() ?: return null
+        if (!resolvedCall.isReallySuccess()) return null
+        val target = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return null
+        if (target.name.asString() != "get" || !target.isOperator) return null
+
         val call = element.callExpression ?: return null
         if (call.getTypeArgumentList() != null) return null
 
@@ -46,6 +52,10 @@ public class ReplaceGetIntention : JetSelfTargetingRangeIntention<JetDotQualifie
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
+        applyTo(element)
+    }
+
+    fun applyTo(element: JetDotQualifiedExpression) {
         val expression = JetPsiFactory(element).buildExpression {
             appendExpression(element.getReceiverExpression())
 
