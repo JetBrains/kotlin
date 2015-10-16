@@ -73,6 +73,9 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
     ): List<ClassId> =
             proto.getExtension(JsProtoBuf.typeAnnotation).orEmpty().map { nameResolver.getClassId(it.id) }
 
+    override fun loadTypeParameterAnnotations(proto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<ClassId> =
+        proto.getExtension(JsProtoBuf.typeParameterAnnotation).orEmpty().map { nameResolver.getClassId(it.id) }
+
     override fun loadPropertyConstant(
             container: ProtoContainer,
             proto: ProtoBuf.Property,

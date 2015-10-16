@@ -14,6 +14,7 @@ public final class DebugJsProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.parameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.typeAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.js.DebugJsProtoBuf.typeParameterAnnotation);
   }
   public interface ClassesOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
@@ -1880,6 +1881,17 @@ public final class DebugJsProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+  public static final int TYPE_PARAMETER_ANNOTATION_FIELD_NUMBER = 130;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.TypeParameter { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeParameter,
+      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> typeParameterAnnotation = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_js_Classes_descriptor;
   private static
@@ -1933,7 +1945,11 @@ public final class DebugJsProtoBuf {
       "zation.Annotation:r\n\017type_annotation\022(.o" +
       "rg.jetbrains.kotlin.serialization.Type\030\202" +
       "\001 \003(\0132..org.jetbrains.kotlin.serializati" +
-      "on.AnnotationB\021B\017DebugJsProtoBuf"
+      "on.Annotation:\205\001\n\031type_parameter_annotat",
+      "ion\0221.org.jetbrains.kotlin.serialization" +
+      ".TypeParameter\030\202\001 \003(\0132..org.jetbrains.ko" +
+      "tlin.serialization.AnnotationB\021B\017DebugJs" +
+      "ProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1965,6 +1981,7 @@ public final class DebugJsProtoBuf {
           compileTimeValue.internalInit(descriptor.getExtensions().get(4));
           parameterAnnotation.internalInit(descriptor.getExtensions().get(5));
           typeAnnotation.internalInit(descriptor.getExtensions().get(6));
+          typeParameterAnnotation.internalInit(descriptor.getExtensions().get(7));
           return null;
         }
       };

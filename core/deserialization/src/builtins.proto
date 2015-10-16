@@ -50,3 +50,7 @@ extend ValueParameter {
 extend Type {
   repeated Annotation type_annotation = 150;
 }
+
+extend TypeParameter {
+  repeated Annotation type_parameter_annotation = 150;
+}

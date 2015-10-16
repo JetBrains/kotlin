@@ -407,6 +407,7 @@ public class DescriptorSerializer {
         if (variance != builder.getVariance()) {
             builder.setVariance(variance);
         }
+        extension.serializeTypeParameter(typeParameter, builder);
 
         Set<JetType> upperBounds = typeParameter.getUpperBounds();
         if (upperBounds.size() == 1 && KotlinBuiltIns.isDefaultBound(CollectionsKt.single(upperBounds))) return builder;

@@ -469,6 +469,18 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeAnnotationWithArguments.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("TypeParameterAnnotation.kt")
+                public void testTypeParameterAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeParameterAnnotation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("TypeParameterAnnotationWithArguments.kt")
+                public void testTypeParameterAnnotationWithArguments() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeParameterAnnotationWithArguments.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget")

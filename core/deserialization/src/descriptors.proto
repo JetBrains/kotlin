@@ -148,6 +148,8 @@ message TypeParameter {
 
   repeated Type upper_bound = 5;
   repeated int32 upper_bound_id = 6;
+
+  extensions 100 to 999;
 }
 
 message Class {

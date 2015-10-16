@@ -14,52 +14,40 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.deserialization.descriptors;
+package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.SourceElement;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.serialization.deserialization.*;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.types.JetType
+import java.util.*
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+class DeserializedTypeParameterDescriptor(
+        c: DeserializationContext, private val proto: ProtoBuf.TypeParameter, index: Int) : AbstractLazyTypeParameterDescriptor(c.storageManager, c.containingDeclaration, c.nameResolver.getName(proto.name), Deserialization.variance(proto.variance), proto.reified, index, SourceElement.NO_SOURCE) {
+    private val typeDeserializer: TypeDeserializer = c.typeDeserializer
+    private val typeTable: TypeTable = c.typeTable
 
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
-
-public class DeserializedTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor {
-    private final ProtoBuf.TypeParameter proto;
-    private final TypeDeserializer typeDeserializer;
-    private final TypeTable typeTable;
-
-    public DeserializedTypeParameterDescriptor(@NotNull DeserializationContext c, @NotNull ProtoBuf.TypeParameter proto, int index) {
-        super(c.getStorageManager(),
-              c.getContainingDeclaration(),
-              c.getNameResolver().getName(proto.getName()),
-              Deserialization.variance(proto.getVariance()),
-              proto.getReified(),
-              index,
-              SourceElement.NO_SOURCE);
-        this.proto = proto;
-        this.typeDeserializer = c.getTypeDeserializer();
-        this.typeTable = c.getTypeTable();
+    private val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
+        c.components.annotationAndConstantLoader
+                .loadTypeParameterAnnotations(proto, c.nameResolver)
+                .map { AnnotationWithTarget(it, null) }
     }
 
-    @NotNull
-    @Override
-    protected Set<JetType> resolveUpperBounds() {
-        List<ProtoBuf.Type> upperBounds = ProtoTypeTableUtilKt.upperBounds(proto, typeTable);
+    override fun getAnnotations(): Annotations = annotations
+
+    override fun resolveUpperBounds(): Set<JetType> {
+        val upperBounds = proto.upperBounds(typeTable)
         if (upperBounds.isEmpty()) {
-            return Collections.singleton(getBuiltIns(this).getDefaultBound());
+            return setOf(this.builtIns.getDefaultBound())
         }
-        Set<JetType> result = new LinkedHashSet<JetType>(upperBounds.size());
-        for (ProtoBuf.Type upperBound : upperBounds) {
-            result.add(typeDeserializer.type(upperBound, Annotations.Companion.getEMPTY()));
+        val result = LinkedHashSet<JetType>(upperBounds.size())
+        for (upperBound in upperBounds) {
+            result.add(typeDeserializer.type(upperBound, Annotations.EMPTY))
         }
-        return result;
+        return result
     }
 }

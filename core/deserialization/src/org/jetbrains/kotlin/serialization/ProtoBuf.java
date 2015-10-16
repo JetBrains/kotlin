@@ -6112,8 +6112,9 @@ public final class ProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.Type)
   }
 
-  public interface TypeParameterOrBuilder
-      extends com.google.protobuf.MessageLiteOrBuilder {
+  public interface TypeParameterOrBuilder extends 
+       com.google.protobuf.GeneratedMessageLite.
+            ExtendableMessageOrBuilder<TypeParameter> {
 
     // required int32 id = 1;
     /**
@@ -6188,10 +6189,10 @@ public final class ProtoBuf {
    * Protobuf type {@code org.jetbrains.kotlin.serialization.TypeParameter}
    */
   public static final class TypeParameter extends
-      com.google.protobuf.GeneratedMessageLite
-      implements TypeParameterOrBuilder {
+      com.google.protobuf.GeneratedMessageLite.ExtendableMessage<
+        TypeParameter> implements TypeParameterOrBuilder {
     // Use TypeParameter.newBuilder() to construct.
-    private TypeParameter(com.google.protobuf.GeneratedMessageLite.Builder builder) {
+    private TypeParameter(com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter, ?> builder) {
       super(builder);
 
     }
@@ -6528,6 +6529,10 @@ public final class ProtoBuf {
           return false;
         }
       }
+      if (!extensionsAreInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -6535,6 +6540,9 @@ public final class ProtoBuf {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
+      com.google.protobuf.GeneratedMessageLite
+        .ExtendableMessage<org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter>.ExtensionWriter extensionWriter =
+          newExtensionWriter();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeInt32(1, id_);
       }
@@ -6553,6 +6561,7 @@ public final class ProtoBuf {
       for (int i = 0; i < upperBoundId_.size(); i++) {
         output.writeInt32(6, upperBoundId_.get(i));
       }
+      extensionWriter.writeUntil(1000, output);
     }
 
     private int memoizedSerializedSize = -1;
@@ -6590,6 +6599,7 @@ public final class ProtoBuf {
         size += dataSize;
         size += 1 * getUpperBoundIdList().size();
       }
+      size += extensionsSerializedSize();
       memoizedSerializedSize = size;
       return size;
     }
@@ -6665,9 +6675,8 @@ public final class ProtoBuf {
      * Protobuf type {@code org.jetbrains.kotlin.serialization.TypeParameter}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter, Builder>
-        implements org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameterOrBuilder {
+        com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<
+          org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameterOrBuilder {
       // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
@@ -6780,6 +6789,7 @@ public final class ProtoBuf {
           }
           
         }
+        this.mergeExtensionFields(other);
         return this;
       }
 
@@ -6797,6 +6807,10 @@ public final class ProtoBuf {
             
             return false;
           }
+        }
+        if (!extensionsAreInitialized()) {
+          
+          return false;
         }
         return true;
       }

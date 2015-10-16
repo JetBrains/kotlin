@@ -166,6 +166,10 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         return type.getExtension(JvmProtoBuf.typeAnnotation).map { loadTypeAnnotation(it, nameResolver) }
     }
 
+    override fun loadTypeParameterAnnotations(typeParameter: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<A> {
+        return typeParameter.getExtension(JvmProtoBuf.typeParameterAnnotation).map { loadTypeAnnotation(it, nameResolver) }
+    }
+
     override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Property, expectedType: JetType): C? {
         val nameResolver = container.nameResolver
         val signature = getCallableSignature(proto, nameResolver, container.typeTable, AnnotatedCallableKind.PROPERTY) ?: return null

@@ -2378,6 +2378,18 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeAnnotationWithArguments.kt");
                     doTestCompiledKotlin(fileName);
                 }
+
+                @TestMetadata("TypeParameterAnnotation.kt")
+                public void testTypeParameterAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeParameterAnnotation.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
+                @TestMetadata("TypeParameterAnnotationWithArguments.kt")
+                public void testTypeParameterAnnotationWithArguments() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeParameterAnnotationWithArguments.kt");
+                    doTestCompiledKotlin(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget")

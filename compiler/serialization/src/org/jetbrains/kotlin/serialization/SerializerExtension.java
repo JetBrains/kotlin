@@ -50,4 +50,7 @@ public abstract class SerializerExtension {
 
     public void serializeType(@NotNull JetType type, @NotNull ProtoBuf.Type.Builder proto) {
     }
+
+    public void serializeTypeParameter(@NotNull TypeParameterDescriptor typeParameter, @NotNull ProtoBuf.TypeParameter.Builder proto) {
+    }
 }

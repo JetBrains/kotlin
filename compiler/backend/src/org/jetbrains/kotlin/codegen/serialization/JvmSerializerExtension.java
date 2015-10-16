@@ -91,6 +91,15 @@ public class JvmSerializerExtension extends SerializerExtension {
     }
 
     @Override
+    public void serializeTypeParameter(
+            @NotNull TypeParameterDescriptor typeParameter, @NotNull ProtoBuf.TypeParameter.Builder proto
+    ) {
+        for (AnnotationDescriptor annotation : typeParameter.getAnnotations()) {
+            proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotation));
+        }
+    }
+
+    @Override
     public void serializeConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull ProtoBuf.Constructor.Builder proto) {
         Method method = bindings.get(METHOD_FOR_FUNCTION, descriptor);
         if (method != null) {
