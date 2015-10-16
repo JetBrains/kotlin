@@ -176,10 +176,8 @@ public class CodegenUtil {
                && JetTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
     }
 
-    public static boolean isEnumValuesMethod(@NotNull FunctionDescriptor functionDescriptor) {
-        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
-        return DescriptorUtils.ENUM_VALUES.equals(functionDescriptor.getName())
-               && methodTypeParameters.isEmpty();
+    public static boolean isEnumValuesProperty(@NotNull VariableDescriptor propertyDescriptor) {
+        return DescriptorUtils.ENUM_VALUES.equals(propertyDescriptor.getName());
     }
 
     @Nullable

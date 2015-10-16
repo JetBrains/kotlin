@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
+import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.JetType
@@ -61,7 +62,7 @@ public class LazyJavaStaticClassScope(
     }
 
     override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> =
-            memberIndex().getAllFieldNames()
+            memberIndex().getAllFieldNames() + (if (jClass.isEnum) listOf(DescriptorUtils.ENUM_VALUES) else emptyList())
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
     override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
@@ -99,6 +100,12 @@ public class LazyJavaStaticClassScope(
                 }
 
         result.addAll(actualProperties)
+
+        if (jClass.isEnum) {
+            if (name == DescriptorUtils.ENUM_VALUES) {
+                result.add(createEnumValuesProperty(getContainingDeclaration()))
+            }
+        }
     }
 
     override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyJavaClassDescriptor

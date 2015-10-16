@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 object BuiltinSpecialProperties {
@@ -201,6 +202,13 @@ fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmDescrip
 }
 
 fun getJvmMethodNameIfSpecial(callableMemberDescriptor: CallableMemberDescriptor): String? {
+    if (callableMemberDescriptor.propertyIfAccessor.name == DescriptorUtils.ENUM_VALUES) {
+        val containingDeclaration = callableMemberDescriptor.containingDeclaration
+        if (callableMemberDescriptor is PropertyAccessorDescriptor
+                && containingDeclaration is ClassDescriptor
+                && containingDeclaration.kind == ClassKind.ENUM_CLASS) return DescriptorUtils.ENUM_VALUES.asString()
+    }
+
     val builtinOverridden = getBuiltinOverriddenThatAffectsJvmName(callableMemberDescriptor)?.propertyIfAccessor
             ?: return null
     return when (builtinOverridden) {

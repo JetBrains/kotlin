@@ -7,5 +7,5 @@ public enum A {
 
 // FILE: test.kt
 fun main() {
-     checkSubtype<Array<A>>(A.values())
+     checkSubtype<Array<A>>(A.values)
 }
