@@ -1078,7 +1078,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.inspections.AddOperatorModifierIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.AddOperatorModifierIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1238,7 +1238,7 @@
                      level="WARNING"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.AddOperatorModifierInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.AddOperatorModifierInspection"
                      displayName="Missing 'operator' modifier"
                      groupName="Kotlin"
                      language="kotlin"
