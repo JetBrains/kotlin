@@ -64,7 +64,7 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
     @NotNull
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
     }
 
     @NotNull

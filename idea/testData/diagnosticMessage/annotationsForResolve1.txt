@@ -1,0 +1,2 @@
+<!-- annotationsForResolve1 -->
+Type mismatch: inferred type is kotlin.String but kotlin.Int was expected
