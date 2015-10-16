@@ -25,12 +25,12 @@ internal class A {
 
     fun normalMethods() {
         val s = "test string"
-        s.length()
+        s.length
         s.isEmpty()
-        s.charAt(1)
+        s[1]
         s.codePointAt(2)
         s.codePointBefore(2)
-        s.codePointCount(0, s.length())
+        s.codePointCount(0, s.length)
         s.offsetByCodePoints(0, 4)
         s.compareTo("test 2")
         s.concat(" another")

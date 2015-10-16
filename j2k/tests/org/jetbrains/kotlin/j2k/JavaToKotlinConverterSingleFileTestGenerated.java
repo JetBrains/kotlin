@@ -955,6 +955,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/codeSimplifications"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("GetOperator.java")
+        public void testGetOperator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/GetOperator.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("IfNullReturnToElvis.java")
         public void testIfNullReturnToElvis() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/IfNullReturnToElvis.java");
@@ -3145,6 +3151,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("simpleCall.java")
         public void testSimpleCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/simpleCall.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("specialBuiltinMembers.java")
+        public void testSpecialBuiltinMembers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/specialBuiltinMembers.java");
             doTest(fileName);
         }
 

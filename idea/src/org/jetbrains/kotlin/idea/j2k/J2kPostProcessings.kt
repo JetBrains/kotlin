@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
+import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetIntention
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -58,6 +59,7 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(IfThenToElvisIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(IfNullToElvisIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(ReplaceGetIntention()) { applyTo(it) }
 
         registerDiagnosticBasedProcessing<JetBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
             val expression = RemoveRightPartOfBinaryExpressionFix(element, "").invoke()
