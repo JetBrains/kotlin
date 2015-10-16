@@ -1,4 +1,4 @@
 class A {
-    var a: Int = 1
+    var a<selection>: Int</selection><caret> = 1
 
 }
