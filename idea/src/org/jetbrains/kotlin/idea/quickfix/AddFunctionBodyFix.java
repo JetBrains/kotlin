@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.psi.JetFunction;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
 import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
     public AddFunctionBodyFix(@NotNull JetFunction element) {
         super(element);

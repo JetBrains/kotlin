@@ -46,8 +46,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReferenceExpression> {
     private static final String PRIMARY_USAGE = "PrimaryUsage";
     private static final String OTHER_USAGE = "OtherUsage";

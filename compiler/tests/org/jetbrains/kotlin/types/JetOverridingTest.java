@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class JetOverridingTest extends JetLiteFixture {
 
     private final ModuleDescriptor root = JetTestUtils.createEmptyModule("<test_root>");

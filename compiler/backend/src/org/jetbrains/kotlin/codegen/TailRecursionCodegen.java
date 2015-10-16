@@ -35,7 +35,6 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.BindingContext.TAIL_RECURSION_CALL;
-import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 
 public class TailRecursionCodegen {
 

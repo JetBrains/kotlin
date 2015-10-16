@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetIfExpression;
 import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder {
 
     @Nullable

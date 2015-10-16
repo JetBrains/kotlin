@@ -57,8 +57,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     private static final Comparator<Pair<JetElement, JetElement>>
             REVERSED_TEXT_OFFSET_COMPARATOR = new Comparator<Pair<JetElement, JetElement>>() {

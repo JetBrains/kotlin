@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserType> {
 
     private final int argumentCount;

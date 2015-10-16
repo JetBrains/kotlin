@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.*;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> {
     public MoveWhenElseBranchFix(@NotNull JetWhenExpression element) {
         super(element);

@@ -45,8 +45,6 @@ import org.jetbrains.kotlin.tests.di.InjectionKt;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class TypeUnifierTest extends JetLiteFixture {
     private Set<TypeConstructor> variables;
 

@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement> {
     public ChangeToStarProjectionFix(@NotNull JetTypeElement element) {
         super(element);

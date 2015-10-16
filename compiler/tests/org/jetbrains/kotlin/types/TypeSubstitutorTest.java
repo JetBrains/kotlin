@@ -54,8 +54,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 @SuppressWarnings("unchecked")
 public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     private JetScope scope;

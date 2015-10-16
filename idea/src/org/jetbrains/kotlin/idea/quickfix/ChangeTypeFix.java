@@ -35,8 +35,6 @@ import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.types.JetType;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
     private final JetType type;
     private final String renderedType;

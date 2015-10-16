@@ -30,7 +30,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableControlFlowState;
 import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState;
-import org.jetbrains.kotlin.cfg.pseudocode.*;
+import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
+import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
+import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtilsKt;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.JetElementInstruction;
@@ -66,10 +69,8 @@ import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState.
 import static org.jetbrains.kotlin.cfg.TailRecursionKind.*;
 import static org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.FORWARD;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE;
-import static org.jetbrains.kotlin.resolve.BindingContext.IS_UNINITIALIZED;
-import static org.jetbrains.kotlin.resolve.BindingContext.TAIL_RECURSION_CALL;
-import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
+import static org.jetbrains.kotlin.diagnostics.Errors.UNREACHABLE_CODE;
+import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 

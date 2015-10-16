@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.types.JetType;
 
 import java.util.HashMap;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class AlternativeFieldSignatureData extends ElementAlternativeSignatureData {
     private JetType altReturnType;
 

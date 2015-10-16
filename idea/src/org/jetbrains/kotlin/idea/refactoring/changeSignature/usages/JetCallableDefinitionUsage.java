@@ -35,7 +35,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenWaitingSetKt;
 import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
 import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.*;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignatureUtilsKt;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
@@ -53,7 +56,6 @@ import org.jetbrains.kotlin.types.substitutions.SubstitutionUtilsKt;
 import java.util.List;
 
 import static org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt.createPrimaryConstructorIfAbsent;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageInfo<T> {
     @NotNull

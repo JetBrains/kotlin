@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     private final JetType type;
 

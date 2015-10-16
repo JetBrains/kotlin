@@ -36,8 +36,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public abstract class AbstractJetParsingTest extends ParsingTestCase {
     static {
         System.setProperty("idea.platform.prefix", "Idea");

@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class KotlinNotSurrounder extends KotlinExpressionSurrounder {
     @Override
     public String getTemplateDescription() {

@@ -33,8 +33,6 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
     @Override
     protected KotlinCoreEnvironment createEnvironment() {

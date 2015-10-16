@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.resolve.ImportPath;
 import java.util.Collection;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class JetImportsFactory {
     @NotNull private final Project project;
 

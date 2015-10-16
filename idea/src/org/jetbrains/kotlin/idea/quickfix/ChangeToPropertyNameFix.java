@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExpression> {
     public ChangeToPropertyNameFix(@NotNull JetSimpleNameExpression element) {
         super(element);

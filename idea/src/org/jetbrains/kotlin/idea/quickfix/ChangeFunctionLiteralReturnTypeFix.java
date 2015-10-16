@@ -47,7 +47,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFunctionLiteralExpression> {
     private final JetType type;

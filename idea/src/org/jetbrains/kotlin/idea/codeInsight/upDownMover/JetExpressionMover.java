@@ -34,8 +34,6 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class JetExpressionMover extends AbstractJetUpDownMover {
 
     private static final Predicate<JetElement> IS_CALL_EXPRESSION = new Predicate<JetElement>() {

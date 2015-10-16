@@ -43,8 +43,7 @@ import org.jetbrains.kotlin.tests.di.InjectionKt;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.frontend.di.DiPackage.createLazyResolveSession;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.frontend.di.InjectionKt.createLazyResolveSession;
 
 public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     private final JetDefaultModalityModifiersTestCase tc = new JetDefaultModalityModifiersTestCase();

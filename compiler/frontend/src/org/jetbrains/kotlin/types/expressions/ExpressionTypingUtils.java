@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.PROCESSED;
 
 public class ExpressionTypingUtils {

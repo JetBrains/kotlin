@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccessor> {
     private JetType type;
 

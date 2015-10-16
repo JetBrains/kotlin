@@ -45,8 +45,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 /**
  * Changes method signature to one of provided signatures.
  * Based on {@link KotlinAddImportAction}

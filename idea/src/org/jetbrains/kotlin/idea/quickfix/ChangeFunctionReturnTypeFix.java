@@ -52,7 +52,6 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH;
 import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction> {

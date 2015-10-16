@@ -72,8 +72,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
     public static final String INTRODUCE_VARIABLE = JetRefactoringBundle.message("introduce.variable");

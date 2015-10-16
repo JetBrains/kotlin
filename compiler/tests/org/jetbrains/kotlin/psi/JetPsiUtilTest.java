@@ -33,8 +33,6 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class JetPsiUtilTest extends JetLiteFixture {
     public void testUnquotedIdentifier() {
         Assert.assertEquals("", JetPsiUtil.unquoteIdentifier(""));
