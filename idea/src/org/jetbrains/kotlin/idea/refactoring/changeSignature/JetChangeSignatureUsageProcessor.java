@@ -38,7 +38,10 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.containers.MultiMap;
-import kotlin.*;
+import kotlin.ArraysKt;
+import kotlin.CollectionsKt;
+import kotlin.MapsKt;
+import kotlin.StringsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +49,7 @@ import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.JetFileType;
-import org.jetbrains.kotlin.idea.analysis.AnalysisPackage;
+import org.jetbrains.kotlin.idea.analysis.AnalyzerUtilKt;
 import org.jetbrains.kotlin.idea.caches.resolve.JavaResolutionUtils;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
@@ -739,7 +742,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
             JetThisExpression newExpr = (JetThisExpression) psiFactory.createExpression(newExprText);
 
-            BindingContext newContext = AnalysisPackage.analyzeInContext(newExpr, scope, originalExpr);
+            BindingContext newContext = AnalyzerUtilKt.analyzeInContext(newExpr, scope, originalExpr);
 
             JetSimpleNameExpression labelExpr = newExpr.getTargetLabel();
             if (labelExpr != null && newContext.get(BindingContext.AMBIGUOUS_LABEL_TARGET, labelExpr) != null) {

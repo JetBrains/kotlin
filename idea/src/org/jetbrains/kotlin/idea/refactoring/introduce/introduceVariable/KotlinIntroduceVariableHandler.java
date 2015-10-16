@@ -37,7 +37,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.idea.analysis.AnalysisPackage;
+import org.jetbrains.kotlin.idea.analysis.AnalyzerUtilKt;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
@@ -143,7 +143,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             DataFlowInfo dataFlowInfo = BindingContextUtilsKt.getDataFlowInfo(bindingContext, expression);
 
             ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
-            JetType typeNoExpectedType = AnalysisPackage.computeTypeInfoInContext(
+            JetType typeNoExpectedType = AnalyzerUtilKt.computeTypeInfoInContext(
                     expression, scope, expression, bindingTrace, dataFlowInfo
             ).getType();
             if (expressionType != null && typeNoExpectedType != null && !JetTypeChecker.DEFAULT.equalTypes(expressionType,

@@ -27,10 +27,8 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsExpression;
-import static org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator.shouldBeInlined;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getNotNullSimpleNameSelector;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSelector;
