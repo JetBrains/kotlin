@@ -44,8 +44,7 @@ import org.jetbrains.kotlin.resolve.ModifierCheckerCore
 open class KeywordLookupObject
 
 object KeywordCompletion {
-    private val NON_ACTUAL_KEYWORDS = setOf(CAPITALIZED_THIS_KEYWORD,
-                                            TYPE_ALIAS_KEYWORD)
+    private val NON_ACTUAL_KEYWORDS = setOf(TYPE_ALIAS_KEYWORD)
     private val ALL_KEYWORDS = (KEYWORDS.getTypes() + SOFT_KEYWORDS.getTypes())
             .filter { it !in NON_ACTUAL_KEYWORDS }
             .map { it as KtKeywordToken }

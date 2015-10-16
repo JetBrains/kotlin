@@ -577,12 +577,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("SelfTypesUnsupported.kt")
-        public void testSelfTypesUnsupported() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/SelfTypesUnsupported.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("Serializable.kt")
         public void testSerializable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Serializable.kt");

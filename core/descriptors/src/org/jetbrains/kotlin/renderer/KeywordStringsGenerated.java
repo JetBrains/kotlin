@@ -51,7 +51,6 @@ public class KeywordStringsGenerated {
         "while",
         "do",
         "when",
-        "interface",
-        "This"
+        "interface"
     ));
 }

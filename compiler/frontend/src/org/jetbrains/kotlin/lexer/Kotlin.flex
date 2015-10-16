@@ -251,7 +251,6 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 "this"       { return KtTokens.THIS_KEYWORD ;}
 "null"       { return KtTokens.NULL_KEYWORD ;}
 "else"       { return KtTokens.ELSE_KEYWORD ;}
-"This"       { return KtTokens.CAPITALIZED_THIS_KEYWORD ;}
 "try"        { return KtTokens.TRY_KEYWORD ;}
 "val"        { return KtTokens.VAL_KEYWORD ;}
 "var"        { return KtTokens.VAR_KEYWORD ;}
