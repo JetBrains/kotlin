@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.idea.codeInsight.generate
 
 import com.intellij.codeInsight.actions.CodeInsightAction
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.TestActionEvent
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
@@ -29,6 +32,20 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 
 abstract class AbstractGenerateActionTest : JetLightCodeInsightFixtureTestCase() {
+    protected open fun createAction(fileText: String): CodeInsightAction {
+        val actionClassName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// ACTION_CLASS: ")
+        return Class.forName(actionClassName).newInstance() as CodeInsightAction
+    }
+
+    private fun testAction(action: AnAction, forced: Boolean): Presentation {
+        val e = TestActionEvent(action)
+        action.beforeActionPerformedUpdate(e)
+        if (forced || (e.presentation.isEnabled && e.presentation.isVisible)) {
+            action.actionPerformed(e)
+        }
+        return e.presentation
+    }
+
     protected open fun doTest(path: String) {
         val fileText = FileUtil.loadFile(File(path), true)
 
@@ -50,17 +67,19 @@ abstract class AbstractGenerateActionTest : JetLightCodeInsightFixtureTestCase()
                     }
             myFixture.configureByFile(path)
 
-            val actionClassName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// ACTION_CLASS: ")
-            val action = Class.forName(actionClassName).newInstance() as CodeInsightAction
+            val action = createAction(fileText)
 
             val isApplicableExpected = !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NOT_APPLICABLE")
+            val isForced = InTextDirectivesUtils.isDirectiveDefined(fileText, "// FORCED")
 
-            val presentation = myFixture.testAction(action)
-            TestCase.assertEquals(isApplicableExpected, presentation.isEnabled)
+            val presentation = testAction(action, isForced)
+            if (!isForced) {
+                TestCase.assertEquals(isApplicableExpected, presentation.isEnabled)
+            }
 
             assert(!conflictFile.exists()) { "Conflict file $conflictFile should not exist" }
 
-            if (isApplicableExpected) {
+            if (isForced || isApplicableExpected) {
                 val afterFile = File("$path.after")
                 TestCase.assertTrue(afterFile.exists())
                 myFixture.checkResult(FileUtil.loadFile(afterFile, true))

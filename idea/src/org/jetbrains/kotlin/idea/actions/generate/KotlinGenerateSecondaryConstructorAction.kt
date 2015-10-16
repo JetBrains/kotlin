@@ -100,7 +100,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
         }
     }
 
-    override fun prepareMembersInfo(klass: JetClassOrObject, project: Project): Info? {
+    override fun prepareMembersInfo(klass: JetClassOrObject, project: Project, editor: Editor): Info? {
         val context = klass.analyzeFully()
         val classDescriptor = context.get(BindingContext.CLASS, klass) ?: return null
         val superConstructors = chooseSuperConstructors(klass, classDescriptor).map { it.descriptor as ConstructorDescriptor }
@@ -108,7 +108,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
         return Info(propertiesToInitialize, superConstructors, classDescriptor)
     }
 
-    override fun generateMembers(editor: Editor, info: Info): List<JetDeclaration> {
+    override fun generateMembers(project: Project, editor: Editor, info: Info): List<JetDeclaration> {
         val targetClass = info.classDescriptor.source.getPsi() as? JetClass ?: return emptyList()
 
         fun Info.findAnchor(): PsiElement? {

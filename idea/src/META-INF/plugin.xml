@@ -173,6 +173,9 @@
       <action id="KotlinGenerateSecondaryConstructor"
               class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction"
               text="Secondary Constructor" />
+      <action id="KotlinGenerateEqualsAndHashCode"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction"
+              text="equals() and hashCode()" />
 
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
