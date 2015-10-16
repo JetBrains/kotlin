@@ -44,6 +44,8 @@ internal object EmptyList : List<Nothing>, Serializable {
     private fun readResolve(): Any = EmptyList
 }
 
+internal fun <T> Array<out T>.asCollection(): Collection<T> = ArrayAsCollection(this)
+
 private class ArrayAsCollection<T>(val values: Array<out T>): Collection<T> {
     override val size: Int get() = values.size()
     override fun isEmpty(): Boolean = values.isEmpty()

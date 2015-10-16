@@ -57,7 +57,7 @@ fun snapshots(): List<GenericFunction> {
         }
         body(Collections) { "return ArrayList(this)" }
         body(Strings) { "return toCollection(ArrayList<T>(length()))" }
-        body(ArraysOfObjects) { "return this.asList().toArrayList()" }
+        body(ArraysOfObjects) { "return ArrayList(this.asCollection())" }
         body(ArraysOfPrimitives) {
             """
             val list = ArrayList<T>(size())

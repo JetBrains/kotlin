@@ -5160,7 +5160,7 @@ public fun Array<out Short>.toShortArray(): ShortArray {
  * Returns an [ArrayList] of all elements.
  */
 public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
-    return this.asList().toArrayList()
+    return ArrayList(this.asCollection())
 }
 
 /**
