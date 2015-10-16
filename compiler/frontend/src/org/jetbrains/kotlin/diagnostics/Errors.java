@@ -453,8 +453,6 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, JetType> MISSING_RECEIVER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetExpression> NO_RECEIVER_ALLOWED = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<JetExpression> FREE_FUNCTION_CALLED_AS_EXTENSION = DiagnosticFactory0.create(ERROR);
-
     // Call resolution
 
     DiagnosticFactory1<JetExpression, String> ILLEGAL_SELECTOR = DiagnosticFactory1.create(ERROR);
@@ -475,6 +473,7 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> CANNOT_COMPLETE_RESOLVE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> UNRESOLVED_REFERENCE_WRONG_RECEIVER = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, JetExpression> INVOKE_EXTENSION_ON_NOT_EXTENSION_FUNCTION = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<PsiElement, TypeParameterDescriptor> TYPE_PARAMETER_AS_REIFIED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, JetType> REIFIED_TYPE_FORBIDDEN_SUBSTITUTION = DiagnosticFactory1.create(ERROR);

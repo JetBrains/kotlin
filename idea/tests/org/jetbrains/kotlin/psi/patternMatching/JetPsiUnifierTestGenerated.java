@@ -365,12 +365,6 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/calls"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
-                @TestMetadata("bothReceivers.kt")
-                public void testBothReceivers() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/bothReceivers.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("callAndCalleeRuntime.kt")
                 public void testCallAndCalleeRuntime() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/callAndCalleeRuntime.kt");

@@ -101,7 +101,7 @@ public interface TracingStrategy {
         public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {}
 
         @Override
-        public void freeFunctionCalledAsExtension(@NotNull BindingTrace trace) { }
+        public void nonExtensionFunctionCalledAsExtension(@NotNull BindingTrace trace) { }
     };
 
     void bindCall(@NotNull BindingTrace trace, @NotNull Call call);
@@ -153,5 +153,5 @@ public interface TracingStrategy {
 
     void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData);
 
-    void freeFunctionCalledAsExtension(@NotNull BindingTrace trace);
+    void nonExtensionFunctionCalledAsExtension(@NotNull BindingTrace trace);
 }

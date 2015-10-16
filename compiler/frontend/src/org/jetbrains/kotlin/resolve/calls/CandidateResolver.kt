@@ -267,14 +267,18 @@ public class CandidateResolver(
     }
 
     private fun CallCandidateResolutionContext<*>.checkNonExtensionCalledWithReceiver() = checkAndReport {
-        if (isSynthesizedInvoke(candidateCall.getCandidateDescriptor())
-            && !KotlinBuiltIns.isExtensionFunctionType(candidateCall.getDispatchReceiver().getType())
+        val call = candidateCall.call
+        if (call is CallTransformer.CallForImplicitInvoke && candidateCall.extensionReceiver.exists()
+                && candidateCall.dispatchReceiver.exists()
         ) {
-            tracing.freeFunctionCalledAsExtension(trace)
-            OTHER_ERROR
-        } else {
-            SUCCESS
+            if (call.dispatchReceiver == candidateCall.dispatchReceiver
+                    && !KotlinBuiltIns.isExactExtensionFunctionType(call.dispatchReceiver.type)
+            ) {
+                tracing.nonExtensionFunctionCalledAsExtension(trace)
+                return@checkAndReport OTHER_ERROR
+            }
         }
+        SUCCESS
     }
 
     private fun getReceiverSuper(receiver: ReceiverValue): JetSuperExpression? {

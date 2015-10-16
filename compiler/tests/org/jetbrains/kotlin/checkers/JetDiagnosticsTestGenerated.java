@@ -12815,6 +12815,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("implicitInvoke.kt")
+                public void testImplicitInvoke() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/implicitInvoke.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("invokeAsExtension.kt")
                 public void testInvokeAsExtension() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/invokeAsExtension.kt");
@@ -12878,6 +12884,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("valNamedInvoke.kt")
                 public void testValNamedInvoke() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/valNamedInvoke.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("wrongInvokeExtension.kt")
+                public void testWrongInvokeExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/wrongInvokeExtension.kt");
                     doTest(fileName);
                 }
 
