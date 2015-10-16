@@ -1354,6 +1354,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                         doTest(fileName);
                     }
 
+                    @TestMetadata("typeParams.kt")
+                    public void testTypeParams() throws Exception {
+                        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/targets/typeParams.kt");
+                        doTest(fileName);
+                    }
+
                     @TestMetadata("typeargs.kt")
                     public void testTypeargs() throws Exception {
                         String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/targets/typeargs.kt");

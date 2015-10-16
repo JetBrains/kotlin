@@ -386,13 +386,15 @@ public class DescriptorResolver {
     public List<TypeParameterDescriptorImpl> resolveTypeParametersForCallableDescriptor(
             DeclarationDescriptor containingDescriptor,
             LexicalWritableScope extensibleScope,
+            LexicalScope scopeForAnnotationsResolve,
             List<JetTypeParameter> typeParameters,
             BindingTrace trace
     ) {
         List<TypeParameterDescriptorImpl> result = new ArrayList<TypeParameterDescriptorImpl>();
         for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
             JetTypeParameter typeParameter = typeParameters.get(i);
-            result.add(resolveTypeParameterForCallableDescriptor(containingDescriptor, extensibleScope, typeParameter, i, trace));
+            result.add(resolveTypeParameterForCallableDescriptor(
+                    containingDescriptor, extensibleScope, scopeForAnnotationsResolve, typeParameter, i, trace));
         }
         return result;
     }
@@ -400,6 +402,7 @@ public class DescriptorResolver {
     private TypeParameterDescriptorImpl resolveTypeParameterForCallableDescriptor(
             DeclarationDescriptor containingDescriptor,
             LexicalWritableScope extensibleScope,
+            LexicalScope scopeForAnnotationsResolve,
             JetTypeParameter typeParameter,
             int index,
             BindingTrace trace
@@ -409,12 +412,12 @@ public class DescriptorResolver {
             trace.report(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY.on(typeParameter));
         }
 
-        // TODO: Support annotation for type parameters
-        AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
+        Annotations annotations =
+                annotationResolver.resolveAnnotationsWithArguments(scopeForAnnotationsResolve, typeParameter.getModifierList(), trace);
 
         TypeParameterDescriptorImpl typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDescriptor,
-                Annotations.Companion.getEMPTY(),
+                annotations,
                 typeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
@@ -771,8 +774,8 @@ public class DescriptorResolver {
                 LexicalWritableScope writableScope = new LexicalWritableScope(
                         scope, containingDeclaration, false, null, new TraceBasedRedeclarationHandler(trace),
                         "Scope with type parameters of a property");
-                typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(propertyDescriptor, writableScope, typeParameters,
-                                                                                      trace);
+                typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(
+                        propertyDescriptor, writableScope, scope, typeParameters, trace);
                 writableScope.changeLockLevel(WritableScope.LockLevel.READING);
                 resolveGenericBounds(property, propertyDescriptor, writableScope, typeParameterDescriptors, trace);
                 scopeWithTypeParameters = writableScope;

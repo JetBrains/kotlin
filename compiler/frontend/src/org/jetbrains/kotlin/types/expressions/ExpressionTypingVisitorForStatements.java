@@ -128,10 +128,6 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             context.trace.report(LOCAL_VARIABLE_WITH_DELEGATE.on(property.getDelegate()));
         }
 
-        for (JetTypeParameter typeParameter : property.getTypeParameters()) {
-            AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, context.trace);
-        }
-
         VariableDescriptor propertyDescriptor = components.descriptorResolver.
                 resolveLocalVariableDescriptor(scope, property, context.dataFlowInfo, context.trace);
         JetExpression initializer = property.getInitializer();

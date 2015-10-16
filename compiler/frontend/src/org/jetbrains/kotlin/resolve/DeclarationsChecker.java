@@ -353,7 +353,6 @@ public class DeclarationsChecker {
             if (typeParameter != null) {
                 DescriptorResolver.checkConflictingUpperBounds(trace, typeParameter, jetTypeParameter);
             }
-            annotationChecker.check(jetTypeParameter, trace, null);
         }
     }
 

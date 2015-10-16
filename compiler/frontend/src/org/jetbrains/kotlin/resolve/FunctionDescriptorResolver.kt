@@ -147,7 +147,7 @@ class FunctionDescriptorResolver(
                                               TraceBasedRedeclarationHandler(trace), "Function descriptor header scope")
 
         val typeParameterDescriptors = descriptorResolver.
-                resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, function.getTypeParameters(), trace)
+                resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, scope, function.getTypeParameters(), trace)
         innerScope.changeLockLevel(WritableScope.LockLevel.BOTH)
         descriptorResolver.resolveGenericBounds(function, functionDescriptor, innerScope, typeParameterDescriptors, trace)
 
