@@ -47,21 +47,21 @@ public class OperatorModifierInspection : AbstractKotlinInspection() {
                 val functionDescriptor = function.resolveToDescriptor() as? FunctionDescriptor ?: return
                 if (!functionDescriptor.isOperator && OperatorChecks.canBeOperator(functionDescriptor)) {
                     holder.registerProblem(nameIdentifier, "Function defines an operator but isn't annotated as such",
-                            AddModifierLocalQuickFix())
+                            AddOperatorModifierFix())
                 }
             }
 
         }
     }
-}
 
-private class AddModifierLocalQuickFix() : LocalQuickFix {
-    override fun getName(): String = "Add 'operator' modifier"
-    override fun getFamilyName(): String = getName()
+    private class AddOperatorModifierFix() : LocalQuickFix {
+        override fun getName(): String = "Add 'operator' modifier"
+        override fun getFamilyName(): String = getName()
 
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val modifierListOwner = descriptor.psiElement.getNonStrictParentOfType<JetModifierListOwner>()
-        modifierListOwner?.addModifier(JetTokens.OPERATOR_KEYWORD)
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val function = descriptor.psiElement.getNonStrictParentOfType<JetNamedFunction>()
+            function?.addModifier(JetTokens.OPERATOR_KEYWORD)
+        }
     }
 }
 
