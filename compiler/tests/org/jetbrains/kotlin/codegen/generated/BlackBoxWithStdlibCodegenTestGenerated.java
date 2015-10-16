@@ -130,6 +130,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("resolveWithLowPriorityAnnotation.kt")
+        public void testResolveWithLowPriorityAnnotation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/resolveWithLowPriorityAnnotation.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("varargInAnnotationParameter.kt")
         public void testVarargInAnnotationParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/varargInAnnotationParameter.kt");

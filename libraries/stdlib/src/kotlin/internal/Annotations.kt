@@ -31,6 +31,13 @@ internal annotation class NoInfer
 internal annotation class Exact
 
 /**
+ * Specifies that a corresponding member has the lowest priority in overload resolution.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class LowPriorityInOverloadResolution
+
+/**
  * The value of this type parameter should be mentioned in input types (argument types, receiver type or expected type).
  */
 @Target(AnnotationTarget.TYPE_PARAMETER)

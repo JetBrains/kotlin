@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.descriptorUtil
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.name.FqName
@@ -27,6 +28,10 @@ public fun Annotated.hasNoInferAnnotation(): Boolean = annotations.hasAnnotation
 private val EXACT_ANNOTATION_FQ_NAME = FqName("kotlin.internal.Exact")
 
 public fun Annotated.hasExactAnnotation(): Boolean = annotations.hasAnnotation(EXACT_ANNOTATION_FQ_NAME)
+
+private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME = FqName("kotlin.internal.LowPriorityInOverloadResolution")
+
+public fun CallableDescriptor.hasLowPriorityInOverloadResolution(): Boolean = annotations.hasAnnotation(LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME)
 
 private val ONLY_INPUT_TYPES_FQ_NAME = FqName("kotlin.internal.OnlyInputTypes")
 
