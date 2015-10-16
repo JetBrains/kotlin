@@ -135,16 +135,16 @@ public abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsi
                 val resolvedTo = psiReference.resolve()
                 if (resolvedTo != null) {
                     val resolvedToElementStr = ReferenceUtils.renderAsGotoImplementation(resolvedTo)
-                    assertEquals(expectedResolveData.referenceString, resolvedToElementStr, "Found reference to '$resolvedToElementStr', but '${expectedResolveData.referenceString}' was expected")
+                    assertEquals("Found reference to '$resolvedToElementStr', but '${expectedResolveData.referenceString}' was expected", expectedResolveData.referenceString, resolvedToElementStr)
                 }
                 else {
                     if (!expectedResolveData.shouldBeUnresolved()) {
-                        assertNull(expectedResolveData.referenceString, "Element $psiReference wasn't resolved to anything, but ${expectedResolveData.referenceString} was expected")
+                        assertNull("Element $psiReference wasn't resolved to anything, but ${expectedResolveData.referenceString} was expected", expectedResolveData.referenceString)
                     }
                 }
             }
             else {
-                assertNull(expectedResolveData.referenceString, "No reference found at offset: $offset, but one resolved to ${expectedResolveData.referenceString} was expected")
+                assertNull("No reference found at offset: $offset, but one resolved to ${expectedResolveData.referenceString} was expected", expectedResolveData.referenceString)
             }
         }
     }

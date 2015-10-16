@@ -35,6 +35,7 @@ import com.intellij.refactoring.introduceParameter.Util
 import com.intellij.refactoring.util.occurrences.ExpressionOccurrenceManager
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase.assertEquals
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.EXTRACT_FUNCTION
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
@@ -55,7 +56,7 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.util.findElementByCommentPrefix
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.io.File
-import java.util.Collections
+import java.util.*
 import kotlin.test.assertEquals
 
 public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTestCase() {
@@ -286,8 +287,8 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                             if (actualReturnTypes.size() != 1 || expectedReturnTypes.isNotEmpty()) {
                                 assertEquals(expectedReturnTypes, actualReturnTypes, "Expected return types mismatch.")
                             }
-                            assertEquals(expectedDescriptors, actualDescriptors, "Expected descriptors mismatch.")
-                            assertEquals(expectedTypes, actualTypes, "Expected types mismatch.")
+                            assertEquals("Expected descriptors mismatch.", expectedDescriptors, actualDescriptors)
+                            assertEquals("Expected types mismatch.", expectedTypes, actualTypes)
 
                             val newDescriptor = if (descriptor.name == "") {
                                 descriptor.copy(suggestedNames = Collections.singletonList("__dummyTestFun__"))

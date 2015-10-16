@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.serialization.jvm
 
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.UsefulTestCase.assertEquals
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Recor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.INTERNAL_TO_CLASS_ID
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.NONE
 import java.util.*
-import kotlin.test.assertEquals
 
 class JvmNameResolverTest : UsefulTestCase() {
     private class Context {
@@ -83,7 +83,7 @@ class JvmNameResolverTest : UsefulTestCase() {
 
     fun testPredefined() {
         for ((index, predefined) in JvmNameResolver.PREDEFINED_STRINGS.withIndex()) {
-            assertEquals(predefined, str("ignored", predefinedIndex = index), "Predefined string failed: $predefined (index $index)")
+            assertEquals("Predefined string failed: $predefined (index $index)", predefined, str("ignored", predefinedIndex = index))
         }
     }
 
