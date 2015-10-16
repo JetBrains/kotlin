@@ -242,6 +242,10 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
         else if (status.hasTypeInferenceIncorporationError()) {
             trace.report(TYPE_INFERENCE_INCORPORATION_ERROR.on(reference));
         }
+        else if (status.hasTypeParameterWithUnsatisfiedOnlyInputTypesError()) {
+            //todo
+            trace.report(TYPE_INFERENCE_ONLY_INPUT_TYPES.on(reference, data.descriptor.getTypeParameters().get(0)));
+        }
         else {
             assert status.hasUnknownParameters();
             trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data));

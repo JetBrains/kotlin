@@ -16,13 +16,18 @@
 
 package org.jetbrains.kotlin.resolve.descriptorUtil
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.name.FqName
 
 private val NO_INFER_ANNOTATION_FQ_NAME = FqName("kotlin.internal.NoInfer")
 
-public fun Annotated.hasNoInferAnnotation(): Boolean = annotations.findAnnotation(NO_INFER_ANNOTATION_FQ_NAME) != null
+public fun Annotated.hasNoInferAnnotation(): Boolean = annotations.hasAnnotation(NO_INFER_ANNOTATION_FQ_NAME)
 
 private val EXACT_ANNOTATION_FQ_NAME = FqName("kotlin.internal.Exact")
 
-public fun Annotated.hasExactAnnotation(): Boolean = annotations.findAnnotation(EXACT_ANNOTATION_FQ_NAME) != null
+public fun Annotated.hasExactAnnotation(): Boolean = annotations.hasAnnotation(EXACT_ANNOTATION_FQ_NAME)
+
+private val ONLY_INPUT_TYPES_FQ_NAME = FqName("kotlin.internal.OnlyInputTypes")
+
+public fun TypeParameterDescriptor.hasOnlyInputTypesAnnotation(): Boolean = annotations.hasAnnotation(ONLY_INPUT_TYPES_FQ_NAME)

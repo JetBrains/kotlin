@@ -89,4 +89,6 @@ public interface ConstraintSystemStatus {
      * Returns <tt>true</tt> if there's an error in constraint system incorporation.
      */
     public fun hasTypeInferenceIncorporationError(): Boolean
+
+    public fun hasTypeParameterWithUnsatisfiedOnlyInputTypesError(): Boolean
 }

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
@@ -82,6 +83,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         override fun hasContradiction() = hasParameterConstraintError() || hasConflictingConstraints()
                                           || hasCannotCaptureTypesError() || hasTypeInferenceIncorporationError()
+                                            || hasTypeParameterWithUnsatisfiedOnlyInputTypesError()
 
         override fun hasViolatedUpperBound() = !isSuccessful() && filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().isSuccessful()
 
@@ -102,6 +104,9 @@ public class ConstraintSystemImpl : ConstraintSystem {
         override fun hasCannotCaptureTypesError() = errors.any { it is CannotCapture }
 
         override fun hasTypeInferenceIncorporationError() = errors.any { it is TypeInferenceError } || !satisfyInitialConstraints()
+
+        override fun hasTypeParameterWithUnsatisfiedOnlyInputTypesError() =
+                localTypeParameterBounds.values.any { it.typeVariable.hasOnlyInputTypesAnnotation() && it.value == null }
     }
 
     private fun getParameterToInferredValueMap(

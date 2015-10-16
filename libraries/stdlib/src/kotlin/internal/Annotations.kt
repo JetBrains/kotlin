@@ -29,3 +29,10 @@ internal annotation class NoInfer
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.SOURCE)
 internal annotation class Exact
+
+/**
+ * The value of this type parameter should be mentioned in input types (argument types, receiver type or expected type).
+ */
+@Target(AnnotationTarget.TYPE_PARAMETER)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class OnlyInputTypes
