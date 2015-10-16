@@ -8,12 +8,12 @@ annotation class Ann(
         val p6: Float
 )
 
-val prop1: Byte = -1
-val prop2: Short = -1
-val prop3: Int = -1
-val prop4: Long = -1
-val prop5: Double = -1.0
-val prop6: Float = -1.0.toFloat()
+const val prop1: Byte = -1
+const val prop2: Short = -1
+const val prop3: Int = -1
+const val prop4: Long = -1
+const val prop5: Double = -1.0
+const val prop6: Float = -1.0.toFloat()
 
 @Ann(prop1, prop2, prop3, prop4, prop5, prop6) class MyClass
 

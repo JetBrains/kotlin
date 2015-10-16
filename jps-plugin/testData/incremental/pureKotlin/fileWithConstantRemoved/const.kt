@@ -1,3 +1,3 @@
 package test
 
-val CONST = "foo"
+const val CONST = "foo"

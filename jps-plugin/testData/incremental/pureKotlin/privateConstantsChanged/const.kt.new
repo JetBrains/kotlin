@@ -1,11 +1,11 @@
 package test
 
-val CONST = "foo"
+const val CONST = "foo"
 
 class Klass {
     companion object {
         private val CHANGED = "new"
-        public val UNCHANGED = 100
+        const public val UNCHANGED = 100
     }
 }
 
