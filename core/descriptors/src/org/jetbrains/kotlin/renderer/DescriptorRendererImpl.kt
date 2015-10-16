@@ -467,6 +467,15 @@ internal class DescriptorRendererImpl(
         if (functionDescriptor.isInfix && functionDescriptor.overriddenDescriptors.none { it.isInfix }) {
             builder.append("infix ")
         }
+        if (functionDescriptor.isExternal && functionDescriptor.overriddenDescriptors.none { it.isExternal }) {
+            builder.append("external ")
+        }
+        if (functionDescriptor.isInline && functionDescriptor.overriddenDescriptors.none { it.isInline }) {
+            builder.append("inline ")
+        }
+        if (functionDescriptor.isTailrec && functionDescriptor.overriddenDescriptors.none { it.isTailrec }) {
+            builder.append("tailrec ")
+        }
     }
 
     override fun render(declarationDescriptor: DeclarationDescriptor): String {
@@ -673,6 +682,13 @@ internal class DescriptorRendererImpl(
 
         renderAnnotations(valueParameter, builder)
 
+        if (valueParameter.isCrossinline) {
+            builder.append("crossinline ")
+        }
+        if (valueParameter.isNoinline) {
+            builder.append("noinline ")
+        }
+
         renderVariable(valueParameter, includeName, builder, topLevel)
 
         val withDefaultValue = renderDefaultValues && (if (debugMode) valueParameter.declaresDefaultValue() else valueParameter.hasDefaultValue())
@@ -836,6 +852,11 @@ internal class DescriptorRendererImpl(
         }
     }
 
+    private fun renderAccessorModifiers(descriptor: PropertyAccessorDescriptor, builder: StringBuilder) {
+        if (descriptor.isExternal && descriptor.overriddenDescriptors.none { it.isExternal }) {
+            builder.append("external ")
+        }
+    }
 
     /* STUPID DISPATCH-ONLY VISITOR */
     private inner class RenderDeclarationDescriptorVisitor : DeclarationDescriptorVisitor<Unit, StringBuilder> {
@@ -853,6 +874,7 @@ internal class DescriptorRendererImpl(
 
         override fun visitPropertyGetterDescriptor(descriptor: PropertyGetterDescriptor, builder: StringBuilder) {
             if (renderAccessors) {
+                renderAccessorModifiers(descriptor, builder)
                 builder.append("getter for ")
                 renderProperty(descriptor.getCorrespondingProperty(), builder)
             }
@@ -864,6 +886,7 @@ internal class DescriptorRendererImpl(
 
         override fun visitPropertySetterDescriptor(descriptor: PropertySetterDescriptor, builder: StringBuilder) {
             if (renderAccessors) {
+                renderAccessorModifiers(descriptor, builder)
                 builder.append("setter for ")
                 renderProperty(descriptor.getCorrespondingProperty(), builder)
             }
