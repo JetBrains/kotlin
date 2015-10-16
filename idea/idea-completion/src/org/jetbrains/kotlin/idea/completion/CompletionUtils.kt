@@ -357,8 +357,8 @@ private open class BaseTypeLookupElement(type: JetType, baseLookupElement: Looku
 }
 
 fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: Int) {
-    PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
-    ShortenReferences.DEFAULT.process(context.getFile() as JetFile, startOffset, endOffset)
+    PsiDocumentManager.getInstance(context.project).commitAllDocuments()
+    ShortenReferences.DEFAULT.process(context.file as JetFile, startOffset, endOffset)
 }
 
 fun <T> ElementPattern<T>.and(rhs: ElementPattern<T>) = StandardPatterns.and(this, rhs)
