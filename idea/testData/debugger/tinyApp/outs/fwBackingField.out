@@ -6,7 +6,7 @@ KotlinFieldBreakpoint created at fwBackingField.kt:30
 KotlinFieldBreakpoint created at fwBackingField.kt:32
 KotlinFieldBreakpoint created at fwBackingField.kt:44
 KotlinFieldBreakpoint created at fwBackingField.kt:47
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! fwBackingField.FwBackingFieldPackage
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! fwBackingField.FwBackingFieldKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 fwBackingField.kt:18
 fwBackingField.kt:21

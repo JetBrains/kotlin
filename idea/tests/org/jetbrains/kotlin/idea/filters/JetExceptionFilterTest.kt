@@ -116,16 +116,16 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
     }
 
     public fun testKt2489() {
-        val packageClassFqName = getPackageClassFqName(FqName.ROOT)
-        doTest("a.kt", 3, { file -> "" + PackagePartClassUtils.getDefaultPartFqName(packageClassFqName, file) + "\$a\$f\$1" })
-        doTest("main.kt", 3, { file -> "" + PackagePartClassUtils.getDefaultPartFqName(packageClassFqName, file) + "\$main\$f\$1" })
+        val packageFQN = FqName.ROOT
+        doTest("a.kt", 3, { file -> "" + PackagePartClassUtils.getDefaultFileClassFqName(packageFQN, file) + "\$a\$f\$1" })
+        doTest("main.kt", 3, { file -> "" + PackagePartClassUtils.getDefaultFileClassFqName(packageFQN, file) + "\$main\$f\$1" })
     }
 
     public fun testMultiSameName() {
-        val packageClassFqName = getPackageClassFqName(FqName("multiSameName"))
+        val packageFQN = FqName("multiSameName")
         // The order and the exact names do matter here
-        doTest("1/foo1.kt", 4, { file -> "" + PackagePartClassUtils.getDefaultPartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
-        doTest("2/foo2.kt", 4, { file -> "" + PackagePartClassUtils.getDefaultPartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
+        doTest("1/foo1.kt", 4, { file -> "" + PackagePartClassUtils.getDefaultFileClassFqName(packageFQN, file) + "\$foo\$f\$1" })
+        doTest("2/foo2.kt", 4, { file -> "" + PackagePartClassUtils.getDefaultFileClassFqName(packageFQN, file) + "\$foo\$f\$1" })
     }
 
     public fun testKotlinClass() {

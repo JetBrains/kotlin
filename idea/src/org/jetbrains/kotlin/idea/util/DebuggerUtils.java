@@ -95,25 +95,7 @@ public class DebuggerUtils {
             return null;
         }
 
-        if (isPackageClassName(className)) {
-            for (JetFile file : filesWithExactName) {
-                boolean hasTopLevelMembers = CollectionsKt.any(file.getDeclarations(), new Function1<JetDeclaration, Boolean>() {
-                    @Override
-                    public Boolean invoke(JetDeclaration declaration) {
-                        return !(declaration instanceof JetClassOrObject);
-                    }
-                });
-                if (hasTopLevelMembers) return file;
-            }
-        }
-
         return filesWithExactName.iterator().next();
-    }
-
-    private static boolean isPackageClassName(JvmClassName className) {
-        String packageName = PackageClassUtils.getPackageClassInternalName(className.getPackageFqName());
-
-        return packageName.equals(className.getInternalName());
     }
 
     @NotNull

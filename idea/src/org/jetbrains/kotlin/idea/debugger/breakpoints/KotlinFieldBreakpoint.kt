@@ -43,6 +43,7 @@ import com.sun.jdi.request.MethodEntryRequest
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -102,7 +103,7 @@ class KotlinFieldBreakpoint(
             setFieldName(property.getName()!!)
 
             if (property is JetProperty && property.isTopLevel()) {
-                getProperties().myClassName = PackageClassUtils.getPackageClassFqName(property.getContainingJetFile().getPackageFqName()).asString()
+                getProperties().myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingJetFile()).fileClassFqName.asString()
             }
             else {
                 val jetClass: JetClassOrObject? = PsiTreeUtil.getParentOfType(property, javaClass())

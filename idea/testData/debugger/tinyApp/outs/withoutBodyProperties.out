@@ -5,7 +5,7 @@ LineBreakpoint created at withoutBodyProperties.kt:23
 LineBreakpoint created at withoutBodyProperties.kt:28
 LineBreakpoint created at withoutBodyProperties.kt:36
 LineBreakpoint created at withoutBodyProperties.kt:43
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! withoutBodyProperties.WithoutBodyPropertiesPackage
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! withoutBodyProperties.WithoutBodyPropertiesKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 withoutBodyProperties.kt:8
 Compile bytecode for 1 + 1
