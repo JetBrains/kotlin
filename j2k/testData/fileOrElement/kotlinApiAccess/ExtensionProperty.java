@@ -1,9 +1,9 @@
 //file
-import kotlinApi.KotlinApiPackage;
+import kotlinApi.KotlinApiKt;
 
 class C {
     int foo() {
-        KotlinApiPackage.setExtensionProperty("a", 1);
-        return KotlinApiPackage.getExtensionProperty("b");
+        KotlinApiKt.setExtensionProperty("a", 1);
+        return KotlinApiKt.getExtensionProperty("b");
     }
 }
