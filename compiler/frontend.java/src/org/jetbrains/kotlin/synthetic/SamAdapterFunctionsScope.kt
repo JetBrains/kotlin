@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.LinkedHashSet
+import java.util.*
 import kotlin.properties.Delegates
 
 interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor {
@@ -151,6 +149,9 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
                 newVisibility: Visibility,
                 newIsOperator: Boolean,
                 newIsInfix: Boolean,
+                newIsExternal: Boolean,
+                newIsInline: Boolean,
+                newIsTailrec: Boolean,
                 original: FunctionDescriptor?,
                 copyOverrides: Boolean,
                 kind: CallableMemberDescriptor.Kind,
@@ -159,7 +160,8 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
                 newReturnType: JetType
         ): FunctionDescriptor? {
             val descriptor = super<SimpleFunctionDescriptorImpl>.doSubstitute(
-                    originalSubstitutor, newOwner, newModality, newVisibility, newIsOperator, newIsInfix, original,
+                    originalSubstitutor, newOwner, newModality, newVisibility,
+                    newIsOperator, newIsInfix, newIsExternal, newIsInline, newIsTailrec, original,
                     copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType)
                 as MyFunctionDescriptor? ?: return null
 

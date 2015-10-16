@@ -141,6 +141,8 @@ public class FunctionDescriptorUtil {
                             parameter.getName(),
                             returnType,
                             parameter.declaresDefaultValue(),
+                            parameter.isCrossinline(),
+                            parameter.isNoinline(),
                             parameter.getVarargElementType(),
                             SourceElement.NO_SOURCE
                     )
@@ -158,6 +160,9 @@ public class FunctionDescriptorUtil {
                 function.getVisibility());
         descriptor.setOperator(function.isOperator());
         descriptor.setInfix(function.isInfix());
+        descriptor.setExternal(function.isExternal());
+        descriptor.setInline(function.isInline());
+        descriptor.setTailrec(function.isTailrec());
         return descriptor;
     }
 }

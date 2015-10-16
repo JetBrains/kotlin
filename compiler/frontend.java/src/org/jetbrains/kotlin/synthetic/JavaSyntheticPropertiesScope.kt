@@ -281,6 +281,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
                                                           visibility,
                                                           false,
                                                           false,
+                                                          getMethod.isExternal,
                                                           CallableMemberDescriptor.Kind.SYNTHESIZED,
                                                           null,
                                                           SourceElement.NO_SOURCE)
@@ -293,6 +294,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
                                                  syntheticExtensionVisibility(setMethod),
                                                  false,
                                                  false,
+                                                 setMethod.isExternal,
                                                  CallableMemberDescriptor.Kind.SYNTHESIZED,
                                                  null,
                                                  SourceElement.NO_SOURCE)

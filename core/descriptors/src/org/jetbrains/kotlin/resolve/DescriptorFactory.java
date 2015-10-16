@@ -50,16 +50,7 @@ public class DescriptorFactory {
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations
     ) {
-        return createSetter(propertyDescriptor, annotations, true);
-    }
-
-    @NotNull
-    public static PropertySetterDescriptorImpl createSetter(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull Annotations annotations,
-            boolean isDefault
-    ) {
-        return createSetter(propertyDescriptor, annotations, isDefault, propertyDescriptor.getVisibility());
+        return createSetter(propertyDescriptor, annotations, true, false);
     }
 
     @NotNull
@@ -67,11 +58,22 @@ public class DescriptorFactory {
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations,
             boolean isDefault,
+            boolean isExternal
+    ) {
+        return createSetter(propertyDescriptor, annotations, isDefault, isExternal, propertyDescriptor.getVisibility());
+    }
+
+    @NotNull
+    public static PropertySetterDescriptorImpl createSetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations,
+            boolean isDefault,
+            boolean isExternal,
             @NotNull Visibility visibility
     ) {
         PropertySetterDescriptorImpl setterDescriptor =
                 new PropertySetterDescriptorImpl(propertyDescriptor, annotations, propertyDescriptor.getModality(),
-                                                 visibility, !isDefault, isDefault,
+                                                 visibility, !isDefault, isDefault, isExternal,
                                                  CallableMemberDescriptor.Kind.DECLARATION, null, propertyDescriptor.getSource());
         setterDescriptor.initializeDefault();
         return setterDescriptor;
@@ -82,15 +84,7 @@ public class DescriptorFactory {
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations
     ) {
-        return createGetter(propertyDescriptor, annotations, true);
-    }
-
-    @NotNull
-    public static PropertyGetterDescriptorImpl createGetter(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull Annotations annotations,
-            boolean isDefault) {
-        return createGetter(propertyDescriptor, annotations, isDefault, propertyDescriptor.getSource());
+        return createGetter(propertyDescriptor, annotations, true, false);
     }
 
     @NotNull
@@ -98,9 +92,20 @@ public class DescriptorFactory {
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations,
             boolean isDefault,
+            boolean isExternal
+    ) {
+        return createGetter(propertyDescriptor, annotations, isDefault, isExternal, propertyDescriptor.getSource());
+    }
+
+    @NotNull
+    public static PropertyGetterDescriptorImpl createGetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations,
+            boolean isDefault,
+            boolean isExternal,
             @NotNull SourceElement sourceElement) {
         return new PropertyGetterDescriptorImpl(propertyDescriptor, annotations, propertyDescriptor.getModality(),
-                                                propertyDescriptor.getVisibility(), !isDefault, isDefault,
+                                                propertyDescriptor.getVisibility(), !isDefault, isDefault, isExternal,
                                                 CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement);
     }
 
@@ -153,7 +158,11 @@ public class DescriptorFactory {
                 SimpleFunctionDescriptorImpl.create(enumClass, Annotations.Companion.getEMPTY(), DescriptorUtils.ENUM_VALUE_OF,
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
-                valueOf, null, 0, Annotations.Companion.getEMPTY(), Name.identifier("value"), getBuiltIns(enumClass).getStringType(), false, null,
+                valueOf, null, 0, Annotations.Companion.getEMPTY(), Name.identifier("value"), getBuiltIns(enumClass).getStringType(),
+                /* declaresDefaultValue = */ false,
+                /* isCrossinline = */ false,
+                /* isNoinline = */ false,
+                null,
                 enumClass.getSource()
         );
         return valueOf.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),

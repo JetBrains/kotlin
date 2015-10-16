@@ -849,7 +849,11 @@ public abstract class KotlinBuiltIns {
             TypeProjection parameterType = parameterTypes.get(i);
             ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
                     functionDescriptor, null, i, Annotations.Companion.getEMPTY(),
-                    Name.identifier("p" + (i + 1)), parameterType.getType(), false, null, SourceElement.NO_SOURCE
+                    Name.identifier("p" + (i + 1)), parameterType.getType(),
+                    /* declaresDefaultValue = */ false,
+                    /* isCrossinline = */ false,
+                    /* isNoinline = */ false,
+                    null, SourceElement.NO_SOURCE
             );
             valueParameters.add(valueParameterDescriptor);
         }

@@ -257,7 +257,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
         PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
                 substitutedDescriptor, getter.getAnnotations(), newModality, convertVisibility(getter.getVisibility(), newVisibility),
-                getter.hasBody(), getter.isDefault(), kind, original == null ? null : original.getGetter(), SourceElement.NO_SOURCE
+                getter.hasBody(), getter.isDefault(), getter.isExternal(), kind, original == null ? null : original.getGetter(), SourceElement.NO_SOURCE
         );
         if (newGetter != null) {
             JetType returnType = getter.getReturnType();
@@ -265,7 +265,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         }
         PropertySetterDescriptorImpl newSetter = setter == null ? null : new PropertySetterDescriptorImpl(
                 substitutedDescriptor, setter.getAnnotations(), newModality, convertVisibility(setter.getVisibility(), newVisibility),
-                setter.hasBody(), setter.isDefault(), kind, original == null ? null : original.getSetter(), SourceElement.NO_SOURCE
+                setter.hasBody(), setter.isDefault(), setter.isExternal(), kind, original == null ? null : original.getSetter(), SourceElement.NO_SOURCE
         );
         if (newSetter != null) {
             List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(

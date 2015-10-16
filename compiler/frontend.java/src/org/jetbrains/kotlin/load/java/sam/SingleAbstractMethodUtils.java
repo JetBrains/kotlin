@@ -157,7 +157,11 @@ public class SingleAbstractMethodUtils {
         assert parameterType != null : "couldn't substitute type: " + parameterTypeUnsubstituted +
                                        ", substitutor = " + typeParameters.substitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
-                result, null, 0, Annotations.Companion.getEMPTY(), Name.identifier("function"), parameterType, false, null, SourceElement.NO_SOURCE);
+                result, null, 0, Annotations.Companion.getEMPTY(), Name.identifier("function"), parameterType,
+                /* declaresDefaultValue = */ false,
+                /* isCrossinline = */ false,
+                /* isNoinline = */ false,
+                null, SourceElement.NO_SOURCE);
 
         JetType returnType = typeParameters.substitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
         assert returnType != null : "couldn't substitute type: " + samInterface.getDefaultType() +
@@ -268,7 +272,11 @@ public class SingleAbstractMethodUtils {
 
             ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
                     samAdapter, null, originalParam.getIndex(), originalParam.getAnnotations(),
-                    originalParam.getName(), newType, false, null, SourceElement.NO_SOURCE
+                    originalParam.getName(), newType,
+                    /* declaresDefaultValue = */ false,
+                    /* isCrossinline = */ false,
+                    /* isNoinline = */ false,
+                    null, SourceElement.NO_SOURCE
             );
             valueParameters.add(newParam);
         }

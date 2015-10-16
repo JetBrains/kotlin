@@ -229,6 +229,8 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                     altName != null ? altName : originalParameterDescriptor.getName(),
                     alternativeType,
                     originalParameterDescriptor.declaresDefaultValue(),
+                    originalParameterDescriptor.isCrossinline(),
+                    originalParameterDescriptor.isNoinline(),
                     alternativeVarargElementType,
                     SourceElement.NO_SOURCE
             ));

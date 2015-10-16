@@ -67,6 +67,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         val getter = if (hasGetter) {
             val getterFlags = proto.getGetterFlags()
             val isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags)
+            val isExternal = proto.hasGetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
             val getter = if (isNotDefault) {
                 PropertyGetterDescriptorImpl(
                         property,
@@ -75,6 +76,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                         Deserialization.visibility(Flags.VISIBILITY.get(getterFlags)),
                         /* hasBody = */ isNotDefault,
                         /* isDefault = */ !isNotDefault,
+                        /* isExternal = */ isExternal,
                         property.getKind(), null, SourceElement.NO_SOURCE
                 )
             }
@@ -91,6 +93,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         val setter = if (Flags.HAS_SETTER.get(flags)) {
             val setterFlags = proto.getSetterFlags()
             val isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags)
+            val isExternal = proto.hasSetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
             if (isNotDefault) {
                 val setter = PropertySetterDescriptorImpl(
                         property,
@@ -99,6 +102,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                         Deserialization.visibility(Flags.VISIBILITY.get(setterFlags)),
                         /* hasBody = */ isNotDefault,
                         /* isDefault = */ !isNotDefault,
+                        /* isExternal = */ isExternal,
                         property.getKind(), null, SourceElement.NO_SOURCE
                 )
                 val setterLocal = local.childContext(setter, listOf())
@@ -148,6 +152,9 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         )
         function.isOperator = Flags.IS_OPERATOR.get(proto.flags)
         function.isInfix = Flags.IS_INFIX.get(proto.flags)
+        function.isExternal = Flags.IS_EXTERNAL_FUNCTION.get(proto.flags)
+        function.isInline = Flags.IS_INLINE.get(proto.flags)
+        function.isTailrec = Flags.IS_TAILREC.get(proto.flags)
         return function
     }
 
@@ -212,6 +219,8 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                     c.nameResolver.getName(proto.name),
                     c.typeDeserializer.type(proto.type(c.typeTable)),
                     Flags.DECLARES_DEFAULT_VALUE.get(flags),
+                    Flags.IS_CROSSINLINE.get(flags),
+                    Flags.IS_NOINLINE.get(flags),
                     proto.varargElementType(c.typeTable)?.let { c.typeDeserializer.type(it) },
                     SourceElement.NO_SOURCE
             )

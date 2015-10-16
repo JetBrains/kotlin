@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollector
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
@@ -166,7 +165,9 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
                     Annotations.EMPTY,
                     arg.getArgumentName()?.asName ?: Name.identifier("p$index"),
                     outType,
-                    false,
+                    /* declaresDefaultValue = */ false,
+                    /* isCrossinline = */ false,
+                    /* isNoinline = */ false,
                     varargElementType,
                     SourceElement.NO_SOURCE
             ))

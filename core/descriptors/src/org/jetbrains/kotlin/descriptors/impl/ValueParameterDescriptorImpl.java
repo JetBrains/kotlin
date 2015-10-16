@@ -31,6 +31,8 @@ import java.util.Collection;
 
 public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements ValueParameterDescriptor {
     private final boolean declaresDefaultValue;
+    private final boolean isCrossinline;
+    private final boolean isNoinline;
     private final JetType varargElementType;
     private final int index;
     private final ValueParameterDescriptor original;
@@ -43,6 +45,8 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             @NotNull Name name,
             @NotNull JetType outType,
             boolean declaresDefaultValue,
+            boolean isCrossinline,
+            boolean isNoinline,
             @Nullable JetType varargElementType,
             @NotNull SourceElement source
     ) {
@@ -50,6 +54,8 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
         this.original = original == null ? this : original;
         this.index = index;
         this.declaresDefaultValue = declaresDefaultValue;
+        this.isCrossinline = isCrossinline;
+        this.isNoinline = isNoinline;
         this.varargElementType = varargElementType;
     }
 
@@ -66,7 +72,17 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     @Override
     public boolean declaresDefaultValue() {
-        return declaresDefaultValue && ((CallableMemberDescriptor) getContainingDeclaration()).getKind().isReal();
+        return declaresDefaultValue && containingDeclarationIsReal();
+    }
+
+    @Override
+    public boolean isCrossinline() {
+        return isCrossinline && containingDeclarationIsReal();
+    }
+
+    @Override
+    public boolean isNoinline() {
+        return isNoinline && containingDeclarationIsReal();
     }
 
     @Nullable
@@ -108,7 +124,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @Override
     public ValueParameterDescriptor copy(@NotNull CallableDescriptor newOwner, @NotNull Name newName) {
         return new ValueParameterDescriptorImpl(
-                newOwner, null, index, getAnnotations(), newName, getType(), declaresDefaultValue(), varargElementType,
+                newOwner, null, index, getAnnotations(), newName, getType(), declaresDefaultValue(), isCrossinline(), isNoinline(), varargElementType,
                 SourceElement.NO_SOURCE
         );
     }
@@ -130,5 +146,9 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
                         return descriptor.getValueParameters().get(getIndex());
                     }
                 });
+    }
+
+    private boolean containingDeclarationIsReal() {
+        return ((CallableMemberDescriptor) getContainingDeclaration()).getKind().isReal();
     }
 }

@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.DescriptorResolver.*
+import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultModality
+import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultVisibility
+import org.jetbrains.kotlin.resolve.DescriptorResolver.transformAnonymousTypeIfNeeded
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getDispatchReceiverParameterIfNeeded
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral
@@ -178,6 +180,9 @@ class FunctionDescriptorResolver(
         )
         functionDescriptor.isOperator = function.hasModifier(JetTokens.OPERATOR_KEYWORD)
         functionDescriptor.isInfix = function.hasModifier(JetTokens.INFIX_KEYWORD)
+        functionDescriptor.isExternal = function.hasModifier(JetTokens.EXTERNAL_KEYWORD)
+        functionDescriptor.isInline = function.hasModifier(JetTokens.INLINE_KEYWORD)
+        functionDescriptor.isTailrec = function.hasModifier(JetTokens.TAILREC_KEYWORD)
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.getAnnotations()) }
         for (valueParameterDescriptor in valueParameterDescriptors) {
             ForceResolveUtil.forceResolveAllContents(valueParameterDescriptor.getType().getAnnotations())
@@ -198,6 +203,7 @@ class FunctionDescriptorResolver(
                 val valueParameterDescriptor = expectedValueParameters.first()
                 val it = ValueParameterDescriptorImpl(functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
                                                       valueParameterDescriptor.getType(), valueParameterDescriptor.declaresDefaultValue(),
+                                                      valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
                                                       valueParameterDescriptor.getVarargElementType(), SourceElement.NO_SOURCE)
                 trace.record(BindingContext.AUTO_CREATED_IT, it)
                 return listOf(it)

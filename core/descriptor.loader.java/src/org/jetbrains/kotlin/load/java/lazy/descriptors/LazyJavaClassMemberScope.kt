@@ -41,7 +41,10 @@ import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.RawSubstitution
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
-import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.JavaArrayType
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaConstructor
+import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
@@ -302,13 +305,15 @@ public class LazyJavaClassMemberScope(
         propertyDescriptor.setType(getterMethod.returnType!!, listOf(), getDispatchReceiverParameter(), null as JetType?)
 
         val getter = DescriptorFactory.createGetter(
-                propertyDescriptor, getterMethod.annotations, /* isDefault = */false, getterMethod.source
+                propertyDescriptor, getterMethod.annotations, /* isDefault = */false,
+                /* isExternal = */ false, getterMethod.source
         ).apply {
             initialize(propertyDescriptor.type)
         }
 
         val setter = setterMethod?.let { setterMethod ->
-            DescriptorFactory.createSetter(propertyDescriptor, setterMethod.annotations, /* isDefault = */false, setterMethod.visibility)
+            DescriptorFactory.createSetter(propertyDescriptor, setterMethod.annotations, /* isDefault = */false,
+            /* isExternal = */ false, setterMethod.visibility)
         }
 
         return propertyDescriptor.apply { initialize(getter, setter) }
@@ -517,6 +522,8 @@ public class LazyJavaClassMemberScope(
                 // Parameters of annotation constructors in Java are never nullable
                 TypeUtils.makeNotNullable(returnType),
                 method.hasAnnotationParameterDefaultValue(),
+                /* isCrossinline = */ false,
+                /* isNoinline = */ false,
                 // Nulls are not allowed in annotation arguments in Java
                 varargElementType?.let { TypeUtils.makeNotNullable(it) },
                 c.components.sourceElementFactory.source(method)
