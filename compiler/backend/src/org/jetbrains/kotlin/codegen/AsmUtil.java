@@ -192,6 +192,10 @@ public class AsmUtil {
             }
         }
 
+        if (functionDescriptor.getOriginal().isExternal()) {
+            flags |= Opcodes.ACC_NATIVE;
+        }
+
         if (AnnotationUtilKt.isPlatformStaticInCompanionObject(functionDescriptor)) {
             // Native method will be a member of the class, the companion object method will be delegated to it
             flags &= ~Opcodes.ACC_NATIVE;
