@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -45,7 +46,7 @@ import java.util.*
 class AddFunctionToSupertypeFix private constructor(
         element: JetNamedFunction,
         private val functions: List<AddFunctionToSupertypeFix.FunctionData>
-) : KotlinQuickFixAction<JetNamedFunction>(element) {
+) : KotlinQuickFixAction<JetNamedFunction>(element), LowPriorityAction {
 
     init {
         assert(functions.isNotEmpty())
