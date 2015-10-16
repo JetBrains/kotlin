@@ -1,7 +1,7 @@
 package c;
 
-import static b.DependencyKt.getTest;
-import static b.DependencyKt.setTest;
+import static b.TestKt.getTest;
+import static b.TestKt.setTest;
 
 class J {
     void bar() {

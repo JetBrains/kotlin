@@ -1,6 +1,6 @@
 package a;
 
-import static b.DependencyKt.test;
+import static b.TestKt.test;
 
 class J {
     void bar() {
