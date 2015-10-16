@@ -67,11 +67,9 @@ public class IncrementalCacheImpl(
         val PROTO_MAP = "proto"
         val CONSTANTS_MAP = "constants"
         val INLINE_FUNCTIONS = "inline-functions"
-        val PACKAGE_PARTS = "package-parts"
         val MULTIFILE_CLASS_FACADES = "multifile-class-facades"
         val MULTIFILE_CLASS_PARTS = "multifile-class-parts"
         val SOURCE_TO_CLASSES = "source-to-classes"
-        val CLASS_TO_SOURCES = "class-to-sources"
         val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
         val DIRTY_INLINE_FUNCTIONS = "dirty-inline-functions"
         val INLINED_TO = "inlined-to"
@@ -93,7 +91,6 @@ public class IncrementalCacheImpl(
     private val protoMap = registerMap(ProtoMap(PROTO_MAP.storageFile))
     private val constantsMap = registerMap(ConstantsMap(CONSTANTS_MAP.storageFile))
     private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
-    private val packagePartMap = registerMap(PackagePartMap(PACKAGE_PARTS.storageFile))
     private val multifileClassFacadeMap = registerMap(MultifileClassFacadeMap(MULTIFILE_CLASS_FACADES.storageFile))
     private val multifileClassPartMap = registerMap(MultifileClassPartMap(MULTIFILE_CLASS_PARTS.storageFile))
     private val sourceToClassesMap = registerMap(SourceToClassesMap(SOURCE_TO_CLASSES.storageFile))
@@ -134,17 +131,7 @@ public class IncrementalCacheImpl(
         val result = THashSet(FileUtil.PATH_HASHING_STRATEGY)
 
         for ((className, functions) in dirtyInlineFunctionsMap.getEntries()) {
-            val internalName =
-                if (packagePartMap.isPackagePart(className)) {
-                    val packageInternalName = PackageClassUtils.getPackageClassInternalName(className.packageFqName)
-                    val packageJvmName = JvmClassName.byInternalName(packageInternalName)
-                    packageJvmName.internalName
-                }
-                else {
-                    className.internalName
-                }
-
-            val classFilePath = getClassFilePath(internalName)
+            val classFilePath = getClassFilePath(className.internalName)
 
             fun addFilesAffectedByChangedInlineFuns(cache: IncrementalCacheImpl) {
                 val targetFiles = functions.flatMap { cache.inlinedTo[classFilePath, it] }
@@ -190,8 +177,7 @@ public class IncrementalCacheImpl(
             header.isCompatiblePackageFacadeKind() ->
                 protoMap.process(kotlinClass, isPackage = true)
             header.isCompatibleFileFacadeKind() -> {
-                assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
-                packagePartMap.addPackagePart(className)
+                assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
 
                 protoMap.process(kotlinClass, isPackage = true) +
                 constantsMap.process(kotlinClass) +
@@ -207,8 +193,7 @@ public class IncrementalCacheImpl(
                 inlineFunctionsMap.process(kotlinClass)
             }
             header.isCompatibleMultifileClassPartKind() -> {
-                assert(sourceFiles.size() == 1) { "Multifile class part from several source files: $sourceFiles" }
-                packagePartMap.addPackagePart(className)
+                assert(sourceFiles.size == 1) { "Multifile class part from several source files: $sourceFiles" }
                 multifileClassPartMap.add(className.internalName, header.multifileClassName!!)
 
                 protoMap.process(kotlinClass, isPackage = true) +
@@ -248,7 +233,6 @@ public class IncrementalCacheImpl(
 
         dirtyClasses.forEach {
             protoMap.remove(it)
-            packagePartMap.remove(it)
             multifileClassFacadeMap.remove(it)
             multifileClassPartMap.remove(it)
             constantsMap.remove(it)
@@ -259,10 +243,11 @@ public class IncrementalCacheImpl(
     }
 
     override fun getObsoletePackageParts(): Collection<String> {
-        val obsoletePackageParts =
-                dirtyOutputClassesMap.getDirtyOutputClasses().filter { packagePartMap.isPackagePart(JvmClassName.byInternalName(it)) }
-        KotlinBuilder.LOG.debug("Obsolete package parts: ${obsoletePackageParts}")
-        return obsoletePackageParts
+        return emptyList()
+//        val obsoletePackageParts =
+//                dirtyOutputClassesMap.getDirtyOutputClasses().filter { packagePartMap.isPackagePart(JvmClassName.byInternalName(it)) }
+//        KotlinBuilder.LOG.debug("Obsolete package parts: ${obsoletePackageParts}")
+//        return obsoletePackageParts
     }
 
     override fun getPackagePartData(fqName: String): JvmPackagePartProto? {
