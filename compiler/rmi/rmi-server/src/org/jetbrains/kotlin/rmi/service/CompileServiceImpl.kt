@@ -27,12 +27,15 @@ import java.io.PrintStream
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
+import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
 import kotlin.concurrent.read
 import kotlin.concurrent.write
+import kotlin.concurrent.schedule
 
+val DAEMON_SHUTDOWN_DELAY_MS = 1000L
 
 fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
 
@@ -46,7 +49,7 @@ class CompileServiceImpl(
         val selfCompilerId: CompilerId,
         val daemonOptions: DaemonOptions,
         port: Int
-) : CompileService, UnicastRemoteObject() {
+) : CompileService {
 
     // RMI-exposed API
 
@@ -60,6 +63,14 @@ class CompileServiceImpl(
             alive = false
             UnicastRemoteObject.unexportObject(this, true)
             log.info("Shutdown complete")
+            if (System.getProperty(COMPILE_DAEMON_FORCE_SHUTDOWN_PROPERTY) != null) {
+                // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
+                // the watcher is a daemon thread, meaning it should not prevent JVM to exit normally
+                Timer(true).schedule(DAEMON_SHUTDOWN_DELAY_MS) {
+                    log.info("force JVM shutdown")
+                    System.exit(0)
+                }
+            }
         }
     }
 
