@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
@@ -43,6 +42,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.name.*;
@@ -241,13 +241,23 @@ public class JetTypeMapper {
         if (parentDeclaration instanceof PackageFragmentDescriptor) {
             containingClassesInfo = getPackageMemberContainingClassesInfo(deserializedDescriptor);
         } else {
-            containingClassesInfo = ContainingClassesInfo.forClassMemberOrNull(
-                    InlineCodegenUtil.getContainerClassId(deserializedDescriptor));
+            ClassId classId = getContainerClassIdForClassDescriptor((ClassDescriptor) parentDeclaration);
+            containingClassesInfo = ContainingClassesInfo.forClassMemberOrNull(classId);
         }
         if (containingClassesInfo == null) {
             throw new IllegalStateException("Couldn't find container for " + deserializedDescriptor.getName());
         }
         return containingClassesInfo;
+    }
+
+    private static ClassId getContainerClassIdForClassDescriptor(ClassDescriptor classDescriptor) {
+        ClassId classId = DescriptorUtilsKt.getClassId(classDescriptor);
+        if (isInterface(classDescriptor)) {
+            FqName relativeClassName = classId.getRelativeClassName();
+            //TODO test nested trait fun inlining
+            classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX));
+        }
+        return classId;
     }
 
     @Nullable

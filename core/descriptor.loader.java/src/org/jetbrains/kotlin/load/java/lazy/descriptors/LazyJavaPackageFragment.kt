@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.ClassId
@@ -57,8 +58,6 @@ class LazyJavaPackageFragment(
     override fun toString() = "lazy java package fragment: $fqName"
 
     override fun getSource(): SourceElement {
-        // TODO source element for a bunch of Kotlin binary classes containing members of the same package
-        val representativeClass = kotlinBinaryClasses.firstOrNull() ?: return SourceElement.NO_SOURCE
-        return KotlinJvmBinarySourceElement(representativeClass)
+        return KotlinJvmBinaryPackageSourceElement(jPackage, kotlinBinaryClasses)
     }
 }

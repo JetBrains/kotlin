@@ -769,9 +769,9 @@ public class InlineCodegen extends CallGenerator {
         if (incrementalCompilationComponents == null || targetId == null) return;
 
         IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
-        String sourceFile = InlineCodegenUtilsKt.getClassFilePath(sourceDescriptor, incrementalCache);
-        String targetFile = InlineCodegenUtilsKt.getSourceFilePath(targetDescriptor);
-        incrementalCache.registerInline(sourceFile, jvmSignature.toString(), targetFile);
+        String classFilePath = InlineCodegenUtilsKt.getClassFilePath(sourceDescriptor, typeMapper, incrementalCache);
+        String sourceFilePath = InlineCodegenUtilsKt.getSourceFilePath(targetDescriptor);
+        incrementalCache.registerInline(classFilePath, jvmSignature.toString(), sourceFilePath);
     }
 
     @Override

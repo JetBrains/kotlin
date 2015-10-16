@@ -520,21 +520,6 @@ public class IncrementalCacheImpl(
                 value.dumpMap { java.lang.Long.toHexString(it) }
     }
 
-    private inner class PackagePartMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
-        public fun addPackagePart(className: JvmClassName) {
-            storage[className.internalName] = true
-        }
-
-        public fun remove(className: JvmClassName) {
-            storage.remove(className.internalName)
-        }
-
-        public fun isPackagePart(className: JvmClassName): Boolean =
-                className.internalName in storage
-
-        override fun dumpValue(value: Boolean) = ""
-    }
-
     private inner class MultifileClassFacadeMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
         public fun add(facadeName: JvmClassName, partNames: List<String>) {
             storage[facadeName.internalName] = partNames

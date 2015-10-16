@@ -16,13 +16,19 @@
 
 package org.jetbrains.kotlin.load.java.descriptors
 
+import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaStaticClassScope
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.types.JetType
 
 fun copyValueParameters(
@@ -60,3 +66,22 @@ fun ClassDescriptor.getParentJavaStaticClassScope(): LazyJavaStaticClassScope? {
 
     return staticScope
 }
+
+fun DeserializedCallableMemberDescriptor.getImplClassName(): Name? =
+        getImplClassName(this.proto, this.nameResolver)
+
+fun getImplClassName(proto: MessageLite, nameResolver: NameResolver): Name? =
+        when (proto) {
+            is ProtoBuf.Constructor ->
+                null
+            is ProtoBuf.Function ->
+                if (proto.hasExtension(JvmProtoBuf.methodImplClassName))
+                    proto.getExtension(JvmProtoBuf.methodImplClassName)
+                else null
+            is ProtoBuf.Property ->
+                if (proto.hasExtension(JvmProtoBuf.propertyImplClassName))
+                    proto.getExtension(JvmProtoBuf.propertyImplClassName)
+                else null
+            else ->
+                error("Unknown message: $proto")
+        }?.let { nameResolver.getName(it) }

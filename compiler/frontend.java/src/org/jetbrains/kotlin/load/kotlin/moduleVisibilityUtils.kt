@@ -46,14 +46,21 @@ public fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescripto
     if (outDirectory == null || packageFragment !is LazyJavaPackageFragment) return false
 
     val source = getSourceElement(descriptor)
-    if (source is KotlinJvmBinarySourceElement) {
-        val binaryClass = source.binaryClass
-        if (binaryClass is VirtualFileKotlinClass) {
-            val file = binaryClass.file
-            if (file.fileSystem.protocol == StandardFileSystems.FILE_PROTOCOL) {
-                val ioFile = VfsUtilCore.virtualToIoFile(file)
-                return ioFile.absolutePath.startsWith(outDirectory.absolutePath + File.separator);
-            }
+
+    val binaryClass = when (source) {
+        is KotlinJvmBinarySourceElement ->
+            source.binaryClass
+        is KotlinJvmBinaryPackageSourceElement ->
+            source.getRepresentativeBinaryClass()
+        else ->
+            null
+    }
+
+    if (binaryClass is VirtualFileKotlinClass) {
+        val file = binaryClass.file
+        if (file.fileSystem.protocol == StandardFileSystems.FILE_PROTOCOL) {
+            val ioFile = VfsUtilCore.virtualToIoFile(file)
+            return ioFile.absolutePath.startsWith(outDirectory.absolutePath + File.separator);
         }
     }
 

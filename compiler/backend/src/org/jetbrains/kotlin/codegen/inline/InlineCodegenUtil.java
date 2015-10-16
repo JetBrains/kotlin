@@ -164,26 +164,6 @@ public class InlineCodegenUtil {
         return fileFinder.findVirtualFileWithHeader(new ClassId(packageFqName, Name.identifier(classNameWithDollars)));
     }
 
-    //TODO: navigate to inner classes
-    @Nullable
-    public static ClassId getContainerClassId(@NotNull DeclarationDescriptor referencedDescriptor) {
-        ClassOrPackageFragmentDescriptor
-                containerDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, ClassOrPackageFragmentDescriptor.class, false);
-        if (containerDescriptor instanceof PackageFragmentDescriptor) {
-            return PackageClassUtils.getPackageClassId(getFqName(containerDescriptor).toSafe());
-        }
-        if (containerDescriptor instanceof ClassDescriptor) {
-            ClassId classId = DescriptorUtilsKt.getClassId((ClassDescriptor) containerDescriptor);
-            if (isInterface(containerDescriptor)) {
-                FqName relativeClassName = classId.getRelativeClassName();
-                //TODO test nested trait fun inlining
-                classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX));
-            }
-            return classId;
-        }
-        return null;
-    }
-
     public static String getInlineName(
             @NotNull CodegenContext codegenContext,
             @NotNull JetTypeMapper typeMapper,
