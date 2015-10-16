@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.ANNOTATION_MODIFIERS_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
@@ -347,7 +345,7 @@ internal class DescriptorRendererImpl(
             // See AnnotationResolver.resolveAndAppendAnnotationsFromModifiers for clarification
             // This hack can be removed when modifiers will be resolved without annotations
 
-            val sortedAnnotations = annotated.getAnnotations().getAllAnnotations().sortedBy { p -> p.annotation.isBuiltinModifier() }
+            val sortedAnnotations = annotated.getAnnotations().getAllAnnotations()
             for ((annotation, target) in sortedAnnotations) {
                 val annotationClass = annotation.getType().getConstructor().getDeclarationDescriptor() as ClassDescriptor
 
@@ -359,9 +357,6 @@ internal class DescriptorRendererImpl(
 
         builder.append(annotationsBuilder)
     }
-
-    private fun AnnotationDescriptor.isBuiltinModifier()
-            = (type.constructor.declarationDescriptor as ClassDescriptor).fqNameSafe in ANNOTATION_MODIFIERS_FQ_NAMES
 
     override fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget?): String {
         return StringBuilder {

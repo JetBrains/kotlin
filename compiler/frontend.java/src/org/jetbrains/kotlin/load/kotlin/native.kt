@@ -16,22 +16,21 @@
 
 package org.jetbrains.kotlin.load.kotlin.nativeDeclarations
 
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DeclarationChecker
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
-import org.jetbrains.kotlin.resolve.diagnostics.SuppressDiagnosticsByAnnotations
+import org.jetbrains.kotlin.resolve.DeclarationChecker
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
+import org.jetbrains.kotlin.resolve.diagnostics.SuppressDiagnosticsByAnnotations
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 private val NATIVE_ANNOTATION_CLASS_NAME = FqName("kotlin.jvm.native")
 private val EXTERNAL_ANNOTATION_CLASS_NAME = FqName("kotlin.external")
@@ -66,7 +65,7 @@ public class NativeFunChecker : DeclarationChecker {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY.on(declaration))
         }
 
-        if (descriptor.hasInlineAnnotation()) {
+        if (InlineUtil.isInline(descriptor)) {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_INLINED.on(declaration))
         }
 

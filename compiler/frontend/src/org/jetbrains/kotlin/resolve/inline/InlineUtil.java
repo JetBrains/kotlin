@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -31,14 +30,16 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.constants.EnumValue;
-
-import static kotlin.CollectionsKt.firstOrNull;
 
 public class InlineUtil {
     public static boolean isInlineLambdaParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {
-        return !KotlinBuiltIns.isNoinline(valueParameterOrReceiver) &&
+        boolean isNoinlineParameter = false;
+
+        if (valueParameterOrReceiver instanceof ValueParameterDescriptor) {
+            isNoinlineParameter = ((ValueParameterDescriptor) valueParameterOrReceiver).isNoinline();
+        }
+
+        return !isNoinlineParameter &&
                KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(valueParameterOrReceiver.getOriginal().getType());
     }
 
@@ -48,20 +49,12 @@ public class InlineUtil {
 
     @NotNull
     public static InlineStrategy getInlineStrategy(@NotNull DeclarationDescriptor descriptor) {
-        AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.inline);
-        if (annotation == null) {
-            return InlineStrategy.NOT_INLINE;
-        }
-        ConstantValue<?> argument = firstOrNull(annotation.getAllValueArguments().values());
-        if (argument == null) {
+        if (descriptor instanceof FunctionDescriptor &&
+            ((FunctionDescriptor) descriptor).isInline()) {
             return InlineStrategy.AS_FUNCTION;
         }
-        assert argument instanceof EnumValue : "Inline annotation parameter should be enum entry but was: " + argument;
-        return InlineStrategy.valueOf(((EnumValue) argument).getValue().getName().asString());
-    }
 
-    public static boolean hasOnlyLocalReturn(@NotNull ValueParameterDescriptor descriptor) {
-        return descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.crossinline) != null;
+        return InlineStrategy.NOT_INLINE;
     }
 
     public static boolean checkNonLocalReturnUsage(
@@ -141,7 +134,7 @@ public class InlineUtil {
 
     public static boolean allowsNonLocalReturns(@NotNull CallableDescriptor lambda) {
         if (lambda instanceof ValueParameterDescriptor) {
-            if (hasOnlyLocalReturn((ValueParameterDescriptor) lambda)) {
+            if (((ValueParameterDescriptor) lambda).isCrossinline()) {
                 //annotated
                 return false;
             }

@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
@@ -41,7 +41,7 @@ public class LocalFunInlineChecker : DeclarationChecker {
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext) {
-        if (descriptor.hasInlineAnnotation() &&
+        if (InlineUtil.isInline(descriptor) &&
             declaration is JetNamedFunction &&
             descriptor is FunctionDescriptor &&
             descriptor.getVisibility() == Visibilities.LOCAL) {
@@ -217,9 +217,10 @@ public class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
     ) {
         if (descriptor.hasIntrinsicAnnotation()) return
 
-        if (descriptor is CallableDescriptor && !descriptor.hasInlineAnnotation()) {
+        if (descriptor is CallableDescriptor && !InlineUtil.isInline(descriptor)) {
             checkTypeParameterDescriptorsAreNotReified(descriptor.getTypeParameters(), diagnosticHolder)
         }
+
         if (descriptor is ClassDescriptor) {
             checkTypeParameterDescriptorsAreNotReified(descriptor.getTypeConstructor().getParameters(), diagnosticHolder)
         }

@@ -170,7 +170,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         });
 
         if (modifierList != null) {
-            LazyAnnotations classAnnotations = new LazyAnnotations(
+            this.annotations = new LazyAnnotations(
                     new LazyAnnotationsContext(
                             c.getAnnotationResolver(),
                             storageManager,
@@ -183,9 +183,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                         }
                     },
                     modifierList.getAnnotationEntries()
-            );
-            this.annotations = c.getAnnotationResolver().resolveAndAppendAnnotationsFromModifiers(
-                    classAnnotations, modifierList
             );
         }
         else {

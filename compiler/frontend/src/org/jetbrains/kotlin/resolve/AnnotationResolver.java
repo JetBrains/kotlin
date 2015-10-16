@@ -18,14 +18,10 @@ package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -55,19 +51,14 @@ public class AnnotationResolver {
     @NotNull private TypeResolver typeResolver;
     @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
 
-    @NotNull private final List<AnnotationDescriptor> modifiersAnnotations;
-
     public AnnotationResolver(
             @NotNull CallResolver callResolver,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
-            @NotNull StorageManager storageManager,
-            @NotNull KotlinBuiltIns kotlinBuiltIns
+            @NotNull StorageManager storageManager
     ) {
         this.callResolver = callResolver;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.storageManager = storageManager;
-
-        modifiersAnnotations = AnnotationUtilKt.buildMigrationAnnotationDescriptors(kotlinBuiltIns);
     }
 
 
@@ -124,30 +115,7 @@ public class AnnotationResolver {
         }
 
         List<JetAnnotationEntry> annotationEntryElements = modifierList.getAnnotationEntries();
-
-        return resolveAndAppendAnnotationsFromModifiers(
-                resolveAnnotationEntries(scope, annotationEntryElements, trace, shouldResolveArguments),
-                modifierList
-        );
-    }
-
-    @NotNull
-    public Annotations resolveAndAppendAnnotationsFromModifiers(
-            @NotNull Annotations annotations,
-            @NotNull JetModifierList modifierList
-    ) {
-        List<AnnotationDescriptor> annotationFromModifiers = new ArrayList<AnnotationDescriptor>();
-
-        for (int i = 0; i < JetTokens.ANNOTATION_MODIFIERS_KEYWORDS_ARRAY.length; i++) {
-            JetModifierKeywordToken modifier = JetTokens.ANNOTATION_MODIFIERS_KEYWORDS_ARRAY[i];
-            if (modifierList.hasModifier(modifier)) {
-                annotationFromModifiers.add(modifiersAnnotations.get(i));
-            }
-        }
-
-        if (annotationFromModifiers.isEmpty()) return annotations;
-
-        return new CompositeAnnotations(annotations, new AnnotationsImpl(annotationFromModifiers));
+        return resolveAnnotationEntries(scope, annotationEntryElements, trace, shouldResolveArguments);
     }
 
     private Annotations resolveAnnotationEntries(

@@ -216,11 +216,6 @@ public interface JetTokens {
                     CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD
             };
 
-    // Please synchronize this array with org.jetbrains.kotlin.descriptors.annotations.ANNOTATION_MODIFIERS_FQ_NAMES
-    JetModifierKeywordToken[] ANNOTATION_MODIFIERS_KEYWORDS_ARRAY = new JetModifierKeywordToken[] {
-            INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, CROSSINLINE_KEYWORD
-    };
-
     TokenSet MODIFIER_KEYWORDS = TokenSet.create(MODIFIER_KEYWORDS_ARRAY);
 
     TokenSet VISIBILITY_MODIFIERS = TokenSet.create(PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD);
