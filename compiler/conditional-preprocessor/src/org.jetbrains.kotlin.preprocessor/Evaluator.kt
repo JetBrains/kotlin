@@ -18,22 +18,22 @@ package org.jetbrains.kotlin.preprocessor
 
 interface Evaluator : (List<Conditional>) -> Boolean
 
-abstract class PlatformEvaluator : Evaluator {
-    final override fun invoke(conditions: List<Conditional>): Boolean = evaluate(conditions.filterIsInstance())
+interface PlatformEvaluator : Evaluator {
+    override fun invoke(conditions: List<Conditional>): Boolean = evaluate(conditions.filterIsInstance())
 
     open fun evaluate(conditions: List<Conditional.PlatformVersion>): Boolean
             = conditions.isEmpty() || conditions.any { match(it) }
 
-    abstract fun match(platformCondition: Conditional.PlatformVersion): Boolean
+    fun match(platformCondition: Conditional.PlatformVersion): Boolean
 }
 
-data class JvmPlatformEvaluator(val version: Int): PlatformEvaluator() {
+data class JvmPlatformEvaluator(val version: Int): PlatformEvaluator {
     override fun match(platformCondition: Conditional.PlatformVersion)
             = platformCondition is Conditional.JvmVersion && version in platformCondition.versionRange
     override fun toString() = "platform: JVM$version"
 }
 
-data class JsPlatformEvaluator(val ecmaScriptVersion: Int = 5): PlatformEvaluator() {
+data class JsPlatformEvaluator(val ecmaScriptVersion: Int = 5): PlatformEvaluator {
     override fun match(platformCondition: Conditional.PlatformVersion)
             = platformCondition is Conditional.JsVersion
     override fun toString() = "platform: JS"

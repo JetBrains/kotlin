@@ -34,7 +34,7 @@ interface Conditional {
         })
     }
 
-    data class JsVersion(): PlatformVersion {
+    data class JsVersion(val version: Int = 5): PlatformVersion {
         companion object : Parser("JsVersion", parse = { JsVersion() })
     }
 

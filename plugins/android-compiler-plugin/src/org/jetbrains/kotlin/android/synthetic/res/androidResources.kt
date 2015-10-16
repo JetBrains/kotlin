@@ -18,7 +18,12 @@ package org.jetbrains.kotlin.android.synthetic.res
 
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 
-public data class AndroidModuleInfo(val applicationPackage: String, resDirectories: List<String>) {
+public class AndroidModuleInfo(val applicationPackage: String, resDirectories: List<String>) {
+
+    override fun equals(other: Any?) = other is AndroidModuleInfo && applicationPackage == other.applicationPackage
+
+    override fun hashCode() = applicationPackage.hashCode()
+
     val resDirectories = resDirectories.sorted()
 }
 

@@ -675,9 +675,14 @@ data class ChangesInfo(
 
 public fun BuildDataPaths.getKotlinCacheVersion(target: BuildTarget<*>): CacheFormatVersion = CacheFormatVersion(getTargetDataRoot(target))
 
-private data class KotlinIncrementalStorageProvider(
+private class KotlinIncrementalStorageProvider(
         private val target: ModuleBuildTarget
 ) : StorageProvider<IncrementalCacheImpl>() {
+
+    override fun equals(other: Any?) = other is KotlinIncrementalStorageProvider && target == other.target
+
+    override fun hashCode() = target.hashCode()
+
     override fun createStorage(targetDataDir: File): IncrementalCacheImpl =
             IncrementalCacheImpl(targetDataDir, target)
 }

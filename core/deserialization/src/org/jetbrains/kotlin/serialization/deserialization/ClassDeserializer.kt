@@ -62,8 +62,10 @@ public class ClassDeserializer(private val components: DeserializationComponents
         return DeserializedClassDescriptor(outerContext, classProto, nameResolver, sourceElement)
     }
 
-    private data class ClassKey(val classId: ClassId, classDataWithSource: ClassDataWithSource?) {
-        // This property is not declared in the constructor because it shouldn't participate in equals/hashCode
-        val classDataWithSource: ClassDataWithSource? = classDataWithSource
+    private class ClassKey(val classId: ClassId, val classDataWithSource: ClassDataWithSource?) {
+        // classDataWithSource *intentionally* not used in equals() / hashCode()
+        override fun equals(other: Any?) = other is ClassKey && classId == other.classId
+
+        override fun hashCode() = classId.hashCode()
     }
 }
