@@ -3,7 +3,7 @@ import java.util.HashMap
 import kotlinApi.KotlinClass
 
 internal class X {
-    fun get(index: Int): Int {
+    operator fun get(index: Int): Int {
         return 0
     }
 }
@@ -14,7 +14,7 @@ internal class C {
     }
 
     fun foo(x: X): Int {
-        return x.get(0)
+        return x[0]
     }
 
     fun foo(kotlinClass: KotlinClass): Int {

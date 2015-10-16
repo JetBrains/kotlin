@@ -60,6 +60,7 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(IfNullToElvisIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(ReplaceGetIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(AddOperatorModifierIntention()) { applyTo(it) }
 
         registerDiagnosticBasedProcessing<JetBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
             val expression = RemoveRightPartOfBinaryExpressionFix(element, "").invoke()

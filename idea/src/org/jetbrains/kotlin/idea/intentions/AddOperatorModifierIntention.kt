@@ -40,6 +40,10 @@ class AddOperatorModifierIntention : JetSelfTargetingRangeIntention<JetNamedFunc
     }
 
     override fun applyTo(element: JetNamedFunction, editor: Editor) {
+        applyTo(element)
+    }
+
+    fun applyTo(element: JetNamedFunction) {
         element.addModifier(JetTokens.OPERATOR_KEYWORD)
     }
 }
