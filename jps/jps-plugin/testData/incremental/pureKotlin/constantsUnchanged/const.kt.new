@@ -1,9 +1,9 @@
 package test
 
-val CONST = "foo"
+const val CONST = "foo"
 
 class Klass {
     companion object {
-        val CONST = "bar"
+        const val CONST = "bar"
     }
 }

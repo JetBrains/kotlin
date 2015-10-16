@@ -1,5 +1,5 @@
 package test
 
 object Object {
-    val CONST = "new"
+    const val CONST = "new"
 }
