@@ -11710,6 +11710,9 @@ public final class ProtoBuf {
      *MemberKind
      *isOperator
      *isInfix
+     *isInline
+     *isTailrec
+     *isExternal
      * </pre>
      */
     boolean hasFlags();
@@ -11724,6 +11727,9 @@ public final class ProtoBuf {
      *MemberKind
      *isOperator
      *isInfix
+     *isInline
+     *isTailrec
+     *isExternal
      * </pre>
      */
     int getFlags();
@@ -11983,6 +11989,9 @@ public final class ProtoBuf {
      *MemberKind
      *isOperator
      *isInfix
+     *isInline
+     *isTailrec
+     *isExternal
      * </pre>
      */
     public boolean hasFlags() {
@@ -11999,6 +12008,9 @@ public final class ProtoBuf {
      *MemberKind
      *isOperator
      *isInfix
+     *isInline
+     *isTailrec
+     *isExternal
      * </pre>
      */
     public int getFlags() {
@@ -12604,6 +12616,9 @@ public final class ProtoBuf {
        *MemberKind
        *isOperator
        *isInfix
+       *isInline
+       *isTailrec
+       *isExternal
        * </pre>
        */
       public boolean hasFlags() {
@@ -12620,6 +12635,9 @@ public final class ProtoBuf {
        *MemberKind
        *isOperator
        *isInfix
+       *isInline
+       *isTailrec
+       *isExternal
        * </pre>
        */
       public int getFlags() {
@@ -12636,6 +12654,9 @@ public final class ProtoBuf {
        *MemberKind
        *isOperator
        *isInfix
+       *isInline
+       *isTailrec
+       *isExternal
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -12655,6 +12676,9 @@ public final class ProtoBuf {
        *MemberKind
        *isOperator
        *isInfix
+       *isInline
+       *isTailrec
+       *isExternal
        * </pre>
        */
       public Builder clearFlags() {
@@ -13334,6 +13358,7 @@ public final class ProtoBuf {
      *Visibility
      *Modality
      *isNotDefault
+     *isExternal
      * </pre>
      */
     boolean hasGetterFlags();
@@ -13346,6 +13371,7 @@ public final class ProtoBuf {
      *Visibility
      *Modality
      *isNotDefault
+     *isExternal
      * </pre>
      */
     int getGetterFlags();
@@ -13698,6 +13724,7 @@ public final class ProtoBuf {
      *Visibility
      *Modality
      *isNotDefault
+     *isExternal
      * </pre>
      */
     public boolean hasGetterFlags() {
@@ -13712,6 +13739,7 @@ public final class ProtoBuf {
      *Visibility
      *Modality
      *isNotDefault
+     *isExternal
      * </pre>
      */
     public int getGetterFlags() {
@@ -14656,6 +14684,7 @@ public final class ProtoBuf {
        *Visibility
        *Modality
        *isNotDefault
+       *isExternal
        * </pre>
        */
       public boolean hasGetterFlags() {
@@ -14670,6 +14699,7 @@ public final class ProtoBuf {
        *Visibility
        *Modality
        *isNotDefault
+       *isExternal
        * </pre>
        */
       public int getGetterFlags() {
@@ -14684,6 +14714,7 @@ public final class ProtoBuf {
        *Visibility
        *Modality
        *isNotDefault
+       *isExternal
        * </pre>
        */
       public Builder setGetterFlags(int value) {
@@ -14701,6 +14732,7 @@ public final class ProtoBuf {
        *Visibility
        *Modality
        *isNotDefault
+       *isExternal
        * </pre>
        */
       public Builder clearGetterFlags() {
@@ -14766,6 +14798,8 @@ public final class ProtoBuf {
      *
      *declaresDefault
      *hasAnnotations
+     *isCrossinline
+     *isNoinline
      * </pre>
      */
     boolean hasFlags();
@@ -14776,6 +14810,8 @@ public final class ProtoBuf {
      *
      *declaresDefault
      *hasAnnotations
+     *isCrossinline
+     *isNoinline
      * </pre>
      */
     int getFlags();
@@ -14956,6 +14992,8 @@ public final class ProtoBuf {
      *
      *declaresDefault
      *hasAnnotations
+     *isCrossinline
+     *isNoinline
      * </pre>
      */
     public boolean hasFlags() {
@@ -14968,6 +15006,8 @@ public final class ProtoBuf {
      *
      *declaresDefault
      *hasAnnotations
+     *isCrossinline
+     *isNoinline
      * </pre>
      */
     public int getFlags() {
@@ -15378,6 +15418,8 @@ public final class ProtoBuf {
        *
        *declaresDefault
        *hasAnnotations
+       *isCrossinline
+       *isNoinline
        * </pre>
        */
       public boolean hasFlags() {
@@ -15390,6 +15432,8 @@ public final class ProtoBuf {
        *
        *declaresDefault
        *hasAnnotations
+       *isCrossinline
+       *isNoinline
        * </pre>
        */
       public int getFlags() {
@@ -15402,6 +15446,8 @@ public final class ProtoBuf {
        *
        *declaresDefault
        *hasAnnotations
+       *isCrossinline
+       *isNoinline
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -15417,6 +15463,8 @@ public final class ProtoBuf {
        *
        *declaresDefault
        *hasAnnotations
+       *isCrossinline
+       *isNoinline
        * </pre>
        */
       public Builder clearFlags() {

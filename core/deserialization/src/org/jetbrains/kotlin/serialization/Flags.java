@@ -52,6 +52,9 @@ public class Flags {
 
     public static final BooleanFlagField IS_OPERATOR = FlagField.booleanAfter(MEMBER_KIND);
     public static final BooleanFlagField IS_INFIX = FlagField.booleanAfter(IS_OPERATOR);
+    public static final BooleanFlagField IS_INLINE = FlagField.booleanAfter(IS_INFIX);
+    public static final BooleanFlagField IS_TAILREC = FlagField.booleanAfter(IS_INLINE);
+    public static final BooleanFlagField IS_EXTERNAL_FUNCTION = FlagField.booleanAfter(IS_TAILREC);
 
     // Properties
 
@@ -65,11 +68,14 @@ public class Flags {
     // Parameters
 
     public static final BooleanFlagField DECLARES_DEFAULT_VALUE = FlagField.booleanAfter(HAS_ANNOTATIONS);
+    public static final BooleanFlagField IS_CROSSINLINE = FlagField.booleanAfter(DECLARES_DEFAULT_VALUE);
+    public static final BooleanFlagField IS_NOINLINE = FlagField.booleanAfter(IS_CROSSINLINE);
 
     // Accessors
 
     // It's important that this flag is negated: "is NOT default" instead of "is default"
     public static final BooleanFlagField IS_NOT_DEFAULT = FlagField.booleanAfter(MODALITY);
+    public static final BooleanFlagField IS_EXTERNAL_ACCESSOR = FlagField.booleanAfter(IS_NOT_DEFAULT);
 
     // ---
 
