@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
-import org.jetbrains.kotlin.idea.inspections.ModifierFixFactory
+import org.jetbrains.kotlin.idea.inspections.AddModifierFixFactory
 import org.jetbrains.kotlin.idea.intentions.IntroduceBackingPropertyFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
@@ -326,8 +326,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         BACKING_FIELD_USAGE_FORBIDDEN.registerFactory(MigrateBackingFieldUsageFix)
         BACKING_FIELD_USAGE_FORBIDDEN.registerFactory(IntroduceBackingPropertyFix)
 
-        OPERATOR_MODIFIER_REQUIRED.registerFactory(ModifierFixFactory(JetTokens.OPERATOR_KEYWORD))
-        INFIX_MODIFIER_REQUIRED.registerFactory(ModifierFixFactory(JetTokens.INFIX_KEYWORD))
+        OPERATOR_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(JetTokens.OPERATOR_KEYWORD))
+        INFIX_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(JetTokens.INFIX_KEYWORD))
 
         UNDERSCORE_IS_DEPRECATED.registerFactory(RenameUnderscoreFix)
 

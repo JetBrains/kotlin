@@ -65,11 +65,3 @@ public class OperatorModifierInspection : AbstractKotlinInspection() {
     }
 }
 
-class ModifierFixFactory(val token: JetModifierKeywordToken) : JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val functionDescriptor = (diagnostic as? DiagnosticWithParameters2<*, *, *>)?.a as? FunctionDescriptor ?: return null
-        val target = DescriptorToSourceUtilsIde.getAnyDeclaration(diagnostic.psiFile.project, functionDescriptor)
-                as? JetModifierListOwner ?: return null
-        return object : AddModifierFix(target, token), CleanupFix {}
-    }
-}
