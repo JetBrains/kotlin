@@ -69,7 +69,11 @@ object BuiltinSpecialBridgesUtil {
 
         val bridgesToGenerate = reachableDeclarations.mapTo(LinkedHashSet<Signature>(), signatureByDescriptor)
         bridgesToGenerate.remove(overriddenBuiltinSignature)
-        bridgesToGenerate.remove(methodItself)
+
+        val superImplementationDescriptor = findSuperImplementationForStubDelegation(function, fake)
+        if (superImplementationDescriptor != null || !fake) {
+            bridgesToGenerate.remove(methodItself)
+        }
 
         if (fake) {
             for (overridden in function.overriddenDescriptors.map { it.original }) {
@@ -80,17 +84,23 @@ object BuiltinSpecialBridgesUtil {
         }
 
         val bridges: MutableSet<BridgeForBuiltinSpecial<Signature>> =
-                (bridgesToGenerate.map { BridgeForBuiltinSpecial(it, methodItself) } + specialBridge.singletonOrEmptyList()).toMutableSet()
+                (bridgesToGenerate.map { BridgeForBuiltinSpecial(it, overriddenBuiltinSignature) } + specialBridge.singletonOrEmptyList()).toMutableSet()
 
-        if (function.modality == Modality.OPEN && fake) {
-            val implementation = findConcreteSuperDeclaration(DescriptorBasedFunctionHandle(function)).descriptor
-            if (!DescriptorUtils.isInterface(implementation.containingDeclaration)) {
-                bridges.add(BridgeForBuiltinSpecial(methodItself, signatureByDescriptor(implementation), isDelegateToSuper = true))
-            }
+        if (superImplementationDescriptor != null) {
+            bridges.add(BridgeForBuiltinSpecial(methodItself, signatureByDescriptor(superImplementationDescriptor), isDelegateToSuper = true))
         }
 
         return bridges
     }
+}
+
+
+private fun findSuperImplementationForStubDelegation(function: FunctionDescriptor, fake: Boolean): FunctionDescriptor? {
+    if (function.modality != Modality.OPEN || !fake) return null
+    val implementation = findConcreteSuperDeclaration(DescriptorBasedFunctionHandle(function)).descriptor
+    if (DescriptorUtils.isInterface(implementation.containingDeclaration)) return null
+
+    return implementation
 }
 
 private fun findAllReachableDeclarations(functionDescriptor: FunctionDescriptor): MutableSet<FunctionDescriptor> =

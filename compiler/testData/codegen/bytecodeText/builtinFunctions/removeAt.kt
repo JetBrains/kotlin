@@ -90,27 +90,18 @@ fun box(
 }
 
 /*
-9 public final bridge remove\(I\)  -> Bridges for removeAt from A1-A10, but no in A9 (interface)
-7 public synthetic bridge remove\(I\)Ljava/lang/Object; -> Synthetic bridges from A2-A7 + A10. None for A9 (interface) and A8 (inherited from ArrayList)
-16 INVOKEVIRTUAL A[0-9]+.removeAt \(I\) -> calls in bridges
-1 public remove\(Ljava/lang/Integer;\)Z -> implementation in A10
-3 public abstract removeAt\(I\) -> A4, A6, A7
+9 INVOKEVIRTUAL A[0-9]+.removeAt \(I\) -> calls in bridges with signature `public final bridge remove\(I\)`
+16 INVOKEVIRTUAL A[0-9]+\.remove \(I\) -> calls to A1-A9.removeAt + 7 calls from `public synthetic bridge remove\(I\)Ljava/lang/Object;`
 1 INVOKEINTERFACE A9\.remove \(I\) -> call A9.removeAt
 1 INVOKEINTERFACE A9\.remove \(Ljava/lang/Object;\) -> call A9.remove
-9 INVOKEVIRTUAL A[0-9]+\.remove \(I\) -> calls to A1-A9.removeAt
+2 INVOKEVIRTUAL A10\.remove \(I\) -> one call in function and one from `public synthetic bridge remove(I)Ljava/lang/Object;` bridge in A10
 */
 
-// 9 public final bridge remove\(I\)
-// 7 public synthetic bridge remove\(I\)Ljava/lang/Object;
-// 1 public remove\(Ljava/lang/Integer;\)Z
-// 3 public abstract removeAt\(I\)
-// 16 INVOKEVIRTUAL A[0-9]+.removeAt \(I\)
+// 9 INVOKEVIRTUAL A[0-9]+.removeAt \(I\)
+// 16 INVOKEVIRTUAL A[0-9]+\.remove \(I\)
 // 1 INVOKEINTERFACE A9\.remove \(I\)
 // 1 INVOKEINTERFACE A9\.remove \(Ljava/lang/Object;\)
-// 9 INVOKEVIRTUAL A[0-9]+\.remove \(I\)
-// 1 INVOKEVIRTUAL A10\.remove \(I\)
-// 9 INVOKEVIRTUAL A[0-9]+\.remove \(I\)
-// 1 INVOKEVIRTUAL A10\.remove \(I\)
+// 2 INVOKEVIRTUAL A10\.remove \(I\)
 // 2 INVOKEINTERFACE java\/util\/List.remove \(I\)
 // 2 INVOKEINTERFACE java\/util\/List.remove \(Ljava/lang/Object;\)
 
