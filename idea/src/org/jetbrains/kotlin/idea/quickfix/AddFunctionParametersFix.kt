@@ -131,7 +131,7 @@ public class AddFunctionParametersFix(
     private fun getNewParameterInfo(
             functionDescriptor: FunctionDescriptor,
             argument: ValueArgument,
-            validator: Function1<String, Boolean>
+            validator: (String) -> Boolean
     ): JetParameterInfo {
         val name = getNewArgumentName(argument, validator)
         val expression = argument.getArgumentExpression()

@@ -259,7 +259,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
         private val LOG = Logger.getInstance(JetPsiChecker::class.java)
 
-        private val checkedQuickFixClasses = HashSet<Class<*>>()
+        private val checkedQuickFixClasses = Collections.synchronizedSet(HashSet<Class<*>>())
 
         private fun check(quickFixClass: Class<*>) {
             if (!checkedQuickFixClasses.add(quickFixClass)) return

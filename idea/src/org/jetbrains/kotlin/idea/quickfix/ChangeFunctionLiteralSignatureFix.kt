@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.types.JetType
 
-class ChangeFunctionLiteralSignatureFix(
+class ChangeFunctionLiteralSignatureFix private constructor(
         functionLiteral: JetFunctionLiteral,
         functionDescriptor: FunctionDescriptor,
         private val parameterTypes: List<JetType>

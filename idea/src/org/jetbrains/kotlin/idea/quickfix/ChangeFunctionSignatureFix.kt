@@ -88,19 +88,17 @@ abstract class ChangeFunctionSignatureFix(
             return Data(element, descriptor)
         }
 
-        override fun createFix(data: Data) = createFix(data.callElement, data.callElement, data.descriptor)
+        override fun createFix(data: Data) = createFix(data.callElement, data.descriptor)
 
-        private fun createFix(callElement: JetCallElement, context: PsiElement, descriptor: CallableDescriptor): ChangeFunctionSignatureFix? {
-            val functionDescriptor = when (descriptor) {
-                is FunctionDescriptor -> descriptor as FunctionDescriptor
-                else -> if (descriptor is ValueParameterDescriptor) descriptor.containingDeclaration as? FunctionDescriptor
-                else null
-            } ?: return null
+        private fun createFix(callElement: JetCallElement, descriptor: CallableDescriptor): ChangeFunctionSignatureFix? {
+            val functionDescriptor = descriptor as? FunctionDescriptor
+                    ?: (descriptor as? ValueParameterDescriptor)?.containingDeclaration as? FunctionDescriptor
+                    ?: return null
 
             if (functionDescriptor.kind == SYNTHESIZED) return null
 
             if (descriptor is ValueParameterDescriptor) {
-                return RemoveParameterFix(context, functionDescriptor, descriptor)
+                return RemoveParameterFix(callElement, functionDescriptor, descriptor)
             }
             else {
                 val parameters = functionDescriptor.valueParameters
@@ -111,8 +109,7 @@ abstract class ChangeFunctionSignatureFix(
                     val call = callElement.getCall(bindingContext) ?: return null
                     val argumentToParameter = call.mapArgumentsToParameters(functionDescriptor)
                     val hasTypeMismatches = argumentToParameter.any {
-                        val argument = it.key
-                        val parameter = it.value
+                        val (argument, parameter) = it
                         val argumentType = argument.getArgumentExpression()?.let { bindingContext.getType(it) }
                         argumentType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)
                     }
