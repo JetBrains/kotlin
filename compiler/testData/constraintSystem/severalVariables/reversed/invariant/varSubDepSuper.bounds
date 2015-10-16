@@ -14,6 +14,7 @@ status:
 -hasErrorInConstrainingTypes: false
 -hasParameterConstraintError: false
 -hasTypeInferenceIncorporationError: false
+-hasTypeParameterWithUnsatisfiedOnlyInputTypesError: false
 -hasUnknownParameters: true
 -hasViolatedUpperBound: false
 -isSuccessful: false
