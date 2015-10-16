@@ -465,7 +465,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
     }
 
     @NotNull
-    public static ClsFileImpl createFakeClsFile(
+    private static ClsFileImpl createFakeClsFile(
             @NotNull Project project,
             @NotNull final FqName packageFqName,
             @NotNull Collection<JetFile> files,

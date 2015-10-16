@@ -19,14 +19,12 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
-import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.light.LightClass
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
-import com.intellij.psi.stubs.PsiClassHolderFileStub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValuesManager
@@ -185,13 +183,7 @@ public open class KotlinLightClassForExplicitDeclaration(
         val virtualFile = classOrObject.containingFile.virtualFile
         assert(virtualFile != null) { "No virtual file for " + classOrObject.text }
 
-        object : ClsFileImpl(ClassFileViewProvider(getManager(), virtualFile)) {
-            override fun getPackageName(): String {
-                return classOrObject.getContainingJetFile().packageFqName.asString()
-            }
-
-            override fun getStub(): PsiClassHolderFileStub<PsiJavaFile> = getJavaFileStub()
-
+        object : FakeFileForLightClass(classOrObject.getContainingJetFile().packageFqName, virtualFile, myManager, this, { getJavaFileStub() }) {
             override fun processDeclarations(
                     processor: PsiScopeProcessor,
                     state: ResolveState,
@@ -243,8 +235,6 @@ public open class KotlinLightClassForExplicitDeclaration(
     }
 
     override fun getParent(): PsiElement? = _parent
-
-    override fun getContext(): PsiElement? = getParent()
 
     private val _typeParameterList: PsiTypeParameterList by lazy {
         LightClassUtil.buildLightTypeParameterList(this, classOrObject)
