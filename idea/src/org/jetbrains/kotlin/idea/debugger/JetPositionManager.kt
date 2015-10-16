@@ -41,8 +41,10 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.fileClasses.getFileClassInternalName
+import org.jetbrains.kotlin.fileClasses.getInternalName
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
@@ -52,6 +54,7 @@ import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -205,8 +208,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         if (psiFile is ClsFileImpl) {
             val decompiledPsiFile = runReadAction { psiFile.decompiledPsiFile }
             if (decompiledPsiFile is JetClsFile && sourcePosition.line == -1) {
-                // TODO get className from decompiledPsiFile (JetClsFile < JetFile)
-                val className = PackageClassUtils.getPackageClassInternalName(decompiledPsiFile.packageFqName)
+                val className = JvmFileClassUtil.getFileClassInfoNoResolve(decompiledPsiFile).fileClassFqName.getInternalName()
                 return myDebugProcess.virtualMachineProxy.classesByName(className)
             }
         }
