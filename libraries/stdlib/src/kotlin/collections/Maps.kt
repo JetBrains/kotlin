@@ -105,18 +105,24 @@ public operator fun <K,V> Map<K,V>.contains(key : K) : Boolean = containsKey(key
 
 /**
  * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
+
+ * Allows to overcome type-safety restriction of `get` that requires to pass a key of type `Key`.
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <K, V> Map<K, V>.getRaw(key: Any?): V? = (this as Map<Any?, V>).get(key)
 
 /**
  * Returns `true` if the map contains the specified [key].
+ *
+ * Allows to overcome type-safety restriction of `containsKey` that requires to pass a key of type `Key`.
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <K> Map<K, *>.containsKeyRaw(key: Any?): Boolean = (this as Map<Any?, *>).containsKey(key)
 
 /**
  * Returns `true` if the map maps one or more keys to the specified [value].
+ *
+ * Allows to overcome type-safety restriction of `containsValue` that requires to pass a value of type `V`.
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <K> Map<K, *>.containsValueRaw(value: Any?): Boolean = (this as Map<K, Any?>).containsValue(value)

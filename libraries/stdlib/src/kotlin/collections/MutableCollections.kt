@@ -5,6 +5,8 @@ package kotlin
 
 /**
  * Checks if all elements in the specified collection are contained in this collection.
+ *
+ * Allows to overcome type-safety restriction of `containsAll` that requires to pass a collection of type `Collection<E>`.
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Collection<*>.containsAllRaw(collection: Collection<Any?>): Boolean = (this as Collection<Any?>).containsAll(collection)
@@ -13,6 +15,8 @@ public inline fun Collection<*>.containsAllRaw(collection: Collection<Any?>): Bo
  * Removes a single instance of the specified element from this
  * collection, if it is present.
  *
+ * Allows to overcome type-safety restriction of `remove` that requires to pass an element of type `E`.
+ *
  * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
  */
 @Suppress("NOTHING_TO_INLINE")
@@ -20,6 +24,8 @@ public inline fun <E> MutableCollection<E>.removeRaw(element: Any?): Boolean = (
 
 /**
  * Removes all of this collection's elements that are also contained in the specified collection.
+
+ * Allows to overcome type-safety restriction of `removeAll` that requires to pass a collection of type `Collection<E>`.
  *
  * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
  */
@@ -28,6 +34,8 @@ public inline fun <E> MutableCollection<E>.removeAllRaw(collection: Collection<A
 
 /**
  * Retains only the elements in this collection that are contained in the specified collection.
+ *
+ * Allows to overcome type-safety restriction of `retailAll` that requires to pass a collection of type `Collection<E>`.
  *
  * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
  */

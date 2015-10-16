@@ -27,7 +27,12 @@ fun elements(): List<GenericFunction> {
 
     templates add f("containsRaw(element: Any?)") {
         only(Iterables, Sequences, ArraysOfObjects)
-        doc { "Returns `true` if [element] is found in the collection." }
+        doc {
+            """
+            Returns `true` if [element] is found in the collection.
+            Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
+            """
+        }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
         annotations("""@Suppress("NOTHING_TO_INLINE")""")
@@ -84,7 +89,12 @@ fun elements(): List<GenericFunction> {
 
     templates add f("indexOfRaw(element: Any?)") {
         only(Iterables, Sequences, ArraysOfObjects, Lists)
-        doc { "Returns first index of [element], or -1 if the collection does not contain element." }
+        doc {
+            """
+            Returns first index of [element], or -1 if the collection does not contain element.
+            Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
+            """
+        }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
         annotations("""@Suppress("NOTHING_TO_INLINE")""")
@@ -143,7 +153,12 @@ fun elements(): List<GenericFunction> {
 
     templates add f("lastIndexOfRaw(element: Any?)") {
         only(Iterables, Sequences, ArraysOfObjects, Lists)
-        doc { "Returns last index of [element], or -1 if the collection does not contain element." }
+        doc {
+            """
+            Returns last index of [element], or -1 if the collection does not contain element.
+            Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
+            """
+        }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
         annotations("""@Suppress("NOTHING_TO_INLINE")""")

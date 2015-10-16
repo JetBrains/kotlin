@@ -63,6 +63,7 @@ public operator fun <T> Iterable<T>.contains(element: T): Boolean {
 
 /**
  * Returns `true` if [element] is found in the collection.
+ * Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Iterable<*>.containsRaw(element: Any?): Boolean {
@@ -312,6 +313,7 @@ public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
+ * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Iterable<*>.indexOfRaw(element: Any?): Int {
@@ -320,6 +322,7 @@ public inline fun Iterable<*>.indexOfRaw(element: Any?): Int {
 
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
+ * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> List<T>.indexOfRaw(element: Any?): Int {
@@ -408,6 +411,7 @@ public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
 
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
+ * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Iterable<*>.lastIndexOfRaw(element: Any?): Int {
@@ -416,6 +420,7 @@ public inline fun Iterable<*>.lastIndexOfRaw(element: Any?): Int {
 
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
+ * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> List<T>.lastIndexOfRaw(element: Any?): Int {
