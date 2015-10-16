@@ -29,7 +29,7 @@ class A3 {
 //value-parameter val y: kotlin.Int defined in A2.<init>
 //public final class A3 defined in root package
 //public constructor A3() defined in A3
-//public companion object defined in A3
+//public companion object B defined in A3
 //private constructor B(prop: kotlin.Int) defined in A3.B
 //value-parameter val prop: kotlin.Int defined in A3.B.<init>
 //public constructor B() defined in A3.B
