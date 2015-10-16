@@ -19,22 +19,14 @@ package org.jetbrains.kotlin.idea.completion.handlers
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.renderer.render
 
 open class BaseDeclarationInsertHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        val name = (item.getObject() as? DeclarationLookupObject)?.name
-        if (name != null) {
-            val nameInCode = name.render()
-            val document = context.getDocument()
-            val needEscaping = nameInCode != name.asString()
-            // we check that text inserted matches the name because something else can be inserted by custom insert handler
-            if (needEscaping && document.getText(TextRange(context.getStartOffset(), context.getTailOffset())) == name.asString()) {
-                document.replaceString(context.getStartOffset(), context.getTailOffset(), nameInCode)
-            }
+        val name = (item.`object` as? DeclarationLookupObject)?.name
+        if (name != null && !name.isSpecial) {
+            context.document.replaceString(context.startOffset, context.tailOffset, name.render())
         }
     }
 }

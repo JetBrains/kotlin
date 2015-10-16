@@ -269,6 +269,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("ConcreteJavaClass2.kt")
+    public void testConcreteJavaClass2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/ConcreteJavaClass2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ConcreteKClass.kt")
     public void testConcreteKClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/ConcreteKClass.kt");

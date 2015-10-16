@@ -26,10 +26,8 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 
-object CastReceiverInsertHandler : KotlinCallableInsertHandler() {
-    override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        super.handleInsert(context, item)
-
+object CastReceiverInsertHandler {
+    fun postHandleInsert(context: InsertionContext, item: LookupElement) {
         val expression = PsiTreeUtil.findElementOfClassAtOffset(context.getFile(), context.getStartOffset(), javaClass<JetSimpleNameExpression>(), false)
         val qualifiedExpression = PsiTreeUtil.getParentOfType(expression, javaClass<JetQualifiedExpression>(), true)
         if (qualifiedExpression != null) {
