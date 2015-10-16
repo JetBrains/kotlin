@@ -1077,6 +1077,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.inspections.AddOperatorModifierIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithInspection"
                      displayName="Add 'replaceWith' argument to 'deprecated' annotation"
                      groupName="Kotlin"
@@ -1233,7 +1238,7 @@
                      level="WARNING"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OperatorModifierInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.AddOperatorModifierInspection"
                      displayName="Missing 'operator' modifier"
                      groupName="Kotlin"
                      language="kotlin"

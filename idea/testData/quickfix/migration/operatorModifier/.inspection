@@ -1,1 +1,1 @@
-org.jetbrains.kotlin.idea.inspections.OperatorModifierInspection
+org.jetbrains.kotlin.idea.inspections.AddOperatorModifierInspection
