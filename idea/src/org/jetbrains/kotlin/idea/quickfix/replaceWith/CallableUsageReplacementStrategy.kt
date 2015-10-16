@@ -559,8 +559,8 @@ private fun restoreFunctionLiteralArguments(expression: JetExpression) {
     callExpressions.forEach { it.moveFunctionLiteralOutsideParentheses() }
 }
 
-private fun <T: Any> PsiElement.get(key: Key<T>): T? = getCopyableUserData(key)
-private fun PsiElement.get(key: Key<Unit>): Boolean = getCopyableUserData(key) != null
+internal fun <T: Any> PsiElement.get(key: Key<T>): T? = getCopyableUserData(key)
+internal fun PsiElement.get(key: Key<Unit>): Boolean = getCopyableUserData(key) != null
 private fun <T: Any> JetElement.clear(key: Key<T>) = putCopyableUserData(key, null)
 private fun <T: Any> JetElement.put(key: Key<T>, value: T) = putCopyableUserData(key, value)
 private fun JetElement.mark(key: Key<Unit>) = putCopyableUserData(key, Unit)
