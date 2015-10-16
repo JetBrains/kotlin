@@ -9,7 +9,7 @@ import java.util.*;
 
 abstract class B<T> : MutableList<T>, AbstractList<T>() {
     override fun removeAt(index: Int): T = null!!
-    override fun remove(o: T): Boolean = null!!
+    override fun remove(element: T): Boolean = null!!
 }
 
 fun main(a: A<String>, b: B<String>, c: ArrayList<String>) {

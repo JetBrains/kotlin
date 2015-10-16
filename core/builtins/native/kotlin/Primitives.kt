@@ -430,11 +430,11 @@ public class Int private () : Number, Comparable<Int> {
     public operator fun rangeTo(other: Double): DoubleRange
 
     /** Shifts this value left by [bits]. */
-    public infix fun shl(bits: Int): Int
+    public infix fun shl(bitCount: Int): Int
     /** Shifts this value right by [bits], filling the leftmost bits with copies of the sign bit. */
-    public infix fun shr(bits: Int): Int
+    public infix fun shr(bitCount: Int): Int
     /** Shifts this value right by [bits], filling the leftmost bits with zeros. */
-    public infix fun ushr(bits: Int): Int
+    public infix fun ushr(bitCount: Int): Int
     /** Performs a bitwise AND operation between the two values. */
     public infix fun and(other: Int): Int
     /** Performs a bitwise OR operation between the two values. */
@@ -585,11 +585,11 @@ public class Long private () : Number, Comparable<Long> {
     public operator fun rangeTo(other: Double): DoubleRange
 
     /** Shifts this value left by [bits]. */
-    public infix fun shl(bits: Int): Long
+    public infix fun shl(bitCount: Int): Long
     /** Shifts this value right by [bits], filling the leftmost bits with copies of the sign bit. */
-    public infix fun shr(bits: Int): Long
+    public infix fun shr(bitCount: Int): Long
     /** Shifts this value right by [bits], filling the leftmost bits with zeros. */
-    public infix fun ushr(bits: Int): Long
+    public infix fun ushr(bitCount: Int): Long
     /** Performs a bitwise AND operation between the two values. */
     public infix fun and(other: Long): Long
     /** Performs a bitwise OR operation between the two values. */

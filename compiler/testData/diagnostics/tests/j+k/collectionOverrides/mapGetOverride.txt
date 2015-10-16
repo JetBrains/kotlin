@@ -19,7 +19,7 @@ public abstract class MyMap : java.util.AbstractMap<kotlin.Double!, kotlin.CharS
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.Double!, /*1*/ value: kotlin.CharSequence!): kotlin.CharSequence?
-    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ m: kotlin.Map<out kotlin.Double!, kotlin.CharSequence!>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.Map<out kotlin.Double!, kotlin.CharSequence!>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.Double!): kotlin.CharSequence?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
