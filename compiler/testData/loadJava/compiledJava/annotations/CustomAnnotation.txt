@@ -17,8 +17,9 @@ public interface CustomAnnotation {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.CustomAnnotation.MyEnum!): kotlin.Int
 
         // Static members
+        public final /*synthesized*/ val values: kotlin.Array<test.CustomAnnotation.MyEnum>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.CustomAnnotation.MyEnum
-        public final /*synthesized*/ fun values(): kotlin.Array<test.CustomAnnotation.MyEnum>
+        @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<test.CustomAnnotation.MyEnum>
     }
 
     @test.CustomAnnotation.MyAnnotation(value = MyEnum.ONE) public open class MyTest {

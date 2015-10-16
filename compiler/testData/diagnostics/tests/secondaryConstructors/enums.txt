@@ -25,8 +25,9 @@ public final enum class A : kotlin.Enum<A> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val values: kotlin.Array<A>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): A
-    public final /*synthesized*/ fun values(): kotlin.Array<A>
+    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<A>
 }
 
 public final enum class B : kotlin.Enum<B> {
@@ -51,8 +52,9 @@ public final enum class B : kotlin.Enum<B> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val values: kotlin.Array<B>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): B
-    public final /*synthesized*/ fun values(): kotlin.Array<B>
+    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<B>
 }
 
 public final enum class C : kotlin.Enum<C> {
@@ -68,8 +70,9 @@ public final enum class C : kotlin.Enum<C> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val values: kotlin.Array<C>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): C
-    public final /*synthesized*/ fun values(): kotlin.Array<C>
+    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<C>
 }
 
 public final enum class D : kotlin.Enum<D> {
@@ -93,6 +96,7 @@ public final enum class D : kotlin.Enum<D> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val values: kotlin.Array<D>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): D
-    public final /*synthesized*/ fun values(): kotlin.Array<D>
+    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<D>
 }

@@ -15,7 +15,8 @@ package bug {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val values: kotlin.Array<bug.Foo<T>>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): bug.Foo<T>
-        public final /*synthesized*/ fun values(): kotlin.Array<bug.Foo<T>>
+        @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<bug.Foo<T>>
     }
 }

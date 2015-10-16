@@ -16,8 +16,9 @@ public final enum class EnumImplementingTraitWithFun : kotlin.Enum<EnumImplement
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val values: kotlin.Array<EnumImplementingTraitWithFun>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumImplementingTraitWithFun
-    public final /*synthesized*/ fun values(): kotlin.Array<EnumImplementingTraitWithFun>
+    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<EnumImplementingTraitWithFun>
 }
 
 public final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImplementingTraitWithVal>, T2 {
@@ -36,8 +37,9 @@ public final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImplement
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val values: kotlin.Array<EnumImplementingTraitWithVal>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumImplementingTraitWithVal
-    public final /*synthesized*/ fun values(): kotlin.Array<EnumImplementingTraitWithVal>
+    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<EnumImplementingTraitWithVal>
 }
 
 public interface T1 {
