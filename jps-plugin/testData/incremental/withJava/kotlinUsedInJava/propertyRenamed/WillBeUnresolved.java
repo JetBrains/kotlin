@@ -1,5 +1,5 @@
 class WillBeUnresolved {
     void main() {
-        test.TestPackage.getProp();
+        test.PropKt.getProp();
     }
 }

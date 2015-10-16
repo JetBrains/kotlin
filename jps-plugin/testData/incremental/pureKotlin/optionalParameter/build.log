@@ -1,7 +1,6 @@
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
 out/production/module/test/OtherKt.class
-out/production/module/test/TestPackage.class
 End of files
 Compiling files:
 src/other.kt

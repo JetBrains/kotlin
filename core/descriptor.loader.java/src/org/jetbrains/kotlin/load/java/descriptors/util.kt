@@ -67,10 +67,10 @@ fun ClassDescriptor.getParentJavaStaticClassScope(): LazyJavaStaticClassScope? {
     return staticScope
 }
 
-fun DeserializedCallableMemberDescriptor.getImplClassName(): Name? =
-        getImplClassName(this.proto, this.nameResolver)
+fun DeserializedCallableMemberDescriptor.getImplClassNameForDeserialized(): Name? =
+        getImplClassNameForProto(this.proto, this.nameResolver)
 
-fun getImplClassName(proto: MessageLite, nameResolver: NameResolver): Name? =
+fun getImplClassNameForProto(proto: MessageLite, nameResolver: NameResolver): Name? =
         when (proto) {
             is ProtoBuf.Constructor ->
                 null

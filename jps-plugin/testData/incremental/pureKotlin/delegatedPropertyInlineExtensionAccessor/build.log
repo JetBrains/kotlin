@@ -1,7 +1,6 @@
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
 out/production/module/inline/InlineGetKt.class
-out/production/module/inline/InlinePackage.class
 End of files
 Compiling files:
 src/inlineGet.kt
@@ -20,7 +19,6 @@ End of files
 
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
-out/production/module/inline/InlinePackage.class
 out/production/module/inline/InlineSetKt.class
 End of files
 Compiling files:

@@ -20,7 +20,8 @@ import com.google.protobuf.MessageLite
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.getImplClassName
+import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
+import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForProto
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
@@ -71,11 +72,11 @@ public object JvmFileClassUtil {
 
     @JvmStatic
     public fun getImplClassName(callable: DeserializedCallableMemberDescriptor): Name? =
-            callable.getImplClassName()
+            callable.getImplClassNameForDeserialized()
 
     @JvmStatic
     public fun getImplClassName(proto: MessageLite, nameResolver: NameResolver): Name? =
-            getImplClassName(proto, nameResolver)
+            getImplClassNameForProto(proto, nameResolver)
 
     @JvmStatic
     public fun getHiddenPartFqName(file: JetFile, jvmFileClassAnnotations: ParsedJmvFileClassAnnotations): FqName =

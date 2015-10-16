@@ -1,7 +1,6 @@
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
 out/production/module/test/PropKt.class
-out/production/module/test/TestPackage.class
 End of files
 Compiling files:
 src/prop.kt
@@ -15,4 +14,4 @@ End of files
 COMPILATION FAILED
 cannot find symbol
 symbol  : method getProp()
-location: class test.TestPackage
+location: class test.PropKt
