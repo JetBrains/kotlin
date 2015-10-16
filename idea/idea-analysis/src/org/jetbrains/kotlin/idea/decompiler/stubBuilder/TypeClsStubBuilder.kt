@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
@@ -162,8 +163,13 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             )
             val varargElementType = valueParameterProto.varargElementType(c.typeTable)
             val typeProto = varargElementType ?: valueParameterProto.type(c.typeTable)
-            val modifierList =
-                    if (varargElementType != null) createModifierListStub(parameterStub, listOf(JetTokens.VARARG_KEYWORD)) else null
+            val modifiers = arrayListOf<JetModifierKeywordToken>()
+
+            if (varargElementType != null) { modifiers.add(JetTokens.VARARG_KEYWORD) }
+            if (Flags.IS_CROSSINLINE.get(valueParameterProto.flags)) { modifiers.add(JetTokens.CROSSINLINE_KEYWORD) }
+            if (Flags.IS_NOINLINE.get(valueParameterProto.flags)) { modifiers.add(JetTokens.NOINLINE_KEYWORD) }
+
+            val modifierList = createModifierListStub(parameterStub, modifiers)
             val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
                     container, callableProto, callableProto.annotatedCallableKind, index, valueParameterProto
             )

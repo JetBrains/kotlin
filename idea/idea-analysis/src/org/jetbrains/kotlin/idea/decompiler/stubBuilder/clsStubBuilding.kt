@@ -209,6 +209,24 @@ enum class FlagsToModifiers {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
             return if (Flags.IS_DATA.get(flags)) JetTokens.DATA_KEYWORD else null
         }
+    },
+
+    EXTERNAL_FUN {
+        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
+            return if (Flags.IS_EXTERNAL_FUNCTION.get(flags)) JetTokens.EXTERNAL_KEYWORD else null
+        }
+    },
+
+    INLINE {
+        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
+            return if (Flags.IS_INLINE.get(flags)) JetTokens.INLINE_KEYWORD else null
+        }
+    },
+
+    TAILREC {
+        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
+            return if (Flags.IS_TAILREC.get(flags)) JetTokens.TAILREC_KEYWORD else null
+        }
     };
 
     abstract fun getModifiers(flags: Int): JetModifierKeywordToken?
