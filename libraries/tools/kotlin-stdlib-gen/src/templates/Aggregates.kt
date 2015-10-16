@@ -95,8 +95,8 @@ fun aggregates(): List<GenericFunction> {
             return count
             """
         }
-        doc(Strings) { "Returns the length of this string."}
-        body(Strings) {
+        doc(CharSequences) { "Returns the length of this char sequence."}
+        body(CharSequences) {
             "return length()"
         }
         body(Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) {
@@ -107,7 +107,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("sumBy(transform: (T) -> Int)") {
         inline(true)
         doc { "Returns the sum of all values produced by [transform] function from elements in the collection." }
-        doc(Strings) { "Returns the sum of all values produced by [transform] function from characters in the string." }
+        doc(CharSequences) { "Returns the sum of all values produced by [transform] function from characters in the char sequence." }
         returns("Int")
         body {
             """
@@ -123,7 +123,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("sumByDouble(transform: (T) -> Double)") {
         inline(true)
         doc { "Returns the sum of all values produced by [transform] function from elements in the collection." }
-        doc(Strings) { "Returns the sum of all values produced by [transform] function from characters in the string." }
+        doc(CharSequences) { "Returns the sum of all values produced by [transform] function from characters in the char sequence." }
         returns("Double")
         body {
             """
@@ -360,7 +360,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("foldRight(initial: R, operation: (T, R) -> R)") {
         inline(true)
 
-        only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
         doc { "Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value." }
         typeParam("R")
         returns("R")
@@ -422,7 +422,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("reduceRight(operation: (T, T) -> T)") {
         inline(true)
 
-        only(Strings, ArraysOfPrimitives)
+        only(CharSequences, ArraysOfPrimitives)
         doc { "Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value." }
         returns("T")
         body {

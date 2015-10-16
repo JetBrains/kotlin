@@ -32,7 +32,7 @@ fun strings(): List<GenericFunction> {
             return buffer
             """
         }
-        exclude(Strings)
+        exclude(CharSequences)
         body(ArraysOfPrimitives) {
             """
             buffer.append(prefix)
@@ -61,7 +61,7 @@ fun strings(): List<GenericFunction> {
             """
         }
 
-        exclude(Strings)
+        exclude(CharSequences)
         returns("String")
         body {
             """

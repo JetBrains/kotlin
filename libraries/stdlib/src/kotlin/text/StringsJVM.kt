@@ -298,7 +298,7 @@ public fun String.intern(): String = (this as java.lang.String).intern()
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
  */
-public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
+public fun CharSequence.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
 
 /**
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
@@ -385,13 +385,6 @@ public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.S
  * Encodes the contents of this string using the specified character set and returns the resulting byte array.
  */
 public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
-
-/**
- * Returns a subsequence of this sequence specified by given [range].
- */
-public fun CharSequence.slice(range: IntRange): CharSequence {
-    return subSequence(range.start, range.end + 1) // inclusive
-}
 
 /**
  * Converts the string into a regular expression [Pattern] optionally

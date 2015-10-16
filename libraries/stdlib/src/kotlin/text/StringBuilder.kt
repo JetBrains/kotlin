@@ -40,3 +40,10 @@ public fun StringBuilder.append(vararg value: Any?): StringBuilder {
         append(item)
     return this
 }
+
+public operator fun StringBuilder.set(index: Int, ch: Char): Unit = this.setCharAt(index, ch)
+
+public var StringBuilder.length : Int
+    get() = this.length()
+    set(value) = this.setLength(value)
+

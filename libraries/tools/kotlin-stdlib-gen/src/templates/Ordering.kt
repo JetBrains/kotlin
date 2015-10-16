@@ -39,6 +39,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
+        include(Strings)
         doc(Strings) { "Returns a string with characters in reversed order." }
         returns(Strings) { "SELF" }
         body(Strings) {
@@ -48,7 +49,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        exclude(Sequences)
+        exclude(Sequences, CharSequences)
     }
 
     templates add f("reversedArray()") {
@@ -78,7 +79,7 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sorted()") {
-        exclude(Strings)
+        exclude(CharSequences)
         exclude(PrimitiveType.Boolean)
 
         doc {
@@ -130,7 +131,7 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedDescending()") {
-        exclude(Strings)
+        exclude(CharSequences)
         exclude(PrimitiveType.Boolean)
 
         doc {
@@ -188,7 +189,7 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedWith(comparator: Comparator<in T>)") {
-        exclude(Strings)
+        exclude(CharSequences)
         returns("List<T>")
         doc {
             """
@@ -235,7 +236,7 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedBy(crossinline selector: (T) -> R?)") {
-        exclude(Strings)
+        exclude(CharSequences)
         inline(true)
         returns("List<T>")
         typeParam("R : Comparable<R>")
@@ -257,7 +258,7 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedByDescending(crossinline selector: (T) -> R?)") {
-        exclude(Strings)
+        exclude(CharSequences)
         inline(true)
         returns("List<T>")
         typeParam("R : Comparable<R>")

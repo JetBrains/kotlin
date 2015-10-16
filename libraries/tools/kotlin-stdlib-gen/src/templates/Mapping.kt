@@ -35,7 +35,7 @@ fun mapping(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives) {
             "return mapIndexedTo(ArrayList<R>(size()), transform)"
         }
-        body(Strings) {
+        body(CharSequences) {
             "return mapIndexedTo(ArrayList<R>(length()), transform)"
         }
         inline(false, Sequences)
@@ -58,7 +58,7 @@ fun mapping(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives, Maps) {
             "return mapTo(ArrayList<R>(size()), transform)"
         }
-        body(Strings) {
+        body(CharSequences) {
             "return mapTo(ArrayList<R>(length()), transform)"
         }
 
@@ -73,7 +73,7 @@ fun mapping(): List<GenericFunction> {
 
     templates add f("mapNotNull(transform: (T) -> R)") {
         inline(true)
-        exclude(Strings, ArraysOfPrimitives)
+        exclude(CharSequences, ArraysOfPrimitives)
         doc { "Returns a list containing the results of applying the given [transform] function to each non-null element of the original collection." }
         deprecate(Deprecation("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().map {} instead.", replaceWith = "filterNotNull().map(transform)"))
         typeParam("T : Any")
@@ -145,7 +145,7 @@ fun mapping(): List<GenericFunction> {
 
     templates add f("mapNotNullTo(destination: C, transform: (T) -> R)") {
         inline(true)
-        exclude(Strings, ArraysOfPrimitives)
+        exclude(CharSequences, ArraysOfPrimitives)
         doc {
             """
             Appends transformed non-null elements of original collection using the given [transform] function

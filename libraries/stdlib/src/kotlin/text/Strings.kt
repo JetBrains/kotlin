@@ -131,39 +131,39 @@ public fun String.padEnd(length: Int, padChar: Char = ' '): String {
     return sb.toString()
 }
 
-/** Returns `true` if the string is not `null` and not empty */
+/** Returns `true` if the char sequence is not `null` and not empty */
 @Deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.", ReplaceWith("this != null && this.isNotEmpty()"))
 @kotlin.jvm.JvmName("isNotEmptyNullable")
-public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
+public fun CharSequence?.isNotEmpty(): Boolean = this != null && this.length() > 0
 
 /**
- * Returns `true` if this nullable string is either `null` or empty.
+ * Returns `true` if this nullable char sequence is either `null` or empty.
  */
-public fun String?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
+public fun CharSequence?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
 
 /**
- * Returns `true` if this string is empty (contains no characters).
+ * Returns `true` if this char sequence is empty (contains no characters).
  */
-public fun String.isEmpty(): Boolean = length() == 0
+public fun CharSequence.isEmpty(): Boolean = length() == 0
 
 /**
- * Returns `true` if this string is not empty.
+ * Returns `true` if this char sequence is not empty.
  */
-public fun String.isNotEmpty(): Boolean = length() > 0
+public fun CharSequence.isNotEmpty(): Boolean = length() > 0
 
 // implemented differently in JVM and JS
 //public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
 
 
 /**
- * Returns `true` if this string is not empty and contains some characters except of whitespace characters.
+ * Returns `true` if this char sequence is not empty and contains some characters except of whitespace characters.
  */
-public fun String.isNotBlank(): Boolean = !isBlank()
+public fun CharSequence.isNotBlank(): Boolean = !isBlank()
 
 /**
- * Returns `true` if this nullable string is either `null` or empty or consists solely of whitespace characters.
+ * Returns `true` if this nullable char sequence is either `null` or empty or consists solely of whitespace characters.
  */
-public fun String?.isNullOrBlank(): Boolean = this == null || this.isBlank()
+public fun CharSequence?.isNullOrBlank(): Boolean = this == null || this.isBlank()
 
 /**
  * Iterator for characters of given CharSequence.
@@ -180,15 +180,15 @@ public operator fun CharSequence.iterator(): CharIterator = object : CharIterato
 public fun String?.orEmpty(): String = this ?: ""
 
 /**
- * Returns the range of valid character indices for this string.
+ * Returns the range of valid character indices for this char sequence.
  */
-public val String.indices: IntRange
+public val CharSequence.indices: IntRange
     get() = 0..length() - 1
 
 /**
- * Returns the index of the last character in the String or -1 if the String is empty.
+ * Returns the index of the last character in the char sequence or -1 if it is empty.
  */
-public val String.lastIndex: Int
+public val CharSequence.lastIndex: Int
     get() = this.length() - 1
 
 /**
@@ -210,20 +210,19 @@ public fun CharSequence.hasSurrogatePairAt(index: Int): Boolean {
 }
 
 /**
- * Returns a subsequence obtained by taking the characters at the given [indices] in this sequence.
- */
-public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
-    val sb = StringBuilder()
-    for (i in indices) {
-        sb.append(get(i))
-    }
-    return sb.toString()
-}
-
-/**
  * Returns a substring specified by the given [range].
  */
 public fun String.substring(range: IntRange): String = substring(range.start, range.end + 1)
+
+/**
+ * Returns a sub sequence specified by the given [range].
+ */
+public fun CharSequence.subSequence(range: IntRange): CharSequence = subSequence(range.start, range.end + 1)
+
+/**
+ * Returns a sub sequence specified by the given [range].
+ */
+public fun CharSequence.subSequence(start: Int): CharSequence = subSequence(start, this.length())
 
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
@@ -524,15 +523,15 @@ public fun String.matches(regex: Regex): Boolean = regex.matches(this)
 
 
 /**
- * Returns `true` if this string starts with the specified character.
+ * Returns `true` if this char sequence starts with the specified character.
  */
-public fun String.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
+public fun CharSequence.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[0].equals(char, ignoreCase)
 
 /**
- * Returns `true` if this string ends with the specified character.
+ * Returns `true` if this char sequence ends with the specified character.
  */
-public fun String.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
+public fun CharSequence.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[lastIndex].equals(char, ignoreCase)
 
 

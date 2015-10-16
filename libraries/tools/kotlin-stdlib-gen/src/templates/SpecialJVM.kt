@@ -145,7 +145,7 @@ fun specialJVM(): List<GenericFunction> {
         typeParam("C : MutableCollection<in R>")
         typeParam("R")
         returns("C")
-        exclude(ArraysOfPrimitives, Strings)
+        exclude(ArraysOfPrimitives, CharSequences)
         body {
             """
             for (element in this) if (klass.isInstance(element)) destination.add(element as R)
@@ -164,7 +164,7 @@ fun specialJVM(): List<GenericFunction> {
             return filterIsInstanceTo(ArrayList<R>(), klass)
             """
         }
-        exclude(ArraysOfPrimitives, Strings)
+        exclude(ArraysOfPrimitives, CharSequences)
 
         doc(Sequences) { "Returns a sequence containing all elements that are instances of specified class." }
         returns(Sequences) { "Sequence<R>" }
@@ -182,7 +182,7 @@ fun specialJVM(): List<GenericFunction> {
         inline(true)
         receiverAsterisk(true)
         returns("C")
-        exclude(ArraysOfPrimitives, Strings)
+        exclude(ArraysOfPrimitives, CharSequences)
         body {
             """
             for (element in this) if (element is R) destination.add(element)
@@ -202,7 +202,7 @@ fun specialJVM(): List<GenericFunction> {
             return filterIsInstanceTo(ArrayList<R>())
             """
         }
-        exclude(ArraysOfPrimitives, Strings)
+        exclude(ArraysOfPrimitives, CharSequences)
 
         doc(Sequences) { "Returns a sequence containing all elements that are instances of specified type parameter R." }
         returns(Sequences) { "Sequence<R>" }

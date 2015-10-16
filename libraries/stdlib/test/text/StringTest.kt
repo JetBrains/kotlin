@@ -123,6 +123,8 @@ class StringTest {
         // abcde
         // 01234
         assertEquals("bcd", "abcde".substring(1..3))
+        assertEquals("bcd", "abcde".subSequence(1..3).toString())
+        assertEquals("cde", "abcde".subSequence(2).toString())
         assertEquals("dcb", "abcde".slice(3 downTo 1))
         assertEquals("edab", "abcde".slice(iter))
     }

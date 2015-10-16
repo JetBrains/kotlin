@@ -19,7 +19,7 @@ fun sequences(): List<GenericFunction> {
             """
         }
 
-        body(ArraysOfObjects, ArraysOfPrimitives, Strings) {
+        body(ArraysOfObjects, ArraysOfPrimitives, CharSequences) {
             """
             if (isEmpty()) return emptySequence()
             return object : Sequence<T> {

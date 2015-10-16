@@ -6,7 +6,7 @@ fun sets(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("toMutableSet()") {
-        exclude(Strings)
+        exclude(CharSequences)
         doc { "Returns a mutable set containing all distinct elements from the given collection." }
         returns("MutableSet<T>")
         body {
@@ -35,7 +35,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("distinct()") {
-        exclude(Strings)
+        exclude(CharSequences)
         val collectionDoc = """
             Returns a list containing only distinct elements from the given collection.
 
@@ -51,7 +51,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("distinctBy(keySelector: (T) -> K)") {
-        exclude(Strings)
+        exclude(CharSequences)
         val collectionDoc = """
             Returns a list containing only distinct elements from the given collection according to the [keySelector].
 
@@ -87,7 +87,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("union(other: Iterable<T>)") {
-        exclude(Strings, Sequences)
+        exclude(CharSequences, Sequences)
         doc { "Returns a set containing all distinct elements from both collections." }
         returns("Set<T>")
         body {
@@ -100,7 +100,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("intersect(other: Iterable<T>)") {
-        exclude(Strings, Sequences)
+        exclude(CharSequences, Sequences)
         doc { "Returns a set containing all elements that are contained by both this set and the specified collection." }
         returns("Set<T>")
         body {
@@ -113,7 +113,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("subtract(other: Iterable<T>)") {
-        exclude(Strings, Sequences)
+        exclude(CharSequences, Sequences)
         doc { "Returns a set containing all elements that are contained by this set and not contained by the specified collection." }
         returns("Set<T>")
         body {
