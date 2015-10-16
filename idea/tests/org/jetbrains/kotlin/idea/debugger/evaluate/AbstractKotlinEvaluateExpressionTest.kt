@@ -223,7 +223,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     fun getExtraVars(): Set<TextWithImports> {
-        return KotlinFrameExtraVariablesProvider().collectVariables(debuggerContext!!.getSourcePosition(), evaluationContext, hashSetOf())!!
+        return KotlinFrameExtraVariablesProvider().collectVariables(debuggerContext!!.getSourcePosition(), evaluationContext!!, hashSetOf())!!
     }
 
     private inner class Printer() {
