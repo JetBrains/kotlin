@@ -1,7 +1,6 @@
 Cleaning output files:
 out/production/module1/META-INF/module1.kotlin_module
 out/production/module1/a/A.class
-out/production/module1/a/APackage.class
 out/production/module1/a/Module1_AKt.class
 End of files
 Compiling files:

@@ -25,7 +25,7 @@ import java.io.File
 class CacheFormatVersion(targetDataRoot: File) {
     companion object {
         // Change this when incremental cache format changes
-        private val INCREMENTAL_CACHE_OWN_VERSION = 6
+        private val INCREMENTAL_CACHE_OWN_VERSION = 7
 
         private val CACHE_FORMAT_VERSION =
                 INCREMENTAL_CACHE_OWN_VERSION * 1000000 +
