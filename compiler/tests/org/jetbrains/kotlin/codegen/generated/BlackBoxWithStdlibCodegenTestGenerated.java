@@ -1212,12 +1212,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("paramWithoutProperty.kt")
-            public void testParamWithoutProperty() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/copy/paramWithoutProperty.kt");
-                doTestWithStdlib(fileName);
-            }
-
             @TestMetadata("valInConstructorParams.kt")
             public void testValInConstructorParams() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/copy/valInConstructorParams.kt");
@@ -1386,12 +1380,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("alreadyDeclaredWrongSignature.kt")
             public void testAlreadyDeclaredWrongSignature() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/tostring/alreadyDeclaredWrongSignature.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("alreadyInherited.kt")
-            public void testAlreadyInherited() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/dataClasses/tostring/alreadyInherited.kt");
                 doTestWithStdlib(fileName);
             }
 

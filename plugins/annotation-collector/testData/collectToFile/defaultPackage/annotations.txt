@@ -8,5 +8,9 @@ m 2 SomeClass getAnnotatedProperty
 m 1 SomeClass annotatedFunction
 a kotlin.inline 3
 m 3 SomeClass annotatedFunction
+f 2 SomeClass arg
+m 2 SomeClass getArg
+m 2 SomeClass component1
 a org.jetbrains.annotations.NotNull 4
 m 4 SomeClass copy
+m 4 SomeClass copy$default

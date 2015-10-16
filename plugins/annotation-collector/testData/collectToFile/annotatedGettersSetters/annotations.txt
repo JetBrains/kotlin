@@ -8,4 +8,9 @@ f 2 0/SomeClass mutableProperty
 m 1 0/SomeClass getMutableProperty
 m 2 0/SomeClass getMutableProperty
 m 1 0/SomeClass setMutableProperty
+a org.jetbrains.annotations.Nullable 3
+f 3 0/SomeClass arg
+m 3 0/SomeClass getArg
+m 3 0/SomeClass component1
 m 2 0/SomeClass copy
+m 2 0/SomeClass copy$default

@@ -1033,21 +1033,9 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
             doTest(fileName);
         }
 
-        @TestMetadata("NoComponents.kt")
-        public void testNoComponents() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/NoComponents.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("OneVal.kt")
         public void testOneVal() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/OneVal.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ParamNameSameToField.kt")
-        public void testParamNameSameToField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/ParamNameSameToField.kt");
             doTest(fileName);
         }
 

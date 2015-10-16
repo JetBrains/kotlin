@@ -1,4 +1,4 @@
-data class A()
+data class A(val arg: Any? = null)
 
 fun box() : String {
   val a = A()

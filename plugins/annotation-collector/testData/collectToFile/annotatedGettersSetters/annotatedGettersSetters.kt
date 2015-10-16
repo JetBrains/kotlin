@@ -1,6 +1,6 @@
 package org.test
 
-public data class SomeClass {
+public data class SomeClass(val arg: Any? = null) {
 
     public val immutableProperty: Int = 5
         @java.lang.Deprecated get
