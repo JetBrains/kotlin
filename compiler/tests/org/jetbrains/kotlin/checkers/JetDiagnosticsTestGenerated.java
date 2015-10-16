@@ -8970,6 +8970,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("enumGetOrdinal.kt")
+            public void testEnumGetOrdinal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/enumGetOrdinal.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("fieldOverridesField.kt")
             public void testFieldOverridesField() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/fieldOverridesField.kt");

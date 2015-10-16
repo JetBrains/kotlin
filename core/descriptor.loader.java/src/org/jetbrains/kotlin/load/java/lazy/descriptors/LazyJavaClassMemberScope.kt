@@ -148,11 +148,12 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun PropertyDescriptor.findGetterOverride(): JavaMethodDescriptor? {
-        val commonProperty = findGetterByName(JvmAbi.getterName(name.asString()))
-        if (commonProperty != null) return commonProperty
+        val specialGetterName = getter?.getOverriddenBuiltinWithDifferentJvmName()?.getBuiltinSpecialPropertyGetterName()
+        if (specialGetterName != null) {
+            return findGetterByName(specialGetterName)
+        }
 
-        val specialGetterName = getter?.getOverriddenBuiltinWithDifferentJvmName()?.getBuiltinSpecialPropertyGetterName() ?: return null
-        return findGetterByName(specialGetterName)
+        return findGetterByName(JvmAbi.getterName(name.asString()))
     }
 
     private fun PropertyDescriptor.findGetterByName(getterName: String): JavaMethodDescriptor? {
