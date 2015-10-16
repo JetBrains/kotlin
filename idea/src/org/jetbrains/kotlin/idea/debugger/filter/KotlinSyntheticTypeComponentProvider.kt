@@ -30,11 +30,6 @@ public class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvide
         val typeName = typeComponent.declaringType().name()
         if (!FqNameUnsafe.isValid(typeName)) return false
 
-        if (PackageClassUtils.isPackageClassFqName(FqName(typeName)))  {
-            val lineNumber = typeComponent.location().lineNumber()
-            return lineNumber == 1
-        }
-
         return false
     }
 }

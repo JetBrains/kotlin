@@ -106,11 +106,6 @@ public object InlineTestUtil {
                         return null
                     }
 
-                    val classFqName = JvmClassName.byInternalName(className).getFqNameForClassNameWithoutDollars()
-                    if (PackageClassUtils.isPackageClassFqName(classFqName)) {
-                        return null
-                    }
-
                     return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
                         public override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
                             val methodCall = MethodInfo(owner, name, desc)
@@ -143,10 +138,10 @@ public object InlineTestUtil {
                 cr.accept(object : ClassVisitorWithName() {
 
                     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor? {
-                        val classFqName = JvmClassName.byInternalName(className).getFqNameForClassNameWithoutDollars()
+                        JvmClassName.byInternalName(className).getFqNameForClassNameWithoutDollars()
                         val declaration = MethodInfo(className, name, desc)
                         //do not check anonymous object creation in inline functions and in package facades
-                        if (PackageClassUtils.isPackageClassFqName(classFqName) || declaration in inlinedMethods) {
+                        if (declaration in inlinedMethods) {
                             return null
                         }
 

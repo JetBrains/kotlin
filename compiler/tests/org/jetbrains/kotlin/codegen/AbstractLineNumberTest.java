@@ -123,10 +123,6 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
         ClassFileFactory factory = state.getFactory();
         List<Integer> actualLineNumbers = Lists.newArrayList();
         for (OutputFile outputFile : ClassFileUtilsKt.getClassFiles(factory)) {
-            if (PackageClassUtils.isPackageClassFqName(new FqName(FileUtil.getNameWithoutExtension(outputFile.getRelativePath())))) {
-                // Don't test line numbers in *Package facade classes
-                continue;
-            }
             ClassReader cr = new ClassReader(outputFile.asByteArray());
             try {
                 List<Integer> lineNumbers = testFunInvoke ? readTestFunLineNumbers(cr) : readAllLineNumbers(cr);

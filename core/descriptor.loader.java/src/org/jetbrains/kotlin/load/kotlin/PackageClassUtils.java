@@ -57,8 +57,4 @@ public final class PackageClassUtils {
     public static String getPackageClassInternalName(@NotNull FqName packageFQN) {
         return JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(packageFQN)).getInternalName();
     }
-
-    public static boolean isPackageClassFqName(@NotNull FqName fqName) {
-        return !fqName.isRoot() && getPackageClassFqName(fqName.parent()).equals(fqName);
-    }
 }
