@@ -222,7 +222,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     public fun testKotlinProject() {
         doTest()
 
-        checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"))
+        checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
     }
 
     public fun testKotlinJavaScriptProject() {
@@ -372,17 +372,21 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         doTest()
 
         val module = myProject.getModules().get(0)
-        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class")
+        assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
 
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
+        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
         checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar")))
 
-        checkWhen(del("src/main.kt"), arrayOf("src/Bar.kt", "src/boo.kt"), mergeArrays(packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"), packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"), arrayOf(klass("kotlinProject", "foo.Bar"))))
-        assertFilesExistInOutput(module, "boo/BooPackage.class", "foo/Bar.class")
-        assertFilesNotExistInOutput(module, "foo/FooPackage.class")
+        checkWhen(del("src/main.kt"),
+                arrayOf("src/Bar.kt", "src/boo.kt"),
+                mergeArrays(packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"),
+                            packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"),
+                            arrayOf(klass("kotlinProject", "foo.Bar"))))
+        assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
+        assertFilesNotExistInOutput(module, "foo/MainKt.class")
 
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
         checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar")))
     }
 
@@ -390,17 +394,29 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         doTest()
 
         val module = myProject.getModules().get(0)
-        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class")
+        assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
 
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
-        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage"), module("kotlinProject")))
+        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(touch("src/Bar.kt"),
+                arrayOf("src/Bar.kt"),
+                arrayOf(klass("kotlinProject", "foo.Bar"),
+                        packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
+                        module("kotlinProject")))
 
-        checkWhen(del("src/main.kt"), arrayOf("src/Bar.kt", "src/boo.kt"), mergeArrays(packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"), packageClasses("kotlinProject", "src/Bar.kt", "foo.FooPackage"), packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"), arrayOf(klass("kotlinProject", "foo.Bar"))))
-        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class")
+        checkWhen(del("src/main.kt"),
+                arrayOf("src/Bar.kt", "src/boo.kt"),
+                mergeArrays(packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"),
+                            packageClasses("kotlinProject", "src/Bar.kt", "foo.MainKt"),
+                            packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"),
+                            arrayOf(klass("kotlinProject", "foo.Bar"))))
+        assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
 
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
-        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage"), module("kotlinProject")))
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(touch("src/Bar.kt"), null,
+                arrayOf(klass("kotlinProject", "foo.Bar"),
+                        packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
+                        module("kotlinProject")))
     }
 
     public fun testKotlinProjectTwoFilesInOnePackage() {
@@ -412,7 +428,6 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING,
                   arrayOf(packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"),
                           packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"),
-                          klass("kotlinProject", "_DefaultPackage"),
                           module("kotlinProject")))
 
         assertFilesNotExistInOutput(myProject.getModules().get(0), "_DefaultPackage.class")
@@ -451,13 +466,13 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         val result = makeAll()
 
         // Check that outputs are located properly
-        assertFilesExistInOutput(findModule("module2"), "kt1/Kt1Package.class")
-        assertFilesExistInOutput(findModule("kotlinProject"), "kt2/Kt2Package.class")
+        assertFilesExistInOutput(findModule("module2"), "kt1/Kt1Kt.class")
+        assertFilesExistInOutput(findModule("kotlinProject"), "kt2/Kt2Kt.class")
 
         result.assertSuccessful()
 
-        checkWhen(touch("src/kt2.kt"), null, packageClasses("kotlinProject", "src/kt2.kt", "kt2.Kt2Package"))
-        checkWhen(touch("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Package"))
+        checkWhen(touch("src/kt2.kt"), null, packageClasses("kotlinProject", "src/kt2.kt", "kt2.Kt2Kt"))
+        checkWhen(touch("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Kt"))
     }
 
     public fun testCircularDependenciesSamePackage() {
@@ -466,10 +481,10 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         result.assertSuccessful()
 
         // Check that outputs are located properly
-        val facadeWithA = findFileInOutputDir(findModule("module1"), "test/TestPackage.class")
-        val facadeWithB = findFileInOutputDir(findModule("module2"), "test/TestPackage.class")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "a", "getA")
-        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "b", "getB", "setB")
+        val facadeWithA = findFileInOutputDir(findModule("module1"), "test/AKt.class")
+        val facadeWithB = findFileInOutputDir(findModule("module2"), "test/BKt.class")
+        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "getA")
+        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB")
 
         checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
         checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
@@ -736,7 +751,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     private fun packageClasses(moduleName: String, fileName: String, packageClassFqName: String): Array<String> {
-        return arrayOf(module(moduleName), klass(moduleName, packageClassFqName), packagePartClass(moduleName, fileName, packageClassFqName))
+        return arrayOf(module(moduleName), packagePartClass(moduleName, fileName, packageClassFqName))
     }
 
     private fun packagePartClass(moduleName: String, fileName: String, packageClassFqName: String): String {
