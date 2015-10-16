@@ -1,4 +1,4 @@
 package
 
 public fun box(): kotlin.String
-@kotlin.tailrec() public fun noTails(): kotlin.Unit
+public tailrec fun noTails(): kotlin.Unit

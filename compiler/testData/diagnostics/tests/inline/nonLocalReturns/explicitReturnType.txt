@@ -2,6 +2,6 @@ package
 
 public fun inlineCall(): kotlin.String
 public fun inlineCallExplicitError(): kotlin.String
-@kotlin.inline() public fun inlineFun(/*0*/ s: () -> kotlin.Int): kotlin.Unit
+public inline fun inlineFun(/*0*/ s: () -> kotlin.Int): kotlin.Unit
 public fun noInline(/*0*/ s: () -> kotlin.Int): kotlin.Unit
 public fun noInlineCall(): kotlin.String

@@ -1,6 +1,6 @@
 package
 
-@kotlin.inline() public fun </*0*/ reified T> createWith(/*0*/ x: T, /*1*/ f: (T) -> A<T>?): A<T>?
+public inline fun </*0*/ reified T> createWith(/*0*/ x: T, /*1*/ f: (T) -> A<T>?): A<T>?
 
 public open class A</*0*/ T> {
     public constructor A</*0*/ T>(/*0*/ x: T)

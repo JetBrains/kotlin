@@ -1,4 +1,4 @@
 package
 
-@kotlin.inline() public fun foo(/*0*/ bar1: (kotlin.String.() -> kotlin.Int) -> kotlin.Int, /*1*/ bar2: (() -> kotlin.Int) -> kotlin.Int): kotlin.Unit
-@kotlin.inline() public fun foo2(/*0*/ bar1: (kotlin.String.() -> kotlin.Int) -> kotlin.Int): kotlin.Unit
+public inline fun foo(/*0*/ bar1: (kotlin.String.() -> kotlin.Int) -> kotlin.Int, /*1*/ bar2: (() -> kotlin.Int) -> kotlin.Int): kotlin.Unit
+public inline fun foo2(/*0*/ bar1: (kotlin.String.() -> kotlin.Int) -> kotlin.Int): kotlin.Unit

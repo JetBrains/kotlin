@@ -14,8 +14,8 @@ private final class Z2 {
         public constructor ZInner()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        @kotlin.inline() public final fun test(): kotlin.Unit
-        @kotlin.inline() public final fun testInternal(): kotlin.Unit
+        public final inline fun test(): kotlin.Unit
+        public final inline fun testInternal(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

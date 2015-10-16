@@ -1,9 +1,9 @@
 package
 
 public /*synthesized*/ fun Run(/*0*/ function: () -> kotlin.Int): Run
-@kotlin.inline() public fun inlineFunWithInvoke(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-@kotlin.inline() public fun inlineFunWithInvokeNonInline(/*0*/ @kotlin.noinline() s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
-@kotlin.inline() public fun ((kotlin.Int) -> kotlin.Unit).inlineExt(): kotlin.Unit
+public inline fun inlineFunWithInvoke(/*0*/ s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun inlineFunWithInvokeNonInline(/*0*/ noinline s: (kotlin.Int) -> kotlin.Unit, /*1*/ ext: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun ((kotlin.Int) -> kotlin.Unit).inlineExt(): kotlin.Unit
 
 public interface Run {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

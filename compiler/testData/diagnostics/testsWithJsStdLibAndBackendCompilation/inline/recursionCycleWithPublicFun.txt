@@ -1,5 +1,5 @@
 package
 
-@kotlin.inline() public fun f(): kotlin.Unit
-@kotlin.inline() public fun g(): kotlin.Unit
-@kotlin.inline() public fun h(): kotlin.Unit
+public inline fun f(): kotlin.Unit
+public inline fun g(): kotlin.Unit
+public inline fun h(): kotlin.Unit

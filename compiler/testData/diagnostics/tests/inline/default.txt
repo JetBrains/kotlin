@@ -1,13 +1,13 @@
 package
 
-@kotlin.inline() public fun default(/*0*/ s: kotlin.Int = ...): kotlin.Unit
-@kotlin.inline() public fun default2(/*0*/ p: kotlin.Int, /*1*/ s: kotlin.String = ...): kotlin.Unit
+public inline fun default(/*0*/ s: kotlin.Int = ...): kotlin.Unit
+public inline fun default2(/*0*/ p: kotlin.Int, /*1*/ s: kotlin.String = ...): kotlin.Unit
 
 public open class Base {
     public constructor Base()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.inline() public final fun foo(/*0*/ a: kotlin.Int = ...): kotlin.Unit
-    @kotlin.inline() public final fun foo2(/*0*/ a: kotlin.Int = ..., /*1*/ s: kotlin.String = ...): kotlin.Unit
+    public final inline fun foo(/*0*/ a: kotlin.Int = ...): kotlin.Unit
+    public final inline fun foo2(/*0*/ a: kotlin.Int = ..., /*1*/ s: kotlin.String = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

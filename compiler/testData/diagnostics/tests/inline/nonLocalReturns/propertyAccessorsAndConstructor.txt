@@ -1,7 +1,7 @@
 package
 
-@kotlin.inline() public fun </*0*/ R> doCall(/*0*/ p: () -> R): kotlin.Unit
-@kotlin.inline() public fun </*0*/ R> doCallInt(/*0*/ p: () -> R): R
+public inline fun </*0*/ R> doCall(/*0*/ p: () -> R): kotlin.Unit
+public inline fun </*0*/ R> doCallInt(/*0*/ p: () -> R): R
 
 public final class A {
     public constructor A()

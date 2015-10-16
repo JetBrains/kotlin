@@ -1,4 +1,4 @@
 package
 
-@kotlin.inline() public fun </*0*/ T : kotlin.Any, /*1*/ R> let(/*0*/ subj: T?, /*1*/ body: (T) -> R): R?
+public inline fun </*0*/ T : kotlin.Any, /*1*/ R> let(/*0*/ subj: T?, /*1*/ body: (T) -> R): R?
 public fun test(/*0*/ s: kotlin.String?): kotlin.String?

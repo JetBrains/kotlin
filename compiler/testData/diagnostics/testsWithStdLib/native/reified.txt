@@ -1,4 +1,4 @@
 package
 
-@kotlin.inline() @kotlin.external() public fun </*0*/ reified T> bar(): kotlin.Unit
-@kotlin.external() public fun </*0*/ reified T> foo(): kotlin.Unit
+public external inline fun </*0*/ reified T> bar(): kotlin.Unit
+public external fun </*0*/ reified T> foo(): kotlin.Unit

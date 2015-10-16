@@ -1,5 +1,5 @@
 package
 
-@kotlin.inline() public fun doCall(/*0*/ block: () -> kotlin.String): kotlin.String
+public inline fun doCall(/*0*/ block: () -> kotlin.String): kotlin.String
 public fun test1(): kotlin.String
 public fun test2(/*0*/ nonLocal: kotlin.String, /*1*/ b: kotlin.Boolean): kotlin.String

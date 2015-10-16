@@ -1,7 +1,7 @@
 package
 
-@kotlin.inline() public fun unsupported(): kotlin.Unit
-@kotlin.inline() public fun unsupportedDefault(/*0*/ s: () -> kotlin.Unit = ...): kotlin.Unit
+public inline fun unsupported(): kotlin.Unit
+public inline fun unsupportedDefault(/*0*/ s: () -> kotlin.Unit = ...): kotlin.Unit
 
 public open class Base {
     public constructor Base()
@@ -14,7 +14,7 @@ public open class Base {
 public final class Derived : Base {
     public constructor Derived()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.inline() public final override /*1*/ fun foo(/*0*/ a: kotlin.Int = ...): kotlin.Unit
+    public final inline override /*1*/ fun foo(/*0*/ a: kotlin.Int = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

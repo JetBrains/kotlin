@@ -1,8 +1,8 @@
 package
 
 public fun bar(/*0*/ arg: () -> kotlin.Int): kotlin.Int
-@kotlin.inline() public fun fast(/*0*/ arg: () -> kotlin.Int): kotlin.Int
-@kotlin.inline() public fun fast2(/*0*/ x: kotlin.Int, /*1*/ arg: () -> kotlin.Int): kotlin.Int
+public inline fun fast(/*0*/ arg: () -> kotlin.Int): kotlin.Int
+public inline fun fast2(/*0*/ x: kotlin.Int, /*1*/ arg: () -> kotlin.Int): kotlin.Int
 public fun foo(/*0*/ arg: kotlin.Int): kotlin.Unit
 @FunAnn() public fun gav(): kotlin.Int
 
