@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.*
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -104,7 +104,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
 
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor)
         components.identifierChecker.checkDeclaration(function, context.trace)
-        if (!function.hasBody()) {
+        if (!function.hasBody() && !function.hasModifier(JetTokens.EXTERNAL_KEYWORD)) {
             context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
         }
 

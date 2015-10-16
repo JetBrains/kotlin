@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin.nativeDeclarations
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetDeclaration
@@ -33,15 +30,13 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 private val NATIVE_ANNOTATION_CLASS_NAME = FqName("kotlin.jvm.native")
-private val EXTERNAL_ANNOTATION_CLASS_NAME = FqName("kotlin.external")
-
 
 public fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
-    return getAnnotations().findAnnotation(EXTERNAL_ANNOTATION_CLASS_NAME) != null
+    return this is FunctionDescriptor && this.isExternal
+           || this is PropertyAccessorDescriptor && this.isExternal
            || annotations.findAnnotation(NATIVE_ANNOTATION_CLASS_NAME) != null
 }
 
-public class SuppressNoBodyErrorsForExternalDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS, EXTERNAL_ANNOTATION_CLASS_NAME)
 public class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS, NATIVE_ANNOTATION_CLASS_NAME)
 
 public class NativeFunChecker : DeclarationChecker {
