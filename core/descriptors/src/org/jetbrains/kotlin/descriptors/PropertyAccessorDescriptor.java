@@ -45,4 +45,6 @@ public interface PropertyAccessorDescriptor extends FunctionDescriptor {
             Kind kind,
             boolean copyOverrides
     );
+
+    boolean isExternal();
 }

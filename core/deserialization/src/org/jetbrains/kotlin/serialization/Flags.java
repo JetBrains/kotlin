@@ -143,7 +143,10 @@ public class Flags {
             @NotNull Modality modality,
             @NotNull CallableMemberDescriptor.Kind memberKind,
             boolean isOperator,
-            boolean isInfix
+            boolean isInfix,
+            boolean isInline,
+            boolean isTailrec,
+            boolean isExternal
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility(visibility))
@@ -151,6 +154,9 @@ public class Flags {
                | MEMBER_KIND.toFlags(memberKind(memberKind))
                | IS_OPERATOR.toFlags(isOperator)
                | IS_INFIX.toFlags(isInfix)
+               | IS_INLINE.toFlags(isInline)
+               | IS_TAILREC.toFlags(isTailrec)
+               | IS_EXTERNAL_FUNCTION.toFlags(isExternal)
                 ;
     }
 
@@ -183,12 +189,14 @@ public class Flags {
             boolean hasAnnotations,
             @NotNull Visibility visibility,
             @NotNull Modality modality,
-            boolean isNotDefault
+            boolean isNotDefault,
+            boolean isExternal
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
                | VISIBILITY.toFlags(visibility(visibility))
                | IS_NOT_DEFAULT.toFlags(isNotDefault)
+               | IS_EXTERNAL_ACCESSOR.toFlags(isExternal)
                ;
     }
 
@@ -245,9 +253,16 @@ public class Flags {
         throw new IllegalArgumentException("Unknown member kind: " + kind);
     }
 
-    public static int getValueParameterFlags(boolean hasAnnotations, boolean declaresDefaultValue) {
+    public static int getValueParameterFlags(
+            boolean hasAnnotations,
+            boolean declaresDefaultValue,
+            boolean isCrossinline,
+            boolean isNoinline
+    ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | DECLARES_DEFAULT_VALUE.toFlags(declaresDefaultValue)
+               | IS_CROSSINLINE.toFlags(isCrossinline)
+               | IS_NOINLINE.toFlags(isNoinline)
                ;
     }
 

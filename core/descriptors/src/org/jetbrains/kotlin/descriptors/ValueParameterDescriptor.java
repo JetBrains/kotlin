@@ -59,4 +59,8 @@ public interface ValueParameterDescriptor extends VariableDescriptor, ParameterD
     @NotNull
     @Override
     Collection<? extends ValueParameterDescriptor> getOverriddenDescriptors();
+
+    boolean isCrossinline();
+
+    boolean isNoinline();
 }
