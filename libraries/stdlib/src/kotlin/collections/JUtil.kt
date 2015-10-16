@@ -50,8 +50,8 @@ private class ArrayAsCollection<T>(val values: Array<out T>): Collection<T> {
     override fun contains(o: T): Boolean = values.contains(o)
     override fun containsAll(c: Collection<T>): Boolean = c.all { contains(it) }
     override fun iterator(): Iterator<T> = values.iterator()
-    // override of hidden toArray method implementation to prevent copying of values array
-    public fun toArray(): Array<out Any?> = values
+    // override hidden toArray implementation to prevent copying of values array
+    public fun toArray(): Array<out Any?> = values.varargToArrayOfAny()
 }
 
 /** Returns an empty read-only list.  The returned list is serializable (JVM). */
@@ -72,10 +72,12 @@ public fun <T> listOf(value: T): List<T> = Collections.singletonList(value)
 
 /** Returns a new [LinkedList] with the given elements. */
 @JvmVersion
-public fun <T> linkedListOf(vararg values: T): LinkedList<T> = LinkedList(ArrayAsCollection(values))
+public fun <T> linkedListOf(vararg values: T): LinkedList<T>
+        = if (values.size() == 0) LinkedList() else LinkedList(ArrayAsCollection(values))
 
 /** Returns a new [ArrayList] with the given elements. */
-public fun <T> arrayListOf(vararg values: T): ArrayList<T> = ArrayList(ArrayAsCollection(values))
+public fun <T> arrayListOf(vararg values: T): ArrayList<T>
+        = if (values.size() == 0) ArrayList() else ArrayList(ArrayAsCollection(values))
 
 /** Returns a new read-only list either of single given element, if it is not null, or empty list it the element is null. The returned list is serializable (JVM). */
 public fun <T : Any> listOfNotNull(value: T?): List<T> = if (value != null) listOf(value) else emptyList()
@@ -145,6 +147,11 @@ internal fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
             is Collection -> if (this.safeToConvertToSet()) toHashSet() else this
             else -> toHashSet()
         }
+
+// copies typed varargs array to array of objects
+@JvmVersion
+private fun <T> Array<out T>.varargToArrayOfAny(): Array<Any?>
+        = Arrays.copyOf(this, this.size(), Array<Any?>::class.java)
 
 /**
  * Searches this list or its range for the provided [element] index using binary search algorithm.
