@@ -9,7 +9,6 @@ out/production/module/META-INF/module.kotlin_module
 out/production/module/WillBeResolvedToOtherKt$willBeResolvedToOther$1.class
 out/production/module/WillBeResolvedToOtherKt.class
 out/production/module/WillBeUnresolvedKt.class
-out/production/module/_DefaultPackage.class
 End of files
 Compiling files:
 src/willBeResolvedToOther.kt

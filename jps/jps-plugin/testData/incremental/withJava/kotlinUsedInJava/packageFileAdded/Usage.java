@@ -1,5 +1,5 @@
 class Usage {
     void usage() {
-        test.TestPackage.a();
+        test.AKt.a();
     }
 }

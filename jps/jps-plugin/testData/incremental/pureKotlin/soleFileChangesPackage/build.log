@@ -1,15 +1,6 @@
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
 out/production/module/foo/AKt.class
-out/production/module/foo/FooPackage.class
-End of files
-Compiling files:
-src/a.kt
-End of files
-Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/bar/AKt.class
-out/production/module/bar/BarPackage.class
 End of files
 Compiling files:
 src/a.kt
