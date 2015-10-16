@@ -1997,6 +1997,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("javaSyntheticPropertyWithDelegation.kt")
+                public void testJavaSyntheticPropertyWithDelegation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/javaSyntheticPropertyWithDelegation.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("javaSyntheticPropertyWithOverride.kt")
+                public void testJavaSyntheticPropertyWithOverride() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/javaSyntheticPropertyWithOverride.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("missingReceiver.kt")
                 public void testMissingReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/missingReceiver.kt");
