@@ -25,12 +25,23 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 
-public class ExplicitGetInspection : IntentionBasedInspection<JetDotQualifiedExpression>(ReplaceGetIntention())
+public class ExplicitGetInspection : IntentionBasedInspection<JetDotQualifiedExpression>(
+        ReplaceGetIntention(),
+        additionalChecker = { expression -> (expression.toResolvedCall()!!.resultingDescriptor as FunctionDescriptor).isExplicitOperator() }
+)
+
+private fun FunctionDescriptor.isExplicitOperator(): Boolean {
+    return if (overriddenDescriptors.isEmpty())
+        containingDeclaration !is JavaClassDescriptor && isOperator
+    else
+        overriddenDescriptors.any { it.isExplicitOperator() }
+}
 
 public class ReplaceGetIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'get' call with index operator"), HighPriorityAction {
     override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {

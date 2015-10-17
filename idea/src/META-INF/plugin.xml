@@ -1099,8 +1099,8 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ExplicitGetInspection"
                      displayName="Explicit 'get'"
                      groupName="Kotlin"
-                     enabledByDefault="false"
-                     level="WEAK WARNING"
+                     enabledByDefault="true"
+                     level="INFO"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisInspection"
