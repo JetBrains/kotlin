@@ -249,9 +249,6 @@ public class KotlinCoreEnvironment private constructor(
                         }
                     }
                 })
-            } else {
-                configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)?.report(CompilerMessageSeverity.INFO,
-                                                                                      "App environment reuse enabled", CompilerMessageLocation.NO_LOCATION)
             }
             val environment = KotlinCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths), configuration)
 
@@ -272,14 +269,9 @@ public class KotlinCoreEnvironment private constructor(
 
         private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
             synchronized (APPLICATION_LOCK) {
-                if (ourApplicationEnvironment != null) {
-                    configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)?.report(CompilerMessageSeverity.INFO,
-                                                                                          "Using existing app environment", CompilerMessageLocation.NO_LOCATION)
+                if (ourApplicationEnvironment != null)
                     return ourApplicationEnvironment!!
-                }
 
-                configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)?.report(CompilerMessageSeverity.INFO,
-                                                                                      "Creating new app environment", CompilerMessageLocation.NO_LOCATION)
                 val parentDisposable = Disposer.newDisposable()
                 ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, configFilePaths)
                 ourProjectCount = 0
