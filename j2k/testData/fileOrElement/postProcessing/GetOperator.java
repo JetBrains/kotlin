@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import kotlinApi.KotlinClass;
+import javaApi.JavaClass;
 
 class X {
     int get(int index) {
@@ -18,5 +19,9 @@ class C {
 
     int foo(KotlinClass kotlinClass) {
         return kotlinClass.get(0); // not operator!
+    }
+
+    int foo(JavaClass javaClass) {
+        return javaClass.get(0);
     }
 }

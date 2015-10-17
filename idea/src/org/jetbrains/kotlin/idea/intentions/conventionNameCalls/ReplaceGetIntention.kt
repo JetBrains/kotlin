@@ -32,9 +32,15 @@ import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 
 public class ExplicitGetInspection : IntentionBasedInspection<JetDotQualifiedExpression>(
-        ReplaceGetIntention(),
-        additionalChecker = { expression -> (expression.toResolvedCall()!!.resultingDescriptor as FunctionDescriptor).isExplicitOperator() }
-)
+        ReplaceGetIntention(), ExplicitGetInspection.additionalChecker
+
+) {
+    companion object {
+        val additionalChecker = { expression: JetDotQualifiedExpression ->
+            (expression.toResolvedCall()!!.resultingDescriptor as FunctionDescriptor).isExplicitOperator()
+        }
+    }
+}
 
 private fun FunctionDescriptor.isExplicitOperator(): Boolean {
     return if (overriddenDescriptors.isEmpty())

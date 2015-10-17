@@ -1,6 +1,7 @@
 // ERROR: Type mismatch: inferred type is kotlin.String? but kotlin.String was expected
 import java.util.HashMap
 import kotlinApi.KotlinClass
+import javaApi.JavaClass
 
 internal class X {
     operator fun get(index: Int): Int {
@@ -19,5 +20,9 @@ internal class C {
 
     fun foo(kotlinClass: KotlinClass): Int {
         return kotlinClass.get(0) // not operator!
+    }
+
+    fun foo(javaClass: JavaClass): Int {
+        return javaClass.get(0)
     }
 }

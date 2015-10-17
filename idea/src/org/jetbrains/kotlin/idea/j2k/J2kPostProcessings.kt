@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
+import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ExplicitGetInspection
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetIntention
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
@@ -59,7 +60,7 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(IfThenToElvisIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(IfNullToElvisIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(ReplaceGetIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(ReplaceGetIntention(), additionalChecker = ExplicitGetInspection.additionalChecker) { applyTo(it) }
         registerIntentionBasedProcessing(AddOperatorModifierIntention()) { applyTo(it) }
 
         registerDiagnosticBasedProcessing<JetBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
@@ -103,11 +104,21 @@ object J2KPostProcessingRegistrar {
             intention: TIntention,
             crossinline apply: TIntention.(TElement) -> Unit
     ) {
+        //TODO: replace with optional argument when supported for inline functions
+        return registerIntentionBasedProcessing<TElement, TIntention>(intention, { true }, apply)
+    }
+
+    private inline fun <reified TElement : JetElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
+            intention: TIntention,
+            noinline additionalChecker: (TElement) -> Boolean,
+            crossinline apply: TIntention.(TElement) -> Unit
+    ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
                 if (!javaClass<TElement>().isInstance(element)) return null
-                @Suppress("UNCHECKED_CAST")
-                if (intention.applicabilityRange(element as TElement) == null) return null
+                val tElement = element as TElement
+                if (intention.applicabilityRange(tElement) == null) return null
+                if (!additionalChecker(tElement)) return null
                 return { intention.apply(element) }
             }
         })
