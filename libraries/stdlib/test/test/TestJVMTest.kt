@@ -32,14 +32,14 @@ class TestJVMTest {
             assertTrue { msg.contains(expected.toString()) }
             assertTrue { msg.contains(actual.toString()) }
             assertFalse { msg.startsWith(".") }
-        }, { assertEquals(expected, actual) })
+        }, { assertEquals<Any>(expected, actual) })
 
         expectAssertion( { msg ->
             assertNotNull(msg); msg!!
             assertTrue { msg.contains(message) }
             assertTrue { msg.contains(expected.toString()) }
             assertTrue { msg.contains(actual.toString()) }
-        } , { assertEquals(expected, actual, message) })
+        } , { assertEquals<Any>(expected, actual, message) })
     }
 
     @Test
