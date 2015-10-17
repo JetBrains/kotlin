@@ -1658,7 +1658,7 @@ public fun <T> Iterable<T>.asSequence(): Sequence<T> {
  * Returns a list containing all elements that are instances of specified type parameter R.
  */
 @kotlin.jvm.JvmVersion
-public inline fun <reified R> Iterable<*>.filterIsInstance(): List<R> {
+public inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R> {
     return filterIsInstanceTo(ArrayList<R>())
 }
 
