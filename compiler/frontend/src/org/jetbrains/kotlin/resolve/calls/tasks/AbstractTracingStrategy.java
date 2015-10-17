@@ -225,7 +225,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             assert substitutedReturnType != null; //todo
 
             assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
-            trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, data.expectedType, substitutedReturnType));
+            trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(call.getCallElement(), data.expectedType, substitutedReturnType));
         }
         else if (status.hasCannotCaptureTypesError()) {
             trace.report(TYPE_INFERENCE_CANNOT_CAPTURE_TYPES.on(reference, data));

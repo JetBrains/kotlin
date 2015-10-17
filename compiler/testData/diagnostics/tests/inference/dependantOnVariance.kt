@@ -13,7 +13,7 @@ fun <T> readFromMyList(<!UNUSED_PARAMETER!>l<!>: MyList<out T>, <!UNUSED_PARAMET
 fun test1(int: Int, any: Any) {
     val a0 : MyList<Any> = getMyList(int)
 
-    val a1 : MyList<Int> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyList<!>(any)
+    val a1 : MyList<Int> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyList(any)<!>
 
     val a2 : MyList<out Any> = getMyList(int)
 
@@ -28,13 +28,13 @@ fun test1(int: Int, any: Any) {
     val a7 : MyList<in Any> = getMyList(int)
 
     val a8 : MyList<in Any> = <!TYPE_MISMATCH!>getMyListToReadFrom<Int>(int)<!>
-    val a9 : MyList<in Any> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyListToReadFrom<!>(int)
+    val a9 : MyList<in Any> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyListToReadFrom(int)<!>
 
     val a10 : MyList<out Int> = <!TYPE_MISMATCH!>getMyList<Any>(any)<!>
-    val a11 : MyList<out Int> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyList<!>(any)
+    val a11 : MyList<out Int> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyList(any)<!>
 
     val a12 : MyList<out Int> = <!TYPE_MISMATCH!>getMyListToWriteTo<Any>(any)<!>
-    val a13 : MyList<out Int> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyListToWriteTo<!>(any)
+    val a13 : MyList<out Int> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyListToWriteTo(any)<!>
 
     useMyList(getMyList(int), int)
     useMyList(getMyList(any), int)
@@ -42,9 +42,9 @@ fun test1(int: Int, any: Any) {
 
     readFromMyList(getMyList(int), any)
     readFromMyList(getMyList(any), int)
-    readFromMyList<Int>(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyList<!>(any), int)
+    readFromMyList<Int>(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyList(any)<!>, int)
 
-    readFromMyList<Int>(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyListToReadFrom<!>(any), int)
+    readFromMyList<Int>(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyListToReadFrom(any)<!>, int)
     readFromMyList(getMyListToReadFrom(any), int)
 
     readFromMyList(getMyListToReadFrom(int), any)
