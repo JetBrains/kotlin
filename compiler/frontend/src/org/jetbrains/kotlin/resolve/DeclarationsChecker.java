@@ -317,6 +317,8 @@ public class DeclarationsChecker {
         checkOpenMembers(classDescriptor);
         checkTypeParameters(aClass);
         checkTypeParameterConstraints(aClass);
+        FiniteBoundRestrictionChecker.check(aClass, classDescriptor, trace);
+        NonExpansiveInheritanceRestrictionChecker.check(aClass, classDescriptor, trace);
 
         if (aClass.isInterface()) {
             checkConstructorInInterface(aClass);

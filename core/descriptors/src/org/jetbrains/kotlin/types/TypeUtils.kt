@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.toReadOnlyList
-import java.util.ArrayDeque
-import java.util.ArrayList
-import java.util.LinkedHashSet
+import java.util.*
 
 public enum class TypeNullability {
     NOT_NULL,
@@ -142,3 +140,41 @@ public fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(
 
 public fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
         TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)
+
+fun Collection<KtType>.closure(f: (KtType) -> Collection<KtType>): Collection<KtType> {
+    if (size == 0) return this
+
+    val result = HashSet(this)
+    var elementsToCheck = result
+    var oldSize = 0
+    while (result.size > oldSize) {
+        oldSize = result.size
+        val toAdd = hashSetOf<KtType>()
+        elementsToCheck.forEach { toAdd.addAll(f(it)) }
+        result.addAll(toAdd)
+        elementsToCheck = toAdd
+    }
+
+    return result
+}
+
+fun boundClosure(types: Collection<KtType>): Collection<KtType> =
+        types.closure { type -> TypeUtils.getTypeParameterDescriptorOrNull(type)?.upperBounds ?: emptySet() }
+
+fun constituentTypes(types: Collection<KtType>): Collection<KtType> {
+    val result = hashSetOf<KtType>()
+    constituentTypes(result, types)
+    return result
+}
+
+private fun constituentTypes(result: MutableSet<KtType>, types: Collection<KtType>) {
+    result.addAll(types)
+    for (type in types) {
+        if (type.isFlexible()) {
+            with (type.flexibility()) { constituentTypes(result, setOf(lowerBound, upperBound)) }
+        }
+        else {
+            constituentTypes(result, type.arguments.filterNot { it.isStarProjection }.map { it.type })
+        }
+    }
+}

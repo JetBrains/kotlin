@@ -510,6 +510,8 @@ public class DefaultErrorMessages {
                     }
                 });
 
+        MAP.put(FINITE_BOUNDS_VIOLATION, "{0}", STRING);
+        MAP.put(EXPANSIVE_INHERITANCE, "{0}", STRING);
         MAP.put(REDUNDANT_PROJECTION, "Projection is redundant: the corresponding type parameter of {0} has the same variance", NAME);
         MAP.put(CONFLICTING_PROJECTION, "Projection is conflicting with variance of the corresponding type parameter of {0}. Remove the projection or replace it with ''*''", NAME);
 
