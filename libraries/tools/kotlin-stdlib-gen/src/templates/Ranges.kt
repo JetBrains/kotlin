@@ -26,7 +26,7 @@ fun ranges(): List<GenericFunction> {
         doc(ProgressionsOfPrimitives) { "Returns a progression that goes over the same range in the opposite direction with the same step." }
         doc(RangesOfPrimitives) { "Returns a progression that goes over this range in reverse direction." }
         returns("TProgression")
-        deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.ERROR))
+        deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING))
         annotations("""@Suppress("DEPRECATION_ERROR")""")
         body(RangesOfPrimitives) {
             "return TProgression(end, start, -ONE)"
@@ -66,7 +66,7 @@ fun ranges(): List<GenericFunction> {
         doc(ProgressionsOfPrimitives) { "Returns a progression that goes over the same range with the given step." }
         doc(RangesOfPrimitives) { "Returns a progression that goes over this range with given step." }
         returns("TProgression")
-        deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.ERROR))
+        deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING))
         annotations("""@Suppress("DEPRECATION_ERROR")""")
         body(RangesOfPrimitives) {
             """
@@ -107,7 +107,7 @@ fun ranges(): List<GenericFunction> {
         }
 
         if (!fromType.isIntegral() || !toType.isIntegral()) {
-            deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.ERROR))
+            deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING))
             annotations("""@Suppress("DEPRECATION_ERROR")""")
         }
 
@@ -147,7 +147,7 @@ fun ranges(): List<GenericFunction> {
         }
 
         if (!fromType.isIntegral() || !toType.isIntegral()) {
-            deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.ERROR))
+            deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING))
             annotations("""@Suppress("DEPRECATION_ERROR")""")
         }
 
@@ -180,7 +180,7 @@ fun ranges(): List<GenericFunction> {
         operator(true)
 
         if (!rangeType.isIntegral()) {
-            deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.ERROR))
+            deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING))
             annotations("""@Suppress("DEPRECATION_ERROR")""")
         }
 

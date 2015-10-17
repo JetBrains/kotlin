@@ -65,7 +65,7 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             }
 
             if (kind == FLOAT || kind == DOUBLE) {
-                out.println("""@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.ERROR)""")
+                out.println("""@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)""")
                 out.println("""@Suppress("DEPRECATION_ERROR")""")
             }
 
