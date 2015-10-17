@@ -20,8 +20,8 @@ import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
-import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
 import org.jetbrains.kotlin.idea.inspections.AddModifierFixFactory
+import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
 import org.jetbrains.kotlin.idea.intentions.IntroduceBackingPropertyFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
@@ -65,7 +65,7 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(addAbstractModifierFactory)
         ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
-        MANY_IMPL_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
+        ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
 
         val removeFinalModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(FINAL_KEYWORD)
         val addAbstractToClassFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD, javaClass<JetClass>())
@@ -151,7 +151,8 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         val implementMethodsHandler = ImplementMembersHandler()
         ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
-        MANY_IMPL_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
+        ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
+        MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
 
         VAL_WITH_SETTER.registerFactory(ChangeVariableMutabilityFix.VAL_WITH_SETTER_FACTORY)
         VAL_REASSIGNMENT.registerFactory(ChangeVariableMutabilityFix.VAL_REASSIGNMENT_FACTORY)

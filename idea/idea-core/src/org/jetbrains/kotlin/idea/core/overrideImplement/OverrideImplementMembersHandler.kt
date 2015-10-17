@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.core.overrideImplement
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.ide.util.MemberChooser
 import com.intellij.lang.LanguageCodeInsightActionHandler
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -83,7 +84,9 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
         generateMembers(editor, classOrObject, selectedElements)
     }
 
-    override fun invoke(project: Project, editor: Editor, file: PsiFile) = invoke(project, editor, file, false)
+    override fun invoke(project: Project, editor: Editor, file: PsiFile) {
+        invoke(project, editor, file, implementAll = ApplicationManager.getApplication().isUnitTestMode)
+    }
 
     override fun startInWriteAction(): Boolean = false
 

@@ -1,0 +1,7 @@
+// "Make 'A' abstract" "true"
+interface I {
+    fun foo()
+}
+
+abstract class A : I {
+}

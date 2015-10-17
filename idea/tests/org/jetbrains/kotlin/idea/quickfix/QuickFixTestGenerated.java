@@ -139,6 +139,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/abstract"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("manyImpl.kt")
+        public void testManyImpl() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/abstract/manyImpl.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("mustBeInitializedOrBeAbstract.kt")
         public void testMustBeInitializedOrBeAbstract() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/abstract/mustBeInitializedOrBeAbstract.kt");
@@ -160,6 +166,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("nonMemberFunctionNoBody.kt")
         public void testNonMemberFunctionNoBody() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/abstract/nonMemberFunctionNoBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notImplementedMember.kt")
+        public void testNotImplementedMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/abstract/notImplementedMember.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notImplementedMemberFromAbstractClass.kt")
+        public void testNotImplementedMemberFromAbstractClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/abstract/notImplementedMemberFromAbstractClass.kt");
             doTest(fileName);
         }
 
@@ -4758,6 +4776,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("changeToInvocation.kt")
         public void testChangeToInvocation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/override/changeToInvocation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implementMember.kt")
+        public void testImplementMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/override/implementMember.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implementMemberFromAbstractClass.kt")
+        public void testImplementMemberFromAbstractClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/override/implementMemberFromAbstractClass.kt");
             doTest(fileName);
         }
 
