@@ -4303,6 +4303,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("forOverride.kt")
+            public void testForOverride() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/operatorModifier/forOverride.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("overridden.kt")
             public void testOverridden() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/operatorModifier/overridden.kt");
