@@ -21,7 +21,7 @@ fun <T> List<T>.contains1(e: @kotlin.internal.NoInfer T): Boolean = true
 fun test(i: Int?, a: Any, l: List<Int>) {
     l.<!TYPE_INFERENCE_INCORPORATION_ERROR!>contains1<!>(<!TYPE_MISMATCH!>a<!>)
     l.<!TYPE_INFERENCE_INCORPORATION_ERROR!>contains1<!>(<!TYPE_MISMATCH!>""<!>)
-    l.contains1(<!TYPE_MISMATCH!>i<!>)
+    l.<!TYPE_INFERENCE_INCORPORATION_ERROR!>contains1<!>(<!TYPE_MISMATCH!>i<!>)
 }
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")

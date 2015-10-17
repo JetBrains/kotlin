@@ -7,7 +7,7 @@ fun <T> bar(a: T, b: Map<T, String>) = b.get(a)
 
 fun test(a: Int) {
     foo(a, null)
-    bar(a, <!NULL_FOR_NONNULL_TYPE!>null<!>)
+    <!TYPE_INFERENCE_INCORPORATION_ERROR!>bar<!>(a, <!NULL_FOR_NONNULL_TYPE!>null<!>)
 }
 fun test1(a: Int) {
     foo(a, throw Exception())
