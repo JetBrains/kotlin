@@ -706,7 +706,12 @@ public class InlineCodegen extends CallGenerator {
 
                 FrameMap frameMap = finallyCodegen.getFrameMap();
                 FrameMap.Mark mark = frameMap.mark();
-                while (frameMap.getCurrentSize() < processor.getNextFreeLocalIndex()) {
+                int marker = -1;
+                Set<LocalVarNodeWrapper> intervals = processor.getLocalVarsMetaInfo().getCurrentIntervals();
+                for (LocalVarNodeWrapper interval : intervals) {
+                    marker = Math.max(interval.getNode().index + 1, marker);
+                }
+                while (frameMap.getCurrentSize() < Math.max(processor.getNextFreeLocalIndex(), offsetForFinallyLocalVar + marker)) {
                     frameMap.enterTemp(Type.INT_TYPE);
                 }
 
