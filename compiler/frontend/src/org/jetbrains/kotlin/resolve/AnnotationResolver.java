@@ -180,13 +180,13 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public JetType resolveAnnotationType(@NotNull LexicalScope scope, @NotNull JetAnnotationEntry entryElement) {
+    public JetType resolveAnnotationType(@NotNull LexicalScope scope, @NotNull JetAnnotationEntry entryElement, @NotNull BindingTrace trace) {
         JetTypeReference typeReference = entryElement.getTypeReference();
         if (typeReference == null) {
             return ErrorUtils.createErrorType("No type reference: " + entryElement.getText());
         }
 
-        JetType type = typeResolver.resolveType(scope, typeReference, new BindingTraceContext(), true);
+        JetType type = typeResolver.resolveType(scope, typeReference, trace, true);
         if (!(type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
             return ErrorUtils.createErrorType("Not an annotation: " + type);
         }
