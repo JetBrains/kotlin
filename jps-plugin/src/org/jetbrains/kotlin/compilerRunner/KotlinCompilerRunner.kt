@@ -108,6 +108,10 @@ public object KotlinCompilerRunner {
             if (!tryCompileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector)) {
                 // otherwise fallback to in-process
 
+                if (System.getProperty("kotlin.environment.keepalive") == null) {
+                    System.setProperty("kotlin.environment.keepalive", "true")
+                }
+
                 val stream = ByteArrayOutputStream()
                 val out = PrintStream(stream)
 

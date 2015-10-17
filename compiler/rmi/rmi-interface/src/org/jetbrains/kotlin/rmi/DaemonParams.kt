@@ -304,6 +304,7 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits
 
     System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"" ) }
     opts.jvmParams.addAll(additionalParams)
+    System.getProperty("kotlin.environment.keepalive")?.let { opts.jvmParams.add("Dkotlin.environment.keepalive=true") }
     return opts
 }
 
