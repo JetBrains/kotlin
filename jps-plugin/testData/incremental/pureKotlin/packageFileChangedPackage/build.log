@@ -1,19 +1,14 @@
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
 out/production/module/test/BKt.class
-out/production/module/test/TestPackage.class
 End of files
 Compiling files:
 src/b.kt
 End of files
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
-out/production/module/newName/BKt.class
-out/production/module/newName/NewNamePackage.class
 out/production/module/test/AKt.class
-out/production/module/test/TestPackage.class
 End of files
 Compiling files:
 src/a.kt
-src/b.kt
 End of files

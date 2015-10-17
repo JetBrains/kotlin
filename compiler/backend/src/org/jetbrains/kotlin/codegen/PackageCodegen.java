@@ -49,12 +49,12 @@ public class PackageCodegen {
     public PackageCodegen(
             @NotNull GenerationState state,
             @NotNull Collection<JetFile> files,
-            @NotNull FqName fqName
+            @NotNull FqName packageFqName
     ) {
         this.state = state;
         this.files = files;
-        this.packageFragment = getOnlyPackageFragment(fqName);
-        packageParts = new PackageParts(fqName.asString());
+        this.packageFragment = getOnlyPackageFragment(packageFqName);
+        packageParts = new PackageParts(packageFqName.asString());
     }
 
     public void generate(@NotNull CompilationErrorHandler errorHandler) {
@@ -124,14 +124,14 @@ public class PackageCodegen {
     }
 
     @Nullable
-    private PackageFragmentDescriptor getOnlyPackageFragment(@NotNull FqName expectedFqName) {
+    private PackageFragmentDescriptor getOnlyPackageFragment(@NotNull FqName expectedPackageFqName) {
         SmartList<PackageFragmentDescriptor> fragments = new SmartList<PackageFragmentDescriptor>();
         for (JetFile file : files) {
             PackageFragmentDescriptor fragment = state.getBindingContext().get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
             assert fragment != null : "package fragment is null for " + file + "\n" + file.getText();
 
-            assert expectedFqName.equals(fragment.getFqName()) :
-                    "expected package fq name: " + expectedFqName + ", actual: " + fragment.getFqName();
+            assert expectedPackageFqName.equals(fragment.getFqName()) :
+                    "expected package fq name: " + expectedPackageFqName + ", actual: " + fragment.getFqName();
 
             if (!fragments.contains(fragment)) {
                 fragments.add(fragment);

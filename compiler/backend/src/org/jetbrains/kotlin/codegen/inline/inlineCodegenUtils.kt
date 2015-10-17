@@ -56,7 +56,7 @@ public fun FunctionDescriptor.getClassFilePath(typeMapper: JetTypeMapper, cache:
             kotlinClass.file.canonicalPath!!
         }
         else -> {
-            val implementationOwnerType = typeMapper.mapOwner(this)
+            val implementationOwnerType = typeMapper.mapImplementationOwner(this)
             val className = implementationOwnerType.internalName
             cache.getClassFilePath(className)
         }

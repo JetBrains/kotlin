@@ -147,13 +147,23 @@ public class JetTypeMapper {
 
     @NotNull
     public Type mapOwner(@NotNull DeclarationDescriptor descriptor) {
+        return mapOwner(descriptor, true);
+    }
+
+    public Type mapImplementationOwner(@NotNull DeclarationDescriptor descriptor) {
+        return mapOwner(descriptor, false);
+    }
+
+    @NotNull
+    public Type mapOwner(@NotNull DeclarationDescriptor descriptor, boolean publicFacade) {
         if (isLocalFunction(descriptor)) {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
         }
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (container instanceof PackageFragmentDescriptor) {
-            return Type.getObjectType(internalNameForPackageMemberOwner((CallableMemberDescriptor) descriptor));
+            String packageMemberOwner = internalNameForPackageMemberOwner((CallableMemberDescriptor) descriptor, publicFacade);
+            return Type.getObjectType(packageMemberOwner);
         }
         else if (container instanceof ClassDescriptor) {
             return mapClass((ClassDescriptor) container);
@@ -190,7 +200,7 @@ public class JetTypeMapper {
         CallableMemberDescriptor directMember = getDirectMember(descriptor);
 
         if (directMember instanceof DeserializedCallableMemberDescriptor) {
-            String facadeFqName = getPackageMemberOwnerInternalName((DeserializedCallableMemberDescriptor) directMember);
+            String facadeFqName = getPackageMemberOwnerInternalName((DeserializedCallableMemberDescriptor) directMember, publicFacade);
             if (facadeFqName != null) return facadeFqName;
         }
 
@@ -261,7 +271,7 @@ public class JetTypeMapper {
     }
 
     @Nullable
-    private String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor) {
+    private String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean publicFacade) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         assert containingDeclaration instanceof PackageFragmentDescriptor : "Not a top-level member: " + descriptor;
 
@@ -270,7 +280,9 @@ public class JetTypeMapper {
             return null;
         }
 
-        return JvmClassName.byClassId(containingClasses.getFacadeClassId()).getInternalName();
+        ClassId ownerClassId = publicFacade ? containingClasses.getFacadeClassId()
+                                            : containingClasses.getImplClassId();
+        return JvmClassName.byClassId(ownerClassId).getInternalName();
     }
 
     private static final ClassId FAKE_CLASS_ID_FOR_BUILTINS = ClassId.topLevel(new FqName("kotlin.KotlinPackage"));

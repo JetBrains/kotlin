@@ -21,6 +21,7 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -112,6 +113,8 @@ public class KotlinCodegenFacade {
             @NotNull Collection<JetFile> jetFiles,
             @NotNull CompilationErrorHandler errorHandler
     ) {
+        // We do not really generate package class, but use old package fqName to identify package in module-info.
+        //FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName);
         PackageCodegen codegen = state.getFactory().forPackage(packageFqName, jetFiles);
         codegen.generate(errorHandler);
     }

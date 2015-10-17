@@ -52,9 +52,4 @@ public final class PackageClassUtils {
     public static ClassId getPackageClassId(@NotNull FqName packageFQN) {
         return new ClassId(packageFQN, Name.identifier(getPackageClassName(packageFQN)));
     }
-
-    @NotNull
-    public static String getPackageClassInternalName(@NotNull FqName packageFQN) {
-        return JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(packageFQN)).getInternalName();
-    }
 }
