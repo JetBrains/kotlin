@@ -59,13 +59,13 @@ internal class LazyStorage<K, V>(
     val keys: Collection<K>
         get() = getStorageIfExists()?.allKeysWithExistingMapping ?: listOf()
 
-    fun contains(key: K): Boolean =
+    operator fun contains(key: K): Boolean =
             getStorageIfExists()?.containsMapping(key) ?: false
 
-    fun get(key: K): V? =
+    operator fun get(key: K): V? =
             getStorageIfExists()?.get(key)
 
-    fun set(key: K, value: V) {
+    operator fun set(key: K, value: V) {
         getStorageOrCreateNew().put(key, value)
     }
 

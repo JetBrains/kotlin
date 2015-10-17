@@ -5,7 +5,10 @@ End of files
 Compiling files:
 src/prop2.kt
 End of files
-COMPILATION FAILED
-Platform declaration clash: The following declarations have the same JVM signature (getProperty()I):
-    fun <get-property>(): kotlin.Int
-    fun <get-property>(): kotlin.Int
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/test/Prop1Kt.class
+End of files
+Compiling files:
+src/prop1.kt
+End of files

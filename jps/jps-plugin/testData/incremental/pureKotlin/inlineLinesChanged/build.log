@@ -1,14 +1,12 @@
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
 out/production/module/inline/InlineKt.class
-out/production/module/inline/InlinePackage.class
 End of files
 Compiling files:
 src/inline.kt
 End of files
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
-out/production/module/usage/UsagePackage.class
 out/production/module/usage/UseGKt.class
 End of files
 Compiling files:

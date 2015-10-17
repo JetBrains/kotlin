@@ -67,6 +67,7 @@ public class IncrementalCacheImpl(
         val PROTO_MAP = "proto"
         val CONSTANTS_MAP = "constants"
         val INLINE_FUNCTIONS = "inline-functions"
+        val PACKAGE_PARTS = "package-parts"
         val MULTIFILE_CLASS_FACADES = "multifile-class-facades"
         val MULTIFILE_CLASS_PARTS = "multifile-class-parts"
         val SOURCE_TO_CLASSES = "source-to-classes"
@@ -91,11 +92,11 @@ public class IncrementalCacheImpl(
     private val protoMap = registerMap(ProtoMap(PROTO_MAP.storageFile))
     private val constantsMap = registerMap(ConstantsMap(CONSTANTS_MAP.storageFile))
     private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
+    private val packagePartMap = registerMap(PackagePartMap(PACKAGE_PARTS.storageFile))
     private val multifileClassFacadeMap = registerMap(MultifileClassFacadeMap(MULTIFILE_CLASS_FACADES.storageFile))
     private val multifileClassPartMap = registerMap(MultifileClassPartMap(MULTIFILE_CLASS_PARTS.storageFile))
     private val sourceToClassesMap = registerMap(SourceToClassesMap(SOURCE_TO_CLASSES.storageFile))
     private val dirtyOutputClassesMap = registerMap(DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile))
-    // TODO: can be removed?
     private val dirtyInlineFunctionsMap = registerMap(DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile))
     private val inlinedTo = registerMap(InlineFunctionsFilesMap(INLINED_TO.storageFile))
 
@@ -177,7 +178,8 @@ public class IncrementalCacheImpl(
             header.isCompatiblePackageFacadeKind() ->
                 protoMap.process(kotlinClass, isPackage = true)
             header.isCompatibleFileFacadeKind() -> {
-                assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
+                assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
+                packagePartMap.addPackagePart(className)
 
                 protoMap.process(kotlinClass, isPackage = true) +
                 constantsMap.process(kotlinClass) +
@@ -193,7 +195,8 @@ public class IncrementalCacheImpl(
                 inlineFunctionsMap.process(kotlinClass)
             }
             header.isCompatibleMultifileClassPartKind() -> {
-                assert(sourceFiles.size == 1) { "Multifile class part from several source files: $sourceFiles" }
+                assert(sourceFiles.size() == 1) { "Multifile class part from several source files: $sourceFiles" }
+                packagePartMap.addPackagePart(className)
                 multifileClassPartMap.add(className.internalName, header.multifileClassName!!)
 
                 protoMap.process(kotlinClass, isPackage = true) +
@@ -233,6 +236,7 @@ public class IncrementalCacheImpl(
 
         dirtyClasses.forEach {
             protoMap.remove(it)
+            packagePartMap.remove(it)
             multifileClassFacadeMap.remove(it)
             multifileClassPartMap.remove(it)
             constantsMap.remove(it)
@@ -243,11 +247,10 @@ public class IncrementalCacheImpl(
     }
 
     override fun getObsoletePackageParts(): Collection<String> {
-        return emptyList()
-//        val obsoletePackageParts =
-//                dirtyOutputClassesMap.getDirtyOutputClasses().filter { packagePartMap.isPackagePart(JvmClassName.byInternalName(it)) }
-//        KotlinBuilder.LOG.debug("Obsolete package parts: ${obsoletePackageParts}")
-//        return obsoletePackageParts
+        val obsoletePackageParts =
+                dirtyOutputClassesMap.getDirtyOutputClasses().filter { packagePartMap.isPackagePart(JvmClassName.byInternalName(it)) }
+        KotlinBuilder.LOG.debug("Obsolete package parts: ${obsoletePackageParts}")
+        return obsoletePackageParts
     }
 
     override fun getPackagePartData(fqName: String): JvmPackagePartProto? {
@@ -518,6 +521,21 @@ public class IncrementalCacheImpl(
 
         override fun dumpValue(value: Map<String, Long>): String =
                 value.dumpMap { java.lang.Long.toHexString(it) }
+    }
+
+    private inner class PackagePartMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
+        public fun addPackagePart(className: JvmClassName) {
+            storage[className.internalName] = true
+        }
+
+        public fun remove(className: JvmClassName) {
+            storage.remove(className.internalName)
+        }
+
+        public fun isPackagePart(className: JvmClassName): Boolean =
+                className.internalName in storage
+
+        override fun dumpValue(value: Boolean) = ""
     }
 
     private inner class MultifileClassFacadeMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {

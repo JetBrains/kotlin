@@ -3,7 +3,6 @@ out/production/module/META-INF/module.kotlin_module
 out/production/module/test/ConstKt.class
 out/production/module/test/Klass$Companion.class
 out/production/module/test/Klass.class
-out/production/module/test/TestPackage.class
 End of files
 Compiling files:
 src/const.kt
