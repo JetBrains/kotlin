@@ -293,7 +293,6 @@ public class ConstraintSystemImpl : ConstraintSystem {
         if (isErrorOrSpecialType(subType, constraintPosition) || isErrorOrSpecialType(superType, constraintPosition)) return
         if (subType == null || superType == null) return
 
-        if (subType.hasNoInferAnnotation() || superType.hasNoInferAnnotation()) return
         if ((subType.hasExactAnnotation() || superType.hasExactAnnotation()) && (constraintKind != EQUAL)) {
             return doAddConstraint(EQUAL, subType, superType, constraintContext, typeCheckingProcedure)
         }
@@ -340,6 +339,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
         if (constraintContext.initial) {
             storeInitialConstraint(constraintKind, subType, superType, constraintPosition)
         }
+        if (subType.hasNoInferAnnotation() || superType.hasNoInferAnnotation()) return
+
         simplifyConstraint(newSubType, superType)
     }
 
