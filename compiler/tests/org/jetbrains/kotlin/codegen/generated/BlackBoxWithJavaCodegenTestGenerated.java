@@ -387,6 +387,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("annotationWithKotlinPropertyFromInterfaceCompanion")
+        public void testAnnotationWithKotlinPropertyFromInterfaceCompanion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/annotationWithKotlinPropertyFromInterfaceCompanion/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("classObjectProperties")
         public void testClassObjectProperties() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/classObjectProperties/");

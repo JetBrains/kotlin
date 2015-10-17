@@ -374,6 +374,11 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
         assert propertyDescriptor != null;
 
+        if (propertyDescriptor.isConst()) {
+            //const initializer always inlined
+            return false;
+        }
+
         JetExpression initializer = property.getInitializer();
 
         ConstantValue<?> initializerValue = computeInitializerValue(property, propertyDescriptor, initializer);
