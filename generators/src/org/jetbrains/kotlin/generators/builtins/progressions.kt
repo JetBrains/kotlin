@@ -46,18 +46,18 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             val hashCode = when (kind) {
                 BYTE, CHAR, SHORT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end.toInt()) + increment)"
+                "        if (isEmpty()) -1 else (31 * (31 * start.toInt() + endInclusive.toInt()) + increment)"
                 INT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * (31 * start + end) + increment)"
+                "        if (isEmpty()) -1 else (31 * (31 * start + endInclusive) + increment)"
                 LONG -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * (31 * ${hashLong("start")} + ${hashLong("end")}) + ${hashLong("increment")}).toInt()"
+                "        if (isEmpty()) -1 else (31 * (31 * ${hashLong("start")} + ${hashLong("endInclusive")}) + ${hashLong("increment")}).toInt()"
                 FLOAT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * (31 * ${floatToIntBits("start")} + ${floatToIntBits("end")}) + ${floatToIntBits("increment")})"
+                "        if (isEmpty()) -1 else (31 * (31 * ${floatToIntBits("start")} + ${floatToIntBits("endInclusive")}) + ${floatToIntBits("increment")})"
                 DOUBLE -> "{\n" +
                 "        if (isEmpty()) return -1\n" +
                 "        var temp = ${doubleToLongBits("start")}\n" +
                 "        var result = ${hashLong("temp")}\n" +
-                "        temp = ${doubleToLongBits("end")}\n" +
+                "        temp = ${doubleToLongBits("endInclusive")}\n" +
                 "        result = 31 * result + ${hashLong("temp")}\n" +
                 "        temp = ${doubleToLongBits("increment")}\n" +
                 "        return (31 * result + ${hashLong("temp")}).toInt()\n" +
@@ -75,25 +75,25 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
  */
 public class $progression(
         override val start: $t,
-        override val end: $t,
+        override val endInclusive: $t,
         override val increment: $incrementType
-) : Progression<$t> {
+) : InclusiveRangeProgression<$t> {
     init {
         $constructor
     }
 
-    override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(start, end, increment)
+    override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(start, endInclusive, increment)
 
     /** Checks if the progression is empty. */
-    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
+    public fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
 
     override fun equals(other: Any?): Boolean =
         other is $progression && (isEmpty() && other.isEmpty() ||
-        ${compare("start")} && ${compare("end")} && ${compare("increment")})
+        ${compare("start")} && ${compare("endInclusive")} && ${compare("increment")})
 
     override fun hashCode(): Int $hashCode
 
-    override fun toString(): String = ${"if (increment > 0) \"\$start..\$end step \$increment\" else \"\$start downTo \$end step \${-increment}\""}
+    override fun toString(): String = ${"if (increment > 0) \"\$start..\$endInclusive step \$increment\" else \"\$start downTo \$endInclusive step \${-increment}\""}
 }""")
             out.println()
         }

@@ -20,6 +20,7 @@ package kotlin
  * Represents a range of values (for example, numbers or characters).
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/ranges.html) for more information.
  */
+@Deprecated("This range has unclear inclusiveness of end value. Use InclusiveRange instead.", ReplaceWith("InclusiveRange<T>"))
 public interface Range<T : Comparable<T>> {
     /**
      * The minimum value in the range.
@@ -40,4 +41,36 @@ public interface Range<T : Comparable<T>> {
      * Checks if the range is empty.
      */
     public fun isEmpty(): Boolean = start > end
+}
+
+/**
+ * Represents a range of values (for example, numbers or characters).
+ * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/ranges.html) for more information.
+ */
+public interface InclusiveRange<T: Comparable<T>> : Range<T> {
+    /**
+     * The minimum value in the range.
+     */
+    public override val start: T
+
+    /**
+     * The maximum value in the range (inclusive).
+     */
+    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
+    public override val end: T get() = endInclusive
+
+    /**
+     * The maximum value in the range (inclusive).
+     */
+    public val endInclusive: T
+
+    /**
+     * Checks if the specified value belongs to the range.
+     */
+    public override operator fun contains(item: T): Boolean = item >= start && item <= endInclusive
+
+    /**
+     * Checks if the range is empty.
+     */
+    public override fun isEmpty(): Boolean = start > endInclusive
 }
