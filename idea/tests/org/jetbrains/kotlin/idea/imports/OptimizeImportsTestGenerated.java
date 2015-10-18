@@ -107,6 +107,18 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("FromCompanionObject.kt")
+    public void testFromCompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/FromCompanionObject.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FromCompanionObjectGeneric.kt")
+    public void testFromCompanionObjectGeneric() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/FromCompanionObjectGeneric.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InvokeFunction.kt")
     public void testInvokeFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/InvokeFunction.kt");
@@ -188,6 +200,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     @TestMetadata("SamConstructor.kt")
     public void testSamConstructor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/SamConstructor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StaticMethodFromSuper.kt")
+    public void testStaticMethodFromSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/StaticMethodFromSuper.kt");
         doTest(fileName);
     }
 

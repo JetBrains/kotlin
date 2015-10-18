@@ -21,13 +21,12 @@ import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
@@ -36,14 +35,15 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
+import org.jetbrains.kotlin.resolve.scopes.utils.withNoFileScope
 import java.util.*
 
 public class KotlinImportOptimizer() : ImportOptimizer {
@@ -112,7 +112,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
                     if (referencedName != null && importableDescriptor.name != referencedName) continue // resolved via alias
 
-                    if (isAccessibleAsMember(importableDescriptor, element)) continue
+                    if (isAccessibleAsMember(importableDescriptor, element, bindingContext)) continue
 
                     _descriptors.add(importableDescriptor)
                 }
@@ -121,15 +121,29 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             super.visitJetElement(element)
         }
 
-        private fun isAccessibleAsMember(target: DeclarationDescriptor, place: JetElement): Boolean {
-            val container = target.containingDeclaration
-            if (container !is ClassDescriptor) return false
-            val scope = if (DescriptorUtils.isCompanionObject(container))
-                container.getContainingDeclaration() as? ClassDescriptor ?: return false
-            else
-                container
-            val classBody = (DescriptorToSourceUtils.getSourceFromDescriptor(scope) as? JetClassOrObject)?.getBody()
-            return classBody != null && classBody.containingFile == file && classBody.isAncestor(place)
+        private fun isAccessibleAsMember(target: DeclarationDescriptor, place: JetElement, bindingContext: BindingContext): Boolean {
+            if (target.containingDeclaration !is ClassDescriptor) return false
+
+            fun isInScope(scope: JetScope): Boolean {
+                return when (target) {
+                    is FunctionDescriptor ->
+                        scope.getFunctions(target.name, NoLookupLocation.FROM_IDE).contains(target)
+
+                    is PropertyDescriptor ->
+                        scope.getProperties(target.name, NoLookupLocation.FROM_IDE).contains(target)
+
+                    is ClassDescriptor ->
+                        scope.getClassifier(target.name, NoLookupLocation.FROM_IDE) == target
+
+                    else -> false
+                }
+            }
+
+            val resolutionScope = place.getResolutionScope(bindingContext, place.getResolutionFacade())
+            val noImportsScope = resolutionScope.withNoFileScope()
+
+            return isInScope(noImportsScope.asJetScope())
+                    || resolutionScope.getImplicitReceiversHierarchy().any { isInScope(it.type.memberScope) }
         }
     }
 
