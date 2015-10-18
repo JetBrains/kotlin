@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -105,8 +105,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
                     if (!target.isExtension) { // for non-extension targets, count only non-qualified simple name usages
                         if (element !is JetNameReferenceExpression) continue
-                        if (element.getIdentifier() == null) continue // skip 'this' etc
-                        if (element.getReceiverExpression() != null) continue
+                        if (CallTypeAndReceiver.detect(element).receiver != null) continue
                     }
 
                     val importableDescriptor = target.getImportableDescriptor()
