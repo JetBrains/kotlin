@@ -81,7 +81,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         return importPath.isImported(defaultImports)
     }
 
-    override fun mayImportByCodeStyle(descriptor: DeclarationDescriptor): Boolean {
+    override fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean {
         val importable = descriptor.getImportableDescriptor()
         return when (importable) {
             is PackageViewDescriptor -> false // now package cannot be imported
@@ -131,10 +131,6 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             // check if import is not needed
             val targetFqName = target.importableFqName ?: return ImportDescriptorResult.FAIL
             if (isAlreadyImported(target, topLevelScope, targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED
-
-            if (!mayImportByCodeStyle(descriptor)) {
-                return ImportDescriptorResult.FAIL
-            }
 
             val imports = if (file is JetCodeFragment)
                 file.importsAsImportList()?.getImports() ?: listOf()

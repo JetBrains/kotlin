@@ -155,12 +155,6 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         doTest(fileName);
     }
 
-    @TestMetadata("DoNotImportNestedClass.kt")
-    public void testDoNotImportNestedClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/DoNotImportNestedClass.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("DropExplicitImports.kt")
     public void testDropExplicitImports() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/DropExplicitImports.kt");
@@ -194,6 +188,12 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     @TestMetadata("ImportClassWhenFunctionImported.kt")
     public void testImportClassWhenFunctionImported() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportClassWhenFunctionImported.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImportFromObject.kt")
+    public void testImportFromObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportFromObject.kt");
         doTest(fileName);
     }
 

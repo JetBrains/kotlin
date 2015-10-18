@@ -16,19 +16,18 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetImportDirective
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.*
 
 public abstract class ImportInsertHelper {
     /*TODO: implementation is not quite correct*/
     public abstract fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean
 
-    public abstract fun mayImportByCodeStyle(descriptor: DeclarationDescriptor): Boolean
+    public abstract fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean
 
     public abstract val importSortComparator: Comparator<ImportPath>
 

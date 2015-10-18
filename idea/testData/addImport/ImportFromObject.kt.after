@@ -1,0 +1,6 @@
+import dependency.MyObject.someFun
+
+// IMPORT: dependency.MyObject.someFun
+fun foo() {
+    someFun()
+}
