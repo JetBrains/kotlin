@@ -409,7 +409,7 @@ public abstract class DoubleIterator : kotlin.Iterator<kotlin.Double> {
     public abstract fun nextDouble(): kotlin.Double
 }
 
-public final class DoubleProgression : kotlin.Progression<kotlin.Double> {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class DoubleProgression : kotlin.Progression<kotlin.Double> {
     /*primary*/ public constructor DoubleProgression(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double, /*2*/ increment: kotlin.Double)
     public open override /*1*/ val end: kotlin.Double
         public open override /*1*/ fun <get-end>(): kotlin.Double
@@ -421,7 +421,7 @@ public final class DoubleProgression : kotlin.Progression<kotlin.Double> {
     public open override /*1*/ fun iterator(): kotlin.DoubleIterator
 }
 
-public final class DoubleProgressionIterator : kotlin.DoubleIterator {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") public final class DoubleProgressionIterator : kotlin.DoubleIterator {
     /*primary*/ public constructor DoubleProgressionIterator(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double, /*2*/ increment: kotlin.Double)
     public final val end: kotlin.Double
         public final fun <get-end>(): kotlin.Double
@@ -435,7 +435,7 @@ public final class DoubleProgressionIterator : kotlin.DoubleIterator {
     public open override /*1*/ fun nextDouble(): kotlin.Double
 }
 
-public final class DoubleRange : kotlin.Range<kotlin.Double>, kotlin.Progression<kotlin.Double> {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class DoubleRange : kotlin.Range<kotlin.Double>, kotlin.Progression<kotlin.Double> {
     /*primary*/ public constructor DoubleRange(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double)
     public open override /*2*/ val end: kotlin.Double
         public open override /*2*/ fun <get-end>(): kotlin.Double
@@ -560,7 +560,7 @@ public abstract class FloatIterator : kotlin.Iterator<kotlin.Float> {
     public abstract fun nextFloat(): kotlin.Float
 }
 
-public final class FloatProgression : kotlin.Progression<kotlin.Float> {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class FloatProgression : kotlin.Progression<kotlin.Float> {
     /*primary*/ public constructor FloatProgression(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float, /*2*/ increment: kotlin.Float)
     public open override /*1*/ val end: kotlin.Float
         public open override /*1*/ fun <get-end>(): kotlin.Float
@@ -572,7 +572,7 @@ public final class FloatProgression : kotlin.Progression<kotlin.Float> {
     public open override /*1*/ fun iterator(): kotlin.FloatIterator
 }
 
-public final class FloatProgressionIterator : kotlin.FloatIterator {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") public final class FloatProgressionIterator : kotlin.FloatIterator {
     /*primary*/ public constructor FloatProgressionIterator(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float, /*2*/ increment: kotlin.Float)
     public final val end: kotlin.Float
         public final fun <get-end>(): kotlin.Float
@@ -586,7 +586,7 @@ public final class FloatProgressionIterator : kotlin.FloatIterator {
     public open override /*1*/ fun nextFloat(): kotlin.Float
 }
 
-public final class FloatRange : kotlin.Range<kotlin.Float>, kotlin.Progression<kotlin.Float> {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class FloatRange : kotlin.Range<kotlin.Float>, kotlin.Progression<kotlin.Float> {
     /*primary*/ public constructor FloatRange(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float)
     public open override /*2*/ val end: kotlin.Float
         public open override /*2*/ fun <get-end>(): kotlin.Float
