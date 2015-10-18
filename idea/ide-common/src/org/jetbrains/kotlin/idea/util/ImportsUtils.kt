@@ -47,7 +47,7 @@ public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
     return when (this) {
         is ConstructorDescriptor -> !parentClass.isInner() // inner class constructors can't be referenced via import
         is ClassDescriptor -> true
-        else -> false
+        else -> parentClass.kind == ClassKind.OBJECT
     }
 }
 

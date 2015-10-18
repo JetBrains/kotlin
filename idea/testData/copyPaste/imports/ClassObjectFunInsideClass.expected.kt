@@ -1,6 +1,7 @@
-// ERROR: Unresolved reference: f
 package to
 
+import a.A
+
 fun g() {
-    f()
+    A.f()
 }
