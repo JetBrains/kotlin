@@ -34,7 +34,6 @@ internal annotation class Exact
  * Specifies that a corresponding member has the lowest priority in overload resolution.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.SOURCE)
 internal annotation class LowPriorityInOverloadResolution
 
 /**
