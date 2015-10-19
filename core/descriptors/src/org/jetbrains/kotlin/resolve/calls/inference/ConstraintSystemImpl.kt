@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
@@ -29,9 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
@@ -137,7 +136,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
             substituteOriginal: Boolean
     ): TypeSubstitutor {
         val parameterToInferredValueMap = getParameterToInferredValueMap(allTypeParameterBounds, getDefaultValue, substituteOriginal)
-        return TypeConstructorSubstitution.createByParametersMap(parameterToInferredValueMap).buildSubstitutor()
+        val substitution = TypeConstructorSubstitution.createByParametersMap(parameterToInferredValueMap)
+        return SubstitutionFilteringInternalResolveAnnotations(substitution).buildSubstitutor()
     }
 
     override fun getStatus(): ConstraintSystemStatus = constraintSystemStatus
@@ -546,10 +546,15 @@ private fun TypeSubstitutor.setApproximateCapturedTypes(): TypeSubstitutor {
     return TypeSubstitutor.create(SubstitutionWithCapturedTypeApproximation(getSubstitution()))
 }
 
-private class SubstitutionWithCapturedTypeApproximation(val substitution: TypeSubstitution) : TypeSubstitution() {
-    override fun get(key: KtType) = substitution[key]
-    override fun isEmpty() = substitution.isEmpty()
+private class SubstitutionWithCapturedTypeApproximation(substitution: TypeSubstitution) : DelegatedTypeSubstitution(substitution) {
     override fun approximateCapturedTypes() = true
+}
+
+class SubstitutionFilteringInternalResolveAnnotations(substitution: TypeSubstitution) : DelegatedTypeSubstitution(substitution) {
+    override fun filterAnnotations(annotations: Annotations): Annotations {
+        if (!annotations.hasInternalAnnotationForResolve()) return annotations
+        return FilteredAnnotations(annotations) { !it.isInternalAnnotationForResolve() }
+    }
 }
 
 public fun ConstraintSystemImpl.registerTypeVariables(typeVariables: Map<TypeParameterDescriptor, Variance>) {

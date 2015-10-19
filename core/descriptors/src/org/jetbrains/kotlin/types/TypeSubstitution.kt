@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 public abstract class TypeSubstitution {
     companion object {
@@ -33,6 +34,8 @@ public abstract class TypeSubstitution {
     public open fun isEmpty(): Boolean = false
 
     public open fun approximateCapturedTypes(): Boolean = false
+
+    public open fun filterAnnotations(annotations: Annotations) = annotations
 
     public fun buildSubstitutor(): TypeSubstitutor = TypeSubstitutor.create(this)
 }
@@ -123,4 +126,16 @@ private class CompositeTypeSubstitution(
     override fun isEmpty() = first.isEmpty() && second.isEmpty()
     //
     override fun approximateCapturedTypes() = first.approximateCapturedTypes() || second.approximateCapturedTypes()
+
+    override fun filterAnnotations(annotations: Annotations): Annotations = second.filterAnnotations(first.filterAnnotations(annotations))
+}
+
+public open class DelegatedTypeSubstitution(val substitution: TypeSubstitution): TypeSubstitution() {
+    override fun get(key: KtType) = substitution.get(key)
+
+    override fun isEmpty() = substitution.isEmpty()
+
+    override fun approximateCapturedTypes() = substitution.approximateCapturedTypes()
+
+    override fun filterAnnotations(annotations: Annotations) = substitution.filterAnnotations(annotations)
 }

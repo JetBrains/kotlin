@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnExpress
 import org.jetbrains.kotlin.resolve.calls.callUtil.isExplicitSafeCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.*
+import org.jetbrains.kotlin.resolve.calls.inference.SubstitutionFilteringInternalResolveAnnotations
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -43,7 +44,6 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTask
-import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -127,7 +127,7 @@ public class CandidateResolver(
                         "Explicit type argument expected for " + candidateDescriptor.getTypeParameters().get(index).getName()))
             }
             val substitution = FunctionDescriptorUtil.createSubstitution(candidateDescriptor as FunctionDescriptor, typeArguments)
-            val substitutor = TypeSubstitutor.create(substitution)
+            val substitutor = TypeSubstitutor.create(SubstitutionFilteringInternalResolveAnnotations(substitution))
 
             if (expectedTypeArgumentCount != jetTypeArguments.size()) {
                 candidateCall.addStatus(OTHER_ERROR)

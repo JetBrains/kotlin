@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class TypeSubstitutor {
 
@@ -183,7 +186,7 @@ public class TypeSubstitutor {
 
             // substitutionType.annotations = replacement.annotations ++ type.annotations
             if (!type.getAnnotations().isEmpty()) {
-                Annotations typeAnnotations = filterOutUnsafeVariance(type.getAnnotations());
+                Annotations typeAnnotations = filterOutUnsafeVariance(substitution.filterAnnotations(type.getAnnotations()));
                 substitutedType = TypeUtilsKt.replaceAnnotations(
                         substitutedType,
                         new CompositeAnnotations(substitutedType.getAnnotations(), typeAnnotations)
@@ -227,7 +230,7 @@ public class TypeSubstitutor {
 
         // Only type parameters of the corresponding class (or captured type parameters of outer declaration) are substituted
         // e.g. for return type Foo of 'add(..)' in 'class Foo { fun <R> add(bar: Bar<R>): Foo }' R shouldn't be substituted in the scope
-        TypeSubstitution substitutionFilteringTypeParameters = new TypeSubstitution() {
+        TypeSubstitution substitutionFilteringTypeParameters = new DelegatedTypeSubstitution(substitution) {
             private final Collection<TypeConstructor> containedOrCapturedTypeParameters =
                     TypeUtilsKt.getContainedAndCapturedTypeParameterConstructors(type);
 
@@ -235,11 +238,6 @@ public class TypeSubstitutor {
             @Override
             public TypeProjection get(@NotNull KtType key) {
                 return containedOrCapturedTypeParameters.contains(key.getConstructor()) ? substitution.get(key) : null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return substitution.isEmpty();
             }
         };
         KtType substitutedType = KtTypeImpl.create(type.getAnnotations(),   // Old annotations. This is questionable
