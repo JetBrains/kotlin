@@ -1,6 +1,6 @@
 package
 
-public final class A : kotlin.Annotation {
+public final annotation class A : kotlin.Annotation {
     public constructor A(/*0*/ arg: kotlin.reflect.KClass<*> = ..., /*1*/ x: kotlin.Int = ..., /*2*/ b: B)
     public final val arg: kotlin.reflect.KClass<*>
     public final val b: B
@@ -10,7 +10,7 @@ public final class A : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class B : kotlin.Annotation {
+public final annotation class B : kotlin.Annotation {
     public constructor B(/*0*/ arg: kotlin.reflect.KClass<*> = ..., /*1*/ y: kotlin.Int = ...)
     public final val arg: kotlin.reflect.KClass<*>
     public final val y: kotlin.Int

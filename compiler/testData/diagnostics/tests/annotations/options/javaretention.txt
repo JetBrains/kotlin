@@ -6,28 +6,28 @@ public open class AnnotationRetentions {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final class BaseAnnotation : kotlin.Annotation {
+    public final annotation class BaseAnnotation : kotlin.Annotation {
         public constructor BaseAnnotation()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final class BinaryAnnotation : kotlin.Annotation {
+    @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class BinaryAnnotation : kotlin.Annotation {
         public constructor BinaryAnnotation()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final class RuntimeAnnotation : kotlin.Annotation {
+    @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class RuntimeAnnotation : kotlin.Annotation {
         public constructor RuntimeAnnotation()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final class SourceAnnotation : kotlin.Annotation {
+    @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class SourceAnnotation : kotlin.Annotation {
         public constructor SourceAnnotation()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

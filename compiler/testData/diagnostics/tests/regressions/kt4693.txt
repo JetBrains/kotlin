@@ -8,7 +8,7 @@ public final enum class MyEnum : kotlin.Enum<MyEnum> {
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum): kotlin.Int
-    @kotlin.inline() public final fun doSmth(/*0*/ f: (MyEnum) -> kotlin.String): kotlin.String
+    public final inline fun doSmth(/*0*/ f: (MyEnum) -> kotlin.String): kotlin.String
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.resolve.ScriptBodyResolver
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.ScriptReceiver
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.DeferredType
@@ -78,7 +79,10 @@ public class LazyScriptDescriptor(
                 scriptDefinition.getScriptParameters().mapIndexed { index, scriptParameter ->
                     ValueParameterDescriptorImpl(
                             result, null, index, Annotations.EMPTY, scriptParameter.getName(), scriptParameter.getType(),
-                            false, null, SourceElement.NO_SOURCE
+                            /* declaresDefaultValue = */ false,
+                            /* isCrossinline = */ false,
+                            /* isNoinline = */ false,
+                            null, SourceElement.NO_SOURCE
                     )
                 },
                 DeferredType.create(resolveSession.storageManager, resolveSession.trace) {

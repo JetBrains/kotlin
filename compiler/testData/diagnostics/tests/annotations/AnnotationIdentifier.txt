@@ -1,6 +1,6 @@
 package
 
-@kotlin.annotation.annotation() public final class annotation : kotlin.Annotation {
+public final annotation class annotation : kotlin.Annotation {
     public constructor annotation()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -9,7 +9,7 @@ package
 
 package other {
 
-    @kotlin.annotation.annotation() public final class My : kotlin.Annotation {
+    public final annotation class My : kotlin.Annotation {
         public constructor My()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

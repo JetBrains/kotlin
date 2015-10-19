@@ -95,6 +95,12 @@ public class CommonDecompiledTextTestGenerated extends AbstractCommonDecompiledT
         doTest(fileName);
     }
 
+    @TestMetadata("Modifiers")
+    public void testModifiers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Modifiers/");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedClasses")
     public void testNestedClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/NestedClasses/");

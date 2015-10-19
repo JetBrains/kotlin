@@ -1,4 +1,4 @@
 package
 
-@kotlin.tailrec() public fun badTails(/*0*/ x: kotlin.Int): kotlin.Int
+public tailrec fun badTails(/*0*/ x: kotlin.Int): kotlin.Int
 public fun box(): kotlin.String

@@ -1,7 +1,7 @@
 package
 
-@kotlin.inline() public fun test(): kotlin.Unit
-@kotlin.inline() internal fun testInternal(): kotlin.Unit
+public inline fun test(): kotlin.Unit
+internal inline fun testInternal(): kotlin.Unit
 
 private final class Z {
     public constructor Z()
@@ -20,7 +20,7 @@ private final class Z2 {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     private final fun privateFun(): kotlin.Unit
     public final fun publicFun(): kotlin.Unit
-    @kotlin.inline() public final fun test(): kotlin.Unit
-    @kotlin.inline() public final fun testInternal(): kotlin.Unit
+    public final inline fun test(): kotlin.Unit
+    public final inline fun testInternal(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

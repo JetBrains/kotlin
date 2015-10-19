@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.ANNOTATION_MODIFIERS_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
@@ -347,7 +345,7 @@ internal class DescriptorRendererImpl(
             // See AnnotationResolver.resolveAndAppendAnnotationsFromModifiers for clarification
             // This hack can be removed when modifiers will be resolved without annotations
 
-            val sortedAnnotations = annotated.getAnnotations().getAllAnnotations().sortedBy { p -> p.annotation.isBuiltinModifier() }
+            val sortedAnnotations = annotated.getAnnotations().getAllAnnotations()
             for ((annotation, target) in sortedAnnotations) {
                 val annotationClass = annotation.getType().getConstructor().getDeclarationDescriptor() as ClassDescriptor
 
@@ -359,9 +357,6 @@ internal class DescriptorRendererImpl(
 
         builder.append(annotationsBuilder)
     }
-
-    private fun AnnotationDescriptor.isBuiltinModifier()
-            = (type.constructor.declarationDescriptor as ClassDescriptor).fqNameSafe in ANNOTATION_MODIFIERS_FQ_NAMES
 
     override fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget?): String {
         return StringBuilder {
@@ -426,6 +421,11 @@ internal class DescriptorRendererImpl(
         }
     }
 
+    private fun renderData(isData: Boolean, builder: StringBuilder) {
+        if (DescriptorRendererModifier.DATA !in modifiers || !isData) return
+        builder.append(renderKeyword("data")).append(" ")
+    }
+
     private fun renderModalityForCallable(callable: CallableMemberDescriptor, builder: StringBuilder) {
         if (!DescriptorUtils.isTopLevelDeclaration(callable) || callable.getModality() != Modality.FINAL) {
             if (overridesSomething(callable) && overrideRenderingPolicy == OverrideRenderingPolicy.RENDER_OVERRIDE && callable.getModality() == Modality.OPEN) {
@@ -466,6 +466,15 @@ internal class DescriptorRendererImpl(
         }
         if (functionDescriptor.isInfix && functionDescriptor.overriddenDescriptors.none { it.isInfix }) {
             builder.append("infix ")
+        }
+        if (functionDescriptor.isExternal) {
+            builder.append("external ")
+        }
+        if (functionDescriptor.isInline) {
+            builder.append("inline ")
+        }
+        if (functionDescriptor.isTailrec) {
+            builder.append("tailrec ")
         }
     }
 
@@ -673,6 +682,13 @@ internal class DescriptorRendererImpl(
 
         renderAnnotations(valueParameter, builder)
 
+        if (valueParameter.isCrossinline) {
+            builder.append("crossinline ")
+        }
+        if (valueParameter.isNoinline) {
+            builder.append("noinline ")
+        }
+
         renderVariable(valueParameter, includeName, builder, topLevel)
 
         val withDefaultValue = renderDefaultValues && (if (debugMode) valueParameter.declaresDefaultValue() else valueParameter.hasDefaultValue())
@@ -762,6 +778,7 @@ internal class DescriptorRendererImpl(
                 renderModality(klass.modality, builder)
             }
             renderInner(klass.isInner, builder)
+            renderData(klass.isData, builder)
             renderClassKindPrefix(klass, builder)
         }
 
@@ -835,6 +852,11 @@ internal class DescriptorRendererImpl(
         }
     }
 
+    private fun renderAccessorModifiers(descriptor: PropertyAccessorDescriptor, builder: StringBuilder) {
+        if (descriptor.isExternal) {
+            builder.append("external ")
+        }
+    }
 
     /* STUPID DISPATCH-ONLY VISITOR */
     private inner class RenderDeclarationDescriptorVisitor : DeclarationDescriptorVisitor<Unit, StringBuilder> {
@@ -852,6 +874,7 @@ internal class DescriptorRendererImpl(
 
         override fun visitPropertyGetterDescriptor(descriptor: PropertyGetterDescriptor, builder: StringBuilder) {
             if (renderAccessors) {
+                renderAccessorModifiers(descriptor, builder)
                 builder.append("getter for ")
                 renderProperty(descriptor.getCorrespondingProperty(), builder)
             }
@@ -863,6 +886,7 @@ internal class DescriptorRendererImpl(
 
         override fun visitPropertySetterDescriptor(descriptor: PropertySetterDescriptor, builder: StringBuilder) {
             if (renderAccessors) {
+                renderAccessorModifiers(descriptor, builder)
                 builder.append("setter for ")
                 renderProperty(descriptor.getCorrespondingProperty(), builder)
             }

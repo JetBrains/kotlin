@@ -1,18 +1,18 @@
 package test
 
-@kotlin.annotation.annotation() public final class BooleanAnno : kotlin.Annotation {
+public final annotation class BooleanAnno : kotlin.Annotation {
     /*primary*/ public constructor BooleanAnno(/*0*/ value: kotlin.Boolean)
     public final val value: kotlin.Boolean
         public final fun <get-value>(): kotlin.Boolean
 }
 
-@kotlin.annotation.annotation() public final class ByteAnno : kotlin.Annotation {
+public final annotation class ByteAnno : kotlin.Annotation {
     /*primary*/ public constructor ByteAnno(/*0*/ value: kotlin.Byte)
     public final val value: kotlin.Byte
         public final fun <get-value>(): kotlin.Byte
 }
 
-@kotlin.annotation.annotation() public final class CharAnno : kotlin.Annotation {
+public final annotation class CharAnno : kotlin.Annotation {
     /*primary*/ public constructor CharAnno(/*0*/ value: kotlin.Char)
     public final val value: kotlin.Char
         public final fun <get-value>(): kotlin.Char
@@ -22,31 +22,31 @@ package test
     /*primary*/ public constructor Class()
 }
 
-@kotlin.annotation.annotation() public final class DoubleAnno : kotlin.Annotation {
+public final annotation class DoubleAnno : kotlin.Annotation {
     /*primary*/ public constructor DoubleAnno(/*0*/ value: kotlin.Double)
     public final val value: kotlin.Double
         public final fun <get-value>(): kotlin.Double
 }
 
-@kotlin.annotation.annotation() public final class FloatAnno : kotlin.Annotation {
+public final annotation class FloatAnno : kotlin.Annotation {
     /*primary*/ public constructor FloatAnno(/*0*/ value: kotlin.Float)
     public final val value: kotlin.Float
         public final fun <get-value>(): kotlin.Float
 }
 
-@kotlin.annotation.annotation() public final class IntAnno : kotlin.Annotation {
+public final annotation class IntAnno : kotlin.Annotation {
     /*primary*/ public constructor IntAnno(/*0*/ value: kotlin.Int)
     public final val value: kotlin.Int
         public final fun <get-value>(): kotlin.Int
 }
 
-@kotlin.annotation.annotation() public final class LongAnno : kotlin.Annotation {
+public final annotation class LongAnno : kotlin.Annotation {
     /*primary*/ public constructor LongAnno(/*0*/ value: kotlin.Long)
     public final val value: kotlin.Long
         public final fun <get-value>(): kotlin.Long
 }
 
-@kotlin.annotation.annotation() public final class ShortAnno : kotlin.Annotation {
+public final annotation class ShortAnno : kotlin.Annotation {
     /*primary*/ public constructor ShortAnno(/*0*/ value: kotlin.Short)
     public final val value: kotlin.Short
         public final fun <get-value>(): kotlin.Short

@@ -1,6 +1,6 @@
 package test
 
-@kotlin.annotation.annotation() public final class `$$$$$$` : kotlin.Annotation {
+public final annotation class `$$$$$$` : kotlin.Annotation {
     /*primary*/ public constructor `$$$$$$`()
 }
 
@@ -8,7 +8,7 @@ package test
     /*primary*/ public constructor A()
 }
 
-@kotlin.annotation.annotation() public final class `Anno$tation` : kotlin.Annotation {
+public final annotation class `Anno$tation` : kotlin.Annotation {
     /*primary*/ public constructor `Anno$tation`()
 }
 

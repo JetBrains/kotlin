@@ -3,7 +3,7 @@ package
 public val @receiver:Ann() kotlin.String.extensionProperty: kotlin.String
 public fun @receiver:Ann() kotlin.String.length2(): kotlin.Int
 
-@kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
+public final annotation class Ann : kotlin.Annotation {
     public constructor Ann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -12,7 +12,7 @@ public final class Test {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        @kotlin.annotation.annotation() public final class ClassObjectAnnotation : kotlin.Annotation {
+        public final annotation class ClassObjectAnnotation : kotlin.Annotation {
             public constructor ClassObjectAnnotation()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -20,7 +20,7 @@ public final class Test {
         }
     }
 
-    @kotlin.annotation.annotation() public final class NestedAnnotation : kotlin.Annotation {
+    public final annotation class NestedAnnotation : kotlin.Annotation {
         public constructor NestedAnnotation()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

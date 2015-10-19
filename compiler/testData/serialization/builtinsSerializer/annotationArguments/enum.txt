@@ -8,12 +8,12 @@ package test
     public constructor C2()
 }
 
-@kotlin.annotation.annotation() public final class EnumArray : kotlin.Annotation {
+public final annotation class EnumArray : kotlin.Annotation {
     public constructor EnumArray(/*0*/ enumArray: kotlin.Array<test.Weapon>)
     public final val enumArray: kotlin.Array<test.Weapon>
 }
 
-@kotlin.annotation.annotation() public final class JustEnum : kotlin.Annotation {
+public final annotation class JustEnum : kotlin.Annotation {
     public constructor JustEnum(/*0*/ weapon: test.Weapon)
     public final val weapon: test.Weapon
 }

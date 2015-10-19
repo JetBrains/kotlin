@@ -34,6 +34,50 @@ public class KotlinRuntimeLibraryUtilTest : TestCase() {
         test("internal-0.1.2", "internal-0.1.2")
         test(".0.1.2", ".0.1.2")
         test("0.1.2.", "0.1.2.")
+
+        test("1.0.0-beta1-001-Idea141-12", "1.0.0-beta1-001")
+        test("1.0.1-beta5-013-Idea143-1", "1.0.1-beta5-013")
+        test("1.0.1-beta1-2-Idea143-1", "1.0.1-beta1-2")
+        test("1.0.3-beta1-2", "1.0.3-beta1-2")
+
+        test("1.0.0-beta1-001-IJ143-12", "1.0.0-beta1-001")
+        test("1.0.1-beta5-013-IJ142-1", "1.0.1-beta5-013")
+        test("1.0.1-beta1-2-IJ-2-1", "1.0.1-beta1-2")
+        test("1.0.3-beta1-2-IJ", "1.0.3-beta1-2")
+
+        test("2.15.789-Idea147-14", "2.15.789")
+
+        test("1.0.0-alpha", "1.0.0-alpha")
+        test("1.2.2123-alpha-023", "1.2.2123-alpha-023")
+    }
+
+    public fun testOutdatedRuntime() {
+        outdated("1.0.0-beta1-001-Idea141-12", "0.12.15")
+        outdated("1.0.0-beta1-001-Idea141-1", "0.152.16")
+        outdated("1.0.0-beta1-001-Idea141-1", "0.152.16")
+
+        notOutdated("1.0.0-beta1-001-Idea141-12", "1.0.0-beta1-001")
+        notOutdated("1.0.0-beta1-001-Idea143-14", "1.0.0-beta1-001")
+        notOutdated("1.0.0-beta1-001", "1.0.0-beta1-001")
+        notOutdated("1.0.0-beta1-001-Idea3-1", "1.0.0-beta1-001")
+        notOutdated("1.0.0-beta1-001-Idea3-(1)", "1.0.0-beta1-001")
+
+        outdated("1.0.0-beta1-002-Idea141-1", "1.0.0-beta1-001")
+        outdated("1.0.0-beta1-010-Idea141-1", "1.0.0-beta1-009")
+        outdated("1.0.0-beta1-100-Idea141-1", "1.0.0-beta1-099")
+        outdated("1.0.0-beta2-000-Idea141-1", "1.0.0-beta1-999")
+        outdated("1.1.0-beta1-000-Idea141-1", "1.0.9-beta9-999")
+        outdated("2.0.0-beta1-000-Idea141-1", "1.9.9-beta9-999")
+    }
+
+    private fun outdated(plugin: String, library: String) {
+        Assert.assertTrue("Should be outdated: plugin=$plugin, library=$library",
+                OutdatedKotlinRuntimeNotification.isRuntimeOutdated(library, KotlinRuntimeLibraryUtil.bundledRuntimeVersion(plugin)))
+    }
+
+    private fun notOutdated(plugin: String, library: String) {
+        Assert.assertFalse("Should NOT be outdated: plugin=$plugin, library=$library",
+                OutdatedKotlinRuntimeNotification.isRuntimeOutdated(library, KotlinRuntimeLibraryUtil.bundledRuntimeVersion(plugin)))
     }
 
     private fun test(version: String, expected: String) {

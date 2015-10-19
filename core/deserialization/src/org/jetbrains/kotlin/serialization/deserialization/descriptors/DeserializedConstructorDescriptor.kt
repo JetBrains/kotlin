@@ -45,4 +45,10 @@ public class DeserializedConstructorDescriptor(
                 annotations, isPrimary, kind, proto, nameResolver, typeTable
         )
     }
+
+    override fun isExternal(): Boolean = false
+
+    override fun isInline(): Boolean = false
+
+    override fun isTailrec(): Boolean = false
 }

@@ -12,3 +12,10 @@ fun test1(a: A, b: B, c: C) {
     assertEquals1(a, b)
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES!>assertEquals1<!>(b, c)
 }
+
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+public fun <@kotlin.internal.OnlyInputTypes T> expect1(expected: T, block: () -> T) {}
+
+fun test() {
+    expect1(2) { byteArrayOf(1, 2, 3).indexOf(3) }
+}

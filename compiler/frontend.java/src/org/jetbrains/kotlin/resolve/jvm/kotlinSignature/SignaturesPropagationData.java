@@ -266,6 +266,8 @@ public class SignaturesPropagationData {
                         stableName != null ? stableName : originalParam.getName(),
                         altType,
                         originalParam.declaresDefaultValue(),
+                        originalParam.isCrossinline(),
+                        originalParam.isNoinline(),
                         varargCheckResult.isVararg ? DescriptorUtilsKt.getBuiltIns(originalParam).getArrayElementType(altType) : null,
                         SourceElement.NO_SOURCE
                 ));

@@ -1,6 +1,6 @@
 package
 
-@kotlin.inline() public fun </*0*/ R> doCall(/*0*/ block: () -> R): R
+public inline fun </*0*/ R> doCall(/*0*/ block: () -> R): R
 public fun test1(/*0*/ intKind: Kind, /*1*/ extKind: Kind): Global
 
 public final class External {

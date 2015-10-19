@@ -15,9 +15,12 @@ abstract class A() {
 class FinalClass() {
     <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> fun foo() {}
     val i: Int = 1
-        <!WRONG_MODIFIER_TARGET!>open<!> get(): Int = field
+        <!WRONG_MODIFIER_TARGET!>open<!> <!WRONG_MODIFIER_TARGET!>inline<!> get(): Int = field
     var j: Int = 1
-        <!WRONG_MODIFIER_TARGET!>open<!> set(v: Int) {}
+        <!WRONG_MODIFIER_TARGET!>open<!> <!WRONG_MODIFIER_TARGET!>inline<!> set(v: Int) {}
+
+    <!WRONG_MODIFIER_TARGET!>inline<!> val f: ()->Unit
+        get() = {}
 }
 
 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> class C

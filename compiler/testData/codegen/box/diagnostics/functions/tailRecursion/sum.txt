@@ -1,4 +1,4 @@
 package
 
 public fun box(): kotlin.String
-@kotlin.tailrec() public fun sum(/*0*/ x: kotlin.Long, /*1*/ sum: kotlin.Long): kotlin.Long
+public tailrec fun sum(/*0*/ x: kotlin.Long, /*1*/ sum: kotlin.Long): kotlin.Long

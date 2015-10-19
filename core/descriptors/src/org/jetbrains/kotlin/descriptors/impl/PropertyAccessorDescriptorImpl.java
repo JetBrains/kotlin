@@ -32,6 +32,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
 
     private final boolean hasBody;
     private final boolean isDefault;
+    private final boolean isExternal;
     private final Modality modality;
     private final PropertyDescriptor correspondingProperty;
     private final Kind kind;
@@ -45,6 +46,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
             @NotNull Name name,
             boolean hasBody,
             boolean isDefault,
+            boolean isExternal,
             Kind kind,
             @NotNull SourceElement source
     ) {
@@ -54,6 +56,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
         this.correspondingProperty = correspondingProperty;
         this.hasBody = hasBody;
         this.isDefault = isDefault;
+        this.isExternal = isExternal;
         this.kind = kind;
     }
 
@@ -80,6 +83,21 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
 
     @Override
     public boolean isInfix() {
+        return false;
+    }
+
+    @Override
+    public boolean isExternal() {
+        return isExternal;
+    }
+
+    @Override
+    public boolean isInline() {
+        return false;
+    }
+
+    @Override
+    public boolean isTailrec() {
         return false;
     }
 

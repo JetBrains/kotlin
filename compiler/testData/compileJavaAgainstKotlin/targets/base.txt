@@ -5,6 +5,6 @@ package test
     @test.base() public/*package*/ open fun foo(/*0*/ @test.base() kotlin.Int): kotlin.Int
 }
 
-@kotlin.annotation.annotation() public final class base : kotlin.Annotation {
+public final annotation class base : kotlin.Annotation {
     public constructor base()
 }

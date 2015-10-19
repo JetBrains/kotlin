@@ -6,7 +6,7 @@ public interface PrimitiveValueInParam {
         public constructor A()
     }
 
-    public final class Ann : kotlin.Annotation {
+    public final annotation class Ann : kotlin.Annotation {
         public constructor Ann(/*0*/ i: kotlin.Int, /*1*/ l: kotlin.Long, /*2*/ d: kotlin.Double, /*3*/ f: kotlin.Float, /*4*/ bool: kotlin.Boolean, /*5*/ str: kotlin.String)
         public final val bool: kotlin.Boolean
         public final val d: kotlin.Double

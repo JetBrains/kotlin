@@ -5,9 +5,9 @@ public fun box(): kotlin.String
 public final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.tailrec() public final fun f1(/*0*/ c: kotlin.Int): kotlin.Unit
-    @kotlin.tailrec() public final fun f2(/*0*/ c: kotlin.Int): kotlin.Unit
-    @kotlin.tailrec() public final fun f3(/*0*/ a: A): kotlin.Unit
+    public final tailrec fun f1(/*0*/ c: kotlin.Int): kotlin.Unit
+    public final tailrec fun f2(/*0*/ c: kotlin.Int): kotlin.Unit
+    public final tailrec fun f3(/*0*/ a: A): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

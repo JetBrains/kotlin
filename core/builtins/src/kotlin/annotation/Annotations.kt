@@ -77,15 +77,6 @@ public enum class AnnotationRetention {
 public annotation class Target(vararg val allowedTargets: AnnotationTarget)
 
 /**
- * This special meta-annotation is used to declare an annotation.
- * So a class in Kotlin is an annotation if and only if it has the "annotation" meta-annotation.
- */
-@Target(AnnotationTarget.ANNOTATION_CLASS)
-@Retention(AnnotationRetention.SOURCE)
-@MustBeDocumented
-private annotation class annotation
-
-/**
  * This meta-annotation determines whether an annotation is stored in binary output and visible for reflection. By default, both are true.
  *
  * @property value necessary annotation retention (RUNTIME, BINARY or SOURCE)

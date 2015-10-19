@@ -1,5 +1,5 @@
 package
 
-@kotlin.inline() public fun </*0*/ reified T> bar(): kotlin.Unit
+public inline fun </*0*/ reified T> bar(): kotlin.Unit
 public fun baz(): kotlin.Unit
 public fun </*0*/ T> foo(): kotlin.Unit

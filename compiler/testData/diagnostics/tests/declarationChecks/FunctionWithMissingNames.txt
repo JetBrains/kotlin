@@ -29,7 +29,7 @@ public final class Outer {
     public final fun B.<no name provided>(): kotlin.Unit
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.FUNCTION}) @kotlin.annotation.annotation() public final class a : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.FUNCTION}) public final annotation class a : kotlin.Annotation {
     public constructor a()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

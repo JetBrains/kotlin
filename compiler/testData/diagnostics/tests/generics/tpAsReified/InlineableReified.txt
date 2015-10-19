@@ -1,5 +1,5 @@
 package
 
-@kotlin.inline() public fun </*0*/ T1, /*1*/ reified T2> bar(/*0*/ x: T1, /*1*/ y: T2): T2
+public inline fun </*0*/ T1, /*1*/ reified T2> bar(/*0*/ x: T1, /*1*/ y: T2): T2
 public fun box(): kotlin.Unit
-@kotlin.inline() public fun </*0*/ reified R> foo(/*0*/ z: R): R
+public inline fun </*0*/ reified R> foo(/*0*/ z: R): R

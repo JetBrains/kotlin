@@ -1,7 +1,7 @@
 package
 
 public fun </*0*/ T> foo1(/*0*/ f: (T) -> kotlin.Unit): Foo<T>
-@kotlin.inline() public fun </*0*/ reified T> foo2(/*0*/ f: (T) -> kotlin.Unit): Foo<T>
+public inline fun </*0*/ reified T> foo2(/*0*/ f: (T) -> kotlin.Unit): Foo<T>
 public fun test1(): kotlin.Unit
 
 public final class Foo</*0*/ T> {

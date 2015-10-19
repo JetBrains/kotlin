@@ -2,10 +2,10 @@
 
 import java.io.*
 
-inline val InputStream.buffered : BufferedInputStream
+<!WRONG_MODIFIER_TARGET!>inline<!> val InputStream.buffered : BufferedInputStream
     get() = if(this is BufferedInputStream) <!DEBUG_INFO_SMARTCAST!>this<!> else BufferedInputStream(this)
 
-inline val Reader.buffered : BufferedReader
+<!WRONG_MODIFIER_TARGET!>inline<!> val Reader.buffered : BufferedReader
     get() = if(this is BufferedReader) <!DEBUG_INFO_SMARTCAST!>this<!> else BufferedReader(this)
 
 

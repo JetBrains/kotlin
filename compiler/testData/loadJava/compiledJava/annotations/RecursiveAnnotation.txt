@@ -2,12 +2,12 @@ package test
 
 public interface RecursiveAnnotation {
 
-    @test.RecursiveAnnotation.B(value = test.RecursiveAnnotation.A(value = "test")) public final class A : kotlin.Annotation {
+    @test.RecursiveAnnotation.B(value = test.RecursiveAnnotation.A(value = "test")) public final annotation class A : kotlin.Annotation {
         public constructor A(/*0*/ value: kotlin.String)
         public final val value: kotlin.String
     }
 
-    @test.RecursiveAnnotation.B(value = test.RecursiveAnnotation.A(value = "test")) public final class B : kotlin.Annotation {
+    @test.RecursiveAnnotation.B(value = test.RecursiveAnnotation.A(value = "test")) public final annotation class B : kotlin.Annotation {
         public constructor B(/*0*/ value: test.RecursiveAnnotation.A)
         public final val value: test.RecursiveAnnotation.A
     }

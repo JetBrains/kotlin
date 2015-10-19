@@ -1,7 +1,7 @@
 <project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="143.116.4"/>
+    <property name="ideaVersion" value="143.249.6"/>
 
 
     <property name="kotlin.bootstrap.branch" value=""/>
@@ -12,6 +12,9 @@
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS"/>
 
     <property name="bootstrap.build.no.tests" value="false"/>
+
+
+    <!-- To enable counter padding, set parameter "need.counter.padding" to true on buildserver -->
 
     <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
     <!--
@@ -165,7 +168,7 @@
         
     </target>
     
-    <target name="fetch-third-party" depends="override-version,make-native-platform-uberjar">
+    <target name="fetch-third-party" depends="do-version-padding,override-version,make-native-platform-uberjar">
         <mkdir dir="dependencies"/>
         <mkdir dir="dependencies/download"/>
 
@@ -837,6 +840,21 @@
             <arg path="${android.destination.dir}/bin/studio.sh"/>
             <arg path="${android.destination.dir}/bin/update_studio.sh"/>
         </exec>
+    </target>
+
+    <target name="do-version-padding" if="need.counter.padding">
+        <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false">
+            <arg value="-cp"/>
+            <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
+            <arg value="-script"/>
+            <arg value="generators/infrastructure/counter-padding.kts"/>
+            <arg value="${teamcity.version}"/>
+            <arg value="${basedir}/dependencies/padded-version.txt"/>
+        </exec>
+
+        <loadfile property="padded.version.number" srcFile="${basedir}/dependencies/padded-version.txt"/>
+
+        <echo message="##teamcity[buildNumber '${padded.version.number}']"/>
     </target>
 
     <target name="override-version">

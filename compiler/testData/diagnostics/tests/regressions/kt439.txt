@@ -1,4 +1,4 @@
 package
 
 public fun main1(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
-@kotlin.inline() public fun </*0*/ T> run1(/*0*/ body: () -> T): T
+public inline fun </*0*/ T> run1(/*0*/ body: () -> T): T

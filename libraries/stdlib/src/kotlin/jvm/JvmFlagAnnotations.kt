@@ -55,12 +55,3 @@ public annotation class Strictfp
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class Synchronized
-
-/**
- * Marks the JVM method generated from the annotated function as `native`, meaning that it's not implemented
- * in Java but rather in a different language (for example, in C/C++ using JNI).
- */
-@Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
-@Retention(AnnotationRetention.SOURCE)
-@MustBeDocumented
-public annotation class native

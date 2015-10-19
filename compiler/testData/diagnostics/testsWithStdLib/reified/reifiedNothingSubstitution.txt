@@ -1,4 +1,4 @@
 package
 
 public fun box(): kotlin.Unit
-@kotlin.inline() public fun </*0*/ reified T> foo(/*0*/ block: () -> T): kotlin.String
+public inline fun </*0*/ reified T> foo(/*0*/ block: () -> T): kotlin.String

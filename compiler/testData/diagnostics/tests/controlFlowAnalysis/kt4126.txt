@@ -1,6 +1,6 @@
 package
 
-@kotlin.data() public final class ProductGroup {
+public final data class ProductGroup {
     public constructor ProductGroup(/*0*/ short_name: kotlin.String, /*1*/ parent: ProductGroup?)
     public final val name: kotlin.String
     public final val parent: ProductGroup?

@@ -2,7 +2,7 @@ package
 
 package test {
 
-    @kotlin.annotation.annotation() public final class A : kotlin.Annotation {
+    public final annotation class A : kotlin.Annotation {
         public constructor A(/*0*/ a: kotlin.Int = ..., /*1*/ b: kotlin.String = ..., /*2*/ c: kotlin.String)
         public final val a: kotlin.Int
         public final val b: kotlin.String

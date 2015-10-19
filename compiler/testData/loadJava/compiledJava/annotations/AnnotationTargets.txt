@@ -3,43 +3,43 @@ package test
 public open class AnnotationTargets {
     public constructor AnnotationTargets()
 
-    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) public final class annotation : kotlin.Annotation {
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) public final annotation class annotation : kotlin.Annotation {
         public constructor annotation()
     }
 
-    public final class base : kotlin.Annotation {
+    public final annotation class base : kotlin.Annotation {
         public constructor base()
     }
 
-    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CONSTRUCTOR}) public final class constructor : kotlin.Annotation {
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CONSTRUCTOR}) public final annotation class constructor : kotlin.Annotation {
         public constructor constructor()
     }
 
-    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FIELD}) public final class field : kotlin.Annotation {
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FIELD}) public final annotation class field : kotlin.Annotation {
         public constructor field()
     }
 
-    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.LOCAL_VARIABLE}) public final class local : kotlin.Annotation {
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.LOCAL_VARIABLE}) public final annotation class local : kotlin.Annotation {
         public constructor local()
     }
 
-    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) public final class method : kotlin.Annotation {
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) public final annotation class method : kotlin.Annotation {
         public constructor method()
     }
 
-    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FIELD}) public final class multiple : kotlin.Annotation {
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FIELD}) public final annotation class multiple : kotlin.Annotation {
         public constructor multiple()
     }
 
-    @kotlin.annotation.Target(allowedTargets = {}) public final class packag : kotlin.Annotation {
+    @kotlin.annotation.Target(allowedTargets = {}) public final annotation class packag : kotlin.Annotation {
         public constructor packag()
     }
 
-    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) public final class parameter : kotlin.Annotation {
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) public final annotation class parameter : kotlin.Annotation {
         public constructor parameter()
     }
 
-    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FILE}) public final class type : kotlin.Annotation {
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FILE}) public final annotation class type : kotlin.Annotation {
         public constructor type()
     }
 }

@@ -170,6 +170,7 @@ message Class {
     Modality
     ClassKind
     isInner
+    isData
   */
   optional int32 flags = 1 [default = 6 /* public final class, no annotations */];
 
@@ -233,6 +234,9 @@ message Function {
     MemberKind
     isOperator
     isInfix
+    isInline
+    isTailrec
+    isExternal
   */
   optional int32 flags = 1 [default = 6];
 
@@ -285,6 +289,7 @@ message Property {
     Visibility
     Modality
     isNotDefault
+    isExternal
   */
   optional int32 getter_flags = 7 /* absent => same as property */;
   optional int32 setter_flags = 8 /* absent => same as property */;
@@ -296,6 +301,8 @@ message ValueParameter {
   /*
     declaresDefault
     hasAnnotations
+    isCrossinline
+    isNoinline
   */
   optional int32 flags = 1 [default = 0];
 

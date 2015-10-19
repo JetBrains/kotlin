@@ -138,15 +138,10 @@ public abstract class KotlinBuiltIns {
 
         public final FqName throwable = fqName("Throwable");
 
-        public final FqName data = fqName("data");
         public final FqName deprecated = fqName("Deprecated");
         public final FqName tailRecursive = fqName("tailrec");
-        public final FqName inline = fqName("inline");
-        public final FqName noinline = fqName("noinline");
-        public final FqName crossinline = fqName("crossinline");
         public final FqName extension = fqName("Extension");
         public final FqName target = annotationName("Target");
-        public final FqName annotation = annotationName("annotation");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
         public final FqName annotationRetention = annotationName("AnnotationRetention");
         public final FqName retention = annotationName("Retention");
@@ -427,11 +422,6 @@ public abstract class KotlinBuiltIns {
                 Name.identifier(retention.name()), NoLookupLocation.FROM_BUILTINS
         );
         return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
-    }
-
-    @NotNull
-    public ClassDescriptor getAnnotationAnnotation() {
-        return getAnnotationClassByName(FQ_NAMES.annotation.shortName());
     }
 
     @NotNull
@@ -856,7 +846,11 @@ public abstract class KotlinBuiltIns {
             TypeProjection parameterType = parameterTypes.get(i);
             ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
                     functionDescriptor, null, i, Annotations.Companion.getEMPTY(),
-                    Name.identifier("p" + (i + 1)), parameterType.getType(), false, null, SourceElement.NO_SOURCE
+                    Name.identifier("p" + (i + 1)), parameterType.getType(),
+                    /* declaresDefaultValue = */ false,
+                    /* isCrossinline = */ false,
+                    /* isNoinline = */ false,
+                    null, SourceElement.NO_SOURCE
             );
             valueParameters.add(valueParameterDescriptor);
         }
@@ -1020,30 +1014,12 @@ public abstract class KotlinBuiltIns {
         return FQ_NAMES.array.equals(getFqName(descriptor));
     }
 
-    public static boolean isAnnotation(@NotNull ClassDescriptor descriptor) {
-        return DescriptorUtils.getFqName(descriptor) == FQ_NAMES.annotation.toUnsafe()
-               || containsAnnotation(descriptor, FQ_NAMES.annotation);
-    }
-
     public static boolean isCloneable(@NotNull ClassDescriptor descriptor) {
         return FQ_NAMES.cloneable.equals(getFqName(descriptor));
     }
 
-    public static boolean isData(@NotNull ClassDescriptor classDescriptor) {
-        return containsAnnotation(classDescriptor, FQ_NAMES.data);
-    }
-
     public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
         return containsAnnotation(declarationDescriptor, FQ_NAMES.deprecated);
-    }
-
-    public static boolean isTailRecursive(@NotNull DeclarationDescriptor declarationDescriptor) {
-        return containsAnnotation(declarationDescriptor, FQ_NAMES.tailRecursive);
-    }
-
-    /** Checks that the symbol represented by the descriptor is annotated with the {@code kotlin.noinline} annotation */
-    public static boolean isNoinline(@NotNull DeclarationDescriptor descriptor) {
-        return containsAnnotation(descriptor, FQ_NAMES.noinline);
     }
 
     public static boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {

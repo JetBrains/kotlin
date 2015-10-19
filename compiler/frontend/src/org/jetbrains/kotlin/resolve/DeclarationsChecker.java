@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
@@ -714,6 +713,8 @@ public class DeclarationsChecker {
 
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
         boolean hasAbstractModifier = function.hasModifier(JetTokens.ABSTRACT_KEYWORD);
+        boolean hasExternalModifier = function.hasModifier(JetTokens.EXTERNAL_KEYWORD);
+
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
             boolean inTrait = classDescriptor.getKind() == ClassKind.INTERFACE;
@@ -728,19 +729,19 @@ public class DeclarationsChecker {
                 trace.report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor));
             }
             if (!hasBody && inTrait) {
-                if (function.hasModifier(JetTokens.FINAL_KEYWORD)) {
+                if (function.hasModifier(JetTokens.FINAL_KEYWORD) && !hasExternalModifier) {
                     trace.report(FINAL_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
                 }
                 if (function.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                     trace.report(PRIVATE_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
                 }
             }
-            if (!hasBody && !hasAbstractModifier && !inTrait) {
+            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inTrait) {
                 trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
             }
             return;
         }
-        if (!function.hasBody() && !hasAbstractModifier) {
+        if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier) {
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
         }
         if (TypeUtilsKt.isNothing(functionDescriptor.getReturnType()) && !function.hasDeclaredReturnType()) {

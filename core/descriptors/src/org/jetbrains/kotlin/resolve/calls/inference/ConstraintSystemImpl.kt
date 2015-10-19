@@ -84,13 +84,14 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         override fun hasContradiction() = hasParameterConstraintError() || hasConflictingConstraints()
                                           || hasCannotCaptureTypesError() || hasTypeInferenceIncorporationError()
-                                            || hasTypeParameterWithUnsatisfiedOnlyInputTypesError()
+
 
         override fun hasViolatedUpperBound() = !isSuccessful() && filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().isSuccessful()
 
         override fun hasConflictingConstraints() = localTypeParameterBounds.values().any { it.values.size() > 1 }
 
-        override fun hasUnknownParameters() = localTypeParameterBounds.values().any { it.values.isEmpty() }
+        override fun hasUnknownParameters() =
+                localTypeParameterBounds.values().any { it.values.isEmpty() } || hasTypeParameterWithUnsatisfiedOnlyInputTypesError()
 
         override fun hasParameterConstraintError() = errors.any { it is ParameterConstraintError }
 

@@ -1,20 +1,20 @@
 package
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final class JavaAnn : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class JavaAnn : kotlin.Annotation {
     public constructor JavaAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final class JavaClassAnn : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class JavaClassAnn : kotlin.Annotation {
     public constructor JavaClassAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final class JavaSourceAnn : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class JavaSourceAnn : kotlin.Annotation {
     public constructor JavaSourceAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -118,7 +118,11 @@ public class ControlStructureTypingUtils {
             JetType argumentType = isArgumentNullable.get(i) ? nullableType : type;
             ValueParameterDescriptorImpl valueParameter = new ValueParameterDescriptorImpl(
                     function, null, i, Annotations.Companion.getEMPTY(), Name.identifier(argumentNames.get(i)),
-                    argumentType, false, null, SourceElement.NO_SOURCE
+                    argumentType,
+                    /* declaresDefaultValue = */ false,
+                    /* isCrossinline = */ false,
+                    /* isNoinline = */ false,
+                    null, SourceElement.NO_SOURCE
             );
             valueParameters.add(valueParameter);
         }

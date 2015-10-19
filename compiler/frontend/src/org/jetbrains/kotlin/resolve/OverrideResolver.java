@@ -31,9 +31,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -733,7 +731,7 @@ public class OverrideResolver {
     }
 
     private void checkOverrideForComponentFunction(@NotNull final CallableMemberDescriptor componentFunction) {
-        final PsiElement dataAnnotation = findDataAnnotationForDataClass(componentFunction.getContainingDeclaration());
+        final PsiElement dataModifier = findDataModifierForDataClass(componentFunction.getContainingDeclaration());
 
         checkOverridesForMemberMarkedOverride(componentFunction, false, new CheckOverrideReportStrategy() {
             private boolean overrideConflict = false;
@@ -742,7 +740,7 @@ public class OverrideResolver {
             public void overridingFinalMember(@NotNull CallableMemberDescriptor overridden) {
                 if (!overrideConflict) {
                     overrideConflict = true;
-                    trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataAnnotation, componentFunction, overridden.getContainingDeclaration()));
+                    trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataModifier, componentFunction, overridden.getContainingDeclaration()));
                 }
             }
 
@@ -750,7 +748,7 @@ public class OverrideResolver {
             public void returnTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overridden) {
                 if (!overrideConflict) {
                     overrideConflict = true;
-                    trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataAnnotation, componentFunction, overridden.getContainingDeclaration()));
+                    trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataModifier, componentFunction, overridden.getContainingDeclaration()));
                 }
             }
 
@@ -777,16 +775,7 @@ public class OverrideResolver {
     }
 
     @NotNull
-    private static PsiElement findDataAnnotationForDataClass(@NotNull DeclarationDescriptor dataClass) {
-        AnnotationDescriptor annotation = dataClass.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.data);
-        if (annotation != null) {
-            JetAnnotationEntry entry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation);
-            if (entry != null) {
-                return entry;
-            }
-        }
-
-
+    private static PsiElement findDataModifierForDataClass(@NotNull DeclarationDescriptor dataClass) {
         JetClass classDeclaration = (JetClass) DescriptorToSourceUtils.getSourceFromDescriptor(dataClass);
         if (classDeclaration != null && classDeclaration.getModifierList() != null) {
             PsiElement modifier = classDeclaration.getModifierList().getModifier(JetTokens.DATA_KEYWORD);
@@ -795,7 +784,7 @@ public class OverrideResolver {
             }
         }
 
-        throw new IllegalStateException("No data annotation is found for data class " + dataClass);
+        throw new IllegalStateException("No data modifier is found for data class " + dataClass);
     }
 
     @Nullable

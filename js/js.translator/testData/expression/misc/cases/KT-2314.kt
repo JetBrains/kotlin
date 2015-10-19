@@ -19,7 +19,7 @@ inline public fun myArrayList<T>(vararg values: T): ArrayList<T> {
     return c
 }
 
-inline public val <T> ArrayList<T>.myHead: T
+public val <T> ArrayList<T>.myHead: T
     get() {
         return get(0)
     }

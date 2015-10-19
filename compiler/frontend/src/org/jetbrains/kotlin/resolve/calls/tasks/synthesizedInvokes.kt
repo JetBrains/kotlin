@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import java.util.ArrayList
+import java.util.*
 
 fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collection<FunctionDescriptor> {
     val result = ArrayList<FunctionDescriptor>(1)
@@ -75,7 +75,7 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
             original.getValueParameters().drop(1).map { p ->
                 ValueParameterDescriptorImpl(
                         result, null, p.getIndex() - 1, p.getAnnotations(), Name.identifier("p${p.getIndex() + 1}"), p.getType(),
-                        p.declaresDefaultValue(), p.getVarargElementType(), p.getSource()
+                        p.declaresDefaultValue(), p.isCrossinline, p.isNoinline, p.getVarargElementType(), p.getSource()
                 )
             },
             original.getReturnType(),
@@ -84,6 +84,9 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
     )
     result.isOperator = original.isOperator
     result.isInfix = original.isInfix
+    result.isExternal = original.isExternal
+    result.isInline = original.isInline
+    result.isTailrec = original.isTailrec
 
     return result
 }

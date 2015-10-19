@@ -5,7 +5,7 @@ public fun test(): kotlin.Unit
 public abstract class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.inline() @kotlin.external() public final fun foo(): kotlin.Unit
+    public final external inline fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -1,4 +1,4 @@
 package
 
 public fun box(): kotlin.String
-@kotlin.tailrec() public fun foo(): kotlin.Unit
+public tailrec fun foo(): kotlin.Unit

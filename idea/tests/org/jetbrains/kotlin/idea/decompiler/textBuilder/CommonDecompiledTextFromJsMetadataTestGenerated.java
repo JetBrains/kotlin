@@ -107,6 +107,12 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
         doTest(fileName);
     }
 
+    @TestMetadata("Modifiers")
+    public void testModifiers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Modifiers/");
+        doTest(fileName);
+    }
+
     @TestMetadata("Object")
     public void testObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Object/");

@@ -71,4 +71,10 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
         doTest(fileName);
     }
 
+    @TestMetadata("topLevelPropertyAccess")
+    public void testTopLevelPropertyAccess() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess/");
+        doTest(fileName);
+    }
+
 }

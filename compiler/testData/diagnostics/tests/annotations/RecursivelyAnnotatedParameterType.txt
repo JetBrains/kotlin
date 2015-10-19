@@ -1,6 +1,6 @@
 package
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.annotation() public final class RecursivelyAnnotated : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class RecursivelyAnnotated : kotlin.Annotation {
     public constructor RecursivelyAnnotated(/*0*/ x: @RecursivelyAnnotated(x = 1) kotlin.Int)
     public final val x: @RecursivelyAnnotated(x = 1) kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -1,7 +1,7 @@
 package
 
-@kotlin.inline() public val java.io.InputStream.buffered: java.io.BufferedInputStream
-@kotlin.inline() public val java.io.Reader.buffered: java.io.BufferedReader
+public val java.io.InputStream.buffered: java.io.BufferedInputStream
+public val java.io.Reader.buffered: java.io.BufferedReader
 
 public open class A {
     public constructor A()

@@ -61,8 +61,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.lexer.JetTokens.OVERRIDE_KEYWORD;
-import static org.jetbrains.kotlin.lexer.JetTokens.VARARG_KEYWORD;
+import static org.jetbrains.kotlin.lexer.JetTokens.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
@@ -278,6 +277,8 @@ public class DescriptorResolver {
                     new ValueParameterDescriptorImpl(functionDescriptor, null, parameter.getIndex(), parameter.getAnnotations(),
                                                      parameter.getName(), parameter.getType(),
                                                      declaresDefaultValue,
+                                                     parameter.isCrossinline(),
+                                                     parameter.isNoinline(),
                                                      parameter.getVarargElementType(), parameter.getSource());
             parameterDescriptors.add(parameterDescriptor);
             if (declaresDefaultValue) {
@@ -366,6 +367,8 @@ public class DescriptorResolver {
                 JetPsiUtil.safeName(valueParameter.getName()),
                 variableType,
                 valueParameter.hasDefaultValue(),
+                valueParameter.hasModifier(CROSSINLINE_KEYWORD),
+                valueParameter.hasModifier(NOINLINE_KEYWORD),
                 varargElementType,
                 KotlinSourceElementKt.toSourceElement(valueParameter)
         );
@@ -1002,7 +1005,7 @@ public class DescriptorResolver {
             setterDescriptor = new PropertySetterDescriptorImpl(propertyDescriptor, annotations,
                                                                 resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
                                                                 resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
-                                                                setter.hasBody(), false,
+                                                                setter.hasBody(), false, setter.hasModifier(EXTERNAL_KEYWORD),
                                                                 CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt
                                                                         .toSourceElement(setter));
             if (parameter != null) {
@@ -1042,7 +1045,8 @@ public class DescriptorResolver {
         }
         else if (property.isVar()) {
             Annotations setterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
-            setterDescriptor = DescriptorFactory.createSetter(propertyDescriptor, setterAnnotations, !property.hasDelegate());
+            setterDescriptor = DescriptorFactory.createSetter(propertyDescriptor, setterAnnotations, !property.hasDelegate(),
+                                                              /* isExternal = */ false);
         }
 
         if (!property.isVar()) {
@@ -1082,7 +1086,7 @@ public class DescriptorResolver {
             getterDescriptor = new PropertyGetterDescriptorImpl(propertyDescriptor, getterAnnotations,
                                                                 resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
                                                                 resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
-                                                                getter.hasBody(), false,
+                                                                getter.hasBody(), false, getter.hasModifier(EXTERNAL_KEYWORD),
                                                                 CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt
                                                                         .toSourceElement(getter));
             getterDescriptor.initialize(returnType);
@@ -1090,7 +1094,8 @@ public class DescriptorResolver {
         }
         else {
             Annotations getterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER);
-            getterDescriptor = DescriptorFactory.createGetter(propertyDescriptor, getterAnnotations, !property.hasDelegate());
+            getterDescriptor = DescriptorFactory.createGetter(propertyDescriptor, getterAnnotations, !property.hasDelegate(),
+                                                              /* isExternal = */ false);
             getterDescriptor.initialize(propertyDescriptor.getType());
         }
         return getterDescriptor;

@@ -32,7 +32,7 @@ public final enum class <no name provided> : kotlin.Enum<<no name provided>> {
     @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<<no name provided>>
 }
 
-@kotlin.annotation.annotation() public final class <no name provided> : kotlin.Annotation {
+public final annotation class <no name provided> : kotlin.Annotation {
     public constructor <no name provided>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

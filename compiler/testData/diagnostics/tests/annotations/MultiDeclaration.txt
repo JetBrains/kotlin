@@ -2,14 +2,14 @@ package
 
 public fun foo(): kotlin.Int
 
-@kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
+public final annotation class Ann : kotlin.Annotation {
     public constructor Ann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() public final class Pair {
+public final data class Pair {
     public constructor Pair(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
     public final val x: kotlin.Int
     public final val y: kotlin.Int

@@ -6,7 +6,7 @@ public final class Some {
     @test.Some.Companion.TestAnnotation() public companion object Companion {
         /*primary*/ private constructor Companion()
 
-        @kotlin.annotation.annotation() public final class TestAnnotation : kotlin.Annotation {
+        public final annotation class TestAnnotation : kotlin.Annotation {
             /*primary*/ public constructor TestAnnotation()
         }
     }

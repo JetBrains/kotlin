@@ -21,16 +21,6 @@ import kotlin.annotation.AnnotationRetention.SOURCE
 import kotlin.annotation.AnnotationTarget.*
 
 /**
- * Marks the annotated class as a data class. The compiler automatically generates
- * equals()/hashCode(), toString(), componentN() and copy() functions for data classes.
- * See [the Kotlin language documentation](http://kotlinlang.org/docs/reference/data-classes.html)
- * for more information.
- */
-@Target(CLASS)
-@MustBeDocumented
-private annotation class data
-
-/**
  * Marks the annotated class, function, property, variable or parameter as deprecated.
  * @property message the message explaining the deprecation and recommending an alternative API to use.
  * @property replaceWith if present, specifies a code fragment which should be used as a replacement for
@@ -91,16 +81,6 @@ public annotation class Extension
 public annotation class Suppress(vararg val names: String)
 
 /**
- * Enables the tail call optimization for the annotated function. If the annotated function
- * calls itself recursively as the last operation it performs, it will be executed without
- * growing the stack depth. Tail call optimization is currently only supported by the JVM
- * backend.
- */
-@Target(FUNCTION)
-@Retention(SOURCE)
-private annotation class tailrec
-
-/**
  * Hides the annotated function, property or constructor from the overload resolution,
  * thus preventing its usages from newly compiled code, but keeps compiling it
  * to retain binary compatibility with the code compiled against it before.
@@ -110,15 +90,6 @@ private annotation class tailrec
 @MustBeDocumented
 @Deprecated("Use @Deprecated(\"...\", level = DeprecationLevel.HIDDEN) instead", replaceWith = ReplaceWith("@Deprecated(, level = DeprecationLevel.HIDDEN)"))
 public annotation class HiddenDeclaration
-
-/**
- * Marks annotated function as `external`, meaning that it's not implemented
- * in Kotlin but rather in a different language (for example, in C/C++ using JNI or JavaScript).
- */
-@Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
-@Retention(SOURCE)
-@MustBeDocumented
-private annotation class external
 
 /**
  * Suppresses errors about variance conflict

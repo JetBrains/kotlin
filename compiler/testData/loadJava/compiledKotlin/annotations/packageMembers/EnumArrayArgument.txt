@@ -5,7 +5,7 @@ package test
 @test.Anno(t = {}) public fun baz(): kotlin.Unit
 @test.Anno(t = {ElementType.METHOD, ElementType.FIELD}) public fun foo(): kotlin.Unit
 
-@kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
+public final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ vararg t: java.lang.annotation.ElementType /*kotlin.Array<out java.lang.annotation.ElementType>*/)
     public final val t: kotlin.Array<out java.lang.annotation.ElementType>
         public final fun <get-t>(): kotlin.Array<out java.lang.annotation.ElementType>

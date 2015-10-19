@@ -1,4 +1,4 @@
 package
 
 public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
-@kotlin.inline() public fun test(/*0*/ @kotlin.noinline() lambda: () -> kotlin.Unit): kotlin.Unit
+public inline fun test(/*0*/ noinline lambda: () -> kotlin.Unit): kotlin.Unit

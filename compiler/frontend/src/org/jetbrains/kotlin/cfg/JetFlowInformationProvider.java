@@ -795,7 +795,7 @@ public class JetFlowInformationProvider {
     public void markTailCalls() {
         final DeclarationDescriptor subroutineDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine);
         if (!(subroutineDescriptor instanceof FunctionDescriptor)) return;
-        if (!KotlinBuiltIns.isTailRecursive(subroutineDescriptor)) return;
+        if (!((FunctionDescriptor) subroutineDescriptor).isTailrec()) return;
 
         // finally blocks are copied which leads to multiple diagnostics reported on one instruction
         class KindAndCall {

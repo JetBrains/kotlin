@@ -1,4 +1,4 @@
 package
 
 public fun box(): kotlin.String
-@kotlin.inline() public fun test(/*0*/ p: kotlin.Any): kotlin.Unit
+public inline fun test(/*0*/ p: kotlin.Any): kotlin.Unit

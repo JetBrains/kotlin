@@ -1,13 +1,13 @@
 package
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.annotation() public final class ClassAnn : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) public final annotation class ClassAnn : kotlin.Annotation {
     public constructor ClassAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FILE}) @kotlin.annotation.annotation() public final class FileAnn : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FILE}) public final annotation class FileAnn : kotlin.Annotation {
     public constructor FileAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,13 +1,13 @@
 package
 
-@java.lang.annotation.Target(value = {ElementType.PACKAGE}) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.annotation() public final class my : kotlin.Annotation {
+@java.lang.annotation.Target(value = {ElementType.PACKAGE}) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) public final annotation class my : kotlin.Annotation {
     public constructor my()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@java.lang.annotation.Retention(value = RetentionPolicy.SOURCE) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.annotation() public final class your : kotlin.Annotation {
+@java.lang.annotation.Retention(value = RetentionPolicy.SOURCE) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class your : kotlin.Annotation {
     public constructor your()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

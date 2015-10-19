@@ -13,14 +13,14 @@ public final class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
+public final annotation class Ann : kotlin.Annotation {
     public constructor Ann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable() @kotlin.annotation.annotation() public final class RepeatableAnn : kotlin.Annotation {
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable() public final annotation class RepeatableAnn : kotlin.Annotation {
     public constructor RepeatableAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

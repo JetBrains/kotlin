@@ -1,4 +1,4 @@
 package
 
 public fun baz(): kotlin.Unit
-@kotlin.inline() public fun </*0*/ T> foo(/*0*/ block: () -> T): T
+public inline fun </*0*/ T> foo(/*0*/ block: () -> T): T

@@ -23,7 +23,7 @@ package
     @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<My>
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) @kotlin.annotation.annotation() public final class base : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class base : kotlin.Annotation {
     public constructor base()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -40,7 +40,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@base() @kotlin.annotation.annotation() public final class derived : kotlin.Annotation {
+@base() public final annotation class derived : kotlin.Annotation {
     public constructor derived()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -9,7 +9,7 @@ package
 @A(value = {}, y = 7) public fun test7(): kotlin.Unit
 @A(value = {"8", "9", "10"}) public fun test8(): kotlin.Unit
 
-public final class A : kotlin.Annotation {
+public final annotation class A : kotlin.Annotation {
     public constructor A(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/, /*1*/ x: kotlin.reflect.KClass<*> = ..., /*2*/ y: kotlin.Int)
     public final val value: kotlin.Array<kotlin.String>
     public final val x: kotlin.reflect.KClass<*>

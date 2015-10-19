@@ -17,7 +17,7 @@ public final class A {
     }
 }
 
-@kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
+public final annotation class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ x: kotlin.Int = ...)
     public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
