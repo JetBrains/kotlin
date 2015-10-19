@@ -45,6 +45,10 @@ public class KotlinRuntimeLibraryUtilTest : TestCase() {
         test("1.0.1-beta1-2-IJ-2-1", "1.0.1-beta1-2")
         test("1.0.3-beta1-2-IJ", "1.0.3-beta1-2")
 
+        test("1.0.3-beta-1020", "1.0.3-beta-1020")
+        test("1.2.3-beta-2059-Idea141-1", "1.2.3-beta-2059")
+        test("1.0.3-beta-4000-IJ-1", "1.0.3-beta-4000")
+
         test("2.15.789-Idea147-14", "2.15.789")
 
         test("1.0.0-alpha", "1.0.0-alpha")
@@ -55,6 +59,9 @@ public class KotlinRuntimeLibraryUtilTest : TestCase() {
         outdated("1.0.0-beta1-001-Idea141-12", "0.12.15")
         outdated("1.0.0-beta1-001-Idea141-1", "0.152.16")
         outdated("1.0.0-beta1-001-Idea141-1", "0.152.16")
+
+        outdated("1.0.0-beta-1001-Idea141-12", "0.12.15")
+        outdated("1.0.0-beta-1000-Idea141-1", "0.152.16")
 
         notOutdated("1.0.0-beta1-001-Idea141-12", "1.0.0-beta1-001")
         notOutdated("1.0.0-beta1-001-Idea143-14", "1.0.0-beta1-001")
@@ -68,6 +75,14 @@ public class KotlinRuntimeLibraryUtilTest : TestCase() {
         outdated("1.0.0-beta2-000-Idea141-1", "1.0.0-beta1-999")
         outdated("1.1.0-beta1-000-Idea141-1", "1.0.9-beta9-999")
         outdated("2.0.0-beta1-000-Idea141-1", "1.9.9-beta9-999")
+
+        outdated("1.0.0-beta-1001-Idea141-12", "1.0.0-beta-1000")
+        outdated("1.0.0-beta-1010-Idea141-12", "1.0.0-beta-1009")
+        outdated("1.0.0-beta-1100-Idea141-12", "1.0.0-beta-1099")
+        outdated("1.0.0-beta-2000-Idea141-12", "1.0.0-beta-1999")
+        outdated("1.0.1-beta-1001-Idea141-12", "1.0.0-beta-9999")
+        outdated("1.1.0-beta-1001-Idea141-12", "1.0.9-beta-9999")
+        outdated("2.0.0-beta-1001-Idea141-12", "1.9.9-beta-9999")
     }
 
     private fun outdated(plugin: String, library: String) {
