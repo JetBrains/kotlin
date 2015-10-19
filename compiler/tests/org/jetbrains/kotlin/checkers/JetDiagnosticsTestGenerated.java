@@ -15833,6 +15833,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("Deprecated.kt")
+                public void testDeprecated() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/Deprecated.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("FalseGetters.kt")
                 public void testFalseGetters() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/FalseGetters.kt");
@@ -15984,6 +15990,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public static class SamAdapters extends AbstractJetDiagnosticsTest {
                 public void testAllFilesPresentInSamAdapters() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("Deprecated.kt")
+                public void testDeprecated() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/Deprecated.kt");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("GenericClass.kt")
