@@ -246,9 +246,7 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
 
             String runtimeVersion = KotlinRuntimeLibraryUtil.bundledRuntimeVersion();
 
-            boolean isOutdated = libraryVersion == null
-                                 || libraryVersion.startsWith("internal-") != runtimeVersion.startsWith("internal-")
-                                 || VersionComparatorUtil.compare(runtimeVersion, libraryVersion) > 0;
+            boolean isOutdated = isRuntimeOutdated(libraryVersion, runtimeVersion);
 
             if (isOutdated) {
                 outdatedLibraries.add(new VersionedLibrary(library, libraryVersion));
@@ -256,6 +254,12 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
         }
 
         return outdatedLibraries;
+    }
+
+    public static boolean isRuntimeOutdated(String libraryVersion, String runtimeVersion) {
+        return libraryVersion == null
+               || libraryVersion.startsWith("internal-") != runtimeVersion.startsWith("internal-")
+               || VersionComparatorUtil.compare(runtimeVersion, libraryVersion) > 0;
     }
 
     @NotNull
