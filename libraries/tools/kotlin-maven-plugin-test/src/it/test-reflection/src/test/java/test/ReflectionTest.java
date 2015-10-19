@@ -23,6 +23,6 @@ import static junit.framework.Assert.assertEquals;
 public class ReflectionTest {
     @Test
     public void testClasspath() {
-        assertEquals("OK", main.MainPackage.box());
+        assertEquals("OK", main.MainKt.box());
     }
 }

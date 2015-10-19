@@ -8,6 +8,6 @@ public class HelloWorldJavaTest {
 
     @Test
     public void testClasspath() {
-        assertEquals("OK", org.jetbrains.JetbrainsPackage.box());
+        assertEquals("OK", org.jetbrains.HelloWorldKt.box());
     }
 }
