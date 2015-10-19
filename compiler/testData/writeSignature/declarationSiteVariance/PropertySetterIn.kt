@@ -3,6 +3,6 @@ class X
 
 var p: M<X> = throw Exception()
 
-// method: _DefaultPackage::setP
+// method: PropertySetterInKt::setP
 // jvm signature:     (LM;)V
 // generic signature: (LM<-LX;>;)V

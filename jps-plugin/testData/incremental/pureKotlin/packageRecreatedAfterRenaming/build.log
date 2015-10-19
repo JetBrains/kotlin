@@ -1,15 +1,6 @@
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
 out/production/module/test/AKt.class
-out/production/module/test/TestPackage.class
-End of files
-Compiling files:
-src/a.kt
-End of files
-Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/test2/AKt.class
-out/production/module/test2/Test2Package.class
 End of files
 Compiling files:
 src/a.kt
@@ -22,7 +13,6 @@ End of files
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
 out/production/module/test2/AKt.class
-out/production/module/test2/Test2Package.class
 End of files
 Compiling files:
 src/a.kt

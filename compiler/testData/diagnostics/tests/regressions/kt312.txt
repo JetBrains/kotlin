@@ -3,5 +3,5 @@ package
 public val args: kotlin.Array<kotlin.String>
 public val name: kotlin.String
 public val name1: kotlin.String?
-@kotlin.inline() public fun </*0*/ reified T> Array(/*0*/ n: kotlin.Int, /*1*/ block: (kotlin.Int) -> T): kotlin.Array<T>
+public inline fun </*0*/ reified T> Array(/*0*/ n: kotlin.Int, /*1*/ block: (kotlin.Int) -> T): kotlin.Array<T>
 public fun </*0*/ T> kotlin.Array<out T>.safeGet(/*0*/ index: kotlin.Int): T?

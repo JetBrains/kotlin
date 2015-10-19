@@ -5,7 +5,7 @@ public val nonConst: kotlin.Int
 public val nonConstKClass: kotlin.reflect.KClass<kotlin.String>
 public fun foo(): kotlin.Int
 
-@kotlin.annotation.annotation() public final class InvalidAnn : kotlin.Annotation {
+public final annotation class InvalidAnn : kotlin.Annotation {
     public constructor InvalidAnn(/*0*/ p1: kotlin.Int = ..., /*1*/ p2: kotlin.Int = ..., /*2*/ p3: kotlin.reflect.KClass<*> = ...)
     public final val p1: kotlin.Int
     public final val p2: kotlin.Int
@@ -15,7 +15,7 @@ public fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class ValidAnn : kotlin.Annotation {
+public final annotation class ValidAnn : kotlin.Annotation {
     public constructor ValidAnn(/*0*/ p1: kotlin.Int = ..., /*1*/ p2: kotlin.String = ..., /*2*/ p3: kotlin.reflect.KClass<*> = ..., /*3*/ p4: kotlin.IntArray = ..., /*4*/ p5: kotlin.Array<kotlin.String> = ..., /*5*/ p6: kotlin.Array<kotlin.reflect.KClass<*>> = ...)
     public final val p1: kotlin.Int
     public final val p2: kotlin.String

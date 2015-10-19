@@ -53,6 +53,12 @@ public class CommonDecompiledTextTestGenerated extends AbstractCommonDecompiledT
         doTest(fileName);
     }
 
+    @TestMetadata("ClassWithNamedClassObject")
+    public void testClassWithNamedClassObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/ClassWithNamedClassObject/");
+        doTest(fileName);
+    }
+
     @TestMetadata("Const")
     public void testConst() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Const/");
@@ -86,6 +92,12 @@ public class CommonDecompiledTextTestGenerated extends AbstractCommonDecompiledT
     @TestMetadata("Inherited")
     public void testInherited() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Inherited/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Modifiers")
+    public void testModifiers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Modifiers/");
         doTest(fileName);
     }
 

@@ -4,7 +4,7 @@ public open class NestedEnumArgument {
     public constructor NestedEnumArgument()
     @test.NestedEnumArgument.Anno(value = E.FIRST) public/*package*/ open fun foo(): kotlin.Unit
 
-    public final class Anno : kotlin.Annotation {
+    public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: test.NestedEnumArgument.E)
         public final val value: test.NestedEnumArgument.E
     }

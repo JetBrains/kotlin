@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.DATA
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.INNER
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.MODALITY
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.VISIBILITY
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.supertypes
+import org.jetbrains.kotlin.utils.sure
 
 fun createClassStub(parent: StubElement<out PsiElement>, classProto: ProtoBuf.Class, classId: ClassId, context: ClsStubBuilderContext) {
     ClassClsStubBuilder(parent, classProto, classId, context).build()
@@ -86,11 +88,13 @@ private class ClassClsStubBuilder(
         val relevantFlags = arrayListOf(VISIBILITY)
         if (isClass()) {
             relevantFlags.add(INNER)
+            relevantFlags.add(DATA)
             relevantFlags.add(MODALITY)
         }
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(JetTokens.ENUM_KEYWORD)
             ProtoBuf.Class.Kind.COMPANION_OBJECT -> listOf(JetTokens.COMPANION_KEYWORD)
+            ProtoBuf.Class.Kind.ANNOTATION_CLASS -> listOf(JetTokens.ANNOTATION_KEYWORD)
             else -> listOf<JetModifierKeywordToken>()
         }
         return createModifierListStubForDeclaration(parent, classProto.getFlags(), relevantFlags, additionalModifiers)
@@ -216,7 +220,9 @@ private class ClassClsStubBuilder(
     }
 
     private fun createNestedClassStub(classBody: StubElement<out PsiElement>, nestedClassId: ClassId) {
-        val classDataWithSource = c.components.classDataFinder.findClassData(nestedClassId)!!
+        val classDataWithSource = c.components.classDataFinder.findClassData(nestedClassId).sure {
+            "Could not find class data for nested class ${nestedClassId.shortClassName} of class ${nestedClassId.outerClassId}"
+        }
         val (nameResolver, classProto) = classDataWithSource.classData
         createClassStub(classBody, classProto, nestedClassId, c.child(nameResolver, TypeTable(classProto.typeTable)))
     }

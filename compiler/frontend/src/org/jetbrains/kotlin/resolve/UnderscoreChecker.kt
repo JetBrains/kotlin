@@ -30,7 +30,7 @@ object UnderscoreChecker : DeclarationChecker {
     fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {
         if (identifier == null || identifier.text.isEmpty()) return
         if (identifier.text.all { it == '_' }) {
-            diagnosticHolder.report(Errors.UNDERSCORE_IS_DEPRECATED.on(identifier))
+            diagnosticHolder.report(Errors.UNDERSCORE_IS_RESERVED.on(identifier))
         }
     }
 

@@ -4,6 +4,6 @@ class X
 
 fun f(): Out<In<X>> = throw Exception()
 
-// method: _DefaultPackage::f
+// method: OutOfInInOutPositionKt::f
 // jvm signature:     ()LOut;
 // generic signature: ()LOut<LIn<-LX;>;>;

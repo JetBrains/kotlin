@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.idea.debugger.filter
 
 import com.intellij.debugger.engine.SyntheticTypeComponentProvider
+import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Method
 import com.sun.jdi.TypeComponent
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 
 public class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvider {
@@ -30,11 +29,17 @@ public class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvide
         val typeName = typeComponent.declaringType().name()
         if (!FqNameUnsafe.isValid(typeName)) return false
 
-        if (PackageClassUtils.isPackageClassFqName(FqName(typeName)))  {
-            val lineNumber = typeComponent.location().lineNumber()
-            return lineNumber == 1
-        }
+        try {
+            if (typeComponent.location().lineNumber() != 1) return false
 
-        return false
+            if (typeComponent.allLineLocations().any { it.lineNumber() != 1 }) {
+                return false
+            }
+
+            return !typeComponent.declaringType().allLineLocations().any { it.lineNumber() != 1 }
+        }
+        catch(e: AbsentInformationException) {
+            return false
+        }
     }
 }

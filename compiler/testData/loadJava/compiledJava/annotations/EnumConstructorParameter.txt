@@ -10,7 +10,7 @@ public final enum class EnumConstructorParameter : kotlin.Enum<test.EnumConstruc
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumConstructorParameter!): kotlin.Int
 
-    public final class Anno : kotlin.Annotation {
+    public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.String)
         public final val value: kotlin.String
     }

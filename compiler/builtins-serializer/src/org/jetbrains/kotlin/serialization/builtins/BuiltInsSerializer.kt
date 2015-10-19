@@ -88,6 +88,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val builtInModule = BuiltinsSourcesModule()
         val resolver = JvmAnalyzerFacade.setupResolverForProject(
+                "builtIns source",
                 ProjectContext(environment.project), listOf(builtInModule),
                 { ModuleContent(files, GlobalSearchScope.EMPTY_SCOPE) },
                 JvmPlatformParameters { throw IllegalStateException() },

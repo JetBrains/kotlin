@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
+import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -57,13 +59,13 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
-import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
 import static org.jetbrains.kotlin.test.JetTestUtils.compilerConfigurationForTests;
 import static org.jetbrains.kotlin.test.JetTestUtils.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends UsefulTestCase {
 
     public static final String DEFAULT_TEST_FILE_NAME = "a_test";
+    public static final String DEFAULT_TEST_FILE_CLASS_NAME = "A_testKt";
 
     protected KotlinCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
@@ -205,15 +207,15 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     @NotNull
-    protected Class<?> generatePackageClass() {
-        FqName packageFqName = myFiles.getPsiFile().getPackageFqName();
-        return generateClass(getPackageClassFqName(packageFqName).asString());
+    protected Class<?> generateFacadeClass() {
+        FqName facadeClassFqName = JvmFileClassUtil.getFileClassInfoNoResolve(myFiles.getPsiFile()).getFacadeClassFqName();
+        return generateClass(facadeClassFqName.asString());
     }
 
     @NotNull
-    protected Class<?> generatePackagePartClass() {
-        String name = PackagePartClassUtils.getPackagePartInternalName(myFiles.getPsiFile());
-        return generateClass(name);
+    protected Class<?> generateFileClass() {
+        FqName fileClassFqName = JvmFileClassUtil.getFileClassInfoNoResolve(myFiles.getPsiFile()).getFileClassFqName();
+        return generateClass(fileClassFqName.asString());
     }
 
     @NotNull
@@ -303,7 +305,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected Method generateFunction() {
-        Class<?> aClass = generatePackageClass();
+        Class<?> aClass = generateFacadeClass();
         try {
             return findTheOnlyMethod(aClass);
         } catch (Error e) {
@@ -314,7 +316,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected Method generateFunction(@NotNull String name) {
-        return findDeclaredMethodByName(generatePackageClass(), name);
+        return findDeclaredMethodByName(generateFacadeClass(), name);
     }
 
     @NotNull

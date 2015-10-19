@@ -52,7 +52,7 @@ public final class B {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() public final class Data {
+public final data class Data {
     public constructor Data(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
     public final val x: kotlin.Int
     public final val y: kotlin.Int

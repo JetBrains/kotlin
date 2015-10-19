@@ -99,7 +99,9 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             boolean copyOverrides
     ) {
         return (SimpleFunctionDescriptorImpl) doSubstitute(
-                TypeSubstitutor.EMPTY, newOwner, modality, visibility, isOperator(), isInfix(), null, copyOverrides, kind
+                TypeSubstitutor.EMPTY, newOwner, modality, visibility,
+                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
+                null, copyOverrides, kind
         );
     }
 }

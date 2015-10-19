@@ -10,4 +10,5 @@ public class Testing {
 // EXIST: LibTrait
 // EXIST: LibEnum
 // EXIST: LibObject
-// EXIST: FooPackage
+// EXIST: MainKt
+// EXIST: AnotherKt

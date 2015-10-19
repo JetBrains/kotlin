@@ -44,6 +44,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private Visibility visibility = Visibilities.UNKNOWN;
     private boolean isOperator = false;
     private boolean isInfix = false;
+    private boolean isExternal = false;
+    private boolean isInline = false;
+    private boolean isTailrec = false;
     private final Set<FunctionDescriptor> overriddenFunctions = SmartSet.create();
     private final FunctionDescriptor original;
     private final Kind kind;
@@ -110,6 +113,18 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.isInfix = isInfix;
     }
 
+    public void setExternal(boolean isExternal) {
+        this.isExternal = isExternal;
+    }
+
+    public void setInline(boolean isInline) {
+        this.isInline = isInline;
+    }
+
+    public void setTailrec(boolean isTailrec) {
+        this.isTailrec = isTailrec;
+    }
+
     public void setReturnType(@NotNull JetType unsubstitutedReturnType) {
         if (this.unsubstitutedReturnType != null) {
             // TODO: uncomment and fix tests
@@ -171,6 +186,21 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
+    public boolean isExternal() {
+        return isExternal;
+    }
+
+    @Override
+    public boolean isInline() {
+        return isInline;
+    }
+
+    @Override
+    public boolean isTailrec() {
+        return isTailrec;
+    }
+
+    @Override
     public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
         overriddenFunctions.add((FunctionDescriptor) overriddenFunction);
     }
@@ -219,7 +249,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, visibility, isOperator, isInfix, getOriginal(), true, getKind());
+        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, visibility,
+                            isOperator, isInfix, isExternal, isInline, isTailrec,
+                            getOriginal(), true, getKind());
     }
 
     @Nullable
@@ -229,12 +261,15 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull Visibility newVisibility,
             boolean isOperator,
             boolean isInfix,
+            boolean isExternal,
+            boolean isInline,
+            boolean isTailrec,
             @Nullable FunctionDescriptor original,
             boolean copyOverrides,
             @NotNull Kind kind
     ) {
         return doSubstitute(originalSubstitutor,
-                newOwner, newModality, newVisibility, isOperator, isInfix, original, copyOverrides, kind,
+                newOwner, newModality, newVisibility, isOperator, isInfix, isExternal, isInline, isTailrec, original, copyOverrides, kind,
                 getValueParameters(), getExtensionReceiverParameterType(), getReturnType()
         );
     }
@@ -253,6 +288,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull Visibility newVisibility,
             boolean isOperator,
             boolean isInfix,
+            boolean isExternal,
+            boolean isInline,
+            boolean isTailrec,
             @Nullable FunctionDescriptor original,
             boolean copyOverrides,
             @NotNull Kind kind,
@@ -317,6 +355,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         );
         substitutedDescriptor.setOperator(isOperator);
         substitutedDescriptor.setInfix(isInfix);
+        substitutedDescriptor.setExternal(isExternal);
+        substitutedDescriptor.setInline(isInline);
+        substitutedDescriptor.setTailrec(isTailrec);
 
         if (copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
@@ -362,6 +403,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                             unsubstitutedValueParameter.getName(),
                             substitutedType,
                             unsubstitutedValueParameter.declaresDefaultValue(),
+                            unsubstitutedValueParameter.isCrossinline(),
+                            unsubstitutedValueParameter.isNoinline(),
                             substituteVarargElementType,
                             SourceElement.NO_SOURCE
                     )

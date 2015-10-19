@@ -113,9 +113,21 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("Modifiers")
+    public void testModifiers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Modifiers/");
+        doTest(fileName);
+    }
+
     @TestMetadata("MultifileClass")
     public void testMultifileClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/MultifileClass/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NamedCompanionObject")
+    public void testNamedCompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/NamedCompanionObject/");
         doTest(fileName);
     }
 
@@ -158,12 +170,6 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
     @TestMetadata("TopLevelMembersKt")
     public void testTopLevelMembersKt() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TopLevelMembersKt/");
-        doTest(fileName);
-    }
-
-    @TestMetadata("TopLevelMembersPackage")
-    public void testTopLevelMembersPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TopLevelMembersPackage/");
         doTest(fileName);
     }
 

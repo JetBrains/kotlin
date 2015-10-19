@@ -1,36 +1,36 @@
 package test
 
-@kotlin.annotation.annotation() public final class AByte : kotlin.Annotation {
+public final annotation class AByte : kotlin.Annotation {
     public constructor AByte(/*0*/ kotlin.Byte)
     public final val value: kotlin.Byte
 }
 
-@kotlin.annotation.annotation() public final class AChar : kotlin.Annotation {
+public final annotation class AChar : kotlin.Annotation {
     public constructor AChar(/*0*/ kotlin.Char)
     public final val value: kotlin.Char
 }
 
-@kotlin.annotation.annotation() public final class ADouble : kotlin.Annotation {
+public final annotation class ADouble : kotlin.Annotation {
     public constructor ADouble(/*0*/ kotlin.Double)
     public final val value: kotlin.Double
 }
 
-@kotlin.annotation.annotation() public final class AFloat : kotlin.Annotation {
+public final annotation class AFloat : kotlin.Annotation {
     public constructor AFloat(/*0*/ kotlin.Float)
     public final val value: kotlin.Float
 }
 
-@kotlin.annotation.annotation() public final class AInt : kotlin.Annotation {
+public final annotation class AInt : kotlin.Annotation {
     public constructor AInt(/*0*/ kotlin.Int)
     public final val value: kotlin.Int
 }
 
-@kotlin.annotation.annotation() public final class ALong : kotlin.Annotation {
+public final annotation class ALong : kotlin.Annotation {
     public constructor ALong(/*0*/ kotlin.Long)
     public final val value: kotlin.Long
 }
 
-@kotlin.annotation.annotation() public final class AString : kotlin.Annotation {
+public final annotation class AString : kotlin.Annotation {
     public constructor AString(/*0*/ kotlin.String)
     public final val value: kotlin.String
 }

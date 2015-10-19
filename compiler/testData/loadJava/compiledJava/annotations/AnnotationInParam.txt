@@ -14,33 +14,33 @@ public interface AnnotationInParam {
         public constructor C()
     }
 
-    public final class MyAnnotation : kotlin.Annotation {
+    public final annotation class MyAnnotation : kotlin.Annotation {
         public constructor MyAnnotation(/*0*/ value: kotlin.String)
         public final val value: kotlin.String
     }
 
-    public final class MyAnnotation2 : kotlin.Annotation {
+    public final annotation class MyAnnotation2 : kotlin.Annotation {
         public constructor MyAnnotation2(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/)
         public final val value: kotlin.Array<kotlin.String>
     }
 
-    public final class MyAnnotation3 : kotlin.Annotation {
+    public final annotation class MyAnnotation3 : kotlin.Annotation {
         public constructor MyAnnotation3(/*0*/ first: kotlin.String, /*1*/ second: kotlin.String)
         public final val first: kotlin.String
         public final val second: kotlin.String
     }
 
-    public final class MyAnnotationWithParam : kotlin.Annotation {
+    public final annotation class MyAnnotationWithParam : kotlin.Annotation {
         public constructor MyAnnotationWithParam(/*0*/ value: test.AnnotationInParam.MyAnnotation)
         public final val value: test.AnnotationInParam.MyAnnotation
     }
 
-    public final class MyAnnotationWithParam2 : kotlin.Annotation {
+    public final annotation class MyAnnotationWithParam2 : kotlin.Annotation {
         public constructor MyAnnotationWithParam2(/*0*/ value: test.AnnotationInParam.MyAnnotation2)
         public final val value: test.AnnotationInParam.MyAnnotation2
     }
 
-    public final class MyAnnotationWithParam3 : kotlin.Annotation {
+    public final annotation class MyAnnotationWithParam3 : kotlin.Annotation {
         public constructor MyAnnotationWithParam3(/*0*/ value: test.AnnotationInParam.MyAnnotation3)
         public final val value: test.AnnotationInParam.MyAnnotation3
     }

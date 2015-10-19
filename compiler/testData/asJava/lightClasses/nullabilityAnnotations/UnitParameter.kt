@@ -1,3 +1,3 @@
-// _DefaultPackage
+// UnitParameterKt
 
 fun foo(s: Unit) {}

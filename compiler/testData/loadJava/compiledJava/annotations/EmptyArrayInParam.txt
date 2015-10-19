@@ -6,7 +6,7 @@ public interface EmptyArrayInParam {
         public constructor A()
     }
 
-    public final class MyAnnotation : kotlin.Annotation {
+    public final annotation class MyAnnotation : kotlin.Annotation {
         public constructor MyAnnotation(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/)
         public final val value: kotlin.Array<kotlin.String>
     }

@@ -10,9 +10,3 @@
     public final @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
     public final @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
 }
-
-@java.lang.Deprecated @kotlin.jvm.internal.KotlinPackage _DefaultPackage {
-    public synthetic final field $moduleName: java.lang.String
-    public final @kotlin.jvm.internal.KotlinDelegatedMethod @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
-    public final @kotlin.jvm.internal.KotlinDelegatedMethod @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
-}

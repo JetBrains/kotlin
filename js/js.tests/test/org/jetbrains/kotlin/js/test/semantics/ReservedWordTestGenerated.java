@@ -35,30 +35,6 @@ public class ReservedWordTestGenerated extends AbstractReservedWordTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/reservedWords/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
-    @TestMetadata("dataClassParamElse.kt")
-    public void testDataClassParamElse() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamElse.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("dataClassParamFalse.kt")
-    public void testDataClassParamFalse() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamFalse.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("dataClassParamInfinity.kt")
-    public void testDataClassParamInfinity() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamInfinity.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("dataClassParamKotlin.kt")
-    public void testDataClassParamKotlin() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassParamKotlin.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("dataClassValBreak.kt")
     public void testDataClassValBreak() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reservedWords/cases/dataClassValBreak.kt");

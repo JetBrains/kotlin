@@ -158,6 +158,8 @@ public class LongRange(override val start: Long, override val end: Long) : Range
     }
 }
 
+@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
+@Suppress("DEPRECATION_ERROR")
 /**
  * A range of values of type `Float`.
  */
@@ -186,6 +188,8 @@ public class FloatRange(override val start: Float, override val end: Float) : Ra
     }
 }
 
+@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
+@Suppress("DEPRECATION_ERROR")
 /**
  * A range of values of type `Double`.
  */

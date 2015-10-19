@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.name.FqName
@@ -50,7 +51,6 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 data class ReplaceWith(val pattern: String, val imports: List<String>)
@@ -121,8 +121,9 @@ object ReplaceWithAnnotationAnalyzer {
         expression.forEachDescendantOfType<JetSimpleNameExpression> { expression ->
             val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
 
-            if (target.isExtension || expression.getReceiverExpression() == null) {
-                importFqNames.addIfNotNull(target.importableFqName)
+            //TODO: other types of references ('[]' etc)
+            if (expression.mainReference.canBeResolvedViaImport(target)) {
+                importFqNames.add(target.importableFqName!!)
             }
 
             if (expression.getReceiverExpression() == null) {

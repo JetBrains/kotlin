@@ -1,4 +1,4 @@
-data public class SomeClass {
+data public class SomeClass(val arg: Any? = null) {
 
     @java.lang.Deprecated public var annotatedProperty: String? = null
 

@@ -7,7 +7,7 @@ public const val i4: kotlin.Int = 1
 public var i5: kotlin.Int
 public var i6: kotlin.Int
 
-@kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
+public final annotation class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ vararg i: kotlin.Int /*kotlin.IntArray*/)
     public final val i: kotlin.IntArray
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

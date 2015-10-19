@@ -9,13 +9,8 @@ src/Usage.java
 End of files
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
-out/production/module/Usage.class
 out/production/module/test/AKt.class
-out/production/module/test/TestPackage.class
 End of files
 Compiling files:
 src/a.kt
-End of files
-Compiling files:
-src/Usage.java
 End of files

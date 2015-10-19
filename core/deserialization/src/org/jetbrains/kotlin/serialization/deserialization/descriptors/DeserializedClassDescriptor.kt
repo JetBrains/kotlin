@@ -54,6 +54,7 @@ public class DeserializedClassDescriptor(
     private val kind = Deserialization.classKind(kindFromProto)
     private val isCompanion = kindFromProto == ProtoBuf.Class.Kind.COMPANION_OBJECT
     private val isInner = Flags.IS_INNER.get(classProto.getFlags())
+    private val isData = Flags.IS_DATA.get(classProto.flags)
 
     val c = outerContext.childContext(this, classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable))
 
@@ -89,6 +90,8 @@ public class DeserializedClassDescriptor(
     override fun getVisibility() = visibility
 
     override fun isInner() = isInner
+
+    override fun isData() = isData
 
     override fun getAnnotations() = annotations
 

@@ -1,5 +1,5 @@
 package
 
-@kotlin.inline() public fun </*0*/ reified T> Array(/*0*/ n: kotlin.Int, /*1*/ block: (kotlin.Int) -> T): kotlin.Array<T>
+public inline fun </*0*/ reified T> Array(/*0*/ n: kotlin.Int, /*1*/ block: (kotlin.Int) -> T): kotlin.Array<T>
 public fun bar(/*0*/ x: kotlin.Int): kotlin.Int
 public fun foo(): kotlin.Unit

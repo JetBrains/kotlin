@@ -141,9 +141,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
                     @Override
                     public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
-                        PackageCodegen codegen = state.getFactory().forPackage(packageFqName, files);
-                        codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
-                        state.getFactory().asList();
+                        KotlinCodegenFacade.doGenerateFiles(files, state, CompilationErrorHandler.THROW_EXCEPTION);
                     }
 
                     @Override
@@ -378,7 +376,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                         PackageCodegen packageCodegen = state.getFactory().forPackage(getPackageFqName(), files);
                         JetFile file = classOrObject.getContainingJetFile();
                         Type packagePartType = FileClasses.getFileClassType(state.getFileClassesProvider(), file);
-                        PackageContext context = state.getRootContext().intoPackagePart(packageCodegen.getPackageFragment(), packagePartType);
+                        PackageContext context = state.getRootContext().intoPackagePart(packageCodegen.getPackageFragment(), packagePartType, file);
                         packageCodegen.generateClassOrObject(classOrObject, context);
                         state.getFactory().asList();
                     }
@@ -435,7 +433,6 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     /*disableInline=*/false,
                     /*disableOptimization=*/false,
                     /*useTypeTableInSerializer=*/false,
-                    /*packageFacadesAsMultifileClasses=*/false,
                     forExtraDiagnostics
             );
             KotlinCodegenFacade.prepareForCompilation(state);
@@ -465,7 +462,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
     }
 
     @NotNull
-    public static ClsFileImpl createFakeClsFile(
+    private static ClsFileImpl createFakeClsFile(
             @NotNull Project project,
             @NotNull final FqName packageFqName,
             @NotNull Collection<JetFile> files,

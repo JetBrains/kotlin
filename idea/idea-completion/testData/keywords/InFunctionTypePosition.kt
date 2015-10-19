@@ -4,5 +4,4 @@ fun foo() {
 
 /*TODO: Is 'package' type qualifier syntax correct?*/
 // EXIST: package
-// EXIST: dynamic
 // NOTHING_ELSE

@@ -3,7 +3,7 @@ package foo
 
 import java.util.*
 
-data class A
+class A
 
 fun checkAbstractList(obj: Any) {
     assertTrue(obj is AbstractList<*>, "checkAbstractList: is AbstractList")

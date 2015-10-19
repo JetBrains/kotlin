@@ -158,7 +158,7 @@ fun box(): String {
         ) {
             case("val", "val $KEYWORD_MARKER", "", testNotRenamedByName)
             case("var", "var $KEYWORD_MARKER", "", testNotRenamedByName)
-            case("param", "$KEYWORD_MARKER",  "",testRenamedByName)
+            case("param", "$KEYWORD_MARKER",  "", testRenamedByName, ignore = true)
         }
 // -------------------------
 
@@ -228,6 +228,7 @@ class Case(
         val testDeclaration: String,
         val testDeclarationInit: String,
         val testBlock: String,
+        val ignore: Boolean,
         val additionalShouldBeEscaped: Set<String>
 )
 
@@ -240,8 +241,9 @@ class Suite(
 class CaseBuilder {
     val cases = arrayListOf<Case>()
 
-    fun case(name: String, testDeclaration: String, testDeclarationInit: String, testBlock: String, additionalShouldBeEscaped: Set<String> = setOf()) {
-        cases.add(Case(name, testDeclaration, testDeclarationInit, testBlock, additionalShouldBeEscaped))
+    fun case(name: String, testDeclaration: String, testDeclarationInit: String, testBlock: String,
+             ignore: Boolean = false, additionalShouldBeEscaped: Set<String> = setOf()) {
+        cases.add(Case(name, testDeclaration, testDeclarationInit, testBlock, ignore, additionalShouldBeEscaped))
     }
 }
 
@@ -291,6 +293,11 @@ class TestDataBuilder() {
                 // Uses small portions of keywords instead of ALL_KEYWORDS to avoid a combinatorial explosion
                 // Each portion contains at least one keyword which should be escaped and at least one which should not.
                 for (keyword in nextKeywordPortion()) {
+
+                    if (case.ignore) {
+                        continue
+                    }
+
                     val shouldBeEscaped = keyword in SHOULD_BE_ESCAPED || keyword in case.additionalShouldBeEscaped
 
                     val keywordWithEscapeIfNeed = if (shouldBeEscaped) "`$keyword`" else keyword

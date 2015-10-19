@@ -2,14 +2,14 @@ package
 
 public fun foo(): kotlin.Int
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.annotation() public final class My : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) public final annotation class My : kotlin.Annotation {
     public constructor My()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() public final class Pair {
+public final data class Pair {
     public constructor Pair(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int)
     public final val a: kotlin.Int
     public final val b: kotlin.Int

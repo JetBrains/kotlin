@@ -38,14 +38,14 @@ public class CliCommonTest extends CliBaseTest {
     public void simple() throws Exception {
         executeCompilerCompareOutputJVM();
 
-        Assert.assertTrue(new File(tmpdir.getTmpDir(), PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class").isFile());
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), "SimpleKt.class").isFile());
     }
 
     @Test
     public void duplicateSources() throws Exception {
         executeCompilerCompareOutputJVM();
 
-        Assert.assertTrue(new File(tmpdir.getTmpDir(), PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class").isFile());
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), "SimpleKt.class").isFile());
     }
 
     @Test

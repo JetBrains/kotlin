@@ -1,6 +1,6 @@
 package b;
 
-import static a.APackage.*;
+import static a.MainKt.*;
 
 class J {
     void bar() {

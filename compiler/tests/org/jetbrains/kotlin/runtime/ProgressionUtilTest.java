@@ -31,7 +31,7 @@ public class ProgressionUtilTest extends UsefulTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        Class<?> progressionUtil = ForTestCompileRuntime.runtimeAndReflectJarClassLoader().loadClass("kotlin.internal.InternalPackage");
+        Class<?> progressionUtil = ForTestCompileRuntime.runtimeAndReflectJarClassLoader().loadClass("kotlin.internal.ProgressionUtilKt");
         this.intMethod = progressionUtil.getMethod("getProgressionFinalElement", int.class, int.class, int.class);
         this.longMethod = progressionUtil.getMethod("getProgressionFinalElement", long.class, long.class, long.class);
     }

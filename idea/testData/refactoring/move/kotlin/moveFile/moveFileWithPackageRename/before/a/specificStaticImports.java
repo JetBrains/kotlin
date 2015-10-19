@@ -1,8 +1,8 @@
 package a;
 
-import static a.APackage.test;
-import static a.APackage.getTEST;
-import static a.APackage.setTEST;
+import static a.MainKt.test;
+import static a.MainKt.getTEST;
+import static a.MainKt.setTEST;
 
 class J {
     void bar() {

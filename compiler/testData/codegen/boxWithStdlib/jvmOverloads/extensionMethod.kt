@@ -6,6 +6,6 @@ class C {
 }
 
 fun box(): String {
-    val m = javaClass<C>().getClassLoader().loadClass("_DefaultPackage").getMethod("foo", javaClass<C>(), javaClass<String>())
+    val m = javaClass<C>().getClassLoader().loadClass("ExtensionMethodKt").getMethod("foo", javaClass<C>(), javaClass<String>())
     return m.invoke(null, C(), "O") as String
 }

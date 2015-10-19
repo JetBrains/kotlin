@@ -45,4 +45,10 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
     boolean isOperator();
 
     boolean isInfix();
+
+    boolean isInline();
+
+    boolean isTailrec();
+
+    boolean isExternal();
 }

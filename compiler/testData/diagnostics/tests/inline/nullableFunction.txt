@@ -1,7 +1,7 @@
 package
 
-@kotlin.inline() public fun </*0*/ T> submit(/*0*/ action: ((kotlin.Int) -> kotlin.Int)?): kotlin.Unit
-@kotlin.inline() public fun </*0*/ T> submit(/*0*/ action: ((kotlin.Int) -> kotlin.Int)?, /*1*/ s: () -> kotlin.Int): kotlin.Unit
-@kotlin.inline() public fun </*0*/ T> submitNoInline(/*0*/ @kotlin.noinline() action: ((kotlin.Int) -> kotlin.Int)?, /*1*/ s: () -> kotlin.Int): kotlin.Unit
-@kotlin.inline() public fun </*0*/ T> ((kotlin.Int) -> kotlin.Int)?.submit(): kotlin.Unit
-@kotlin.inline() public fun </*0*/ T> ((kotlin.Int) -> kotlin.Int)?.submit(/*0*/ action: () -> T): kotlin.Unit
+public inline fun </*0*/ T> submit(/*0*/ action: ((kotlin.Int) -> kotlin.Int)?): kotlin.Unit
+public inline fun </*0*/ T> submit(/*0*/ action: ((kotlin.Int) -> kotlin.Int)?, /*1*/ s: () -> kotlin.Int): kotlin.Unit
+public inline fun </*0*/ T> submitNoInline(/*0*/ noinline action: ((kotlin.Int) -> kotlin.Int)?, /*1*/ s: () -> kotlin.Int): kotlin.Unit
+public inline fun </*0*/ T> ((kotlin.Int) -> kotlin.Int)?.submit(): kotlin.Unit
+public inline fun </*0*/ T> ((kotlin.Int) -> kotlin.Int)?.submit(/*0*/ action: () -> T): kotlin.Unit

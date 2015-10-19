@@ -24,7 +24,7 @@ public class JvmCliVirtualFileFinder(private val index: JvmDependenciesIndex) : 
 
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? {
         val classFileName = classId.getRelativeClassName().asString().replace('.', '$')
-        return index.findClass(classId, acceptedRootTypes = JavaRoot.OnlyBinary) { dir, _ ->
+        return index.findClass(classId, acceptedRootTypes = JavaRoot.OnlyBinary) { dir, rootType ->
             dir.findChild("$classFileName.class")?.let {
                 if (it.isValid()) it else null
             }

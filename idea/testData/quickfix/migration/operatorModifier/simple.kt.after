@@ -1,4 +1,0 @@
-// "Add 'operator' modifier" "true"
-class A {
-    public operator fun plus(other: A): A = A()
-}

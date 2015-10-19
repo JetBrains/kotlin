@@ -4,7 +4,7 @@ public open class AnnotatedValueParameter {
     public constructor AnnotatedValueParameter()
     public open fun f(/*0*/ @test.AnnotatedValueParameter.Anno(value = "non-empty") p0: kotlin.(Mutable)List<kotlin.String!>!): kotlin.Unit
 
-    public final class Anno : kotlin.Annotation {
+    public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.String)
         public final val value: kotlin.String
     }

@@ -1,9 +1,9 @@
 //file
-import kotlinApi.KotlinApiPackage;
+import kotlinApi.KotlinApiKt;
 
 class C {
     int foo() {
-        KotlinApiPackage.setGlobalValue2(0);
-        return KotlinApiPackage.getGlobalValue2();
+        KotlinApiKt.setGlobalValue2(0);
+        return KotlinApiKt.getGlobalValue2();
     }
 }

@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -225,11 +226,23 @@ public class KotlinRuntimeLibraryUtil {
     public static String bundledRuntimeVersion(@NotNull String pluginVersion) {
         int placeToSplit = -1;
 
-        for (int i = 1; i < pluginVersion.length(); i++) {
-            char ch = pluginVersion.charAt(i);
-            if (Character.isLetter(ch) && pluginVersion.charAt(i - 1) == '.') {
-                placeToSplit = i - 1;
-                break;
+        int ideaPatternIndex = StringUtil.indexOf(pluginVersion, "Idea");
+        if (ideaPatternIndex >= 2 && Character.isDigit(pluginVersion.charAt(ideaPatternIndex - 2))) {
+            placeToSplit = ideaPatternIndex - 1;
+        }
+
+        int ijPatternIndex = StringUtil.indexOf(pluginVersion, "IJ");
+        if (ijPatternIndex >= 2 && Character.isDigit(pluginVersion.charAt(ijPatternIndex - 2))) {
+            placeToSplit = ijPatternIndex - 1;
+        }
+
+        if (placeToSplit == -1) {
+            for (int i = 1; i < pluginVersion.length(); i++) {
+                char ch = pluginVersion.charAt(i);
+                if (Character.isLetter(ch) && pluginVersion.charAt(i - 1) == '.') {
+                    placeToSplit = i - 1;
+                    break;
+                }
             }
         }
 

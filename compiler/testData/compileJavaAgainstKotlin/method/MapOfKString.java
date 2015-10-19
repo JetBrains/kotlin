@@ -8,6 +8,6 @@ class MapOfKString {
     public static void gfgdgfg() {
         Map<BigDecimal, String> map = new HashMap<BigDecimal, String>();
         
-        Map<BigDecimal, String> r = TestPackage.fff(map);
+        Map<BigDecimal, String> r = MapOfKStringKt.fff(map);
     }
 }

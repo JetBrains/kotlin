@@ -1,3 +1,3 @@
 package
 
-@kotlin.inline() public fun </*0*/ T1, /*1*/ T2, /*2*/ reified T3, /*3*/ T4> foo(): T3
+public inline fun </*0*/ T1, /*1*/ T2, /*2*/ reified T3, /*3*/ T4> foo(): T3

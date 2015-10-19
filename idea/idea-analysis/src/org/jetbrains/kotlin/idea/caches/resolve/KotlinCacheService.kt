@@ -55,6 +55,7 @@ public class KotlinCacheService(val project: Project) {
     private inner class GlobalFacade(platform: TargetPlatform) {
         val facadeForLibraries = ProjectResolutionFacade(project) {
             globalResolveSessionProvider(
+                    "project libraries for platform $platform",
                     project,
                     platform,
                     logProcessCanceled = true,
@@ -68,6 +69,7 @@ public class KotlinCacheService(val project: Project) {
 
         val facadeForModules = ProjectResolutionFacade(project) {
             globalResolveSessionProvider(
+                    "project source roots and libraries for platform $platform",
                     project,
                     platform,
                     reuseDataFrom = facadeForLibraries,
@@ -93,11 +95,13 @@ public class KotlinCacheService(val project: Project) {
                 PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
                 KotlinOutOfBlockCompletionModificationTracker.getInstance(project)
         )
+        val debugName = "completion/highlighting in $syntheticFileModule for files ${files.joinToString { it.name }} for platform $targetPlatform"
         return when {
             syntheticFileModule is ModuleSourceInfo -> {
                 val dependentModules = syntheticFileModule.getDependentModules()
                 ProjectResolutionFacade(project) {
                     globalResolveSessionProvider(
+                            debugName,
                             project,
                             targetPlatform,
                             syntheticFiles = files,
@@ -111,6 +115,7 @@ public class KotlinCacheService(val project: Project) {
             syntheticFileModule is LibrarySourceInfo || syntheticFileModule is NotUnderContentRootModuleInfo -> {
                 ProjectResolutionFacade(project) {
                     globalResolveSessionProvider(
+                            debugName,
                             project,
                             targetPlatform,
                             syntheticFiles = files,
@@ -128,6 +133,7 @@ public class KotlinCacheService(val project: Project) {
                 LOG.warn("Creating cache with synthetic files ($files) in classes of library $syntheticFileModule")
                 ProjectResolutionFacade(project) {
                     globalResolveSessionProvider(
+                            debugName,
                             project,
                             targetPlatform,
                             syntheticFiles = files,
@@ -186,6 +192,7 @@ public class KotlinCacheService(val project: Project) {
 }
 
 private fun globalResolveSessionProvider(
+        debugName: String,
         project: Project,
         platform: TargetPlatform,
         dependencies: Collection<Any>,
@@ -201,7 +208,7 @@ private fun globalResolveSessionProvider(
                         ?: GlobalContext(logProcessCanceled)
 
     val moduleResolverProvider = createModuleResolverProvider(
-            project, globalContext,
+            debugName, project, globalContext,
             AnalyzerFacadeProvider.getAnalyzerFacade(platform),
             syntheticFiles, delegateResolverForProject, moduleFilter
     )

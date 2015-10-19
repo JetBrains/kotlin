@@ -46,8 +46,8 @@ public class CompileEnvironmentTest extends TestCase {
             File[] files = out.listFiles();
             Arrays.sort(files);
             assertEquals(2, files.length);
-            assertEquals(1, files[0].listFiles().length);//META-INF
-            assertEquals(2, files[1].listFiles().length);//Smoke package
+            assertEquals(1, files[0].listFiles().length); //META-INF
+            assertEquals(1, files[1].listFiles().length); // SmokeKt
         }
         finally {
             FileUtil.delete(tempDir);

@@ -81,7 +81,7 @@ public class FakeCallResolver(
         val fakeBindingTrace = context.replaceBindingTrace(fakeTrace)
 
         return makeAndResolveFakeCallInContext(receiver, fakeBindingTrace, valueArguments, name, callElement) { fake ->
-            fakeTrace.commit({ _, key ->
+            fakeTrace.commit({ slice, key ->
                 // excluding all entries related to fake expression
                 key != fake
             }, true)

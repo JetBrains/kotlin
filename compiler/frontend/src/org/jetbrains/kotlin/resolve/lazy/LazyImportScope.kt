@@ -102,7 +102,7 @@ class LazyImportResolver(
         }
         for ((alias, import) in explicitClassImports.entries()) {
             if (alias.all { it == '_' }) {
-                traceForImportResolve.report(Errors.UNDERSCORE_IS_DEPRECATED.on(import))
+                traceForImportResolve.report(Errors.UNDERSCORE_IS_RESERVED.on(import))
             }
         }
         for (alias in explicitClassImports.keySet()) {

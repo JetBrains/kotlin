@@ -1,6 +1,6 @@
 package
 
-@kotlin.data() public final enum class First : kotlin.Enum<First> {
+public final data enum class First : kotlin.Enum<First> {
     enum entry A
 
     enum entry B
@@ -23,7 +23,7 @@ package
     @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<First>
 }
 
-@kotlin.data() @kotlin.annotation.annotation() public final class Fourth : kotlin.Annotation {
+public final data annotation class Fourth : kotlin.Annotation {
     public constructor Fourth(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int
@@ -33,7 +33,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() public object Second {
+public data object Second {
     private constructor Second()
     public final /*synthesized*/ fun copy(): Second
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -41,7 +41,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() public interface Third {
+public data interface Third {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

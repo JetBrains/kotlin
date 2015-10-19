@@ -7,7 +7,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.annotation() public final class sourceann : kotlin.Annotation {
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class sourceann : kotlin.Annotation {
     public constructor sourceann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,10 +1,10 @@
 package b;
 
-import a.APackage;
+import a.MainKt;
 import a.Test;
 
 class J {
     void bar() {
-        APackage.test(new Test());
+        MainKt.test(new Test());
     }
 }

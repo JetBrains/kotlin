@@ -2,7 +2,7 @@ package
 
 package test {
 
-    @kotlin.annotation.annotation() public final class AnnClass : kotlin.Annotation {
+    public final annotation class AnnClass : kotlin.Annotation {
         public constructor AnnClass(/*0*/ a: kotlin.reflect.KClass<*>)
         public final val a: kotlin.reflect.KClass<*>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

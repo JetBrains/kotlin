@@ -1,5 +1,5 @@
 fun f(): List<String> = throw Exception()
 
-// method: _DefaultPackage::f
+// method: OutInOutPositionKt::f
 // jvm signature:     ()Ljava/util/List;
 // generic signature: ()Ljava/util/List<Ljava/lang/String;>;

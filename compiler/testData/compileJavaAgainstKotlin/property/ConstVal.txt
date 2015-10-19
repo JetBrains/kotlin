@@ -7,7 +7,7 @@ public object A {
     public const final val OBJECT: kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class Ann : kotlin.Annotation {
+public final annotation class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ kotlin.String)
     public final val value: kotlin.String
 }

@@ -1,17 +1,15 @@
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
-out/production/module/inline/InlineKt.class
-out/production/module/inline/InlinePackage.class
+out/production/module/test/InlineKt.class
 End of files
 Compiling files:
 End of files
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
 out/production/module/usage/UsageKt.class
-out/production/module/usage/UsagePackage.class
 End of files
 Compiling files:
 src/usage.kt
 End of files
 COMPILATION FAILED
-Unresolved reference: f
+Unresolved reference: test

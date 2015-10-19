@@ -16,7 +16,7 @@ public final class A2 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class Ann1 : kotlin.Annotation {
+public final annotation class Ann1 : kotlin.Annotation {
     public constructor Ann1(/*0*/ arg: kotlin.reflect.KClass<*>)
     public final val arg: kotlin.reflect.KClass<*>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -24,7 +24,7 @@ public final class A2 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class Ann2 : kotlin.Annotation {
+public final annotation class Ann2 : kotlin.Annotation {
     public constructor Ann2(/*0*/ vararg arg: kotlin.reflect.KClass<*> /*kotlin.Array<out kotlin.reflect.KClass<*>>*/)
     public final val arg: kotlin.Array<out kotlin.reflect.KClass<*>>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -32,7 +32,7 @@ public final class A2 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class Ann3 : kotlin.Annotation {
+public final annotation class Ann3 : kotlin.Annotation {
     public constructor Ann3(/*0*/ arg: kotlin.Array<kotlin.reflect.KClass<*>>)
     public final val arg: kotlin.Array<kotlin.reflect.KClass<*>>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

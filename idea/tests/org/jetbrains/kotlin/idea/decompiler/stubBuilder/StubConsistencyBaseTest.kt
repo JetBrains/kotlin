@@ -20,16 +20,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder
 import org.junit.Assert
 
 public abstract class StubConsistencyBaseTest : JetLightCodeInsightFixtureTestCase() {
 
-    protected abstract fun getPackages(): List<FqName>
+    protected abstract fun getFileIds(): List<ClassId>
     protected abstract fun getVirtualFileFinder(): VirtualFileFinder
 
     protected abstract fun createStubBuilder(): ClsStubBuilder
@@ -37,12 +36,12 @@ public abstract class StubConsistencyBaseTest : JetLightCodeInsightFixtureTestCa
     protected abstract fun getDecompiledText(packageFile: VirtualFile): String
 
     public fun testConsistency() {
-        getPackages().forEach { doTest(it) }
+        getFileIds().forEach { doTest(it) }
     }
 
-    private fun doTest(packageFqName: FqName) {
+    private fun doTest(id: ClassId) {
         val project = getProject()
-        val packageFile = getVirtualFileFinder().findVirtualFileWithHeader(PackageClassUtils.getPackageClassId(packageFqName))!!
+        val packageFile = getVirtualFileFinder().findVirtualFileWithHeader(id)!!
         val decompiledText = getDecompiledText(packageFile)
         val fileWithDecompiledText = JetPsiFactory(project).createFile(decompiledText)
         val stubTreeFromDecompiledText = JetFileStubBuilder().buildStubTree(fileWithDecompiledText)

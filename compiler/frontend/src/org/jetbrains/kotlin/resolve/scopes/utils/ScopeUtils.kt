@@ -281,16 +281,28 @@ public fun LexicalScope.addImportScope(importScope: JetScope): LexicalScope {
     val fileScope = getFileScope()
     val scopeWithAdditionImport =
             LexicalChainedScope(fileScope, fileScope.ownerDescriptor, false, null, "Scope with addition import", importScope)
-    return LexicalScopeWrapper(this, scopeWithAdditionImport)
+    return replaceFileScope(scopeWithAdditionImport)
 }
+
+public fun LexicalScope.replaceFileScope(fileScopeReplace: LexicalScope): LexicalScope {
+    if (this is FileScope) return fileScopeReplace
+
+    return LexicalScopeWrapper(this, fileScopeReplace)
+}
+
+public fun LexicalScope.withNoFileScope(): LexicalScope = replaceFileScope(MemberScopeToFileScopeAdapter(JetScope.Empty))
 
 private class LexicalScopeWrapper(val delegate: LexicalScope, val fileScopeReplace: LexicalScope): LexicalScope by delegate {
     override val parent: LexicalScope? by lazy(LazyThreadSafetyMode.NONE) {
-        if (delegate is FileScope) {
+        assert(delegate !is FileScope) { "We should replace FileScope($delegate) to $fileScopeReplace" }
+        val parent = delegate.parent!!
+
+        if (parent is FileScope) {
             fileScopeReplace
         }
         else {
-            LexicalScopeWrapper(delegate.parent!!, fileScopeReplace)
+            LexicalScopeWrapper(parent, fileScopeReplace)
         }
     }
 }
+

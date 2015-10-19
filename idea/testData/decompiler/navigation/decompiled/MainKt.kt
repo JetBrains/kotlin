@@ -33,4 +33,4 @@ package testData.libraries
 
 [public fun processDouble(d: testData.libraries.Double): kotlin.Unit { /* compiled code */ }]
 
-[@kotlin.inline public fun <T> T.filter(predicate: (T) -> kotlin.Boolean): T? { /* compiled code */ }]
+[public inline fun <T> T.filter(predicate: (T) -> kotlin.Boolean): T? { /* compiled code */ }]

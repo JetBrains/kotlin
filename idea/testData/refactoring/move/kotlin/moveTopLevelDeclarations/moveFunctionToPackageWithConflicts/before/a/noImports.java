@@ -2,6 +2,6 @@ package a;
 
 class J {
     void bar() {
-        APackage.test();
+        MainKt.test();
     }
 }

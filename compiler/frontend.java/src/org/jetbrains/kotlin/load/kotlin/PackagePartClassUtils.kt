@@ -51,6 +51,11 @@ public object PackagePartClassUtils {
 
     @TestOnly
     @JvmStatic
+    public fun getDefaultFileClassFqName(packageFqName: FqName, file: VirtualFile): FqName =
+            getPackagePartFqName(packageFqName, file.name)
+
+    @TestOnly
+    @JvmStatic
     public fun getDefaultPartFqName(facadeClassFqName: FqName, file: VirtualFile): FqName =
             getPackagePartFqName(facadeClassFqName.parent(), file.name)
 

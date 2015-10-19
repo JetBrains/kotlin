@@ -142,17 +142,6 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject)
     }
 
-    override fun getPackageClasses(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val filesInPackage = findFilesForPackage(packageFqName, scope)
-
-        val filesWithCallables = PackagePartClassUtils.getFilesWithCallables(filesInPackage)
-        if (filesWithCallables.isEmpty()) return emptyList()
-
-        return emptyOrSingletonList<PsiClass>(
-                KotlinLightClassForFacade.createForPackageFacade(psiManager, packageFqName, scope, filesWithCallables)
-        )
-    }
-
     override fun resolveClassToDescriptor(classOrObject: JetClassOrObject): ClassDescriptor? {
         return bindingContext.get(BindingContext.CLASS, classOrObject)
     }

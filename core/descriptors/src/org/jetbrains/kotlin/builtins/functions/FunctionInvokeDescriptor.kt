@@ -46,6 +46,12 @@ public class FunctionInvokeDescriptor private constructor(
         return FunctionInvokeDescriptor(newOwner, original as FunctionInvokeDescriptor?, kind)
     }
 
+    override fun isExternal(): Boolean = false
+
+    override fun isInline(): Boolean = false
+
+    override fun isTailrec(): Boolean = false
+
     companion object Factory {
         fun create(functionClass: FunctionClassDescriptor): FunctionInvokeDescriptor {
             val typeParameters = functionClass.getTypeConstructor().getParameters()
@@ -87,6 +93,8 @@ public class FunctionInvokeDescriptor private constructor(
                     Name.identifier(name),
                     typeParameter.getDefaultType(),
                     /* declaresDefaultValue = */ false,
+                    /* isCrossinline = */ false,
+                    /* isNoinline = */ false,
                     /* varargElementType = */ null,
                     SourceElement.NO_SOURCE
             )

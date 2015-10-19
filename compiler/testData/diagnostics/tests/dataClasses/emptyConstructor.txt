@@ -2,7 +2,7 @@ package
 
 public fun foo(/*0*/ a: A): kotlin.Unit
 
-@kotlin.data() public final class A {
+public final data class A {
     public constructor A()
     public final /*synthesized*/ fun copy(): A
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

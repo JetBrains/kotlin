@@ -24,7 +24,7 @@ public final class B {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() public final class Pair</*0*/ out A, /*1*/ out B> {
+public final data class Pair</*0*/ out A, /*1*/ out B> {
     public constructor Pair</*0*/ out A, /*1*/ out B>(/*0*/ first: A, /*1*/ second: B)
     public final val first: A
     public final val second: B

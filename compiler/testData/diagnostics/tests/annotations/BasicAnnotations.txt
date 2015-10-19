@@ -7,14 +7,14 @@ package
 @my2() public fun foo41(): kotlin.Unit
 @my2(i = 2) public fun foo42(): kotlin.Unit
 
-@kotlin.annotation.annotation() public final class my : kotlin.Annotation {
+public final annotation class my : kotlin.Annotation {
     public constructor my()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class my1 : kotlin.Annotation {
+public final annotation class my1 : kotlin.Annotation {
     public constructor my1(/*0*/ i: kotlin.Int)
     public final val i: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -22,7 +22,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class my2 : kotlin.Annotation {
+public final annotation class my2 : kotlin.Annotation {
     public constructor my2(/*0*/ i: kotlin.Int = ...)
     public final val i: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

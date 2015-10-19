@@ -23,15 +23,16 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 
-/**
- * The fact that this is a Java class is used in reflection implementation classes: otherwise if it were a Kotlin class, KClassImpl()
- * instance would have been invoked in its static initializer (to create and cache $kotlinClass field), resulting in infinite recursion.
- */
 /* package */ class ReflectProperties {
     public static abstract class Val<T> {
         private static final Object NULL_VALUE = new Object() {};
 
-        public abstract T get(Object instance, Object metadata);
+        @SuppressWarnings("UnusedParameters")
+        public T get(Object instance, Object metadata) {
+            return invoke();
+        }
+
+        public abstract T invoke();
 
         protected Object escape(T value) {
             return value == null ? NULL_VALUE : value;
@@ -53,7 +54,7 @@ import java.lang.ref.WeakReference;
         }
 
         @Override
-        public T get(Object instance, Object metadata) {
+        public T invoke() {
             Object cached = value;
             if (cached != null) {
                 return unescape(cached);
@@ -80,7 +81,7 @@ import java.lang.ref.WeakReference;
         }
 
         @Override
-        public T get(Object instance, Object metadata) {
+        public T invoke() {
             SoftReference<Object> cached = value;
             if (cached != null) {
                 Object result = cached.get();
@@ -107,7 +108,7 @@ import java.lang.ref.WeakReference;
         }
 
         @Override
-        public T get(Object instance, Object metadata) {
+        public T invoke() {
             WeakReference<Object> cached = value;
             if (cached != null) {
                 Object result = cached.get();

@@ -274,7 +274,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         KeywordValues.process(keywordValueConsumer, callTypeAndReceiver, bindingContext, resolutionFacade, moduleDescriptor, isJvmModule)
 
         val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
-        KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
+        KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix, isJvmModule) { lookupElement ->
             val keyword = lookupElement.lookupString
             if (keyword in keywordsToSkip) return@complete
 

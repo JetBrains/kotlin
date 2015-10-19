@@ -1,7 +1,7 @@
 package a;
 
-import static b.BPackage.getTest;
-import static b.BPackage.setTest;
+import static b.TestKt.getTest;
+import static b.TestKt.setTest;
 
 class J {
     void bar() {

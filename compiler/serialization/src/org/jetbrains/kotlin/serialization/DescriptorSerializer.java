@@ -125,7 +125,8 @@ public class DescriptorSerializer {
         ProtoBuf.Class.Builder builder = ProtoBuf.Class.newBuilder();
 
         int flags = Flags.getClassFlags(hasAnnotations(classDescriptor), classDescriptor.getVisibility(), classDescriptor.getModality(),
-                                        classDescriptor.getKind(), classDescriptor.isInner(), classDescriptor.isCompanionObject());
+                                        classDescriptor.getKind(), classDescriptor.isInner(), classDescriptor.isCompanionObject(),
+                                        classDescriptor.isData());
         if (flags != builder.getFlags()) {
             builder.setFlags(flags);
         }
@@ -211,6 +212,7 @@ public class DescriptorSerializer {
                 hasAnnotations,
                 descriptor.getVisibility(),
                 descriptor.getModality(),
+                false,
                 false
         );
 
@@ -283,7 +285,8 @@ public class DescriptorSerializer {
 
         int flags = Flags.getFunctionFlags(
                 hasAnnotations(descriptor), descriptor.getVisibility(), descriptor.getModality(), descriptor.getKind(),
-                descriptor.isOperator(), descriptor.isInfix()
+                descriptor.isOperator(), descriptor.isInfix(), descriptor.isInline(), descriptor.isTailrec(),
+                descriptor.isExternal()
         );
         if (flags != builder.getFlags()) {
             builder.setFlags(flags);
@@ -355,7 +358,8 @@ public class DescriptorSerializer {
                 hasAnnotations(accessor),
                 accessor.getVisibility(),
                 accessor.getModality(),
-                !accessor.isDefault()
+                !accessor.isDefault(),
+                accessor.isExternal()
         );
     }
 
@@ -363,7 +367,8 @@ public class DescriptorSerializer {
     private ProtoBuf.ValueParameter.Builder valueParameter(@NotNull ValueParameterDescriptor descriptor) {
         ProtoBuf.ValueParameter.Builder builder = ProtoBuf.ValueParameter.newBuilder();
 
-        int flags = Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue());
+        int flags = Flags.getValueParameterFlags(hasAnnotations(descriptor), descriptor.declaresDefaultValue(),
+                                                 descriptor.isCrossinline(), descriptor.isNoinline());
         if (flags != builder.getFlags()) {
             builder.setFlags(flags);
         }

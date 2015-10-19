@@ -20,16 +20,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.util.OperatorChecks
-
-//TODO: do we really need it?
-public class AddOperatorModifierInspection : IntentionBasedInspection<JetNamedFunction>(
-        listOf(IntentionBasedInspection.IntentionData(AddOperatorModifierIntention())),
-        "Function defines an operator but isn't annotated as such",
-        JetNamedFunction::class.java)
 
 class AddOperatorModifierIntention : JetSelfTargetingRangeIntention<JetNamedFunction>(JetNamedFunction::class.java, "Add 'operator' modifier") {
     override fun applicabilityRange(element: JetNamedFunction): TextRange? {

@@ -45,9 +45,3 @@
 @kotlin.jvm.internal.KotlinClass My {
     public method <init>(): void
 }
-
-@java.lang.Deprecated @kotlin.jvm.internal.KotlinPackage _DefaultPackage {
-    public synthetic final field $moduleName: java.lang.String
-    public final @kotlin.jvm.internal.KotlinDelegatedMethod method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
-    public final @kotlin.jvm.internal.KotlinDelegatedMethod @org.jetbrains.annotations.NotNull method foo(p0: int): My
-}

@@ -1,4 +1,4 @@
 package
 
 public fun box(): kotlin.String
-@kotlin.tailrec() public fun withWhen(/*0*/ counter: kotlin.Int, /*1*/ d: kotlin.Any): kotlin.Int
+public tailrec fun withWhen(/*0*/ counter: kotlin.Int, /*1*/ d: kotlin.Any): kotlin.Int

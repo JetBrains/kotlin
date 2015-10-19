@@ -1,9 +1,9 @@
 package a;
 
-import b.BPackage;
+import b.TestKt;
 
 class J {
     void bar() {
-        BPackage.test();
+        TestKt.test();
     }
 }

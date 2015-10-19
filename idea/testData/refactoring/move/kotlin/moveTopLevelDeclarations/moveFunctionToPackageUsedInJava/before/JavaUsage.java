@@ -1,7 +1,7 @@
-import oldPackage.OldPackagePackage;
+import oldPackage.FunKt;
 
 class JavaUsage {
     public static void main(String[] args) {
-        OldPackagePackage.foo();
+        FunKt.foo();
     }
 }

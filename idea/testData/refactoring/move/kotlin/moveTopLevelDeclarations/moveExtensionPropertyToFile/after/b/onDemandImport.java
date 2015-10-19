@@ -4,7 +4,7 @@ import a.*;
 
 class J {
     void bar() {
-        BPackage.getTest(new Test());
-        BPackage.setTest(new Test(), 0);
+        DependencyKt.getTest(new Test());
+        DependencyKt.setTest(new Test(), 0);
     }
 }

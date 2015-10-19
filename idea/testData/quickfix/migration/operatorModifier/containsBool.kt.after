@@ -1,4 +1,0 @@
-// "Add 'operator' modifier" "true"
-class A {
-    operator fun <caret>contains(other: A): Boolean = true
-}

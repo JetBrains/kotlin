@@ -1,4 +1,3 @@
-import kotlin.Map.*
+import kotlin.Map.Entry
 
 // IMPORT: kotlin.Map.Entry
-// IMPORT_NESTED_CLASSES: true

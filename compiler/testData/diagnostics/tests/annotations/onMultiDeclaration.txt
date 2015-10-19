@@ -2,7 +2,7 @@ package
 
 public fun test(): kotlin.Any?
 
-@kotlin.data() public final class P {
+public final data class P {
     public constructor P(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int)
     public final val a: kotlin.Int
     public final val b: kotlin.Int
@@ -14,7 +14,7 @@ public fun test(): kotlin.Any?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.annotation() public final class ann : kotlin.Annotation {
+public final annotation class ann : kotlin.Annotation {
     public constructor ann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

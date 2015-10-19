@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -161,26 +162,6 @@ public class InlineCodegenUtil {
         //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
         // we construct valid.package.name/RelativeClassNameAsSingleName that should work in compiler, but fails for inner classes in IDE
         return fileFinder.findVirtualFileWithHeader(new ClassId(packageFqName, Name.identifier(classNameWithDollars)));
-    }
-
-    //TODO: navigate to inner classes
-    @Nullable
-    public static ClassId getContainerClassId(@NotNull DeclarationDescriptor referencedDescriptor) {
-        ClassOrPackageFragmentDescriptor
-                containerDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, ClassOrPackageFragmentDescriptor.class, false);
-        if (containerDescriptor instanceof PackageFragmentDescriptor) {
-            return PackageClassUtils.getPackageClassId(getFqName(containerDescriptor).toSafe());
-        }
-        if (containerDescriptor instanceof ClassDescriptor) {
-            ClassId classId = DescriptorUtilsKt.getClassId((ClassDescriptor) containerDescriptor);
-            if (isInterface(containerDescriptor)) {
-                FqName relativeClassName = classId.getRelativeClassName();
-                //TODO test nested trait fun inlining
-                classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX));
-            }
-            return classId;
-        }
-        return null;
     }
 
     public static String getInlineName(

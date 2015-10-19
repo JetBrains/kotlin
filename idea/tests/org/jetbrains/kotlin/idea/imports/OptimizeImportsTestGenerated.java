@@ -47,6 +47,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("CallableReference.kt")
+    public void testCallableReference() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/CallableReference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassFromSameFileImportAddedBug.kt")
     public void testClassFromSameFileImportAddedBug() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/ClassFromSameFileImportAddedBug.kt");
@@ -98,6 +104,18 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     @TestMetadata("Enums.kt")
     public void testEnums() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/Enums.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FromCompanionObject.kt")
+    public void testFromCompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/FromCompanionObject.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("FromCompanionObjectGeneric.kt")
+    public void testFromCompanionObjectGeneric() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/FromCompanionObjectGeneric.kt");
         doTest(fileName);
     }
 
@@ -185,6 +203,18 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("StaticMethodFromSuper.kt")
+    public void testStaticMethodFromSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/StaticMethodFromSuper.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ThisAndSuper.kt")
+    public void testThisAndSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/ThisAndSuper.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("UnusedImports.kt")
     public void testUnusedImports() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/UnusedImports.kt");
@@ -232,6 +262,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         @TestMetadata("ClassNameConflictWithDefault.kt")
         public void testClassNameConflictWithDefault() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/allUnderImports/ClassNameConflictWithDefault.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MemberImports.kt")
+        public void testMemberImports() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/allUnderImports/MemberImports.kt");
             doTest(fileName);
         }
 

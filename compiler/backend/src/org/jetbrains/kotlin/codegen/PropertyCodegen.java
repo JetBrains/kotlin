@@ -340,7 +340,7 @@ public class PropertyCodegen {
         else if (!isDelegate && hasJvmFieldAnnotation) {
             modifiers |= getDefaultVisibilityFlag(propertyDescriptor.getVisibility());
         }
-        else if (kind != OwnerKind.PACKAGE || isDelegate) {
+        else {
             modifiers |= ACC_PRIVATE;
         }
 

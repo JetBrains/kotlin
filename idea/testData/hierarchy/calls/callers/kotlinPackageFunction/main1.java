@@ -1,7 +1,7 @@
 class JA {
-    public String name = _DefaultPackage.packageFun("");
+    public String name = Main0Kt.packageFun("");
 
     public String foo() {
-        return _DefaultPackage.packageFun("");
+        return Main0Kt.packageFun("");
     }
 }

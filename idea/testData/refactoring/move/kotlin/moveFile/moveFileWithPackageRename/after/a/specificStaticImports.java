@@ -2,9 +2,9 @@ package a;
 
 import b.Test;
 
-import static b.BPackage.test;
-import static b.BPackage.getTEST;
-import static b.BPackage.setTEST;
+import static b.MainKt.test;
+import static b.MainKt.getTEST;
+import static b.MainKt.setTEST;
 
 class J {
     void bar() {

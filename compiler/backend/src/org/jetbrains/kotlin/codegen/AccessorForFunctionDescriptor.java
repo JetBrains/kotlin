@@ -48,8 +48,6 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
                    descriptor.getReturnType(),
                    Modality.FINAL,
                    Visibilities.LOCAL);
-        setOperator(descriptor.isOperator());
-        setInfix(descriptor.isInfix());
     }
 
     @NotNull

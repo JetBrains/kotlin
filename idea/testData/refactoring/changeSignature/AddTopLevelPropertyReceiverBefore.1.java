@@ -1,8 +1,8 @@
-import test.TestPackage;
+import test.AddTopLevelPropertyReceiverBeforeKt;
 
 class Test {
     static void test() {
-        TestPackage.getP();
-        TestPackage.setP(1);
+        AddTopLevelPropertyReceiverBeforeKt.getP();
+        AddTopLevelPropertyReceiverBeforeKt.setP(1);
     }
 }

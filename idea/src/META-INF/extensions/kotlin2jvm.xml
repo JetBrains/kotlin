@@ -4,9 +4,6 @@
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <defaultErrorMessages implementation="org.jetbrains.kotlin.resolve.jvm.diagnostics.DefaultErrorMessagesJvm"/>
 
-        <suppressStringProvider implementation="org.jetbrains.kotlin.load.kotlin.nativeDeclarations.SuppressNoBodyErrorsForExternalDeclarations"/>
-        <suppressStringProvider implementation="org.jetbrains.kotlin.load.kotlin.nativeDeclarations.SuppressNoBodyErrorsForNativeDeclarations"/>
-
         <classBuilderInterceptorExtension implementation="org.jetbrains.kotlin.annotation.AnnotationCollectorExtension"/>
 
         <analyzeCompleteHandlerExtension implementation="org.jetbrains.kotlin.resolve.jvm.AnalyzeCompleteHandlerExtension"/>

@@ -60,10 +60,6 @@ public class NavigateToDecompiledLibraryTest extends LightCodeInsightFixtureTest
         doTest();
     }
 
-    public void testLibrariesPackage() {
-        doTest();
-    }
-
     public void testSimpleClass() {
         doTest();
     }

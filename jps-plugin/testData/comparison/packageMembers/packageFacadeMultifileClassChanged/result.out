@@ -1,4 +1,3 @@
-changes in test/TestPackage: NONE
 skip test/Utils
 changes in test/Utils__Main1Kt: MEMBERS
     [publicAddedFun1]

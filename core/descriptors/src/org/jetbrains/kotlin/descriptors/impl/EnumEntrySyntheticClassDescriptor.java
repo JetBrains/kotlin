@@ -145,6 +145,11 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     }
 
     @Override
+    public boolean isData() {
+        return false;
+    }
+
+    @Override
     public boolean isCompanionObject() {
         return false;
     }

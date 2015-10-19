@@ -112,7 +112,7 @@ public class ClassTranslator private constructor(
         bodyVisitor.traverseContainer(classDeclaration, context)
         delegationTranslator.generateDelegated(properties)
 
-        if (KotlinBuiltIns.isData(descriptor)) {
+        if (descriptor.isData) {
             JsDataClassGenerator(classDeclaration, context, properties).generate()
         }
 

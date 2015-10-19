@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
-import java.util.ArrayList
+import java.util.*
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContext,
@@ -73,6 +73,7 @@ class LazyJavaClassDescriptor(
     override fun getModality() = modality
     override fun getVisibility() = visibility
     override fun isInner() = isInner
+    override fun isData() = false
 
     private val typeConstructor = c.storageManager.createLazyValue { LazyJavaClassTypeConstructor() }
     override fun getTypeConstructor(): TypeConstructor = typeConstructor()

@@ -1,6 +1,6 @@
 package test
 
-@kotlin.annotation.annotation() public final class Anno : kotlin.Annotation {
+public final annotation class Anno : kotlin.Annotation {
     public constructor Anno(/*0*/ e: [ERROR : test.E])
     public final val e: [ERROR : test.E]
 }

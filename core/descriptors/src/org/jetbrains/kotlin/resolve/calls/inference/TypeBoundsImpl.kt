@@ -36,10 +36,6 @@ public class TypeBoundsImpl(
 ) : TypeBounds {
     override val bounds = ArrayList<Bound>()
 
-    private val typesInBoundsSet: Set<JetType> by lazy {
-        bounds.filter { it.isProper }.map { it.constrainingType }.toSet()
-    }
-
     private var resultValues: Collection<JetType>? = null
 
     var isFixed: Boolean = false
@@ -157,7 +153,10 @@ public class TypeBoundsImpl(
         // a captured type might be an answer
         if (!possibleAnswer.getConstructor().isDenotable() && !possibleAnswer.isCaptured()) return false
 
-        if (typeVariable.hasOnlyInputTypesAnnotation() && !typesInBoundsSet.contains(possibleAnswer)) return false
+        if (typeVariable.hasOnlyInputTypesAnnotation()) {
+            val typesInBoundsSet = bounds.filter { it.isProper && it.constrainingType.constructor.isDenotable }.map { it.constrainingType }.toSet()
+            if (!typesInBoundsSet.contains(possibleAnswer)) return false
+        }
 
         for (bound in bounds) {
             when (bound.kind) {

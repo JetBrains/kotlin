@@ -153,6 +153,8 @@ public class LongProgression(
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
+@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
+@Suppress("DEPRECATION_ERROR")
 /**
  * A progression of values of type `Float`.
  */
@@ -181,6 +183,8 @@ public class FloatProgression(
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
+@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
+@Suppress("DEPRECATION_ERROR")
 /**
  * A progression of values of type `Double`.
  */

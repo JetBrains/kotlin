@@ -1,10 +1,10 @@
 package server
 
-import some.SomePackage
+import some.TopLevelMethodFromJava_DataKt
 
 class Testing {
     void test() {
-        SomePackage.<caret>foo(12);
+        TopLevelMethodFromJava_DataKt.<caret>foo(12);
     }
 }
 

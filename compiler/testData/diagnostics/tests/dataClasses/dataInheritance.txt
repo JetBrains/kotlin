@@ -6,7 +6,7 @@ public interface Allowed {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() public abstract class Base {
+public abstract data class Base {
     public constructor Base(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int
@@ -16,7 +16,7 @@ public interface Allowed {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() public final class Complex : Allowed, NotAllowed {
+public final data class Complex : Allowed, NotAllowed {
     public constructor Complex(/*0*/ y: kotlin.Int)
     public final val y: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int
@@ -36,7 +36,7 @@ public final class Derived : Base {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() public final class Nasty : Base {
+public final data class Nasty : Base {
     public constructor Nasty(/*0*/ z: kotlin.Int, /*1*/ y: kotlin.Int)
     public final override /*1*/ /*fake_override*/ val x: kotlin.Int
     public final val y: kotlin.Int

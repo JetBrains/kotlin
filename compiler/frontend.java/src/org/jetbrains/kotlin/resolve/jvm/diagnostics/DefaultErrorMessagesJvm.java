@@ -24,18 +24,27 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
     private static final Renderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA = new Renderer<ConflictingJvmDeclarationsData>() {
         @NotNull
         @Override
         public String render(@NotNull ConflictingJvmDeclarationsData data) {
-            StringBuilder sb = new StringBuilder();
+            List<String> renderedDescriptors = new ArrayList<String>();
             for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
                 DeclarationDescriptor descriptor = origin.getDescriptor();
                 if (descriptor != null) {
-                    sb.append("    ").append(DescriptorRenderer.COMPACT.render(descriptor)).append("\n");
+                    renderedDescriptors.add(DescriptorRenderer.Companion.getCOMPACT().render(descriptor));
                 }
+            }
+            Collections.sort(renderedDescriptors);
+            StringBuilder sb = new StringBuilder();
+            for (String renderedDescriptor : renderedDescriptors) {
+                sb.append("    ").append(renderedDescriptor).append("\n");
             }
             return ("The following declarations have the same JVM signature (" + data.getSignature().getName() + data.getSignature().getDesc() + "):\n" + sb).trim();
         }

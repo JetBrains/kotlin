@@ -65,7 +65,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
 
         private fun mayImport(descriptor: DeclarationDescriptor, file: JetFile): Boolean {
             return descriptor.canBeReferencedViaImport()
-                   && ImportInsertHelper.getInstance(file.getProject()).mayImportByCodeStyle(descriptor)
+                   && ImportInsertHelper.getInstance(file.getProject()).mayImportOnShortenReferences(descriptor)
         }
     }
 

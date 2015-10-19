@@ -3,7 +3,7 @@ package test
 public open class ClassObjectInParamVariance {
     public constructor ClassObjectInParamVariance()
 
-    public final class Anno : kotlin.Annotation {
+    public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ arg1: kotlin.reflect.KClass<out kotlin.Int!>, /*1*/ arg2: kotlin.reflect.KClass<in kotlin.Int!>, /*2*/ arg3: kotlin.Array<kotlin.reflect.KClass<out kotlin.Int!>>, /*3*/ arg4: kotlin.Array<kotlin.reflect.KClass<in kotlin.Int!>>, /*4*/ arg5: kotlin.Array<kotlin.reflect.KClass<out java.lang.Class<*>!>>, /*5*/ arg6: kotlin.Array<kotlin.reflect.KClass<in java.lang.Class<*>!>>, /*6*/ arg7: kotlin.Array<kotlin.reflect.KClass<out java.lang.Class<kotlin.Int!>!>>, /*7*/ arg8: kotlin.Array<kotlin.reflect.KClass<in java.lang.Class<kotlin.Int!>!>>)
         public final val arg1: kotlin.reflect.KClass<out kotlin.Int!>
         public final val arg2: kotlin.reflect.KClass<in kotlin.Int!>

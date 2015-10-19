@@ -11,6 +11,6 @@ fun test(bal: Array<Int>) {
 
     val <!UNUSED_VARIABLE!>e<!>: Unit = run { bar += 4 }
 
-    val <!UNUSED_VARIABLE!>f<!>: Int = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>run<!> { bar += 4 }
+    val <!UNUSED_VARIABLE!>f<!>: Int = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>run { bar += 4 }<!>
 }
 fun <T> run(f: () -> T): T = f()

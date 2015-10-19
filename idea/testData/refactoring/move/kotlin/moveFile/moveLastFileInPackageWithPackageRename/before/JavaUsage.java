@@ -1,8 +1,8 @@
-import oldPackage.OldPackagePackage;
+import oldPackage.StuffKt;
 
 class JavaUsage {
     public static void main(String[] args) {
-        OldPackagePackage.foo();
-        OldPackagePackage.getProp();
+        StuffKt.foo();
+        StuffKt.getProp();
     }
 }

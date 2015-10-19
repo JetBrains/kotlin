@@ -1,3 +1,4 @@
+@file: Suppress("DEPRECATION_ERROR")
 package language
 
 import java.lang.Double as jDouble

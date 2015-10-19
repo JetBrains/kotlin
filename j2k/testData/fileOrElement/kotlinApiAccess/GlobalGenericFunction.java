@@ -1,8 +1,8 @@
 //file
-import kotlinApi.KotlinApiPackage;
+import kotlinApi.KotlinApiKt;
 
 class C {
     void foo() {
-        int v = KotlinApiPackage.<Integer>globalGenericFunction(1);
+        int v = KotlinApiKt.<Integer>globalGenericFunction(1);
     }
 }

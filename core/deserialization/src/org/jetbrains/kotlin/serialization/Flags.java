@@ -34,6 +34,7 @@ public class Flags {
 
     public static final FlagField<ProtoBuf.Class.Kind> CLASS_KIND = FlagField.after(MODALITY, ProtoBuf.Class.Kind.values());
     public static final BooleanFlagField IS_INNER = FlagField.booleanAfter(CLASS_KIND);
+    public static final BooleanFlagField IS_DATA = FlagField.booleanAfter(IS_INNER);
 
     // Callables
 
@@ -51,6 +52,9 @@ public class Flags {
 
     public static final BooleanFlagField IS_OPERATOR = FlagField.booleanAfter(MEMBER_KIND);
     public static final BooleanFlagField IS_INFIX = FlagField.booleanAfter(IS_OPERATOR);
+    public static final BooleanFlagField IS_INLINE = FlagField.booleanAfter(IS_INFIX);
+    public static final BooleanFlagField IS_TAILREC = FlagField.booleanAfter(IS_INLINE);
+    public static final BooleanFlagField IS_EXTERNAL_FUNCTION = FlagField.booleanAfter(IS_TAILREC);
 
     // Properties
 
@@ -64,11 +68,14 @@ public class Flags {
     // Parameters
 
     public static final BooleanFlagField DECLARES_DEFAULT_VALUE = FlagField.booleanAfter(HAS_ANNOTATIONS);
+    public static final BooleanFlagField IS_CROSSINLINE = FlagField.booleanAfter(DECLARES_DEFAULT_VALUE);
+    public static final BooleanFlagField IS_NOINLINE = FlagField.booleanAfter(IS_CROSSINLINE);
 
     // Accessors
 
     // It's important that this flag is negated: "is NOT default" instead of "is default"
     public static final BooleanFlagField IS_NOT_DEFAULT = FlagField.booleanAfter(MODALITY);
+    public static final BooleanFlagField IS_EXTERNAL_ACCESSOR = FlagField.booleanAfter(IS_NOT_DEFAULT);
 
     // ---
 
@@ -87,13 +94,15 @@ public class Flags {
             Modality modality,
             ClassKind kind,
             boolean inner,
-            boolean isCompanionObject
+            boolean isCompanionObject,
+            boolean isData
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
                | VISIBILITY.toFlags(visibility(visibility))
                | CLASS_KIND.toFlags(classKind(kind, isCompanionObject))
                | IS_INNER.toFlags(inner)
+               | IS_DATA.toFlags(isData)
                ;
     }
 
@@ -134,7 +143,10 @@ public class Flags {
             @NotNull Modality modality,
             @NotNull CallableMemberDescriptor.Kind memberKind,
             boolean isOperator,
-            boolean isInfix
+            boolean isInfix,
+            boolean isInline,
+            boolean isTailrec,
+            boolean isExternal
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility(visibility))
@@ -142,6 +154,9 @@ public class Flags {
                | MEMBER_KIND.toFlags(memberKind(memberKind))
                | IS_OPERATOR.toFlags(isOperator)
                | IS_INFIX.toFlags(isInfix)
+               | IS_INLINE.toFlags(isInline)
+               | IS_TAILREC.toFlags(isTailrec)
+               | IS_EXTERNAL_FUNCTION.toFlags(isExternal)
                 ;
     }
 
@@ -174,12 +189,14 @@ public class Flags {
             boolean hasAnnotations,
             @NotNull Visibility visibility,
             @NotNull Modality modality,
-            boolean isNotDefault
+            boolean isNotDefault,
+            boolean isExternal
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
                | VISIBILITY.toFlags(visibility(visibility))
                | IS_NOT_DEFAULT.toFlags(isNotDefault)
+               | IS_EXTERNAL_ACCESSOR.toFlags(isExternal)
                ;
     }
 
@@ -236,9 +253,16 @@ public class Flags {
         throw new IllegalArgumentException("Unknown member kind: " + kind);
     }
 
-    public static int getValueParameterFlags(boolean hasAnnotations, boolean declaresDefaultValue) {
+    public static int getValueParameterFlags(
+            boolean hasAnnotations,
+            boolean declaresDefaultValue,
+            boolean isCrossinline,
+            boolean isNoinline
+    ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | DECLARES_DEFAULT_VALUE.toFlags(declaresDefaultValue)
+               | IS_CROSSINLINE.toFlags(isCrossinline)
+               | IS_NOINLINE.toFlags(isNoinline)
                ;
     }
 

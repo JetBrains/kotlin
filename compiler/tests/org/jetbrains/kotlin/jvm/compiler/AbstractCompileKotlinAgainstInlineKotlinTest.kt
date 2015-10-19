@@ -49,7 +49,7 @@ public abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCom
         try {
             factory1 = compileA(File(files[1]))
             factory2 = compileB(File(files[0]))
-            invokeBox()
+            invokeBox(files[0])
         }
         catch (e: Throwable) {
             var result = ""

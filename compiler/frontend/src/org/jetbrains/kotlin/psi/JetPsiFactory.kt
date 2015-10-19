@@ -78,7 +78,11 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createType(type: String): JetTypeReference {
-        return createProperty("val x : $type").getTypeReference()!!
+        val typeReference = createProperty("val x : $type").typeReference
+        if (typeReference == null || typeReference.text != type) {
+            throw IllegalArgumentException("Incorrect type: $type")
+        }
+        return typeReference
     }
 
     public fun createStar(): PsiElement {

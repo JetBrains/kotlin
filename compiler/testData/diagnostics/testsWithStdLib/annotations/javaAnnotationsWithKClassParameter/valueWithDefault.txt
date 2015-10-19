@@ -1,6 +1,6 @@
 package
 
-public final class A : kotlin.Annotation {
+public final annotation class A : kotlin.Annotation {
     public constructor A(/*0*/ value: kotlin.reflect.KClass<*> = ...)
     public final val value: kotlin.reflect.KClass<*>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

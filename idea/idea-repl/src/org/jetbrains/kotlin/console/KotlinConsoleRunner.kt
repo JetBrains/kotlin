@@ -114,7 +114,7 @@ public class KotlinConsoleRunner(
 
         keeper.putVirtualFileToConsole(consoleFile, this)
         processHandler.addProcessListener(object : ProcessAdapter() {
-            override fun processTerminated(_: ProcessEvent) {
+            override fun processTerminated(event: ProcessEvent) {
                 keeper.removeConsole(consoleFile)
             }
         })
@@ -123,7 +123,7 @@ public class KotlinConsoleRunner(
     }
 
     override fun createExecuteActionHandler() = object : ProcessBackedConsoleExecuteActionHandler(processHandler, false) {
-        override fun runExecuteAction(_: LanguageConsoleView) = executor.executeCommand()
+        override fun runExecuteAction(consoleView: LanguageConsoleView) = executor.executeCommand()
     }
 
     override fun fillToolBarActions(toolbarActions: DefaultActionGroup,

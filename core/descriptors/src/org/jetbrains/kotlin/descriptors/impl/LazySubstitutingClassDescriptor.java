@@ -212,6 +212,11 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
+    public boolean isData() {
+        return original.isData();
+    }
+
+    @Override
     public boolean isCompanionObject() {
         return original.isCompanionObject();
     }

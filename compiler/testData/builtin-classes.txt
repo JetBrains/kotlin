@@ -289,7 +289,7 @@ public interface Comparable</*0*/ in T> {
     public abstract operator fun compareTo(/*0*/ other: T): kotlin.Int
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER}) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class Deprecated : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER}) @kotlin.annotation.MustBeDocumented() public final annotation class Deprecated : kotlin.Annotation {
     /*primary*/ public constructor Deprecated(/*0*/ message: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ..., /*2*/ level: kotlin.DeprecationLevel = ...)
     public final val level: kotlin.DeprecationLevel
         public final fun <get-level>(): kotlin.DeprecationLevel
@@ -409,7 +409,7 @@ public abstract class DoubleIterator : kotlin.Iterator<kotlin.Double> {
     public abstract fun nextDouble(): kotlin.Double
 }
 
-public final class DoubleProgression : kotlin.Progression<kotlin.Double> {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class DoubleProgression : kotlin.Progression<kotlin.Double> {
     /*primary*/ public constructor DoubleProgression(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double, /*2*/ increment: kotlin.Double)
     public open override /*1*/ val end: kotlin.Double
         public open override /*1*/ fun <get-end>(): kotlin.Double
@@ -421,7 +421,7 @@ public final class DoubleProgression : kotlin.Progression<kotlin.Double> {
     public open override /*1*/ fun iterator(): kotlin.DoubleIterator
 }
 
-public final class DoubleProgressionIterator : kotlin.DoubleIterator {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") public final class DoubleProgressionIterator : kotlin.DoubleIterator {
     /*primary*/ public constructor DoubleProgressionIterator(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double, /*2*/ increment: kotlin.Double)
     public final val end: kotlin.Double
         public final fun <get-end>(): kotlin.Double
@@ -435,7 +435,7 @@ public final class DoubleProgressionIterator : kotlin.DoubleIterator {
     public open override /*1*/ fun nextDouble(): kotlin.Double
 }
 
-public final class DoubleRange : kotlin.Range<kotlin.Double>, kotlin.Progression<kotlin.Double> {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class DoubleRange : kotlin.Range<kotlin.Double>, kotlin.Progression<kotlin.Double> {
     /*primary*/ public constructor DoubleRange(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double)
     public open override /*2*/ val end: kotlin.Double
         public open override /*2*/ fun <get-end>(): kotlin.Double
@@ -468,7 +468,7 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     }
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class Extension : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented() public final annotation class Extension : kotlin.Annotation {
     /*primary*/ public constructor Extension()
 }
 
@@ -560,7 +560,7 @@ public abstract class FloatIterator : kotlin.Iterator<kotlin.Float> {
     public abstract fun nextFloat(): kotlin.Float
 }
 
-public final class FloatProgression : kotlin.Progression<kotlin.Float> {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class FloatProgression : kotlin.Progression<kotlin.Float> {
     /*primary*/ public constructor FloatProgression(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float, /*2*/ increment: kotlin.Float)
     public open override /*1*/ val end: kotlin.Float
         public open override /*1*/ fun <get-end>(): kotlin.Float
@@ -572,7 +572,7 @@ public final class FloatProgression : kotlin.Progression<kotlin.Float> {
     public open override /*1*/ fun iterator(): kotlin.FloatIterator
 }
 
-public final class FloatProgressionIterator : kotlin.FloatIterator {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") public final class FloatProgressionIterator : kotlin.FloatIterator {
     /*primary*/ public constructor FloatProgressionIterator(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float, /*2*/ increment: kotlin.Float)
     public final val end: kotlin.Float
         public final fun <get-end>(): kotlin.Float
@@ -586,7 +586,7 @@ public final class FloatProgressionIterator : kotlin.FloatIterator {
     public open override /*1*/ fun nextFloat(): kotlin.Float
 }
 
-public final class FloatRange : kotlin.Range<kotlin.Float>, kotlin.Progression<kotlin.Float> {
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class FloatRange : kotlin.Range<kotlin.Float>, kotlin.Progression<kotlin.Float> {
     /*primary*/ public constructor FloatRange(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float)
     public open override /*2*/ val end: kotlin.Float
         public open override /*2*/ fun <get-end>(): kotlin.Float
@@ -621,7 +621,7 @@ public interface FloatingPointConstants</*0*/ T> {
 public interface Function</*0*/ out R> {
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented() @kotlin.Deprecated(message = "Use @Deprecated("...", level = DeprecationLevel.HIDDEN) instead", replaceWith = kotlin.ReplaceWith(expression = "@Deprecated(, level = DeprecationLevel.HIDDEN)", imports = {})) @kotlin.annotation.annotation() public final class HiddenDeclaration : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented() @kotlin.Deprecated(message = "Use @Deprecated("...", level = DeprecationLevel.HIDDEN) instead", replaceWith = kotlin.ReplaceWith(expression = "@Deprecated(, level = DeprecationLevel.HIDDEN)", imports = {})) public final annotation class HiddenDeclaration : kotlin.Annotation {
     /*primary*/ public constructor HiddenDeclaration()
 }
 
@@ -1104,7 +1104,7 @@ public interface Range</*0*/ T : kotlin.Comparable<T>> {
     public open fun isEmpty(): kotlin.Boolean
 }
 
-@kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class ReplaceWith : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented() public final annotation class ReplaceWith : kotlin.Annotation {
     /*primary*/ public constructor ReplaceWith(/*0*/ expression: kotlin.String, /*1*/ vararg imports: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     public final val expression: kotlin.String
         public final fun <get-expression>(): kotlin.String
@@ -1265,7 +1265,7 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     }
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.annotation() public final class Suppress : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class Suppress : kotlin.Annotation {
     /*primary*/ public constructor Suppress(/*0*/ vararg names: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     public final val names: kotlin.Array<out kotlin.String>
         public final fun <get-names>(): kotlin.Array<out kotlin.String>
@@ -1284,30 +1284,6 @@ public object Unit {
     /*primary*/ private constructor Unit()
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() public final class UnsafeVariance : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.MustBeDocumented() public final annotation class UnsafeVariance : kotlin.Annotation {
     /*primary*/ public constructor UnsafeVariance()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() private final class crossinline : kotlin.Annotation {
-    /*primary*/ public constructor crossinline()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() private final class data : kotlin.Annotation {
-    /*primary*/ public constructor data()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() private final class external : kotlin.Annotation {
-    /*primary*/ public constructor external()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() private final class inline : kotlin.Annotation {
-    /*primary*/ public constructor inline()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented() @kotlin.annotation.annotation() private final class noinline : kotlin.Annotation {
-    /*primary*/ public constructor noinline()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.annotation() private final class tailrec : kotlin.Annotation {
-    /*primary*/ public constructor tailrec()
 }

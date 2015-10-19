@@ -9,7 +9,7 @@ class A {
                + KotlinClass.Companion.getStaticVar()
                + KotlinClass.Companion.nullableStaticFun(1)
                + KotlinClass.Companion.staticFun(1)
-               + KotlinApiPackage.nullableGlobalFunction("").length()
-               + KotlinApiPackage.globalFunction("").length();
+               + KotlinApiKt.nullableGlobalFunction("").length()
+               + KotlinApiKt.globalFunction("").length();
     }
 }

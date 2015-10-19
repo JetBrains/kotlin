@@ -5,5 +5,3 @@ f 0 0/SomeClass$someFunction$LocalClass annotatedProperty
 a org.jetbrains.annotations.Nullable 1
 f 1 0/SomeClass$someFunction$LocalClass annotatedProperty
 m 1 0/SomeClass$someFunction$LocalClass getAnnotatedProperty
-a kotlin.inline 2
-m 2 0/SomeClass$someFunction$LocalClass annotatedFunction

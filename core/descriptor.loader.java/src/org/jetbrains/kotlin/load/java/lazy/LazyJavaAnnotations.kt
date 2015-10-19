@@ -45,7 +45,6 @@ class LazyJavaAnnotations(
 
     override fun iterator() =
             (annotationOwner.annotations.asSequence().map(annotationDescriptors)
-             + JavaAnnotationMapper.findMappedJavaAnnotation(KotlinBuiltIns.FQ_NAMES.annotation, annotationOwner, c)
              + JavaAnnotationMapper.findMappedJavaAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated, annotationOwner, c)).filterNotNull().iterator()
 
     override fun isEmpty() = !iterator().hasNext()

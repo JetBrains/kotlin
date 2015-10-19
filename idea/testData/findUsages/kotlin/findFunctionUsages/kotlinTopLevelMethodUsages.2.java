@@ -1,11 +1,11 @@
 package client;
 
-import server.ServerPackage;
+import server.KotlinTopLevelMethodUsages_0Kt;
 
 class JClient {
-    String s = ServerPackage.processRequest();
+    String s = KotlinTopLevelMethodUsages_0Kt.processRequest();
 
     String sendRequest() {
-        return ServerPackage.processRequest();
+        return KotlinTopLevelMethodUsages_0Kt.processRequest();
     }
 }

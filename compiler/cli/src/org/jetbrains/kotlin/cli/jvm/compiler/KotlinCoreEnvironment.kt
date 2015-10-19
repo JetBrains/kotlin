@@ -239,15 +239,17 @@ public class KotlinCoreEnvironment private constructor(
         ): KotlinCoreEnvironment {
             // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
             // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
-            Disposer.register(parentDisposable, object : Disposable {
-                override fun dispose() {
-                    synchronized (APPLICATION_LOCK) {
-                        if (--ourProjectCount <= 0) {
-                            disposeApplicationEnvironment()
+            if (System.getProperty("kotlin.environment.keepalive") == null) {
+                Disposer.register(parentDisposable, object : Disposable {
+                    override fun dispose() {
+                        synchronized (APPLICATION_LOCK) {
+                            if (--ourProjectCount <= 0) {
+                                disposeApplicationEnvironment()
+                            }
                         }
                     }
-                }
-            })
+                })
+            }
             val environment = KotlinCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths), configuration)
 
             synchronized (APPLICATION_LOCK) {
@@ -267,7 +269,8 @@ public class KotlinCoreEnvironment private constructor(
 
         private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
             synchronized (APPLICATION_LOCK) {
-                if (ourApplicationEnvironment != null) return ourApplicationEnvironment!!
+                if (ourApplicationEnvironment != null)
+                    return ourApplicationEnvironment!!
 
                 val parentDisposable = Disposer.newDisposable()
                 ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, configFilePaths)
@@ -293,6 +296,7 @@ public class KotlinCoreEnvironment private constructor(
         }
 
         private fun createApplicationEnvironment(parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
+
             Extensions.cleanRootArea(parentDisposable)
             registerAppExtensionPoints()
             val applicationEnvironment = JavaCoreApplicationEnvironment(parentDisposable)

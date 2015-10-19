@@ -1,9 +1,9 @@
 package testing;
 
-import testing.rename.RenamePackage;
+import testing.rename.RenameKotlinPackageFunctionFromJavaKt;
 
 class JavaClient {
     public void testing() {
-        RenamePackage.bar();
+        RenameKotlinPackageFunctionFromJavaKt.bar();
     }
 }

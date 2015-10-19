@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
-import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
@@ -148,18 +147,23 @@ public class JetTypeMapper {
 
     @NotNull
     public Type mapOwner(@NotNull DeclarationDescriptor descriptor) {
+        return mapOwner(descriptor, true);
+    }
+
+    public Type mapImplementationOwner(@NotNull DeclarationDescriptor descriptor) {
         return mapOwner(descriptor, false);
     }
 
     @NotNull
-    private Type mapOwner(@NotNull DeclarationDescriptor descriptor, boolean isImplementation) {
+    public Type mapOwner(@NotNull DeclarationDescriptor descriptor, boolean publicFacade) {
         if (isLocalFunction(descriptor)) {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
         }
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (container instanceof PackageFragmentDescriptor) {
-            return Type.getObjectType(internalNameForPackageMemberOwner((CallableMemberDescriptor) descriptor, isImplementation));
+            String packageMemberOwner = internalNameForPackageMemberOwner((CallableMemberDescriptor) descriptor, publicFacade);
+            return Type.getObjectType(packageMemberOwner);
         }
         else if (container instanceof ClassDescriptor) {
             return mapClass((ClassDescriptor) container);
@@ -173,7 +177,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    private String internalNameForPackageMemberOwner(@NotNull CallableMemberDescriptor descriptor, boolean isImplementation) {
+    private String internalNameForPackageMemberOwner(@NotNull CallableMemberDescriptor descriptor, boolean publicFacade) {
         boolean isAccessor = descriptor instanceof AccessorForCallableDescriptor;
         if (isAccessor) {
             descriptor = ((AccessorForCallableDescriptor) descriptor).getCalleeDescriptor();
@@ -181,10 +185,11 @@ public class JetTypeMapper {
         JetFile file = DescriptorToSourceUtils.getContainingFile(descriptor);
         if (file != null) {
             Visibility visibility = descriptor.getVisibility();
-            if (isImplementation ||
+            if (!publicFacade ||
                 descriptor instanceof PropertyDescriptor ||
                 Visibilities.isPrivate(visibility) ||
-                isAccessor/*Cause of KT-9603*/) {
+                isAccessor/*Cause of KT-9603*/
+            ) {
                 return FileClasses.getFileClassInternalName(fileClassesProvider, file);
             }
             else {
@@ -195,12 +200,12 @@ public class JetTypeMapper {
         CallableMemberDescriptor directMember = getDirectMember(descriptor);
 
         if (directMember instanceof DeserializedCallableMemberDescriptor) {
-            String facadeFqName = getPackageMemberOwnerInternalName((DeserializedCallableMemberDescriptor) directMember);
+            String facadeFqName = getPackageMemberOwnerInternalName((DeserializedCallableMemberDescriptor) directMember, publicFacade);
             if (facadeFqName != null) return facadeFqName;
         }
 
-        throw new RuntimeException("Unreachable state");
-        //return PackageClassUtils.getPackageClassInternalName(packageFragment.getFqName());
+        throw new RuntimeException("Could not find package member for " + descriptor +
+                                   " in package fragment " + descriptor.getContainingDeclaration());
     }
 
     public static class ContainingClassesInfo {
@@ -246,8 +251,8 @@ public class JetTypeMapper {
         if (parentDeclaration instanceof PackageFragmentDescriptor) {
             containingClassesInfo = getPackageMemberContainingClassesInfo(deserializedDescriptor);
         } else {
-            containingClassesInfo = ContainingClassesInfo.forClassMemberOrNull(
-                    InlineCodegenUtil.getContainerClassId(deserializedDescriptor));
+            ClassId classId = getContainerClassIdForClassDescriptor((ClassDescriptor) parentDeclaration);
+            containingClassesInfo = ContainingClassesInfo.forClassMemberOrNull(classId);
         }
         if (containingClassesInfo == null) {
             throw new IllegalStateException("Couldn't find container for " + deserializedDescriptor.getName());
@@ -255,8 +260,18 @@ public class JetTypeMapper {
         return containingClassesInfo;
     }
 
+    private static ClassId getContainerClassIdForClassDescriptor(ClassDescriptor classDescriptor) {
+        ClassId classId = DescriptorUtilsKt.getClassId(classDescriptor);
+        if (isInterface(classDescriptor)) {
+            FqName relativeClassName = classId.getRelativeClassName();
+            //TODO test nested trait fun inlining
+            classId = new ClassId(classId.getPackageFqName(), Name.identifier(relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX));
+        }
+        return classId;
+    }
+
     @Nullable
-    private String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor) {
+    private String getPackageMemberOwnerInternalName(@NotNull DeserializedCallableMemberDescriptor descriptor, boolean publicFacade) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         assert containingDeclaration instanceof PackageFragmentDescriptor : "Not a top-level member: " + descriptor;
 
@@ -265,12 +280,16 @@ public class JetTypeMapper {
             return null;
         }
 
-        return JvmClassName.byClassId(containingClasses.getFacadeClassId()).getInternalName();
+        ClassId ownerClassId = publicFacade ? containingClasses.getFacadeClassId()
+                                            : containingClasses.getImplClassId();
+        return JvmClassName.byClassId(ownerClassId).getInternalName();
     }
+
+    private static final ClassId FAKE_CLASS_ID_FOR_BUILTINS = ClassId.topLevel(new FqName("kotlin.KotlinPackage"));
 
     @Nullable
     private ContainingClassesInfo getPackageMemberContainingClassesInfo(@NotNull DeserializedCallableMemberDescriptor descriptor) {
-        // XXX This method (and getPackageMemberOwnerShortName) is a dirty hack.
+        // XXX This method is a dirty hack.
         // We need some safe, concise way to identify multifile facade and multifile part
         // from a deserialized package member descriptor.
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
@@ -279,8 +298,7 @@ public class JetTypeMapper {
         PackageFragmentDescriptor packageFragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
 
         if (packageFragmentDescriptor instanceof BuiltinsPackageFragment) {
-            ClassId builtinsFacadeClassId = ClassId.topLevel(PackageClassUtils.getPackageClassFqName(packageFragmentDescriptor.getFqName()));
-            return new ContainingClassesInfo(builtinsFacadeClassId, builtinsFacadeClassId);
+            return new ContainingClassesInfo(FAKE_CLASS_ID_FOR_BUILTINS, FAKE_CLASS_ID_FOR_BUILTINS);
         }
 
         Name implClassName = JvmFileClassUtil.getImplClassName(descriptor);

@@ -13,8 +13,8 @@ public final class B {
     public final inner class C {
         public constructor C()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        @kotlin.tailrec() public final fun h(/*0*/ counter: kotlin.Int): kotlin.Unit
-        @kotlin.tailrec() public final fun h2(/*0*/ x: kotlin.Any): kotlin.Unit
+        public final tailrec fun h(/*0*/ counter: kotlin.Int): kotlin.Unit
+        public final tailrec fun h2(/*0*/ x: kotlin.Any): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

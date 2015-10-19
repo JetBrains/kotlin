@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
 public class ConstraintSystemImpl : ConstraintSystem {
@@ -83,13 +84,14 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         override fun hasContradiction() = hasParameterConstraintError() || hasConflictingConstraints()
                                           || hasCannotCaptureTypesError() || hasTypeInferenceIncorporationError()
-                                            || hasTypeParameterWithUnsatisfiedOnlyInputTypesError()
+
 
         override fun hasViolatedUpperBound() = !isSuccessful() && filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().isSuccessful()
 
         override fun hasConflictingConstraints() = localTypeParameterBounds.values().any { it.values.size() > 1 }
 
-        override fun hasUnknownParameters() = localTypeParameterBounds.values().any { it.values.isEmpty() }
+        override fun hasUnknownParameters() =
+                localTypeParameterBounds.values().any { it.values.isEmpty() } || hasTypeParameterWithUnsatisfiedOnlyInputTypesError()
 
         override fun hasParameterConstraintError() = errors.any { it is ParameterConstraintError }
 
@@ -293,7 +295,6 @@ public class ConstraintSystemImpl : ConstraintSystem {
         if (isErrorOrSpecialType(subType, constraintPosition) || isErrorOrSpecialType(superType, constraintPosition)) return
         if (subType == null || superType == null) return
 
-        if (subType.hasNoInferAnnotation() || superType.hasNoInferAnnotation()) return
         if ((subType.hasExactAnnotation() || superType.hasExactAnnotation()) && (constraintKind != EQUAL)) {
             return doAddConstraint(EQUAL, subType, superType, constraintContext, typeCheckingProcedure)
         }
@@ -340,6 +341,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
         if (constraintContext.initial) {
             storeInitialConstraint(constraintKind, subType, superType, constraintPosition)
         }
+        if (subType.hasNoInferAnnotation() || superType.hasNoInferAnnotation()) return
+
         simplifyConstraint(newSubType, superType)
     }
 
@@ -473,15 +476,19 @@ public class ConstraintSystemImpl : ConstraintSystem {
     }
 
     private fun satisfyInitialConstraints(): Boolean {
-        fun JetType.substituteAndMakeNullable(): JetType? {
+        fun JetType.substitute(): JetType? {
             val substitutor = getSubstitutor(substituteOriginal = false) { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
-            val result = substitutor.substitute(this, Variance.INVARIANT) ?: return null
-            return TypeUtils.makeNullable(result)
+            return substitutor.substitute(this, Variance.INVARIANT) ?: return null
         }
         return initialConstraints.all {
-            val resultSubType = it.subtype.substituteAndMakeNullable() ?: return false
-            val resultSuperType = it.superType.substituteAndMakeNullable() ?: return false
-            when (it.kind) {
+            constraint ->
+            val resultSubType = constraint.subtype.substitute()?.let {
+                // the call might be done via safe access, so we check for notNullable receiver type;
+                // 'unsafe call' error is reported otherwise later
+                if (constraint.position.kind != ConstraintPositionKind.RECEIVER_POSITION) it else it.makeNotNullable()
+            } ?: return false
+            val resultSuperType = constraint.superType.substitute() ?: return false
+            when (constraint.kind) {
                 SUB_TYPE -> JetTypeChecker.DEFAULT.isSubtypeOf(resultSubType, resultSuperType)
                 EQUAL -> JetTypeChecker.DEFAULT.equalTypes(resultSubType, resultSuperType)
             }

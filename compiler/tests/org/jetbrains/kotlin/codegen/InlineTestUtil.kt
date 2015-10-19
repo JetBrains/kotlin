@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -32,7 +32,6 @@ import kotlin.properties.Delegates
 
 public object InlineTestUtil {
 
-    public val INLINE_ANNOTATION_CLASS: String = "kotlin/inline"
     private val KOTLIN_PACKAGE_DESC = "L" + AsmUtil.internalNameByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE) + ";"
     private val KOTLIN_MULTIFILE_CLASS_DESC = "L" + AsmUtil.internalNameByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS) + ";"
 
@@ -62,27 +61,28 @@ public object InlineTestUtil {
         val classHeaders = hashMapOf<String, KotlinClassHeader>()
 
         for (file in files) {
-            val cr = ClassReader(file.asByteArray())
+            val bytes = file.asByteArray()
+            val cr = ClassReader(bytes)
+
+            val inlineFunctions = inlineFunctionsJvmNames(bytes)
+            if (inlineFunctions.isEmpty()) continue
 
             val classVisitor = object : ClassVisitorWithName() {
-
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {
                     return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
-                        public override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
-                            val type = Type.getType(desc)
-                            val annotationClass = type.getInternalName()
-                            if (INLINE_ANNOTATION_CLASS == annotationClass) {
+                        override fun visitEnd() {
+                            if (name + desc in inlineFunctions) {
                                 inlineMethods.add(MethodInfo(className, name, this.desc))
                             }
-                            return super.visitAnnotation(desc, visible)
                         }
                     }
                 }
             }
-            cr.accept(classVisitor, 0)
 
+            cr.accept(classVisitor, 0)
             classHeaders.put(classVisitor.className, getClassHeader(file))
         }
+
         return InlineInfo(inlineMethods, classHeaders)
     }
 
@@ -103,11 +103,6 @@ public object InlineTestUtil {
 
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String, exceptions: Array<String>): MethodVisitor? {
                     if (skipMethodsOfThisClass) {
-                        return null
-                    }
-
-                    val classFqName = JvmClassName.byInternalName(className).getFqNameForClassNameWithoutDollars()
-                    if (PackageClassUtils.isPackageClassFqName(classFqName)) {
                         return null
                     }
 
@@ -143,10 +138,10 @@ public object InlineTestUtil {
                 cr.accept(object : ClassVisitorWithName() {
 
                     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor? {
-                        val classFqName = JvmClassName.byInternalName(className).getFqNameForClassNameWithoutDollars()
+                        JvmClassName.byInternalName(className).getFqNameForClassNameWithoutDollars()
                         val declaration = MethodInfo(className, name, desc)
                         //do not check anonymous object creation in inline functions and in package facades
-                        if (PackageClassUtils.isPackageClassFqName(classFqName) || declaration in inlinedMethods) {
+                        if (declaration in inlinedMethods) {
                             return null
                         }
 

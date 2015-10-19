@@ -311,6 +311,57 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addOperatorModifier")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddOperatorModifier extends AbstractIntentionTest {
+        public void testAllFilesPresentInAddOperatorModifier() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addOperatorModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("containsBool.kt")
+        public void testContainsBool() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addOperatorModifier/containsBool.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("containsInt.kt")
+        public void testContainsInt() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addOperatorModifier/containsInt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extension.kt")
+        public void testExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addOperatorModifier/extension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("forOverride.kt")
+        public void testForOverride() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addOperatorModifier/forOverride.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overridden.kt")
+        public void testOverridden() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addOperatorModifier/overridden.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addOperatorModifier/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toplevel.kt")
+        public void testToplevel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addOperatorModifier/toplevel.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/branched")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

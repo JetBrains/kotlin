@@ -23,16 +23,8 @@
 @kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass Anno
 
 @kotlin.jvm.internal.KotlinFileFacade DefaultTargetsKt {
-    @Anno field p2: int
-    public method getP(): int
-    public method getP2(): int
+    private final @Anno field p2: int
     method <clinit>(): void
-}
-
-@java.lang.Deprecated @kotlin.jvm.internal.KotlinPackage _DefaultPackage {
-    public synthetic field $kotlinPackage: kotlin.reflect.KPackage
-    public synthetic field $moduleName: java.lang.String
-    method <clinit>(): void
-    public @kotlin.jvm.internal.KotlinDelegatedMethod method getP(): int
-    public @kotlin.jvm.internal.KotlinDelegatedMethod method getP2(): int
+    public final method getP(): int
+    public final method getP2(): int
 }

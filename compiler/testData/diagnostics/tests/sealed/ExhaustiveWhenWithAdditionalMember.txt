@@ -44,7 +44,7 @@ public sealed class Sealed {
         }
     }
 
-    @kotlin.data() public final class Tuple {
+    public final data class Tuple {
         public constructor Tuple(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
         public final val x: kotlin.Int
         public final val y: kotlin.Int

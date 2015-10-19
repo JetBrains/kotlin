@@ -211,4 +211,9 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
 
     @Override
     public abstract int hashCode();
+
+    @Override
+    public PsiElement getContext() {
+        return getParent();
+    }
 }

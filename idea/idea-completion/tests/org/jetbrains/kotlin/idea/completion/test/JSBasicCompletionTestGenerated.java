@@ -2260,6 +2260,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("DynamicKeyword.kt")
+        public void testDynamicKeyword() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/js/DynamicKeyword.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InPackage.kt")
         public void testInPackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/js/InPackage.kt");

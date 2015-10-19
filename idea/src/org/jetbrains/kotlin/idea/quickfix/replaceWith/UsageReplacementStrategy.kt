@@ -54,8 +54,15 @@ interface UsageReplacementStrategy {
                 }
 
                 is ClassDescriptor -> {
-                    val replacement = ReplaceWithAnnotationAnalyzer.analyzeClassReplacement(replaceWith, target, resolutionFacade) ?: return null
-                    return ClassUsageReplacementStrategy(replacement)
+                    val replacementType = ReplaceWithAnnotationAnalyzer.analyzeClassReplacement(replaceWith, target, resolutionFacade)
+                    if (replacementType != null) { //TODO: check that it's really resolved and is not an object otherwise it can be expression as well
+                        return ClassUsageReplacementStrategy(replacementType, null, element.project)
+                    }
+                    else {
+                        val constructor = target.unsubstitutedPrimaryConstructor ?: return null
+                        val replacementExpression = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(replaceWith, constructor, resolutionFacade) ?: return null
+                        return ClassUsageReplacementStrategy(null, replacementExpression, element.project)
+                    }
                 }
 
                 else -> return null

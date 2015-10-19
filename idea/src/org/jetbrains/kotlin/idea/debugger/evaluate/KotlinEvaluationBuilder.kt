@@ -189,7 +189,6 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context, parametersDescriptor)
 
             val outputFiles = classFileFactory.asList().filterClassFiles()
-                    .filter { it.relativePath != "$packageInternalName.class" }
                     .sortedBy { it.relativePath.length() }
 
             val funName = runReadAction { extractedFunction.name }
@@ -464,8 +463,6 @@ package packageForDebugger
 
 !FUNCTION!
 """
-
-private val packageInternalName = PackageClassUtils.getPackageClassInternalName(FqName("packageForDebugger"))
 
 private fun createFileForDebugger(codeFragment: JetCodeFragment,
                                   extractedFunction: JetNamedFunction

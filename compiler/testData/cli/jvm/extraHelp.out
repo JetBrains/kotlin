@@ -3,7 +3,6 @@ where advanced options include:
   -Xno-call-assertions       Don't generate not-null assertion after each invocation of method returning not-null
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-optimize              Disable optimizations
-  -Xmultifile-package-facadesCompile package facade classes as multifile classes
   -Xreport-perf              Report detailed performance statistics
   -Xno-inline                Disable method inlining
   -Xrepeat <count>           Repeat compilation (for performance analysis)

@@ -1,4 +1,4 @@
-import static _DefaultPackage.foo;
+import static TestKt.foo;
 
 class Test {
     static void test() {

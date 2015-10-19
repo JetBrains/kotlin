@@ -1,7 +1,7 @@
-import newPackage.NewPackagePackage;
+import newPackage.FooKt;
 
 class JavaUsage {
     public static void main(String[] args) {
-        NewPackagePackage.foo();
+        FooKt.foo();
     }
 }

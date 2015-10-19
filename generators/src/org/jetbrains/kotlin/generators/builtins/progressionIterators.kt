@@ -57,11 +57,11 @@ class ${t}ProgressionIterator(start: $t, end: $t, val increment: $incrementType)
 
 fun floatingPointProgressionIterator(kind: ProgressionKind): String {
     val t = kind.capitalized
-
     return """/**
  * An iterator over a progression of values of type `$t`.
  * @property increment the number by which the value is incremented on each step.
  */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
 class ${t}ProgressionIterator(start: $t, val end: $t, val increment: $t) : ${t}Iterator() {
     private var next = start
 

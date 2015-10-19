@@ -5,7 +5,7 @@ public /*synthesized*/ fun NullInAnnotation(/*0*/ function: () -> kotlin.Unit): 
 public interface NullInAnnotation {
     @test.NullInAnnotation.Ann(a = null, b = {null}) public abstract fun foo(): kotlin.Unit
 
-    public final class Ann : kotlin.Annotation {
+    public final annotation class Ann : kotlin.Annotation {
         public constructor Ann(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Array<kotlin.String>)
         public final val a: kotlin.String
         public final val b: kotlin.Array<kotlin.String>

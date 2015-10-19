@@ -1,12 +1,15 @@
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
-out/production/module/test/Fun2Kt.class
-out/production/module/test/TestPackage.class
+out/production/module/test/Utils.class
+out/production/module/test/Utils__Fun2Kt.class
 End of files
 Compiling files:
 src/fun2.kt
 End of files
 COMPILATION FAILED
+Platform declaration clash: The following declarations have the same JVM signature (function(Ljava/util/List;)V):
+    fun function(list: kotlin.List<kotlin.Any>): kotlin.Unit
+    fun function(list: kotlin.List<kotlin.String>): kotlin.Unit
 Platform declaration clash: The following declarations have the same JVM signature (function(Ljava/util/List;)V):
     fun function(list: kotlin.List<kotlin.Any>): kotlin.Unit
     fun function(list: kotlin.List<kotlin.String>): kotlin.Unit

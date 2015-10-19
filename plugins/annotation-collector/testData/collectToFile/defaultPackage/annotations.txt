@@ -1,12 +1,12 @@
-a kotlin.data 0
-c 0 SomeClass
-a java.lang.Deprecated 1
+a java.lang.Deprecated 0
+f 0 SomeClass annotatedProperty
+a org.jetbrains.annotations.Nullable 1
 f 1 SomeClass annotatedProperty
-a org.jetbrains.annotations.Nullable 2
-f 2 SomeClass annotatedProperty
-m 2 SomeClass getAnnotatedProperty
-m 1 SomeClass annotatedFunction
-a kotlin.inline 3
-m 3 SomeClass annotatedFunction
-a org.jetbrains.annotations.NotNull 4
-m 4 SomeClass copy
+m 1 SomeClass getAnnotatedProperty
+m 0 SomeClass annotatedFunction
+f 1 SomeClass arg
+m 1 SomeClass getArg
+m 1 SomeClass component1
+a org.jetbrains.annotations.NotNull 2
+m 2 SomeClass copy
+m 2 SomeClass copy$default

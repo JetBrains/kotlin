@@ -1,3 +1,3 @@
-// _DefaultPackage
+// VoidReturnKt
 
 fun foo(g: String) {}

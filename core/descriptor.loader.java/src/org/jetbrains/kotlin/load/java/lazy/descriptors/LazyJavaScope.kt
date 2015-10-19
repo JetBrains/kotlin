@@ -207,7 +207,9 @@ public abstract class LazyJavaScope(
                     annotations,
                     name,
                     outType,
-                    false,
+                    /* declaresDefaultValue = */ false,
+                    /* isCrossinline = */ false,
+                    /* isNoinline = */ false,
                     varargElementType,
                     c.components.sourceElementFactory.source(javaParameter)
             )

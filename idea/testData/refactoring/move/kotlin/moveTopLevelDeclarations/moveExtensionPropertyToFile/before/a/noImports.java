@@ -2,7 +2,7 @@ package a;
 
 class J {
     void bar() {
-        APackage.getTest(new Test());
-        APackage.setTest(new Test(), 0);
+        MainKt.getTest(new Test());
+        MainKt.setTest(new Test(), 0);
     }
 }

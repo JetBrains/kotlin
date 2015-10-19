@@ -31,7 +31,7 @@ public final class PackageClassUtils {
 
     // ex. <root> -> _DefaultPackage, a -> APackage, a.b -> BPackage
     @NotNull
-    public static String getPackageClassName(@NotNull FqName packageFQN) {
+    private static String getPackageClassName(@NotNull FqName packageFQN) {
         if (packageFQN.isRoot()) {
             return DEFAULT_PACKAGE_CLASS_NAME;
         }
@@ -51,14 +51,5 @@ public final class PackageClassUtils {
     @NotNull
     public static ClassId getPackageClassId(@NotNull FqName packageFQN) {
         return new ClassId(packageFQN, Name.identifier(getPackageClassName(packageFQN)));
-    }
-
-    @NotNull
-    public static String getPackageClassInternalName(@NotNull FqName packageFQN) {
-        return JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(packageFQN)).getInternalName();
-    }
-
-    public static boolean isPackageClassFqName(@NotNull FqName fqName) {
-        return !fqName.isRoot() && getPackageClassFqName(fqName.parent()).equals(fqName);
     }
 }

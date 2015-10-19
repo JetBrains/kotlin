@@ -1,4 +1,4 @@
-import static _DefaultPackage.foo;
+import static FunctionRenameJavaUsagesBeforeKt.foo;
 
 class J {
     void test() {

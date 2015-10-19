@@ -31,4 +31,7 @@ class Class {
     var nullableVarWithGetSet: String?
         @[NotNull] get() = ""
         @[NotNull] set(v) {}
+
+    private val privateNN: String = ""
+    private val privateN: String? = ""
 }

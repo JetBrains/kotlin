@@ -13,6 +13,6 @@ class X
 //     thus removing the wildcard would be restricting the use of the return value of the method, and we don't want do this.
 fun f(): Out<Out<X>> = throw Exception()
 
-// method: _DefaultPackage::f
+// method: OutOfOutInOutPositionKt::f
 // jvm signature:     ()LOut;
 // generic signature: ()LOut<LOut<+LX;>;>;

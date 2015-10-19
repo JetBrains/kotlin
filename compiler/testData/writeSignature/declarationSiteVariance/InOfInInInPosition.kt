@@ -3,6 +3,6 @@ class X
 
 fun f(p: In<In<X>>) {}
 
-// method: _DefaultPackage::f
+// method: InOfInInInPositionKt::f
 // jvm signature:     (LIn;)V
 // generic signature: (LIn<-LIn<-LX;>;>;)V

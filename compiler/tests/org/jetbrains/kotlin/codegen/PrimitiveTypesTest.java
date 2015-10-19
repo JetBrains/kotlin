@@ -159,7 +159,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testCastOnStack() throws Exception {
         loadText("fun foo(l: Long): Double = l.toDouble()");
-        Class<?> mainClass = generatePackagePartClass();
+        Class<?> mainClass = generateFileClass();
         Method main = mainClass.getDeclaredMethod("foo", long.class);
         double result = (Double) main.invoke(null, 42L);
         assertTrue(Math.abs(42L - result) <= 1e-9);

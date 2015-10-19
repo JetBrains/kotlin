@@ -21,7 +21,7 @@ package test
     }
 }
 
-@kotlin.annotation.annotation() public final class anno : kotlin.Annotation {
+public final annotation class anno : kotlin.Annotation {
     public constructor anno(/*0*/ x: kotlin.String)
     public final val x: kotlin.String
 }

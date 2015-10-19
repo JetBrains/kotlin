@@ -33,7 +33,7 @@ public final class BigInteger {
     public final fun xor(/*0*/ o: BigInteger): BigInteger
 }
 
-@kotlin.data() private final class BinaryOperationKey</*0*/ A, /*1*/ B> {
+private final data class BinaryOperationKey</*0*/ A, /*1*/ B> {
     public constructor BinaryOperationKey</*0*/ A, /*1*/ B>(/*0*/ f: CompileTimeType<out A>, /*1*/ g: CompileTimeType<out B>, /*2*/ functionName: kotlin.String)
     public final val f: CompileTimeType<out A>
     public final val functionName: kotlin.String
@@ -54,7 +54,7 @@ private final class CompileTimeType</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() private final class UnaryOperationKey</*0*/ A> {
+private final data class UnaryOperationKey</*0*/ A> {
     public constructor UnaryOperationKey</*0*/ A>(/*0*/ f: CompileTimeType<out A>, /*1*/ functionName: kotlin.String)
     public final val f: CompileTimeType<out A>
     public final val functionName: kotlin.String

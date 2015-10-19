@@ -20,7 +20,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.psi.*
-import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.search.GlobalSearchScope
@@ -31,7 +30,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
@@ -116,8 +114,8 @@ public class KotlinLightClassForFacade private constructor(
     private val implementsList: LightEmptyImplementsList =
             LightEmptyImplementsList(manager)
 
-    private val packageClsFile: ClsFileImpl = KotlinJavaFileStubProvider.createFakeClsFile(manager.getProject(), packageFqName, files) {
-        (getDelegate().getContainingFile() as ClsFileImpl).getStub()
+    private val packageClsFile = FakeFileForLightClass(packageFqName, files.first().virtualFile!!, myManager, this) {
+        lightClassDataCache.value.javaFileStub
     }
 
     override fun getOrigin(): JetClassOrObject? = null
@@ -190,8 +188,8 @@ public class KotlinLightClassForFacade private constructor(
     override fun copy() = KotlinLightClassForFacade(getManager(), facadeClassFqName, searchScope, lightClassDataCache, files, deprecated)
 
     override fun getDelegate(): PsiClass {
-        val psiClass = LightClassUtil.findClass(facadeClassFqName, lightClassDataCache.getValue().javaFileStub)
-                       ?: throw IllegalStateException("Facade class $facadeClassFqName not found")
+        val psiClass = LightClassUtil.findClass(facadeClassFqName, lightClassDataCache.value.javaFileStub)
+                ?: throw IllegalStateException("Facade class $facadeClassFqName not found")
         return psiClass
     }
 
@@ -238,23 +236,6 @@ public class KotlinLightClassForFacade private constructor(
     }
 
     companion object Factory {
-        public fun createForPackageFacade(
-                manager: PsiManager,
-                packageFqName: FqName,
-                searchScope: GlobalSearchScope,
-                files: Collection<JetFile> // this is redundant, but computing it multiple times is costly
-        ): KotlinLightClassForFacade? {
-            if (files.any { LightClassUtil.belongsToKotlinBuiltIns(it) }) {
-                return null
-            }
-
-            assert(files.isNotEmpty()) { "No files for package $packageFqName" }
-
-            val packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName)
-            val lightClassDataCache = PackageFacadeStubCache.getInstance(manager.project).get(packageFqName, searchScope)
-            return KotlinLightClassForFacade(manager, packageClassFqName, searchScope, lightClassDataCache, files, true)
-        }
-
         public fun createForFacade(
                 manager: PsiManager,
                 facadeClassFqName: FqName,

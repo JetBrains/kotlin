@@ -1,16 +1,16 @@
 package c;
 
 import a.Test;
-import a.APackage;
+import a.MainKt;
 
 class J {
     void bar() {
         Test t = new Test();
-        APackage.test();
-        APackage.test(t);
-        System.out.println(APackage.getTEST());
-        System.out.println(APackage.getTEST(t));
-        APackage.setTEST("");
-        APackage.setTEST(t, "");
+        MainKt.test();
+        MainKt.test(t);
+        System.out.println(MainKt.getTEST());
+        System.out.println(MainKt.getTEST(t));
+        MainKt.setTEST("");
+        MainKt.setTEST(t, "");
     }
 }

@@ -33,7 +33,6 @@ import com.intellij.testFramework.PsiTestUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassName
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -109,24 +108,24 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
     }
 
     public fun testBreakpointReachedAt() {
-        doTest("breakpointReachedAt.kt", 2, { getPackageClassName(FqName.ROOT) }, linePrefix = "Breakpoint reached at ")
+        doTest("breakpointReachedAt.kt", 2, { "BreakpointReachedAtKt" }, linePrefix = "Breakpoint reached at ")
     }
 
     public fun testSimple() {
-        doTest("simple.kt", 2, { getPackageClassName(FqName.ROOT) })
+        doTest("simple.kt", 2, { "SimpleKt" })
     }
 
     public fun testKt2489() {
-        val packageClassFqName = getPackageClassFqName(FqName.ROOT)
-        doTest("a.kt", 3, { file -> "" + PackagePartClassUtils.getDefaultPartFqName(packageClassFqName, file) + "\$a\$f\$1" })
-        doTest("main.kt", 3, { file -> "" + PackagePartClassUtils.getDefaultPartFqName(packageClassFqName, file) + "\$main\$f\$1" })
+        val packageFQN = FqName.ROOT
+        doTest("a.kt", 3, { file -> "" + PackagePartClassUtils.getDefaultFileClassFqName(packageFQN, file) + "\$a\$f\$1" })
+        doTest("main.kt", 3, { file -> "" + PackagePartClassUtils.getDefaultFileClassFqName(packageFQN, file) + "\$main\$f\$1" })
     }
 
     public fun testMultiSameName() {
-        val packageClassFqName = getPackageClassFqName(FqName("multiSameName"))
+        val packageFQN = FqName("multiSameName")
         // The order and the exact names do matter here
-        doTest("1/foo1.kt", 4, { file -> "" + PackagePartClassUtils.getDefaultPartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
-        doTest("2/foo2.kt", 4, { file -> "" + PackagePartClassUtils.getDefaultPartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
+        doTest("1/foo1.kt", 4, { file -> "" + PackagePartClassUtils.getDefaultFileClassFqName(packageFQN, file) + "\$foo\$f\$1" })
+        doTest("2/foo2.kt", 4, { file -> "" + PackagePartClassUtils.getDefaultFileClassFqName(packageFQN, file) + "\$foo\$f\$1" })
     }
 
     public fun testKotlinClass() {

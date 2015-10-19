@@ -1,12 +1,14 @@
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
 out/production/module/test/Fun2Kt.class
-out/production/module/test/TestPackage.class
 End of files
 Compiling files:
 src/fun2.kt
 End of files
-COMPILATION FAILED
-Platform declaration clash: The following declarations have the same JVM signature (function()V):
-    fun function(): kotlin.Unit
-    fun function(): kotlin.Unit
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/test/Fun1Kt.class
+End of files
+Compiling files:
+src/fun1.kt
+End of files

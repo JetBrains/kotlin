@@ -2,6 +2,6 @@ package test;
 
 class Void {
     {
-        TestPackage.f();
+        VoidKt.f();
     }
 }

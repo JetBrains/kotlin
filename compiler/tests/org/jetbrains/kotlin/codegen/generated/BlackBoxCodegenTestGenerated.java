@@ -1036,6 +1036,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("classNamedAsOldPackageFacade.kt")
+        public void testClassNamedAsOldPackageFacade() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classNamedAsOldPackageFacade.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("classObject.kt")
         public void testClassObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObject.kt");
@@ -1513,12 +1519,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt6136.kt")
         public void testKt6136() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt6136.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt6136_2.kt")
-        public void testKt6136_2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt6136_2.kt");
             doTest(fileName);
         }
 

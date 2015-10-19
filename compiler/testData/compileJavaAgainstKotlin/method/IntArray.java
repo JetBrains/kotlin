@@ -3,6 +3,6 @@ package test;
 
 class IntArray {
     {
-        int[] r = TestPackage.doNothing(new int[0], null);
+        int[] r = IntArrayKt.doNothing(new int[0], null);
     }
 }

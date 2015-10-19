@@ -2,15 +2,15 @@ package test;
 
 class JavaClass {
     void testMethod() {
-        TestPackage.none();
+        TopLevelKt.none();
 
         try {
-            TestPackage.one();
+            TopLevelKt.one();
         }
         catch (E1 e) {}
 
         try {
-            TestPackage.two();
+            TopLevelKt.two();
         }
         catch (E1 e) {}
         catch (E2 e) {}

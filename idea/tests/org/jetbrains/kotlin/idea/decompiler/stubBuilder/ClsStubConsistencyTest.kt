@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import kotlin.properties.Delegates
 
 public class ClsStubConsistencyTest : StubConsistencyBaseTest() {
     override fun getVirtualFileFinder(): VirtualFileFinder = JvmVirtualFileFinder.SERVICE.getInstance(getProject())
-    override fun getPackages(): List<FqName> = listOf(FqName("kotlin"))
+    override fun getFileIds(): List<ClassId> = listOf(ClassId.topLevel(FqName("kotlin.CollectionsKt")))
 
     override fun createStubBuilder() = KotlinClsStubBuilder()
 

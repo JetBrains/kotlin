@@ -33,15 +33,14 @@ import org.jetbrains.kotlin.types.JetType
 
 class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
 
-sealed class KotlinFunctionInsertHandler(
-
-) : KotlinCallableInsertHandler() {
+sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
 
     class Normal(
             val inputTypeArguments: Boolean,
             val inputValueArguments: Boolean,
             val argumentText: String = "",
-            val lambdaInfo: GenerateLambdaInfo? = null
+            val lambdaInfo: GenerateLambdaInfo? = null,
+            val argumentsOnly: Boolean = false
     ) : KotlinFunctionInsertHandler() {
         init {
             if (lambdaInfo != null) {
@@ -49,8 +48,19 @@ sealed class KotlinFunctionInsertHandler(
             }
         }
 
-        public override fun handleInsert(context: InsertionContext, item: LookupElement) {
-            super.handleInsert(context, item)
+        //TODO: add 'data' or special annotation when supported
+        fun copy(
+                inputTypeArguments: Boolean = this.inputTypeArguments,
+                inputValueArguments: Boolean = this.inputValueArguments,
+                argumentText: String = this.argumentText,
+                lambdaInfo: GenerateLambdaInfo? = this.lambdaInfo,
+                argumentsOnly: Boolean = this.argumentsOnly
+        ) = Normal(inputTypeArguments, inputValueArguments, argumentText, lambdaInfo, argumentsOnly)
+
+        override fun handleInsert(context: InsertionContext, item: LookupElement) {
+            if (!argumentsOnly) {
+                super.handleInsert(context, item)
+            }
 
             val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
             psiDocumentManager.commitAllDocuments()

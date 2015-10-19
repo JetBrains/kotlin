@@ -1,6 +1,6 @@
 package test
 
-@kotlin.annotation.annotation() public final class AAA : kotlin.Annotation {
+public final annotation class AAA : kotlin.Annotation {
     public constructor AAA()
 }
 

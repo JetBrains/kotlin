@@ -1,6 +1,6 @@
 package test
 
-@kotlin.data() public final class A {
+public final data class A {
     /*primary*/ public constructor A(/*0*/ foo: kotlin.String, /*1*/ bar: kotlin.Int, /*2*/ other: kotlin.Long)
     public final val bar: kotlin.Int
         public final fun <get-bar>(): kotlin.Int

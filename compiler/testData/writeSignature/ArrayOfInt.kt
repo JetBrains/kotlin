@@ -1,5 +1,5 @@
 fun never(): Array<Int> = throw Exception()
 
-// method: _DefaultPackage::never
+// method: ArrayOfIntKt::never
 // jvm signature:     ()[Ljava/lang/Integer;
 // generic signature: null

@@ -38,10 +38,6 @@ public class AnnotationGenTest extends CodegenTestCase {
         return generateAndCreateClassLoader();
     }
 
-    private Class<?> getPackageClass(@NotNull ClassLoader loader) throws ClassNotFoundException {
-        return loader.loadClass(PackageClassUtils.getPackageClassName(myFiles.getPsiFile().getPackageFqName()));
-    }
-
     private Class<?> getPackageSrcClass(@NotNull ClassLoader loader) throws ClassNotFoundException {
         return loader.loadClass(PackagePartClassUtils.getPackagePartInternalName(myFiles.getPsiFile()));
     }
@@ -55,9 +51,6 @@ public class AnnotationGenTest extends CodegenTestCase {
 
     public void testPropField() throws Exception {
         ClassLoader loader = loadFileGetClassLoader("@[java.lang.Deprecated] var x = 0");
-        Class<?> packageClass = getPackageClass(loader);
-        assertNull(packageClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
-        assertNull(packageClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
         Class<?> srcClass = getPackageSrcClass(loader);
         assertNull(srcClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
         assertNull(srcClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
@@ -67,9 +60,6 @@ public class AnnotationGenTest extends CodegenTestCase {
     public void testPropGetter() throws Exception {
         ClassLoader loader = loadFileGetClassLoader("var x = 0\n" +
                  "@[java.lang.Deprecated] get");
-        Class<?> packageClass = getPackageClass(loader);
-        assertNotNull(packageClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
-        assertNull(packageClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
         Class<?> srcClass = getPackageSrcClass(loader);
         assertNotNull(srcClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
         assertNull(srcClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
@@ -79,9 +69,6 @@ public class AnnotationGenTest extends CodegenTestCase {
     public void testPropSetter() throws Exception {
         ClassLoader loader = loadFileGetClassLoader("var x = 0\n" +
                  "@[java.lang.Deprecated] set");
-        Class<?> packageClass = getPackageClass(loader);
-        assertNull(packageClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
-        assertNotNull(packageClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
         Class<?> scrClass = getPackageSrcClass(loader);
         assertNull(scrClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
         assertNotNull(scrClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
@@ -90,10 +77,6 @@ public class AnnotationGenTest extends CodegenTestCase {
 
     public void testAnnotationForParamInTopLevelFunction() throws Exception {
         ClassLoader loader = loadFileGetClassLoader("fun x(@[java.lang.Deprecated] i: Int) {}");
-        Class<?> packageClass = getPackageClass(loader);
-        Method packageClassMethod = packageClass.getMethod("x", int.class);
-        assertNotNull(packageClassMethod);
-        assertNotNull(getDeprecatedAnnotationFromList(packageClassMethod.getParameterAnnotations()[0]));
         Class<?> srcClass = getPackageSrcClass(loader);
         Method srcClassMethod = srcClass.getMethod("x", int.class);
         assertNotNull(srcClassMethod);
@@ -208,11 +191,6 @@ public class AnnotationGenTest extends CodegenTestCase {
 
     public void testMethod() throws Exception {
         ClassLoader loader = loadFileGetClassLoader("@[java.lang.Deprecated] fun x () {}");
-
-        Class<?> packageClass = getPackageClass(loader);
-        Method packageClassMethod = packageClass.getDeclaredMethod("x");
-        assertNotNull(packageClassMethod.getAnnotation(Deprecated.class));
-
         Class<?> srcClass = getPackageSrcClass(loader);
         Method srcClassMethod = srcClass.getDeclaredMethod("x");
         assertNotNull(srcClassMethod.getAnnotation(Deprecated.class));

@@ -38,7 +38,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KotlinReflectionInternalError
 
 internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclarationContainerImpl(), KClass<T>, KAnnotatedElementImpl {
-    val descriptor by ReflectProperties.lazySoft {
+    private val descriptor_ = ReflectProperties.lazySoft {
         val classId = classId
 
         val descriptor =
@@ -47,6 +47,9 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
         descriptor ?: throw KotlinReflectionInternalError("Class not resolved: $jClass")
     }
+
+    val descriptor: ClassDescriptor
+        get() = descriptor_()
 
     override val annotated: Annotated get() = descriptor
 
@@ -138,7 +141,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }.filterNotNull().map { KClassImpl(it) }
 
     @Suppress("UNCHECKED_CAST")
-    override val objectInstance: T? by ReflectProperties.lazy {
+    private val objectInstance_ = ReflectProperties.lazy {
         val descriptor = descriptor
         if (descriptor.kind != ClassKind.OBJECT) return@lazy null
 
@@ -150,6 +153,9 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
         field.get(null) as T
     }
+
+    override val objectInstance: T?
+        get() = objectInstance_()
 
     override fun equals(other: Any?): Boolean =
             other is KClassImpl<*> && jClass == other.jClass

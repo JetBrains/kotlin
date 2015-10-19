@@ -139,6 +139,7 @@ class LongProgressionIterator(start: Long, end: Long, val increment: Long) : Lon
  * An iterator over a progression of values of type `Float`.
  * @property increment the number by which the value is incremented on each step.
  */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
 class FloatProgressionIterator(start: Float, val end: Float, val increment: Float) : FloatIterator() {
     private var next = start
 
@@ -155,6 +156,7 @@ class FloatProgressionIterator(start: Float, val end: Float, val increment: Floa
  * An iterator over a progression of values of type `Double`.
  * @property increment the number by which the value is incremented on each step.
  */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
 class DoubleProgressionIterator(start: Double, val end: Double, val increment: Double) : DoubleIterator() {
     private var next = start
 

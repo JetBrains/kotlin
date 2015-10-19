@@ -1,5 +1,5 @@
 package
 
 public fun getFun(/*0*/ s: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Int
-@kotlin.inline() public fun getInlineFun(/*0*/ s: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Int
-@kotlin.inline() public fun testExtension(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public inline fun getInlineFun(/*0*/ s: (kotlin.Int) -> kotlin.Unit): (kotlin.Int) -> kotlin.Int
+public inline fun testExtension(/*0*/ s: (kotlin.Int) -> kotlin.Unit): kotlin.Unit

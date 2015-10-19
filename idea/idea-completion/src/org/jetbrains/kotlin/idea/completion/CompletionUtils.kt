@@ -89,7 +89,7 @@ fun LookupElement.withReceiverCast(): LookupElement {
     return object: LookupElementDecorator<LookupElement>(this) {
         override fun handleInsert(context: InsertionContext) {
             super.handleInsert(context)
-            CastReceiverInsertHandler.handleInsert(context, getDelegate())
+            CastReceiverInsertHandler.postHandleInsert(context, delegate)
         }
     }
 }

@@ -33,20 +33,14 @@ public interface AbstractSMAPBaseTest {
 
     private fun extractSMAPFromClasses(outputFiles: Iterable<OutputFile>): List<SMAPAndFile> {
         return outputFiles.map { outputFile ->
-            if (PackageClassUtils.isPackageClassFqName(FqName(FileUtil.getNameWithoutExtension(outputFile.relativePath).replace('/', '.')))) {
-                // Don't test line numbers in *Package facade classes
-                null
-            }
-            else {
-                var debugInfo: String? = null
-                ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.ASM5) {
-                    override fun visitSource(source: String?, debug: String?) {
-                        debugInfo = debug
-                    }
-                }, 0)
+            var debugInfo: String? = null
+            ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.ASM5) {
+                override fun visitSource(source: String?, debug: String?) {
+                    debugInfo = debug
+                }
+            }, 0)
 
-                SMAPAndFile.SMAPAndFile(debugInfo, outputFile.sourceFiles.single())
-            }
+            SMAPAndFile.SMAPAndFile(debugInfo, outputFile.sourceFiles.single())
         }.filterNotNull()
     }
 

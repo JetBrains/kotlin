@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
@@ -83,6 +84,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final Visibility visibility;
     private final NotNullLazyValue<ClassKind> kind;
     private final NotNullLazyValue<Boolean> isInner;
+    private final NotNullLazyValue<Boolean> isData;
 
     private final Annotations annotations;
     private final Annotations danglingAnnotations;
@@ -153,15 +155,22 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             }
         });
 
+        this.isData = storageManager.createLazyValue(new Function0<Boolean>() {
+            @Override
+            public Boolean invoke() {
+                return modifierList != null && modifierList.hasModifier(JetTokens.DATA_KEYWORD);
+            }
+        });
+
         this.kind = storageManager.createLazyValue(new Function0<ClassKind>() {
             @Override
             public ClassKind invoke() {
-                return (syntaxKind == ClassKind.CLASS && KotlinBuiltIns.isAnnotation(descriptor)) ? ClassKind.ANNOTATION_CLASS : syntaxKind;
+                return (syntaxKind == ClassKind.CLASS && modifierList != null && modifierList.hasModifier(JetTokens.ANNOTATION_KEYWORD)) ? ClassKind.ANNOTATION_CLASS : syntaxKind;
             }
         });
 
         if (modifierList != null) {
-            LazyAnnotations classAnnotations = new LazyAnnotations(
+            this.annotations = new LazyAnnotations(
                     new LazyAnnotationsContext(
                             c.getAnnotationResolver(),
                             storageManager,
@@ -174,9 +183,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                         }
                     },
                     modifierList.getAnnotationEntries()
-            );
-            this.annotations = c.getAnnotationResolver().resolveAndAppendAnnotationsFromModifiers(
-                    classAnnotations, modifierList
             );
         }
         else {
@@ -403,6 +409,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public boolean isInner() {
         return isInner.invoke();
+    }
+
+    @Override
+    public boolean isData() {
+        return isData.invoke();
     }
 
     @Override

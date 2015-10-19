@@ -24,7 +24,7 @@ public final class MyWrapper : Wrapper<A> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.data() public final class Pair</*0*/ out T> {
+public final data class Pair</*0*/ out T> {
     public constructor Pair</*0*/ out T>(/*0*/ a: T, /*1*/ b: T)
     public final val a: T
     public final val b: T

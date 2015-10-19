@@ -39,6 +39,7 @@ public val COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY: String = "kotlin.daemon.cl
 public val COMPILE_DAEMON_LOG_PATH_PROPERTY: String = "kotlin.daemon.log.path"
 public val COMPILE_DAEMON_REPORT_PERF_PROPERTY: String = "kotlin.daemon.perf"
 public val COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY: String = "kotlin.daemon.verbose"
+public val COMPILE_DAEMON_FORCE_SHUTDOWN_PROPERTY: String = "kotlin.daemon.force.shutdown"
 public val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String = "--daemon-"
 public val COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY: String = "kotlin.daemon.startup.timeout"
 public val COMPILE_DAEMON_DEFAULT_FILES_PREFIX: String = "kotlin-daemon"
@@ -304,6 +305,8 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits
 
     System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"" ) }
     opts.jvmParams.addAll(additionalParams)
+    System.getProperty(COMPILE_DAEMON_FORCE_SHUTDOWN_PROPERTY)?.let { opts.jvmParams.add(COMPILE_DAEMON_FORCE_SHUTDOWN_PROPERTY) }
+    System.getProperty("kotlin.environment.keepalive")?.let { opts.jvmParams.add("Dkotlin.environment.keepalive=true") }
     return opts
 }
 

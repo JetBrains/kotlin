@@ -4,7 +4,7 @@
     <target name="build">
         <kotlinc src="${test.data}/hello.kt" output="${temp}/hello.jar" modulename="test"/>
 
-        <java classname="hello.HelloPackage" fork="true">
+        <java classname="hello.HelloKt" fork="true">
             <classpath>
                 <pathelement location="${temp}/hello.jar"/>
                 <pathelement location="${kotlin.runtime.jar}"/>

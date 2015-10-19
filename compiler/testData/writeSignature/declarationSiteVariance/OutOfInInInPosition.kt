@@ -4,6 +4,6 @@ class X
 
 fun f(p: Out<In<X>>) {}
 
-// method: _DefaultPackage::f
+// method: OutOfInInInPositionKt::f
 // jvm signature:     (LOut;)V
 // generic signature: (LOut<+LIn<-LX;>;>;)V

@@ -9,7 +9,7 @@ class A @Ann(1)private constructor(x: Int) {
     inner class B() // do not insert here
     inner class C        protected constructor() {
         fun foo() {
-            data class Local private constructor()
+            class Local private constructor()
         }
     }
 }

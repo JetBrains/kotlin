@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.context.ModuleContext;
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
@@ -205,7 +206,7 @@ public class KotlinToJVMBytecodeCompiler {
                     return null;
                 }
                 FqName fqName = file.getPackageFqName();
-                mainClass = PackageClassUtils.getPackageClassFqName(fqName);
+                mainClass = JvmFileClassUtil.getFileClassInfoNoResolve(file).getFacadeClassFqName();
             }
         }
         return mainClass;
@@ -399,7 +400,6 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
                 /* useTypeTableInSerializer = */ false,
-                configuration.get(JVMConfigurationKeys.PACKAGE_FACADES_AS_MULTIFILE_CLASSES, false),
                 diagnosticHolder,
                 packagesWithObsoleteParts,
                 obsoleteMultifileClasses,

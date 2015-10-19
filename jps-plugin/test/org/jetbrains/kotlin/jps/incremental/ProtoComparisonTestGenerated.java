@@ -43,9 +43,9 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             doTest(fileName);
         }
 
-        @TestMetadata("classToPackageFacade")
-        public void testClassToPackageFacade() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classToPackageFacade/");
+        @TestMetadata("classToFileFacade")
+        public void testClassToFileFacade() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classToFileFacade/");
             doTest(fileName);
         }
 

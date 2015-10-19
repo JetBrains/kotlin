@@ -29,6 +29,7 @@ package illegal_modifiers {
 
     public final class FinalClass {
         public constructor FinalClass()
+        public final val f: () -> kotlin.Unit
         public final val i: kotlin.Int = 1
         public final var j: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -45,7 +46,7 @@ package illegal_modifiers {
     }
 
     public final class IllegalModifiers10 {
-        @kotlin.annotation.annotation() public constructor IllegalModifiers10()
+        public constructor IllegalModifiers10()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -100,15 +101,15 @@ package illegal_modifiers {
 
     public open class IllegalModifiers7 {
         public constructor IllegalModifiers7()
-        @kotlin.annotation.annotation() public final val x: kotlin.Int = 1
+        public final val x: kotlin.Int = 1
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        @kotlin.annotation.annotation() public final fun foo(): kotlin.Unit
+        public final fun foo(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
     public final class IllegalModifiers8 {
-        @kotlin.annotation.annotation() public constructor IllegalModifiers8()
+        public constructor IllegalModifiers8()
         public constructor IllegalModifiers8(/*0*/ x: kotlin.Int)
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -138,7 +139,7 @@ package illegal_modifiers {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.annotation.annotation() public final class annotated : kotlin.Annotation {
+    public final annotation class annotated : kotlin.Annotation {
         public constructor annotated(/*0*/ text: kotlin.String = ...)
         public final val text: kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

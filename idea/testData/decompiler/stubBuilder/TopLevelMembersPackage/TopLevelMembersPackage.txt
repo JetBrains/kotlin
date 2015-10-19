@@ -1,6 +1,0 @@
-PsiJetFileStubImpl[package=foo.TopLevelMembers]
-  PACKAGE_DIRECTIVE:
-    DOT_QUALIFIED_EXPRESSION:
-      REFERENCE_EXPRESSION:[referencedName=foo]
-      REFERENCE_EXPRESSION:[referencedName=TopLevelMembers]
-  IMPORT_LIST:

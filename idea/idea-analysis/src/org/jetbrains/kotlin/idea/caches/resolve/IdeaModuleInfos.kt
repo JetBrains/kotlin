@@ -33,8 +33,8 @@ import java.util.*
 
 public val LIBRARY_NAME_PREFIX: String = "library "
 
-public abstract class IdeaModuleInfo : ModuleInfo {
-    abstract fun contentScope(): GlobalSearchScope
+public interface IdeaModuleInfo : ModuleInfo {
+    fun contentScope(): GlobalSearchScope
 }
 
 private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, productionOnly: Boolean): List<IdeaModuleInfo> {
@@ -80,14 +80,14 @@ fun ideaModelDependencies(module: Module, productionOnly: Boolean): List<IdeaMod
     return result.toList()
 }
 
-public abstract class ModuleSourceInfo : IdeaModuleInfo() {
-    abstract val module: Module
+public interface ModuleSourceInfo : IdeaModuleInfo {
+    val module: Module
 }
 
-public data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourceInfo() {
+public data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourceInfo {
     override val name = Name.special("<production sources for module ${module.getName()}>")
 
-    override fun contentScope() = ModuleProductionSourceScope(module)
+    override fun contentScope(): GlobalSearchScope = ModuleProductionSourceScope(module)
 
     override fun dependencies() = module.cached(CachedValueProvider {
         CachedValueProvider.Result(
@@ -99,10 +99,10 @@ public data class ModuleProductionSourceInfo(override val module: Module) : Modu
 }
 
 //TODO: (module refactoring) do not create ModuleTestSourceInfo when there are no test roots for module
-public data class ModuleTestSourceInfo(override val module: Module) : ModuleSourceInfo() {
+public data class ModuleTestSourceInfo(override val module: Module) : ModuleSourceInfo {
     override val name = Name.special("<test sources for module ${module.getName()}>")
 
-    override fun contentScope() = ModuleTestSourceScope(module)
+    override fun contentScope(): GlobalSearchScope = ModuleTestSourceScope(module)
 
     override fun dependencies() = module.cached(CachedValueProvider {
         CachedValueProvider.Result(
@@ -148,10 +148,10 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
     override fun contains(file: VirtualFile) = moduleFileIndex.isInTestSourceContent(file)
 }
 
-public data class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
+public data class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo {
     override val name: Name = Name.special("<$LIBRARY_NAME_PREFIX${library.getName()}>")
 
-    override fun contentScope() = LibraryWithoutSourceScope(project, library)
+    override fun contentScope(): GlobalSearchScope = LibraryWithoutSourceScope(project, library)
 
     override val isLibrary: Boolean
         get() = true
@@ -171,7 +171,7 @@ public data class LibraryInfo(val project: Project, val library: Library) : Idea
     override fun toString() = "LibraryInfo(libraryName=${library.getName()})"
 }
 
-internal data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo() {
+internal data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo {
     override val name: Name = Name.special("<sources for library ${library.getName()}>")
 
     override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
@@ -187,15 +187,15 @@ internal data class LibrarySourceInfo(val project: Project, val library: Library
 }
 
 //TODO: (module refactoring) there should be separate SdkSourceInfo but there are no kotlin source in existing sdks for now :)
-public data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo() {
+public data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo {
     override val name: Name = Name.special("<$LIBRARY_NAME_PREFIX${sdk.getName()}>")
 
-    override fun contentScope() = SdkScope(project, sdk)
+    override fun contentScope(): GlobalSearchScope = SdkScope(project, sdk)
 
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
 }
 
-internal object NotUnderContentRootModuleInfo : IdeaModuleInfo() {
+internal object NotUnderContentRootModuleInfo : IdeaModuleInfo {
     override val name: Name = Name.special("<special module for files not under source root>")
 
     override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
@@ -204,12 +204,21 @@ internal object NotUnderContentRootModuleInfo : IdeaModuleInfo() {
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
 }
 
-private data class LibraryWithoutSourceScope(project: Project, private val library: Library) :
+private class LibraryWithoutSourceScope(project: Project, private val library: Library) :
         LibraryScopeBase(project, library.getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>()) {
+
+    override fun equals(other: Any?) = other is LibraryWithoutSourceScope && library == other.library
+
+    override fun hashCode() = library.hashCode()
 }
 
 //TODO: (module refactoring) android sdk has modified scope
-private data class SdkScope(project: Project, private val sdk: Sdk) :
-        LibraryScopeBase(project, sdk.getRootProvider().getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>())
+private class SdkScope(project: Project, private val sdk: Sdk) :
+        LibraryScopeBase(project, sdk.getRootProvider().getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>()) {
+
+    override fun equals(other: Any?) = other is SdkScope && sdk == other.sdk
+
+    override fun hashCode() = sdk.hashCode()
+}
 
 internal fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo

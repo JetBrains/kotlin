@@ -2,12 +2,12 @@ package test
 
 public interface EnumInParam {
 
-    public final class MyRetention : kotlin.Annotation {
+    public final annotation class MyRetention : kotlin.Annotation {
         public constructor MyRetention(/*0*/ value: java.lang.annotation.RetentionPolicy)
         public final val value: java.lang.annotation.RetentionPolicy
     }
 
-    @test.EnumInParam.MyRetention(value = RetentionPolicy.RUNTIME) public final class RetentionAnnotation : kotlin.Annotation {
+    @test.EnumInParam.MyRetention(value = RetentionPolicy.RUNTIME) public final annotation class RetentionAnnotation : kotlin.Annotation {
         public constructor RetentionAnnotation(/*0*/ value: kotlin.String)
         public final val value: kotlin.String
     }

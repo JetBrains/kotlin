@@ -2,7 +2,7 @@ package
 
 public fun foo(/*0*/ a: A): kotlin.Unit
 
-@kotlin.data() public final class A {
+public final data class A {
     public constructor A(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String)
     public final var x: kotlin.Int
     public final var y: kotlin.String

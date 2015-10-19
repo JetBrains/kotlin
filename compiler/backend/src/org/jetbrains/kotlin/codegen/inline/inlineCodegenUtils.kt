@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
 public val FunctionDescriptor.sourceFilePath: String
@@ -32,19 +34,30 @@ public val FunctionDescriptor.sourceFilePath: String
         return containingFile?.virtualFile?.canonicalPath!!
     }
 
-public fun FunctionDescriptor.getClassFilePath(cache: IncrementalCache): String {
+public fun FunctionDescriptor.getClassFilePath(typeMapper: JetTypeMapper, cache: IncrementalCache): String {
     val container = containingDeclaration as? DeclarationDescriptorWithSource
     val source = container?.source
 
     return when (source) {
+        is KotlinJvmBinaryPackageSourceElement -> {
+            if (this !is DeserializedCallableMemberDescriptor) {
+                throw AssertionError("Expected DeserializedCallableMemberDescriptor, got: $this")
+            }
+            val kotlinClass = source.getContainingBinaryClass(this) ?:
+                    throw AssertionError("Descriptor $this is not found, in: $source")
+            if (kotlinClass !is VirtualFileKotlinClass) {
+                throw AssertionError("Expected VirtualFileKotlinClass, got $kotlinClass")
+            }
+            kotlinClass.file.canonicalPath!!
+        }
         is KotlinJvmBinarySourceElement -> {
             assert(this is DeserializedSimpleFunctionDescriptor) { "Expected DeserializedSimpleFunctionDescriptor, got: $this" }
             val kotlinClass = source.binaryClass as VirtualFileKotlinClass
             kotlinClass.file.canonicalPath!!
         }
         else -> {
-            val classId = InlineCodegenUtil.getContainerClassId(this)!!
-            val className = JvmClassName.byClassId(classId).internalName
+            val implementationOwnerType = typeMapper.mapImplementationOwner(this)
+            val className = implementationOwnerType.internalName
             cache.getClassFilePath(className)
         }
     }

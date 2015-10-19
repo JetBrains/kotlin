@@ -1,9 +1,9 @@
 package testing;
 
-import testing.rename.RenamePackage;
+import testing.rename.RenameKotlinClassKt;
 
 class JavaClient {
     void foo() {
-        RenamePackage.test();
+        RenameKotlinClassKt.test();
     }
 }
