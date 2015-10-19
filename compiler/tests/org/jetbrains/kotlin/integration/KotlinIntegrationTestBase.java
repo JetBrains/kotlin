@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
     static {
@@ -82,7 +83,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         content = normalizePath(content, tmpdir, "[Temp]");
         content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
         content = normalizePath(content, getKotlinProjectHome(), "[KotlinProjectHome]");
-        content = content.replaceAll(KotlinVersion.VERSION, "[KotlinVersion]");
+        content = content.replaceAll(Pattern.quote(KotlinVersion.VERSION), "[KotlinVersion]");
         content = StringUtil.convertLineSeparators(content);
         content = CliBaseTest.removePerfOutput(content);
         return content;
