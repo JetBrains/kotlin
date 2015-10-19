@@ -5,8 +5,8 @@ class Identifier<T>(t : T?, myHasDollar : Boolean) {
 
     companion object {
         open public fun <T> init(name : T?) : Identifier<T> {
-            val __ = Identifier<T>(name, false)
-            return __
+            val id = Identifier<T>(name, false)
+            return id
         }
     }
     init {

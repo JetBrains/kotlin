@@ -365,7 +365,7 @@ public class DefaultErrorMessages {
 
         MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return kotlin.Int, but returns {0}", RENDER_TYPE);
 
-        MAP.put(UNDERSCORE_IS_DEPRECATED, "Names _, __, ___, ..., are deprecated");
+        MAP.put(UNDERSCORE_IS_RESERVED, "Names _, __, ___, ..., are reserved in Kotlin");
         MAP.put(INVALID_CHARACTERS, "Name {0}", STRING);
 
         MAP.put(INAPPLICABLE_OPERATOR_MODIFIER, "'operator' modifier is inapplicable on this function");

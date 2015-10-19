@@ -330,7 +330,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         OPERATOR_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(JetTokens.OPERATOR_KEYWORD))
         INFIX_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(JetTokens.INFIX_KEYWORD))
 
-        UNDERSCORE_IS_DEPRECATED.registerFactory(RenameUnderscoreFix)
+        UNDERSCORE_IS_RESERVED.registerFactory(RenameUnderscoreFix)
 
         CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.registerFactory(AddTypeToLHSOfCallableReferenceFix)
 
