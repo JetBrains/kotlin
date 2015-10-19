@@ -1,7 +1,9 @@
 package
 
 public val ______: _<kotlin.Int>
+public val something: kotlin.Any?
 public fun __(/*0*/ ___: kotlin.Int, /*1*/ y: _<kotlin.Int>?): kotlin.Int
+public fun doIt(/*0*/ f: (kotlin.Any?) -> kotlin.Any?): kotlin.Any?
 
 @kotlin.Deprecated(message = "") @kotlin.data() public final class Pair {
     public constructor Pair(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)

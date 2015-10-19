@@ -27,11 +27,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
-import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
@@ -141,7 +138,10 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
 
         val functionDescriptor = createFunctionLiteralDescriptor(expression, context)
-        expression.valueParameters.forEach { components.identifierChecker.checkDeclaration(it, context.trace) }
+        expression.valueParameters.forEach {
+            components.identifierChecker.checkDeclaration(it, context.trace)
+            UnderscoreChecker.checkNamed(it, context.trace)
+        }
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 

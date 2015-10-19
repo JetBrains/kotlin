@@ -14,3 +14,7 @@ fun <!UNDERSCORE_IS_DEPRECATED!>__<!>(<!UNDERSCORE_IS_DEPRECATED!>___<!>: Int, y
     val `_` = __________
     <!UNDERSCORE_IS_DEPRECATED!>__<!>@ return if (y != null) __(____, y) else __(`_`, ______)
 }
+
+fun doIt(f: (Any?) -> Any?) = f(null)
+
+val something = doIt { <!UNDERSCORE_IS_DEPRECATED!>__<!> -> __ }
