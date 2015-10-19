@@ -45,6 +45,8 @@ public class ResolutionResultsHandler {
             @NotNull ResolutionTask task,
             @NotNull Collection<MutableResolvedCall<D>> candidates
     ) {
+        boolean resolveOverloads = task.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS; // todo rename CheckArgumentTypesMode
+
         Set<MutableResolvedCall<D>> successfulCandidates = Sets.newLinkedHashSet();
         Set<MutableResolvedCall<D>> failedCandidates = Sets.newLinkedHashSet();
         Set<MutableResolvedCall<D>> incompleteCandidates = Sets.newLinkedHashSet();
@@ -68,10 +70,10 @@ public class ResolutionResultsHandler {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
 
         if (!successfulCandidates.isEmpty() || !incompleteCandidates.isEmpty()) {
-            return computeSuccessfulResult(task, successfulCandidates, incompleteCandidates);
+            return computeSuccessfulResult(task, successfulCandidates, incompleteCandidates, resolveOverloads);
         }
         else if (!failedCandidates.isEmpty()) {
-            return computeFailedResult(task, failedCandidates);
+            return computeFailedResult(task, failedCandidates, resolveOverloads);
         }
         if (!candidatesWithWrongReceiver.isEmpty()) {
             task.tracing.unresolvedReferenceWrongReceiver(task.trace, candidatesWithWrongReceiver);
@@ -85,12 +87,13 @@ public class ResolutionResultsHandler {
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeSuccessfulResult(
             @NotNull ResolutionTask task,
             @NotNull Set<MutableResolvedCall<D>> successfulCandidates,
-            @NotNull Set<MutableResolvedCall<D>> incompleteCandidates
+            @NotNull Set<MutableResolvedCall<D>> incompleteCandidates,
+            boolean resolveOverloads
     ) {
         Set<MutableResolvedCall<D>> successfulAndIncomplete = Sets.newLinkedHashSet();
         successfulAndIncomplete.addAll(successfulCandidates);
         successfulAndIncomplete.addAll(incompleteCandidates);
-        OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulAndIncomplete, true);
+        OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulAndIncomplete, true, resolveOverloads);
         if (results.isSingleResult()) {
             MutableResolvedCall<D> resultingCall = results.getResultingCall();
             resultingCall.getTrace().moveAllMyDataTo(task.trace);
@@ -122,7 +125,8 @@ public class ResolutionResultsHandler {
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeFailedResult(
             @NotNull ResolutionTask task,
-            @NotNull Set<MutableResolvedCall<D>> failedCandidates
+            @NotNull Set<MutableResolvedCall<D>> failedCandidates,
+            boolean resolveOverloads
     ) {
         if (failedCandidates.size() != 1) {
             // This is needed when there are several overloads some of which are OK but for nullability of the receiver,
@@ -139,7 +143,7 @@ public class ResolutionResultsHandler {
                     if (severityLevel.contains(ARGUMENTS_MAPPING_ERROR)) {
                         return recordFailedInfo(task, thisLevel);
                     }
-                    OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false);
+                    OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false, resolveOverloads);
                     return recordFailedInfo(task, results.getResultingCalls());
                 }
             }
@@ -178,7 +182,8 @@ public class ResolutionResultsHandler {
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
             @NotNull Set<MutableResolvedCall<D>> candidates,
-            boolean discriminateGenerics
+            boolean discriminateGenerics,
+            boolean resolveOverloads
     ) {
         if (candidates.size() == 1) {
             return OverloadResolutionResultsImpl.success(candidates.iterator().next());
@@ -187,6 +192,9 @@ public class ResolutionResultsHandler {
         Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(candidates, MAP_TO_RESULT);
         if (noOverrides.size() == 1) {
             return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
+        }
+        else if (!resolveOverloads) {
+            return OverloadResolutionResultsImpl.ambiguity(noOverrides);
         }
 
         MutableResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(noOverrides, false);
