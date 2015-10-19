@@ -53,14 +53,14 @@ object KeywordCompletion {
 
     private val KEYWORDS_TO_IGNORE_PREFIX = TokenSet.create(OVERRIDE_KEYWORD /* it's needed to complete overrides that should be work by member name too */)
 
-    public fun complete(position: PsiElement, prefix: String, consumer: (LookupElement) -> Unit) {
+    public fun complete(position: PsiElement, prefix: String, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
 
         val parserFilter = buildFilter(position)
         for (keywordToken in ALL_KEYWORDS) {
             var keyword = keywordToken.getValue()
 
-            if (keyword == COMPANION_KEYWORD.getValue()) { // complete "companion object" instead of simply "companion" unless we are before "object" already
+            if (keywordToken == COMPANION_KEYWORD) { // complete "companion object" instead of simply "companion" unless we are before "object" already
                 fun PsiElement.isSpace() = this is PsiWhiteSpace && '\n' !in getText()
 
                 var next = position.nextLeaf { !(it.isSpace() || it.getText() == "$") }?.getText()
@@ -71,6 +71,8 @@ object KeywordCompletion {
                     keyword += " " + OBJECT_KEYWORD.getValue()
                 }
             }
+
+            if (keywordToken == DYNAMIC_KEYWORD && isJvmModule) continue // not supported for JVM
 
             // we use simple matching by prefix, not prefix matcher from completion
             if (!keyword.startsWith(prefix) && keywordToken !in KEYWORDS_TO_IGNORE_PREFIX) continue
