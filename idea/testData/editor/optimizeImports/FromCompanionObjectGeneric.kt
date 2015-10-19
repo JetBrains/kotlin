@@ -1,13 +1,11 @@
 import A.Companion.run
 
-interface Action<T> {
-    fun run(t: T)
+open class Action<T> {
+    fun run(t: T){}
 }
 
 open class A {
-    companion object : Action<String> {
-        override fun run(t: String) {
-        }
+    companion object : Action<String>() {
     }
 }
 
