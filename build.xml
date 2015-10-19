@@ -450,7 +450,7 @@
             </assertions>
             <arg value="-cp"/>
             <arg value="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"/>
-            <arg value="org.jetbrains.kotlin.serialization.builtins.BuiltinsPackage"/>
+            <arg value="org.jetbrains.kotlin.serialization.builtins.RunKt"/>
             <arg value="${output}/builtins"/>
             <arg value="core/builtins/native"/>
             <arg value="core/builtins/src"/>
