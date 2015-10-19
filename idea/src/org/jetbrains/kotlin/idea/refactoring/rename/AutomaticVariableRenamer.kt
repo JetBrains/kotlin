@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
@@ -26,7 +27,6 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -39,10 +39,10 @@ import org.jetbrains.kotlin.psi.JetVariableDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.JetType
-import java.util.ArrayList
-import java.util.LinkedHashMap
+import java.util.*
 
 public class AutomaticVariableRenamer(
         klass: PsiNamedElement, // PsiClass or JetClass
@@ -62,7 +62,15 @@ public class AutomaticVariableRenamer(
             ) ?: continue
 
             if (parameterOrVariable.getTypeReference()?.isAncestor(usageElement) != true) continue
-            val type = (parameterOrVariable.resolveToDescriptor() as VariableDescriptor).getType()
+
+            val descriptor = try {
+                parameterOrVariable.resolveToDescriptor()
+            } catch(e: NoDescriptorForDeclarationException) {
+                LOG.error(e)
+                continue
+            }
+
+            val type = (descriptor as VariableDescriptor).getType()
             if (type.isCollectionLikeOf(klass)) {
                 toUnpluralize.add(parameterOrVariable)
             }
@@ -93,6 +101,10 @@ public class AutomaticVariableRenamer(
             StringUtil.pluralize(canonicalName)
         else
             canonicalName
+    }
+
+    companion object {
+        val LOG = Logger.getInstance(AutomaticVariableRenamer::class.java)
     }
 }
 
