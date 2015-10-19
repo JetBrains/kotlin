@@ -1,6 +1,6 @@
 // "Create class 'A'" "false"
 // ACTION: Create interface 'A'
-// ACTION: Create Test
+// ACTION: Create test
 // ERROR: Unresolved reference: A
 package p
 
