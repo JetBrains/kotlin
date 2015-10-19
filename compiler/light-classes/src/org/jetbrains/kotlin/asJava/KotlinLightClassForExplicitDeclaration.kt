@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.light.LightClass
 import com.intellij.psi.impl.light.LightMethod
@@ -154,12 +155,7 @@ public open class KotlinLightClassForExplicitDeclaration(
                     "Can't get text for outermost class"
                 }
 
-                val stubFileText: String? = try {
-                    javaFileStub.psi.text
-                }
-                catch (e: Exception) {
-                    "Can't get stub text"
-                }
+                val stubFileText = DebugUtil.stubTreeToString(javaFileStub)
 
                 throw IllegalStateException("Class was not found $classFqName\nin $ktFileText\nstub: \n$stubFileText")
             }
