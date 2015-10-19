@@ -18,9 +18,12 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -30,6 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.constant
@@ -181,4 +185,13 @@ public fun JetExpression.readWriteAccess(useResolveForReadWrite: Boolean): Refer
         ReferenceAccess.READ_WRITE
     else
         ReferenceAccess.READ
+}
+
+public fun JetReference.canBeResolvedViaImport(target: DeclarationDescriptor): Boolean {
+    if (!target.canBeReferencedViaImport()) return false
+    if (target.isExtension) return true // assume that any type of reference can use imports when resolved to extension
+    val referenceExpression = this.element as? JetNameReferenceExpression ?: return false
+    if (CallTypeAndReceiver.detect(referenceExpression).receiver != null) return false
+    if (element.parent is JetThisExpression || element.parent is JetSuperExpression) return false // TODO: it's a bad design of PSI tree, we should change it
+    return true
 }

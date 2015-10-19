@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
+import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
@@ -103,11 +102,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                     if (target is PackageViewDescriptor && parentFqName == FqName.ROOT) continue // no need to import top-level packages
                     if (target !is PackageViewDescriptor && parentFqName == currentPackageName) continue
 
-                    if (!target.isExtension) { // for non-extension targets, count only non-qualified simple name usages
-                        if (element !is JetNameReferenceExpression) continue
-                        if (CallTypeAndReceiver.detect(element).receiver != null) continue
-                        if (element.parent is JetThisExpression || element.parent is JetSuperExpression) continue // TODO: it's a bad design of PSI tree, we should change it
-                    }
+                    if (!reference.canBeResolvedViaImport(target)) continue
 
                     val importableDescriptor = target.getImportableDescriptor()
 

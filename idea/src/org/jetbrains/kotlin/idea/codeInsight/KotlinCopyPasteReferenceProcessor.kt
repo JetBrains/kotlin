@@ -42,11 +42,7 @@ import org.jetbrains.kotlin.idea.conversion.copy.end
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.conversion.copy.start
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.references.JetMultiReference
-import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
+import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -56,7 +52,6 @@ import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -154,13 +149,9 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
                 val declaration = declarations.singleOrNull()
                 if (declaration != null && declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
 
-                if (!descriptor.isExtension) {
-                    if (element !is JetNameReferenceExpression) continue
-                    if (CallTypeAndReceiver.detect(element).receiver != null) continue
-                    if (element.parent is JetThisExpression || element.parent is JetSuperExpression) continue // TODO: it's a bad design of PSI tree, we should change it
-                }
+                if (!reference.canBeResolvedViaImport(descriptor)) continue
 
-                val fqName = descriptor.importableFqName ?: continue
+                val fqName = descriptor.importableFqName!!
 
                 val kind = KotlinReferenceData.Kind.fromDescriptor(descriptor) ?: continue
                 add(KotlinReferenceData(element.range.start - startOffset, element.range.end - startOffset, fqName.asString(), kind))
