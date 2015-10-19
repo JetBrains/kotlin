@@ -130,6 +130,7 @@ class JetSimpleNameReference(expression: JetSimpleNameExpression) : JetSimpleRef
 
         // not supported for infix calls and operators
         if (expression !is JetNameReferenceExpression) return expression
+        if (expression.parent is JetThisExpression || expression.parent is JetSuperExpression) return expression // TODO: it's a bad design of PSI tree, we should change it
 
         val newExpression = expression.changeQualifiedName(fqName).getQualifiedElementSelector() as JetNameReferenceExpression
         val newQualifiedElement = newExpression.getQualifiedElement()
