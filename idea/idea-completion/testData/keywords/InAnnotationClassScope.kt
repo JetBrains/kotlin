@@ -4,7 +4,7 @@ annotation class Test {
 
 // EXIST:  abstract
 // EXIST:  class
-// EXIST:  enum
+// EXIST:  enum class
 // EXIST:  final
 // EXIST:  fun
 // EXIST:  object
@@ -23,6 +23,6 @@ annotation class Test {
 // EXIST:  inline
 // EXIST:  tailrec
 // EXIST:  external
-// EXIST:  annotation
+// EXIST:  annotation class
 // EXIST:  const
 // NOTHING_ELSE

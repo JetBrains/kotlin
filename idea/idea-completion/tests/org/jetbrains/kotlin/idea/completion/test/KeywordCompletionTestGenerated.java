@@ -71,6 +71,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/keywords"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
+    @TestMetadata("BeforeClass.kt")
+    public void testBeforeClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/BeforeClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("BeforeDelegationCall.kt")
     public void testBeforeDelegationCall() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/BeforeDelegationCall.kt");

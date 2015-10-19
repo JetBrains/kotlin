@@ -53,6 +53,12 @@ object KeywordCompletion {
 
     private val KEYWORDS_TO_IGNORE_PREFIX = TokenSet.create(OVERRIDE_KEYWORD /* it's needed to complete overrides that should be work by member name too */)
 
+    private val COMPOUND_KEYWORDS = mapOf<JetKeywordToken, JetKeywordToken>(
+            COMPANION_KEYWORD to OBJECT_KEYWORD,
+            ENUM_KEYWORD to CLASS_KEYWORD,
+            ANNOTATION_KEYWORD to CLASS_KEYWORD
+    )
+
     public fun complete(position: PsiElement, prefix: String, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
 
@@ -60,15 +66,16 @@ object KeywordCompletion {
         for (keywordToken in ALL_KEYWORDS) {
             var keyword = keywordToken.getValue()
 
-            if (keywordToken == COMPANION_KEYWORD) { // complete "companion object" instead of simply "companion" unless we are before "object" already
+            val nextKeyword = COMPOUND_KEYWORDS[keywordToken]
+            if (nextKeyword != null) {
                 fun PsiElement.isSpace() = this is PsiWhiteSpace && '\n' !in getText()
 
                 var next = position.nextLeaf { !(it.isSpace() || it.getText() == "$") }?.getText()
                 if (next != null && next.startsWith("$")) {
                     next = next.substring(1)
                 }
-                if (next != OBJECT_KEYWORD.getValue()) {
-                    keyword += " " + OBJECT_KEYWORD.getValue()
+                if (next != nextKeyword.value) {
+                    keyword += " " + nextKeyword.value
                 }
             }
 

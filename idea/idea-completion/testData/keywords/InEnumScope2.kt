@@ -5,7 +5,7 @@ enum class Test {
 }
 
 // EXIST:  abstract
-// EXIST:  enum
+// EXIST:  enum class
 // EXIST:  final
 // EXIST:  inner
 // EXIST:  internal
@@ -23,7 +23,7 @@ enum class Test {
 // EXIST:  inline
 // EXIST:  tailrec
 // EXIST:  external
-// EXIST:  annotation
+// EXIST:  annotation class
 // EXIST:  const
 // EXIST: fun
 
