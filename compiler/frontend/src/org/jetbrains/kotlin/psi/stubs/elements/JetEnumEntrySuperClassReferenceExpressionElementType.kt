@@ -42,6 +42,6 @@ public class JetEnumEntrySuperClassReferenceExpressionElementType(@NonNls debugN
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinEnumEntrySuperclassReferenceExpressionStub {
-        return KotlinEnumEntrySuperclassReferenceExpressionStubImpl(parentStub, dataStream.readName())
+        return KotlinEnumEntrySuperclassReferenceExpressionStubImpl(parentStub, dataStream.readName()!!)
     }
 }

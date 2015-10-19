@@ -38,10 +38,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.containers.MultiMap;
-import kotlin.ArraysKt;
-import kotlin.CollectionsKt;
-import kotlin.MapsKt;
-import kotlin.StringsKt;
+import kotlin.*;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -590,7 +587,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             }
         }
 
-        List<UsageInfo> adjustedUsages = KotlinPackage.filterNot(
+        List<UsageInfo> adjustedUsages = ArraysKt.filterNot(
                 usageInfos,
                 new Function1<UsageInfo, Boolean>() {
                     @Override
