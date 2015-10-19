@@ -1,6 +1,6 @@
 // FILE: first.before.kt
 // "Import" "true"
-// ERROR: Missing 'getValue(testing.BigTest, kotlin.PropertyMetadata)' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
+// ERROR: Missing 'getValue(testing.BigTest, kotlin.reflect.KProperty<*>)' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
 
 package testing
 
@@ -25,7 +25,7 @@ public fun <T> DelegateImpl<T>.getValue(thisRef: Any?, property: PropertyMetadat
 
 // FILE: first.after.kt
 // "Import" "true"
-// ERROR: Missing 'getValue(testing.BigTest, kotlin.PropertyMetadata)' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
+// ERROR: Missing 'getValue(testing.BigTest, kotlin.reflect.KProperty<*>)' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
 
 package testing
 
