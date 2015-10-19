@@ -28,7 +28,19 @@ public class Intrinsics {
     }
 
     public static String stringPlus(String self, Object other) {
-        return String.valueOf(self) + String.valueOf(other);
+        return self + other;
+    }
+
+    public static void checkNotNull(Object object) {
+        if (object == null) {
+            throwNpe();
+        }
+    }
+
+    public static void checkNotNull(Object object, String message) {
+        if (object == null) {
+            throwNpe(message);
+        }
     }
 
     public static void throwNpe() {
@@ -47,32 +59,77 @@ public class Intrinsics {
         throwUninitializedProperty("lateinit property " + propertyName + " has not been initialized");
     }
 
-    public static void checkExpressionValueIsNotNull(Object value, String message) {
+    public static void throwAssert() {
+        throw sanitizeStackTrace(new AssertionError());
+    }
+
+    public static void throwAssert(String message) {
+        throw sanitizeStackTrace(new AssertionError(message));
+    }
+
+    public static void throwIllegalArgument() {
+        throw sanitizeStackTrace(new IllegalArgumentException());
+    }
+
+    public static void throwIllegalArgument(String message) {
+        throw sanitizeStackTrace(new IllegalArgumentException(message));
+    }
+
+    public static void throwIllegalState() {
+        throw sanitizeStackTrace(new IllegalStateException());
+    }
+
+    public static void throwIllegalState(String message) {
+        throw sanitizeStackTrace(new IllegalStateException(message));
+    }
+
+    public static void checkExpressionValueIsNotNull(Object value, String expression) {
         if (value == null) {
-            IllegalStateException exception = new IllegalStateException(message + " must not be null");
-            throw sanitizeStackTrace(exception);
+            throw sanitizeStackTrace(new IllegalStateException(expression + " must not be null"));
+        }
+    }
+
+    public static void checkNotNullExpressionValue(Object value, String message) {
+        if (value == null) {
+            throw sanitizeStackTrace(new IllegalStateException(message));
         }
     }
 
     public static void checkReturnedValueIsNotNull(Object value, String className, String methodName) {
         if (value == null) {
-            IllegalStateException exception =
-                    new IllegalStateException("Method specified as non-null returned null: " + className + "." + methodName);
-            throw sanitizeStackTrace(exception);
+            throw sanitizeStackTrace(
+                    new IllegalStateException("Method specified as non-null returned null: " + className + "." + methodName)
+            );
+        }
+    }
+
+    public static void checkReturnedValueIsNotNull(Object value, String message) {
+        if (value == null) {
+            throw sanitizeStackTrace(new IllegalStateException(message));
         }
     }
 
     public static void checkFieldIsNotNull(Object value, String className, String fieldName) {
         if (value == null) {
-            IllegalStateException exception =
-                    new IllegalStateException("Field specified as non-null is null: " + className + "." + fieldName);
-            throw sanitizeStackTrace(exception);
+            throw sanitizeStackTrace(new IllegalStateException("Field specified as non-null is null: " + className + "." + fieldName));
+        }
+    }
+
+    public static void checkFieldIsNotNull(Object value, String message) {
+        if (value == null) {
+            throw sanitizeStackTrace(new IllegalStateException(message));
         }
     }
 
     public static void checkParameterIsNotNull(Object value, String paramName) {
         if (value == null) {
             throwParameterIsNullException(paramName);
+        }
+    }
+
+    public static void checkNotNullParameter(Object value, String message) {
+        if (value == null) {
+            throw sanitizeStackTrace(new IllegalArgumentException(message));
         }
     }
 
