@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
-import kotlin.reflect.jvm.internal.impl.types.JetType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
