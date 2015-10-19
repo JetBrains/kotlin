@@ -1003,6 +1003,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/private"), Pattern.compile("^(.+)\\.1.kt$"), true);
         }
 
+        @TestMetadata("kt8094.1.kt")
+        public void testKt8094() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/kt8094.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
         @TestMetadata("privateInInlineInMultiFileFacade.1.kt")
         public void testPrivateInInlineInMultiFileFacade() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/privateInInlineInMultiFileFacade.1.kt");
