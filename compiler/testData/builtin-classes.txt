@@ -1287,27 +1287,3 @@ public object Unit {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.MustBeDocumented() public final annotation class UnsafeVariance : kotlin.Annotation {
     /*primary*/ public constructor UnsafeVariance()
 }
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented() private final annotation class crossinline : kotlin.Annotation {
-    /*primary*/ public constructor crossinline()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.MustBeDocumented() private final annotation class data : kotlin.Annotation {
-    /*primary*/ public constructor data()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.MustBeDocumented() private final annotation class external : kotlin.Annotation {
-    /*primary*/ public constructor external()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented() private final annotation class inline : kotlin.Annotation {
-    /*primary*/ public constructor inline()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented() private final annotation class noinline : kotlin.Annotation {
-    /*primary*/ public constructor noinline()
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) private final annotation class tailrec : kotlin.Annotation {
-    /*primary*/ public constructor tailrec()
-}
