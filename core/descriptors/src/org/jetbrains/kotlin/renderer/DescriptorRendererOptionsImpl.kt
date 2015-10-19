@@ -107,12 +107,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
 
     override var excludedAnnotationClasses by property(emptySet<FqName>())
 
-    override var excludedTypeAnnotationClasses by property(setOf(
-            FqName("org.jetbrains.annotations.ReadOnly"),
-            FqName("org.jetbrains.annotations.Mutable"),
-            FqName("org.jetbrains.annotations.NotNull"),
-            FqName("org.jetbrains.annotations.Nullable"),
-            FqName("kotlin.internal.NoInfer"),
-            FqName("kotlin.internal.Exact")
-    ))
+    override var excludedTypeAnnotationClasses by property(
+            ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
+                    + ExcludedTypeAnnotations.internalAnnotationsForResolve)
 }

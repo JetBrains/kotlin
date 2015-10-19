@@ -192,6 +192,18 @@ public interface DescriptorRendererOptions {
     public var renderDefaultAnnotationArguments: Boolean
 }
 
+object ExcludedTypeAnnotations {
+    val annotationsForNullabilityAndMutability = setOf(
+            FqName("org.jetbrains.annotations.ReadOnly"),
+            FqName("org.jetbrains.annotations.Mutable"),
+            FqName("org.jetbrains.annotations.NotNull"),
+            FqName("org.jetbrains.annotations.Nullable"))
+
+    val internalAnnotationsForResolve = setOf(
+            FqName("kotlin.internal.NoInfer"),
+            FqName("kotlin.internal.Exact"))
+}
+
 public enum class RenderingFormat {
     PLAIN,
     HTML
