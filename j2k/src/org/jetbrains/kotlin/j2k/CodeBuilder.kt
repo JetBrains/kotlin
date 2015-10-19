@@ -135,7 +135,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
 
         if (prefix.lineBreaksBefore > 0) {
             val lineBreaksToAdd = prefix.lineBreaksBefore - builder.trailingLineBreakCount()
-            for (_ in 1..lineBreaksToAdd) {
+            for (it in 1..lineBreaksToAdd) {
                 append("\n", false)
             }
         }

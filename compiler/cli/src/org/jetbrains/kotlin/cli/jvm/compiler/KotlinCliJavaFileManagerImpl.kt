@@ -87,7 +87,7 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
     override fun findPackage(packageName: String): PsiPackage? {
         var found = false
         val packageFqName = packageName.toSafeFqName() ?: return null
-        index.traverseDirectoriesInPackage(packageFqName) { _, __ ->
+        index.traverseDirectoriesInPackage(packageFqName) { dir, rootType ->
             found = true
             //abort on first found
             false

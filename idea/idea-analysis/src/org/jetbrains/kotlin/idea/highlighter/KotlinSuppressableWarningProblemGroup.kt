@@ -81,24 +81,24 @@ private object DeclarationKindDetector : JetVisitor<AnnotationHostKind?, Unit?>(
 
     fun detect(declaration: JetDeclaration) = declaration.accept(this, null)
 
-    override fun visitDeclaration(d: JetDeclaration, _: Unit?) = null
+    override fun visitDeclaration(d: JetDeclaration, data: Unit?) = null
 
-    override fun visitClass(d: JetClass, _: Unit?) = detect(d, if (d.isInterface()) "interface" else "class")
+    override fun visitClass(d: JetClass, data: Unit?) = detect(d, if (d.isInterface()) "interface" else "class")
 
-    override fun visitNamedFunction(d: JetNamedFunction, _: Unit?) = detect(d, "fun")
+    override fun visitNamedFunction(d: JetNamedFunction, data: Unit?) = detect(d, "fun")
 
-    override fun visitProperty(d: JetProperty, _: Unit?) = detect(d, d.getValOrVarKeyword().getText()!!)
+    override fun visitProperty(d: JetProperty, data: Unit?) = detect(d, d.getValOrVarKeyword().getText()!!)
 
-    override fun visitMultiDeclaration(d: JetMultiDeclaration, _: Unit?) = detect(d, d.getValOrVarKeyword()?.getText() ?: "val",
+    override fun visitMultiDeclaration(d: JetMultiDeclaration, data: Unit?) = detect(d, d.getValOrVarKeyword()?.getText() ?: "val",
                                                                                   name = d.getEntries().map { it.getName()!! }.join(", ", "(", ")"))
 
-    override fun visitTypeParameter(d: JetTypeParameter, _: Unit?) = detect(d, "type parameter", newLineNeeded = false)
+    override fun visitTypeParameter(d: JetTypeParameter, data: Unit?) = detect(d, "type parameter", newLineNeeded = false)
 
-    override fun visitEnumEntry(d: JetEnumEntry, _: Unit?) = detect(d, "enum entry")
+    override fun visitEnumEntry(d: JetEnumEntry, data: Unit?) = detect(d, "enum entry")
 
-    override fun visitParameter(d: JetParameter, _: Unit?) = detect(d, "parameter", newLineNeeded = false)
+    override fun visitParameter(d: JetParameter, data: Unit?) = detect(d, "parameter", newLineNeeded = false)
 
-    override fun visitObjectDeclaration(d: JetObjectDeclaration, _: Unit?): AnnotationHostKind? {
+    override fun visitObjectDeclaration(d: JetObjectDeclaration, data: Unit?): AnnotationHostKind? {
         if (d.isCompanion()) return detect(d, "companion object", name = "${d.getName()} of ${d.getStrictParentOfType<JetClass>()?.getName()}")
         if (d.getParent() is JetObjectLiteralExpression) return null
         return detect(d, "object")

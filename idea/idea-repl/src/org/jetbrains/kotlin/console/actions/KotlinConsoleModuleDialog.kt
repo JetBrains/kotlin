@@ -60,6 +60,6 @@ public class KotlinConsoleModuleDialog(private val project: Project) {
     }
 
     private fun createRunAction(module: Module) = object : AnAction(module.name) {
-        override fun actionPerformed(_: AnActionEvent) = runConsole(module)
+        override fun actionPerformed(e: AnActionEvent) = runConsole(module)
     }
 }

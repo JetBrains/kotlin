@@ -24,5 +24,5 @@ public class KotlinConsoleGutterContentProvider : BasicGutterContentProvider() {
      *  This method overriding is needed to prevent [BasicGutterContentProvider] from adding some strange unicode
      *  symbols of zero width and to ease range highlighting.
      */
-    override fun beforeEvaluate(_: Editor) = Unit
+    override fun beforeEvaluate(editor: Editor) = Unit
 }
