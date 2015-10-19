@@ -467,13 +467,13 @@ internal class DescriptorRendererImpl(
         if (functionDescriptor.isInfix && functionDescriptor.overriddenDescriptors.none { it.isInfix }) {
             builder.append("infix ")
         }
-        if (functionDescriptor.isExternal && functionDescriptor.overriddenDescriptors.none { it.isExternal }) {
+        if (functionDescriptor.isExternal) {
             builder.append("external ")
         }
-        if (functionDescriptor.isInline && functionDescriptor.overriddenDescriptors.none { it.isInline }) {
+        if (functionDescriptor.isInline) {
             builder.append("inline ")
         }
-        if (functionDescriptor.isTailrec && functionDescriptor.overriddenDescriptors.none { it.isTailrec }) {
+        if (functionDescriptor.isTailrec) {
             builder.append("tailrec ")
         }
     }
@@ -853,7 +853,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderAccessorModifiers(descriptor: PropertyAccessorDescriptor, builder: StringBuilder) {
-        if (descriptor.isExternal && descriptor.overriddenDescriptors.none { it.isExternal }) {
+        if (descriptor.isExternal) {
             builder.append("external ")
         }
     }

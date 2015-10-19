@@ -187,35 +187,17 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @Override
     public boolean isExternal() {
-        if (isExternal) return true;
-
-        for (FunctionDescriptor descriptor : overriddenFunctions) {
-            if (descriptor.isExternal()) return true;
-        }
-
-        return false;
+        return isExternal;
     }
 
     @Override
     public boolean isInline() {
-        if (isInline) return true;
-
-        for (FunctionDescriptor descriptor : overriddenFunctions) {
-            if (descriptor.isInline()) return true;
-        }
-
-        return false;
+        return isInline;
     }
 
     @Override
     public boolean isTailrec() {
-        if (isTailrec) return true;
-
-        for (FunctionDescriptor descriptor : overriddenFunctions) {
-            if (descriptor.isTailrec()) return true;
-        }
-
-        return false;
+        return isTailrec;
     }
 
     @Override

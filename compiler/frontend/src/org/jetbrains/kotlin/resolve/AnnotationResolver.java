@@ -114,8 +114,7 @@ public class AnnotationResolver {
             return Annotations.Companion.getEMPTY();
         }
 
-        List<JetAnnotationEntry> annotationEntryElements = modifierList.getAnnotationEntries();
-        return resolveAnnotationEntries(scope, annotationEntryElements, trace, shouldResolveArguments);
+        return resolveAnnotationEntries(scope, modifierList.getAnnotationEntries(), trace, shouldResolveArguments);
     }
 
     private Annotations resolveAnnotationEntries(

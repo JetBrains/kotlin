@@ -72,17 +72,17 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     @Override
     public boolean declaresDefaultValue() {
-        return declaresDefaultValue && containingDeclarationIsReal();
+        return declaresDefaultValue && ((CallableMemberDescriptor) getContainingDeclaration()).getKind().isReal();
     }
 
     @Override
     public boolean isCrossinline() {
-        return isCrossinline && containingDeclarationIsReal();
+        return isCrossinline;
     }
 
     @Override
     public boolean isNoinline() {
-        return isNoinline && containingDeclarationIsReal();
+        return isNoinline;
     }
 
     @Nullable
@@ -146,9 +146,5 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
                         return descriptor.getValueParameters().get(getIndex());
                     }
                 });
-    }
-
-    private boolean containingDeclarationIsReal() {
-        return ((CallableMemberDescriptor) getContainingDeclaration()).getKind().isReal();
     }
 }

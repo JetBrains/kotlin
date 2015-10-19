@@ -33,7 +33,6 @@ private val NATIVE_ANNOTATION_CLASS_NAME = FqName("kotlin.jvm.native")
 
 public fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
     return this is FunctionDescriptor && this.isExternal
-           || this is PropertyAccessorDescriptor && this.isExternal
            || annotations.findAnnotation(NATIVE_ANNOTATION_CLASS_NAME) != null
 }
 

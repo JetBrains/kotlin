@@ -1,7 +1,7 @@
 package usage
 
 fun main(args: Array<String>) {
-    inline.f {
+    test.f {
         println("to be inlined")
     }
 }

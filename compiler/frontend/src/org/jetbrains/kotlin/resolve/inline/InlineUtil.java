@@ -33,13 +33,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 public class InlineUtil {
     public static boolean isInlineLambdaParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {
-        boolean isNoinlineParameter = false;
-
-        if (valueParameterOrReceiver instanceof ValueParameterDescriptor) {
-            isNoinlineParameter = ((ValueParameterDescriptor) valueParameterOrReceiver).isNoinline();
-        }
-
-        return !isNoinlineParameter &&
+        return !(valueParameterOrReceiver instanceof ValueParameterDescriptor
+                 && ((ValueParameterDescriptor) valueParameterOrReceiver).isNoinline()) &&
                KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(valueParameterOrReceiver.getOriginal().getType());
     }
 
