@@ -1,4 +1,3 @@
-// "Add 'operator' modifier" "true"
 class A {
 }
 

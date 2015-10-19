@@ -1,6 +1,4 @@
-// "Add 'operator' modifier" "false"
-// ACTION: Convert to block body
-// ACTION: Specify return type explicitly
+// IS_APPLICABLE: false
 open class A {
     open operator fun plus(a: A) = A()
 }

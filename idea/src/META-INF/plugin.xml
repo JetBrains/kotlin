@@ -1238,13 +1238,6 @@
                      level="WARNING"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.AddOperatorModifierInspection"
-                     displayName="Missing 'operator' modifier"
-                     groupName="Kotlin"
-                     language="kotlin"
-                     enabledByDefault="true"
-                     level="WARNING"/>
-
       <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConflictingExtensionPropertyInspection"
                        displayName="Extension property conflicts with synthetic one"
                        groupName="Kotlin"
