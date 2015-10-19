@@ -56,6 +56,7 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
             val fileText = file.getText()
 
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
+            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS:") ?: nameCountToUseStarImportForMembersDefault
             codeStyleSettings.IMPORT_NESTED_CLASSES = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// IMPORT_NESTED_CLASSES:") ?: false
 
             InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PACKAGE_TO_USE_STAR_IMPORTS:").forEach {
@@ -80,4 +81,7 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
 
     protected open val nameCountToUseStarImportDefault: Int
         get() = 1
+
+    protected open val nameCountToUseStarImportForMembersDefault: Int
+        get() = 3
 }

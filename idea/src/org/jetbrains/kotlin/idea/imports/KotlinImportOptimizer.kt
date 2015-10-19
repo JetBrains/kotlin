@@ -164,15 +164,21 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
             val importsToGenerate = HashSet<ImportPath>()
 
-            val descriptorsByPackages = HashMultimap.create<FqName, DeclarationDescriptor>()
+            val descriptorsByParentFqName = HashMultimap.create<FqName, DeclarationDescriptor>()
             for (descriptor in descriptorsToImport) {
                 val fqName = descriptor.importableFqName!!
+                val container = descriptor.containingDeclaration
                 val parentFqName = fqName.parent()
-                if (descriptor is PackageViewDescriptor || parentFqName.isRoot()) {
-                    importsToGenerate.add(ImportPath(fqName, false))
+                val canUseStarImport = when {
+                    parentFqName.isRoot -> false
+                    (container as? ClassDescriptor)?.kind == ClassKind.OBJECT -> false
+                    else -> true
+                }
+                if (canUseStarImport) {
+                    descriptorsByParentFqName.put(parentFqName, descriptor)
                 }
                 else {
-                    descriptorsByPackages.put(parentFqName, descriptor)
+                    importsToGenerate.add(ImportPath(fqName, false))
                 }
             }
 
@@ -180,11 +186,16 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
             fun isImportedByDefault(fqName: FqName) = importInsertHelper.isImportedWithDefault(ImportPath(fqName, false), file)
 
-            for (packageName in descriptorsByPackages.keys()) {
-                val descriptors = descriptorsByPackages[packageName]
+            for (parentFqName in descriptorsByParentFqName.keys()) {
+                val descriptors = descriptorsByParentFqName[parentFqName]
                 val fqNames = descriptors.map { it.importableFqName!! }.toSet()
-                val explicitImports = fqNames.size() < codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
-                                      && packageName.asString() !in codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS
+                val isMember = descriptors.first().containingDeclaration is ClassDescriptor
+                val nameCountToUseStar = if (isMember)
+                    codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
+                else
+                    codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
+                val explicitImports = fqNames.size < nameCountToUseStar
+                                      && parentFqName.asString() !in codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS
                 if (explicitImports) {
                     for (fqName in fqNames) {
                         if (!isImportedByDefault(fqName)) {
@@ -200,7 +211,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                     }
 
                     if (!fqNames.all(::isImportedByDefault)) {
-                        importsToGenerate.add(ImportPath(packageName, true))
+                        importsToGenerate.add(ImportPath(parentFqName, true))
                     }
                 }
             }
@@ -218,14 +229,14 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                     // add explicit import if failed to import with * (or from current package)
                     importsToGenerate.add(ImportPath(fqName, false))
 
-                    val packageName = fqName.parent()
+                    val parentFqName = fqName.parent()
 
-                    for (descriptor in descriptorsByPackages[packageName].filter { it.importableFqName == fqName }) {
-                        descriptorsByPackages.remove(packageName, descriptor)
+                    for (descriptor in descriptorsByParentFqName[parentFqName].filter { it.importableFqName == fqName }) {
+                        descriptorsByParentFqName.remove(parentFqName, descriptor)
                     }
 
-                    if (descriptorsByPackages[packageName].isEmpty()) { // star import is not really needed
-                        importsToGenerate.remove(ImportPath(packageName, true))
+                    if (descriptorsByParentFqName[parentFqName].isEmpty()) { // star import is not really needed
+                        importsToGenerate.remove(ImportPath(parentFqName, true))
                     }
                 }
             }

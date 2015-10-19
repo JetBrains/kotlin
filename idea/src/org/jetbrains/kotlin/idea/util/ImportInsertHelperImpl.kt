@@ -158,14 +158,13 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val fqName = target.importableFqName!!
             val packageFqName = fqName.parent()
 
-            val tryStarImport = shouldTryStarImport(packageFqName, imports)
+            val tryStarImport = shouldTryStarImport(packageFqName, target, imports)
                                     && when (target) {
                                         // this check does not give a guarantee that import with * will import the class - for example,
                                         // there can be classes with conflicting name in more than one import with *
                                         is ClassDescriptor -> topLevelScope.getClassifier(name, NoLookupLocation.FROM_IDE) == null
-                                        is PackageViewDescriptor -> false
                                         is FunctionDescriptor, is PropertyDescriptor -> true
-                                        else -> throw Exception()
+                                        else -> error("Unknown kind of descriptor to import:$target")
                                     }
 
             if (tryStarImport) {
@@ -176,19 +175,26 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             return addExplicitImport(target)
         }
 
-        private fun shouldTryStarImport(packageFqName: FqName, imports: Collection<JetImportDirective>): Boolean {
-            if (packageFqName.isRoot()) return false
+        private fun shouldTryStarImport(containerFqName: FqName, target: DeclarationDescriptor, imports: Collection<JetImportDirective>): Boolean {
+            if (containerFqName.isRoot) return false
 
-            val starImportPath = ImportPath(packageFqName, true)
+            val container = target.containingDeclaration
+            if (container is ClassDescriptor && container.kind == ClassKind.OBJECT) return false // cannot import with '*' from object
+
+            val starImportPath = ImportPath(containerFqName, true)
             if (imports.any { it.getImportPath() == starImportPath }) return false
 
-            if (packageFqName.asString() in codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS) return true
+            if (containerFqName.asString() in codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS) return true
 
             val importsFromPackage = imports.count {
                 val path = it.getImportPath()
-                path != null && !path.isAllUnder() && !path.hasAlias() && path.fqnPart().parent() == packageFqName
+                path != null && !path.isAllUnder() && !path.hasAlias() && path.fqnPart().parent() == containerFqName
             }
-            return importsFromPackage + 1 >= codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
+            val nameCountToUseStar = if (container is ClassDescriptor)
+                codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
+            else
+                codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
+            return importsFromPackage + 1 >= nameCountToUseStar
         }
 
         private fun addStarImport(target: DeclarationDescriptor): ImportDescriptorResult {
