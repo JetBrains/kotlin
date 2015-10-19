@@ -70,8 +70,8 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     }
     private val starImportPackageTable = ImportLayoutPanel.createTableForPackageEntries(starImportPackageEntryTable, dummyImportLayoutPanel)
 
-    private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector("Use imports:")
-    private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector("Use imports for Java statics and enums:")
+    private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector("Top-level symbols:")
+    private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector("Java statics and enum members:")
 
     init {
         setLayout(BorderLayout())
@@ -133,17 +133,17 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     }
 
     private class NameCountToUseStarImportSelector(label: String) : OptionGroup() {
-        private val rbUseSingleImports = JRadioButton("With single name")
-        private val rbUseStarImports = JRadioButton("With '*'")
-        private val rbUseStarImportsIfMore = JRadioButton("With '*' if more than ")
-        private val starImportLimitModel = SpinnerNumberModel(4, 1, 100, 1)
+        private val rbUseSingleImports = JRadioButton("Use single name import")
+        private val rbUseStarImports = JRadioButton("Use import with '*'")
+        private val rbUseStarImportsIfAtLeast = JRadioButton("Use import with '*' when at least ")
+        private val starImportLimitModel = SpinnerNumberModel(2, 2, 100, 1)
         private val starImportLimitField = JSpinner(starImportLimitModel)
 
         init {
             ButtonGroup().apply {
                 add(rbUseSingleImports)
                 add(rbUseStarImports)
-                add(rbUseStarImportsIfMore)
+                add(rbUseStarImportsIfAtLeast)
             }
 
             add(JLabel(label))
@@ -152,15 +152,15 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             val jPanel: JPanel = JPanel(GridBagLayout())
             add(jPanel.apply {
                 val constraints = GridBagConstraints().apply { gridx = GridBagConstraints.RELATIVE }
-                this.add(rbUseStarImportsIfMore, constraints)
+                this.add(rbUseStarImportsIfAtLeast, constraints)
                 this.add(starImportLimitField, constraints)
                 this.add(JLabel(" names used"), constraints.apply { fill = GridBagConstraints.HORIZONTAL; weightx = 1.0 })
             }, true)
 
             fun updateEnabled() {
-                starImportLimitField.setEnabled(rbUseStarImportsIfMore.isSelected())
+                starImportLimitField.setEnabled(rbUseStarImportsIfAtLeast.isSelected())
             }
-            rbUseStarImportsIfMore.addChangeListener { updateEnabled() }
+            rbUseStarImportsIfAtLeast.addChangeListener { updateEnabled() }
             updateEnabled()
         }
 
@@ -169,7 +169,7 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
                 return when {
                     rbUseSingleImports.isSelected -> Int.MAX_VALUE
                     rbUseStarImports.isSelected -> 1
-                    else -> (starImportLimitModel.number as Int) + 1
+                    else -> starImportLimitModel.number as Int
                 }
             }
            set(value) {
@@ -179,8 +179,8 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
                    1 -> rbUseStarImports.isSelected = true
 
                    else -> {
-                       rbUseStarImportsIfMore.isSelected = true
-                       starImportLimitField.value = value - 1
+                       rbUseStarImportsIfAtLeast.isSelected = true
+                       starImportLimitField.value = value
                    }
                }
            }
