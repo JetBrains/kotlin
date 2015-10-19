@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.supertypes
+import org.jetbrains.kotlin.utils.sure
 
 fun createClassStub(parent: StubElement<out PsiElement>, classProto: ProtoBuf.Class, classId: ClassId, context: ClsStubBuilderContext) {
     ClassClsStubBuilder(parent, classProto, classId, context).build()
@@ -216,7 +217,9 @@ private class ClassClsStubBuilder(
     }
 
     private fun createNestedClassStub(classBody: StubElement<out PsiElement>, nestedClassId: ClassId) {
-        val classDataWithSource = c.components.classDataFinder.findClassData(nestedClassId)!!
+        val classDataWithSource = c.components.classDataFinder.findClassData(nestedClassId).sure {
+            "Could not find class data for nested class ${nestedClassId.shortClassName} of class ${nestedClassId.outerClassId}"
+        }
         val (nameResolver, classProto) = classDataWithSource.classData
         createClassStub(classBody, classProto, nestedClassId, c.child(nameResolver, TypeTable(classProto.typeTable)))
     }
