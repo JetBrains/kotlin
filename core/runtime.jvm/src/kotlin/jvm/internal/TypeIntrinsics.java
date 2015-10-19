@@ -33,160 +33,144 @@ public class TypeIntrinsics {
         throw sanitizeStackTrace(new ClassCastException(argumentClassName + " cannot be cast to " + requestedClassName));
     }
 
-    public static void throwCce(ClassCastException e) {
-        throw Intrinsics.sanitizeStackTrace(e, TypeIntrinsics.class.getName());
+    public static ClassCastException throwCce(ClassCastException e) {
+        throw sanitizeStackTrace(e);
     }
 
     public static boolean isMutableIterator(Object obj) {
-        return (obj instanceof Iterator) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableIterator));
+        return obj instanceof Iterator &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableIterator);
     }
 
     public static Iterator asMutableIterator(Object obj) {
-        Iterator result = null;
-        try {
-            result = (Iterator) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableIterator)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableIterator)) {
             throwCce(obj, "kotlin.MutableIterator");
         }
-        return result;
+        try {
+            return (Iterator) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableListIterator(Object obj) {
-        return (obj instanceof ListIterator) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableListIterator));
+        return obj instanceof ListIterator &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableListIterator);
     }
 
     public static ListIterator asMutableListIterator(Object obj) {
-        ListIterator result = null;
-        try {
-            result = (ListIterator) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableListIterator)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableListIterator)) {
             throwCce(obj, "kotlin.MutableListIterator");
         }
-        return result;
+        try {
+            return (ListIterator) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableIterable(Object obj) {
-        return (obj instanceof Iterable) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableIterable));
+        return obj instanceof Iterable &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableIterable);
     }
 
     public static Iterable asMutableIterable(Object obj) {
-        Iterable result = null;
-        try {
-            result = (Iterable) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableIterable)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableIterable)) {
             throwCce(obj, "kotlin.MutableIterable");
         }
-        return result;
+        try {
+            return (Iterable) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableCollection(Object obj) {
-        return (obj instanceof Collection) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableCollection));
+        return obj instanceof Collection &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableCollection);
     }
 
     public static Collection asMutableCollection(Object obj) {
-        Collection result = null;
-        try {
-            result = (Collection) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableCollection)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableCollection)) {
             throwCce(obj, "kotlin.MutableCollection");
         }
-        return result;
+        try {
+            return (Collection) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableList(Object obj) {
-        return (obj instanceof List) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableList));
+        return obj instanceof List &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableList);
     }
 
     public static List asMutableList(Object obj) {
-        List result = null;
-        try {
-            result = (List) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableList)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableList)) {
             throwCce(obj, "kotlin.MutableList");
         }
-        return result;
+        try {
+            return (List) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableSet(Object obj) {
-        return (obj instanceof Set) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableSet));
+        return obj instanceof Set &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableSet);
     }
 
     public static Set asMutableSet(Object obj) {
-        Set result = null;
-        try {
-            result = (Set) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableSet)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableSet)) {
             throwCce(obj, "kotlin.MutableSet");
         }
-        return result;
+        try {
+            return (Set) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableMap(Object obj) {
-        return (obj instanceof Map) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableMap));
+        return obj instanceof Map &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableMap);
     }
 
     public static Map asMutableMap(Object obj) {
-        Map result = null;
-        try {
-            result = (Map) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableMap)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableMap)) {
             throwCce(obj, "kotlin.MutableMap");
         }
-        return result;
+        try {
+            return (Map) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableMapEntry(Object obj) {
-        return (obj instanceof Map.Entry) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableMap.Entry));
+        return obj instanceof Map.Entry &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableMap.Entry);
     }
 
     public static Map.Entry asMutableMapEntry(Object obj) {
-        Map.Entry result = null;
-        try {
-            result = (Map.Entry) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableMap.Entry)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableMap.Entry)) {
             throwCce(obj, "kotlin.MutableMap.MutableEntry");
         }
-        return result;
+        try {
+            return (Map.Entry) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static int getFunctionArity(Object obj) {
