@@ -1,0 +1,10 @@
+// "Create property 'foo' as constructor parameter" "true"
+
+class A {
+    class B(var foo: Int) {
+        fun test(): Int {
+            <caret>foo = 1
+            return foo
+        }
+    }
+}

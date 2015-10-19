@@ -19,20 +19,30 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableBuilderConfiguration
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallablePlacement
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.PropertyInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.createBuilder
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.source.getPsi
 
-public class CreateParameterFromUsageFix<E : KtElement>(
+public open class CreateParameterFromUsageFix<E : KtElement>(
         val functionDescriptor: FunctionDescriptor,
         val parameterInfo: JetParameterInfo,
         val defaultValueContext: E
 ) : CreateFromUsageFixBase<E>(defaultValueContext) {
     override fun getText(): String {
-        return JetBundle.message("create.parameter.from.usage", parameterInfo.name)
+        return with(parameterInfo) {
+            if (valOrVar != JetValVar.None) "Create property '$name' as constructor parameter" else "Create parameter '$name'"
+        }
     }
 
     override fun startInWriteAction() = false
@@ -47,5 +57,47 @@ public class CreateParameterFromUsageFix<E : KtElement>(
         }
 
         runChangeSignature(project, functionDescriptor, config, defaultValueContext, text)
+    }
+
+    companion object {
+        public fun <E : KtElement> createFixForPrimaryConstructorPropertyParameter(
+                element: E,
+                info: PropertyInfo
+        ) : CreateParameterFromUsageFix<E>? {
+            val receiverClassDescriptor: ClassDescriptor
+
+            val builder = CallableBuilderConfiguration(listOf(info), element, element.getContainingJetFile(), null, false).createBuilder()
+            val receiverTypeCandidate = builder.computeTypeCandidates(info.receiverTypeInfo).firstOrNull()
+            if (receiverTypeCandidate != null) {
+                builder.placement = CallablePlacement.WithReceiver(receiverTypeCandidate)
+                receiverClassDescriptor = receiverTypeCandidate.theType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+            }
+            else {
+                if (element !is KtSimpleNameExpression) return null
+
+                val classOrObject = element.getStrictParentOfType<KtClassOrObject>() ?: return null
+                receiverClassDescriptor = classOrObject.resolveToDescriptorIfAny() as? ClassDescriptor ?: return null
+
+                val paramInfo = CreateParameterByRefActionFactory.extractFixData(element)?.parameterInfo
+                if (paramInfo?.callableDescriptor == receiverClassDescriptor.unsubstitutedPrimaryConstructor) return null
+            }
+
+            if (receiverClassDescriptor.kind != ClassKind.CLASS) return null
+            val receiverClass = receiverClassDescriptor.source.getPsi() as? KtClass ?: return null
+            if (!receiverClass.canRefactor()) return null
+            val constructorDescriptor = receiverClassDescriptor.unsubstitutedPrimaryConstructor ?: return null
+
+            val paramType = info.returnTypeInfo.getPossibleTypes(builder).firstOrNull() ?: return null
+            if (paramType.hasTypeParametersToAdd(constructorDescriptor, builder.currentFileContext)) return null
+
+            val paramInfo = JetParameterInfo(
+                    callableDescriptor = constructorDescriptor,
+                    name = info.name,
+                    type = paramType,
+                    valOrVar = if (info.writable) JetValVar.Var else JetValVar.Val
+            )
+
+            return CreateParameterFromUsageFix(constructorDescriptor, paramInfo, element)
+        }
     }
 }

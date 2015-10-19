@@ -1,0 +1,8 @@
+// "Create property 'foo' as constructor parameter" "true"
+// ERROR: No value passed for parameter foo
+
+class A<T>(val n: T, val foo: A<Int>)
+
+fun test() {
+    val a: A<Int> = A(1, ).foo
+}

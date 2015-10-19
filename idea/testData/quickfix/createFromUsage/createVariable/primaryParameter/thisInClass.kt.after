@@ -1,0 +1,7 @@
+// "Create property 'foo' as constructor parameter" "true"
+
+class A<T>(val n: T, val foo: A<Int>) {
+    fun test(): A<Int> {
+        return this.foo
+    }
+}

@@ -2835,6 +2835,93 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class PrimaryParameter extends AbstractQuickFixTest {
+                public void testAllFilesPresentInPrimaryParameter() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+                }
+
+                @TestMetadata("localValNoReceiver.kt")
+                public void testLocalValNoReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/localValNoReceiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberValNoReceiver.kt")
+                public void testMemberValNoReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/memberValNoReceiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberVarNoReceiver.kt")
+                public void testMemberVarNoReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/memberVarNoReceiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("objectMemberValNoReceiver.kt")
+                public void testObjectMemberValNoReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/objectMemberValNoReceiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("thisInClass.kt")
+                public void testThisInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/thisInClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("thisInExtension.kt")
+                public void testThisInExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/thisInExtension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("thisInNestedClass1.kt")
+                public void testThisInNestedClass1() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/thisInNestedClass1.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("thisInNestedClass2.kt")
+                public void testThisInNestedClass2() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/thisInNestedClass2.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("topLevelValNoReceiver.kt")
+                public void testTopLevelValNoReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/topLevelValNoReceiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("valOnCompanionObject.kt")
+                public void testValOnCompanionObject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/valOnCompanionObject.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("valOnLibType.kt")
+                public void testValOnLibType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/valOnLibType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("valOnUserType.kt")
+                public void testValOnUserType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/valOnUserType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varOnUserType.kt")
+                public void testVarOnUserType() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter/varOnUserType.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable/property")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
