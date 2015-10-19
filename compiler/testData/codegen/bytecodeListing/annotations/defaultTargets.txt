@@ -23,7 +23,7 @@
 @kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass Anno
 
 @kotlin.jvm.internal.KotlinFileFacade DefaultTargetsKt {
-    final @Anno field p2: int
+    private final @Anno field p2: int
     method <clinit>(): void
     public final method getP(): int
     public final method getP2(): int

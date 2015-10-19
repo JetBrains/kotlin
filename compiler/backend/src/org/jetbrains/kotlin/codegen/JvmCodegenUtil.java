@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import kotlin.CollectionsKt;
 import kotlin.StringsKt;
 import kotlin.jvm.functions.Function1;
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
-import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunction;
 import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilKt;
@@ -77,25 +77,21 @@ public class JvmCodegenUtil {
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
-                 ((context.getParentContext() instanceof PackageContext || context.getParentContext() instanceof MultifileClassPartContext)
-                  && isSamePackageInSameModule(context.getParentContext().getContextDescriptor(), containingDeclaration)))
+                 ((context.getParentContext() instanceof FacadePartWithSourceFile)
+                  && isWithinSameFile(((FacadePartWithSourceFile) context.getParentContext()).getSourceFile(), descriptor)))
                 && context.getContextKind() != OwnerKind.DEFAULT_IMPLS);
     }
 
-    private static boolean isSamePackageInSameModule(
-            @NotNull DeclarationDescriptor callerOwner,
-            @NotNull DeclarationDescriptor calleeOwner
+    private static boolean isWithinSameFile(
+            @Nullable JetFile callerFile,
+            @NotNull CallableMemberDescriptor descriptor
     ) {
-        if (callerOwner instanceof PackageFragmentDescriptor && calleeOwner instanceof PackageFragmentDescriptor) {
-            PackageFragmentDescriptor callerFragment = (PackageFragmentDescriptor) callerOwner;
-            PackageFragmentDescriptor calleeFragment = (PackageFragmentDescriptor) calleeOwner;
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration().getOriginal();
+        if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            PsiElement calleeElement = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
+            PsiFile calleeFile = calleeElement != null ? calleeElement.getContainingFile() : null;
+            return callerFile != null && callerFile != SourceFile.NO_SOURCE_FILE && calleeFile == callerFile;
 
-            // backing field should be used directly within same module of same package
-            if (callerFragment == calleeFragment) {
-                return true;
-            }
-            return callerFragment.getFqName().equals(calleeFragment.getFqName())
-                   && calleeFragment instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment;
         }
         return false;
     }

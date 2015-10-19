@@ -87,7 +87,7 @@ public class PackageCodegen {
         }
 
         Type fileClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.getFileClassFqName());
-        PackageContext packagePartContext = state.getRootContext().intoPackagePart(packageFragment, fileClassType);
+        PackageContext packagePartContext = state.getRootContext().intoPackagePart(packageFragment, fileClassType, file);
 
         boolean generatePackagePart = false;
 

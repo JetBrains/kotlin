@@ -109,7 +109,8 @@ public class InlineCodegen extends CallGenerator {
 
         initialFrameSize = codegen.getFrameMap().getCurrentSize();
 
-        context = (MethodContext) getContext(functionDescriptor, state);
+        PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
+        context = (MethodContext) getContext(functionDescriptor, state, element != null ? (JetFile) element.getContainingFile() : null);
         jvmSignature = typeMapper.mapSignature(functionDescriptor, context.getContextKind());
 
         // TODO: implement AS_FUNCTION inline strategy
@@ -586,12 +587,12 @@ public class InlineCodegen extends CallGenerator {
         activeLambda = null;
     }
 
-    public static CodegenContext getContext(DeclarationDescriptor descriptor, GenerationState state) {
+    public static CodegenContext getContext(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state, @Nullable JetFile sourceFile) {
         if (descriptor instanceof PackageFragmentDescriptor) {
-            return new PackageContext((PackageFragmentDescriptor) descriptor, state.getRootContext(), null);
+            return new PackageContext((PackageFragmentDescriptor) descriptor, state.getRootContext(), null, sourceFile);
         }
 
-        CodegenContext parent = getContext(descriptor.getContainingDeclaration(), state);
+        CodegenContext parent = getContext(descriptor.getContainingDeclaration(), state, sourceFile);
 
         if (descriptor instanceof ClassDescriptor) {
             OwnerKind kind = DescriptorUtils.isInterface(descriptor) ? OwnerKind.DEFAULT_IMPLS : OwnerKind.IMPLEMENTATION;

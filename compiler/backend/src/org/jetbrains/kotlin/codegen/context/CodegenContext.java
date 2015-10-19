@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetSuperExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -180,17 +181,18 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public PackageContext intoPackagePart(@NotNull PackageFragmentDescriptor descriptor, Type packagePartType) {
-        return new PackageContext(descriptor, this, packagePartType);
+    public PackageContext intoPackagePart(@NotNull PackageFragmentDescriptor descriptor, Type packagePartType, @Nullable JetFile sourceFile) {
+        return new PackageContext(descriptor, this, packagePartType, sourceFile);
     }
 
     @NotNull
     public FieldOwnerContext<PackageFragmentDescriptor> intoMultifileClassPart(
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull Type multifileClassType,
-            @NotNull Type filePartType
+            @NotNull Type filePartType,
+            @NotNull JetFile sourceFile
     ) {
-        return new MultifileClassPartContext(descriptor, this, multifileClassType, filePartType);
+        return new MultifileClassPartContext(descriptor, this, multifileClassType, filePartType, sourceFile);
     }
 
     @NotNull

@@ -38,7 +38,7 @@ public class PackageFacadeContext extends PackageContext implements DelegatingFa
             @NotNull Type packagePartType,
             @NotNull Type publicFacadeType
     ) {
-        super(contextDescriptor, parent, packagePartType);
+        super(contextDescriptor, parent, packagePartType, null);
 
         this.publicFacadeType = publicFacadeType;
     }

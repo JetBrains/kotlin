@@ -376,7 +376,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                         PackageCodegen packageCodegen = state.getFactory().forPackage(getPackageFqName(), files);
                         JetFile file = classOrObject.getContainingJetFile();
                         Type packagePartType = FileClasses.getFileClassType(state.getFileClassesProvider(), file);
-                        PackageContext context = state.getRootContext().intoPackagePart(packageCodegen.getPackageFragment(), packagePartType);
+                        PackageContext context = state.getRootContext().intoPackagePart(packageCodegen.getPackageFragment(), packagePartType, file);
                         packageCodegen.generateClassOrObject(classOrObject, context);
                         state.getFactory().asList();
                     }

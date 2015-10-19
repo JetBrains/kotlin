@@ -162,7 +162,7 @@ public class MultifileClassCodegen(
         var generatePart = false
         val partClassInfo = state.fileClassesProvider.getFileClassInfo(file)
         val partType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(partClassInfo.fileClassFqName)
-        val partContext = state.rootContext.intoMultifileClassPart(packageFragment, facadeClassType, partType)
+        val partContext = state.rootContext.intoMultifileClassPart(packageFragment, facadeClassType, partType, file)
 
         for (declaration in file.declarations) {
             if (declaration is JetProperty || declaration is JetNamedFunction) {

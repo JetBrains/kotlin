@@ -20,18 +20,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.org.objectweb.asm.Type;
 
-public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor> implements DelegatingToPartContext {
+public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor> implements DelegatingToPartContext, FacadePartWithSourceFile {
     private final Type packagePartType;
+    @Nullable private JetFile sourceFile;
 
     public PackageContext(
             @NotNull PackageFragmentDescriptor contextDescriptor,
             @NotNull CodegenContext parent,
-            @Nullable Type packagePartType
+            @Nullable Type packagePartType,
+            @Nullable JetFile sourceFile
     ) {
         super(contextDescriptor, OwnerKind.PACKAGE, parent, null, null, null);
         this.packagePartType = packagePartType;
+        this.sourceFile = sourceFile;
     }
 
     @Override
@@ -48,5 +52,11 @@ public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor>
     @Override
     public Type getImplementationOwnerClassType() {
         return packagePartType;
+    }
+
+    @Nullable
+    @Override
+    public JetFile getSourceFile() {
+        return sourceFile;
     }
 }
