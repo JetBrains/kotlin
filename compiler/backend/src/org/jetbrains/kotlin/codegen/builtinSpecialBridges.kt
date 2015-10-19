@@ -109,39 +109,39 @@ private fun findAllReachableDeclarations(functionDescriptor: FunctionDescriptor)
 private fun needGenerateSpecialBridge(
         functionDescriptor: FunctionDescriptor,
         reachableDeclarations: Collection<FunctionDescriptor>,
-        specialCallableDescriptor: CallableDescriptor
+        specialCallableDescriptor: CallableMemberDescriptor
 ): Boolean {
     val classDescriptor = functionDescriptor.containingDeclaration as ClassDescriptor
+    return !classDescriptor.hasRealKotlinSuperClassWithOverrideOf(specialCallableDescriptor)
+            && specialCallableDescriptor.modality != Modality.FINAL
+            && reachableDeclarations.none { it.containingDeclaration is JavaClassDescriptor && it.modality == Modality.FINAL }
+}
+
+private fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
+        specialCallableDescriptor: CallableDescriptor
+): Boolean {
     val builtinContainerDefaultType = (specialCallableDescriptor.containingDeclaration as ClassDescriptor).defaultType
 
-    var superClassDescriptor = DescriptorUtils.getSuperClassDescriptor(classDescriptor)
+    var superClassDescriptor = DescriptorUtils.getSuperClassDescriptor(this)
 
     while (superClassDescriptor != null) {
-        val implementsBuiltinDeclaration =
-                TypeCheckingProcedure.findCorrespondingSupertype(superClassDescriptor.defaultType, builtinContainerDefaultType) != null
-
         if (superClassDescriptor !is JavaClassDescriptor) {
             // Kotlin class
-            if (implementsBuiltinDeclaration) {
-                if (!functionDescriptor.modality.isOverridable) return false
-                // Generate bridges if it's built-in
+
+            val doesOverrideBuiltinDeclaration =
+                    TypeCheckingProcedure.findCorrespondingSupertype(superClassDescriptor.defaultType, builtinContainerDefaultType) != null
+
+            if (doesOverrideBuiltinDeclaration) {
                 val containingPackageFragment = DescriptorUtils.getParentOfType(superClassDescriptor, PackageFragmentDescriptor::class.java)
-                if (containingPackageFragment === superClassDescriptor.builtIns.builtInsPackageFragment) return true
-                return false
-            }
-        }
-        else {
-            // java super class inherits builtin class and it's declaration is final
-            if (implementsBuiltinDeclaration
-                && reachableDeclarations.any { it.containingDeclaration == superClassDescriptor && it.modality == Modality.FINAL }) {
-                return false
+                if (containingPackageFragment === superClassDescriptor.builtIns.builtInsPackageFragment) return false
+                return true
             }
         }
 
-        superClassDescriptor = DescriptorUtils.getSuperClassDescriptor(superClassDescriptor as ClassDescriptor)
+        superClassDescriptor = DescriptorUtils.getSuperClassDescriptor(superClassDescriptor)
     }
 
-    return true
+    return false
 }
 
 public fun isValueArgumentForCallToMethodWithTypeCheckBarrier(
