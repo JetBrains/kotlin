@@ -74,7 +74,7 @@ public class DeclarationsChecker {
             KtClassOrObject classOrObject = entry.getKey();
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
 
-            checkSupertypesForConsistency(classDescriptor);
+            checkSupertypesForConsistency(classOrObject, classDescriptor);
             checkTypesInClassHeader(classOrObject);
 
             if (classOrObject instanceof KtClass) {
@@ -184,9 +184,26 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkSupertypesForConsistency(@NotNull ClassDescriptor classDescriptor) {
-        Multimap<TypeConstructor, TypeProjection> multimap = SubstitutionUtils
-                .buildDeepSubstitutionMultimap(classDescriptor.getDefaultType());
+    private void checkSupertypesForConsistency(
+            @NotNull KtClassOrObject classOrObject,
+            @NotNull ClassDescriptor classDescriptor
+    ) {
+        checkSupertypesForConsistency(classDescriptor, classOrObject);
+    }
+
+    private void checkSupertypesForConsistency(
+            @NotNull KtTypeParameter typeParameter,
+            @NotNull TypeParameterDescriptor typeParameterDescriptor
+    ) {
+        checkSupertypesForConsistency(typeParameterDescriptor, typeParameter);
+    }
+
+    private void checkSupertypesForConsistency(
+            @NotNull ClassifierDescriptor classifierDescriptor,
+            @NotNull PsiElement sourceElement
+    ) {
+        Multimap<TypeConstructor, TypeProjection> multimap =
+                SubstitutionUtils.buildDeepSubstitutionMultimap(classifierDescriptor.getDefaultType());
         for (Map.Entry<TypeConstructor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
             Collection<TypeProjection> projections = entry.getValue();
             if (projections.size() > 1) {
@@ -204,14 +221,19 @@ public class DeclarationsChecker {
                 if (conflictingTypes.size() > 1) {
                     DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
                     assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
-                    KtClassOrObject psiElement = (KtClassOrObject) DescriptorToSourceUtils.getSourceFromDescriptor(classDescriptor);
-                    assert psiElement != null;
-                    KtDelegationSpecifierList delegationSpecifierList = psiElement.getDelegationSpecifierList();
-                    assert delegationSpecifierList != null;
-                    //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
-                    trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES
-                                         .on(delegationSpecifierList, typeParameterDescriptor, (ClassDescriptor) containingDeclaration,
-                                             conflictingTypes));
+                    if (sourceElement instanceof KtClassOrObject) {
+                        KtDelegationSpecifierList delegationSpecifierList = ((KtClassOrObject) sourceElement).getDelegationSpecifierList();
+                        assert delegationSpecifierList != null;
+                        //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
+                        trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES
+                                             .on(delegationSpecifierList, typeParameterDescriptor, (ClassDescriptor) containingDeclaration,
+                                                 conflictingTypes));
+                    }
+                    else if (sourceElement instanceof KtTypeParameter) {
+                        trace.report(INCONSISTENT_TYPE_PARAMETER_BOUNDS
+                                             .on((KtTypeParameter) sourceElement, typeParameterDescriptor, (ClassDescriptor) containingDeclaration,
+                                                 conflictingTypes));
+                    }
                 }
             }
         }
@@ -361,6 +383,10 @@ public class DeclarationsChecker {
             for (KtTypeParameter typeParameter : typeParameterListOwner.getTypeParameters()) {
                 if (typeParameter.getExtendsBound() != null && hasConstraints(typeParameter, constraints)) {
                     trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAINTS.on(typeParameter));
+                }
+                TypeParameterDescriptor descriptor = trace.get(TYPE_PARAMETER, typeParameter);
+                if (descriptor != null) {
+                    checkSupertypesForConsistency(typeParameter, descriptor);
                 }
             }
         }

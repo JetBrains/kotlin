@@ -325,6 +325,12 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("TypeParameterBounds.kt")
+        public void testTypeParameterBounds() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/TypeParameterBounds.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("UnreachableCode.kt")
         public void testUnreachableCode() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/UnreachableCode.kt");
