@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface KotlinFileFacade {
     @Deprecated
-    int abiVersion();
+    int abiVersion() default 32;
 
     int[] version() default {};
 

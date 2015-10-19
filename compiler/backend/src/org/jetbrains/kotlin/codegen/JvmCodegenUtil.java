@@ -24,7 +24,10 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
-import org.jetbrains.kotlin.codegen.context.*;
+import org.jetbrains.kotlin.codegen.context.CodegenContext;
+import org.jetbrains.kotlin.codegen.context.FacadePartWithSourceFile;
+import org.jetbrains.kotlin.codegen.context.MethodContext;
+import org.jetbrains.kotlin.codegen.context.RootContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -217,7 +220,7 @@ public class JvmCodegenUtil {
         av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmAbi.VERSION.toArray());
 
         // TODO: drop after some time
-        av.visit(JvmAnnotationNames.OLD_ABI_VERSION_FIELD_NAME, JvmAbi.VERSION.getMinor());
+        av.visit(JvmAnnotationNames.OLD_ABI_VERSION_FIELD_NAME, 32);
     }
 
     public static void writeModuleName(@NotNull AnnotationVisitor av, @NotNull GenerationState state) {

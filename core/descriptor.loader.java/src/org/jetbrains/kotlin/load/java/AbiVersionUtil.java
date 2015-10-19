@@ -23,9 +23,8 @@ public final class AbiVersionUtil {
     public static final BinaryVersion INVALID_VERSION = BinaryVersion.create(new int[0]);
 
     public static boolean isAbiVersionCompatible(@NotNull BinaryVersion actual) {
-        // TODO: compare versions according to Semantic Versioning
         return actual.getMajor() == JvmAbi.VERSION.getMajor() &&
-               actual.getMinor() == JvmAbi.VERSION.getMinor();
+               actual.getMinor() <= JvmAbi.VERSION.getMinor();
     }
 
     private AbiVersionUtil() {
