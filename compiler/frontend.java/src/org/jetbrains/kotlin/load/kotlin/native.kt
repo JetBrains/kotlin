@@ -29,14 +29,9 @@ import org.jetbrains.kotlin.resolve.diagnostics.SuppressDiagnosticsByAnnotations
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-private val NATIVE_ANNOTATION_CLASS_NAME = FqName("kotlin.jvm.native")
-
 public fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
     return this is FunctionDescriptor && this.isExternal
-           || annotations.findAnnotation(NATIVE_ANNOTATION_CLASS_NAME) != null
 }
-
-public class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS, NATIVE_ANNOTATION_CLASS_NAME)
 
 public class NativeFunChecker : DeclarationChecker {
     override fun check(
