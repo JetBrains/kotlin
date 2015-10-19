@@ -329,6 +329,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("SyntheticExtensionDeprecated")
+    public void testSyntheticExtensionDeprecated() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/SyntheticExtensionDeprecated/");
+        doTest(fileName);
+    }
+
     @TestMetadata("SyntheticExtensionForGenericClass")
     public void testSyntheticExtensionForGenericClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/SyntheticExtensionForGenericClass/");

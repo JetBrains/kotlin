@@ -1019,7 +1019,16 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
-        return containsAnnotation(declarationDescriptor, FQ_NAMES.deprecated);
+        if (containsAnnotation(declarationDescriptor, FQ_NAMES.deprecated)) return true;
+
+        if (declarationDescriptor instanceof PropertyDescriptor) {
+            boolean isVar = ((PropertyDescriptor) declarationDescriptor).isVar();
+            PropertyGetterDescriptor getter = ((PropertyDescriptor) declarationDescriptor).getGetter();
+            PropertySetterDescriptor setter = ((PropertyDescriptor) declarationDescriptor).getSetter();
+            return getter != null && isDeprecated(getter) && (!isVar || setter != null && isDeprecated(setter));
+        }
+
+        return false;
     }
 
     public static boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
