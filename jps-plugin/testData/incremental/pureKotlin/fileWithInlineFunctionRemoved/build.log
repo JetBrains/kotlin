@@ -12,4 +12,4 @@ Compiling files:
 src/usage.kt
 End of files
 COMPILATION FAILED
-Unresolved reference: f
+Unresolved reference: inline
