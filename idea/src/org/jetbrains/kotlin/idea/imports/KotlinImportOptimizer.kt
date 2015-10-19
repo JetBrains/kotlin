@@ -106,6 +106,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                     if (!target.isExtension) { // for non-extension targets, count only non-qualified simple name usages
                         if (element !is JetNameReferenceExpression) continue
                         if (CallTypeAndReceiver.detect(element).receiver != null) continue
+                        if (element.parent is JetThisExpression || element.parent is JetSuperExpression) continue // TODO: it's a bad design of PSI tree, we should change it
                     }
 
                     val importableDescriptor = target.getImportableDescriptor()

@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.references.JetMultiReference
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -53,7 +54,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -156,8 +156,8 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
 
                 if (!descriptor.isExtension) {
                     if (element !is JetNameReferenceExpression) continue
-                    if (element.getIdentifier() == null) continue // skip 'this' etc
-                    if (element.getReceiverExpression() != null) continue
+                    if (CallTypeAndReceiver.detect(element).receiver != null) continue
+                    if (element.parent is JetThisExpression || element.parent is JetSuperExpression) continue // TODO: it's a bad design of PSI tree, we should change it
                 }
 
                 val fqName = descriptor.importableFqName ?: continue

@@ -209,6 +209,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("ThisAndSuper.kt")
+    public void testThisAndSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/ThisAndSuper.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("UnusedImports.kt")
     public void testUnusedImports() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/UnusedImports.kt");
