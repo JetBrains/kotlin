@@ -17,7 +17,6 @@ End of files
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
 out/production/module/test/ConstKt.class
-out/production/module/test/TestPackage.class
 out/production/module/test/Usage.class
 End of files
 Compiling files:

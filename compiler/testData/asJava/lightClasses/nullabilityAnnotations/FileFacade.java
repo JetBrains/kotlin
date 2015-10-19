@@ -1,4 +1,4 @@
-public final class _DefaultPackageKt {
+public final class FileFacadeKt {
     @org.jetbrains.annotations.Nullable
     static final java.lang.String nullableVal = "";
     @org.jetbrains.annotations.Nullable
@@ -7,9 +7,7 @@ public final class _DefaultPackageKt {
     static final java.lang.String notNullVal = "";
     @org.jetbrains.annotations.NotNull
     static java.lang.String notNullVar;
-    @org.jetbrains.annotations.NotNull
     static final java.lang.String privateNn = "";
-    @org.jetbrains.annotations.Nullable
     static final java.lang.String privateN = "";
 
     @org.jetbrains.annotations.NotNull
@@ -52,7 +50,13 @@ public final class _DefaultPackageKt {
     @org.jetbrains.annotations.NotNull
     public static final java.lang.String getNotNullValWithGet() { /* compiled code */ }
 
-    @kotlin.jvm.internal.KotlinDelegatedMethod(implementationClassName = "_DefaultPackageKt")
+    @org.jetbrains.annotations.Nullable
+    @org.jetbrains.annotations.NotNull
+    public static final java.lang.String getNotNullVarWithGetSet() { /* compiled code */ }
+
+    @org.jetbrains.annotations.Nullable
+    public static final void setNotNullVarWithGetSet(@org.jetbrains.annotations.NotNull java.lang.String v) { /* compiled code */ }
+
     @org.jetbrains.annotations.NotNull
     @org.jetbrains.annotations.Nullable
     public static final java.lang.String getNullableValWithGet() { /* compiled code */ }
@@ -64,9 +68,5 @@ public final class _DefaultPackageKt {
     @org.jetbrains.annotations.NotNull
     public static final void setNullableVarWithGetSet(@org.jetbrains.annotations.Nullable java.lang.String v) { /* compiled code */ }
 
-    @org.jetbrains.annotations.NotNull
-    static final java.lang.String getPrivateNn() { /* compiled code */ }
-
-    @org.jetbrains.annotations.Nullable
-    public static final java.lang.String nullableWithNN() { /* compiled code */ }
+    private static final java.lang.String privateFun(java.lang.String a, java.lang.String b) { /* compiled code */ }
 }

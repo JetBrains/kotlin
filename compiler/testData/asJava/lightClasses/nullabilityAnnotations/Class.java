@@ -7,6 +7,8 @@ public final class Class {
     private final java.lang.String notNullVal = "";
     @org.jetbrains.annotations.NotNull
     private java.lang.String notNullVar;
+    private final java.lang.String privateNN = "";
+    private final java.lang.String privateN = "";
 
     @org.jetbrains.annotations.NotNull
     public final java.lang.String notNull(@org.jetbrains.annotations.NotNull java.lang.String a) { /* compiled code */ }
