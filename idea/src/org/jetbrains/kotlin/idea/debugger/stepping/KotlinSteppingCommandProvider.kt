@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.stepping
 
+import com.intellij.debugger.NoDataException
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.SuspendContextImpl
@@ -354,7 +355,13 @@ private fun SuspendContextImpl.getNextPositionWithFilter(
         skip: (JetFile, Int) -> Boolean
 ): XSourcePositionImpl? {
     for (location in locations) {
-        val file = this.debugProcess.positionManager.getSourcePosition(location)?.file as? JetFile ?: continue
+        val file = try {
+            this.debugProcess.positionManager.getSourcePosition(location)?.file as? JetFile
+        }
+        catch(e: NoDataException) {
+            null
+        } ?: continue
+
         val currentLine = location.lineNumber() - 1
         val lineStartOffset = file.getLineStartOffset(currentLine) ?: continue
         if (skip(file, lineStartOffset)) continue
