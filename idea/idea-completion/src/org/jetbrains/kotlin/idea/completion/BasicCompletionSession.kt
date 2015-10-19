@@ -26,7 +26,6 @@ import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
-import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -56,29 +54,16 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              resultSet: CompletionResultSet)
 : CompletionSession(configuration, parameters, resultSet) {
 
-    private enum class CompletionKind(
-            val descriptorKindFilter: DescriptorKindFilter?,
-            val classKindFilter: ((ClassKind) -> Boolean)?
-    ) {
-        ALL(
-                descriptorKindFilter = DescriptorKindFilter(DescriptorKindFilter.ALL_KINDS_MASK),
-                classKindFilter = { it != ClassKind.ENUM_ENTRY }
-        ),
+    private enum class CompletionKind(val descriptorKindFilter: DescriptorKindFilter?) {
+        ALL(descriptorKindFilter = DescriptorKindFilter.ALL),
 
-        TYPES(
-                descriptorKindFilter = DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry,
-                classKindFilter = { it != ClassKind.ENUM_ENTRY }
-        ),
+        KEYWORDS_ONLY(descriptorKindFilter = null),
 
-        KEYWORDS_ONLY(descriptorKindFilter = null, classKindFilter = null),
+        NAMED_ARGUMENTS_ONLY(descriptorKindFilter = null),
 
-        NAMED_ARGUMENTS_ONLY(descriptorKindFilter = null, classKindFilter = null),
+        PARAMETER_NAME(descriptorKindFilter = null),
 
-        PARAMETER_NAME(descriptorKindFilter = null, classKindFilter = null),
-
-        SUPER_QUALIFIER(descriptorKindFilter = DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, classKindFilter = null),
-
-        ANNOTATION(descriptorKindFilter = CallType.ANNOTATION.descriptorKindFilter, classKindFilter = { it == ClassKind.ANNOTATION_CLASS })
+        SUPER_QUALIFIER(descriptorKindFilter = DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
     }
 
     private val completionKind = detectCompletionKind()
@@ -108,10 +93,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         get() = smartCompletion?.expectedInfos ?: emptyList()
 
     private fun detectCompletionKind(): CompletionKind {
-        if (nameExpression != null && NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
-            return CompletionKind.NAMED_ARGUMENTS_ONLY
-        }
-
         if (nameExpression == null) {
             val parameter = position.getParent() as? KtParameter
             return if (parameter != null && position == parameter.getNameIdentifier())
@@ -120,22 +101,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 CompletionKind.KEYWORDS_ONLY
         }
 
-        if (callTypeAndReceiver is CallTypeAndReceiver.ANNOTATION) {
-            return CompletionKind.ANNOTATION // we need special completion kind for it to filter non-imported classes with classKindFilter
+        if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
+            return CompletionKind.NAMED_ARGUMENTS_ONLY
         }
 
-        // Check that completion in the type annotation context and if there's a qualified
-        // expression we are at first of it
-        val typeReference = position.getStrictParentOfType<KtTypeReference>()
-        if (typeReference != null) {
-            if (typeReference.parent is KtSuperExpression) {
-                return CompletionKind.SUPER_QUALIFIER
-            }
-
-            val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<KtSimpleNameExpression>())
-            if (firstPartReference == nameExpression) {
-                return CompletionKind.TYPES
-            }
+        if (nameExpression.getStrictParentOfType<KtSuperExpression>() != null) {
+            return CompletionKind.SUPER_QUALIFIER
         }
 
         return CompletionKind.ALL
@@ -335,9 +306,15 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         flushToResultSet()
 
         if (shouldRunTopLevelCompletion()) {
-            completionKind.classKindFilter?.let { addAllClasses(it) }
-
             if (completionKind == CompletionKind.ALL) {
+                val classKindFilter: ((ClassKind) -> Boolean)?
+                when (callTypeAndReceiver) {
+                    is CallTypeAndReceiver.ANNOTATION -> classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
+                    is CallTypeAndReceiver.DEFAULT, is CallTypeAndReceiver.TYPE -> classKindFilter = { it != ClassKind.ENUM_ENTRY }
+                    else -> classKindFilter = null
+                }
+                classKindFilter?.let { addAllClasses(it) }
+
                 collector.addDescriptorElements(getTopLevelCallables(), notImported = true)
             }
         }

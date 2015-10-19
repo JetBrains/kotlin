@@ -51,7 +51,7 @@ public sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: D
 
     object PACKAGE_DIRECTIVE : CallType<KtExpression?>(DescriptorKindFilter.PACKAGES)
 
-    object TYPE : CallType<KtExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK))
+    object TYPE : CallType<KtExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry)
 
     object DELEGATE : CallType<KtExpression?>(DescriptorKindFilter.FUNCTIONS)
 
