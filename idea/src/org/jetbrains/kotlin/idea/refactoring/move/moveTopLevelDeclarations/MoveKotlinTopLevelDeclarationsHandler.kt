@@ -51,9 +51,9 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
             return false
         }
 
-        val elementsToSearch = elements.mapTo(LinkedHashSet()) { it as JetNamedDeclaration }
+        val elementsToSearch = elements.mapTo(LinkedHashSet()) { it as KtNamedDeclaration }
 
-        if (elementsToSearch.any { it.parent !is JetFile }) {
+        if (elementsToSearch.any { it.parent !is KtFile }) {
             val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is only supported for top-level declarations")
             CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
             return true
@@ -63,8 +63,8 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
         val targetDirectory = MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
         val searchInComments = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_IN_COMMENTS
         val searchInText = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_FOR_TEXT
-        val targetFile = targetContainer as? JetFile
-        val moveToPackage = targetContainer !is JetFile
+        val targetFile = targetContainer as? KtFile
+        val moveToPackage = targetContainer !is KtFile
 
         MoveKotlinTopLevelDeclarationsDialog(
                 project, elementsToSearch, targetPackageName, targetDirectory, targetFile, moveToPackage, searchInComments, searchInText, callback
@@ -78,8 +78,8 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
         if (getSourceDirectories(elements).singleOrNull() == null) return false
 
         return elements.all { e ->
-            if (e is JetClass || (e is JetObjectDeclaration && !e.isObjectLiteral()) || e is JetNamedFunction || e is JetProperty) {
-                (editorMode || e.parent is JetFile) && e.canRefactor()
+            if (e is KtClass || (e is KtObjectDeclaration && !e.isObjectLiteral()) || e is KtNamedFunction || e is KtProperty) {
+                (editorMode || e.parent is KtFile) && e.canRefactor()
             }
             else false
         }
@@ -90,7 +90,7 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     }
 
     override fun isValidTarget(psiElement: PsiElement?, sources: Array<out PsiElement>): Boolean {
-        return psiElement is PsiPackage || (psiElement is PsiDirectory && psiElement.getPackage() != null) || psiElement is JetFile
+        return psiElement is PsiPackage || (psiElement is PsiDirectory && psiElement.getPackage() != null) || psiElement is KtFile
     }
 
     override fun doMove(project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?) {

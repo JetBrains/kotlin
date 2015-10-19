@@ -31,14 +31,14 @@ import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetIntent
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.*
 
 interface J2kPostProcessing {
-    fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)?
+    fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)?
 }
 
 object J2KPostProcessingRegistrar {
@@ -63,44 +63,44 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(ReplaceGetIntention(), additionalChecker = ExplicitGetInspection.additionalChecker) { applyTo(it) }
         registerIntentionBasedProcessing(AddOperatorModifierIntention()) { applyTo(it) }
 
-        registerDiagnosticBasedProcessing<JetBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
+        registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
             val expression = RemoveRightPartOfBinaryExpressionFix(element, "").invoke()
 
-            val variable = expression.parent as? JetProperty
+            val variable = expression.parent as? KtProperty
             if (variable != null && expression == variable.initializer && variable.isLocal) {
                 val refs = ReferencesSearch.search(variable, LocalSearchScope(variable.containingFile)).findAll()
                 for (ref in refs) {
-                    val usage = ref.element as? JetSimpleNameExpression ?: continue
+                    val usage = ref.element as? KtSimpleNameExpression ?: continue
                     usage.replace(expression)
                 }
                 variable.delete()
             }
         }
 
-        registerDiagnosticBasedProcessing<JetTypeProjection>(Errors.REDUNDANT_PROJECTION) { element, diagnostic ->
+        registerDiagnosticBasedProcessing<KtTypeProjection>(Errors.REDUNDANT_PROJECTION) { element, diagnostic ->
             val fix = RemoveModifierFix.createRemoveProjectionFactory(true).createActions(diagnostic).single() as RemoveModifierFix
             fix.invoke()
         }
 
-        registerDiagnosticBasedProcessing<JetSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, diagnostic ->
-            val exclExclExpr = element.parent as JetUnaryExpression
+        registerDiagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, diagnostic ->
+            val exclExclExpr = element.parent as KtUnaryExpression
             exclExclExpr.replace(exclExclExpr.baseExpression!!)
         }
 
         registerDiagnosticBasedProcessingFactory(
                 Errors.VAL_REASSIGNMENT,
-                fun (element: JetSimpleNameExpression, diagnostic: Diagnostic): (() -> Unit)? {
-                    val property = element.mainReference.resolve() as? JetProperty ?: return null
+                fun (element: KtSimpleNameExpression, diagnostic: Diagnostic): (() -> Unit)? {
+                    val property = element.mainReference.resolve() as? KtProperty ?: return null
                     return {
                         if (!property.isVar) {
-                            property.valOrVarKeyword.replace(JetPsiFactory(element.project).createVarKeyword())
+                            property.valOrVarKeyword.replace(KtPsiFactory(element.project).createVarKeyword())
                         }
                     }
                 }
         )
     }
 
-    private inline fun <reified TElement : JetElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
+    private inline fun <reified TElement : KtElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
             intention: TIntention,
             crossinline apply: TIntention.(TElement) -> Unit
     ) {
@@ -108,13 +108,13 @@ object J2KPostProcessingRegistrar {
         return registerIntentionBasedProcessing<TElement, TIntention>(intention, { true }, apply)
     }
 
-    private inline fun <reified TElement : JetElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
+    private inline fun <reified TElement : KtElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
             intention: TIntention,
             noinline additionalChecker: (TElement) -> Boolean,
             crossinline apply: TIntention.(TElement) -> Unit
     ) {
         _processings.add(object : J2kPostProcessing {
-            override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
                 if (!javaClass<TElement>().isInstance(element)) return null
                 val tElement = element as TElement
                 if (intention.applicabilityRange(tElement) == null) return null
@@ -124,19 +124,19 @@ object J2KPostProcessingRegistrar {
         })
     }
 
-    private inline fun <reified TElement : JetElement> registerDiagnosticBasedProcessing(
+    private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessing(
             diagnosticFactory: DiagnosticFactory<*>,
             crossinline fix: (TElement, Diagnostic) -> Unit
     ) {
         registerDiagnosticBasedProcessingFactory(diagnosticFactory) { element: TElement, diagnostic: Diagnostic -> { fix(element, diagnostic) } }
     }
 
-    private inline fun <reified TElement : JetElement> registerDiagnosticBasedProcessingFactory(
+    private inline fun <reified TElement : KtElement> registerDiagnosticBasedProcessingFactory(
             diagnosticFactory: DiagnosticFactory<*>,
             crossinline fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
     ) {
         _processings.add(object : J2kPostProcessing {
-            override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
                 if (!javaClass<TElement>().isInstance(element)) return null
                 val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory == diagnosticFactory } ?: return null
                 return fixFactory(element as TElement, diagnostic)
@@ -145,16 +145,16 @@ object J2KPostProcessingRegistrar {
     }
 
     private class RemoveExplicitTypeArgumentsProcessing : J2kPostProcessing {
-        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is JetTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) return null
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) return null
 
             return { element.delete() }
         }
     }
 
     private class RemoveRedundantOverrideVisibilityProcessing : J2kPostProcessing {
-        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is JetCallableDeclaration || !element.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return null
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtCallableDeclaration || !element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
             val modifier = element.visibilityModifierType() ?: return null
             return { element.setVisibility(modifier) }
         }
@@ -163,8 +163,8 @@ object J2KPostProcessingRegistrar {
     private class MoveLambdaOutsideParenthesesProcessing : J2kPostProcessing {
         private val intention = MoveLambdaOutsideParenthesesIntention()
 
-        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is JetCallExpression) return null
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtCallExpression) return null
             val literalArgument = element.valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral() ?: return null
             if (!intention.isApplicableTo(element, literalArgument.textOffset)) return null
             return { intention.applyTo(element) }
@@ -174,8 +174,8 @@ object J2KPostProcessingRegistrar {
     private class ConvertToStringTemplateProcessing : J2kPostProcessing {
         private val intention = ConvertToStringTemplateIntention()
 
-        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element is JetBinaryExpression && intention.isApplicableTo(element) && intention.shouldSuggestToConvert(element)) {
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element is KtBinaryExpression && intention.isApplicableTo(element) && intention.shouldSuggestToConvert(element)) {
                 return { intention.applyTo(element) }
             }
             else {
@@ -187,16 +187,16 @@ object J2KPostProcessingRegistrar {
     private class UsePropertyAccessSyntaxProcessing : J2kPostProcessing {
         private val intention = UsePropertyAccessSyntaxIntention()
 
-        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is JetCallExpression) return null
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtCallExpression) return null
             val propertyName = intention.detectPropertyNameToUse(element) ?: return null
             return { intention.applyTo(element, propertyName) }
         }
     }
 
     private class RemoveRedundantSamAdaptersProcessing : J2kPostProcessing {
-        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is JetCallExpression) return null
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtCallExpression) return null
 
             val expressions = RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
             if (expressions.isEmpty()) return null
@@ -211,8 +211,8 @@ object J2KPostProcessingRegistrar {
     private class AccessorBodyToExpression : J2kPostProcessing {
         private val intention = ConvertToExpressionBodyIntention()
 
-        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is JetPropertyAccessor) return null
+        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is KtPropertyAccessor) return null
             if (!intention.isApplicableTo(element)) return null
             return { intention.applyTo(element, true) }
         }

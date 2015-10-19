@@ -30,13 +30,13 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 
-public class AddOpenModifierToClassDeclarationFix extends KotlinQuickFixAction<JetTypeReference> {
-    private JetClass classDeclaration;
+public class AddOpenModifierToClassDeclarationFix extends KotlinQuickFixAction<KtTypeReference> {
+    private KtClass classDeclaration;
 
-    public AddOpenModifierToClassDeclarationFix(@NotNull JetTypeReference typeReference) {
+    public AddOpenModifierToClassDeclarationFix(@NotNull KtTypeReference typeReference) {
         super(typeReference);
     }
 
@@ -46,18 +46,18 @@ public class AddOpenModifierToClassDeclarationFix extends KotlinQuickFixAction<J
             return false;
         }
 
-        JetSimpleNameExpression referenceExpression = PsiTreeUtil.findChildOfType(getElement(), JetSimpleNameExpression.class);
+        KtSimpleNameExpression referenceExpression = PsiTreeUtil.findChildOfType(getElement(), KtSimpleNameExpression.class);
         if (referenceExpression == null) {
             return false;
         }
 
         PsiReference reference = ReferenceUtilKt.getMainReference(referenceExpression);
         PsiElement target = reference.resolve();
-        if (target instanceof JetSecondaryConstructor) {
-            target = ((JetSecondaryConstructor) target).getContainingClassOrObject();
+        if (target instanceof KtSecondaryConstructor) {
+            target = ((KtSecondaryConstructor) target).getContainingClassOrObject();
         }
-        if (target instanceof JetClass && QuickFixUtil.canModifyElement(target)) {
-            classDeclaration = (JetClass) target;
+        if (target instanceof KtClass && QuickFixUtil.canModifyElement(target)) {
+            classDeclaration = (KtClass) target;
             return !(classDeclaration.isEnum() || classDeclaration.isInterface());
         }
 
@@ -77,8 +77,8 @@ public class AddOpenModifierToClassDeclarationFix extends KotlinQuickFixAction<J
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        classDeclaration.addModifier(JetTokens.OPEN_KEYWORD);
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        classDeclaration.addModifier(KtTokens.OPEN_KEYWORD);
     }
 
     @NotNull
@@ -87,7 +87,7 @@ public class AddOpenModifierToClassDeclarationFix extends KotlinQuickFixAction<J
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                JetTypeReference typeReference = QuickFixUtil.getParentElementOfType(diagnostic, JetTypeReference.class);
+                KtTypeReference typeReference = QuickFixUtil.getParentElementOfType(diagnostic, KtTypeReference.class);
                 return typeReference == null ? null : new AddOpenModifierToClassDeclarationFix(typeReference);
             }
         };

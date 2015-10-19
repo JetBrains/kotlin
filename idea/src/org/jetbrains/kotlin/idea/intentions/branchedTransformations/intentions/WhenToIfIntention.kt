@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpression
 import org.jetbrains.kotlin.psi.*
 
-public class WhenToIfIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Replace 'when' with 'if'"), LowPriorityAction {
-    override fun applicabilityRange(element: JetWhenExpression): TextRange? {
+public class WhenToIfIntention : JetSelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Replace 'when' with 'if'"), LowPriorityAction {
+    override fun applicabilityRange(element: KtWhenExpression): TextRange? {
         val entries = element.getEntries()
         if (entries.isEmpty()) return null
         val lastEntry = entries.last()
@@ -32,8 +32,8 @@ public class WhenToIfIntention : JetSelfTargetingRangeIntention<JetWhenExpressio
         return element.getWhenKeyword().getTextRange()
     }
 
-    override fun applyTo(element: JetWhenExpression, editor: Editor) {
-        val factory = JetPsiFactory(element)
+    override fun applyTo(element: KtWhenExpression, editor: Editor) {
+        val factory = KtPsiFactory(element)
         val ifExpression = factory.buildExpression {
             val entries = element.getEntries()
             for ((i, entry) in entries.withIndex()) {
@@ -60,7 +60,7 @@ public class WhenToIfIntention : JetSelfTargetingRangeIntention<JetWhenExpressio
         element.replace(ifExpression)
     }
 
-    private fun JetPsiFactory.combineWhenConditions(conditions: Array<JetWhenCondition>, subject: JetExpression?): JetExpression? {
+    private fun KtPsiFactory.combineWhenConditions(conditions: Array<KtWhenCondition>, subject: KtExpression?): KtExpression? {
         when (conditions.size()) {
             0 -> return null
 

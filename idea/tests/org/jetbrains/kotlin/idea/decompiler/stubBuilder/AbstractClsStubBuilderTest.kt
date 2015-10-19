@@ -25,7 +25,7 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
-import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder
+import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -44,7 +44,7 @@ public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCa
         val stubTreeFromCls = KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(classFile))!!
         myFixture.configureFromExistingVirtualFile(classFile)
         val psiFile = myFixture.getFile()
-        val stubTreeFromDecompiledText = JetFileStubBuilder().buildStubTree(psiFile)
+        val stubTreeFromDecompiledText = KtFileStubBuilder().buildStubTree(psiFile)
         val expectedText = stubTreeFromDecompiledText.serializeToString()
         Assert.assertEquals(expectedText, stubTreeFromCls.serializeToString())
         if (txtFile != null) {

@@ -21,7 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 
 public object StaticFacadeIndexUtil {
 
@@ -31,7 +31,7 @@ public object StaticFacadeIndexUtil {
             partFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
-    ) : Collection<JetFile> =
+    ) : Collection<KtFile> =
             PackagePartClassUtils.getFilesWithCallables(
                     JetFileFacadeFqNameIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
 
@@ -39,6 +39,6 @@ public object StaticFacadeIndexUtil {
             partFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
-    ): Collection<JetFile> =
+    ): Collection<KtFile> =
             JetMultifileClassPartIndex.INSTANCE.get(partFqName.asString(), project, searchScope)
 }

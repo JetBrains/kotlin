@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.psi.JetReferenceExpression;
+import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -34,15 +34,15 @@ import static org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE_WRONG
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
 public class TracingStrategyImpl extends AbstractTracingStrategy {
-    private final JetReferenceExpression reference;
+    private final KtReferenceExpression reference;
 
-    private TracingStrategyImpl(@NotNull JetReferenceExpression reference, @NotNull Call call) {
+    private TracingStrategyImpl(@NotNull KtReferenceExpression reference, @NotNull Call call) {
         super(reference, call);
         this.reference = reference;
     }
 
     @NotNull
-    public static TracingStrategy create(@NotNull JetReferenceExpression reference, @NotNull Call call) {
+    public static TracingStrategy create(@NotNull KtReferenceExpression reference, @NotNull Call call) {
         return new TracingStrategyImpl(reference, call);
     }
 

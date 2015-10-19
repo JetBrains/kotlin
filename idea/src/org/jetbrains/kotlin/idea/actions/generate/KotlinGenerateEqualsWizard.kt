@@ -27,8 +27,8 @@ import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.containers.HashMap
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isInheritable
 import org.jetbrains.kotlin.utils.keysToMap
 import javax.swing.JLabel
@@ -36,21 +36,21 @@ import javax.swing.JPanel
 
 class KotlinGenerateEqualsWizard(
         project: Project,
-        klass: JetClass,
-        properties: List<JetNamedDeclaration>,
+        klass: KtClass,
+        properties: List<KtNamedDeclaration>,
         needEquals: Boolean,
         needHashCode: Boolean
-) : AbstractGenerateEqualsWizard<JetClass, JetNamedDeclaration, KotlinMemberInfo>(
+) : AbstractGenerateEqualsWizard<KtClass, KtNamedDeclaration, KotlinMemberInfo>(
         project, KotlinGenerateEqualsWizard.BuilderImpl(klass, properties, needEquals, needHashCode)
 ) {
-    private object MemberInfoModelImpl : AbstractMemberInfoModel<JetNamedDeclaration, KotlinMemberInfo>()
+    private object MemberInfoModelImpl : AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>()
 
     private class BuilderImpl(
-            private val klass: JetClass,
-            properties: List<JetNamedDeclaration>,
+            private val klass: KtClass,
+            properties: List<KtNamedDeclaration>,
             needEquals: Boolean,
             needHashCode: Boolean
-    ) : AbstractGenerateEqualsWizard.Builder<JetClass, JetNamedDeclaration, KotlinMemberInfo>() {
+    ) : AbstractGenerateEqualsWizard.Builder<KtClass, KtNamedDeclaration, KotlinMemberInfo>() {
         private val equalsPanel: KotlinMemberSelectionPanel?
         private val hashCodePanel: KotlinMemberSelectionPanel?
 
@@ -72,7 +72,7 @@ class KotlinGenerateEqualsWizard(
             } else null
         }
 
-        private fun createMemberInfo(it: JetNamedDeclaration) = KotlinMemberInfo(it).apply { isChecked = true }
+        private fun createMemberInfo(it: KtNamedDeclaration) = KotlinMemberInfo(it).apply { isChecked = true }
 
         override fun getPsiClass() = klass
 
@@ -80,7 +80,7 @@ class KotlinGenerateEqualsWizard(
 
         override fun getFieldsToHashCode() = membersToHashCode
 
-        override fun getFieldsToNonNull() = HashMap<JetNamedDeclaration, KotlinMemberInfo>()
+        override fun getFieldsToNonNull() = HashMap<KtNamedDeclaration, KotlinMemberInfo>()
 
         override fun getEqualsPanel() = equalsPanel
 

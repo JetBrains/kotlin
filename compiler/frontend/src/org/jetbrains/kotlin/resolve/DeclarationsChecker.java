@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
@@ -64,27 +64,27 @@ public class DeclarationsChecker {
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
-        for (JetFile file : bodiesResolveContext.getFiles()) {
+        for (KtFile file : bodiesResolveContext.getFiles()) {
             checkModifiersAndAnnotationsInPackageDirective(file);
             annotationChecker.check(file, trace, null);
         }
 
-        Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = bodiesResolveContext.getDeclaredClasses();
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : classes.entrySet()) {
-            JetClassOrObject classOrObject = entry.getKey();
+        Map<KtClassOrObject, ClassDescriptorWithResolutionScopes> classes = bodiesResolveContext.getDeclaredClasses();
+        for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : classes.entrySet()) {
+            KtClassOrObject classOrObject = entry.getKey();
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
 
             checkSupertypesForConsistency(classDescriptor);
             checkTypesInClassHeader(classOrObject);
 
-            if (classOrObject instanceof JetClass) {
-                JetClass jetClass = (JetClass) classOrObject;
-                checkClass(bodiesResolveContext, jetClass, classDescriptor);
+            if (classOrObject instanceof KtClass) {
+                KtClass ktClass = (KtClass) classOrObject;
+                checkClass(bodiesResolveContext, ktClass, classDescriptor);
                 descriptorResolver.checkNamesInConstraints(
-                        jetClass, classDescriptor, classDescriptor.getScopeForClassHeaderResolution(), trace);
+                        ktClass, classDescriptor, classDescriptor.getScopeForClassHeaderResolution(), trace);
             }
-            else if (classOrObject instanceof JetObjectDeclaration) {
-                checkObject((JetObjectDeclaration) classOrObject, classDescriptor);
+            else if (classOrObject instanceof KtObjectDeclaration) {
+                checkObject((KtObjectDeclaration) classOrObject, classDescriptor);
             }
 
             checkPrimaryConstructor(classOrObject, classDescriptor);
@@ -94,9 +94,9 @@ public class DeclarationsChecker {
             checkClassExposedType(classOrObject, classDescriptor);
         }
 
-        Map<JetNamedFunction, SimpleFunctionDescriptor> functions = bodiesResolveContext.getFunctions();
-        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : functions.entrySet()) {
-            JetNamedFunction function = entry.getKey();
+        Map<KtNamedFunction, SimpleFunctionDescriptor> functions = bodiesResolveContext.getFunctions();
+        for (Map.Entry<KtNamedFunction, SimpleFunctionDescriptor> entry : functions.entrySet()) {
+            KtNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
 
             checkFunction(function, functionDescriptor);
@@ -104,9 +104,9 @@ public class DeclarationsChecker {
             identifierChecker.checkDeclaration(function, trace);
         }
 
-        Map<JetProperty, PropertyDescriptor> properties = bodiesResolveContext.getProperties();
-        for (Map.Entry<JetProperty, PropertyDescriptor> entry : properties.entrySet()) {
-            JetProperty property = entry.getKey();
+        Map<KtProperty, PropertyDescriptor> properties = bodiesResolveContext.getProperties();
+        for (Map.Entry<KtProperty, PropertyDescriptor> entry : properties.entrySet()) {
+            KtProperty property = entry.getKey();
             PropertyDescriptor propertyDescriptor = entry.getValue();
 
             checkProperty(property, propertyDescriptor);
@@ -114,30 +114,30 @@ public class DeclarationsChecker {
             identifierChecker.checkDeclaration(property, trace);
         }
 
-        for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : bodiesResolveContext.getSecondaryConstructors().entrySet()) {
+        for (Map.Entry<KtSecondaryConstructor, ConstructorDescriptor> entry : bodiesResolveContext.getSecondaryConstructors().entrySet()) {
             ConstructorDescriptor constructorDescriptor = entry.getValue();
-            JetSecondaryConstructor declaration = entry.getKey();
+            KtSecondaryConstructor declaration = entry.getKey();
             checkConstructorDeclaration(constructorDescriptor, declaration);
             checkFunctionExposedType(declaration, constructorDescriptor);
         }
     }
 
-    private void checkConstructorDeclaration(ConstructorDescriptor constructorDescriptor, JetDeclaration declaration) {
+    private void checkConstructorDeclaration(ConstructorDescriptor constructorDescriptor, KtDeclaration declaration) {
         modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor);
         identifierChecker.checkDeclaration(declaration, trace);
     }
 
-    private void checkModifiersAndAnnotationsInPackageDirective(JetFile file) {
-        JetPackageDirective packageDirective = file.getPackageDirective();
+    private void checkModifiersAndAnnotationsInPackageDirective(KtFile file) {
+        KtPackageDirective packageDirective = file.getPackageDirective();
         if (packageDirective == null) return;
 
-        JetModifierList modifierList = packageDirective.getModifierList();
+        KtModifierList modifierList = packageDirective.getModifierList();
         if (modifierList == null) return;
 
-        for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
-            JetConstructorCalleeExpression calleeExpression = annotationEntry.getCalleeExpression();
+        for (KtAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
+            KtConstructorCalleeExpression calleeExpression = annotationEntry.getCalleeExpression();
             if (calleeExpression != null) {
-                JetReferenceExpression reference = calleeExpression.getConstructorReferenceExpression();
+                KtReferenceExpression reference = calleeExpression.getConstructorReferenceExpression();
                 if (reference != null) {
                     trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
                 }
@@ -147,37 +147,37 @@ public class DeclarationsChecker {
         ModifierCheckerCore.INSTANCE$.check(packageDirective, trace, null);
     }
 
-    private void checkTypesInClassHeader(@NotNull JetClassOrObject classOrObject) {
-        for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
+    private void checkTypesInClassHeader(@NotNull KtClassOrObject classOrObject) {
+        for (KtDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
             checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
         }
 
-        if (!(classOrObject instanceof JetClass)) return;
-        JetClass jetClass = (JetClass) classOrObject;
+        if (!(classOrObject instanceof KtClass)) return;
+        KtClass ktClass = (KtClass) classOrObject;
 
-        for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
+        for (KtTypeParameter jetTypeParameter : ktClass.getTypeParameters()) {
             checkBoundsForTypeInClassHeader(jetTypeParameter.getExtendsBound());
             checkFinalUpperBounds(jetTypeParameter.getExtendsBound());
         }
 
-        for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
+        for (KtTypeConstraint constraint : ktClass.getTypeConstraints()) {
             checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
             checkFinalUpperBounds(constraint.getBoundTypeReference());
         }
     }
 
-    private void checkBoundsForTypeInClassHeader(@Nullable JetTypeReference typeReference) {
+    private void checkBoundsForTypeInClassHeader(@Nullable KtTypeReference typeReference) {
         if (typeReference != null) {
-            JetType type = trace.getBindingContext().get(TYPE, typeReference);
+            KtType type = trace.getBindingContext().get(TYPE, typeReference);
             if (type != null) {
                 DescriptorResolver.checkBounds(typeReference, type, trace);
             }
         }
     }
 
-    private void checkFinalUpperBounds(@Nullable JetTypeReference typeReference) {
+    private void checkFinalUpperBounds(@Nullable KtTypeReference typeReference) {
         if (typeReference != null) {
-            JetType type = trace.getBindingContext().get(TYPE, typeReference);
+            KtType type = trace.getBindingContext().get(TYPE, typeReference);
             if (type != null) {
                 DescriptorResolver.checkUpperBoundType(typeReference, type, trace);
             }
@@ -196,7 +196,7 @@ public class DeclarationsChecker {
                 TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
 
                 // Immediate arguments of supertypes cannot be projected
-                Set<JetType> conflictingTypes = Sets.newLinkedHashSet();
+                Set<KtType> conflictingTypes = Sets.newLinkedHashSet();
                 for (TypeProjection projection : projections) {
                     conflictingTypes.add(projection.getType());
                 }
@@ -204,9 +204,9 @@ public class DeclarationsChecker {
                 if (conflictingTypes.size() > 1) {
                     DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
                     assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
-                    JetClassOrObject psiElement = (JetClassOrObject) DescriptorToSourceUtils.getSourceFromDescriptor(classDescriptor);
+                    KtClassOrObject psiElement = (KtClassOrObject) DescriptorToSourceUtils.getSourceFromDescriptor(classDescriptor);
                     assert psiElement != null;
-                    JetDelegationSpecifierList delegationSpecifierList = psiElement.getDelegationSpecifierList();
+                    KtDelegationSpecifierList delegationSpecifierList = psiElement.getDelegationSpecifierList();
                     assert delegationSpecifierList != null;
                     //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
                     trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES
@@ -217,7 +217,7 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkClassExposedType(@NotNull JetClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
+    private void checkClassExposedType(@NotNull KtClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
         checkExposedSupertypes(klass, classDescriptor);
         checkExposedParameterBounds(klass, classDescriptor);
 
@@ -226,16 +226,16 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkExposedParameterBounds(@NotNull JetClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
+    private void checkExposedParameterBounds(@NotNull KtClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
         EffectiveVisibility classVisibility = EffectiveVisibility.Companion.forClass(classDescriptor);
-        List<JetTypeParameter> typeParameterList = klass.getTypeParameters();
+        List<KtTypeParameter> typeParameterList = klass.getTypeParameters();
         int i = 0;
         for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
             if (i >= typeParameterList.size()) return;
-            for (JetType upperBound : typeParameterDescriptor.getUpperBounds()) {
+            for (KtType upperBound : typeParameterDescriptor.getUpperBounds()) {
                 EffectiveVisibility upperBoundVisibility = EffectiveVisibility.Companion.forType(upperBound);
                 if (!upperBoundVisibility.sameOrMorePermissive(classVisibility)) {
-                    JetTypeParameter typeParameter = typeParameterList.get(i);
+                    KtTypeParameter typeParameter = typeParameterList.get(i);
                     trace.report(EXPOSED_TYPE_PARAMETER_BOUND.on(typeParameter, classVisibility, upperBoundVisibility));
                     break;
                 }
@@ -244,12 +244,12 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkExposedSupertypes(@NotNull JetClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
+    private void checkExposedSupertypes(@NotNull KtClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
         EffectiveVisibility classVisibility = EffectiveVisibility.Companion.forClass(classDescriptor);
         boolean isInterface = classDescriptor.getKind() == ClassKind.INTERFACE;
-        List<JetDelegationSpecifier> delegationList = klass.getDelegationSpecifiers();
+        List<KtDelegationSpecifier> delegationList = klass.getDelegationSpecifiers();
         int i = -1;
-        for (JetType superType : classDescriptor.getTypeConstructor().getSupertypes()) {
+        for (KtType superType : classDescriptor.getTypeConstructor().getSupertypes()) {
             i++;
             if (i >= delegationList.size()) return;
             ClassDescriptor superDescriptor = TypeUtils.getClassDescriptor(superType);
@@ -272,11 +272,11 @@ public class DeclarationsChecker {
         }
     }
 
-    private static void removeDuplicateTypes(Set<JetType> conflictingTypes) {
-        for (Iterator<JetType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
-            JetType type = iterator.next();
-            for (JetType otherType : conflictingTypes) {
-                boolean subtypeOf = JetTypeChecker.DEFAULT.equalTypes(type, otherType);
+    private static void removeDuplicateTypes(Set<KtType> conflictingTypes) {
+        for (Iterator<KtType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
+            KtType type = iterator.next();
+            for (KtType otherType : conflictingTypes) {
+                boolean subtypeOf = KotlinTypeChecker.DEFAULT.equalTypes(type, otherType);
                 if (type != otherType && subtypeOf) {
                     iterator.remove();
                     break;
@@ -285,13 +285,13 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkObject(JetObjectDeclaration declaration, ClassDescriptor classDescriptor) {
+    private void checkObject(KtObjectDeclaration declaration, ClassDescriptor classDescriptor) {
         if  (declaration.isLocal() && !declaration.isCompanion() && !declaration.isObjectLiteral()) {
             trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor));
         }
     }
 
-    private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
+    private void checkClass(BodiesResolveContext c, KtClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
         checkTypeParameters(aClass);
         checkTypeParameterConstraints(aClass);
@@ -307,24 +307,24 @@ public class DeclarationsChecker {
             checkAnnotationClassWithBody(aClass);
             checkValOnAnnotationParameter(aClass);
         }
-        else if (aClass instanceof JetEnumEntry) {
-            checkEnumEntry((JetEnumEntry) aClass, classDescriptor);
+        else if (aClass instanceof KtEnumEntry) {
+            checkEnumEntry((KtEnumEntry) aClass, classDescriptor);
         }
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
             if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) continue;
-            JetNamedDeclaration member = (JetNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor);
-            if (member instanceof JetFunction && memberDescriptor instanceof FunctionDescriptor) {
-                checkFunctionExposedType((JetFunction) member, (FunctionDescriptor) memberDescriptor);
+            KtNamedDeclaration member = (KtNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor);
+            if (member instanceof KtFunction && memberDescriptor instanceof FunctionDescriptor) {
+                checkFunctionExposedType((KtFunction) member, (FunctionDescriptor) memberDescriptor);
             }
         }
     }
 
-    private void checkPrimaryConstructor(JetClassOrObject classOrObject, ClassDescriptor classDescriptor) {
+    private void checkPrimaryConstructor(KtClassOrObject classOrObject, ClassDescriptor classDescriptor) {
         ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-        JetPrimaryConstructor declaration = classOrObject.getPrimaryConstructor();
+        KtPrimaryConstructor declaration = classOrObject.getPrimaryConstructor();
         if (primaryConstructor == null || declaration == null) return;
 
-        for (JetParameter parameter : declaration.getValueParameters()) {
+        for (KtParameter parameter : declaration.getValueParameters()) {
             PropertyDescriptor propertyDescriptor = trace.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
             if (propertyDescriptor != null) {
                 modifiersChecker.checkModifiersForDeclaration(parameter, propertyDescriptor);
@@ -336,16 +336,16 @@ public class DeclarationsChecker {
             trace.report(MISSING_CONSTRUCTOR_KEYWORD.on(declaration.getModifierList()));
         }
 
-        if (!(classOrObject instanceof JetClass)) {
+        if (!(classOrObject instanceof KtClass)) {
             trace.report(CONSTRUCTOR_IN_OBJECT.on(declaration));
         }
 
         checkConstructorDeclaration(primaryConstructor, declaration);
     }
 
-    private void checkTypeParameters(JetTypeParameterListOwner typeParameterListOwner) {
+    private void checkTypeParameters(KtTypeParameterListOwner typeParameterListOwner) {
         // TODO: Support annotation for type parameters
-        for (JetTypeParameter jetTypeParameter : typeParameterListOwner.getTypeParameters()) {
+        for (KtTypeParameter jetTypeParameter : typeParameterListOwner.getTypeParameters()) {
             AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(jetTypeParameter, trace);
 
             TypeParameterDescriptor typeParameter = trace.get(TYPE_PARAMETER, jetTypeParameter);
@@ -355,10 +355,10 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkTypeParameterConstraints(JetTypeParameterListOwner typeParameterListOwner) {
-        List<JetTypeConstraint> constraints = typeParameterListOwner.getTypeConstraints();
+    private void checkTypeParameterConstraints(KtTypeParameterListOwner typeParameterListOwner) {
+        List<KtTypeConstraint> constraints = typeParameterListOwner.getTypeConstraints();
         if (!constraints.isEmpty()) {
-            for (JetTypeParameter typeParameter : typeParameterListOwner.getTypeParameters()) {
+            for (KtTypeParameter typeParameter : typeParameterListOwner.getTypeParameters()) {
                 if (typeParameter.getExtendsBound() != null && hasConstraints(typeParameter, constraints)) {
                     trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAINTS.on(typeParameter));
                 }
@@ -366,9 +366,9 @@ public class DeclarationsChecker {
         }
     }
 
-    private static boolean hasConstraints(JetTypeParameter typeParameter, List<JetTypeConstraint> constraints) {
-        for (JetTypeConstraint constraint : constraints) {
-            JetSimpleNameExpression parameterName = constraint.getSubjectTypeParameterName();
+    private static boolean hasConstraints(KtTypeParameter typeParameter, List<KtTypeConstraint> constraints) {
+        for (KtTypeConstraint constraint : constraints) {
+            KtSimpleNameExpression parameterName = constraint.getSubjectTypeParameterName();
             if (parameterName != null && parameterName.getText().equals(typeParameter.getName())) {
                 return true;
             }
@@ -376,8 +376,8 @@ public class DeclarationsChecker {
         return false;
     }
 
-    private void checkConstructorInInterface(JetClass klass) {
-        JetPrimaryConstructor primaryConstructor = klass.getPrimaryConstructor();
+    private void checkConstructorInInterface(KtClass klass) {
+        KtPrimaryConstructor primaryConstructor = klass.getPrimaryConstructor();
         if (primaryConstructor != null) {
             trace.report(CONSTRUCTOR_IN_INTERFACE.on(primaryConstructor));
         }
@@ -389,8 +389,8 @@ public class DeclarationsChecker {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) declaredCallableMember;
 
             PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
-            if (!(declaration instanceof JetNamedFunction)) continue;
-            JetNamedFunction functionDeclaration = (JetNamedFunction) declaration;
+            if (!(declaration instanceof KtNamedFunction)) continue;
+            KtNamedFunction functionDeclaration = (KtNamedFunction) declaration;
 
             if (isHidingParentMemberIfPresent(declaredCallableMember)) continue;
 
@@ -433,22 +433,22 @@ public class DeclarationsChecker {
     }
 
     private static boolean isHidingParentMemberIfPresent(CallableMemberDescriptor member) {
-        JetNamedDeclaration declaration = (JetNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
+        KtNamedDeclaration declaration = (KtNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
         if (declaration != null) {
-            JetModifierList modifierList = declaration.getModifierList();
-            return modifierList == null || !modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD);
+            KtModifierList modifierList = declaration.getModifierList();
+            return modifierList == null || !modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD);
         }
         return false;
     }
 
-    private void checkAnnotationClassWithBody(JetClassOrObject classOrObject) {
+    private void checkAnnotationClassWithBody(KtClassOrObject classOrObject) {
         if (classOrObject.getBody() != null) {
             trace.report(ANNOTATION_CLASS_WITH_BODY.on(classOrObject.getBody()));
         }
     }
 
-    private void checkValOnAnnotationParameter(JetClass aClass) {
-        for (JetParameter parameter : aClass.getPrimaryConstructorParameters()) {
+    private void checkValOnAnnotationParameter(KtClass aClass) {
+        for (KtParameter parameter : aClass.getPrimaryConstructorParameters()) {
             if (!parameter.hasValOrVar()) {
                 trace.report(MISSING_VAL_ON_ANNOTATION_PARAMETER.on(parameter));
             }
@@ -460,14 +460,14 @@ public class DeclarationsChecker {
 
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
             if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) continue;
-            JetNamedDeclaration member = (JetNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor);
-            if (member != null && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
+            KtNamedDeclaration member = (KtNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor);
+            if (member != null && member.hasModifier(KtTokens.OPEN_KEYWORD)) {
                 trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));
             }
         }
     }
 
-    private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
+    private void checkProperty(KtProperty property, PropertyDescriptor propertyDescriptor) {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof ClassDescriptor) {
             checkPropertyAbstractness(property, propertyDescriptor, (ClassDescriptor) containingDeclaration);
@@ -485,8 +485,8 @@ public class DeclarationsChecker {
             if (isTypeParameterUsedInReceiverType(typeParameter, descriptor)) continue;
 
             PsiElement typeParameterPsi = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameter);
-            if (typeParameterPsi instanceof JetTypeParameter) {
-                trace.report(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER.on((JetTypeParameter) typeParameterPsi));
+            if (typeParameterPsi instanceof KtTypeParameter) {
+                trace.report(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER.on((KtTypeParameter) typeParameterPsi));
             }
         }
     }
@@ -498,18 +498,18 @@ public class DeclarationsChecker {
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter == null) return false;
 
-        return TypeUtils.containsSpecialType(receiverParameter.getType(), new Function1<JetType, Boolean>() {
+        return TypeUtils.containsSpecialType(receiverParameter.getType(), new Function1<KtType, Boolean>() {
             @Override
-            public Boolean invoke(JetType type) {
+            public Boolean invoke(KtType type) {
                 return parameter.equals(type.getConstructor().getDeclarationDescriptor());
             }
         });
     }
 
-    private void checkPropertyLateInit(@NotNull JetCallableDeclaration property, @NotNull PropertyDescriptor propertyDescriptor) {
-        JetModifierList modifierList = property.getModifierList();
+    private void checkPropertyLateInit(@NotNull KtCallableDeclaration property, @NotNull PropertyDescriptor propertyDescriptor) {
+        KtModifierList modifierList = property.getModifierList();
         if (modifierList == null) return;
-        PsiElement modifier = modifierList.getModifier(JetTokens.LATEINIT_KEYWORD);
+        PsiElement modifier = modifierList.getModifier(KtTokens.LATEINIT_KEYWORD);
         if (modifier == null) return;
 
         if (!propertyDescriptor.isVar()) {
@@ -519,7 +519,7 @@ public class DeclarationsChecker {
         boolean returnTypeIsNullable = true;
         boolean returnTypeIsPrimitive = true;
 
-        JetType returnType = propertyDescriptor.getReturnType();
+        KtType returnType = propertyDescriptor.getReturnType();
         if (returnType != null) {
             returnTypeIsNullable = TypeUtils.isNullableType(returnType);
             returnTypeIsPrimitive = KotlinBuiltIns.isPrimitiveType(returnType);
@@ -538,13 +538,13 @@ public class DeclarationsChecker {
             trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on abstract properties"));
         }
 
-        if (property instanceof JetParameter) {
+        if (property instanceof KtParameter) {
             trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on primary constructor parameters"));
         }
 
         boolean hasDelegateExpressionOrInitializer = false;
-        if (property instanceof JetProperty) {
-            hasDelegateExpressionOrInitializer = ((JetProperty) property).hasDelegateExpressionOrInitializer();
+        if (property instanceof KtProperty) {
+            hasDelegateExpressionOrInitializer = ((KtProperty) property).hasDelegateExpressionOrInitializer();
             if (hasDelegateExpressionOrInitializer) {
                 trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier,
                         "is not allowed on properties with initializer or on delegated properties"));
@@ -579,15 +579,15 @@ public class DeclarationsChecker {
     }
 
     private void checkPropertyAbstractness(
-            @NotNull JetProperty property,
+            @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull ClassDescriptor classDescriptor
     ) {
-        JetPropertyAccessor getter = property.getGetter();
-        JetPropertyAccessor setter = property.getSetter();
-        JetModifierList modifierList = property.getModifierList();
+        KtPropertyAccessor getter = property.getGetter();
+        KtPropertyAccessor setter = property.getSetter();
+        KtModifierList modifierList = property.getModifierList();
 
-        if (modifierList != null && modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) { //has abstract modifier
+        if (modifierList != null && modifierList.hasModifier(KtTokens.ABSTRACT_KEYWORD)) { //has abstract modifier
             if (!classCanHaveAbstractMembers(classDescriptor)) {
                 String name = property.getName();
                 trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor));
@@ -599,11 +599,11 @@ public class DeclarationsChecker {
         }
 
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
-            JetExpression initializer = property.getInitializer();
+            KtExpression initializer = property.getInitializer();
             if (initializer != null) {
                 trace.report(ABSTRACT_PROPERTY_WITH_INITIALIZER.on(initializer));
             }
-            JetPropertyDelegate delegate = property.getDelegate();
+            KtPropertyDelegate delegate = property.getDelegate();
             if (delegate != null) {
                 trace.report(ABSTRACT_DELEGATED_PROPERTY.on(delegate));
             }
@@ -616,9 +616,9 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkPropertyInitializer(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
-        JetPropertyAccessor getter = property.getGetter();
-        JetPropertyAccessor setter = property.getSetter();
+    private void checkPropertyInitializer(@NotNull KtProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+        KtPropertyAccessor getter = property.getGetter();
+        KtPropertyAccessor setter = property.getSetter();
         boolean hasAccessorImplementation = (getter != null && getter.hasBody()) ||
                                             (setter != null && setter.hasBody());
 
@@ -628,13 +628,13 @@ public class DeclarationsChecker {
             if (!property.hasDelegateExpressionOrInitializer() && property.getTypeReference() == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
-            if (inTrait && property.hasModifier(JetTokens.PRIVATE_KEYWORD) && !property.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+            if (inTrait && property.hasModifier(KtTokens.PRIVATE_KEYWORD) && !property.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                 trace.report(PRIVATE_PROPERTY_IN_INTERFACE.on(property));
             }
             return;
         }
-        JetExpression initializer = property.getInitializer();
-        JetPropertyDelegate delegate = property.getDelegate();
+        KtExpression initializer = property.getInitializer();
+        KtPropertyDelegate delegate = property.getDelegate();
         boolean backingFieldRequired =
                 Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
 
@@ -658,7 +658,7 @@ public class DeclarationsChecker {
             if (!error && property.getTypeReference() == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
-            if (inTrait && property.hasModifier(JetTokens.FINAL_KEYWORD) && backingFieldRequired) {
+            if (inTrait && property.hasModifier(KtTokens.FINAL_KEYWORD) && backingFieldRequired) {
                 trace.report(FINAL_PROPERTY_IN_INTERFACE.on(property));
             }
             return;
@@ -682,7 +682,7 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkMemberReceiverExposedType(@Nullable JetTypeReference typeReference, @NotNull CallableMemberDescriptor memberDescriptor) {
+    private void checkMemberReceiverExposedType(@Nullable KtTypeReference typeReference, @NotNull CallableMemberDescriptor memberDescriptor) {
         if (typeReference == null) return;
         ReceiverParameterDescriptor receiverParameterDescriptor = memberDescriptor.getExtensionReceiverParameter();
         if (receiverParameterDescriptor == null) return;
@@ -693,7 +693,7 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkPropertyExposedType(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+    private void checkPropertyExposedType(@NotNull KtProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         EffectiveVisibility propertyVisibility = EffectiveVisibility.Companion.forMember(propertyDescriptor);
         EffectiveVisibility typeVisibility = EffectiveVisibility.Companion.forType(propertyDescriptor.getType());
         if (!typeVisibility.sameOrMorePermissive(propertyVisibility)) {
@@ -702,8 +702,8 @@ public class DeclarationsChecker {
         checkMemberReceiverExposedType(property.getReceiverTypeReference(), propertyDescriptor);
     }
 
-    protected void checkFunction(JetNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
-        JetTypeParameterList typeParameterList = function.getTypeParameterList();
+    protected void checkFunction(KtNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
+        KtTypeParameterList typeParameterList = function.getTypeParameterList();
         PsiElement nameIdentifier = function.getNameIdentifier();
         if (typeParameterList != null && nameIdentifier != null &&
             typeParameterList.getTextRange().getStartOffset() > nameIdentifier.getTextRange().getStartOffset()) {
@@ -712,8 +712,8 @@ public class DeclarationsChecker {
         checkTypeParameterConstraints(function);
 
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
-        boolean hasAbstractModifier = function.hasModifier(JetTokens.ABSTRACT_KEYWORD);
-        boolean hasExternalModifier = function.hasModifier(JetTokens.EXTERNAL_KEYWORD);
+        boolean hasAbstractModifier = function.hasModifier(KtTokens.ABSTRACT_KEYWORD);
+        boolean hasExternalModifier = function.hasModifier(KtTokens.EXTERNAL_KEYWORD);
 
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
@@ -729,10 +729,10 @@ public class DeclarationsChecker {
                 trace.report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor));
             }
             if (!hasBody && inTrait) {
-                if (function.hasModifier(JetTokens.FINAL_KEYWORD) && !hasExternalModifier) {
+                if (function.hasModifier(KtTokens.FINAL_KEYWORD) && !hasExternalModifier) {
                     trace.report(FINAL_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
                 }
-                if (function.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+                if (function.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
                     trace.report(PRIVATE_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
                 }
             }
@@ -750,9 +750,9 @@ public class DeclarationsChecker {
         checkFunctionExposedType(function, functionDescriptor);
     }
 
-    private void checkFunctionExposedType(@NotNull JetFunction function, @NotNull FunctionDescriptor functionDescriptor) {
+    private void checkFunctionExposedType(@NotNull KtFunction function, @NotNull FunctionDescriptor functionDescriptor) {
         EffectiveVisibility functionVisibility = EffectiveVisibility.Companion.forMember(functionDescriptor);
-        if (!(function instanceof JetConstructor)) {
+        if (!(function instanceof KtConstructor)) {
             EffectiveVisibility returnTypeVisibility = EffectiveVisibility.Companion.forType(functionDescriptor.getReturnType());
             if (!returnTypeVisibility.sameOrMorePermissive(functionVisibility)) {
                 PsiElement reportOn = function.getNameIdentifier();
@@ -773,8 +773,8 @@ public class DeclarationsChecker {
         checkMemberReceiverExposedType(function.getReceiverTypeReference(), functionDescriptor);
     }
 
-    private void checkAccessors(@NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
-        for (JetPropertyAccessor accessor : property.getAccessors()) {
+    private void checkAccessors(@NotNull KtProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+        for (KtPropertyAccessor accessor : property.getAccessors()) {
             PropertyAccessorDescriptor propertyAccessorDescriptor = accessor.isGetter() ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
             assert propertyAccessorDescriptor != null : "No property accessor descriptor for " + property.getText();
             modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor);
@@ -792,15 +792,15 @@ public class DeclarationsChecker {
 
     private void checkAccessor(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @Nullable JetPropertyAccessor accessor,
+            @Nullable KtPropertyAccessor accessor,
             @Nullable PropertyAccessorDescriptor accessorDescriptor
     ) {
         if (accessor == null) return;
-        JetModifierList accessorModifierList = accessor.getModifierList();
+        KtModifierList accessorModifierList = accessor.getModifierList();
         if (accessorModifierList != null && accessorDescriptor != null) {
-            Map<JetModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(accessorModifierList, Sets
-                    .newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD,
-                                JetTokens.INTERNAL_KEYWORD));
+            Map<KtModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(accessorModifierList, Sets
+                    .newHashSet(KtTokens.PUBLIC_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PRIVATE_KEYWORD,
+                                KtTokens.INTERNAL_KEYWORD));
             if (propertyDescriptor.getModality() == Modality.ABSTRACT && accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
                 reportVisibilityModifierDiagnostics(tokens.values(), Errors.ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY);
             }
@@ -820,7 +820,7 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkEnumEntry(@NotNull JetEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {
+    private void checkEnumEntry(@NotNull KtEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {
         DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
         if (DescriptorUtils.isEnumClass(declaration)) {
             ClassDescriptor enumClass = (ClassDescriptor) declaration;

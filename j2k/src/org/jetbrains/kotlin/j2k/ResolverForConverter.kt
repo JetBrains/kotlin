@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.j2k
 
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
 public interface ResolverForConverter {
-    public fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor?
+    public fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor?
 }
 
 object EmptyResolverForConverter : ResolverForConverter {
-    override fun resolveToDescriptor(declaration: JetDeclaration) = null
+    override fun resolveToDescriptor(declaration: KtDeclaration) = null
 }

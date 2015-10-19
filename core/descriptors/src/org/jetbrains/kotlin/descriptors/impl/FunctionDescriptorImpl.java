@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
+import kotlin.reflect.jvm.internal.impl.types.JetType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.types.DescriptorSubstitutor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.utils.CollectionsKt;
@@ -37,7 +38,7 @@ import java.util.Set;
 public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor {
     private List<TypeParameterDescriptor> typeParameters;
     private List<ValueParameterDescriptor> unsubstitutedValueParameters;
-    private JetType unsubstitutedReturnType;
+    private KtType unsubstitutedReturnType;
     private ReceiverParameterDescriptor extensionReceiverParameter;
     private ReceiverParameterDescriptor dispatchReceiverParameter;
     private Modality modality;
@@ -66,11 +67,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @NotNull
     public FunctionDescriptorImpl initialize(
-            @Nullable JetType receiverParameterType,
+            @Nullable KtType receiverParameterType,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-            @Nullable JetType unsubstitutedReturnType,
+            @Nullable KtType unsubstitutedReturnType,
             @Nullable Modality modality,
             @NotNull Visibility visibility
     ) {
@@ -125,7 +126,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.isTailrec = isTailrec;
     }
 
-    public void setReturnType(@NotNull JetType unsubstitutedReturnType) {
+    public void setReturnType(@NotNull KtType unsubstitutedReturnType) {
         if (this.unsubstitutedReturnType != null) {
             // TODO: uncomment and fix tests
             //throw new IllegalStateException("returnType already set");
@@ -228,7 +229,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
-    public JetType getReturnType() {
+    public KtType getReturnType() {
         return unsubstitutedReturnType;
     }
 
@@ -275,7 +276,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Nullable
-    protected JetType getExtensionReceiverParameterType() {
+    protected KtType getExtensionReceiverParameterType() {
         if (extensionReceiverParameter == null) return null;
         return extensionReceiverParameter.getType();
     }
@@ -295,8 +296,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             boolean copyOverrides,
             @NotNull Kind kind,
             @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors,
-            @Nullable JetType newExtensionReceiverParameterType,
-            @NotNull JetType newReturnType
+            @Nullable KtType newExtensionReceiverParameterType,
+            @NotNull KtType newReturnType
     ) {
         FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, original, kind);
 
@@ -306,7 +307,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 originalTypeParameters, originalSubstitutor.getSubstitution(), substitutedDescriptor, substitutedTypeParameters
         );
 
-        JetType substitutedReceiverParameterType = null;
+        KtType substitutedReceiverParameterType = null;
         if (newExtensionReceiverParameterType != null) {
             substitutedReceiverParameterType = substitutor.substitute(newExtensionReceiverParameterType, Variance.IN_VARIANCE);
             if (substitutedReceiverParameterType == null) {
@@ -339,7 +340,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             return null;
         }
 
-        JetType substitutedReturnType = substitutor.substitute(newReturnType, Variance.OUT_VARIANCE);
+        KtType substitutedReturnType = substitutor.substitute(newReturnType, Variance.OUT_VARIANCE);
         if (substitutedReturnType == null) {
             return null;
         }
@@ -389,9 +390,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(unsubstitutedValueParameters.size());
         for (ValueParameterDescriptor unsubstitutedValueParameter : unsubstitutedValueParameters) {
             // TODO : Lazy?
-            JetType substitutedType = substitutor.substitute(unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);
-            JetType varargElementType = unsubstitutedValueParameter.getVarargElementType();
-            JetType substituteVarargElementType =
+            KtType substitutedType = substitutor.substitute(unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);
+            KtType varargElementType = unsubstitutedValueParameter.getVarargElementType();
+            KtType substituteVarargElementType =
                     varargElementType == null ? null : substitutor.substitute(varargElementType, Variance.IN_VARIANCE);
             if (substitutedType == null) return null;
             result.add(

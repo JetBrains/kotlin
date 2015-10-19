@@ -32,11 +32,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
-public class IterateExpressionIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Iterate over collection"), HighPriorityAction {
-    override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
-        if (element.getParent() !is JetBlockExpression) return false
+public class IterateExpressionIntention : JetSelfTargetingIntention<KtExpression>(javaClass(), "Iterate over collection"), HighPriorityAction {
+    override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
+        if (element.getParent() !is KtBlockExpression) return false
         val range = element.getTextRange()
         if (caretOffset != range.getStartOffset() && caretOffset != range.getEndOffset()) return false
         val data = data(element) ?: return false
@@ -44,9 +44,9 @@ public class IterateExpressionIntention : JetSelfTargetingIntention<JetExpressio
         return true
     }
 
-    private data class Data(val collectionType: JetType, val elementType: JetType)
+    private data class Data(val collectionType: KtType, val elementType: KtType)
 
-    private fun data(expression: JetExpression): Data? {
+    private fun data(expression: KtExpression): Data? {
         val resolutionFacade = expression.getResolutionFacade()
         val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.PARTIAL)
         val type = bindingContext.getType(expression) ?: return null
@@ -56,19 +56,19 @@ public class IterateExpressionIntention : JetSelfTargetingIntention<JetExpressio
         return Data(type, elementType)
     }
 
-    override fun applyTo(element: JetExpression, editor: Editor) {
+    override fun applyTo(element: KtExpression, editor: Editor) {
         //TODO: multi-declaration (when?)
 
         val elementType = data(element)!!.elementType
         val nameValidator = NewDeclarationNameValidator(element, element.siblings(), NewDeclarationNameValidator.Target.VARIABLES)
         val names = KotlinNameSuggester.suggestIterationVariableNames(element, elementType, nameValidator, "e")
 
-        var forExpression = JetPsiFactory(element).createExpressionByPattern("for($0 in $1) {\nx\n}", names.first(), element) as JetForExpression
+        var forExpression = KtPsiFactory(element).createExpressionByPattern("for($0 in $1) {\nx\n}", names.first(), element) as KtForExpression
         forExpression = element.replaced(forExpression)
 
         PsiDocumentManager.getInstance(forExpression.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())
 
-        val bodyPlaceholder = (forExpression.getBody() as JetBlockExpression).getStatements().single()
+        val bodyPlaceholder = (forExpression.getBody() as KtBlockExpression).getStatements().single()
 
         val templateBuilder = TemplateBuilderImpl(forExpression)
         templateBuilder.replaceElement(forExpression.getLoopParameter()!!, ChooseStringExpression(names))

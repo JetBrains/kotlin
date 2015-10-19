@@ -20,20 +20,20 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.JetNodeTypes
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.sure
 
 public object PositioningStrategies {
-    private open class DeclarationHeader<T : JetDeclaration> : PositioningStrategy<T>() {
+    private open class DeclarationHeader<T : KtDeclaration> : PositioningStrategy<T>() {
         override fun isValid(element: T): Boolean {
-            if (element is JetNamedDeclaration &&
-                element !is JetObjectDeclaration &&
-                element !is JetSecondaryConstructor &&
-                element !is JetFunction
+            if (element is KtNamedDeclaration &&
+                element !is KtObjectDeclaration &&
+                element !is KtSecondaryConstructor &&
+                element !is KtFunction
             ) {
                 if (element.getNameIdentifier() == null) {
                     return false
@@ -46,7 +46,7 @@ public object PositioningStrategies {
     public val DEFAULT: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             when (element) {
-                is JetObjectLiteralExpression -> {
+                is KtObjectLiteralExpression -> {
                     val objectDeclaration = element.getObjectDeclaration()
                     val objectKeyword = objectDeclaration.getObjectKeyword()
                     val delegationSpecifierList = objectDeclaration.getDelegationSpecifierList()
@@ -55,13 +55,13 @@ public object PositioningStrategies {
                     }
                     return markRange(objectKeyword, delegationSpecifierList)
                 }
-                is JetObjectDeclaration -> {
+                is KtObjectDeclaration -> {
                     return markRange(
                             element.getObjectKeyword(),
                             element.getNameIdentifier() ?: element.getObjectKeyword()
                     )
                 }
-                is JetConstructorDelegationCall -> {
+                is KtConstructorDelegationCall -> {
                     return SECONDARY_CONSTRUCTOR_DELEGATION_CALL.mark(element)
                 }
                 else -> {
@@ -71,19 +71,19 @@ public object PositioningStrategies {
         }
     }
 
-    public val DECLARATION_RETURN_TYPE: PositioningStrategy<JetDeclaration> = object : PositioningStrategy<JetDeclaration>() {
-        override fun mark(element: JetDeclaration): List<TextRange> {
+    public val DECLARATION_RETURN_TYPE: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
             return markElement(getElementToMark(element))
         }
 
-        override fun isValid(element: JetDeclaration): Boolean {
+        override fun isValid(element: KtDeclaration): Boolean {
             return !hasSyntaxErrors(getElementToMark(element))
         }
 
-        private fun getElementToMark(declaration: JetDeclaration): PsiElement {
+        private fun getElementToMark(declaration: KtDeclaration): PsiElement {
             val (returnTypeRef, nameIdentifierOrPlaceholder) = when (declaration) {
-                is JetCallableDeclaration -> Pair(declaration.getTypeReference(), declaration.getNameIdentifier())
-                is JetPropertyAccessor -> Pair(declaration.getReturnTypeReference(), declaration.getNamePlaceholder())
+                is KtCallableDeclaration -> Pair(declaration.getTypeReference(), declaration.getNameIdentifier())
+                is KtPropertyAccessor -> Pair(declaration.getReturnTypeReference(), declaration.getNamePlaceholder())
                 else -> Pair(null, null)
             }
 
@@ -93,43 +93,43 @@ public object PositioningStrategies {
         }
     }
 
-    public val DECLARATION_NAME: PositioningStrategy<JetNamedDeclaration> = object : DeclarationHeader<JetNamedDeclaration>() {
-        override fun mark(element: JetNamedDeclaration): List<TextRange> {
+    public val DECLARATION_NAME: PositioningStrategy<KtNamedDeclaration> = object : DeclarationHeader<KtNamedDeclaration>() {
+        override fun mark(element: KtNamedDeclaration): List<TextRange> {
             val nameIdentifier = element.getNameIdentifier()
             if (nameIdentifier != null) {
-                if (element is JetClassOrObject) {
+                if (element is KtClassOrObject) {
                     val startElement =
-                            element.getModifierList()?.getModifier(JetTokens.ENUM_KEYWORD)
-                            ?: element.getNode().findChildByType(TokenSet.create(JetTokens.CLASS_KEYWORD, JetTokens.OBJECT_KEYWORD))?.getPsi()
+                            element.getModifierList()?.getModifier(KtTokens.ENUM_KEYWORD)
+                            ?: element.getNode().findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))?.getPsi()
                             ?: element
 
                     return markRange(startElement, nameIdentifier)
                 }
                 return markElement(nameIdentifier)
             }
-            if (element is JetNamedFunction) {
+            if (element is KtNamedFunction) {
                 return DECLARATION_SIGNATURE.mark(element)
             }
             return DEFAULT.mark(element)
         }
     }
 
-    public val DECLARATION_SIGNATURE: PositioningStrategy<JetDeclaration> = object : DeclarationHeader<JetDeclaration>() {
-        override fun mark(element: JetDeclaration): List<TextRange> {
+    public val DECLARATION_SIGNATURE: PositioningStrategy<KtDeclaration> = object : DeclarationHeader<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
             when (element) {
-                is JetConstructor<*> -> {
+                is KtConstructor<*> -> {
                     val begin = element.getConstructorKeyword() ?: element.getValueParameterList() ?: return markElement(element)
                     val end = element.getValueParameterList() ?: element.getConstructorKeyword() ?: return markElement(element)
                     return markRange(begin, end)
                 }
-                is JetFunction -> {
+                is KtFunction -> {
                     val endOfSignatureElement =
                             element.getTypeReference()
                             ?: element.getValueParameterList()
                             ?: element.getNameIdentifier()
                             ?: element
                     val startElement
-                            = if (element is JetFunctionLiteral) {
+                            = if (element is KtFunctionLiteral) {
                                 element.getReceiverTypeReference()
                                 ?: element.getValueParameterList()
                                 ?: element
@@ -137,11 +137,11 @@ public object PositioningStrategies {
                             else element
                     return markRange(startElement, endOfSignatureElement)
                 }
-                is JetProperty -> {
+                is KtProperty -> {
                     val endOfSignatureElement = element.getTypeReference() ?: element.getNameIdentifier() ?: element
                     return markRange(element, endOfSignatureElement)
                 }
-                is JetPropertyAccessor -> {
+                is KtPropertyAccessor -> {
                     val endOfSignatureElement =
                             element.getReturnTypeReference()
                             ?: element.getRightParenthesis()?.getPsi()
@@ -149,12 +149,12 @@ public object PositioningStrategies {
 
                     return markRange(element, endOfSignatureElement)
                 }
-                is JetClass -> {
+                is KtClass -> {
                     val nameAsDeclaration = element.getNameIdentifier() ?: return markElement(element)
                     val primaryConstructorParameterList = element.getPrimaryConstructorParameterList() ?: return markElement(nameAsDeclaration)
                     return markRange(nameAsDeclaration, primaryConstructorParameterList)
                 }
-                is JetObjectDeclaration -> {
+                is KtObjectDeclaration -> {
                     return DECLARATION_NAME.mark(element)
                 }
             }
@@ -164,23 +164,23 @@ public object PositioningStrategies {
 
     public val DECLARATION_SIGNATURE_OR_DEFAULT: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
-            return if (element is JetDeclaration)
+            return if (element is KtDeclaration)
                 DECLARATION_SIGNATURE.mark(element)
             else
                 DEFAULT.mark(element)
         }
 
         override fun isValid(element: PsiElement): Boolean {
-            return if (element is JetDeclaration)
+            return if (element is KtDeclaration)
                 DECLARATION_SIGNATURE.isValid(element)
             else
                 DEFAULT.isValid(element)
         }
     }
 
-    public val TYPE_PARAMETERS_OR_DECLARATION_SIGNATURE: PositioningStrategy<JetDeclaration> = object : PositioningStrategy<JetDeclaration>() {
-        override fun mark(element: JetDeclaration): List<TextRange> {
-            if (element is JetTypeParameterListOwner) {
+    public val TYPE_PARAMETERS_OR_DECLARATION_SIGNATURE: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
+            if (element is KtTypeParameterListOwner) {
                 val jetTypeParameterList = element.getTypeParameterList()
                 if (jetTypeParameterList != null) {
                     return markElement(jetTypeParameterList)
@@ -190,32 +190,32 @@ public object PositioningStrategies {
         }
     }
 
-    public val ABSTRACT_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.ABSTRACT_KEYWORD)
+    public val ABSTRACT_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.ABSTRACT_KEYWORD)
 
-    public val OVERRIDE_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.OVERRIDE_KEYWORD)
+    public val OVERRIDE_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.OVERRIDE_KEYWORD)
 
-    public val FINAL_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.FINAL_KEYWORD)
+    public val FINAL_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.FINAL_KEYWORD)
 
-    public val PRIVATE_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.PRIVATE_KEYWORD)
+    public val PRIVATE_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.PRIVATE_KEYWORD)
 
-    public val VARIANCE_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.IN_KEYWORD, JetTokens.OUT_KEYWORD)
+    public val VARIANCE_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.IN_KEYWORD, KtTokens.OUT_KEYWORD)
 
     public val FOR_REDECLARATION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             val nameIdentifier = when (element) {
-                is JetNamedDeclaration -> element.getNameIdentifier()
-                is JetFile -> element.getPackageDirective()!!.getNameIdentifier()
+                is KtNamedDeclaration -> element.getNameIdentifier()
+                is KtFile -> element.getPackageDirective()!!.getNameIdentifier()
                 else -> null
             }
 
-            if (nameIdentifier == null && element is JetObjectDeclaration) return DEFAULT.mark(element)
+            if (nameIdentifier == null && element is KtObjectDeclaration) return DEFAULT.mark(element)
 
             return markElement(nameIdentifier ?: element)
         }
     }
-    public val FOR_UNRESOLVED_REFERENCE: PositioningStrategy<JetReferenceExpression> = object : PositioningStrategy<JetReferenceExpression>() {
-        override fun mark(element: JetReferenceExpression): List<TextRange> {
-            if (element is JetArrayAccessExpression) {
+    public val FOR_UNRESOLVED_REFERENCE: PositioningStrategy<KtReferenceExpression> = object : PositioningStrategy<KtReferenceExpression>() {
+        override fun mark(element: KtReferenceExpression): List<TextRange> {
+            if (element is KtArrayAccessExpression) {
                 val ranges = element.getBracketRanges()
                 if (!ranges.isEmpty()) {
                     return ranges
@@ -226,9 +226,9 @@ public object PositioningStrategies {
     }
 
     @JvmStatic
-    public fun modifierSetPosition(vararg tokens: JetModifierKeywordToken): PositioningStrategy<JetModifierListOwner> {
-        return object : PositioningStrategy<JetModifierListOwner>() {
-            override fun mark(element: JetModifierListOwner): List<TextRange> {
+    public fun modifierSetPosition(vararg tokens: KtModifierKeywordToken): PositioningStrategy<KtModifierListOwner> {
+        return object : PositioningStrategy<KtModifierListOwner>() {
+            override fun mark(element: KtModifierListOwner): List<TextRange> {
                 val modifierList = element.getModifierList().sure { "No modifier list, but modifier has been found by the analyzer" }
 
                 for (token in tokens) {
@@ -242,15 +242,15 @@ public object PositioningStrategies {
         }
     }
 
-    public val ARRAY_ACCESS: PositioningStrategy<JetArrayAccessExpression> = object : PositioningStrategy<JetArrayAccessExpression>() {
-        override fun mark(element: JetArrayAccessExpression): List<TextRange> {
+    public val ARRAY_ACCESS: PositioningStrategy<KtArrayAccessExpression> = object : PositioningStrategy<KtArrayAccessExpression>() {
+        override fun mark(element: KtArrayAccessExpression): List<TextRange> {
             return markElement(element.getIndicesNode())
         }
     }
 
-    public val VISIBILITY_MODIFIER: PositioningStrategy<JetModifierListOwner> = object : PositioningStrategy<JetModifierListOwner>() {
-        override fun mark(element: JetModifierListOwner): List<TextRange> {
-            val visibilityTokens = listOf(JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD)
+    public val VISIBILITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = object : PositioningStrategy<KtModifierListOwner>() {
+        override fun mark(element: KtModifierListOwner): List<TextRange> {
+            val visibilityTokens = listOf(KtTokens.PRIVATE_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PUBLIC_KEYWORD, KtTokens.INTERNAL_KEYWORD)
             val modifierList = element.getModifierList()
 
             val result = visibilityTokens.map { modifierList?.getModifier(it)?.getTextRange() }.filterNotNull()
@@ -265,9 +265,9 @@ public object PositioningStrategies {
             }
 
             val elementToMark = when (element) {
-                is JetObjectDeclaration -> element.getObjectKeyword()
-                is JetPropertyAccessor -> element.getNamePlaceholder()
-                is JetClassInitializer -> element
+                is KtObjectDeclaration -> element.getObjectKeyword()
+                is KtPropertyAccessor -> element.getNamePlaceholder()
+                is KtClassInitializer -> element
                 else -> throw IllegalArgumentException(
                         "Can't find text range for element '${element.javaClass.getCanonicalName()}' with the text '${element.getText()}'")
             }
@@ -275,104 +275,104 @@ public object PositioningStrategies {
         }
     }
 
-    public val VARIANCE_IN_PROJECTION: PositioningStrategy<JetTypeProjection> = object : PositioningStrategy<JetTypeProjection>() {
-        override fun mark(element: JetTypeProjection): List<TextRange> {
+    public val VARIANCE_IN_PROJECTION: PositioningStrategy<KtTypeProjection> = object : PositioningStrategy<KtTypeProjection>() {
+        override fun mark(element: KtTypeProjection): List<TextRange> {
             return markElement(element.getProjectionToken()!!)
         }
     }
 
-    public val PARAMETER_DEFAULT_VALUE: PositioningStrategy<JetParameter> = object : PositioningStrategy<JetParameter>() {
-        override fun mark(element: JetParameter): List<TextRange> {
+    public val PARAMETER_DEFAULT_VALUE: PositioningStrategy<KtParameter> = object : PositioningStrategy<KtParameter>() {
+        override fun mark(element: KtParameter): List<TextRange> {
             return markNode(element.getDefaultValue()!!.getNode())
         }
     }
 
     public val CALL_ELEMENT: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
-            return markElement((element as? JetCallElement)?.getCalleeExpression() ?: element)
+            return markElement((element as? KtCallElement)?.getCalleeExpression() ?: element)
         }
     }
 
-    public val DECLARATION_WITH_BODY: PositioningStrategy<JetDeclarationWithBody> = object : PositioningStrategy<JetDeclarationWithBody>() {
-        override fun mark(element: JetDeclarationWithBody): List<TextRange> {
-            val lastBracketRange = (element.getBodyExpression() as? JetBlockExpression)?.getLastBracketRange()
+    public val DECLARATION_WITH_BODY: PositioningStrategy<KtDeclarationWithBody> = object : PositioningStrategy<KtDeclarationWithBody>() {
+        override fun mark(element: KtDeclarationWithBody): List<TextRange> {
+            val lastBracketRange = (element.getBodyExpression() as? KtBlockExpression)?.getLastBracketRange()
             return if (lastBracketRange != null)
                 markRange(lastBracketRange)
             else
                 markElement(element)
         }
 
-        override fun isValid(element: JetDeclarationWithBody): Boolean {
-            return super.isValid(element) && (element.getBodyExpression() as? JetBlockExpression)?.getLastBracketRange() != null
+        override fun isValid(element: KtDeclarationWithBody): Boolean {
+            return super.isValid(element) && (element.getBodyExpression() as? KtBlockExpression)?.getLastBracketRange() != null
         }
     }
 
-    public val VAL_OR_VAR_NODE: PositioningStrategy<JetNamedDeclaration> = object : PositioningStrategy<JetNamedDeclaration>() {
-        override fun mark(element: JetNamedDeclaration): List<TextRange> {
+    public val VAL_OR_VAR_NODE: PositioningStrategy<KtNamedDeclaration> = object : PositioningStrategy<KtNamedDeclaration>() {
+        override fun mark(element: KtNamedDeclaration): List<TextRange> {
             return when (element) {
-                is JetParameter -> markElement(element.valOrVarKeyword ?: element)
-                is JetProperty -> markElement(element.valOrVarKeyword)
+                is KtParameter -> markElement(element.valOrVarKeyword ?: element)
+                is KtProperty -> markElement(element.valOrVarKeyword)
                 else -> error("Declaration is neither a parameter nor a property: " + element.getElementTextWithContext())
             }
         }
     }
 
-    public val ELSE_ENTRY: PositioningStrategy<JetWhenEntry> = object : PositioningStrategy<JetWhenEntry>() {
-        override fun mark(element: JetWhenEntry): List<TextRange> {
+    public val ELSE_ENTRY: PositioningStrategy<KtWhenEntry> = object : PositioningStrategy<KtWhenEntry>() {
+        override fun mark(element: KtWhenEntry): List<TextRange> {
             return markElement(element.getElseKeyword()!!)
         }
     }
 
-    public val WHEN_EXPRESSION: PositioningStrategy<JetWhenExpression> = object : PositioningStrategy<JetWhenExpression>() {
-        override fun mark(element: JetWhenExpression): List<TextRange> {
+    public val WHEN_EXPRESSION: PositioningStrategy<KtWhenExpression> = object : PositioningStrategy<KtWhenExpression>() {
+        override fun mark(element: KtWhenExpression): List<TextRange> {
             return markElement(element.getWhenKeyword())
         }
     }
 
-    public val WHEN_CONDITION_IN_RANGE: PositioningStrategy<JetWhenConditionInRange> = object : PositioningStrategy<JetWhenConditionInRange>() {
-        override fun mark(element: JetWhenConditionInRange): List<TextRange> {
+    public val WHEN_CONDITION_IN_RANGE: PositioningStrategy<KtWhenConditionInRange> = object : PositioningStrategy<KtWhenConditionInRange>() {
+        override fun mark(element: KtWhenConditionInRange): List<TextRange> {
             return markElement(element.getOperationReference())
         }
     }
 
-    public val NULLABLE_TYPE: PositioningStrategy<JetNullableType> = object : PositioningStrategy<JetNullableType>() {
-        override fun mark(element: JetNullableType): List<TextRange> {
+    public val NULLABLE_TYPE: PositioningStrategy<KtNullableType> = object : PositioningStrategy<KtNullableType>() {
+        override fun mark(element: KtNullableType): List<TextRange> {
             return markNode(element.getQuestionMarkNode())
         }
     }
 
     public val CALL_EXPRESSION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
-            if (element is JetCallExpression) {
+            if (element is KtCallExpression) {
                 return markRange(element, element.getTypeArgumentList() ?: element.getCalleeExpression() ?: element)
             }
             return markElement(element)
         }
     }
 
-    public val VALUE_ARGUMENTS: PositioningStrategy<JetElement> = object : PositioningStrategy<JetElement>() {
-        override fun mark(element: JetElement): List<TextRange> {
-            return markElement((element as? JetValueArgumentList)?.getRightParenthesis() ?: element)
+    public val VALUE_ARGUMENTS: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
+        override fun mark(element: KtElement): List<TextRange> {
+            return markElement((element as? KtValueArgumentList)?.getRightParenthesis() ?: element)
         }
     }
 
-    public val FUNCTION_PARAMETERS: PositioningStrategy<JetFunction> = object : PositioningStrategy<JetFunction>() {
-        override fun mark(element: JetFunction): List<TextRange> {
+    public val FUNCTION_PARAMETERS: PositioningStrategy<KtFunction> = object : PositioningStrategy<KtFunction>() {
+        override fun mark(element: KtFunction): List<TextRange> {
             val valueParameterList = element.getValueParameterList()
             if (valueParameterList != null) {
                 return markElement(valueParameterList)
             }
-            if (element is JetFunctionLiteral) {
+            if (element is KtFunctionLiteral) {
                 return markNode(element.getLBrace().getNode())
             }
             return DECLARATION_SIGNATURE_OR_DEFAULT.mark(element)
         }
     }
 
-    public val CUT_CHAR_QUOTES: PositioningStrategy<JetElement> = object : PositioningStrategy<JetElement>() {
-        override fun mark(element: JetElement): List<TextRange> {
-            if (element is JetConstantExpression) {
-                if (element.getNode().getElementType() == JetNodeTypes.CHARACTER_CONSTANT) {
+    public val CUT_CHAR_QUOTES: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
+        override fun mark(element: KtElement): List<TextRange> {
+            if (element is KtConstantExpression) {
+                if (element.getNode().getElementType() == KtNodeTypes.CHARACTER_CONSTANT) {
                     val elementTextRange = element.getTextRange()
                     return listOf(TextRange.create(elementTextRange.getStartOffset() + 1, elementTextRange.getEndOffset() - 1))
                 }
@@ -381,10 +381,10 @@ public object PositioningStrategies {
         }
     }
 
-    public val LONG_LITERAL_SUFFIX: PositioningStrategy<JetElement> = object : PositioningStrategy<JetElement>() {
-        override fun mark(element: JetElement): List<TextRange> {
-            if (element is JetConstantExpression) {
-                if (element.getNode().getElementType() == JetNodeTypes.INTEGER_CONSTANT) {
+    public val LONG_LITERAL_SUFFIX: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
+        override fun mark(element: KtElement): List<TextRange> {
+            if (element is KtConstantExpression) {
+                if (element.getNode().getElementType() == KtNodeTypes.INTEGER_CONSTANT) {
                     val endOffset = element.endOffset
                     return listOf(TextRange.create(endOffset - 1, endOffset))
                 }
@@ -399,26 +399,26 @@ public object PositioningStrategies {
         }
     }
 
-    public val AS_TYPE: PositioningStrategy<JetBinaryExpressionWithTypeRHS> = object : PositioningStrategy<JetBinaryExpressionWithTypeRHS>() {
-        override fun mark(element: JetBinaryExpressionWithTypeRHS): List<TextRange> {
+    public val AS_TYPE: PositioningStrategy<KtBinaryExpressionWithTypeRHS> = object : PositioningStrategy<KtBinaryExpressionWithTypeRHS>() {
+        override fun mark(element: KtBinaryExpressionWithTypeRHS): List<TextRange> {
             return markRange(element.getOperationReference(), element)
         }
     }
 
-    public val COMPANION_OBJECT: PositioningStrategy<JetObjectDeclaration> = object : PositioningStrategy<JetObjectDeclaration>() {
-        override fun mark(element: JetObjectDeclaration): List<TextRange> {
-            if (element.hasModifier(JetTokens.COMPANION_KEYWORD)) {
-                return modifierSetPosition(JetTokens.COMPANION_KEYWORD).mark(element)
+    public val COMPANION_OBJECT: PositioningStrategy<KtObjectDeclaration> = object : PositioningStrategy<KtObjectDeclaration>() {
+        override fun mark(element: KtObjectDeclaration): List<TextRange> {
+            if (element.hasModifier(KtTokens.COMPANION_KEYWORD)) {
+                return modifierSetPosition(KtTokens.COMPANION_KEYWORD).mark(element)
             }
             return DEFAULT.mark(element)
         }
     }
 
-    public val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PositioningStrategy<JetConstructorDelegationCall> =
-            object : PositioningStrategy<JetConstructorDelegationCall>() {
-                override fun mark(element: JetConstructorDelegationCall): List<TextRange> {
+    public val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PositioningStrategy<KtConstructorDelegationCall> =
+            object : PositioningStrategy<KtConstructorDelegationCall>() {
+                override fun mark(element: KtConstructorDelegationCall): List<TextRange> {
                     if (element.isImplicit()) {
-                        val constructor = element.getStrictParentOfType<JetSecondaryConstructor>()!!
+                        val constructor = element.getStrictParentOfType<KtSecondaryConstructor>()!!
                         val valueParameterList = constructor.getValueParameterList() ?: return markElement(constructor)
                         return markRange(constructor.getConstructorKeyword(), valueParameterList.getLastChild())
                     }
@@ -426,30 +426,30 @@ public object PositioningStrategies {
                 }
             }
 
-    public val DELEGATOR_SUPER_CALL: PositioningStrategy<JetEnumEntry> = object: PositioningStrategy<JetEnumEntry>() {
-        override fun mark(element: JetEnumEntry): List<TextRange> {
+    public val DELEGATOR_SUPER_CALL: PositioningStrategy<KtEnumEntry> = object: PositioningStrategy<KtEnumEntry>() {
+        override fun mark(element: KtEnumEntry): List<TextRange> {
             val specifiers = element.getDelegationSpecifiers()
             return markElement(if (specifiers.isEmpty()) element else specifiers[0])
         }
     }
 
-    public val UNUSED_VALUE: PositioningStrategy<JetBinaryExpression> = object: PositioningStrategy<JetBinaryExpression>() {
-        override fun mark(element: JetBinaryExpression): List<TextRange> {
+    public val UNUSED_VALUE: PositioningStrategy<KtBinaryExpression> = object: PositioningStrategy<KtBinaryExpression>() {
+        override fun mark(element: KtBinaryExpression): List<TextRange> {
             return listOf(TextRange(element.getLeft()!!.startOffset, element.getOperationReference().endOffset))
         }
     }
 
-    public val USELESS_ELVIS: PositioningStrategy<JetBinaryExpression> = object: PositioningStrategy<JetBinaryExpression>() {
-        override fun mark(element: JetBinaryExpression): List<TextRange> {
+    public val USELESS_ELVIS: PositioningStrategy<KtBinaryExpression> = object: PositioningStrategy<KtBinaryExpression>() {
+        override fun mark(element: KtBinaryExpression): List<TextRange> {
             return listOf(TextRange(element.getOperationReference().startOffset, element.endOffset))
         }
     }
 
-    public val IMPORT_ALIAS: PositioningStrategy<JetImportDirective> = object: PositioningStrategy<JetImportDirective>() {
-        override fun mark(element: JetImportDirective): List<TextRange> {
+    public val IMPORT_ALIAS: PositioningStrategy<KtImportDirective> = object: PositioningStrategy<KtImportDirective>() {
+        override fun mark(element: KtImportDirective): List<TextRange> {
             element.aliasNameNode?.let { return markNode(it) }
             element.importedReference?.let {
-                if (it is JetQualifiedExpression) {
+                if (it is KtQualifiedExpression) {
                     it.selectorExpression?.let { return markElement(it) }
                 }
                 return markElement(it)

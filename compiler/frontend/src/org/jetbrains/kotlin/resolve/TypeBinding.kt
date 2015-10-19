@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.typeBinding
 
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetTypeElement
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.KtTypeElement
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 
 interface TypeBinding<out P : PsiElement> {
     val psiElement: P
-    val jetType: JetType
+    val jetType: KtType
     fun getArgumentBindings(): List<TypeArgumentBinding<P>?>
 }
 
@@ -40,7 +40,7 @@ interface TypeArgumentBinding<out P: PsiElement> {
     val typeBinding: TypeBinding<P>
 }
 
-fun JetTypeReference.createTypeBinding(trace: BindingContext): TypeBinding<JetTypeElement>? {
+fun KtTypeReference.createTypeBinding(trace: BindingContext): TypeBinding<KtTypeElement>? {
     val jetType = trace[BindingContext.TYPE, this]
     val psiElement = typeElement
     if (jetType == null || psiElement == null) {
@@ -51,7 +51,7 @@ fun JetTypeReference.createTypeBinding(trace: BindingContext): TypeBinding<JetTy
     }
 }
 
-fun JetCallableDeclaration.createTypeBindingForReturnType(trace: BindingContext): TypeBinding<PsiElement>?  {
+fun KtCallableDeclaration.createTypeBindingForReturnType(trace: BindingContext): TypeBinding<PsiElement>?  {
     val jetTypeReference = getTypeReference()
     if (jetTypeReference != null) return jetTypeReference.createTypeBinding(trace)
 
@@ -69,11 +69,11 @@ private class TypeArgumentBindingImpl<out P: PsiElement>(
 
 private class ExplicitTypeBinding(
         private val trace: BindingContext,
-        override val psiElement: JetTypeElement,
-        override val jetType: JetType
-) : TypeBinding<JetTypeElement> {
+        override val psiElement: KtTypeElement,
+        override val jetType: KtType
+) : TypeBinding<KtTypeElement> {
 
-    override fun getArgumentBindings(): List<TypeArgumentBinding<JetTypeElement>?> {
+    override fun getArgumentBindings(): List<TypeArgumentBinding<KtTypeElement>?> {
         val psiTypeArguments = psiElement.getTypeArgumentsAsTypes()
         val isErrorBinding = run {
             val sizeIsEqual = psiTypeArguments.size() == jetType.getArguments().size()
@@ -111,7 +111,7 @@ private class ExplicitTypeBinding(
 private class NoTypeElementBinding<out P : PsiElement>(
         private val trace: BindingContext,
         override val psiElement: P,
-        override val jetType: JetType
+        override val jetType: KtType
 ): TypeBinding<P> {
 
     override fun getArgumentBindings(): List<TypeArgumentBinding<P>?> {

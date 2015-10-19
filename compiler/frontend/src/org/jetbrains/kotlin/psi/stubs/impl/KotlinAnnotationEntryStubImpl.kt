@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import com.intellij.psi.PsiElement
 
 public class KotlinAnnotationEntryStubImpl(
         parent: StubElement<out PsiElement>?,
         private val shortName: StringRef,
         private val hasValueArguments: Boolean
-) : KotlinStubBaseImpl<JetAnnotationEntry>(parent, JetStubElementTypes.ANNOTATION_ENTRY), KotlinAnnotationEntryStub {
+) : KotlinStubBaseImpl<KtAnnotationEntry>(parent, KtStubElementTypes.ANNOTATION_ENTRY), KotlinAnnotationEntryStub {
 
     override fun getShortName() = shortName.getString()
 

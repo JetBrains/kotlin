@@ -44,13 +44,13 @@ import com.intellij.util.ui.table.JBTableRow
 import com.intellij.util.ui.table.JBTableRowEditor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor.Kind
-import org.jetbrains.kotlin.psi.JetExpressionCodeFragment
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetTypeCodeFragment
+import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtTypeCodeFragment
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.awt.BorderLayout
 import java.awt.Font
@@ -72,7 +72,7 @@ public class JetChangeSignatureDialog(
         JetMethodDescriptor,
         ParameterTableModelItemBase<JetParameterInfo>,
         JetCallableParameterTableModel>(project, methodDescriptor, false, context) {
-    override fun getFileType() = JetFileType.INSTANCE
+    override fun getFileType() = KotlinFileType.INSTANCE
 
     override fun createParametersInfoModel(descriptor: JetMethodDescriptor) = createParametersInfoModel(descriptor, myDefaultValueContext)
 
@@ -383,7 +383,7 @@ public class JetChangeSignatureDialog(
         }
 
         private fun createReturnTypeCodeFragment(project: Project, method: JetMethodDescriptor) =
-                JetPsiFactory(project).createTypeCodeFragment(method.renderOriginalReturnType(), method.baseDeclaration)
+                KtPsiFactory(project).createTypeCodeFragment(method.renderOriginalReturnType(), method.baseDeclaration)
 
         public fun createRefactoringProcessorForSilentChangeSignature(project: Project,
                                                                       commandName: String,
@@ -410,7 +410,7 @@ public class JetChangeSignatureDialog(
                 val parameterInfo = parameter.parameter
 
                 parameterInfo.currentTypeText = parameter.typeCodeFragment.getText().trim()
-                val codeFragment = parameter.defaultValueCodeFragment as JetExpressionCodeFragment
+                val codeFragment = parameter.defaultValueCodeFragment as KtExpressionCodeFragment
                 val oldDefaultValue = parameterInfo.defaultValueForCall
                 if (codeFragment.getText() != (if (oldDefaultValue != null) oldDefaultValue.getText() else "")) {
                     parameterInfo.defaultValueForCall = codeFragment.getContentElement()
@@ -433,6 +433,6 @@ public class JetChangeSignatureDialog(
         }
 
         private fun hasTypeReference(codeFragment: PsiCodeFragment?): Boolean
-                = (codeFragment as? JetTypeCodeFragment)?.hasTypeReference() ?: false
+                = (codeFragment as? KtTypeCodeFragment)?.hasTypeReference() ?: false
     }
 }

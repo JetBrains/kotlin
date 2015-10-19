@@ -43,7 +43,7 @@ import java.io.File
 import java.util.ArrayList
 
 public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
-    protected open fun getDescriptor(declaration: JetDeclaration, container: ComponentProvider): DeclarationDescriptor {
+    protected open fun getDescriptor(declaration: KtDeclaration, container: ComponentProvider): DeclarationDescriptor {
         return container.get<ResolveSession>().resolveToDescriptor(declaration)
     }
 
@@ -52,7 +52,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
 
     public fun doTest(path: String) {
         val fileText = FileUtil.loadFile(File(path), true)
-        val psiFile = JetPsiFactory(getProject()).createFile(fileText)
+        val psiFile = KtPsiFactory(getProject()).createFile(fileText)
 
         val context = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(getProject(), environment.getModuleName())
 
@@ -71,8 +71,8 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
 
         val descriptors = ArrayList<DeclarationDescriptor>()
 
-        psiFile.accept(object : JetVisitorVoid() {
-            override fun visitJetFile(file: JetFile) {
+        psiFile.accept(object : KtVisitorVoid() {
+            override fun visitJetFile(file: KtFile) {
                 val fqName = file.getPackageFqName()
                 if (!fqName.isRoot()) {
                     val packageDescriptor = context.module.getPackage(fqName)
@@ -81,23 +81,23 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 file.acceptChildren(this)
             }
 
-            override fun visitParameter(parameter: JetParameter) {
+            override fun visitParameter(parameter: KtParameter) {
                 val declaringElement = parameter.getParent().getParent()
                 when (declaringElement) {
-                    is JetFunctionType -> return
-                    is JetNamedFunction ->
+                    is KtFunctionType -> return
+                    is KtNamedFunction ->
                         addCorrespondingParameterDescriptor(getDescriptor(declaringElement, container) as FunctionDescriptor, parameter)
-                    is JetPrimaryConstructor -> {
-                        val jetClassOrObject: JetClassOrObject = declaringElement.getContainingClassOrObject()
-                        val classDescriptor = getDescriptor(jetClassOrObject, container) as ClassDescriptor
+                    is KtPrimaryConstructor -> {
+                        val ktClassOrObject: KtClassOrObject = declaringElement.getContainingClassOrObject()
+                        val classDescriptor = getDescriptor(ktClassOrObject, container) as ClassDescriptor
                         addCorrespondingParameterDescriptor(classDescriptor.getUnsubstitutedPrimaryConstructor()!!, parameter)
                     }
                     else -> super.visitParameter(parameter)
                 }
             }
 
-            override fun visitPropertyAccessor(accessor: JetPropertyAccessor) {
-                val parent = accessor.getParent() as JetProperty
+            override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
+                val parent = accessor.getParent() as KtProperty
                 val propertyDescriptor = getDescriptor(parent, container) as PropertyDescriptor
                 if (accessor.isGetter()) {
                     descriptors.add(propertyDescriptor.getGetter()!!)
@@ -108,16 +108,16 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 accessor.acceptChildren(this)
             }
 
-            override fun visitAnonymousInitializer(initializer: JetClassInitializer) {
+            override fun visitAnonymousInitializer(initializer: KtClassInitializer) {
                 initializer.acceptChildren(this)
             }
 
-            override fun visitDeclaration(element: JetDeclaration) {
+            override fun visitDeclaration(element: KtDeclaration) {
                 val descriptor = getDescriptor(element, container)
                 descriptors.add(descriptor)
                 if (descriptor is ClassDescriptor) {
                     // if class has primary constructor then we visit it later, otherwise add it artificially
-                    if (element !is JetClassOrObject || !element.hasExplicitPrimaryConstructor()) {
+                    if (element !is KtClassOrObject || !element.hasExplicitPrimaryConstructor()) {
                         if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
                             descriptors.add(descriptor.getUnsubstitutedPrimaryConstructor()!!)
                         }
@@ -126,11 +126,11 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 element.acceptChildren(this)
             }
 
-            override fun visitJetElement(element: JetElement) {
+            override fun visitJetElement(element: KtElement) {
                 element.acceptChildren(this)
             }
 
-            private fun addCorrespondingParameterDescriptor(functionDescriptor: FunctionDescriptor, parameter: JetParameter) {
+            private fun addCorrespondingParameterDescriptor(functionDescriptor: FunctionDescriptor, parameter: KtParameter) {
                 for (valueParameterDescriptor in functionDescriptor.getValueParameters()) {
                     if (valueParameterDescriptor.getName() == parameter.getNameAsName()) {
                         descriptors.add(valueParameterDescriptor)

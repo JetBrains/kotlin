@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.*
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.util.*
 
 class InsertHandlerProvider(
@@ -85,7 +85,7 @@ class InsertHandlerProvider(
 
         val potentiallyInferred = HashSet<TypeParameterDescriptor>()
 
-        fun addPotentiallyInferred(type: JetType) {
+        fun addPotentiallyInferred(type: KtType) {
             val descriptor = type.constructor.declarationDescriptor as? TypeParameterDescriptor
             if (descriptor != null && descriptor in typeParameters) {
                 potentiallyInferred.add(descriptor)

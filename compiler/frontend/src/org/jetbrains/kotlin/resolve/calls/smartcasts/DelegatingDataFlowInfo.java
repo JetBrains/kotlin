@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.HashSet;
@@ -31,7 +31,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
 
 /* package */ class DelegatingDataFlowInfo implements DataFlowInfo {
     private static final ImmutableMap<DataFlowValue, Nullability> EMPTY_NULLABILITY_INFO = ImmutableMap.of();
-    private static final SetMultimap<DataFlowValue, JetType> EMPTY_TYPE_INFO = newTypeInfo();
+    private static final SetMultimap<DataFlowValue, KtType> EMPTY_TYPE_INFO = newTypeInfo();
 
     @Nullable
     private final DataFlowInfo parent;
@@ -41,7 +41,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
 
     // Also immutable
     @NotNull
-    private final SetMultimap<DataFlowValue, JetType> typeInfo;
+    private final SetMultimap<DataFlowValue, KtType> typeInfo;
 
     /**
      * Value for which type info was cleared or reassigned at this point
@@ -53,7 +53,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     /* package */ DelegatingDataFlowInfo(
             @Nullable DataFlowInfo parent,
             @NotNull ImmutableMap<DataFlowValue, Nullability> nullabilityInfo,
-            @NotNull SetMultimap<DataFlowValue, JetType> typeInfo
+            @NotNull SetMultimap<DataFlowValue, KtType> typeInfo
     ) {
         this(parent, nullabilityInfo, typeInfo, null);
     }
@@ -61,7 +61,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     /* package */ DelegatingDataFlowInfo(
             @Nullable DataFlowInfo parent,
             @NotNull ImmutableMap<DataFlowValue, Nullability> nullabilityInfo,
-            @NotNull SetMultimap<DataFlowValue, JetType> typeInfo,
+            @NotNull SetMultimap<DataFlowValue, KtType> typeInfo,
             @Nullable DataFlowValue valueWithGivenTypeInfo
     ) {
         this.parent = parent;
@@ -90,8 +90,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
 
     @Override
     @NotNull
-    public SetMultimap<DataFlowValue, JetType> getCompleteTypeInfo() {
-        SetMultimap<DataFlowValue, JetType> result = newTypeInfo();
+    public SetMultimap<DataFlowValue, KtType> getCompleteTypeInfo() {
+        SetMultimap<DataFlowValue, KtType> result = newTypeInfo();
         Set<DataFlowValue> withGivenTypeInfo = new HashSet<DataFlowValue>();
         DelegatingDataFlowInfo info = this;
         while (info != null) {
@@ -130,18 +130,18 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
 
     @Override
     @NotNull
-    public Set<JetType> getPossibleTypes(@NotNull DataFlowValue key) {
-        JetType originalType = key.getType();
-        Set<JetType> types = collectTypesFromMeAndParents(key);
+    public Set<KtType> getPossibleTypes(@NotNull DataFlowValue key) {
+        KtType originalType = key.getType();
+        Set<KtType> types = collectTypesFromMeAndParents(key);
         if (getNullability(key).canBeNull()) {
             return types;
         }
 
-        Set<JetType> enrichedTypes = Sets.newHashSetWithExpectedSize(types.size() + 1);
+        Set<KtType> enrichedTypes = Sets.newHashSetWithExpectedSize(types.size() + 1);
         if (originalType.isMarkedNullable()) {
             enrichedTypes.add(TypeUtils.makeNotNullable(originalType));
         }
-        for (JetType type : types) {
+        for (KtType type : types) {
             enrichedTypes.add(TypeUtils.makeNotNullable(type));
         }
 
@@ -174,8 +174,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         Nullability nullabilityOfB = getNullability(b);
         putNullability(nullability, a, nullabilityOfB);
 
-        SetMultimap<DataFlowValue, JetType> newTypeInfo = newTypeInfo();
-        Set<JetType> typesForB = collectTypesFromMeAndParents(b);
+        SetMultimap<DataFlowValue, KtType> newTypeInfo = newTypeInfo();
+        Set<KtType> typesForB = collectTypesFromMeAndParents(b);
         // Own type of B must be recorded separately, e.g. for a constant
         // But if its type is the same as A or it's null, there is no reason to do it
         // because usually null type or own type are not saved in this set
@@ -203,7 +203,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB));
         changed |= putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA));
 
-        SetMultimap<DataFlowValue, JetType> newTypeInfo = newTypeInfo();
+        SetMultimap<DataFlowValue, KtType> newTypeInfo = newTypeInfo();
         newTypeInfo.putAll(a, collectTypesFromMeAndParents(b));
         newTypeInfo.putAll(b, collectTypesFromMeAndParents(a));
         changed |= !newTypeInfo.isEmpty();
@@ -218,8 +218,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     }
 
     @NotNull
-    private Set<JetType> collectTypesFromMeAndParents(@NotNull DataFlowValue value) {
-        Set<JetType> types = new LinkedHashSet<JetType>();
+    private Set<KtType> collectTypesFromMeAndParents(@NotNull DataFlowValue value) {
+        Set<KtType> types = new LinkedHashSet<KtType>();
 
         DataFlowInfo current = this;
         while (current != null) {
@@ -257,12 +257,12 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
 
     @Override
     @NotNull
-    public DataFlowInfo establishSubtyping(@NotNull DataFlowValue value, @NotNull JetType type) {
+    public DataFlowInfo establishSubtyping(@NotNull DataFlowValue value, @NotNull KtType type) {
         if (value.getType().equals(type)) return this;
         if (getPossibleTypes(value).contains(type)) return this;
         ImmutableMap<DataFlowValue, Nullability> newNullabilityInfo =
                 type.isMarkedNullable() ? EMPTY_NULLABILITY_INFO : ImmutableMap.of(value, NOT_NULL);
-        SetMultimap<DataFlowValue, JetType> newTypeInfo = ImmutableSetMultimap.of(value, type);
+        SetMultimap<DataFlowValue, KtType> newTypeInfo = ImmutableSetMultimap.of(value, type);
         return new DelegatingDataFlowInfo(this, newNullabilityInfo, newTypeInfo);
     }
 
@@ -287,8 +287,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
             }
         }
 
-        SetMultimap<DataFlowValue, JetType> myTypeInfo = getCompleteTypeInfo();
-        SetMultimap<DataFlowValue, JetType> otherTypeInfo = other.getCompleteTypeInfo();
+        SetMultimap<DataFlowValue, KtType> myTypeInfo = getCompleteTypeInfo();
+        SetMultimap<DataFlowValue, KtType> otherTypeInfo = other.getCompleteTypeInfo();
         if (nullabilityMapBuilder.isEmpty() && containsAll(myTypeInfo, otherTypeInfo)) {
             return this;
         }
@@ -296,7 +296,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         return new DelegatingDataFlowInfo(this, ImmutableMap.copyOf(nullabilityMapBuilder), otherTypeInfo);
     }
 
-    private static boolean containsAll(SetMultimap<DataFlowValue, JetType> first, SetMultimap<DataFlowValue, JetType> second) {
+    private static boolean containsAll(SetMultimap<DataFlowValue, KtType> first, SetMultimap<DataFlowValue, KtType> second) {
         return first.entries().containsAll(second.entries());
     }
 
@@ -318,13 +318,13 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
             nullabilityMapBuilder.put(key, thisFlags.or(otherFlags));
         }
 
-        SetMultimap<DataFlowValue, JetType> myTypeInfo = getCompleteTypeInfo();
-        SetMultimap<DataFlowValue, JetType> otherTypeInfo = other.getCompleteTypeInfo();
-        SetMultimap<DataFlowValue, JetType> newTypeInfo = newTypeInfo();
+        SetMultimap<DataFlowValue, KtType> myTypeInfo = getCompleteTypeInfo();
+        SetMultimap<DataFlowValue, KtType> otherTypeInfo = other.getCompleteTypeInfo();
+        SetMultimap<DataFlowValue, KtType> newTypeInfo = newTypeInfo();
 
         for (DataFlowValue key : Sets.intersection(myTypeInfo.keySet(), otherTypeInfo.keySet())) {
-            Set<JetType> thisTypes = myTypeInfo.get(key);
-            Set<JetType> otherTypes = otherTypeInfo.get(key);
+            Set<KtType> thisTypes = myTypeInfo.get(key);
+            Set<KtType> otherTypes = otherTypeInfo.get(key);
             newTypeInfo.putAll(key, Sets.intersection(thisTypes, otherTypes));
         }
 
@@ -336,7 +336,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     }
 
     @NotNull
-    /* package */ static SetMultimap<DataFlowValue, JetType> newTypeInfo() {
+    /* package */ static SetMultimap<DataFlowValue, KtType> newTypeInfo() {
         return LinkedHashMultimap.create();
     }
 

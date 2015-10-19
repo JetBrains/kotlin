@@ -20,66 +20,66 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.lexer.JetSingleValueToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class SimplifyNegatedBinaryExpressionInspection : IntentionBasedInspection<JetPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
+public class SimplifyNegatedBinaryExpressionInspection : IntentionBasedInspection<KtPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
 
-public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingRangeIntention<JetPrefixExpression>(javaClass(), "Simplify negated binary expression") {
+public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingRangeIntention<KtPrefixExpression>(javaClass(), "Simplify negated binary expression") {
 
-    private fun IElementType.negate(): JetSingleValueToken? = when (this) {
-        JetTokens.IN_KEYWORD -> JetTokens.NOT_IN
-        JetTokens.NOT_IN -> JetTokens.IN_KEYWORD
+    private fun IElementType.negate(): KtSingleValueToken? = when (this) {
+        KtTokens.IN_KEYWORD -> KtTokens.NOT_IN
+        KtTokens.NOT_IN -> KtTokens.IN_KEYWORD
 
-        JetTokens.IS_KEYWORD -> JetTokens.NOT_IS
-        JetTokens.NOT_IS -> JetTokens.IS_KEYWORD
+        KtTokens.IS_KEYWORD -> KtTokens.NOT_IS
+        KtTokens.NOT_IS -> KtTokens.IS_KEYWORD
 
-        JetTokens.EQEQ -> JetTokens.EXCLEQ
-        JetTokens.EXCLEQ -> JetTokens.EQEQ
+        KtTokens.EQEQ -> KtTokens.EXCLEQ
+        KtTokens.EXCLEQ -> KtTokens.EQEQ
 
-        JetTokens.LT -> JetTokens.GTEQ
-        JetTokens.GTEQ -> JetTokens.LT
+        KtTokens.LT -> KtTokens.GTEQ
+        KtTokens.GTEQ -> KtTokens.LT
 
-        JetTokens.GT -> JetTokens.LTEQ
-        JetTokens.LTEQ -> JetTokens.GT
+        KtTokens.GT -> KtTokens.LTEQ
+        KtTokens.LTEQ -> KtTokens.GT
 
         else -> null
     }
 
-    override fun applicabilityRange(element: JetPrefixExpression): TextRange? {
+    override fun applicabilityRange(element: KtPrefixExpression): TextRange? {
         return if (isApplicableTo(element)) element.getOperationReference().getTextRange() else null
     }
 
-    public fun isApplicableTo(element: JetPrefixExpression): Boolean {
-        if (element.getOperationToken() != JetTokens.EXCL) return false
+    public fun isApplicableTo(element: KtPrefixExpression): Boolean {
+        if (element.getOperationToken() != KtTokens.EXCL) return false
 
-        val expression = JetPsiUtil.deparenthesize(element.getBaseExpression()) as? JetOperationExpression ?: return false
+        val expression = KtPsiUtil.deparenthesize(element.getBaseExpression()) as? KtOperationExpression ?: return false
         when (expression) {
-            is JetIsExpression -> { if (expression.getTypeReference() == null) return false }
-            is JetBinaryExpression -> { if (expression.getLeft() == null || expression.getRight() == null) return false }
+            is KtIsExpression -> { if (expression.getTypeReference() == null) return false }
+            is KtBinaryExpression -> { if (expression.getLeft() == null || expression.getRight() == null) return false }
             else -> return false
         }
 
-        val operation = expression.getOperationReference().getReferencedNameElementType() as? JetSingleValueToken ?: return false
+        val operation = expression.getOperationReference().getReferencedNameElementType() as? KtSingleValueToken ?: return false
         val negatedOperation = operation.negate() ?: return false
 
         setText("Simplify negated '${operation.getValue()}' expression to '${negatedOperation.getValue()}'")
         return true
     }
 
-    override fun applyTo(element: JetPrefixExpression, editor: Editor) {
+    override fun applyTo(element: KtPrefixExpression, editor: Editor) {
         applyTo(element)
     }
 
-    public fun applyTo(element: JetPrefixExpression) {
-        val expression = JetPsiUtil.deparenthesize(element.getBaseExpression())!!
-        val operation = (expression as JetOperationExpression).getOperationReference().getReferencedNameElementType().negate()!!.getValue()
+    public fun applyTo(element: KtPrefixExpression) {
+        val expression = KtPsiUtil.deparenthesize(element.getBaseExpression())!!
+        val operation = (expression as KtOperationExpression).getOperationReference().getReferencedNameElementType().negate()!!.getValue()
 
-        val psiFactory = JetPsiFactory(expression)
+        val psiFactory = KtPsiFactory(expression)
         val newExpression = when (expression) {
-            is JetIsExpression -> psiFactory.createExpressionByPattern("$0 $1 $2", expression.getLeftHandSide(), operation, expression.getTypeReference()!!)
-            is JetBinaryExpression -> psiFactory.createExpressionByPattern("$0 $1 $2", expression.getLeft()!!, operation, expression.getRight()!!)
+            is KtIsExpression -> psiFactory.createExpressionByPattern("$0 $1 $2", expression.getLeftHandSide(), operation, expression.getTypeReference()!!)
+            is KtBinaryExpression -> psiFactory.createExpressionByPattern("$0 $1 $2", expression.getLeft()!!, operation, expression.getRight()!!)
             else -> throw IllegalArgumentException()
         }
         element.replace(newExpression)

@@ -32,22 +32,22 @@ public class KotlinStringTemplateSurrounder extends KotlinExpressionSurrounder {
     }
 
     @Override
-    public boolean isApplicable(@NotNull JetExpression expression) {
-        return !(expression instanceof JetStringTemplateExpression);
+    public boolean isApplicable(@NotNull KtExpression expression) {
+        return !(expression instanceof KtStringTemplateExpression);
     }
 
     @Nullable
     @Override
-    public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetStringTemplateExpression stringTemplateExpression = (JetStringTemplateExpression) JetPsiFactoryKt.JetPsiFactory(expression).createExpression(
+    public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull KtExpression expression) {
+        KtStringTemplateExpression stringTemplateExpression = (KtStringTemplateExpression) KtPsiFactoryKt.KtPsiFactory(expression).createExpression(
                 getCodeTemplate(expression)
         );
-        JetStringTemplateEntry templateEntry = stringTemplateExpression.getEntries()[0];
-        JetExpression innerExpression = templateEntry.getExpression();
+        KtStringTemplateEntry templateEntry = stringTemplateExpression.getEntries()[0];
+        KtExpression innerExpression = templateEntry.getExpression();
         assert innerExpression != null : "JetExpression should exists for " + stringTemplateExpression.toString();
         innerExpression.replace(expression);
 
-        expression = (JetExpression) expression.replace(stringTemplateExpression);
+        expression = (KtExpression) expression.replace(stringTemplateExpression);
 
         CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(expression);
 
@@ -55,9 +55,9 @@ public class KotlinStringTemplateSurrounder extends KotlinExpressionSurrounder {
         return new TextRange(offset, offset);
     }
 
-    private String getCodeTemplate(JetExpression expression) {
+    private String getCodeTemplate(KtExpression expression) {
         if (expression.getChildren().length > 0 ||
-            expression instanceof JetConstantExpression) {
+            expression instanceof KtConstantExpression) {
             return "\"${a}\"";
         }
         return "\"$a\"";

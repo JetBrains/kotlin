@@ -28,26 +28,26 @@ import org.jetbrains.kotlin.idea.core.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class MoveDeclarationToSeparateFileIntention :
-        JetSelfTargetingRangeIntention<JetClassOrObject>(JetClassOrObject::class.java, "Move declaration to separate file"),
+        JetSelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Move declaration to separate file"),
         LowPriorityAction {
-    override fun applicabilityRange(element: JetClassOrObject): TextRange? {
+    override fun applicabilityRange(element: KtClassOrObject): TextRange? {
         if (element.name == null) return null
-        if (element.parent !is JetFile) return null
-        if (element.hasModifier(JetTokens.PRIVATE_KEYWORD)) return null
+        if (element.parent !is KtFile) return null
+        if (element.hasModifier(KtTokens.PRIVATE_KEYWORD)) return null
         if (element.getContainingJetFile().declarations.size() == 1) return null
 
         val keyword = when (element) {
-            is JetClass -> element.getClassOrInterfaceKeyword()
-            is JetObjectDeclaration -> element.getObjectKeyword()
+            is KtClass -> element.getClassOrInterfaceKeyword()
+            is KtObjectDeclaration -> element.getObjectKeyword()
             else -> return null
         }
         val startOffset = keyword?.startOffset ?: return null
@@ -58,7 +58,7 @@ public class MoveDeclarationToSeparateFileIntention :
         return TextRange(startOffset, endOffset)
     }
 
-    override fun applyTo(element: JetClassOrObject, editor: Editor) {
+    override fun applyTo(element: KtClassOrObject, editor: Editor) {
         val file = element.getContainingJetFile()
         val project = file.project
         val originalOffset = editor.caretModel.offset - element.startOffset
@@ -77,7 +77,7 @@ public class MoveDeclarationToSeparateFileIntention :
                                                      setOf(element),
                                                      packageName.asString(),
                                                      directory,
-                                                     targetFile as? JetFile,
+                                                     targetFile as? KtFile,
                                                      true,
                                                      true,
                                                      true,
@@ -95,7 +95,7 @@ public class MoveDeclarationToSeparateFileIntention :
                 searchInNonCode = false,
                 updateInternalReferences = true,
                 moveCallback = MoveCallback {
-                    val newFile = directory.findFile(targetFileName) as JetFile
+                    val newFile = directory.findFile(targetFileName) as KtFile
                     val newDeclaration = newFile.declarations.first()
                     NavigationUtil.activateFileWithPsiElement(newFile)
                     FileEditorManager.getInstance(project).selectedTextEditor?.moveCaret(newDeclaration.startOffset + originalOffset)

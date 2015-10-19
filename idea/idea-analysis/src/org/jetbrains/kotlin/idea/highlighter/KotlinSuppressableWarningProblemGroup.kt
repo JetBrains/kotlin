@@ -54,7 +54,7 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
     var current: PsiElement? = element
     var suppressAtStatementAllowed = true
     while (current != null) {
-        if (current is JetDeclaration && current !is JetMultiDeclaration) {
+        if (current is KtDeclaration && current !is KtMultiDeclaration) {
             val declaration = current
             val kind = DeclarationKindDetector.detect(declaration)
             if (kind != null) {
@@ -62,10 +62,10 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
             }
             suppressAtStatementAllowed = false
         }
-        else if (current is JetExpression && suppressAtStatementAllowed) {
+        else if (current is KtExpression && suppressAtStatementAllowed) {
             // Add suppress action at first statement
-            if (current.parent is JetBlockExpression || current.parent is JetMultiDeclaration) {
-                val kind = if (current.parent is JetBlockExpression) "statement" else "initializer"
+            if (current.parent is KtBlockExpression || current.parent is KtMultiDeclaration) {
+                val kind = if (current.parent is KtBlockExpression) "statement" else "initializer"
                 actions.add(KotlinSuppressIntentionAction(current, diagnosticFactory,
                                                           AnnotationHostKind(kind, "", true)))
                 suppressAtStatementAllowed = false
@@ -77,33 +77,33 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
     return actions
 }
 
-private object DeclarationKindDetector : JetVisitor<AnnotationHostKind?, Unit?>() {
+private object DeclarationKindDetector : KtVisitor<AnnotationHostKind?, Unit?>() {
 
-    fun detect(declaration: JetDeclaration) = declaration.accept(this, null)
+    fun detect(declaration: KtDeclaration) = declaration.accept(this, null)
 
-    override fun visitDeclaration(d: JetDeclaration, data: Unit?) = null
+    override fun visitDeclaration(d: KtDeclaration, data: Unit?) = null
 
-    override fun visitClass(d: JetClass, data: Unit?) = detect(d, if (d.isInterface()) "interface" else "class")
+    override fun visitClass(d: KtClass, data: Unit?) = detect(d, if (d.isInterface()) "interface" else "class")
 
-    override fun visitNamedFunction(d: JetNamedFunction, data: Unit?) = detect(d, "fun")
+    override fun visitNamedFunction(d: KtNamedFunction, data: Unit?) = detect(d, "fun")
 
-    override fun visitProperty(d: JetProperty, data: Unit?) = detect(d, d.getValOrVarKeyword().getText()!!)
+    override fun visitProperty(d: KtProperty, data: Unit?) = detect(d, d.getValOrVarKeyword().getText()!!)
 
-    override fun visitMultiDeclaration(d: JetMultiDeclaration, data: Unit?) = detect(d, d.getValOrVarKeyword()?.getText() ?: "val",
+    override fun visitMultiDeclaration(d: KtMultiDeclaration, data: Unit?) = detect(d, d.getValOrVarKeyword()?.getText() ?: "val",
                                                                                   name = d.getEntries().map { it.getName()!! }.join(", ", "(", ")"))
 
-    override fun visitTypeParameter(d: JetTypeParameter, data: Unit?) = detect(d, "type parameter", newLineNeeded = false)
+    override fun visitTypeParameter(d: KtTypeParameter, data: Unit?) = detect(d, "type parameter", newLineNeeded = false)
 
-    override fun visitEnumEntry(d: JetEnumEntry, data: Unit?) = detect(d, "enum entry")
+    override fun visitEnumEntry(d: KtEnumEntry, data: Unit?) = detect(d, "enum entry")
 
-    override fun visitParameter(d: JetParameter, data: Unit?) = detect(d, "parameter", newLineNeeded = false)
+    override fun visitParameter(d: KtParameter, data: Unit?) = detect(d, "parameter", newLineNeeded = false)
 
-    override fun visitObjectDeclaration(d: JetObjectDeclaration, data: Unit?): AnnotationHostKind? {
-        if (d.isCompanion()) return detect(d, "companion object", name = "${d.getName()} of ${d.getStrictParentOfType<JetClass>()?.getName()}")
-        if (d.getParent() is JetObjectLiteralExpression) return null
+    override fun visitObjectDeclaration(d: KtObjectDeclaration, data: Unit?): AnnotationHostKind? {
+        if (d.isCompanion()) return detect(d, "companion object", name = "${d.getName()} of ${d.getStrictParentOfType<KtClass>()?.getName()}")
+        if (d.getParent() is KtObjectLiteralExpression) return null
         return detect(d, "object")
     }
 
-    private fun detect(declaration: JetDeclaration, kind: String, name: String = declaration.getName() ?: "<anonymous>", newLineNeeded: Boolean = true)
+    private fun detect(declaration: KtDeclaration, kind: String, name: String = declaration.getName() ?: "<anonymous>", newLineNeeded: Boolean = true)
         = AnnotationHostKind(kind, name, newLineNeeded)
 }

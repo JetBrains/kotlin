@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -36,7 +36,7 @@ public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompleted
             project: Project,
             module: ModuleDescriptor,
             bindingContext: BindingContext,
-            files: Collection<JetFile>
+            files: Collection<KtFile>
     ): AnalysisResult? {
         val forExtraDiagnostics = BindingTraceContext()
 

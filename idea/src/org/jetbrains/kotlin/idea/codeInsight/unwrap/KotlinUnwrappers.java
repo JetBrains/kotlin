@@ -33,7 +33,7 @@ public class KotlinUnwrappers {
 
         @Override
         public boolean isApplicableTo(PsiElement e) {
-            return e instanceof JetExpression && e.getParent() instanceof JetBlockExpression;
+            return e instanceof KtExpression && e.getParent() instanceof KtBlockExpression;
         }
     }
 
@@ -43,8 +43,8 @@ public class KotlinUnwrappers {
         }
 
         @Override
-        protected JetExpression getExpressionToUnwrap(@NotNull JetElement target) {
-            return target instanceof JetIfExpression ? ((JetIfExpression) target).getElse() : null;
+        protected KtExpression getExpressionToUnwrap(@NotNull KtElement target) {
+            return target instanceof KtIfExpression ? ((KtIfExpression) target).getElse() : null;
         }
     }
 
@@ -54,8 +54,8 @@ public class KotlinUnwrappers {
         }
 
         @Override
-        protected JetExpression getExpressionToUnwrap(@NotNull JetElement target) {
-            return target instanceof JetIfExpression ? ((JetIfExpression) target).getThen() : null;
+        protected KtExpression getExpressionToUnwrap(@NotNull KtElement target) {
+            return target instanceof KtIfExpression ? ((KtIfExpression) target).getThen() : null;
         }
     }
 
@@ -66,16 +66,16 @@ public class KotlinUnwrappers {
 
         @Override
         public boolean isApplicableTo(PsiElement e) {
-            return e instanceof JetIfExpression
-                   && ((JetIfExpression) e).getCondition() != null
-                   && ((JetIfExpression) e).getThen() != null
-                   && ((JetIfExpression) e).getElse() != null;
+            return e instanceof KtIfExpression
+                   && ((KtIfExpression) e).getCondition() != null
+                   && ((KtIfExpression) e).getThen() != null
+                   && ((KtIfExpression) e).getElse() != null;
         }
 
         @Override
         protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
-            JetIfExpression ifExpr = (JetIfExpression) element;
-            context.replace(ifExpr, JetPsiFactoryKt.JetPsiFactory(ifExpr).createIf(ifExpr.getCondition(), ifExpr.getThen(), null));
+            KtIfExpression ifExpr = (KtIfExpression) element;
+            context.replace(ifExpr, KtPsiFactoryKt.KtPsiFactory(ifExpr).createIf(ifExpr.getCondition(), ifExpr.getThen(), null));
         }
     }
 
@@ -86,8 +86,8 @@ public class KotlinUnwrappers {
 
         @Override
         @Nullable
-        protected JetExpression getExpressionToUnwrap(@NotNull JetElement target) {
-            return target instanceof JetLoopExpression ? ((JetLoopExpression) target).getBody() : null;
+        protected KtExpression getExpressionToUnwrap(@NotNull KtElement target) {
+            return target instanceof KtLoopExpression ? ((KtLoopExpression) target).getBody() : null;
         }
     }
 
@@ -98,8 +98,8 @@ public class KotlinUnwrappers {
 
         @Override
         @Nullable
-        protected JetExpression getExpressionToUnwrap(@NotNull JetElement target) {
-            return target instanceof JetTryExpression ? ((JetTryExpression) target).getTryBlock() : null;
+        protected KtExpression getExpressionToUnwrap(@NotNull KtElement target) {
+            return target instanceof KtTryExpression ? ((KtTryExpression) target).getTryBlock() : null;
         }
     }
 
@@ -110,13 +110,13 @@ public class KotlinUnwrappers {
 
         @NotNull
         @Override
-        protected JetElement getEnclosingElement(@NotNull JetElement element) {
-            return (JetElement)element.getParent();
+        protected KtElement getEnclosingElement(@NotNull KtElement element) {
+            return (KtElement)element.getParent();
         }
 
         @Override
-        protected JetExpression getExpressionToUnwrap(@NotNull JetElement target) {
-            return target instanceof JetCatchClause ? ((JetCatchClause) target).getCatchBody() : null;
+        protected KtExpression getExpressionToUnwrap(@NotNull KtElement target) {
+            return target instanceof KtCatchClause ? ((KtCatchClause) target).getCatchBody() : null;
         }
     }
 
@@ -127,7 +127,7 @@ public class KotlinUnwrappers {
 
         @Override
         public boolean isApplicableTo(PsiElement e) {
-            return e instanceof JetCatchClause;
+            return e instanceof KtCatchClause;
         }
     }
 
@@ -138,18 +138,18 @@ public class KotlinUnwrappers {
 
         @Override
         public boolean isApplicableTo(PsiElement e) {
-            return super.isApplicableTo(e) && getEnclosingElement((JetElement)e).getParent() instanceof JetBlockExpression;
+            return super.isApplicableTo(e) && getEnclosingElement((KtElement)e).getParent() instanceof KtBlockExpression;
         }
 
         @NotNull
         @Override
-        protected JetElement getEnclosingElement(@NotNull JetElement element) {
-            return (JetElement)element.getParent();
+        protected KtElement getEnclosingElement(@NotNull KtElement element) {
+            return (KtElement)element.getParent();
         }
 
         @Override
-        protected JetExpression getExpressionToUnwrap(@NotNull JetElement target) {
-            return target instanceof JetFinallySection ? ((JetFinallySection) target).getFinalExpression() : null;
+        protected KtExpression getExpressionToUnwrap(@NotNull KtElement target) {
+            return target instanceof KtFinallySection ? ((KtFinallySection) target).getFinalExpression() : null;
         }
     }
 
@@ -160,7 +160,7 @@ public class KotlinUnwrappers {
 
         @Override
         public boolean isApplicableTo(PsiElement e) {
-            return e instanceof JetFinallySection;
+            return e instanceof KtFinallySection;
         }
     }
 }

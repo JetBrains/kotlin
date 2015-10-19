@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl
 import org.jetbrains.kotlin.cfg.pseudocode.TypePredicate
 import org.jetbrains.kotlin.cfg.pseudocode.getExpectedTypePredicate
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.util.*
@@ -32,10 +32,10 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
     override fun dumpInstructions(pseudocode: PseudocodeImpl, out: StringBuilder, bindingContext: BindingContext) {
         val expectedTypePredicateMap = HashMap<PseudoValue, TypePredicate>()
 
-        fun getElementToValueMap(pseudocode: PseudocodeImpl): Map<JetElement, PseudoValue> {
-            val elementToValues = LinkedHashMap<JetElement, PseudoValue>()
-            pseudocode.getCorrespondingElement().accept(object : JetTreeVisitorVoid() {
-                override fun visitJetElement(element: JetElement) {
+        fun getElementToValueMap(pseudocode: PseudocodeImpl): Map<KtElement, PseudoValue> {
+            val elementToValues = LinkedHashMap<KtElement, PseudoValue>()
+            pseudocode.getCorrespondingElement().accept(object : KtTreeVisitorVoid() {
+                override fun visitJetElement(element: KtElement) {
                     super.visitJetElement(element)
 
                     val value = pseudocode.getElementValue(element)
@@ -47,7 +47,7 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
             return elementToValues
         }
 
-        fun elementText(element: JetElement?): String =
+        fun elementText(element: KtElement?): String =
                 element?.getText()?.replace("\\s+".toRegex(), " ") ?: ""
 
         fun valueDecl(value: PseudoValue): String {
@@ -57,7 +57,7 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
             return "${value.debugName}: $typePredicate"
         }
 
-        fun valueDescription(element: JetElement?, value: PseudoValue): String {
+        fun valueDescription(element: KtElement?, value: PseudoValue): String {
             return when {
                 value.element != element -> "COPY"
                 else -> value.createdAt?.let { "NEW: $it" } ?: ""
@@ -73,7 +73,7 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
         val allValues = elementToValues.values() + unboundValues
         if (allValues.isEmpty()) return
 
-        val valueDescriptions = LinkedHashMap<Pair<PseudoValue, JetElement?>, String>()
+        val valueDescriptions = LinkedHashMap<Pair<PseudoValue, KtElement?>, String>()
         for (value in unboundValues) {
             valueDescriptions[value to null] = valueDescription(null, value)
         }

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.framework;
 import com.intellij.framework.FrameworkTypeEx;
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetIcons;
+import org.jetbrains.kotlin.idea.KtIcons;
 
 import javax.swing.*;
 
@@ -47,6 +47,6 @@ public class JSFrameworkType extends FrameworkTypeEx {
     @NotNull
     @Override
     public Icon getIcon() {
-        return JetIcons.SMALL_LOGO_13;
+        return KtIcons.SMALL_LOGO_13;
     }
 }

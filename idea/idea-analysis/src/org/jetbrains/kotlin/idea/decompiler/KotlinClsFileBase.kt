@@ -24,26 +24,26 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.descriptorToKey
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
-public abstract class KotlinClsFileBase(val provider: KotlinClassFileViewProvider) : JetFile(provider, true) {
+public abstract class KotlinClsFileBase(val provider: KotlinClassFileViewProvider) : KtFile(provider, true) {
     protected abstract val decompiledText: LockedClearableLazyValue<DecompiledText>
 
-    public fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor): JetDeclaration? {
+    public fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor): KtDeclaration? {
         val original = descriptor.getOriginal()
 
         if (original is ValueParameterDescriptor) {
             val callable = original.getContainingDeclaration()
-            val callableDeclaration = getDeclarationForDescriptor(callable) as? JetCallableDeclaration ?: return null
+            val callableDeclaration = getDeclarationForDescriptor(callable) as? KtCallableDeclaration ?: return null
             return callableDeclaration.getValueParameters()[original.getIndex()]
         }
 
         if (original is ConstructorDescriptor && original.isPrimary()) {
-            val classOrObject = getDeclarationForDescriptor(original.getContainingDeclaration()) as? JetClassOrObject
+            val classOrObject = getDeclarationForDescriptor(original.getContainingDeclaration()) as? KtClassOrObject
             return classOrObject?.getPrimaryConstructor() ?: classOrObject
         }
 
@@ -51,7 +51,7 @@ public abstract class KotlinClsFileBase(val provider: KotlinClassFileViewProvide
 
         val range = decompiledText.get().renderedDescriptorsToRange[key]
         return if (range != null) {
-            PsiTreeUtil.findElementOfClassAtRange(this, range.getStartOffset(), range.getEndOffset(), javaClass<JetDeclaration>())
+            PsiTreeUtil.findElementOfClassAtRange(this, range.getStartOffset(), range.getEndOffset(), javaClass<KtDeclaration>())
         }
         else {
             null

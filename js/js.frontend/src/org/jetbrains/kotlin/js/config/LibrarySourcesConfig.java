@@ -29,9 +29,9 @@ import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.js.JavaScript;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 import org.jetbrains.kotlin.utils.LibraryUtils;
@@ -88,7 +88,7 @@ public class LibrarySourcesConfig extends Config {
     }
 
     @Override
-    protected void init(@NotNull final List<JetFile> sourceFilesInLibraries, @NotNull final List<KotlinJavascriptMetadata> metadata) {
+    protected void init(@NotNull final List<KtFile> sourceFilesInLibraries, @NotNull final List<KotlinJavascriptMetadata> metadata) {
         if (files.isEmpty()) return;
 
         final PsiManager psiManager = PsiManager.getInstance(getProject());
@@ -234,12 +234,12 @@ public class LibrarySourcesConfig extends Config {
         }
     }
 
-    protected static JetFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
+    protected static KtFile getJetFileByVirtualFile(VirtualFile file, String moduleName, PsiManager psiManager) {
         PsiFile psiFile = psiManager.findFile(file);
         assert psiFile != null;
 
         setupPsiFile(psiFile, moduleName);
-        return (JetFile) psiFile;
+        return (KtFile) psiFile;
     }
 
     protected static void setupPsiFile(PsiFile psiFile, String moduleName) {
@@ -247,11 +247,11 @@ public class LibrarySourcesConfig extends Config {
     }
 
     private static class JetFileCollector extends VirtualFileVisitor {
-        private final List<JetFile> jetFiles;
+        private final List<KtFile> jetFiles;
         private final String moduleName;
         private final PsiManager psiManager;
 
-        private JetFileCollector(List<JetFile> files, String name, PsiManager manager) {
+        private JetFileCollector(List<KtFile> files, String name, PsiManager manager) {
             moduleName = name;
             psiManager = manager;
             jetFiles = files;
@@ -259,7 +259,7 @@ public class LibrarySourcesConfig extends Config {
 
         @Override
         public boolean visitFile(@NotNull VirtualFile file) {
-            if (!file.isDirectory() && StringUtil.notNullize(file.getExtension()).equalsIgnoreCase(JetFileType.EXTENSION)) {
+            if (!file.isDirectory() && StringUtil.notNullize(file.getExtension()).equalsIgnoreCase(KotlinFileType.EXTENSION)) {
                 jetFiles.add(getJetFileByVirtualFile(file, moduleName, psiManager));
             }
             return true;

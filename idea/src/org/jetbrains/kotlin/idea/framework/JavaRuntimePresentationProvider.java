@@ -23,7 +23,7 @@ import com.intellij.openapi.roots.libraries.LibraryPresentationProvider;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetIcons;
+import org.jetbrains.kotlin.idea.KtIcons;
 import org.jetbrains.kotlin.utils.LibraryUtils;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -43,7 +43,7 @@ public class JavaRuntimePresentationProvider extends LibraryPresentationProvider
     @Nullable
     @Override
     public Icon getIcon() {
-        return JetIcons.SMALL_LOGO_13;
+        return KtIcons.SMALL_LOGO_13;
     }
 
     @Nullable

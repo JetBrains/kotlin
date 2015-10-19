@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
@@ -235,8 +235,8 @@ private class ConstructorClsStubBuilder(
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
         return if (Flags.IS_SECONDARY.get(constructorProto.flags))
-            KotlinPlaceHolderStubImpl(parent, JetStubElementTypes.SECONDARY_CONSTRUCTOR)
+            KotlinPlaceHolderStubImpl(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR)
         else
-            KotlinPlaceHolderStubImpl(parent, JetStubElementTypes.PRIMARY_CONSTRUCTOR)
+            KotlinPlaceHolderStubImpl(parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR)
     }
 }

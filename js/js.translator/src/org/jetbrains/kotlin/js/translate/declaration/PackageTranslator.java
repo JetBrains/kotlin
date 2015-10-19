@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.List;
 import java.util.Map;
@@ -64,8 +64,8 @@ final class PackageTranslator extends AbstractTranslator {
         this.visitor = visitor;
     }
     
-    public void translate(JetFile file) {
-        for (JetDeclaration declaration : file.getDeclarations()) {
+    public void translate(KtFile file) {
+        for (KtDeclaration declaration : file.getDeclarations()) {
             if (!AnnotationsUtils.isPredefinedObject(BindingUtils.getDescriptorForElement(bindingContext(), declaration))) {
                 declaration.accept(visitor, context());
             }

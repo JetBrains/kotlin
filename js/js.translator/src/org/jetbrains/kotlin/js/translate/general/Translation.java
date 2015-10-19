@@ -43,10 +43,10 @@ import org.jetbrains.kotlin.js.translate.test.JSTester;
 import org.jetbrains.kotlin.js.translate.test.QUnitTester;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 
@@ -69,7 +69,7 @@ public final class Translation {
     }
 
     @NotNull
-    public static FunctionTranslator functionTranslator(@NotNull JetDeclarationWithBody function,
+    public static FunctionTranslator functionTranslator(@NotNull KtDeclarationWithBody function,
             @NotNull TranslationContext context) {
         return FunctionTranslator.newInstance(function, context);
     }
@@ -80,12 +80,12 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+    public static JsNode translateExpression(@NotNull KtExpression expression, @NotNull TranslationContext context) {
         return translateExpression(expression, context, context.dynamicContext().jsBlock());
     }
 
     @NotNull
-    public static JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context, @NotNull JsBlock block) {
+    public static JsNode translateExpression(@NotNull KtExpression expression, @NotNull TranslationContext context, @NotNull JsBlock block) {
         JsExpression aliasForExpression = context.aliasingContext().getAliasForExpression(expression);
         if (aliasForExpression != null) {
             return aliasForExpression;
@@ -105,18 +105,18 @@ public final class Translation {
 
     //NOTE: use with care
     @NotNull
-    public static JsNode doTranslateExpression(JetExpression expression, TranslationContext context) {
+    public static JsNode doTranslateExpression(KtExpression expression, TranslationContext context) {
         return expression.accept(new ExpressionVisitor(), context);
     }
 
     @NotNull
-    public static JsExpression translateAsExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+    public static JsExpression translateAsExpression(@NotNull KtExpression expression, @NotNull TranslationContext context) {
         return translateAsExpression(expression, context, context.dynamicContext().jsBlock());
     }
 
     @NotNull
     public static JsExpression translateAsExpression(
-            @NotNull JetExpression expression,
+            @NotNull KtExpression expression,
             @NotNull TranslationContext context,
             @NotNull JsBlock block
     ) {
@@ -138,13 +138,13 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsStatement translateAsStatement(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+    public static JsStatement translateAsStatement(@NotNull KtExpression expression, @NotNull TranslationContext context) {
         return translateAsStatement(expression, context, context.dynamicContext().jsBlock());
     }
 
     @NotNull
     public static JsStatement translateAsStatement(
-            @NotNull JetExpression expression,
+            @NotNull KtExpression expression,
             @NotNull TranslationContext context,
             @NotNull JsBlock block) {
         return convertToStatement(translateExpression(expression, context, block));
@@ -152,7 +152,7 @@ public final class Translation {
 
     @NotNull
     public static JsStatement translateAsStatementAndMergeInBlockIfNeeded(
-            @NotNull JetExpression expression,
+            @NotNull KtExpression expression,
             @NotNull TranslationContext context
     ) {
         JsBlock block = new JsBlock();
@@ -162,7 +162,7 @@ public final class Translation {
 
     @NotNull
     public static TranslationContext generateAst(@NotNull BindingTrace bindingTrace,
-            @NotNull Collection<JetFile> files, @NotNull MainCallParameters mainCallParameters,
+            @NotNull Collection<KtFile> files, @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config)
             throws TranslationException {
@@ -178,7 +178,7 @@ public final class Translation {
     }
 
     @NotNull
-    private static TranslationContext doGenerateAst(@NotNull BindingTrace bindingTrace, @NotNull Collection<JetFile> files,
+    private static TranslationContext doGenerateAst(@NotNull BindingTrace bindingTrace, @NotNull Collection<KtFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Config config) throws MainFunctionNotFoundException {
@@ -213,7 +213,7 @@ public final class Translation {
         }
     }
 
-    private static void mayBeGenerateTests(@NotNull Collection<JetFile> files, @NotNull Config config,
+    private static void mayBeGenerateTests(@NotNull Collection<KtFile> files, @NotNull Config config,
             @NotNull JsBlock rootBlock, @NotNull TranslationContext context) {
         JSTester tester = config.isTestConfig() ? new JSRhinoUnitTester() : new QUnitTester();
         tester.initialize(context, rootBlock);
@@ -223,10 +223,10 @@ public final class Translation {
 
     //TODO: determine whether should throw exception
     @Nullable
-    private static JsStatement generateCallToMain(@NotNull TranslationContext context, @NotNull Collection<JetFile> files,
+    private static JsStatement generateCallToMain(@NotNull TranslationContext context, @NotNull Collection<KtFile> files,
             @NotNull List<String> arguments) throws MainFunctionNotFoundException {
         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext());
-        JetNamedFunction mainFunction = mainFunctionDetector.getMainFunction(files);
+        KtNamedFunction mainFunction = mainFunctionDetector.getMainFunction(files);
         if (mainFunction == null) {
             return null;
         }

@@ -29,7 +29,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 
 import java.util.*;
 
@@ -59,13 +59,13 @@ public class ConfigureKotlinInProjectUtils {
             return Collections.emptyList();
         }
 
-        if (!FileTypeIndex.containsFileOfType(JetFileType.INSTANCE, GlobalSearchScope.projectScope(project))) {
+        if (!FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))) {
             return Collections.emptyList();
         }
 
         List<Module> modulesWithKotlin = Lists.newArrayList();
         for (Module module : ModuleManager.getInstance(project).getModules()) {
-            if (FileTypeIndex.containsFileOfType(JetFileType.INSTANCE, module.getModuleScope(true))) {
+            if (FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))) {
                 modulesWithKotlin.add(module);
             }
         }

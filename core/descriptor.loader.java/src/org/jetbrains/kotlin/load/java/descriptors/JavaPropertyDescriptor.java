@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.List;
 
@@ -55,9 +55,9 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
     @NotNull
     @Override
     public JavaCallableMemberDescriptor enhance(
-            @Nullable JetType enhancedReceiverType,
-            @NotNull List<JetType> enhancedValueParametersTypes,
-            @NotNull JetType enhancedReturnType
+            @Nullable KtType enhancedReceiverType,
+            @NotNull List<KtType> enhancedValueParametersTypes,
+            @NotNull KtType enhancedReturnType
     ) {
         JavaPropertyDescriptor enhanced = new JavaPropertyDescriptor(
                 getContainingDeclaration(),

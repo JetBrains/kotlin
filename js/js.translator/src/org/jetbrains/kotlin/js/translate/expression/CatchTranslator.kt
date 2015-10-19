@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.js.translate.general.Translation.patternTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation.translateAsStatementAndMergeInBlockIfNeeded
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToBlock
-import org.jetbrains.kotlin.psi.JetCatchClause
-import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.KtCatchClause
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull
 
 class CatchTranslator(
-        val catches: List<JetCatchClause>,
+        val catches: List<KtCatchClause>,
         context: TranslationContext
 ) : AbstractTranslator(context) {
 
@@ -76,7 +76,7 @@ class CatchTranslator(
                        translateCatches(parameterRef, catches.iterator()))
     }
 
-    private fun translateCatches(parameterRef: JsNameRef, catches: Iterator<JetCatchClause>): JsStatement {
+    private fun translateCatches(parameterRef: JsNameRef, catches: Iterator<KtCatchClause>): JsStatement {
         if (!catches.hasNext()) return JsThrow(parameterRef)
 
         val catch = catches.next()
@@ -98,7 +98,7 @@ class CatchTranslator(
         return JsIf(typeCheck, thenBlock, elseBlock)
     }
 
-    private fun translateCatchBody(context: TranslationContext, catchClause: JetCatchClause): JsBlock {
+    private fun translateCatchBody(context: TranslationContext, catchClause: KtCatchClause): JsBlock {
         val catchBody = catchClause.getCatchBody()
         val jsCatchBody =
                 if (catchBody != null)
@@ -109,7 +109,7 @@ class CatchTranslator(
         return convertToBlock(jsCatchBody)
     }
 
-    private val JetTypeReference.isThrowable: Boolean
+    private val KtTypeReference.isThrowable: Boolean
         get() {
             val jetType = getNotNull(bindingContext(), BindingContext.TYPE, this)
             val jetTypeName = jetType.getJetTypeFqName(false)

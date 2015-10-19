@@ -36,13 +36,13 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureC
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.kotlin.psi.JetCallElement
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 abstract class ChangeFunctionSignatureFix(
         protected val context: PsiElement,
@@ -76,21 +76,21 @@ abstract class ChangeFunctionSignatureFix(
         }
     }
 
-    companion object : KotlinSingleIntentionActionFactoryWithDelegate<JetCallElement, Data>() {
-        data class Data(val callElement: JetCallElement, val descriptor: CallableDescriptor)
+    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtCallElement, Data>() {
+        data class Data(val callElement: KtCallElement, val descriptor: CallableDescriptor)
 
-        override fun getElementOfInterest(diagnostic: Diagnostic): JetCallElement? {
-            return diagnostic.psiElement.getNonStrictParentOfType<JetCallElement>()
+        override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? {
+            return diagnostic.psiElement.getNonStrictParentOfType<KtCallElement>()
         }
 
-        override fun extractFixData(element: JetCallElement, diagnostic: Diagnostic): Data? {
+        override fun extractFixData(element: KtCallElement, diagnostic: Diagnostic): Data? {
             val descriptor = DiagnosticFactory.cast(diagnostic, Errors.TOO_MANY_ARGUMENTS, Errors.NO_VALUE_FOR_PARAMETER).a
             return Data(element, descriptor)
         }
 
         override fun createFix(data: Data) = createFix(data.callElement, data.descriptor)
 
-        private fun createFix(callElement: JetCallElement, descriptor: CallableDescriptor): ChangeFunctionSignatureFix? {
+        private fun createFix(callElement: KtCallElement, descriptor: CallableDescriptor): ChangeFunctionSignatureFix? {
             val functionDescriptor = descriptor as? FunctionDescriptor
                     ?: (descriptor as? ValueParameterDescriptor)?.containingDeclaration as? FunctionDescriptor
                     ?: return null
@@ -111,7 +111,7 @@ abstract class ChangeFunctionSignatureFix(
                     val hasTypeMismatches = argumentToParameter.any {
                         val (argument, parameter) = it
                         val argumentType = argument.getArgumentExpression()?.let { bindingContext.getType(it) }
-                        argumentType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)
+                        argumentType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)
                     }
                     return AddFunctionParametersFix(callElement, functionDescriptor, hasTypeMismatches)
                 }
@@ -128,7 +128,7 @@ abstract class ChangeFunctionSignatureFix(
 
             override fun getText() = "Remove parameter '${parameterToRemove.name.asString()}'"
 
-            override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+            override fun invoke(project: Project, editor: Editor?, file: KtFile) {
                 runRemoveParameter(parameterToRemove, context)
             }
         }

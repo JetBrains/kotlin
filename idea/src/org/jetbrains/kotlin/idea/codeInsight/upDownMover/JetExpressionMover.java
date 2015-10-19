@@ -28,7 +28,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
@@ -36,10 +36,10 @@ import java.util.List;
 
 public class JetExpressionMover extends AbstractJetUpDownMover {
 
-    private static final Predicate<JetElement> IS_CALL_EXPRESSION = new Predicate<JetElement>() {
+    private static final Predicate<KtElement> IS_CALL_EXPRESSION = new Predicate<KtElement>() {
         @Override
-        public boolean apply(@Nullable JetElement input) {
-            return input instanceof JetCallExpression;
+        public boolean apply(@Nullable KtElement input) {
+            return input instanceof KtCallExpression;
         }
     };
 
@@ -47,9 +47,9 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     private final static Class[] MOVABLE_ELEMENT_CLASSES = {
-            JetExpression.class,
-            JetWhenEntry.class,
-            JetValueArgument.class,
+            KtExpression.class,
+            KtWhenEntry.class,
+            KtValueArgument.class,
             PsiComment.class
     };
 
@@ -57,31 +57,31 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         @NotNull
         @Override
         public Boolean invoke(PsiElement element) {
-            return (!(element instanceof JetExpression)
-                    || element instanceof JetDeclaration
-                    || element instanceof JetBlockExpression
-                    || element.getParent() instanceof JetBlockExpression);
+            return (!(element instanceof KtExpression)
+                    || element instanceof KtDeclaration
+                    || element instanceof KtBlockExpression
+                    || element.getParent() instanceof KtBlockExpression);
         }
     };
 
     private final static Class[] BLOCKLIKE_ELEMENT_CLASSES =
-            {JetBlockExpression.class, JetWhenExpression.class, JetClassBody.class, JetFile.class};
+            {KtBlockExpression.class, KtWhenExpression.class, KtClassBody.class, KtFile.class};
 
     private final static Class[] FUNCTIONLIKE_ELEMENT_CLASSES =
-            {JetFunction.class, JetPropertyAccessor.class, JetClassInitializer.class};
+            {KtFunction.class, KtPropertyAccessor.class, KtClassInitializer.class};
 
-    private static final Predicate<JetElement> CHECK_BLOCK_LIKE_ELEMENT = new Predicate<JetElement>() {
+    private static final Predicate<KtElement> CHECK_BLOCK_LIKE_ELEMENT = new Predicate<KtElement>() {
         @Override
-        public boolean apply(@Nullable JetElement input) {
-            return (input instanceof JetBlockExpression || input instanceof JetClassBody)
+        public boolean apply(@Nullable KtElement input) {
+            return (input instanceof KtBlockExpression || input instanceof KtClassBody)
                    && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
         }
     };
 
-    private static final Predicate<JetElement> CHECK_BLOCK = new Predicate<JetElement>() {
+    private static final Predicate<KtElement> CHECK_BLOCK = new Predicate<KtElement>() {
         @Override
-        public boolean apply(@Nullable JetElement input) {
-            return input instanceof JetBlockExpression && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
+        public boolean apply(@Nullable KtElement input) {
+            return input instanceof KtBlockExpression && !PsiTreeUtil.instanceOf(input.getParent(), FUNCTIONLIKE_ELEMENT_CLASSES);
         }
     };
 
@@ -114,7 +114,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
                 nextElement = sibling;
             }
 
-            if (sibling instanceof JetExpression) {
+            if (sibling instanceof KtExpression) {
                 nextExpression = sibling;
                 break;
             }
@@ -141,7 +141,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             @NotNull MoveInfo info
     ) {
         //noinspection unchecked
-        PsiElement prev = JetPsiUtil.getLastChildByType(block, JetExpression.class);
+        PsiElement prev = KtPsiUtil.getLastChildByType(block, KtExpression.class);
         if (prev == null) return BraceStatus.NOT_MOVABLE;
 
         Document doc = editor.getDocument();
@@ -170,18 +170,18 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         if (closingBrace == null) return BraceStatus.NOT_FOUND;
 
         PsiElement blockLikeElement = closingBrace.getParent();
-        if (!(blockLikeElement instanceof JetBlockExpression)) return BraceStatus.NOT_MOVABLE;
+        if (!(blockLikeElement instanceof KtBlockExpression)) return BraceStatus.NOT_MOVABLE;
 
         PsiElement blockParent = blockLikeElement.getParent();
-        if (blockParent instanceof JetWhenEntry) return BraceStatus.NOT_FOUND;
+        if (blockParent instanceof KtWhenEntry) return BraceStatus.NOT_FOUND;
         if (PsiTreeUtil.instanceOf(blockParent, FUNCTIONLIKE_ELEMENT_CLASSES)) return BraceStatus.NOT_FOUND;
 
-        PsiElement enclosingExpression = PsiTreeUtil.getParentOfType(blockLikeElement, JetExpression.class);
+        PsiElement enclosingExpression = PsiTreeUtil.getParentOfType(blockLikeElement, KtExpression.class);
 
-        if (enclosingExpression instanceof JetDoWhileExpression) return BraceStatus.NOT_MOVABLE;
+        if (enclosingExpression instanceof KtDoWhileExpression) return BraceStatus.NOT_MOVABLE;
 
-        if (enclosingExpression instanceof JetIfExpression) {
-            JetIfExpression ifExpression = (JetIfExpression) enclosingExpression;
+        if (enclosingExpression instanceof KtIfExpression) {
+            KtIfExpression ifExpression = (KtIfExpression) enclosingExpression;
 
             if (blockLikeElement == ifExpression.getThen() && ifExpression.getElse() != null) return BraceStatus.NOT_MOVABLE;
         }
@@ -192,23 +192,23 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     @Nullable
-    private static JetBlockExpression findClosestBlock(@NotNull PsiElement anchor, boolean down, boolean strict) {
-        PsiElement current = PsiTreeUtil.getParentOfType(anchor, JetBlockExpression.class, strict);
+    private static KtBlockExpression findClosestBlock(@NotNull PsiElement anchor, boolean down, boolean strict) {
+        PsiElement current = PsiTreeUtil.getParentOfType(anchor, KtBlockExpression.class, strict);
         while (current != null) {
             PsiElement parent = current.getParent();
-            if (parent instanceof JetClassBody ||
-                parent instanceof JetClassInitializer ||
-                parent instanceof JetNamedFunction ||
-                (parent instanceof JetProperty && !((JetProperty) parent).isLocal())) {
+            if (parent instanceof KtClassBody ||
+                parent instanceof KtClassInitializer ||
+                parent instanceof KtNamedFunction ||
+                (parent instanceof KtProperty && !((KtProperty) parent).isLocal())) {
                 return null;
             }
 
-            if (parent instanceof JetBlockExpression) return (JetBlockExpression) parent;
+            if (parent instanceof KtBlockExpression) return (KtBlockExpression) parent;
 
             PsiElement sibling = down ? current.getNextSibling() : current.getPrevSibling();
             if (sibling != null) {
                 //noinspection unchecked
-                JetBlockExpression block = (JetBlockExpression) JetPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK);
+                KtBlockExpression block = (KtBlockExpression) KtPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK);
                 if (block != null) return block;
 
                 current = sibling;
@@ -222,12 +222,12 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     @Nullable
-    private static JetBlockExpression getDSLLambdaBlock(@NotNull PsiElement element, boolean down) {
-        JetCallExpression callExpression =
-                (JetCallExpression) JetPsiUtil.getOutermostDescendantElement(element, down, IS_CALL_EXPRESSION);
+    private static KtBlockExpression getDSLLambdaBlock(@NotNull PsiElement element, boolean down) {
+        KtCallExpression callExpression =
+                (KtCallExpression) KtPsiUtil.getOutermostDescendantElement(element, down, IS_CALL_EXPRESSION);
         if (callExpression == null) return null;
 
-        List<JetFunctionLiteralArgument> functionLiterals = callExpression.getFunctionLiteralArguments();
+        List<KtFunctionLiteralArgument> functionLiterals = callExpression.getFunctionLiteralArguments();
         if (functionLiterals.isEmpty()) return null;
 
         return functionLiterals.get(0).getFunctionLiteral().getBodyExpression();
@@ -235,9 +235,9 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
     @Nullable
     private static LineRange getExpressionTargetRange(@NotNull Editor editor, @NotNull PsiElement sibling, boolean down) {
-        if (sibling instanceof JetIfExpression && !down) {
-            JetExpression elseBranch = ((JetIfExpression) sibling).getElse();
-            if (elseBranch instanceof JetBlockExpression) {
+        if (sibling instanceof KtIfExpression && !down) {
+            KtExpression elseBranch = ((KtIfExpression) sibling).getElse();
+            if (elseBranch instanceof KtBlockExpression) {
                 sibling = elseBranch;
             }
         }
@@ -246,17 +246,17 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         PsiElement end = sibling;
 
         // moving out of code block
-        if (sibling.getNode().getElementType() == (down ? JetTokens.RBRACE : JetTokens.LBRACE)) {
+        if (sibling.getNode().getElementType() == (down ? KtTokens.RBRACE : KtTokens.LBRACE)) {
             PsiElement parent = sibling.getParent();
-            if (!(parent instanceof JetBlockExpression || parent instanceof JetFunctionLiteral)) return null;
+            if (!(parent instanceof KtBlockExpression || parent instanceof KtFunctionLiteral)) return null;
 
-            JetBlockExpression newBlock;
-            if (parent instanceof JetFunctionLiteral) {
+            KtBlockExpression newBlock;
+            if (parent instanceof KtFunctionLiteral) {
                 //noinspection ConstantConditions
-                newBlock = findClosestBlock(((JetFunctionLiteral) parent).getBodyExpression(), down, false);
+                newBlock = findClosestBlock(((KtFunctionLiteral) parent).getBodyExpression(), down, false);
 
                 if (!down) {
-                    PsiElement arrow = ((JetFunctionLiteral) parent).getArrow();
+                    PsiElement arrow = ((KtFunctionLiteral) parent).getArrow();
                     if (arrow != null) {
                         end = arrow;
                     }
@@ -268,7 +268,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             if (newBlock == null) return null;
 
             if (PsiTreeUtil.isAncestor(newBlock, parent, true)) {
-                PsiElement outermostParent = JetPsiUtil.getOutermostParent(parent, newBlock, true);
+                PsiElement outermostParent = KtPsiUtil.getOutermostParent(parent, newBlock, true);
 
                 if (down) {
                     end = outermostParent;
@@ -290,27 +290,27 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         else {
             PsiElement blockLikeElement;
 
-            JetBlockExpression dslBlock = getDSLLambdaBlock(sibling, down);
+            KtBlockExpression dslBlock = getDSLLambdaBlock(sibling, down);
             if (dslBlock != null) {
                 // Use JetFunctionLiteral (since it contains braces)
                 blockLikeElement = dslBlock.getParent();
             } else {
                 // JetBlockExpression and other block-like elements
-                blockLikeElement = JetPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK_LIKE_ELEMENT);
+                blockLikeElement = KtPsiUtil.getOutermostDescendantElement(sibling, down, CHECK_BLOCK_LIKE_ELEMENT);
             }
 
             if (blockLikeElement != null) {
                 if (down) {
-                    end = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.LBRACE);
-                    if (blockLikeElement instanceof JetFunctionLiteral) {
-                        PsiElement arrow = ((JetFunctionLiteral) blockLikeElement).getArrow();
+                    end = KtPsiUtil.findChildByType(blockLikeElement, KtTokens.LBRACE);
+                    if (blockLikeElement instanceof KtFunctionLiteral) {
+                        PsiElement arrow = ((KtFunctionLiteral) blockLikeElement).getArrow();
                         if (arrow != null) {
                             end = arrow;
                         }
                     }
                 }
                 else {
-                    start = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.RBRACE);
+                    start = KtPsiUtil.findChildByType(blockLikeElement, KtTokens.RBRACE);
                 }
             }
         }
@@ -320,8 +320,8 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
     @Nullable
     private static LineRange getWhenEntryTargetRange(@NotNull Editor editor, @NotNull PsiElement sibling, boolean down) {
-        if (sibling.getNode().getElementType() == (down ? JetTokens.RBRACE : JetTokens.LBRACE) &&
-            PsiTreeUtil.getParentOfType(sibling, JetWhenEntry.class) == null) {
+        if (sibling.getNode().getElementType() == (down ? KtTokens.RBRACE : KtTokens.LBRACE) &&
+            PsiTreeUtil.getParentOfType(sibling, KtWhenEntry.class) == null) {
             return null;
         }
 
@@ -337,11 +337,11 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     ) {
         PsiElement next = sibling;
 
-        if (next.getNode().getElementType() == JetTokens.COMMA) {
+        if (next.getNode().getElementType() == KtTokens.COMMA) {
             next = firstNonWhiteSibling(next, down);
         }
 
-        LineRange range = (next instanceof JetParameter || next instanceof JetValueArgument)
+        LineRange range = (next instanceof KtParameter || next instanceof KtValueArgument)
                           ? new LineRange(next, next, editor.getDocument())
                           : null;
 
@@ -359,15 +359,15 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             @NotNull PsiElement sibling,
             boolean down
     ) {
-        if (elementToCheck instanceof JetParameter || elementToCheck instanceof JetValueArgument) {
+        if (elementToCheck instanceof KtParameter || elementToCheck instanceof KtValueArgument) {
             return getValueParamOrArgTargetRange(editor, elementToCheck, sibling, down);
         }
 
-        if (elementToCheck instanceof JetExpression || elementToCheck instanceof PsiComment) {
+        if (elementToCheck instanceof KtExpression || elementToCheck instanceof PsiComment) {
             return getExpressionTargetRange(editor, sibling, down);
         }
 
-        if (elementToCheck instanceof JetWhenEntry) {
+        if (elementToCheck instanceof KtWhenEntry) {
             return getWhenEntryTargetRange(editor, sibling, down);
         }
 
@@ -413,7 +413,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     private static boolean isForbiddenMove(@NotNull PsiElement element, boolean down) {
-        if (element instanceof JetParameter || element instanceof JetValueArgument) {
+        if (element instanceof KtParameter || element instanceof KtValueArgument) {
             return isLastOfItsKind(element, down);
         }
 
@@ -421,9 +421,9 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     private static boolean isBracelessBlock(@NotNull PsiElement element) {
-        if (!(element instanceof JetBlockExpression)) return false;
+        if (!(element instanceof KtBlockExpression)) return false;
 
-        JetBlockExpression block = (JetBlockExpression) element;
+        KtBlockExpression block = (KtBlockExpression) element;
 
         return block.getLBrace() == null && block.getRBrace() == null;
     }
@@ -461,15 +461,15 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         }
 
         if (sibling == null) {
-            JetCallExpression callExpression = PsiTreeUtil.getParentOfType(element, JetCallExpression.class);
+            KtCallExpression callExpression = PsiTreeUtil.getParentOfType(element, KtCallExpression.class);
             if (callExpression != null) {
-                JetBlockExpression dslBlock = getDSLLambdaBlock(callExpression, down);
+                KtBlockExpression dslBlock = getDSLLambdaBlock(callExpression, down);
                 if (PsiTreeUtil.isAncestor(dslBlock, element, false)) {
                     //noinspection ConstantConditions
                     PsiElement blockParent = dslBlock.getParent();
                     return down
-                           ? JetPsiUtil.findChildByType(blockParent, JetTokens.RBRACE)
-                           : JetPsiUtil.findChildByType(blockParent, JetTokens.LBRACE);
+                           ? KtPsiUtil.findChildByType(blockParent, KtTokens.RBRACE)
+                           : KtPsiUtil.findChildByType(blockParent, KtTokens.LBRACE);
                 }
             }
 
@@ -513,7 +513,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             return true;
         }
 
-        if ((firstElement instanceof JetParameter || firstElement instanceof JetValueArgument) &&
+        if ((firstElement instanceof KtParameter || firstElement instanceof KtValueArgument) &&
             PsiTreeUtil.isAncestor(lastElement, firstElement, false)) {
             lastElement = firstElement;
         }
@@ -536,7 +536,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
     private static PsiElement getComma(@NotNull PsiElement element) {
         PsiElement sibling = firstNonWhiteSibling(element, true);
-        return sibling != null && (sibling.getNode().getElementType() == JetTokens.COMMA) ? sibling : null;
+        return sibling != null && (sibling.getNode().getElementType() == KtTokens.COMMA) ? sibling : null;
     }
 
     private static void fixCommaIfNeeded(@NotNull PsiElement element, boolean willBeLast) {
@@ -548,7 +548,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             PsiElement parent = element.getParent();
             assert parent != null;
 
-            parent.addAfter(JetPsiFactoryKt.JetPsiFactory(parent.getProject()).createComma(), element);
+            parent.addAfter(KtPsiFactoryKt.KtPsiFactory(parent.getProject()).createComma(), element);
         }
     }
 

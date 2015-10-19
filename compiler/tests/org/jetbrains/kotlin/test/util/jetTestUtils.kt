@@ -53,17 +53,17 @@ public fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? 
 public fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String> {
     var result = SmartFMap.emptyMap<PsiElement, String>()
     accept(
-            object : JetTreeVisitorVoid() {
+            object : KtTreeVisitorVoid() {
                 override fun visitComment(comment: PsiComment) {
                     val commentText = comment.getText()
                     if (commentText.startsWith(prefix)) {
                         val parent = comment.getParent()
                         val elementToAdd = when (parent) {
-                            is JetDeclaration -> parent
+                            is KtDeclaration -> parent
                             is PsiMember -> parent
                             else -> PsiTreeUtil.skipSiblingsForward(
                                     comment,
-                                    javaClass<PsiWhiteSpace>(), javaClass<PsiComment>(), javaClass<JetPackageDirective>()
+                                    javaClass<PsiWhiteSpace>(), javaClass<PsiComment>(), javaClass<KtPackageDirective>()
                             )
                         } as? PsiElement ?: return
 

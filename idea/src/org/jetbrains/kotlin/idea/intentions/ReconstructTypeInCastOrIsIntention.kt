@@ -25,19 +25,19 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
-public class ReconstructTypeInCastOrIsIntention : JetSelfTargetingOffsetIndependentIntention<JetTypeReference>(javaClass(), "Replace by reconstructed type"), LowPriorityAction {
-    override fun isApplicableTo(element: JetTypeReference): Boolean {
+public class ReconstructTypeInCastOrIsIntention : JetSelfTargetingOffsetIndependentIntention<KtTypeReference>(javaClass(), "Replace by reconstructed type"), LowPriorityAction {
+    override fun isApplicableTo(element: KtTypeReference): Boolean {
         // Only user types (like Foo) are interesting
-        val typeElement = element.typeElement as? JetUserType ?: return false
+        val typeElement = element.typeElement as? KtUserType ?: return false
 
         // If there are generic arguments already, there's nothing to reconstruct
         if (typeElement.getTypeArguments().isNotEmpty()) return false
 
         // We must be on the RHS of as/as?/is/!is or inside an is/!is-condition in when()
-        val expression = element.getParentOfType<JetExpression>(true)
-        if (expression !is JetBinaryExpressionWithTypeRHS && element.getParentOfType<JetWhenConditionIsPattern>(true) == null) return false
+        val expression = element.getParentOfType<KtExpression>(true)
+        if (expression !is KtBinaryExpressionWithTypeRHS && element.getParentOfType<KtWhenConditionIsPattern>(true) == null) return false
 
         val type = getReconstructedType(element)
         if (type == null || type.isError()) return false
@@ -51,13 +51,13 @@ public class ReconstructTypeInCastOrIsIntention : JetSelfTargetingOffsetIndepend
         return true
     }
 
-    override fun applyTo(element: JetTypeReference, editor: Editor) {
+    override fun applyTo(element: KtTypeReference, editor: Editor) {
         val type = getReconstructedType(element)!!
-        val newType = JetPsiFactory(element).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+        val newType = KtPsiFactory(element).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
         ShortenReferences.DEFAULT.process(element.replaced(newType))
     }
 
-    private fun getReconstructedType(typeRef: JetTypeReference): JetType? {
+    private fun getReconstructedType(typeRef: KtTypeReference): KtType? {
         return typeRef.analyze().get(BindingContext.TYPE, typeRef)
     }
 }

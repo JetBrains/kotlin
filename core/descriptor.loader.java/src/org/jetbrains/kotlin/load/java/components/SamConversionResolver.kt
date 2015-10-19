@@ -21,24 +21,24 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.types.KtType
 
 public interface SamConversionResolver {
     public companion object EMPTY : SamConversionResolver {
         override fun <D : FunctionDescriptor> resolveSamAdapter(original: D) = null
-        override fun resolveSamConstructor(name: Name, scope: JetScope) = null
+        override fun resolveSamConstructor(name: Name, scope: KtScope) = null
         override fun resolveFunctionTypeIfSamInterface(
                 classDescriptor: JavaClassDescriptor, resolveMethod: (JavaMethod) -> FunctionDescriptor
-        ): JetType? = null
+        ): KtType? = null
     }
 
-    public fun resolveSamConstructor(name: Name, scope: JetScope): SamConstructorDescriptor?
+    public fun resolveSamConstructor(name: Name, scope: KtScope): SamConstructorDescriptor?
 
     public fun <D : FunctionDescriptor> resolveSamAdapter(original: D): D?
 
     public fun resolveFunctionTypeIfSamInterface(
             classDescriptor: JavaClassDescriptor,
             resolveMethod: (JavaMethod) -> FunctionDescriptor
-    ): JetType?
+    ): KtType?
 }

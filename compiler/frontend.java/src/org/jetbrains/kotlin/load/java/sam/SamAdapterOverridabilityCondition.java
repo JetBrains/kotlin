@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.TypeUtils;
 
@@ -57,7 +57,7 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
         return true;
     }
 
-    private static boolean differentClasses(@NotNull JetType type1, @NotNull JetType type2) {
+    private static boolean differentClasses(@NotNull KtType type1, @NotNull KtType type2) {
         DeclarationDescriptor declarationDescriptor1 = type1.getConstructor().getDeclarationDescriptor();
         if (declarationDescriptor1 == null) return true; // No class, classes are not equal
         DeclarationDescriptor declarationDescriptor2 = type2.getConstructor().getDeclarationDescriptor();
@@ -100,7 +100,7 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
     @Nullable
     private static SamAdapterInfo getNearestDeclarationOrSynthesized(
             @NotNull SimpleFunctionDescriptor samAdapter,
-            @NotNull JetType ownerType
+            @NotNull KtType ownerType
     ) {
         if (samAdapter.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             return new SamAdapterInfo(samAdapter, ownerType);
@@ -109,7 +109,7 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
         for (CallableMemberDescriptor overridden : samAdapter.getOverriddenDescriptors()) {
             ClassDescriptor containingClass = (ClassDescriptor) overridden.getContainingDeclaration();
 
-            for (JetType immediateSupertype : TypeUtils.getImmediateSupertypes(ownerType)) {
+            for (KtType immediateSupertype : TypeUtils.getImmediateSupertypes(ownerType)) {
                 if (containingClass != immediateSupertype.getConstructor().getDeclarationDescriptor()) {
                     continue;
                 }
@@ -126,9 +126,9 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
 
     private static class SamAdapterInfo {
         private final SimpleFunctionDescriptor samAdapter;
-        private final JetType ownerType;
+        private final KtType ownerType;
 
-        private SamAdapterInfo(@NotNull SimpleFunctionDescriptor samAdapter, @NotNull JetType ownerType) {
+        private SamAdapterInfo(@NotNull SimpleFunctionDescriptor samAdapter, @NotNull KtType ownerType) {
             this.samAdapter = samAdapter;
             this.ownerType = ownerType;
         }

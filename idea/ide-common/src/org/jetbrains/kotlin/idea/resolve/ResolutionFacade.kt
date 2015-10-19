@@ -21,19 +21,19 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public interface ResolutionFacade {
     public val project: Project
 
-    public fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext
+    public fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext
 
-    public fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult
+    public fun analyzeFullyAndGetResult(elements: Collection<KtElement>): AnalysisResult
 
-    public fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor
+    public fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor
 
     public val moduleDescriptor: ModuleDescriptor
 

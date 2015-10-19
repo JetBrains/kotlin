@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import javax.swing.Icon
 
@@ -41,7 +41,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
     }
 
     override fun getInfo(element: PsiElement): RunLineMarkerContributor.Info? {
-        val declaration = element.getStrictParentOfType<JetNamedDeclaration>() ?: return null
+        val declaration = element.getStrictParentOfType<KtNamedDeclaration>() ?: return null
         if (declaration.nameIdentifier != element) return null
 
         // To prevent IDEA failing on red code
@@ -50,7 +50,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         val project = element.project
 
         val (url, framework) = when (declaration) {
-            is JetClassOrObject -> {
+            is KtClassOrObject -> {
                 val lightClass = declaration.toLightClass() ?: return null
                 val framework = TestFrameworks.detectFramework(lightClass) ?: return null
                 if (!framework.isTestClass(lightClass)) return null
@@ -58,7 +58,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
                 "java:suite://${lightClass.qualifiedName!!}" to framework
             }
 
-            is JetNamedFunction -> {
+            is KtNamedFunction -> {
                 val lightMethod = declaration.toLightMethods().firstOrNull() ?: return null
                 val lightClass = lightMethod.containingClass as? KotlinLightClass ?: return null
                 val framework = TestFrameworks.detectFramework(lightClass) ?: return null

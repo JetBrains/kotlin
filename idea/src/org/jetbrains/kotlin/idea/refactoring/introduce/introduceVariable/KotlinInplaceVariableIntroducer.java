@@ -44,9 +44,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,7 +57,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> extends InplaceVariableIntroducer<JetExpression> {
+public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> extends InplaceVariableIntroducer<KtExpression> {
     private static final Key<KotlinInplaceVariableIntroducer> ACTIVE_INTRODUCER = Key.create("ACTIVE_INTRODUCER");
 
     public static final String TYPE_REFERENCE_VARIABLE_NAME = "TypeReferenceVariable";
@@ -120,17 +120,17 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
     protected D myDeclaration;
     private final boolean isVar;
     private final boolean myDoNotChangeVar;
-    @Nullable private final JetType myExprType;
+    @Nullable private final KtType myExprType;
     private final boolean noTypeInference;
     private final List<ControlWrapper> panelControls = new ArrayList<ControlWrapper>();
     private JPanel contentPanel;
 
     public KotlinInplaceVariableIntroducer(
             PsiNamedElement elementToRename, Editor editor, Project project,
-            String title, JetExpression[] occurrences,
-            @Nullable JetExpression expr, boolean replaceOccurrence,
+            String title, KtExpression[] occurrences,
+            @Nullable KtExpression expr, boolean replaceOccurrence,
             D declaration, boolean isVar, boolean doNotChangeVar,
-            @Nullable JetType exprType, boolean noTypeInference
+            @Nullable KtType exprType, boolean noTypeInference
     ) {
         super(elementToRename, editor, project, title, occurrences, expr);
         this.myReplaceOccurrence = replaceOccurrence;
@@ -226,7 +226,7 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
                                         if (exprTypeCheckbox.isSelected()) {
                                             String renderedType =
                                                     IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(myExprType);
-                                            myDeclaration.setTypeReference(new JetPsiFactory(myProject).createType(renderedType));
+                                            myDeclaration.setTypeReference(new KtPsiFactory(myProject).createType(renderedType));
                                         }
                                         else {
                                             myDeclaration.setTypeReference(null);
@@ -260,12 +260,12 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
                             protected void run(@NotNull Result result) throws Throwable {
                                 PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
 
-                                JetPsiFactory psiFactory = new JetPsiFactory(myProject);
+                                KtPsiFactory psiFactory = new KtPsiFactory(myProject);
                                 PsiElement keyword = varCheckbox.isSelected() ? psiFactory.createVarKeyword() : psiFactory.createValKeyword();
 
-                                PsiElement valOrVar = myDeclaration instanceof JetProperty
-                                                       ? ((JetProperty) myDeclaration).getValOrVarKeyword()
-                                                       : ((JetParameter) myDeclaration).getValOrVarKeyword();
+                                PsiElement valOrVar = myDeclaration instanceof KtProperty
+                                                       ? ((KtProperty) myDeclaration).getValOrVarKeyword()
+                                                       : ((KtParameter) myDeclaration).getValOrVarKeyword();
                                 valOrVar.replace(keyword);
                             }
                         }.execute();
@@ -284,7 +284,7 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
             protected void run(@NotNull Result result) throws Throwable {
                 PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
 
-                ASTNode identifier = myDeclaration.getNode().findChildByType(JetTokens.IDENTIFIER);
+                ASTNode identifier = myDeclaration.getNode().findChildByType(KtTokens.IDENTIFIER);
                 if (identifier != null) {
                     TextRange range = identifier.getTextRange();
                     RangeHighlighter[] highlighters = myEditor.getMarkupModel().getAllHighlighters();
@@ -311,7 +311,7 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
-                ASTNode identifier = myDeclaration.getNode().findChildByType(JetTokens.IDENTIFIER);
+                ASTNode identifier = myDeclaration.getNode().findChildByType(KtTokens.IDENTIFIER);
                 if (identifier != null) {
                     TextRange range = identifier.getTextRange();
                     RangeHighlighter[] highlighters = myEditor.getMarkupModel().getAllHighlighters();
@@ -354,7 +354,7 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
     }
 
     protected void addTypeReferenceVariable(TemplateBuilderImpl builder) {
-        JetTypeReference typeReference = myDeclaration.getTypeReference();
+        KtTypeReference typeReference = myDeclaration.getTypeReference();
         if (typeReference != null) {
             builder.replaceElement(typeReference,
                                    TYPE_REFERENCE_VARIABLE_NAME,
@@ -392,10 +392,10 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
     @Override
     protected Collection<PsiReference> collectRefs(SearchScope referencesSearchScope) {
         return CollectionsKt.map(
-                ArraysKt.filterIsInstance(getOccurrences(), JetSimpleNameExpression.class),
-                new Function1<JetSimpleNameExpression, PsiReference>() {
+                ArraysKt.filterIsInstance(getOccurrences(), KtSimpleNameExpression.class),
+                new Function1<KtSimpleNameExpression, PsiReference>() {
                     @Override
-                    public PsiReference invoke(JetSimpleNameExpression expression) {
+                    public PsiReference invoke(KtSimpleNameExpression expression) {
                         return ReferenceUtilKt.getMainReference(expression);
                     }
                 }

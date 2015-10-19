@@ -25,10 +25,10 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import kotlin.IntRange;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetFunction;
-import org.jetbrains.kotlin.psi.JetFunctionLiteral;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtFunction;
+import org.jetbrains.kotlin.psi.KtFunctionLiteral;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
 
 import java.util.List;
 
@@ -37,9 +37,9 @@ public class DebuggerSteppingHelper {
     public static DebugProcessImpl.ResumeCommand createStepOverCommand(
             final SuspendContextImpl suspendContext,
             final boolean ignoreBreakpoints,
-            final JetFile file,
+            final KtFile file,
             final IntRange linesRange,
-            final List<JetFunction> inlineArguments,
+            final List<KtFunction> inlineArguments,
             final List<PsiElement> additionalElementsToSkip
     ) {
         final DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
@@ -83,8 +83,8 @@ public class DebuggerSteppingHelper {
     public static DebugProcessImpl.ResumeCommand createStepOutCommand(
             final SuspendContextImpl suspendContext,
             final boolean ignoreBreakpoints,
-            final List<JetNamedFunction> inlineFunctions,
-            final JetFunctionLiteral inlineArgument
+            final List<KtNamedFunction> inlineFunctions,
+            final KtFunctionLiteral inlineArgument
     ) {
         final DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
         return debugProcess.new ResumeCommand(suspendContext) {

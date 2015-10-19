@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
-import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -59,7 +59,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         fun getIgnoranceCondition(): Condition<PsiElement> {
             return object : Condition<PsiElement> {
                 override fun value(t: PsiElement?): Boolean {
-                    if (t is JetFile) return false
+                    if (t is KtFile) return false
                     return deleteList.any { element -> JavaSafeDeleteProcessor.isInside(t, element.unwrapped) }
                 }
             }
@@ -90,10 +90,10 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
                     is SafeDeleteReferenceJavaDeleteUsageInfo ->
                         usageInfo.getElement()?.let { usageElement ->
-                            if (usageElement.getNonStrictParentOfType<JetValueArgumentName>() != null) null
+                            if (usageElement.getNonStrictParentOfType<KtValueArgumentName>() != null) null
                             else {
-                                usageElement.getNonStrictParentOfType<JetImportDirective>()?.let { importDirective ->
-                                    SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as JetDeclaration)
+                                usageElement.getNonStrictParentOfType<KtImportDirective>()?.let { importDirective ->
+                                    SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as KtDeclaration)
                                 } ?: if (forceReferencedElementUnwrapping) {
                                     SafeDeleteReferenceJavaDeleteUsageInfo(usageElement, element.unwrapped, usageInfo.isSafeDelete())
                                 } else usageInfo
@@ -113,44 +113,44 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                         .filterNotNull()
                         .fold(insideDeleted) { condition1, condition2 -> Conditions.or(condition1, condition2) }
 
-        fun findUsagesByJavaProcessor(jetDeclaration: JetDeclaration): NonCodeUsageSearchInfo {
+        fun findUsagesByJavaProcessor(ktDeclaration: KtDeclaration): NonCodeUsageSearchInfo {
             return NonCodeUsageSearchInfo(
                     findUsagesByJavaProcessor(
-                            jetDeclaration.toLightElements().asSequence(),
+                            ktDeclaration.toLightElements().asSequence(),
                             getIgnoranceCondition()
                     ),
-                    jetDeclaration
+                    ktDeclaration
             )
         }
 
-        fun findKotlinDeclarationUsages(declaration: JetDeclaration): NonCodeUsageSearchInfo {
+        fun findKotlinDeclarationUsages(declaration: KtDeclaration): NonCodeUsageSearchInfo {
             ReferencesSearch.search(declaration, declaration.getUseScope())
                     .asSequence()
                     .filterNot { reference -> getIgnoranceCondition().value(reference.getElement()) }
                     .mapTo(usages) { reference ->
-                        reference.getElement().getNonStrictParentOfType<JetImportDirective>()?.let { importDirective ->
-                            SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as JetDeclaration)
+                        reference.getElement().getNonStrictParentOfType<KtImportDirective>()?.let { importDirective ->
+                            SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as KtDeclaration)
                         } ?: SafeDeleteReferenceSimpleDeleteUsageInfo(element, declaration, false)
                     }
 
             return getSearchInfo(declaration)
         }
 
-        fun findTypeParameterUsages(parameter: JetTypeParameter) {
-            val owner = parameter.getNonStrictParentOfType<JetTypeParameterListOwner>()
+        fun findTypeParameterUsages(parameter: KtTypeParameter) {
+            val owner = parameter.getNonStrictParentOfType<KtTypeParameterListOwner>()
             if (owner == null) return
 
             val parameterList = owner.getTypeParameters()
             val parameterIndex = parameterList.indexOf(parameter)
 
             for (reference in ReferencesSearch.search(owner)) {
-                if (reference !is JetReference) continue
+                if (reference !is KtReference) continue
 
                 val referencedElement = reference.getElement()
 
-                val argList = referencedElement.getNonStrictParentOfType<JetUserType>()?.let { jetType ->
+                val argList = referencedElement.getNonStrictParentOfType<KtUserType>()?.let { jetType ->
                     jetType.getTypeArgumentList()
-                } ?: referencedElement.getNonStrictParentOfType<JetCallExpression>()?.let { callExpression ->
+                } ?: referencedElement.getNonStrictParentOfType<KtCallExpression>()?.let { callExpression ->
                     callExpression.getTypeArgumentList()
                 } ?: null
 
@@ -170,21 +170,21 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         }
 
         return when (element) {
-            is JetClassOrObject -> {
+            is KtClassOrObject -> {
                 element.toLightClass()?.let { klass ->
                     findDelegationCallUsages(klass)
                     findUsagesByJavaProcessor(klass, false)
                 }
             }
 
-            is JetSecondaryConstructor -> {
+            is KtSecondaryConstructor -> {
                 element.getRepresentativeLightMethod()?.let { method ->
                     findDelegationCallUsages(method)
                     findUsagesByJavaProcessor(method, false)
                 }
             }
 
-            is JetNamedFunction -> {
+            is KtNamedFunction -> {
                 if (!LightClassUtil.canGenerateLightClass(element)) {
                     findKotlinDeclarationUsages(element)
                 }
@@ -196,7 +196,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             is PsiMethod ->
                 findUsagesByJavaProcessor(element, false)
 
-            is JetProperty -> {
+            is KtProperty -> {
                 if (!LightClassUtil.canGenerateLightClass(element)) {
                     findKotlinDeclarationUsages(element)
                 }
@@ -205,12 +205,12 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 }
             }
 
-            is JetTypeParameter -> {
+            is KtTypeParameter -> {
                 findTypeParameterUsages(element)
                 findUsagesByJavaProcessor(element)
             }
 
-            is JetParameter ->
+            is KtParameter ->
                 findUsagesByJavaProcessor(element)
 
             else -> null
@@ -218,14 +218,14 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     }
 
     override fun findConflicts(element: PsiElement, allElementsToDelete: Array<out PsiElement>): MutableCollection<String>? {
-        if (element is JetNamedFunction || element is JetProperty) {
-            val jetClass = element.getNonStrictParentOfType<JetClass>()
+        if (element is KtNamedFunction || element is KtProperty) {
+            val jetClass = element.getNonStrictParentOfType<KtClass>()
             if (jetClass == null || jetClass.getBody() != element.getParent()) return null
 
             val modifierList = jetClass.getModifierList()
-            if (modifierList != null && modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) return null
+            if (modifierList != null && modifierList.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return null
 
-            val bindingContext = (element as JetElement).analyze()
+            val bindingContext = (element as KtElement).analyze()
 
             val declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
             if (declarationDescriptor !is CallableMemberDescriptor) return null
@@ -284,21 +284,21 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         when (element) {
             is PsiMethod -> element.cleanUpOverrides()
 
-            is JetNamedFunction ->
+            is KtNamedFunction ->
                 if (!element.isLocal()) {
                     element.getRepresentativeLightMethod()?.cleanUpOverrides()
                 }
 
-            is JetProperty ->
+            is KtProperty ->
                 if (!element.isLocal()) {
                     element.toLightMethods().forEach { method -> method.cleanUpOverrides() }
                 }
 
-            is JetTypeParameter ->
+            is KtTypeParameter ->
                 element.deleteElementAndCleanParent()
 
-            is JetParameter ->
-                (element.getParent() as JetParameterList).removeParameter(element)
+            is KtParameter ->
+                (element.getParent() as KtParameterList).removeParameter(element)
         }
     }
 
@@ -306,7 +306,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             element: PsiElement, module: Module?, allElementsToDelete: Collection<PsiElement>
     ): Collection<PsiElement>? {
         when (element) {
-            is JetParameter ->
+            is KtParameter ->
                 return element.toPsiParameters().flatMap { psiParameter ->
                     JetRefactoringUtil.checkParametersInMethodHierarchy(psiParameter) ?: emptyList()
                 }.ifEmpty { listOf(element) }
@@ -318,9 +318,9 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         if (ApplicationManager.getApplication()!!.isUnitTestMode()) return Collections.singletonList(element)
 
         return when (element) {
-            is JetNamedFunction, is JetProperty ->
+            is KtNamedFunction, is KtProperty ->
                 JetRefactoringUtil.checkSuperMethods(
-                        element as JetDeclaration, allElementsToDelete, "super.methods.delete.with.usage.search"
+                        element as KtDeclaration, allElementsToDelete, "super.methods.delete.with.usage.search"
                 )
 
             else -> super.getElementsToSearch(element, module, allElementsToDelete)

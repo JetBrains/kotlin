@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.test.JetTestUtils
 import kotlin.test.assertEquals
@@ -64,11 +64,11 @@ public class JetNameSuggesterTest : LightCodeInsightFixtureTestCase() {
 
     private fun doTest() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        val file = myFixture.getFile() as JetFile
+        val file = myFixture.getFile() as KtFile
         val expectedResultText = JetTestUtils.getLastCommentInFile(file)
         try {
             JetRefactoringUtil.selectExpression(myFixture.getEditor(), file, object : JetRefactoringUtil.SelectExpressionCallback {
-                override fun run(expression: JetExpression?) {
+                override fun run(expression: KtExpression?) {
                     val names = KotlinNameSuggester.suggestNamesByExpressionAndType(expression!!, expression.analyze(BodyResolveMode.PARTIAL), { true }, "value").sorted()
                     val result = StringUtil.join(names, "\n").trim()
                     assertEquals(expectedResultText, result)

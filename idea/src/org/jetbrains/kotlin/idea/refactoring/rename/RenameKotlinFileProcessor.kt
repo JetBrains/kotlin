@@ -22,20 +22,20 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 
 class RenameKotlinFileProcessor() : RenamePsiFileProcessor() {
-    override fun canProcessElement(element: PsiElement) = element is JetFile
+    override fun canProcessElement(element: PsiElement) = element is KtFile
 
     override fun prepareRenaming(element: PsiElement?,
                                  newName: String,
                                  allRenames: MutableMap<PsiElement, String>,
                                  scope: SearchScope) {
-        val jetFile = element as? JetFile ?: return
-        if (FileTypeManager.getInstance().getFileTypeByFileName(newName) != JetFileType.INSTANCE) {
+        val jetFile = element as? KtFile ?: return
+        if (FileTypeManager.getInstance().getFileTypeByFileName(newName) != KotlinFileType.INSTANCE) {
             return
         }
 

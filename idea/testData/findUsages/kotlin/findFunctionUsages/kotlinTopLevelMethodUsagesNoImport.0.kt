@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetNamedFunction
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.KtNamedFunction
 // OPTIONS: usages, skipImports
 package server
 

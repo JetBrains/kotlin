@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.List;
 import java.util.Set;
@@ -41,39 +41,39 @@ import java.util.Set;
 public class MemberMatching {
     /* DECLARATIONS ROUGH MATCHING */
     @Nullable
-    private static JetTypeReference getReceiverType(@NotNull JetNamedDeclaration propertyOrFunction) {
-        if (propertyOrFunction instanceof JetCallableDeclaration) {
-            return ((JetCallableDeclaration) propertyOrFunction).getReceiverTypeReference();
+    private static KtTypeReference getReceiverType(@NotNull KtNamedDeclaration propertyOrFunction) {
+        if (propertyOrFunction instanceof KtCallableDeclaration) {
+            return ((KtCallableDeclaration) propertyOrFunction).getReceiverTypeReference();
         }
         throw new IllegalArgumentException("Not a callable declaration: " + propertyOrFunction.getClass().getName());
     }
 
     @NotNull
-    private static List<JetParameter> getValueParameters(@NotNull JetNamedDeclaration propertyOrFunction) {
-        if (propertyOrFunction instanceof JetCallableDeclaration) {
-            return ((JetCallableDeclaration) propertyOrFunction).getValueParameters();
+    private static List<KtParameter> getValueParameters(@NotNull KtNamedDeclaration propertyOrFunction) {
+        if (propertyOrFunction instanceof KtCallableDeclaration) {
+            return ((KtCallableDeclaration) propertyOrFunction).getValueParameters();
         }
         throw new IllegalArgumentException("Not a callable declaration: " + propertyOrFunction.getClass().getName());
     }
 
-    private static String getTypeShortName(@NotNull JetTypeReference typeReference) {
-        JetTypeElement typeElement = typeReference.getTypeElement();
+    private static String getTypeShortName(@NotNull KtTypeReference typeReference) {
+        KtTypeElement typeElement = typeReference.getTypeElement();
         assert typeElement != null;
-        return typeElement.accept(new JetVisitor<String, Void>() {
+        return typeElement.accept(new KtVisitor<String, Void>() {
             @Override
-            public String visitDeclaration(@NotNull JetDeclaration declaration, Void data) {
+            public String visitDeclaration(@NotNull KtDeclaration declaration, Void data) {
                 throw new IllegalStateException("This visitor shouldn't be invoked for " + declaration.getClass());
             }
 
             @Override
-            public String visitUserType(@NotNull JetUserType type, Void data) {
-                JetSimpleNameExpression referenceExpression = type.getReferenceExpression();
+            public String visitUserType(@NotNull KtUserType type, Void data) {
+                KtSimpleNameExpression referenceExpression = type.getReferenceExpression();
                 assert referenceExpression != null;
                 return referenceExpression.getReferencedName();
             }
 
             @Override
-            public String visitFunctionType(@NotNull JetFunctionType type, Void data) {
+            public String visitFunctionType(@NotNull KtFunctionType type, Void data) {
                 int parameterCount = type.getParameters().size();
                 if (type.getReceiverTypeReference() != null) {
                     return KotlinBuiltIns.getExtensionFunctionName(parameterCount);
@@ -84,32 +84,32 @@ public class MemberMatching {
             }
 
             @Override
-            public String visitNullableType(@NotNull JetNullableType nullableType, Void data) {
-                JetTypeElement innerType = nullableType.getInnerType();
+            public String visitNullableType(@NotNull KtNullableType nullableType, Void data) {
+                KtTypeElement innerType = nullableType.getInnerType();
                 assert innerType != null : "No inner type: " + nullableType;
                 return innerType.accept(this, null);
             }
 
             @Override
-            public String visitDynamicType(@NotNull JetDynamicType type, Void data) {
+            public String visitDynamicType(@NotNull KtDynamicType type, Void data) {
                 return "dynamic";
             }
         }, null);
     }
 
-    private static boolean typesHaveSameShortName(@NotNull JetTypeReference a, @NotNull JetTypeReference b) {
+    private static boolean typesHaveSameShortName(@NotNull KtTypeReference a, @NotNull KtTypeReference b) {
         return getTypeShortName(a).equals(getTypeShortName(b));
     }
 
-    static boolean sameReceiverPresenceAndParametersCount(@NotNull JetNamedDeclaration a, @NotNull JetNamedDeclaration b) {
+    static boolean sameReceiverPresenceAndParametersCount(@NotNull KtNamedDeclaration a, @NotNull KtNamedDeclaration b) {
         boolean sameReceiverPresence = (getReceiverType(a) == null) == (getReceiverType(b) == null);
         boolean sameParametersCount = getValueParameters(a).size() == getValueParameters(b).size();
         return sameReceiverPresence && sameParametersCount;
     }
 
-    static boolean receiverAndParametersShortTypesMatch(@NotNull JetNamedDeclaration a, @NotNull JetNamedDeclaration b) {
-        JetTypeReference aReceiver = getReceiverType(a);
-        JetTypeReference bReceiver = getReceiverType(b);
+    static boolean receiverAndParametersShortTypesMatch(@NotNull KtNamedDeclaration a, @NotNull KtNamedDeclaration b) {
+        KtTypeReference aReceiver = getReceiverType(a);
+        KtTypeReference bReceiver = getReceiverType(b);
         if ((aReceiver == null) != (bReceiver == null)) {
             return false;
         }
@@ -118,14 +118,14 @@ public class MemberMatching {
             return false;
         }
 
-        List<JetParameter> aParameters = getValueParameters(a);
-        List<JetParameter> bParameters = getValueParameters(b);
+        List<KtParameter> aParameters = getValueParameters(a);
+        List<KtParameter> bParameters = getValueParameters(b);
         if (aParameters.size() != bParameters.size()) {
             return false;
         }
         for (int i = 0; i < aParameters.size(); i++) {
-            JetTypeReference aType = aParameters.get(i).getTypeReference();
-            JetTypeReference bType = bParameters.get(i).getTypeReference();
+            KtTypeReference aType = aParameters.get(i).getTypeReference();
+            KtTypeReference bType = bParameters.get(i).getTypeReference();
 
             assert aType != null;
             assert bType != null;
@@ -139,8 +139,8 @@ public class MemberMatching {
 
 
     /* DECLARATION AND DESCRIPTOR STRICT MATCHING */
-    static boolean receiversMatch(@NotNull JetNamedDeclaration declaration, @NotNull CallableDescriptor descriptor) {
-        JetTypeReference declarationReceiver = getReceiverType(declaration);
+    static boolean receiversMatch(@NotNull KtNamedDeclaration declaration, @NotNull CallableDescriptor descriptor) {
+        KtTypeReference declarationReceiver = getReceiverType(declaration);
         ReceiverParameterDescriptor descriptorReceiver = descriptor.getExtensionReceiverParameter();
         if (declarationReceiver == null && descriptorReceiver == null) {
             return true;
@@ -151,8 +151,8 @@ public class MemberMatching {
         return false;
     }
 
-    static boolean valueParametersTypesMatch(@NotNull JetNamedDeclaration declaration, @NotNull CallableDescriptor descriptor) {
-        List<JetParameter> declarationParameters = getValueParameters(declaration);
+    static boolean valueParametersTypesMatch(@NotNull KtNamedDeclaration declaration, @NotNull CallableDescriptor descriptor) {
+        List<KtParameter> declarationParameters = getValueParameters(declaration);
         List<ValueParameterDescriptor> descriptorParameters = descriptor.getValueParameters();
         if (descriptorParameters.size() != declarationParameters.size()) {
             return false;
@@ -160,20 +160,20 @@ public class MemberMatching {
 
         for (int i = 0; i < descriptorParameters.size(); i++) {
             ValueParameterDescriptor descriptorParameter = descriptorParameters.get(i);
-            JetParameter declarationParameter = declarationParameters.get(i);
-            JetTypeReference typeReference = declarationParameter.getTypeReference();
+            KtParameter declarationParameter = declarationParameters.get(i);
+            KtTypeReference typeReference = declarationParameter.getTypeReference();
             if (typeReference == null) {
                 return false;
             }
-            JetModifierList modifierList = declarationParameter.getModifierList();
-            boolean varargInDeclaration = modifierList != null && modifierList.hasModifier(JetTokens.VARARG_KEYWORD);
+            KtModifierList modifierList = declarationParameter.getModifierList();
+            boolean varargInDeclaration = modifierList != null && modifierList.hasModifier(KtTokens.VARARG_KEYWORD);
             boolean varargInDescriptor = descriptorParameter.getVarargElementType() != null;
             if (varargInDeclaration != varargInDescriptor) {
                 return false;
             }
             String declarationTypeText = typeReference.getText();
 
-            JetType typeToRender = varargInDeclaration ? descriptorParameter.getVarargElementType() : descriptorParameter.getType();
+            KtType typeToRender = varargInDeclaration ? descriptorParameter.getVarargElementType() : descriptorParameter.getType();
             assert typeToRender != null;
             String descriptorParameterText = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(typeToRender);
             if (!declarationTypeText.equals(descriptorParameterText)) {
@@ -184,34 +184,34 @@ public class MemberMatching {
     }
 
     static boolean typeParametersMatch(
-            @NotNull JetTypeParameterListOwner typeParameterListOwner,
+            @NotNull KtTypeParameterListOwner typeParameterListOwner,
             @NotNull List<TypeParameterDescriptor> typeParameterDescriptors
     ) {
-        List<JetTypeParameter> decompiledParameters = typeParameterListOwner.getTypeParameters();
+        List<KtTypeParameter> decompiledParameters = typeParameterListOwner.getTypeParameters();
         if (decompiledParameters.size() != typeParameterDescriptors.size()) {
             return false;
         }
 
         Multimap<Name, String> decompiledParameterToBounds = HashMultimap.create();
-        for (JetTypeParameter parameter : decompiledParameters) {
-            JetTypeReference extendsBound = parameter.getExtendsBound();
+        for (KtTypeParameter parameter : decompiledParameters) {
+            KtTypeReference extendsBound = parameter.getExtendsBound();
             if (extendsBound != null) {
                 decompiledParameterToBounds.put(parameter.getNameAsName(), extendsBound.getText());
             }
         }
 
-        for (JetTypeConstraint typeConstraint : typeParameterListOwner.getTypeConstraints()) {
-            JetSimpleNameExpression typeParameterName = typeConstraint.getSubjectTypeParameterName();
+        for (KtTypeConstraint typeConstraint : typeParameterListOwner.getTypeConstraints()) {
+            KtSimpleNameExpression typeParameterName = typeConstraint.getSubjectTypeParameterName();
             assert typeParameterName != null;
 
-            JetTypeReference bound = typeConstraint.getBoundTypeReference();
+            KtTypeReference bound = typeConstraint.getBoundTypeReference();
             assert bound != null;
 
             decompiledParameterToBounds.put(typeParameterName.getReferencedNameAsName(), bound.getText());
         }
 
         for (int i = 0; i < decompiledParameters.size(); i++) {
-            JetTypeParameter decompiledParameter = decompiledParameters.get(i);
+            KtTypeParameter decompiledParameter = decompiledParameters.get(i);
             TypeParameterDescriptor descriptor = typeParameterDescriptors.get(i);
 
             Name name = decompiledParameter.getNameAsName();
@@ -221,9 +221,9 @@ public class MemberMatching {
             }
 
             Set<String> descriptorUpperBounds = Sets.newHashSet(ContainerUtil.map(
-                    descriptor.getUpperBounds(), new Function<JetType, String>() {
+                    descriptor.getUpperBounds(), new Function<KtType, String>() {
                 @Override
-                public String fun(JetType type) {
+                public String fun(KtType type) {
                     return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
                 }
             }));

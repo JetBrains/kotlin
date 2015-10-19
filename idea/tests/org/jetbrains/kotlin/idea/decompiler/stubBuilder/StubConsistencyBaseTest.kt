@@ -22,8 +22,8 @@ import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.junit.Assert
 
 public abstract class StubConsistencyBaseTest : JetLightCodeInsightFixtureTestCase() {
@@ -43,8 +43,8 @@ public abstract class StubConsistencyBaseTest : JetLightCodeInsightFixtureTestCa
         val project = getProject()
         val packageFile = getVirtualFileFinder().findVirtualFileWithHeader(id)!!
         val decompiledText = getDecompiledText(packageFile)
-        val fileWithDecompiledText = JetPsiFactory(project).createFile(decompiledText)
-        val stubTreeFromDecompiledText = JetFileStubBuilder().buildStubTree(fileWithDecompiledText)
+        val fileWithDecompiledText = KtPsiFactory(project).createFile(decompiledText)
+        val stubTreeFromDecompiledText = KtFileStubBuilder().buildStubTree(fileWithDecompiledText)
         val expectedText = stubTreeFromDecompiledText.serializeToString()
 
         val fileStub = createStubBuilder().buildFileStub(FileContentImpl.createByFile(packageFile))!!

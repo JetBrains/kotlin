@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
@@ -69,7 +69,7 @@ public final class LoadDescriptorUtil {
     ) {
         JetFilesAndAnalysisResult filesAndResult = JetFilesAndAnalysisResult.createJetFilesAndAnalyze(kotlinFiles, disposable, configurationKind);
         AnalysisResult result = filesAndResult.getAnalysisResult();
-        List<JetFile> files = filesAndResult.getJetFiles();
+        List<KtFile> files = filesAndResult.getJetFiles();
         GenerationState state = GenerationUtils.compileFilesGetGenerationState(
                 files.get(0).getProject(), result, files, useTypeTableInSerializer
         );
@@ -107,7 +107,7 @@ public final class LoadDescriptorUtil {
 
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         ModuleDescriptor module = LazyResolveTestUtil
-                .resolve(environment.getProject(), trace, Collections.<JetFile>emptyList(), environment);
+                .resolve(environment.getProject(), trace, Collections.<KtFile>emptyList(), environment);
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         return Pair.create(packageView, trace.getBindingContext());
@@ -131,9 +131,9 @@ public final class LoadDescriptorUtil {
                 @NotNull ConfigurationKind configurationKind
         ) {
             final KotlinCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
-            List<JetFile> jetFiles = ContainerUtil.map(kotlinFiles, new Function<File, JetFile>() {
+            List<KtFile> jetFiles = ContainerUtil.map(kotlinFiles, new Function<File, KtFile>() {
                 @Override
-                public JetFile fun(File kotlinFile) {
+                public KtFile fun(File kotlinFile) {
                     try {
                         return JetTestUtils.createFile(
                                 kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true), jetCoreEnvironment.getProject());
@@ -148,16 +148,16 @@ public final class LoadDescriptorUtil {
             return new JetFilesAndAnalysisResult(jetFiles, result);
         }
 
-        private final List<JetFile> jetFiles;
+        private final List<KtFile> jetFiles;
         private final AnalysisResult result;
 
-        private JetFilesAndAnalysisResult(@NotNull List<JetFile> jetFiles, @NotNull AnalysisResult result) {
+        private JetFilesAndAnalysisResult(@NotNull List<KtFile> jetFiles, @NotNull AnalysisResult result) {
             this.jetFiles = jetFiles;
             this.result = result;
         }
 
         @NotNull
-        public List<JetFile> getJetFiles() {
+        public List<KtFile> getJetFiles() {
             return jetFiles;
         }
 

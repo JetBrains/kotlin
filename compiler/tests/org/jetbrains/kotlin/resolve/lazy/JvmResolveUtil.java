@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.PackagePartProvider;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
@@ -36,12 +36,12 @@ public class JvmResolveUtil {
 
     public static String TEST_MODULE_NAME = "java-integration-test";
     @NotNull
-    public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull JetFile file) {
+    public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull KtFile file) {
         return analyzeOneFileWithJavaIntegrationAndCheckForErrors(file, PackagePartProvider.Companion.getEMPTY());
     }
 
     @NotNull
-    public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull JetFile file, @NotNull PackagePartProvider provider) {
+    public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull KtFile file, @NotNull PackagePartProvider provider) {
         AnalyzingUtils.checkForSyntacticErrors(file);
 
         AnalysisResult analysisResult = analyzeOneFileWithJavaIntegration(file, provider);
@@ -52,24 +52,24 @@ public class JvmResolveUtil {
     }
 
     @NotNull
-    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file,  @NotNull KotlinCoreEnvironment environment) {
+    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull KtFile file,  @NotNull KotlinCoreEnvironment environment) {
         return analyzeOneFileWithJavaIntegration(file, new JvmPackagePartProvider(environment));
     }
 
     @NotNull
-    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file,  @NotNull PackagePartProvider provider) {
+    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull KtFile file,  @NotNull PackagePartProvider provider) {
         return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file), provider);
     }
 
     @NotNull
-    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file) {
+    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull KtFile file) {
         return analyzeOneFileWithJavaIntegration(file, PackagePartProvider.Companion.getEMPTY());
     }
 
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegrationAndCheckForErrors(
             @NotNull Project project,
-            @NotNull Collection<JetFile> files
+            @NotNull Collection<KtFile> files
     ) {
         return analyzeFilesWithJavaIntegrationAndCheckForErrors(project, files, PackagePartProvider.Companion.getEMPTY());
     }
@@ -77,10 +77,10 @@ public class JvmResolveUtil {
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegrationAndCheckForErrors(
             @NotNull Project project,
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull PackagePartProvider packagePartProvider
     ) {
-        for (JetFile file : files) {
+        for (KtFile file : files) {
             AnalyzingUtils.checkForSyntacticErrors(file);
         }
 
@@ -94,7 +94,7 @@ public class JvmResolveUtil {
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegration(
             @NotNull Project project,
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull KotlinCoreEnvironment environment
     ) {
         return analyzeFilesWithJavaIntegration(project, files, new JvmPackagePartProvider(environment));
@@ -103,7 +103,7 @@ public class JvmResolveUtil {
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegration(
             @NotNull Project project,
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull PackagePartProvider packagePartProvider
     ) {
 

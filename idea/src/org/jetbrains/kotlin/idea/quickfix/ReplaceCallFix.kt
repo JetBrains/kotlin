@@ -31,7 +31,7 @@ public abstract class ReplaceCallFix protected constructor(val psiElement: PsiEl
     override fun getFamilyName(): String = getText()
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (file is JetFile) {
+        if (file is KtFile) {
             return getCallExpression() != null
         }
         return false
@@ -42,8 +42,8 @@ public abstract class ReplaceCallFix protected constructor(val psiElement: PsiEl
 
         val selector = callExpression.getSelectorExpression()
         if (selector != null) {
-            val newElement = JetPsiFactory(callExpression).createExpression(
-                    callExpression.getReceiverExpression().getText() + operation + selector.getText()) as JetQualifiedExpression
+            val newElement = KtPsiFactory(callExpression).createExpression(
+                    callExpression.getReceiverExpression().getText() + operation + selector.getText()) as KtQualifiedExpression
 
             callExpression.replace(newElement)
         }
@@ -51,18 +51,18 @@ public abstract class ReplaceCallFix protected constructor(val psiElement: PsiEl
 
     override fun startInWriteAction(): Boolean = true
 
-    private fun getCallExpression(): JetQualifiedExpression? {
+    private fun getCallExpression(): KtQualifiedExpression? {
         return PsiTreeUtil.getParentOfType(psiElement, classToReplace)
     }
 
     abstract val operation: String
-    abstract val classToReplace: Class<out JetQualifiedExpression>
+    abstract val classToReplace: Class<out KtQualifiedExpression>
 }
 
 public class ReplaceWithSafeCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement) {
     override fun getText(): String = "Replace with safe (?.) call"
     override val operation: String get() = "?."
-    override val classToReplace: Class<out JetQualifiedExpression> get() = javaClass<JetDotQualifiedExpression>()
+    override val classToReplace: Class<out KtQualifiedExpression> get() = javaClass<KtDotQualifiedExpression>()
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction
@@ -73,7 +73,7 @@ public class ReplaceWithSafeCallFix(psiElement: PsiElement): ReplaceCallFix(psiE
 public class ReplaceWithDotCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement), CleanupFix {
     override fun getText(): String = JetBundle.message("replace.with.dot.call")
     override val operation: String get() = "."
-    override val classToReplace: Class<out JetQualifiedExpression> get() = javaClass<JetSafeQualifiedExpression>()
+    override val classToReplace: Class<out KtQualifiedExpression> get() = javaClass<KtSafeQualifiedExpression>()
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction

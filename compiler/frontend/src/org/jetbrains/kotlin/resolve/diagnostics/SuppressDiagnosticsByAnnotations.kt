@@ -22,16 +22,16 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 
-public val FUNCTION_NO_BODY_ERRORS: List<DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor>> =
+public val FUNCTION_NO_BODY_ERRORS: List<DiagnosticFactory1<KtFunction, SimpleFunctionDescriptor>> =
         listOf(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, Errors.NON_MEMBER_FUNCTION_NO_BODY, Errors.FINAL_FUNCTION_WITH_NO_BODY)
 
-public val PROPERTY_NOT_INITIALIZED_ERRORS: List<DiagnosticFactory0<JetProperty>> =
+public val PROPERTY_NOT_INITIALIZED_ERRORS: List<DiagnosticFactory0<KtProperty>> =
         listOf(Errors.MUST_BE_INITIALIZED, Errors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT)
 
 public abstract class SuppressDiagnosticsByAnnotations(

@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.DelegationResolver.generateDelegatedMembers
 import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
@@ -34,13 +34,13 @@ import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.types.DeferredType
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.util.*
 
 public open class LazyClassMemberScope(
@@ -51,7 +51,7 @@ public open class LazyClassMemberScope(
 ) : AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider>(c, declarationProvider, thisClass, trace) {
 
     private val descriptorsFromDeclaredElements = storageManager.createLazyValue {
-        computeDescriptorsFromDeclaredElements(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
+        computeDescriptorsFromDeclaredElements(DescriptorKindFilter.ALL, KtScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
     }
     private val extraDescriptors: NotNullLazyValue<Collection<DeclarationDescriptor>> = storageManager.createLazyValue {
         computeExtraDescriptors(NoLookupLocation.FOR_ALREADY_TRACKED)
@@ -85,14 +85,14 @@ public open class LazyClassMemberScope(
     }
 
     private interface MemberExtractor<T : CallableMemberDescriptor> {
-        public fun extract(extractFrom: JetType, name: Name): Collection<T>
+        public fun extract(extractFrom: KtType, name: Name): Collection<T>
     }
 
     private val primaryConstructor: NullableLazyValue<ConstructorDescriptor>
             = c.storageManager.createNullableLazyValue { resolvePrimaryConstructor() }
 
-    override fun getScopeForMemberDeclarationResolution(declaration: JetDeclaration): LexicalScope {
-        if (declaration is JetProperty) {
+    override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration): LexicalScope {
+        if (declaration is KtProperty) {
             return thisDescriptor.getScopeForInitializerResolution()
         }
         return thisDescriptor.getScopeForMemberDeclarationResolution()
@@ -107,7 +107,7 @@ public open class LazyClassMemberScope(
             }
 
             override fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
-                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent) as JetDeclaration?
+                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent) as KtDeclaration?
                 assert(declaration != null) { "fromCurrent can not be a fake override" }
                 trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()))
             }
@@ -315,13 +315,13 @@ public open class LazyClassMemberScope(
 
     companion object {
         private val EXTRACT_FUNCTIONS: MemberExtractor<FunctionDescriptor> = object : MemberExtractor<FunctionDescriptor> {
-            override fun extract(extractFrom: JetType, name: Name): Collection<FunctionDescriptor> {
+            override fun extract(extractFrom: KtType, name: Name): Collection<FunctionDescriptor> {
                 return extractFrom.memberScope.getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
             }
         }
 
         private val EXTRACT_PROPERTIES: MemberExtractor<PropertyDescriptor> = object : MemberExtractor<PropertyDescriptor> {
-            override fun extract(extractFrom: JetType, name: Name): Collection<PropertyDescriptor> {
+            override fun extract(extractFrom: KtType, name: Name): Collection<PropertyDescriptor> {
                 @Suppress("UNCHECKED_CAST")
                 return extractFrom.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED) as Collection<PropertyDescriptor>
             }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.List;
 import java.util.Map;
@@ -73,7 +73,7 @@ public interface ResolvedCall<D extends CallableDescriptor> {
 
     /** What's substituted for type parameters */
     @NotNull
-    Map<TypeParameterDescriptor, JetType> getTypeArguments();
+    Map<TypeParameterDescriptor, KtType> getTypeArguments();
 
     /** Data flow info for each argument and the result data flow info */
     @NotNull

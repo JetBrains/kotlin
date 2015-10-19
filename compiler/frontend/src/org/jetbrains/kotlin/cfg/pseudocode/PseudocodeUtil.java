@@ -27,15 +27,15 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.WriteValueInstructi
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.ResolvedCallUtilKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -43,7 +43,7 @@ import java.util.Collection;
 
 public class PseudocodeUtil {
     @NotNull
-    public static Pseudocode generatePseudocode(@NotNull JetDeclaration declaration, @NotNull final BindingContext bindingContext) {
+    public static Pseudocode generatePseudocode(@NotNull KtDeclaration declaration, @NotNull final BindingContext bindingContext) {
         BindingTrace mockTrace = new BindingTrace() {
             @NotNull
             @Override
@@ -72,12 +72,12 @@ public class PseudocodeUtil {
 
             @Nullable
             @Override
-            public JetType getType(@NotNull JetExpression expression) {
+            public KtType getType(@NotNull KtExpression expression) {
                 return bindingContext.getType(expression);
             }
 
             @Override
-            public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
+            public void recordType(@NotNull KtExpression expression, @Nullable KtType type) {
             }
 
             @Override
@@ -89,7 +89,7 @@ public class PseudocodeUtil {
 
     @Nullable
     public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull Instruction instruction, boolean onlyReference, @NotNull BindingContext bindingContext) {
-        JetElement element = null;
+        KtElement element = null;
         if (instruction instanceof ReadValueInstruction) {
             element = ((ReadValueInstruction) instruction).getElement();
         }

@@ -54,10 +54,10 @@ public class InlineUtil {
 
     public static boolean checkNonLocalReturnUsage(
             @NotNull DeclarationDescriptor fromFunction,
-            @NotNull JetExpression startExpression,
+            @NotNull KtExpression startExpression,
             @NotNull BindingTrace trace
     ) {
-        PsiElement containingFunction = PsiTreeUtil.getParentOfType(startExpression, JetClassOrObject.class, JetDeclarationWithBody.class);
+        PsiElement containingFunction = PsiTreeUtil.getParentOfType(startExpression, KtClassOrObject.class, KtDeclarationWithBody.class);
         if (containingFunction == null) {
             return false;
         }
@@ -70,7 +70,7 @@ public class InlineUtil {
         BindingContext bindingContext = trace.getBindingContext();
 
         while (canBeInlineArgument(containingFunction) && fromFunction != containingFunctionDescriptor) {
-            if (!isInlinedArgument((JetFunction) containingFunction, bindingContext, true)) {
+            if (!isInlinedArgument((KtFunction) containingFunction, bindingContext, true)) {
                 return false;
             }
 
@@ -85,13 +85,13 @@ public class InlineUtil {
     }
 
     public static boolean isInlinedArgument(
-            @NotNull JetFunction argument,
+            @NotNull KtFunction argument,
             @NotNull BindingContext bindingContext,
             boolean checkNonLocalReturn
     ) {
         if (!canBeInlineArgument(argument)) return false;
 
-        JetExpression call = JetPsiUtil.getParentCallIfPresent(argument);
+        KtExpression call = KtPsiUtil.getParentCallIfPresent(argument);
         if (call != null) {
             ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(call, bindingContext);
             if (resolvedCall != null && isInline(resolvedCall.getResultingDescriptor())) {
@@ -111,7 +111,7 @@ public class InlineUtil {
     }
 
     public static boolean canBeInlineArgument(@Nullable PsiElement functionalExpression) {
-        return functionalExpression instanceof JetFunctionLiteral || functionalExpression instanceof JetNamedFunction;
+        return functionalExpression instanceof KtFunctionLiteral || functionalExpression instanceof KtNamedFunction;
     }
 
     @Nullable

@@ -22,11 +22,11 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-public class RemoveBracesIntention : JetSelfTargetingIntention<JetBlockExpression>(javaClass(), "Remove braces") {
-    override fun isApplicableTo(element: JetBlockExpression, caretOffset: Int): Boolean {
+public class RemoveBracesIntention : JetSelfTargetingIntention<KtBlockExpression>(javaClass(), "Remove braces") {
+    override fun isApplicableTo(element: KtBlockExpression, caretOffset: Int): Boolean {
         if (element.getStatements().size() != 1) return false
 
-        val containerNode = element.getParent() as? JetContainerNode ?: return false
+        val containerNode = element.getParent() as? KtContainerNode ?: return false
 
         val lBrace = element.getLBrace() ?: return false
         val rBrace = element.getRBrace() ?: return false
@@ -37,27 +37,27 @@ public class RemoveBracesIntention : JetSelfTargetingIntention<JetBlockExpressio
         return true
     }
 
-    override fun applyTo(element: JetBlockExpression, editor: Editor) {
+    override fun applyTo(element: KtBlockExpression, editor: Editor) {
         val statement = element.getStatements().single()
 
-        val containerNode = element.getParent() as JetContainerNode
-        val construct = containerNode.getParent() as JetExpression
+        val containerNode = element.getParent() as KtContainerNode
+        val construct = containerNode.getParent() as KtExpression
         handleComments(construct, element)
 
         val newElement = element.replace(statement.copy())
 
-        if (construct is JetDoWhileExpression) {
-            newElement.getParent()!!.addAfter(JetPsiFactory(element).createNewLine(), newElement)
+        if (construct is KtDoWhileExpression) {
+            newElement.getParent()!!.addAfter(KtPsiFactory(element).createNewLine(), newElement)
         }
     }
 
-    private fun handleComments(construct: JetExpression, block: JetBlockExpression) {
+    private fun handleComments(construct: KtExpression, block: KtBlockExpression) {
         var sibling = block.getFirstChild()?.getNextSibling()
 
         while (sibling != null) {
             if (sibling is PsiComment) {
                 //cleans up extra whitespace
-                val psiFactory = JetPsiFactory(construct)
+                val psiFactory = KtPsiFactory(construct)
                 if (construct.getPrevSibling() is PsiWhiteSpace) {
                     construct.getPrevSibling()!!.replace(psiFactory.createNewLine())
                 }

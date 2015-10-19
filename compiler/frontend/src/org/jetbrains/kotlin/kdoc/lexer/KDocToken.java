@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.kdoc.lexer;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.lexer.JetToken;
+import org.jetbrains.kotlin.lexer.KtToken;
 
-public class KDocToken extends JetToken {
+public class KDocToken extends KtToken {
     public KDocToken(@NotNull @NonNls String debugName) {
         super(debugName);
     }

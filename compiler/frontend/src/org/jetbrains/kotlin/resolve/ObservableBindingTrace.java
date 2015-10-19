@@ -20,8 +20,8 @@ import com.intellij.util.SmartFMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -78,12 +78,12 @@ public class ObservableBindingTrace implements BindingTrace {
 
     @Nullable
     @Override
-    public JetType getType(@NotNull JetExpression expression) {
+    public KtType getType(@NotNull KtExpression expression) {
         return originalTrace.getType(expression);
     }
 
     @Override
-    public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
+    public void recordType(@NotNull KtExpression expression, @Nullable KtType type) {
         originalTrace.recordType(expression, type);
     }
 

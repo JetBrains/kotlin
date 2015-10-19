@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.Analysis
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
@@ -58,21 +58,21 @@ interface Parameter {
     val mirrorVarName: String?
     val receiverCandidate: Boolean
 
-    fun getParameterType(allowSpecialClassNames: Boolean): JetType
+    fun getParameterType(allowSpecialClassNames: Boolean): KtType
 
-    fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<JetType>
+    fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<KtType>
 
-    fun copy(name: String, parameterType: JetType): Parameter
+    fun copy(name: String, parameterType: KtType): Parameter
 }
 
 val Parameter.nameForRef: String get() = mirrorVarName ?: name
 
 data class TypeParameter(
-        val originalDeclaration: JetTypeParameter,
-        val originalConstraints: List<JetTypeConstraint>
+        val originalDeclaration: KtTypeParameter,
+        val originalConstraints: List<KtTypeConstraint>
 )
 
-interface Replacement: Function2<ExtractableCodeDescriptor, JetElement, JetElement>
+interface Replacement: Function2<ExtractableCodeDescriptor, KtElement, KtElement>
 
 interface ParameterReplacement : Replacement {
     val parameter: Parameter
@@ -82,15 +82,15 @@ interface ParameterReplacement : Replacement {
 class RenameReplacement(override val parameter: Parameter): ParameterReplacement {
     override fun copy(parameter: Parameter) = RenameReplacement(parameter)
 
-    override fun invoke(descriptor: ExtractableCodeDescriptor, e: JetElement): JetElement {
-        var expressionToReplace = (e.getParent() as? JetThisExpression ?: e).let { it.getQualifiedExpressionForSelector() ?: it }
-        val parameterName = JetPsiUtil.unquoteIdentifier(parameter.nameForRef)
+    override fun invoke(descriptor: ExtractableCodeDescriptor, e: KtElement): KtElement {
+        var expressionToReplace = (e.getParent() as? KtThisExpression ?: e).let { it.getQualifiedExpressionForSelector() ?: it }
+        val parameterName = KtPsiUtil.unquoteIdentifier(parameter.nameForRef)
         val replacingName =
                 if (e.getText().startsWith('`') || !KotlinNameSuggester.isIdentifier(parameterName)) "`$parameterName`" else parameterName
-        val psiFactory = JetPsiFactory(e)
+        val psiFactory = KtPsiFactory(e)
         val replacement = when {
             parameter == descriptor.receiverParameter -> psiFactory.createExpression("this")
-            expressionToReplace is JetOperationReferenceExpression -> psiFactory.createOperationName(replacingName)
+            expressionToReplace is KtOperationReferenceExpression -> psiFactory.createOperationName(replacingName)
             else -> psiFactory.createSimpleName(replacingName)
         }
         return expressionToReplace.replaced(replacement)
@@ -100,83 +100,83 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
 class AddPrefixReplacement(override val parameter: Parameter): ParameterReplacement {
     override fun copy(parameter: Parameter) = AddPrefixReplacement(parameter)
 
-    override fun invoke(descriptor: ExtractableCodeDescriptor, e: JetElement): JetElement {
+    override fun invoke(descriptor: ExtractableCodeDescriptor, e: KtElement): KtElement {
         if (descriptor.receiverParameter == parameter) return e
 
-        val selector = (e.parent as? JetCallExpression) ?: e
-        val replacingExpression = JetPsiFactory(e).createExpression("${parameter.nameForRef}.${selector.text}")
-        val newExpr = (selector.replace(replacingExpression) as JetQualifiedExpression).selectorExpression!!
-        return (newExpr as? JetCallExpression)?.calleeExpression ?: newExpr
+        val selector = (e.parent as? KtCallExpression) ?: e
+        val replacingExpression = KtPsiFactory(e).createExpression("${parameter.nameForRef}.${selector.text}")
+        val newExpr = (selector.replace(replacingExpression) as KtQualifiedExpression).selectorExpression!!
+        return (newExpr as? KtCallExpression)?.calleeExpression ?: newExpr
     }
 }
 
 class FqNameReplacement(val fqName: FqName): Replacement {
-    override fun invoke(descriptor: ExtractableCodeDescriptor, e: JetElement): JetElement {
-        val thisExpr = e.getParent() as? JetThisExpression
+    override fun invoke(descriptor: ExtractableCodeDescriptor, e: KtElement): KtElement {
+        val thisExpr = e.getParent() as? KtThisExpression
         if (thisExpr != null) {
-            return thisExpr.replaced(JetPsiFactory(e).createExpression(fqName.asString())).getQualifiedElementSelector()!!
+            return thisExpr.replaced(KtPsiFactory(e).createExpression(fqName.asString())).getQualifiedElementSelector()!!
         }
 
-        val newExpr = (e as? JetSimpleNameExpression)?.mainReference?.bindToFqName(fqName, ShorteningMode.NO_SHORTENING) as JetElement
-        return if (newExpr is JetQualifiedExpression) newExpr.getSelectorExpression()!! else newExpr
+        val newExpr = (e as? KtSimpleNameExpression)?.mainReference?.bindToFqName(fqName, ShorteningMode.NO_SHORTENING) as KtElement
+        return if (newExpr is KtQualifiedExpression) newExpr.getSelectorExpression()!! else newExpr
     }
 }
 
 interface OutputValue {
-    val originalExpressions: List<JetExpression>
-    val valueType: JetType
+    val originalExpressions: List<KtExpression>
+    val valueType: KtType
 
     class ExpressionValue(
             val callSiteReturn: Boolean,
-            override val originalExpressions: List<JetExpression>,
-            override val valueType: JetType
+            override val originalExpressions: List<KtExpression>,
+            override val valueType: KtType
     ): OutputValue
 
     class Jump(
-            val elementsToReplace: List<JetExpression>,
-            val elementToInsertAfterCall: JetElement?,
+            val elementsToReplace: List<KtExpression>,
+            val elementToInsertAfterCall: KtElement?,
             val conditional: Boolean,
             private val builtIns: KotlinBuiltIns
     ): OutputValue {
-        override val originalExpressions: List<JetExpression> get() = elementsToReplace
-        override val valueType: JetType = with(builtIns) { if (conditional) booleanType else unitType }
+        override val originalExpressions: List<KtExpression> get() = elementsToReplace
+        override val valueType: KtType = with(builtIns) { if (conditional) booleanType else unitType }
     }
 
     class ParameterUpdate(
             val parameter: Parameter,
-            override val originalExpressions: List<JetExpression>
+            override val originalExpressions: List<KtExpression>
     ): OutputValue {
-        override val valueType: JetType get() = parameter.getParameterType(false)
+        override val valueType: KtType get() = parameter.getParameterType(false)
     }
 
     class Initializer(
-            val initializedDeclaration: JetProperty,
-            override val valueType: JetType
+            val initializedDeclaration: KtProperty,
+            override val valueType: KtType
     ): OutputValue {
-        override val originalExpressions: List<JetExpression> get() = Collections.singletonList(initializedDeclaration)
+        override val originalExpressions: List<KtExpression> get() = Collections.singletonList(initializedDeclaration)
     }
 }
 
 abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
-    val outputValueTypes: List<JetType> get() = outputValues.map { it.valueType }
+    val outputValueTypes: List<KtType> get() = outputValues.map { it.valueType }
 
-    abstract val returnType: JetType
+    abstract val returnType: KtType
 
     protected abstract fun getBoxingExpressionText(arguments: List<String>): String?
 
     abstract val boxingRequired: Boolean
 
-    fun getReturnExpression(arguments: List<String>, psiFactory: JetPsiFactory): JetReturnExpression? {
+    fun getReturnExpression(arguments: List<String>, psiFactory: KtPsiFactory): KtReturnExpression? {
         val expressionText = getBoxingExpressionText(arguments) ?: return null
-        return psiFactory.createExpression("return $expressionText") as JetReturnExpression
+        return psiFactory.createExpression("return $expressionText") as KtReturnExpression
     }
 
-    protected abstract fun extractExpressionByIndex(boxedExpression: JetExpression, index: Int): JetExpression?
+    protected abstract fun extractExpressionByIndex(boxedExpression: KtExpression, index: Int): KtExpression?
 
-    protected fun extractArgumentExpressionByIndex(boxedExpression: JetExpression, index: Int): JetExpression? {
-        val call: JetCallExpression? = when (boxedExpression) {
-            is JetCallExpression -> boxedExpression
-            is JetQualifiedExpression -> boxedExpression.getSelectorExpression() as? JetCallExpression
+    protected fun extractArgumentExpressionByIndex(boxedExpression: KtExpression, index: Int): KtExpression? {
+        val call: KtCallExpression? = when (boxedExpression) {
+            is KtCallExpression -> boxedExpression
+            is KtQualifiedExpression -> boxedExpression.getSelectorExpression() as? KtCallExpression
             else -> null
         }
         val arguments = call?.getValueArguments()
@@ -185,7 +185,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
         return arguments[index].getArgumentExpression()
     }
 
-    fun extractExpressionByValue(boxedExpression: JetExpression, value: OutputValue): JetExpression? {
+    fun extractExpressionByValue(boxedExpression: KtExpression, value: OutputValue): KtExpression? {
         val index = outputValues.indexOf(value)
         if (index < 0) return null
 
@@ -206,8 +206,8 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             private val selectors = arrayOf("first", "second", "third")
         }
 
-        override val returnType: JetType by lazy {
-            fun getType(): JetType {
+        override val returnType: KtType by lazy {
+            fun getType(): KtType {
                 val boxingClass = when (outputValues.size()) {
                     1 -> return outputValues.first().valueType
                     2 -> module.resolveTopLevelClass(FqName("kotlin.Pair"), NoLookupLocation.FROM_IDE)!!
@@ -233,7 +233,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             }
         }
 
-        override fun extractExpressionByIndex(boxedExpression: JetExpression, index: Int): JetExpression? {
+        override fun extractExpressionByIndex(boxedExpression: KtExpression, index: Int): KtExpression? {
             if (outputValues.size() == 1) return boxedExpression
             return extractArgumentExpressionByIndex(boxedExpression, index)
         }
@@ -251,7 +251,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
     }
 
     class AsList(outputValues: List<OutputValue>): OutputValueBoxer(outputValues) {
-        override val returnType: JetType by lazy {
+        override val returnType: KtType by lazy {
             assert(outputValues.isNotEmpty())
             val builtIns = outputValues.first().valueType.builtIns
             TypeUtils.substituteParameters(
@@ -267,7 +267,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             return arguments.joinToString(prefix = "kotlin.listOf(", separator = ", ", postfix = ")")
         }
 
-        override fun extractExpressionByIndex(boxedExpression: JetExpression, index: Int): JetExpression? {
+        override fun extractExpressionByIndex(boxedExpression: KtExpression, index: Int): KtExpression? {
             return extractArgumentExpressionByIndex(boxedExpression, index)
         }
 
@@ -281,7 +281,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
 data class ControlFlow(
         val outputValues: List<OutputValue>,
         val boxerFactory: (List<OutputValue>) -> OutputValueBoxer,
-        val declarationsToCopy: List<JetDeclaration>
+        val declarationsToCopy: List<KtDeclaration>
 ) {
     val outputValueBoxer = boxerFactory(outputValues)
 
@@ -302,7 +302,7 @@ data class ControlFlow(
     }
 }
 
-val ControlFlow.possibleReturnTypes: List<JetType>
+val ControlFlow.possibleReturnTypes: List<KtType>
     get() {
         val returnType = outputValueBoxer.returnType
         return when {
@@ -328,7 +328,7 @@ data class ExtractableCodeDescriptor(
         val typeParameters: List<TypeParameter>,
         val replacementMap: Map<Int, Replacement>,
         val controlFlow: ControlFlow,
-        val returnType: JetType
+        val returnType: KtType
 ) {
     val name: String get() = suggestedNames.firstOrNull() ?: ""
     val duplicates: List<DuplicateInfo> by lazy { findDuplicates() }
@@ -374,13 +374,13 @@ enum class ExtractionTarget(val targetName: String) {
 
     companion object {
         fun checkNotTrait(descriptor: ExtractableCodeDescriptor): Boolean {
-            val parent = descriptor.extractionData.targetSibling.getStrictParentOfType<JetDeclaration>()
-            return !(parent is JetClass && parent.isInterface())
+            val parent = descriptor.extractionData.targetSibling.getStrictParentOfType<KtDeclaration>()
+            return !(parent is KtClass && parent.isInterface())
         }
 
         fun checkSimpleBody(descriptor: ExtractableCodeDescriptor): Boolean {
             val expression = descriptor.extractionData.getExpressions().singleOrNull()
-            return expression != null && expression !is JetDeclaration && expression !is JetBlockExpression
+            return expression != null && expression !is KtDeclaration && expression !is KtBlockExpression
         }
 
         fun checkSimpleControlFlow(descriptor: ExtractableCodeDescriptor): Boolean {
@@ -393,7 +393,7 @@ enum class ExtractionTarget(val targetName: String) {
             if (descriptor.returnType.isUnit()) return false
 
             val parent = descriptor.extractionData.targetSibling.getParent()
-            return (parent is JetFile || parent is JetClassBody)
+            return (parent is KtFile || parent is KtClassBody)
         }
     }
 }
@@ -421,9 +421,9 @@ data class ExtractionGeneratorConfiguration(
 
 data class ExtractionResult(
         val config: ExtractionGeneratorConfiguration,
-        val declaration: JetNamedDeclaration,
+        val declaration: KtNamedDeclaration,
         val duplicateReplacers: Map<JetPsiRange, () -> Unit>,
-        val nameByOffset: Map<Int, JetElement>
+        val nameByOffset: Map<Int, KtElement>
 )
 
 class AnalysisResult (

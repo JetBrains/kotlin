@@ -19,18 +19,18 @@ package org.jetbrains.kotlin.idea.properties
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceRegistrar
-import org.jetbrains.kotlin.psi.JetLiteralStringTemplateEntry
-import org.jetbrains.kotlin.psi.JetStringTemplateExpression
+import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
 public class KotlinPropertiesReferenceContributor : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         registrar.registerReferenceProvider(
-                PlatformPatterns.psiElement(JetStringTemplateExpression::class.java),
+                PlatformPatterns.psiElement(KtStringTemplateExpression::class.java),
                 KotlinPropertyKeyReferenceProvider
         )
 
         registrar.registerReferenceProvider(
-                PlatformPatterns.psiElement(JetStringTemplateExpression::class.java),
+                PlatformPatterns.psiElement(KtStringTemplateExpression::class.java),
                 KotlinResourceBundleNameReferenceProvider
         )
     }

@@ -20,18 +20,18 @@ import com.intellij.codeInsight.editorActions.QuoteHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.highlighter.HighlighterIterator
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 
 public class KotlinQuoteHandler : QuoteHandler {
     override fun isClosingQuote(iterator: HighlighterIterator, offset: Int): Boolean {
         val tokenType = iterator.getTokenType()
 
-        if (tokenType == JetTokens.CHARACTER_LITERAL) {
+        if (tokenType == KtTokens.CHARACTER_LITERAL) {
             val start = iterator.getStart()
             val end = iterator.getEnd()
             return end - start >= 1 && offset == end - 1
         }
-        else if (tokenType == JetTokens.CLOSING_QUOTE) {
+        else if (tokenType == KtTokens.CLOSING_QUOTE) {
             return true
         }
         return false
@@ -40,7 +40,7 @@ public class KotlinQuoteHandler : QuoteHandler {
     override fun isOpeningQuote(iterator: HighlighterIterator, offset: Int): Boolean {
         val tokenType = iterator.getTokenType()
 
-        if (tokenType == JetTokens.OPEN_QUOTE) {
+        if (tokenType == KtTokens.OPEN_QUOTE) {
             val start = iterator.getStart()
             return offset == start
         }
@@ -53,11 +53,11 @@ public class KotlinQuoteHandler : QuoteHandler {
 
     override fun isInsideLiteral(iterator: HighlighterIterator): Boolean {
         val tokenType = iterator.getTokenType()
-        return tokenType == JetTokens.REGULAR_STRING_PART ||
-               tokenType == JetTokens.OPEN_QUOTE ||
-               tokenType == JetTokens.CLOSING_QUOTE ||
-               tokenType == JetTokens.SHORT_TEMPLATE_ENTRY_START ||
-               tokenType == JetTokens.LONG_TEMPLATE_ENTRY_END ||
-               tokenType == JetTokens.LONG_TEMPLATE_ENTRY_START
+        return tokenType == KtTokens.REGULAR_STRING_PART ||
+               tokenType == KtTokens.OPEN_QUOTE ||
+               tokenType == KtTokens.CLOSING_QUOTE ||
+               tokenType == KtTokens.SHORT_TEMPLATE_ENTRY_START ||
+               tokenType == KtTokens.LONG_TEMPLATE_ENTRY_END ||
+               tokenType == KtTokens.LONG_TEMPLATE_ENTRY_START
     }
 }

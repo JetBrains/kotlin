@@ -32,26 +32,26 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfN
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetPostfixExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetThrowExpression
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtPostfixExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtThrowExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<JetPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression"), LowPriorityAction {
-    override fun applicabilityRange(element: JetPostfixExpression): TextRange? {
-        return if (element.getOperationToken() == JetTokens.EXCLEXCL && element.getBaseExpression() != null)
+public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<KtPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression"), LowPriorityAction {
+    override fun applicabilityRange(element: KtPostfixExpression): TextRange? {
+        return if (element.getOperationToken() == KtTokens.EXCLEXCL && element.getBaseExpression() != null)
             element.getOperationReference().getTextRange()
         else
             null
     }
 
-    override fun applyTo(element: JetPostfixExpression, editor: Editor) {
-        val base = JetPsiUtil.safeDeparenthesize(element.getBaseExpression()!!)
+    override fun applyTo(element: KtPostfixExpression, editor: Editor) {
+        val base = KtPsiUtil.safeDeparenthesize(element.getBaseExpression()!!)
         val expressionText = formatForUseInExceptionArgument(base.getText()!!)
 
-        val defaultException = JetPsiFactory(element).createExpression("throw NullPointerException()")
+        val defaultException = KtPsiFactory(element).createExpression("throw NullPointerException()")
 
         val isStatement = element.isUsedAsStatement(element.analyze())
         val isStable = base.isStableVariable()
@@ -62,7 +62,7 @@ public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<JetPos
             element.convertToIfNotNullExpression(base, base, defaultException)
 
         val thrownExpression =
-                ((if (isStatement) ifStatement.getThen() else ifStatement.getElse()) as JetThrowExpression).getThrownExpression()!!
+                ((if (isStatement) ifStatement.getThen() else ifStatement.getElse()) as KtThrowExpression).getThrownExpression()!!
 
         val message = escapeJava("Expression '$expressionText' must not be null")
         val nullPtrExceptionText = "NullPointerException(\"$message\")"

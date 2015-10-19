@@ -26,13 +26,13 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.refactoring.util.RefactoringMessageUtil
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
-import org.jetbrains.kotlin.psi.JetPackageDirective
+import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 
-public class MoveFileToPackageMatchingDirectoryIntention : JetSelfTargetingOffsetIndependentIntention<JetPackageDirective>(
+public class MoveFileToPackageMatchingDirectoryIntention : JetSelfTargetingOffsetIndependentIntention<KtPackageDirective>(
         javaClass(), "", "Move file to package-matching directory"
 ) {
-    override fun isApplicableTo(element: JetPackageDirective): Boolean {
+    override fun isApplicableTo(element: KtPackageDirective): Boolean {
         if (element.getContainingJetFile().packageMatchesDirectory()) return false
 
         val qualifiedName = element.getQualifiedName()
@@ -41,7 +41,7 @@ public class MoveFileToPackageMatchingDirectoryIntention : JetSelfTargetingOffse
         return true
     }
 
-    override fun applyTo(element: JetPackageDirective, editor: Editor) {
+    override fun applyTo(element: KtPackageDirective, editor: Editor) {
         val file = element.getContainingJetFile()
         val project = file.getProject()
         val targetDirectory = MoveClassesOrPackagesUtil.chooseDestinationPackage(

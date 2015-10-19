@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider
-import org.jetbrains.kotlin.psi.JetScript
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ScriptBodyResolver
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.utils.sure
 public class LazyScriptDescriptor(
         private val resolveSession: ResolveSession,
         scriptBodyResolver: ScriptBodyResolver,
-        private val jetScript: JetScript,
+        private val jetScript: KtScript,
         private val priority: Int
 ) : ScriptDescriptor, LazyEntity, DeclarationDescriptorNonRootImpl(
         jetScript.getContainingJetFile().getPackageFqName().let {

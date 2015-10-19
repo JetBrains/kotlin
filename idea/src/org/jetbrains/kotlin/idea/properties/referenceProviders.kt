@@ -60,15 +60,15 @@ private fun DeclarationDescriptor.getBundleNameByAnnotation(): String? {
     return (annotations.findAnnotation(PROPERTY_KEY) ?: annotations.findExternalAnnotation(PROPERTY_KEY))?.getBundleName()
 }
 
-private fun JetExpression.getBundleNameByContext(): String? {
-    val expression = JetPsiUtil.safeDeparenthesize(this)
+private fun KtExpression.getBundleNameByContext(): String? {
+    val expression = KtPsiUtil.safeDeparenthesize(this)
     val parent = expression.parent
 
-    (parent as? JetProperty)?.let { return it.resolveToDescriptor().getBundleNameByAnnotation() }
+    (parent as? KtProperty)?.let { return it.resolveToDescriptor().getBundleNameByAnnotation() }
 
     val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
     val resolvedCall =
-            if (parent is JetQualifiedExpression && expression == parent.receiverExpression) {
+            if (parent is KtQualifiedExpression && expression == parent.receiverExpression) {
                 parent.selectorExpression.getResolvedCall(bindingContext)
             }
             else {
@@ -89,35 +89,35 @@ private fun JetExpression.getBundleNameByContext(): String? {
             ?.getBundleNameByAnnotation()
 }
 
-private fun JetAnnotationEntry.getPropertyKeyResolvedCall(): ResolvedCall<*>? {
+private fun KtAnnotationEntry.getPropertyKeyResolvedCall(): ResolvedCall<*>? {
     val resolvedCall = getResolvedCall(analyze(BodyResolveMode.PARTIAL)) ?: return null
     val klass = (resolvedCall.resultingDescriptor as? ConstructorDescriptor)?.containingDeclaration ?: return null
     if (klass.kind != ClassKind.ANNOTATION_CLASS || klass.importableFqName != PROPERTY_KEY) return null
     return resolvedCall
 }
 
-private fun JetStringTemplateExpression.isBundleName(): Boolean {
-    val parent = JetPsiUtil.safeDeparenthesize(this).parent
+private fun KtStringTemplateExpression.isBundleName(): Boolean {
+    val parent = KtPsiUtil.safeDeparenthesize(this).parent
     when (parent) {
-        is JetValueArgument -> {
-            val resolvedCall = parent.getStrictParentOfType<JetAnnotationEntry>()?.getPropertyKeyResolvedCall() ?: return false
+        is KtValueArgument -> {
+            val resolvedCall = parent.getStrictParentOfType<KtAnnotationEntry>()?.getPropertyKeyResolvedCall() ?: return false
             val valueParameter = (resolvedCall.getArgumentMapping(parent) as? ArgumentMatch)?.valueParameter ?: return false
             if (valueParameter.name != PROPERTY_KEY_RESOURCE_BUNDLE) return false
 
             return true
         }
 
-        is JetProperty -> {
+        is KtProperty -> {
             val contexts = (parent.useScope as? LocalSearchScope)?.scope ?: arrayOf(parent.containingFile)
             return contexts.any {
-                it.anyDescendantOfType<JetAnnotationEntry> f@ { entry ->
+                it.anyDescendantOfType<KtAnnotationEntry> f@ { entry ->
                     if (!entry.valueArguments.any { it.getArgumentName()?.asName == PROPERTY_KEY_RESOURCE_BUNDLE }) return@f false
                     val resolvedCall = entry.getPropertyKeyResolvedCall() ?: return@f false
                     val parameter = resolvedCall.resultingDescriptor.valueParameters.singleOrNull { it.name == PROPERTY_KEY_RESOURCE_BUNDLE }
                                     ?: return@f false
                     val valueArgument = resolvedCall.valueArguments[parameter] as? ExpressionValueArgument ?: return@f false
                     val bundleNameExpression = valueArgument.valueArgument?.getArgumentExpression() ?: return@f false
-                    bundleNameExpression is JetSimpleNameExpression && bundleNameExpression.mainReference.resolve() == parent
+                    bundleNameExpression is KtSimpleNameExpression && bundleNameExpression.mainReference.resolve() == parent
                 }
             }
         }
@@ -128,7 +128,7 @@ private fun JetStringTemplateExpression.isBundleName(): Boolean {
 
 public object KotlinPropertyKeyReferenceProvider : PsiReferenceProvider() {
     override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
-        if (!(element is JetStringTemplateExpression && element.isPlain())) return PsiReference.EMPTY_ARRAY
+        if (!(element is KtStringTemplateExpression && element.isPlain())) return PsiReference.EMPTY_ARRAY
         val bundleName = element.getBundleNameByContext() ?: return PsiReference.EMPTY_ARRAY
         return arrayOf(PropertyReference(ElementManipulators.getValueText(element), element, bundleName, false))
     }
@@ -136,7 +136,7 @@ public object KotlinPropertyKeyReferenceProvider : PsiReferenceProvider() {
 
 public object KotlinResourceBundleNameReferenceProvider : PsiReferenceProvider() {
     override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
-        if (!(element is JetStringTemplateExpression && element.isPlain() && element.isBundleName())) return PsiReference.EMPTY_ARRAY
+        if (!(element is KtStringTemplateExpression && element.isPlain() && element.isBundleName())) return PsiReference.EMPTY_ARRAY
         return arrayOf(ResourceBundleReference(element))
     }
 }

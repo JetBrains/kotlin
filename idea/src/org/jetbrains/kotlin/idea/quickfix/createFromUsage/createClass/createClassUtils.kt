@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.contai
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.noSubstitutions
 import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -48,7 +48,7 @@ internal fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUppe
 private fun String.checkPackageName(): Boolean = isNotEmpty() && Character.isLowerCase(first())
 
 internal fun getTargetParentByQualifier(
-        file: JetFile,
+        file: KtFile,
         isQualified: Boolean,
         qualifierDescriptor: DeclarationDescriptor?): PsiElement? {
     val project = file.getProject()
@@ -68,7 +68,7 @@ internal fun getTargetParentByQualifier(
     return if (targetParent.canRefactor()) return targetParent else null
 }
 
-internal fun getTargetParentByCall(call: Call, file: JetFile): PsiElement? {
+internal fun getTargetParentByCall(call: Call, file: KtFile): PsiElement? {
     val receiver = call.getExplicitReceiver()
     return when (receiver) {
         ReceiverValue.NO_RECEIVER -> getTargetParentByQualifier(file, false, null)
@@ -82,7 +82,7 @@ internal fun isInnerClassExpected(call: Call): Boolean {
     return receiver != ReceiverValue.NO_RECEIVER && receiver !is Qualifier
 }
 
-internal fun JetExpression.getInheritableTypeInfo(
+internal fun KtExpression.getInheritableTypeInfo(
         context: BindingContext,
         moduleDescriptor: ModuleDescriptor,
         containingDeclaration: PsiElement): Pair<TypeInfo, (ClassKind) -> Boolean> {
@@ -108,12 +108,12 @@ internal fun JetExpression.getInheritableTypeInfo(
     }
 }
 
-internal fun JetSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent: PsiElement): IntentionAction? {
+internal fun KtSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent: PsiElement): IntentionAction? {
     val name = getReferencedName()
     if (!name.checkPackageName()) return null
 
     val basePackage: PsiPackage? = when (targetParent) {
-                                      is JetFile -> JavaPsiFacade.getInstance(targetParent.getProject()).findPackage(targetParent.getPackageFqName().asString())
+                                      is KtFile -> JavaPsiFacade.getInstance(targetParent.getProject()).findPackage(targetParent.getPackageFqName().asString())
                                       is PsiPackage -> targetParent
                                       else -> null
                                   }

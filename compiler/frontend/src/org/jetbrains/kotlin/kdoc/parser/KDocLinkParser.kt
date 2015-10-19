@@ -20,8 +20,8 @@ import com.intellij.lang.PsiParser
 import com.intellij.psi.tree.IElementType
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.lexer.JetLexer
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KotlinLexer
 import com.intellij.lang.PsiBuilderFactory
 import kotlin.platform.*
 
@@ -36,7 +36,7 @@ class KDocLinkParser(): PsiParser {
             val project = parentElement.getProject()
             val builder = PsiBuilderFactory.getInstance().createBuilder(project,
                                                                         chameleon,
-                                                                        JetLexer(),
+                    KotlinLexer(),
                                                                         root.getLanguage(),
                                                                         chameleon.getText())
             val parser = KDocLinkParser()
@@ -47,19 +47,19 @@ class KDocLinkParser(): PsiParser {
 
     override fun parse(root: IElementType, builder: PsiBuilder): ASTNode {
         val rootMarker = builder.mark()
-        val hasLBracket = builder.getTokenType() == JetTokens.LBRACKET
+        val hasLBracket = builder.getTokenType() == KtTokens.LBRACKET
         if (hasLBracket) {
             builder.advanceLexer()
         }
         parseQualifiedName(builder)
         if (hasLBracket) {
-            if (!builder.eof() && builder.getTokenType() != JetTokens.RBRACKET) {
+            if (!builder.eof() && builder.getTokenType() != KtTokens.RBRACKET) {
                 builder.error("Closing bracket expected")
-                while (!builder.eof() && builder.getTokenType() != JetTokens.RBRACKET) {
+                while (!builder.eof() && builder.getTokenType() != KtTokens.RBRACKET) {
                     builder.advanceLexer()
                 }
             }
-            if (builder.getTokenType() == JetTokens.RBRACKET) {
+            if (builder.getTokenType() == KtTokens.RBRACKET) {
                 builder.advanceLexer()
             }
         }
@@ -86,7 +86,7 @@ class KDocLinkParser(): PsiParser {
             }
             builder.advanceLexer()
             marker.done(KDocElementTypes.KDOC_NAME)
-            if (builder.getTokenType() != JetTokens.DOT) {
+            if (builder.getTokenType() != KtTokens.DOT) {
                 break
             }
             marker = marker.precede()
@@ -94,5 +94,5 @@ class KDocLinkParser(): PsiParser {
         }
     }
 
-    private fun isName(tokenType: IElementType?) = tokenType == JetTokens.IDENTIFIER || tokenType in JetTokens.KEYWORDS
+    private fun isName(tokenType: IElementType?) = tokenType == KtTokens.IDENTIFIER || tokenType in KtTokens.KEYWORDS
 }

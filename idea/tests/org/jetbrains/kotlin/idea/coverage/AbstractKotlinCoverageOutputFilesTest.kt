@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.coverage
 
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 import com.intellij.openapi.util.io.FileUtil
@@ -31,7 +31,7 @@ public abstract class AbstractKotlinCoverageOutputFilesTest(): JetLightCodeInsig
     override fun getTestDataPath(): String? = TEST_DATA_PATH
 
     public fun doTest(path: String) {
-        val kotlinFile = myFixture.configureByFile(path) as JetFile
+        val kotlinFile = myFixture.configureByFile(path) as KtFile
         val outDir = myFixture.getTempDirFixture().findOrCreateDir("coverageTestOut")
         try {
             FileUtil.loadLines(File(path.replace(".kt", ".classes.txt"))).forEach {

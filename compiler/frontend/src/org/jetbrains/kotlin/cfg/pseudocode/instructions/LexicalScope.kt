@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 
-public class LexicalScope(val parentScope: LexicalScope?, val element: JetElement) {
+public class LexicalScope(val parentScope: LexicalScope?, val element: KtElement) {
     //todo remove after KT-4126
     private val d = (parentScope?.depth ?: 0) + 1
     val depth: Int get() = d
@@ -27,7 +27,7 @@ public class LexicalScope(val parentScope: LexicalScope?, val element: JetElemen
     val lexicalScopeForContainingDeclaration: LexicalScope? by lazy {
         var scope: LexicalScope? = this
         while (scope != null) {
-            if (scope.element is JetDeclaration) {
+            if (scope.element is KtDeclaration) {
                 return@lazy scope
             }
             scope = scope.parentScope

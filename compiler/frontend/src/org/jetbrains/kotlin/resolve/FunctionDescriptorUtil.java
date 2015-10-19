@@ -38,7 +38,7 @@ public class FunctionDescriptorUtil {
     private static final TypeSubstitutor MAKE_TYPE_PARAMETERS_FRESH = TypeSubstitutor.create(new TypeSubstitution() {
 
         @Override
-        public TypeProjection get(@NotNull JetType key) {
+        public TypeProjection get(@NotNull KtType key) {
             return null;
         }
 
@@ -53,7 +53,7 @@ public class FunctionDescriptorUtil {
 
     public static TypeSubstitution createSubstitution(
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull List<JetType> typeArguments
+            @NotNull List<KtType> typeArguments
     ) {
         if (functionDescriptor.getTypeParameters().isEmpty()) return TypeSubstitution.getEMPTY();
 
@@ -90,7 +90,7 @@ public class FunctionDescriptorUtil {
 
     public static void initializeFromFunctionType(
             @NotNull FunctionDescriptorImpl functionDescriptor,
-            @NotNull JetType functionType,
+            @NotNull KtType functionType,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull Modality modality,
             @NotNull Visibility visibility
@@ -129,7 +129,7 @@ public class FunctionDescriptorUtil {
         List<ValueParameterDescriptor> parameters = new ArrayList<ValueParameterDescriptor>(newParameters.size());
         int idx = 0;
         for (ValueParameterDescriptor parameter : newParameters) {
-            JetType returnType = parameter.getReturnType();
+            KtType returnType = parameter.getReturnType();
             assert returnType != null;
 
             parameters.add(

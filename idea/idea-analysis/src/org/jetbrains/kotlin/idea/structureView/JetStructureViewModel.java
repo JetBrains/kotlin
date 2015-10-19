@@ -20,8 +20,8 @@ import com.intellij.ide.structureView.StructureViewModelBase;
 import com.intellij.ide.util.treeView.smartTree.NodeProvider;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,9 +32,9 @@ public class JetStructureViewModel extends StructureViewModelBase {
 
     private static final Sorter[] sorters = new Sorter[] {Sorter.ALPHA_SORTER};
 
-    public JetStructureViewModel(@NotNull JetFile jetFile) {
+    public JetStructureViewModel(@NotNull KtFile jetFile) {
         super(jetFile, new JetStructureViewElement(jetFile));
-        withSuitableClasses(JetDeclaration.class);
+        withSuitableClasses(KtDeclaration.class);
     }
 
     @NotNull

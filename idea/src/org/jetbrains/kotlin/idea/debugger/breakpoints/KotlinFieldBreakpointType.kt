@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.breakpoints.dialog.AddFieldBreakpointDialog
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -113,13 +113,13 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
     }
 
     private fun createBreakpointIfPropertyExists(
-            declaration: JetDeclarationContainer,
-            file: JetFile,
+            declaration: KtDeclarationContainer,
+            file: KtFile,
             className: String,
             fieldName: String
     ): XLineBreakpoint<KotlinPropertyBreakpointProperties>? {
         val project = file.getProject()
-        val property = declaration.getDeclarations().firstOrNull { it is JetProperty && it.getName() == fieldName } ?: return null
+        val property = declaration.getDeclarations().firstOrNull { it is KtProperty && it.getName() == fieldName } ?: return null
 
         val document = PsiDocumentManager.getInstance(project).getDocument(file) ?: return null
         val line = document.getLineNumber(property.getTextOffset())

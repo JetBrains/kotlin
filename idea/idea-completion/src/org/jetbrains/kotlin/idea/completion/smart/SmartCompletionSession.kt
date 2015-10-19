@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.FunctionLiteralArgument
-import org.jetbrains.kotlin.psi.JetCodeFragment
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.ValueArgumentName
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
@@ -77,7 +77,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                     processNonImported { collector.addElements(filter(it), notImported = true) }
                     flushToResultSet()
 
-                    if (position.getContainingFile() is JetCodeFragment) {
+                    if (position.getContainingFile() is KtCodeFragment) {
                         getRuntimeReceiverTypeReferenceVariants().forEach {
                             collector.addElements(filter(it).map { it.withReceiverCast() })
                         }

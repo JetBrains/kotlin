@@ -20,14 +20,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class TypeProjectionImpl extends TypeProjectionBase {
     private final Variance projection;
-    private final JetType type;
+    private final KtType type;
 
-    public TypeProjectionImpl(@NotNull Variance projection, @NotNull JetType type) {
+    public TypeProjectionImpl(@NotNull Variance projection, @NotNull KtType type) {
         this.projection = projection;
         this.type = type;
     }
 
-    public TypeProjectionImpl(@NotNull JetType type) {
+    public TypeProjectionImpl(@NotNull KtType type) {
         this(Variance.INVARIANT, type);
     }
 
@@ -39,7 +39,7 @@ public class TypeProjectionImpl extends TypeProjectionBase {
 
     @Override
     @NotNull
-    public JetType getType() {
+    public KtType getType() {
         return type;
     }
 

@@ -20,27 +20,27 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.psi.JetParameterList
-import org.jetbrains.kotlin.psi.JetTypeArgumentList
-import org.jetbrains.kotlin.psi.JetTypeParameterList
-import org.jetbrains.kotlin.psi.JetValueArgumentList
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.KtParameterList
+import org.jetbrains.kotlin.psi.KtTypeArgumentList
+import org.jetbrains.kotlin.psi.KtTypeParameterList
+import org.jetbrains.kotlin.psi.KtValueArgumentList
+import org.jetbrains.kotlin.lexer.KtTokens
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 
 public class KotlinListSelectioner : ExtendWordSelectionHandlerBase() {
     companion object {
         fun canSelect(e: PsiElement)
-            = e is JetParameterList || e is JetValueArgumentList || e is JetTypeParameterList || e is JetTypeArgumentList
+            = e is KtParameterList || e is KtValueArgumentList || e is KtTypeParameterList || e is KtTypeArgumentList
     }
 
     override fun canSelect(e: PsiElement) = KotlinListSelectioner.canSelect(e)
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         val node = e.getNode()!!
-        val startNode = node.findChildByType(TokenSet.create(JetTokens.LPAR, JetTokens.LT)) ?: return null
-        val endNode = node.findChildByType(TokenSet.create(JetTokens.RPAR, JetTokens.GT)) ?: return null
+        val startNode = node.findChildByType(TokenSet.create(KtTokens.LPAR, KtTokens.LT)) ?: return null
+        val endNode = node.findChildByType(TokenSet.create(KtTokens.RPAR, KtTokens.GT)) ?: return null
         val innerRange = TextRange(startNode.getStartOffset() + 1, endNode.getStartOffset())
-        if (e is JetTypeArgumentList || e is JetTypeParameterList) {
+        if (e is KtTypeArgumentList || e is KtTypeParameterList) {
             return listOf(innerRange,
                           TextRange(startNode.getStartOffset(), endNode.getStartOffset() + endNode.getTextLength()))
         }

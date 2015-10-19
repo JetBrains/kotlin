@@ -20,7 +20,7 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.KtWhenExpression;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.org.objectweb.asm.Label;
@@ -38,7 +38,7 @@ public class StringSwitchCodegen extends SwitchCodegen {
     private int tempVarIndex;
 
     public StringSwitchCodegen(
-            @NotNull JetWhenExpression expression,
+            @NotNull KtWhenExpression expression,
             boolean isStatement,
             @NotNull ExpressionCodegen codegen
     ) {

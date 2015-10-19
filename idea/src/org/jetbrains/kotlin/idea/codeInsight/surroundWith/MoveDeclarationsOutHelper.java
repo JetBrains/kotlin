@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +48,10 @@ public class MoveDeclarationsOutHelper {
         Project project = container.getProject();
 
         List<PsiElement> resultStatements = new ArrayList<PsiElement>();
-        List<JetProperty> propertiesDeclarations = new ArrayList<JetProperty>();
+        List<KtProperty> propertiesDeclarations = new ArrayList<KtProperty>();
 
         // Dummy element to add new declarations at the beginning
-        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(project);
+        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(project);
         PsiElement dummyFirstStatement = container.addBefore(psiFactory.createExpression("dummyStatement"), statements[0]);
 
         try {
@@ -60,14 +60,14 @@ public class MoveDeclarationsOutHelper {
 
             for (PsiElement statement : statements) {
                 if (needToDeclareOut(statement, lastStatementOffset, scope)) {
-                    if (statement instanceof JetProperty && ((JetProperty) statement).getInitializer() != null) {
-                        JetProperty property = (JetProperty) statement;
-                        JetProperty declaration = createVariableDeclaration(property, generateDefaultInitializers);
-                        declaration = (JetProperty) container.addBefore(declaration, dummyFirstStatement);
+                    if (statement instanceof KtProperty && ((KtProperty) statement).getInitializer() != null) {
+                        KtProperty property = (KtProperty) statement;
+                        KtProperty declaration = createVariableDeclaration(property, generateDefaultInitializers);
+                        declaration = (KtProperty) container.addBefore(declaration, dummyFirstStatement);
                         propertiesDeclarations.add(declaration);
                         container.addAfter(psiFactory.createNewLine(), declaration);
 
-                        JetBinaryExpression assignment = createVariableAssignment(property);
+                        KtBinaryExpression assignment = createVariableAssignment(property);
                         resultStatements.add(property.replace(assignment));
                     }
                     else {
@@ -91,22 +91,22 @@ public class MoveDeclarationsOutHelper {
     }
 
     @NotNull
-    private static JetBinaryExpression createVariableAssignment(@NotNull JetProperty property) {
+    private static KtBinaryExpression createVariableAssignment(@NotNull KtProperty property) {
         String propertyName = property.getName();
         assert propertyName != null : "Property should have a name " + property.getText();
-        JetBinaryExpression assignment = (JetBinaryExpression) JetPsiFactoryKt
-                .JetPsiFactory(property).createExpression(propertyName + " = x");
-        JetExpression right = assignment.getRight();
+        KtBinaryExpression assignment = (KtBinaryExpression) KtPsiFactoryKt
+                .KtPsiFactory(property).createExpression(propertyName + " = x");
+        KtExpression right = assignment.getRight();
         assert right != null : "Created binary expression should have a right part " + assignment.getText();
-        JetExpression initializer = property.getInitializer();
+        KtExpression initializer = property.getInitializer();
         assert initializer != null : "Initializer should exist for property " + property.getText();
         right.replace(initializer);
         return assignment;
     }
 
     @NotNull
-    private static JetProperty createVariableDeclaration(@NotNull JetProperty property, boolean generateDefaultInitializers) {
-        JetType propertyType = getPropertyType(property);
+    private static KtProperty createVariableDeclaration(@NotNull KtProperty property, boolean generateDefaultInitializers) {
+        KtType propertyType = getPropertyType(property);
         String defaultInitializer = null;
         if (generateDefaultInitializers && property.isVar()) {
             defaultInitializer = CodeInsightUtils.defaultInitializer(propertyType);
@@ -115,7 +115,7 @@ public class MoveDeclarationsOutHelper {
     }
 
     @NotNull
-    private static JetType getPropertyType(@NotNull JetProperty property) {
+    private static KtType getPropertyType(@NotNull KtProperty property) {
         BindingContext bindingContext = ResolutionUtils.analyze(property, BodyResolveMode.PARTIAL);
 
         VariableDescriptor propertyDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
@@ -124,8 +124,8 @@ public class MoveDeclarationsOutHelper {
     }
 
     @NotNull
-    private static JetProperty createProperty(@NotNull JetProperty property, @NotNull JetType propertyType, @Nullable String initializer) {
-        JetTypeReference typeRef = property.getTypeReference();
+    private static KtProperty createProperty(@NotNull KtProperty property, @NotNull KtType propertyType, @Nullable String initializer) {
+        KtTypeReference typeRef = property.getTypeReference();
         String typeString = null;
         if (typeRef != null) {
             typeString = typeRef.getText();
@@ -134,13 +134,13 @@ public class MoveDeclarationsOutHelper {
             typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(propertyType);
         }
 
-        return JetPsiFactoryKt.JetPsiFactory(property).createProperty(property.getName(), typeString, property.isVar(), initializer);
+        return KtPsiFactoryKt.KtPsiFactory(property).createProperty(property.getName(), typeString, property.isVar(), initializer);
     }
 
     private static boolean needToDeclareOut(@NotNull PsiElement element, int lastStatementOffset, @NotNull SearchScope scope) {
-        if (element instanceof JetProperty ||
-            element instanceof JetClassOrObject ||
-            element instanceof JetFunction) {
+        if (element instanceof KtProperty ||
+            element instanceof KtClassOrObject ||
+            element instanceof KtFunction) {
 
             PsiReference[] refs = ReferencesSearch.search(element, scope, false).toArray(PsiReference.EMPTY_ARRAY);
             if (refs.length > 0) {

@@ -32,7 +32,7 @@ public class JetSimpleNameExpressionTest : JetLiteFixture() {
         assertReceiver("1 to 2", "1")
     }
     private fun assertReceiver(exprString: String, expected: String) {
-        val expression = JetPsiFactory(getProject()).createExpression(exprString) as JetBinaryExpression
+        val expression = KtPsiFactory(getProject()).createExpression(exprString) as KtBinaryExpression
         Assert.assertEquals(expected, expression.getOperationReference().getReceiverExpression()!!.getText())
     }
     override fun createEnvironment(): KotlinCoreEnvironment {

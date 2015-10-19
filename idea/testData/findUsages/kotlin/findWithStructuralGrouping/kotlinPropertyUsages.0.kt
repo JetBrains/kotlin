@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetProperty
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.KtProperty
 // GROUPING_RULES: org.jetbrains.kotlin.idea.findUsages.KotlinDeclarationGroupRuleProvider$KotlinDeclarationGroupingRule
 // OPTIONS: usages
 package server

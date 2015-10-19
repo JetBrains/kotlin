@@ -39,12 +39,12 @@ public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder
             return null;
         }
 
-        JetTryExpression tryExpression = (JetTryExpression) JetPsiFactoryKt.JetPsiFactory(project).createExpression(getCodeTemplate());
-        tryExpression = (JetTryExpression) container.addAfter(tryExpression, statements[statements.length - 1]);
+        KtTryExpression tryExpression = (KtTryExpression) KtPsiFactoryKt.KtPsiFactory(project).createExpression(getCodeTemplate());
+        tryExpression = (KtTryExpression) container.addAfter(tryExpression, statements[statements.length - 1]);
 
         // TODO move a comment for first statement
 
-        JetBlockExpression tryBlock = tryExpression.getTryBlock();
+        KtBlockExpression tryBlock = tryExpression.getTryBlock();
         // Add statements in try block of created try - catch - finally
         KotlinSurrounderUtils.addStatementsInBlock(tryBlock, statements);
 
@@ -59,12 +59,12 @@ public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder
     protected abstract String getCodeTemplate();
 
     @NotNull
-    protected abstract TextRange getTextRangeForCaret(@NotNull JetTryExpression expression);
+    protected abstract TextRange getTextRangeForCaret(@NotNull KtTryExpression expression);
 
-    protected static TextRange getCatchTypeParameterTextRange(@NotNull JetTryExpression expression) {
-        JetParameter parameter = expression.getCatchClauses().get(0).getCatchParameter();
+    protected static TextRange getCatchTypeParameterTextRange(@NotNull KtTryExpression expression) {
+        KtParameter parameter = expression.getCatchClauses().get(0).getCatchParameter();
         assert parameter != null : "Catch parameter should exists for " + expression.getText();
-        JetElement typeReference = parameter.getTypeReference();
+        KtElement typeReference = parameter.getTypeReference();
         assert typeReference != null : "Type reference for parameter should exists for " + expression.getText();
         return typeReference.getTextRange();
     }

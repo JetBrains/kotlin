@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -34,17 +34,17 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
-internal fun JetType.contains(inner: JetType): Boolean {
-    return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
+internal fun KtType.contains(inner: KtType): Boolean {
+    return KotlinTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
 }
 
-private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
+private fun KtType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
     val substitution = typeParameterNameMap
             .mapValues {
                 val name = Name.identifier(it.value)
@@ -63,7 +63,7 @@ private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, St
                     override fun getDeclarationDescriptor() = wrappingTypeParameter
                 }
 
-                val wrappingType = object : JetType by typeParameter.defaultType {
+                val wrappingType = object : KtType by typeParameter.defaultType {
                     override fun getConstructor() = wrappingTypeConstructor
                 }
 
@@ -76,23 +76,23 @@ private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, St
     return renderer.renderType(typeToRender)
 }
 
-internal fun JetType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
-internal fun JetType.renderLong(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, true)
+internal fun KtType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
+internal fun KtType.renderLong(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, true)
 
-internal fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: JetScope): List<TypeParameterDescriptor> {
+internal fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: KtScope): List<TypeParameterDescriptor> {
     return typeParameters.filter { typeParameter ->
         val classifier = scope.getClassifier(typeParameter.name, NoLookupLocation.FROM_IDE)
         classifier == null || classifier != typeParameter
     }
 }
 
-fun JetType.containsStarProjections(): Boolean = arguments.any { it.isStarProjection || it.type.containsStarProjections() }
+fun KtType.containsStarProjections(): Boolean = arguments.any { it.isStarProjection || it.type.containsStarProjections() }
 
-fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
-    val visitedTypes = HashSet<JetType>()
+fun KtType.getTypeParameters(): Set<TypeParameterDescriptor> {
+    val visitedTypes = HashSet<KtType>()
     val typeParameters = LinkedHashSet<TypeParameterDescriptor>()
 
-    fun traverseTypes(type: JetType) {
+    fun traverseTypes(type: KtType) {
         if (!visitedTypes.add(type)) return
 
         val arguments = type.arguments
@@ -111,16 +111,16 @@ fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
     return typeParameters
 }
 
-fun JetExpression.guessTypes(
+fun KtExpression.guessTypes(
         context: BindingContext,
         module: ModuleDescriptor,
         pseudocode: Pseudocode? = null,
         coerceUnusedToUnit: Boolean = true
-): Array<JetType> {
+): Array<KtType> {
     if (coerceUnusedToUnit
-        && this !is JetDeclaration
+        && this !is KtDeclaration
         && isUsedAsStatement(context)
-        && getNonStrictParentOfType<JetAnnotationEntry>() == null) return arrayOf(module.builtIns.getUnitType())
+        && getNonStrictParentOfType<KtAnnotationEntry>() == null) return arrayOf(module.builtIns.getUnitType())
 
     // if we know the actual type of the expression
     val theType1 = context.getType(this)
@@ -136,17 +136,17 @@ fun JetExpression.guessTypes(
 
     val parent = getParent()
     return when {
-        this is JetTypeConstraint -> {
+        this is KtTypeConstraint -> {
             // expression itself is a type assertion
             val constraint = this
             arrayOf(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
         }
-        parent is JetTypeConstraint -> {
+        parent is KtTypeConstraint -> {
             // expression is on the left side of a type assertion
             val constraint = parent
             arrayOf(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
         }
-        this is JetMultiDeclarationEntry -> {
+        this is KtMultiDeclarationEntry -> {
             // expression is on the lhs of a multi-declaration
             val typeRef = getTypeReference()
             if (typeRef != null) {
@@ -158,7 +158,7 @@ fun JetExpression.guessTypes(
                 guessType(context)
             }
         }
-        this is JetParameter -> {
+        this is KtParameter -> {
             // expression is a parameter (e.g. declared in a for-loop)
             val typeRef = getTypeReference()
             if (typeRef != null) {
@@ -170,7 +170,7 @@ fun JetExpression.guessTypes(
                 guessType(context)
             }
         }
-        parent is JetProperty && parent.isLocal() -> {
+        parent is KtProperty && parent.isLocal() -> {
             // the expression is the RHS of a variable assignment with a specified type
             val variable = parent
             val typeRef = variable.getTypeReference()
@@ -183,8 +183,8 @@ fun JetExpression.guessTypes(
                 variable.guessType(context)
             }
         }
-        parent is JetPropertyDelegate -> {
-            val variableDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as JetProperty] as VariableDescriptor
+        parent is KtPropertyDelegate -> {
+            val variableDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as KtProperty] as VariableDescriptor
             val delegateClassName = if (variableDescriptor.isVar()) "ReadWriteProperty" else "ReadOnlyProperty"
             val delegateClass = module.resolveTopLevelClass(FqName("kotlin.properties.$delegateClassName"), NoLookupLocation.FROM_IDE)
                                 ?: return arrayOf(module.builtIns.getAnyType())
@@ -193,7 +193,7 @@ fun JetExpression.guessTypes(
             val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(variableDescriptor.getType()))
             arrayOf(TypeUtils.substituteProjectionsForParameters(delegateClass, typeArguments))
         }
-        parent is JetStringTemplateEntryWithExpression && parent.getExpression() == this -> {
+        parent is KtStringTemplateEntryWithExpression && parent.getExpression() == this -> {
             arrayOf(module.builtIns.getStringType())
         }
         else -> {
@@ -204,20 +204,20 @@ fun JetExpression.guessTypes(
     }
 }
 
-private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetType> {
+private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KtType> {
     val expectedTypes = SearchUtils.findAllReferences(this, getUseScope())!!.asSequence().map { ref ->
-        if (ref is JetSimpleNameReference) {
+        if (ref is KtSimpleNameReference) {
             context[BindingContext.EXPECTED_EXPRESSION_TYPE, ref.expression]
         }
         else {
             null
         }
-    }.filterNotNullTo(HashSet<JetType>())
+    }.filterNotNullTo(HashSet<KtType>())
 
     if (expectedTypes.isEmpty() || expectedTypes.any { expectedType -> ErrorUtils.containsErrorType(expectedType) }) {
         return arrayOf()
     }
-    val theType = TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, expectedTypes)
+    val theType = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, expectedTypes)
     if (theType != null) {
         return arrayOf(theType)
     }
@@ -228,18 +228,18 @@ private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetTyp
 }
 
 /**
- * Encapsulates a single type substitution of a <code>JetType</code> by another <code>JetType</code>.
+ * Encapsulates a single type substitution of a <code>KtType</code> by another <code>KtType</code>.
  */
-internal class JetTypeSubstitution(public val forType: JetType, public val byType: JetType)
+internal class JetTypeSubstitution(public val forType: KtType, public val byType: KtType)
 
-internal fun JetType.substitute(substitution: JetTypeSubstitution, variance: Variance): JetType {
+internal fun KtType.substitute(substitution: JetTypeSubstitution, variance: Variance): KtType {
     val nullable = isMarkedNullable()
     val currentType = makeNotNullable()
 
     if (when (variance) {
-        Variance.INVARIANT      -> JetTypeChecker.DEFAULT.equalTypes(currentType, substitution.forType)
-        Variance.IN_VARIANCE    -> JetTypeChecker.DEFAULT.isSubtypeOf(currentType, substitution.forType)
-        Variance.OUT_VARIANCE   -> JetTypeChecker.DEFAULT.isSubtypeOf(substitution.forType, currentType)
+        Variance.INVARIANT      -> KotlinTypeChecker.DEFAULT.equalTypes(currentType, substitution.forType)
+        Variance.IN_VARIANCE    -> KotlinTypeChecker.DEFAULT.isSubtypeOf(currentType, substitution.forType)
+        Variance.OUT_VARIANCE   -> KotlinTypeChecker.DEFAULT.isSubtypeOf(substitution.forType, currentType)
     }) {
         return TypeUtils.makeNullableAsSpecified(substitution.byType, nullable)
     }
@@ -248,17 +248,17 @@ internal fun JetType.substitute(substitution: JetTypeSubstitution, variance: Var
             val (projection, typeParameter) = pair
             TypeProjectionImpl(Variance.INVARIANT, projection.getType().substitute(substitution, typeParameter.getVariance()))
         }
-        return JetTypeImpl.create(getAnnotations(), getConstructor(), isMarkedNullable(), newArguments, getMemberScope())
+        return KtTypeImpl.create(getAnnotations(), getConstructor(), isMarkedNullable(), newArguments, getMemberScope())
     }
 }
 
-fun JetExpression.getExpressionForTypeGuess() = getAssignmentByLHS()?.getRight() ?: this
+fun KtExpression.getExpressionForTypeGuess() = getAssignmentByLHS()?.getRight() ?: this
 
-fun JetCallElement.getTypeInfoForTypeArguments(): List<TypeInfo> {
+fun KtCallElement.getTypeInfoForTypeArguments(): List<TypeInfo> {
     return getTypeArguments().map { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }.filterNotNull()
 }
 
-fun JetCallExpression.getParameterInfos(): List<ParameterInfo> {
+fun KtCallExpression.getParameterInfos(): List<ParameterInfo> {
     val anyType = this.platform.builtIns.nullableAnyType
     return valueArguments.map {
         ParameterInfo(
@@ -268,7 +268,7 @@ fun JetCallExpression.getParameterInfos(): List<ParameterInfo> {
     }
 }
 
-private fun TypePredicate.getRepresentativeTypes(): Set<JetType> {
+private fun TypePredicate.getRepresentativeTypes(): Set<KtType> {
     return when (this) {
         is SingleType -> Collections.singleton(targetType)
         is AllSubtypes -> Collections.singleton(upperBound)
@@ -276,7 +276,7 @@ private fun TypePredicate.getRepresentativeTypes(): Set<JetType> {
             if (typeSets.isEmpty()) AllTypes.getRepresentativeTypes()
             else typeSets.map { it.getRepresentativeTypes() }.reduce { a, b -> a intersect b }
         }
-        is ForSomeType -> typeSets.flatMapTo(LinkedHashSet<JetType>()) { it.getRepresentativeTypes() }
+        is ForSomeType -> typeSets.flatMapTo(LinkedHashSet<KtType>()) { it.getRepresentativeTypes() }
         is AllTypes -> emptySet()
         else -> throw AssertionError("Invalid type predicate: ${this}")
     }

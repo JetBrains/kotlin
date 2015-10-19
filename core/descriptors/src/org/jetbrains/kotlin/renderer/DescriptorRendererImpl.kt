@@ -146,11 +146,11 @@ internal class DescriptorRendererImpl(
     }
 
     /* TYPES RENDERING */
-    override fun renderType(type: JetType): String {
+    override fun renderType(type: KtType): String {
         return renderNormalizedType(typeNormalizer(type))
     }
 
-    private fun renderNormalizedType(type: JetType): String {
+    private fun renderNormalizedType(type: KtType): String {
         if (type is LazyType && debugMode) {
             return type.toString()
         }
@@ -172,13 +172,13 @@ internal class DescriptorRendererImpl(
         return renderInflexibleType(type)
     }
 
-    private fun renderFlexibleTypeWithBothBounds(lower: JetType, upper: JetType): String {
+    private fun renderFlexibleTypeWithBothBounds(lower: KtType, upper: KtType): String {
         return renderFlexibleTypeWithBothBounds(renderNormalizedType(lower), renderNormalizedType(upper))
     }
 
     private fun renderFlexibleTypeWithBothBounds(lower: String, upper: String) = "($lower..$upper)"
 
-    private fun renderInflexibleType(type: JetType): String {
+    private fun renderInflexibleType(type: KtType): String {
         assert(!type.isFlexible()) { "Flexible types not allowed here: " + renderNormalizedType(type) }
 
         val customResult = type.getCapability<CustomFlexibleRendering>()?.renderInflexible(type, this)
@@ -202,12 +202,12 @@ internal class DescriptorRendererImpl(
         return renderDefaultType(type)
     }
 
-    private fun shouldRenderAsPrettyFunctionType(type: JetType): Boolean {
+    private fun shouldRenderAsPrettyFunctionType(type: KtType): Boolean {
         return prettyFunctionTypes && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)
                && type.getArguments().none { it.isStarProjection() }
     }
 
-    private fun renderFlexibleType(type: JetType): String {
+    private fun renderFlexibleType(type: KtType): String {
         val lower = type.flexibility().lowerBound
         val upper = type.flexibility().upperBound
 
@@ -246,7 +246,7 @@ internal class DescriptorRendererImpl(
         }.toString()
     }
 
-    private fun renderDefaultType(type: JetType): String {
+    private fun renderDefaultType(type: KtType): String {
         val sb = StringBuilder()
 
         renderAnnotations(type, sb, /* needBrackets = */ true)
@@ -290,7 +290,7 @@ internal class DescriptorRendererImpl(
         }.joinTo(builder, ", ")
     }
 
-    private fun renderFunctionType(type: JetType): String {
+    private fun renderFunctionType(type: KtType): String {
         return StringBuilder {
             val isNullable = type.isMarkedNullable()
             if (isNullable) append("(")
@@ -338,7 +338,7 @@ internal class DescriptorRendererImpl(
     private fun renderAnnotations(annotated: Annotated, builder: StringBuilder, needBrackets: Boolean = false) {
         if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
 
-        val excluded = if (annotated is JetType) excludedTypeAnnotationClasses else excludedAnnotationClasses
+        val excluded = if (annotated is KtType) excludedTypeAnnotationClasses else excludedAnnotationClasses
 
         val annotationsBuilder = StringBuilder {
             // Sort is needed just to fix some order when annotations resolved from modifiers

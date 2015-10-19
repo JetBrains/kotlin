@@ -21,27 +21,27 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetReturnExpression
+import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldReturnToIfIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'if' expression"), LowPriorityAction {
-    override fun applicabilityRange(element: JetReturnExpression): TextRange? {
-        val ifExpression = element.getReturnedExpression() as? JetIfExpression ?: return null
+public class UnfoldReturnToIfIntention : JetSelfTargetingRangeIntention<KtReturnExpression>(javaClass(), "Replace return with 'if' expression"), LowPriorityAction {
+    override fun applicabilityRange(element: KtReturnExpression): TextRange? {
+        val ifExpression = element.getReturnedExpression() as? KtIfExpression ?: return null
         return TextRange(element.startOffset, ifExpression.getIfKeyword().endOffset)
     }
 
-    override fun applyTo(element: JetReturnExpression, editor: Editor) {
-        val ifExpression = element.getReturnedExpression() as JetIfExpression
+    override fun applyTo(element: KtReturnExpression, editor: Editor) {
+        val ifExpression = element.getReturnedExpression() as KtIfExpression
         val newIfExpression = ifExpression.copied()
         val thenExpr = newIfExpression.getThen()!!.lastBlockStatementOrThis()
         val elseExpr = newIfExpression.getElse()!!.lastBlockStatementOrThis()
 
-        val psiFactory = JetPsiFactory(element)
+        val psiFactory = KtPsiFactory(element)
         thenExpr.replace(psiFactory.createExpressionByPattern("return $0", thenExpr))
         elseExpr.replace(psiFactory.createExpressionByPattern("return $0", elseExpr))
 

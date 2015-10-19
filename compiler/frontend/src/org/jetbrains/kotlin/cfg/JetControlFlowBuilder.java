@@ -32,32 +32,32 @@ import java.util.Map;
 
 public interface JetControlFlowBuilder {
     // Subroutines
-    void enterSubroutine(@NotNull JetElement subroutine);
+    void enterSubroutine(@NotNull KtElement subroutine);
 
     @NotNull
-    Pseudocode exitSubroutine(@NotNull JetElement subroutine);
+    Pseudocode exitSubroutine(@NotNull KtElement subroutine);
 
     @NotNull
-    JetElement getCurrentSubroutine();
+    KtElement getCurrentSubroutine();
     @Nullable
-    JetElement getReturnSubroutine();
+    KtElement getReturnSubroutine();
 
     // Lexical scopes
-    void enterLexicalScope(@NotNull JetElement element);
-    void exitLexicalScope(@NotNull JetElement element);
+    void enterLexicalScope(@NotNull KtElement element);
+    void exitLexicalScope(@NotNull KtElement element);
 
     // Entry/exit points
     @NotNull
-    Label getEntryPoint(@NotNull JetElement labelElement);
+    Label getEntryPoint(@NotNull KtElement labelElement);
     @NotNull
-    Label getExitPoint(@NotNull JetElement labelElement);
+    Label getExitPoint(@NotNull KtElement labelElement);
     @NotNull
-    Label getConditionEntryPoint(@NotNull JetElement labelElement);
+    Label getConditionEntryPoint(@NotNull KtElement labelElement);
 
     // Declarations
-    void declareParameter(@NotNull JetParameter parameter);
-    void declareVariable(@NotNull JetVariableDeclaration property);
-    void declareFunction(@NotNull JetElement subroutine, @NotNull Pseudocode pseudocode);
+    void declareParameter(@NotNull KtParameter parameter);
+    void declareVariable(@NotNull KtVariableDeclaration property);
+    void declareFunction(@NotNull KtElement subroutine, @NotNull Pseudocode pseudocode);
 
     // Labels
     @NotNull
@@ -68,25 +68,25 @@ public interface JetControlFlowBuilder {
     void bindLabel(@NotNull Label label);
 
     // Jumps
-    void jump(@NotNull Label label, @NotNull JetElement element);
-    void jumpOnFalse(@NotNull Label label, @NotNull JetElement element, @Nullable PseudoValue conditionValue);
-    void jumpOnTrue(@NotNull Label label, @NotNull JetElement element, @Nullable PseudoValue conditionValue);
-    void nondeterministicJump(@NotNull Label label, @NotNull JetElement element, @Nullable PseudoValue inputValue); // Maybe, jump to label
-    void nondeterministicJump(@NotNull List<Label> label, @NotNull JetElement element);
-    void jumpToError(@NotNull JetElement element);
+    void jump(@NotNull Label label, @NotNull KtElement element);
+    void jumpOnFalse(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue conditionValue);
+    void jumpOnTrue(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue conditionValue);
+    void nondeterministicJump(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue inputValue); // Maybe, jump to label
+    void nondeterministicJump(@NotNull List<Label> label, @NotNull KtElement element);
+    void jumpToError(@NotNull KtElement element);
 
-    void returnValue(@NotNull JetExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull JetElement subroutine);
-    void returnNoValue(@NotNull JetReturnExpression returnExpression, @NotNull JetElement subroutine);
+    void returnValue(@NotNull KtExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull KtElement subroutine);
+    void returnNoValue(@NotNull KtReturnExpression returnExpression, @NotNull KtElement subroutine);
 
-    void throwException(@NotNull JetThrowExpression throwExpression, @NotNull PseudoValue thrownValue);
+    void throwException(@NotNull KtThrowExpression throwExpression, @NotNull PseudoValue thrownValue);
 
     // Loops
     @NotNull
-    LoopInfo enterLoop(@NotNull JetLoopExpression expression);
-    void enterLoopBody(@NotNull JetLoopExpression expression);
-    void exitLoopBody(@NotNull JetLoopExpression expression);
+    LoopInfo enterLoop(@NotNull KtLoopExpression expression);
+    void enterLoopBody(@NotNull KtLoopExpression expression);
+    void exitLoopBody(@NotNull KtLoopExpression expression);
     @Nullable
-    JetLoopExpression getCurrentLoop();
+    KtLoopExpression getCurrentLoop();
 
     // Try-Finally
     void enterTryFinally(@NotNull GenerationTrigger trigger);
@@ -95,49 +95,49 @@ public interface JetControlFlowBuilder {
     void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel);
 
     // Reading values
-    void mark(@NotNull JetElement element);
+    void mark(@NotNull KtElement element);
 
     @Nullable
-    PseudoValue getBoundValue(@Nullable JetElement element);
-    void bindValue(@NotNull PseudoValue value, @NotNull JetElement element);
+    PseudoValue getBoundValue(@Nullable KtElement element);
+    void bindValue(@NotNull PseudoValue value, @NotNull KtElement element);
     @NotNull
-    PseudoValue newValue(@Nullable JetElement element);
+    PseudoValue newValue(@Nullable KtElement element);
 
-    void loadUnit(@NotNull JetExpression expression);
+    void loadUnit(@NotNull KtExpression expression);
 
     @NotNull
-    InstructionWithValue loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant);
+    InstructionWithValue loadConstant(@NotNull KtExpression expression, @Nullable CompileTimeConstant<?> constant);
     @NotNull
-    InstructionWithValue createAnonymousObject(@NotNull JetObjectLiteralExpression expression);
+    InstructionWithValue createAnonymousObject(@NotNull KtObjectLiteralExpression expression);
     @NotNull
-    InstructionWithValue createLambda(@NotNull JetFunction expression);
+    InstructionWithValue createLambda(@NotNull KtFunction expression);
     @NotNull
-    InstructionWithValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues);
+    InstructionWithValue loadStringTemplate(@NotNull KtStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues);
 
     @NotNull
     MagicInstruction magic(
-            @NotNull JetElement instructionElement,
-            @Nullable JetElement valueElement,
+            @NotNull KtElement instructionElement,
+            @Nullable KtElement valueElement,
             @NotNull List<PseudoValue> inputValues,
             @NotNull MagicKind kind
     );
 
     @NotNull
     MergeInstruction merge(
-            @NotNull JetExpression expression,
+            @NotNull KtExpression expression,
             @NotNull List<PseudoValue> inputValues
     );
 
     @NotNull
     ReadValueInstruction readVariable(
-            @NotNull JetExpression expression,
+            @NotNull KtExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues
     );
 
     @NotNull
     CallInstruction call(
-            @NotNull JetElement valueElement,
+            @NotNull KtElement valueElement,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
             @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
@@ -150,14 +150,14 @@ public interface JetControlFlowBuilder {
     }
     @NotNull
     OperationInstruction predefinedOperation(
-            @NotNull JetExpression expression,
+            @NotNull KtExpression expression,
             @NotNull PredefinedOperation operation,
             @NotNull List<PseudoValue> inputValues
     );
 
     void write(
-            @NotNull JetElement assignment,
-            @NotNull JetElement lValue,
+            @NotNull KtElement assignment,
+            @NotNull KtElement lValue,
             @NotNull PseudoValue rValue,
             @NotNull AccessTarget target,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues);

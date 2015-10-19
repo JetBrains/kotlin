@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.findUsages.dialogs;
 import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UtilsKt;
-import org.jetbrains.kotlin.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
 import javax.swing.*;
@@ -31,7 +31,7 @@ class Utils {
 
     public static void configureLabelComponent(
             @NotNull SimpleColoredComponent coloredComponent,
-            @NotNull JetNamedDeclaration declaration) {
+            @NotNull KtNamedDeclaration declaration) {
         coloredComponent.append(DescriptorRenderer.COMPACT.render(UtilsKt.getDescriptor(declaration)));
     }
 

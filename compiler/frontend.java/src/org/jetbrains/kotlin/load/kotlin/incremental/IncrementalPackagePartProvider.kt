@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal class IncrementalPackagePartProvider private constructor(
         private val parent: PackagePartProvider,
-        sourceFiles: Collection<JetFile>,
+        sourceFiles: Collection<KtFile>,
         incrementalCaches: List<IncrementalCache>,
         storageManager: StorageManager
 ) : PackagePartProvider {
@@ -46,7 +46,7 @@ internal class IncrementalPackagePartProvider private constructor(
         @JvmStatic
         public fun create(
                 parent: PackagePartProvider,
-                sourceFiles: Collection<JetFile>,
+                sourceFiles: Collection<KtFile>,
                 targets: List<TargetId>?,
                 incrementalCompilationComponents: IncrementalCompilationComponents?,
                 storageManager: StorageManager

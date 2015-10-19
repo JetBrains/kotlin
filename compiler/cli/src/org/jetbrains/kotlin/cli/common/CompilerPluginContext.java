@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.cli.common;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.util.List;
 
 /**
  * Represents the context of available state in which a {@link CompilerPlugin} runs such as
- * the {@link Project}, the {@link BindingContext} and the underlying {@link JetFile} files.
+ * the {@link Project}, the {@link BindingContext} and the underlying {@link KtFile} files.
  */
 public class CompilerPluginContext {
     @NotNull
@@ -34,9 +34,9 @@ public class CompilerPluginContext {
     @NotNull
     private final BindingContext context;
     @NotNull
-    private final List<JetFile> files;
+    private final List<KtFile> files;
 
-    public CompilerPluginContext(Project project, BindingContext context, List<JetFile> files) {
+    public CompilerPluginContext(Project project, BindingContext context, List<KtFile> files) {
         this.project = project;
         this.context = context;
         this.files = files;
@@ -48,7 +48,7 @@ public class CompilerPluginContext {
     }
 
     @NotNull
-    public List<JetFile> getFiles() {
+    public List<KtFile> getFiles() {
         return files;
     }
 

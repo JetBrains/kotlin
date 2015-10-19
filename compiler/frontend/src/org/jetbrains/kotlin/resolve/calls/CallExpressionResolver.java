@@ -22,7 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
@@ -88,7 +88,7 @@ public class CallExpressionResolver {
 
     @Nullable
     public ResolvedCall<FunctionDescriptor> getResolvedCallForFunction(
-            @NotNull Call call, @NotNull JetExpression callExpression,
+            @NotNull Call call, @NotNull KtExpression callExpression,
             @NotNull ResolutionContext context, @NotNull CheckArgumentTypesMode checkArguments,
             @NotNull boolean[] result
     ) {
@@ -103,8 +103,8 @@ public class CallExpressionResolver {
     }
 
     @Nullable
-    private JetType getVariableType(
-            @NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
+    private KtType getVariableType(
+            @NotNull KtSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context, @NotNull boolean[] result
     ) {
         TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
@@ -116,7 +116,7 @@ public class CallExpressionResolver {
         OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(contextForVariable);
 
         // if the expression is a receiver in a qualified expression, it should be resolved after the selector is resolved
-        boolean isLHSOfDot = JetPsiUtil.isLHSOfDot(nameExpression);
+        boolean isLHSOfDot = KtPsiUtil.isLHSOfDot(nameExpression);
         if (!resolutionResult.isNothing() && resolutionResult.getResultCode() != OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER) {
             boolean isQualifier = isLHSOfDot && resolutionResult.isSingleResult()
                                   && resolutionResult.getResultingDescriptor() instanceof FakeCallableDescriptorForObject;
@@ -142,14 +142,14 @@ public class CallExpressionResolver {
 
     @NotNull
     public JetTypeInfo getSimpleNameExpressionTypeInfo(
-            @NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
+            @NotNull KtSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
         boolean[] result = new boolean[1];
 
         TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
                 context, "trace to resolve as variable", nameExpression);
-        JetType type =
+        KtType type =
                 getVariableType(nameExpression, receiver, callOperationNode, context.replaceTraceAndCache(temporaryForVariable), result);
         // TODO: for a safe call, it's necessary to set receiver != null here, as inside ArgumentTypeResolver.analyzeArgumentsAndRecordTypes
         // Unfortunately it provokes problems with x?.y!!.foo() with the following x!!.bar():
@@ -181,7 +181,7 @@ public class CallExpressionResolver {
 
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfo(
-            @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
+            @NotNull KtCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
         JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context);
@@ -197,7 +197,7 @@ public class CallExpressionResolver {
      */
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(
-            @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
+            @NotNull KtCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
         boolean[] result = new boolean[1];
@@ -236,7 +236,7 @@ public class CallExpressionResolver {
                 }
             }
 
-            JetType type = functionDescriptor.getReturnType();
+            KtType type = functionDescriptor.getReturnType();
             // Extracting jump out possible and jump point flow info from arguments, if any
             List<? extends ValueArgument> arguments = callExpression.getValueArguments();
             DataFlowInfo resultFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
@@ -253,12 +253,12 @@ public class CallExpressionResolver {
             return TypeInfoFactoryKt.createTypeInfo(type, resultFlowInfo, jumpOutPossible, jumpFlowInfo);
         }
 
-        JetExpression calleeExpression = callExpression.getCalleeExpression();
-        if (calleeExpression instanceof JetSimpleNameExpression && callExpression.getTypeArgumentList() == null) {
+        KtExpression calleeExpression = callExpression.getCalleeExpression();
+        if (calleeExpression instanceof KtSimpleNameExpression && callExpression.getTypeArgumentList() == null) {
             TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
                     context, "trace to resolve as variable with 'invoke' call", callExpression);
-            JetType type = getVariableType((JetSimpleNameExpression) calleeExpression, receiver, callOperationNode,
-                                           context.replaceTraceAndCache(temporaryForVariable), result);
+            KtType type = getVariableType((KtSimpleNameExpression) calleeExpression, receiver, callOperationNode,
+                                          context.replaceTraceAndCache(temporaryForVariable), result);
             Qualifier qualifier = temporaryForVariable.trace.get(BindingContext.QUALIFIER, calleeExpression);
             if (result[0] && (qualifier == null || qualifier.getPackageView() == null)) {
                 temporaryForVariable.commit();
@@ -271,16 +271,16 @@ public class CallExpressionResolver {
         return TypeInfoFactoryKt.noTypeInfo(context);
     }
 
-    private static boolean canInstantiateAnnotationClass(@NotNull JetCallExpression expression, @NotNull BindingTrace trace) {
+    private static boolean canInstantiateAnnotationClass(@NotNull KtCallExpression expression, @NotNull BindingTrace trace) {
         //noinspection unchecked
-        PsiElement parent = PsiTreeUtil.getParentOfType(expression, JetValueArgument.class, JetParameter.class);
-        if (parent instanceof JetValueArgument) {
-            return PsiTreeUtil.getParentOfType(parent, JetAnnotationEntry.class) != null;
+        PsiElement parent = PsiTreeUtil.getParentOfType(expression, KtValueArgument.class, KtParameter.class);
+        if (parent instanceof KtValueArgument) {
+            return PsiTreeUtil.getParentOfType(parent, KtAnnotationEntry.class) != null;
         }
-        else if (parent instanceof JetParameter) {
-            JetClass jetClass = PsiTreeUtil.getParentOfType(parent, JetClass.class);
-            if (jetClass != null) {
-                DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetClass);
+        else if (parent instanceof KtParameter) {
+            KtClass ktClass = PsiTreeUtil.getParentOfType(parent, KtClass.class);
+            if (ktClass != null) {
+                DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ktClass);
                 return DescriptorUtils.isAnnotationClass(descriptor);
             }
         }
@@ -291,15 +291,15 @@ public class CallExpressionResolver {
     private JetTypeInfo getSelectorReturnTypeInfo(
             @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode,
-            @Nullable JetExpression selectorExpression,
+            @Nullable KtExpression selectorExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        if (selectorExpression instanceof JetCallExpression) {
-            return getCallExpressionTypeInfoWithoutFinalTypeCheck((JetCallExpression) selectorExpression, receiver,
+        if (selectorExpression instanceof KtCallExpression) {
+            return getCallExpressionTypeInfoWithoutFinalTypeCheck((KtCallExpression) selectorExpression, receiver,
                                                                   callOperationNode, context);
         }
-        else if (selectorExpression instanceof JetSimpleNameExpression) {
-            return getSimpleNameExpressionTypeInfo((JetSimpleNameExpression) selectorExpression, receiver, callOperationNode, context);
+        else if (selectorExpression instanceof KtSimpleNameExpression) {
+            return getSimpleNameExpressionTypeInfo((KtSimpleNameExpression) selectorExpression, receiver, callOperationNode, context);
         }
         else if (selectorExpression != null) {
             context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
@@ -339,18 +339,18 @@ public class CallExpressionResolver {
      */
     @NotNull
     public JetTypeInfo getQualifiedExpressionTypeInfo(
-            @NotNull JetQualifiedExpression expression, @NotNull ExpressionTypingContext context
+            @NotNull KtQualifiedExpression expression, @NotNull ExpressionTypingContext context
     ) {
         // TODO : functions as values
-        JetExpression selectorExpression = expression.getSelectorExpression();
-        JetExpression receiverExpression = expression.getReceiverExpression();
-        boolean safeCall = (expression.getOperationSign() == JetTokens.SAFE_ACCESS);
+        KtExpression selectorExpression = expression.getSelectorExpression();
+        KtExpression receiverExpression = expression.getReceiverExpression();
+        boolean safeCall = (expression.getOperationSign() == KtTokens.SAFE_ACCESS);
         ResolutionContext contextForReceiver = context.replaceExpectedType(NO_EXPECTED_TYPE).
                 replaceContextDependency(INDEPENDENT).
                 replaceInsideCallChain(true); // Enter call chain
         // Visit receiver (x in x.y or x?.z) here. Recursion is possible.
         JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(receiverExpression, contextForReceiver);
-        JetType receiverType = receiverTypeInfo.getType();
+        KtType receiverType = receiverTypeInfo.getType();
         QualifierReceiver qualifierReceiver = (QualifierReceiver) context.trace.get(BindingContext.QUALIFIER, receiverExpression);
 
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
@@ -363,7 +363,7 @@ public class CallExpressionResolver {
         // Visit selector (y in x.y) here. Recursion is also possible.
         JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
                 receiver, expression.getOperationTokenNode(), selectorExpression, context);
-        JetType selectorReturnType = selectorReturnTypeInfo.getType();
+        KtType selectorReturnType = selectorReturnTypeInfo.getType();
 
         resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, expression, context);
         checkNestedClassAccess(expression, context);
@@ -436,23 +436,23 @@ public class CallExpressionResolver {
 
     private void resolveDeferredReceiverInQualifiedExpression(
             @Nullable QualifierReceiver qualifierReceiver,
-            @NotNull JetQualifiedExpression qualifiedExpression,
+            @NotNull KtQualifiedExpression qualifiedExpression,
             @NotNull ExpressionTypingContext context
     ) {
         if (qualifierReceiver == null) return;
-        JetExpression calleeExpression =
-                JetPsiUtil.deparenthesize(CallUtilKt.getCalleeExpressionIfAny(qualifiedExpression.getSelectorExpression()));
+        KtExpression calleeExpression =
+                KtPsiUtil.deparenthesize(CallUtilKt.getCalleeExpressionIfAny(qualifiedExpression.getSelectorExpression()));
         DeclarationDescriptor selectorDescriptor =
-                calleeExpression instanceof JetReferenceExpression
-                ? context.trace.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) calleeExpression) : null;
+                calleeExpression instanceof KtReferenceExpression
+                ? context.trace.get(BindingContext.REFERENCE_TARGET, (KtReferenceExpression) calleeExpression) : null;
         QualifierKt.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, symbolUsageValidator, selectorDescriptor);
     }
 
     private static void checkNestedClassAccess(
-            @NotNull JetQualifiedExpression expression,
+            @NotNull KtQualifiedExpression expression,
             @NotNull ExpressionTypingContext context
     ) {
-        JetExpression selectorExpression = expression.getSelectorExpression();
+        KtExpression selectorExpression = expression.getSelectorExpression();
         if (selectorExpression == null) return;
 
         // A.B - if B is a nested class accessed by outer class, 'A' and 'A.B' were marked as qualifiers

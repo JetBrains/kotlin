@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.JetTypeImpl
+import org.jetbrains.kotlin.types.KtTypeImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
@@ -92,7 +92,7 @@ object KeywordValues {
             val qualifierType = bindingContext[BindingContext.TYPE, callTypeAndReceiver.receiver]
             if (qualifierType != null) {
                 val kClassDescriptor = resolutionFacade.getFrontendService(ReflectionTypes::class.java).kClass
-                val classLiteralType = JetTypeImpl.create(Annotations.EMPTY, kClassDescriptor, false, listOf(TypeProjectionImpl(qualifierType)))
+                val classLiteralType = KtTypeImpl.create(Annotations.EMPTY, kClassDescriptor, false, listOf(TypeProjectionImpl(qualifierType)))
                 val kClassTypes = listOf(FuzzyType(classLiteralType, emptyList()))
                 val kClassMatcher = { info: ExpectedInfo -> kClassTypes.matchExpectedInfo(info) }
                 consumer.consume("class", kClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {
@@ -104,7 +104,7 @@ object KeywordValues {
                             .singleOrNull() as? ClassDescriptor
 
                     if (javaLangClassDescriptor != null) {
-                        val javaLangClassType = JetTypeImpl.create(Annotations.EMPTY, javaLangClassDescriptor, false, listOf(TypeProjectionImpl(qualifierType)))
+                        val javaLangClassType = KtTypeImpl.create(Annotations.EMPTY, javaLangClassDescriptor, false, listOf(TypeProjectionImpl(qualifierType)))
                         val javaClassTypes = listOf(FuzzyType(javaLangClassType, emptyList()))
                         val javaClassMatcher = { info: ExpectedInfo -> javaClassTypes.matchExpectedInfo(info) }
                         consumer.consume("class", javaClassMatcher, SmartCompletionItemPriority.CLASS_LITERAL) {

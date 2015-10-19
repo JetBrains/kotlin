@@ -37,8 +37,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.Map;
 
@@ -101,21 +101,21 @@ public class NavigateToDecompiledLibraryTest extends LightCodeInsightFixtureTest
         PsiFile decompiledPsiFile = PsiManager.getInstance(getProject()).findFile(classFile);
         assertNotNull(decompiledPsiFile);
         assertTrue("Expecting kotlin class file, was: " + decompiledPsiFile.getClass(), decompiledPsiFile instanceof JetClsFile);
-        Map<String, JetDeclaration> map = getRenderedDescriptorToKotlinPsiMap(
-                (JetFile) decompiledPsiFile, ((JetClsFile) decompiledPsiFile).getRenderedDescriptorsToRange()
+        Map<String, KtDeclaration> map = getRenderedDescriptorToKotlinPsiMap(
+                (KtFile) decompiledPsiFile, ((JetClsFile) decompiledPsiFile).getRenderedDescriptorsToRange()
         );
         String decompiledTextWithMarks = getDecompiledTextWithMarks(map);
 
         assertSameLinesWithFile(TEST_DATA_PATH + "/decompiled/" + getTestName(false) + ".kt", decompiledTextWithMarks);
     }
 
-    private String getDecompiledTextWithMarks(Map<String, JetDeclaration> map) {
+    private String getDecompiledTextWithMarks(Map<String, KtDeclaration> map) {
         String decompiledText = getDecompiledText();
 
         int[] openings = new int[decompiledText.length() + 1];
         int[] closings = new int[decompiledText.length() + 1];
-        for (JetDeclaration jetDeclaration : map.values()) {
-            TextRange textRange = jetDeclaration.getTextRange();
+        for (KtDeclaration ktDeclaration : map.values()) {
+            TextRange textRange = ktDeclaration.getTextRange();
             openings[textRange.getStartOffset()]++;
             closings[textRange.getEndOffset()]++;
         }
@@ -138,18 +138,18 @@ public class NavigateToDecompiledLibraryTest extends LightCodeInsightFixtureTest
     }
 
     @NotNull
-    private static Map<String, JetDeclaration> getRenderedDescriptorToKotlinPsiMap(
-            @NotNull JetFile file, @NotNull Map<String, TextRange> renderedDescriptorsToRanges
+    private static Map<String, KtDeclaration> getRenderedDescriptorToKotlinPsiMap(
+            @NotNull KtFile file, @NotNull Map<String, TextRange> renderedDescriptorsToRanges
     ) {
-        Map<String, JetDeclaration> renderedDescriptorsToJetDeclarations = Maps.newHashMap();
+        Map<String, KtDeclaration> renderedDescriptorsToJetDeclarations = Maps.newHashMap();
         for (Map.Entry<String, TextRange> renderedDescriptorToRange : renderedDescriptorsToRanges.entrySet()) {
             String renderedDescriptor = renderedDescriptorToRange.getKey();
             TextRange range = renderedDescriptorToRange.getValue();
-            JetDeclaration jetDeclaration = PsiTreeUtil.findElementOfClassAtRange(file, range.getStartOffset(), range.getEndOffset(),
-                                                                                  JetDeclaration.class);
-            assert jetDeclaration != null : "Can't find declaration at " + range + ": "
-                                            + file.getText().substring(range.getStartOffset(), range.getEndOffset());
-            renderedDescriptorsToJetDeclarations.put(renderedDescriptor, jetDeclaration);
+            KtDeclaration ktDeclaration = PsiTreeUtil.findElementOfClassAtRange(file, range.getStartOffset(), range.getEndOffset(),
+                                                                                KtDeclaration.class);
+            assert ktDeclaration != null : "Can't find declaration at " + range + ": "
+                                           + file.getText().substring(range.getStartOffset(), range.getEndOffset());
+            renderedDescriptorsToJetDeclarations.put(renderedDescriptor, ktDeclaration);
         }
         return renderedDescriptorsToJetDeclarations;
     }

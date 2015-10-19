@@ -27,10 +27,10 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.renderer.render
@@ -45,16 +45,16 @@ public open class DescriptorMemberChooserObject(
     override fun getParentNodeDelegate(): MemberChooserObject {
         val parent = descriptor.containingDeclaration ?: error("No parent for $descriptor")
 
-        val declaration = if (psiElement is JetDeclaration) { // kotlin
-            PsiTreeUtil.getStubOrPsiParentOfType(psiElement, javaClass<JetNamedDeclaration>())
-                ?: PsiTreeUtil.getStubOrPsiParentOfType(psiElement, javaClass<JetFile>())
+        val declaration = if (psiElement is KtDeclaration) { // kotlin
+            PsiTreeUtil.getStubOrPsiParentOfType(psiElement, javaClass<KtNamedDeclaration>())
+                ?: PsiTreeUtil.getStubOrPsiParentOfType(psiElement, javaClass<KtFile>())
         }
         else { // java or compiled
             (psiElement as PsiMember).containingClass
         } ?: error("No parent for $psiElement")
 
         return when (declaration) {
-            is JetFile -> PsiElementMemberChooserObject(declaration, declaration.name)
+            is KtFile -> PsiElementMemberChooserObject(declaration, declaration.name)
             else -> DescriptorMemberChooserObject(declaration, parent)
         }
     }
@@ -82,9 +82,9 @@ public open class DescriptorMemberChooserObject(
 
         public fun getIcon(declaration: PsiElement?, descriptor: DeclarationDescriptor): Icon {
             if (declaration != null && declaration.isValid) {
-                val isClass = declaration is PsiClass || declaration is JetClass
+                val isClass = declaration is PsiClass || declaration is KtClass
                 val flags = if (isClass) 0 else Iconable.ICON_FLAG_VISIBILITY
-                if (declaration is JetDeclaration) {
+                if (declaration is KtDeclaration) {
                     // kotlin declaration
                     // visibility and abstraction better detect by a descriptor
                     return JetDescriptorIconProvider.getIcon(descriptor, declaration, flags)

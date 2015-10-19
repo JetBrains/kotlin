@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collections;
 
@@ -38,15 +38,15 @@ import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.messag
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.sum;
 
 public final class StringTemplateTranslator extends AbstractTranslator {
-    private final JetStringTemplateEntry[] expressionEntries;
+    private final KtStringTemplateEntry[] expressionEntries;
 
     @NotNull
-    public static JsExpression translate(@NotNull JetStringTemplateExpression expression,
+    public static JsExpression translate(@NotNull KtStringTemplateExpression expression,
                                          @NotNull TranslationContext context) {
         return (new StringTemplateTranslator(expression, context).translate());
     }
 
-    private StringTemplateTranslator(@NotNull JetStringTemplateExpression expression,
+    private StringTemplateTranslator(@NotNull KtStringTemplateExpression expression,
                                      @NotNull TranslationContext context) {
         super(context);
 
@@ -57,13 +57,13 @@ public final class StringTemplateTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translate() {
         EntryVisitor entryVisitor = new EntryVisitor();
-        for (JetStringTemplateEntry entry : expressionEntries) {
+        for (KtStringTemplateEntry entry : expressionEntries) {
             entry.accept(entryVisitor);
         }
         return entryVisitor.getResultingExpression();
     }
 
-    private final class EntryVisitor extends JetVisitorVoid {
+    private final class EntryVisitor extends KtVisitorVoid {
 
         @Nullable
         private JsExpression resultingExpression = null;
@@ -78,8 +78,8 @@ public final class StringTemplateTranslator extends AbstractTranslator {
         }
 
         @Override
-        public void visitStringTemplateEntryWithExpression(@NotNull JetStringTemplateEntryWithExpression entry) {
-            JetExpression entryExpression = entry.getExpression();
+        public void visitStringTemplateEntryWithExpression(@NotNull KtStringTemplateEntryWithExpression entry) {
+            KtExpression entryExpression = entry.getExpression();
             assert entryExpression != null :
                     "JetStringTemplateEntryWithExpression must have not null entry expression.";
             JsExpression translatedExpression = Translation.translateAsExpression(entryExpression, context());
@@ -88,7 +88,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
                 return;
             }
 
-            JetType type = context().bindingContext().getType(entryExpression);
+            KtType type = context().bindingContext().getType(entryExpression);
             if (type == null || type.isMarkedNullable()) {
                 append(TopLevelFIF.TO_STRING.apply((JsExpression) null, Collections.singletonList(translatedExpression), context()));
             }
@@ -100,7 +100,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
             }
         }
 
-        private boolean mustCallToString(@NotNull JetType type) {
+        private boolean mustCallToString(@NotNull KtType type) {
             Name typeName = DescriptorUtilsKt.getNameIfStandardType(type);
             if (typeName != null) {
                 //TODO: this is a hacky optimization, should use some generic approach
@@ -115,12 +115,12 @@ public final class StringTemplateTranslator extends AbstractTranslator {
         }
 
         @Override
-        public void visitLiteralStringTemplateEntry(@NotNull JetLiteralStringTemplateEntry entry) {
+        public void visitLiteralStringTemplateEntry(@NotNull KtLiteralStringTemplateEntry entry) {
             appendText(entry.getText());
         }
 
         @Override
-        public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
+        public void visitEscapeStringTemplateEntry(@NotNull KtEscapeStringTemplateEntry entry) {
             appendText(entry.getUnescapedValue());
         }
 

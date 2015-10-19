@@ -44,12 +44,12 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
     override fun execute(p: AnnotatedElementsSearch.Parameters, consumer: Processor<PsiModifierListOwner>): Boolean {
         return processAnnotatedMembers(p.annotationClass, p.scope) { declaration ->
             when (declaration) {
-                is JetClass -> {
+                is KtClass -> {
                     val lightClass = LightClassUtil.getPsiClass(declaration)
                     consumer.process(lightClass)
                 }
-                is JetNamedFunction, is JetSecondaryConstructor -> {
-                    val wrappedMethod = LightClassUtil.getLightClassMethod(declaration as JetFunction)
+                is KtNamedFunction, is KtSecondaryConstructor -> {
+                    val wrappedMethod = LightClassUtil.getLightClassMethod(declaration as KtFunction)
                     consumer.process(wrappedMethod)
                 }
                 else -> true
@@ -60,7 +60,7 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
     companion object {
         private val LOG = Logger.getInstance("#com.intellij.psi.impl.search.AnnotatedMembersSearcher")
 
-        public fun processAnnotatedMembers(annClass: PsiClass, useScope: SearchScope, consumer: (JetDeclaration) -> Boolean): Boolean {
+        public fun processAnnotatedMembers(annClass: PsiClass, useScope: SearchScope, consumer: (KtDeclaration) -> Boolean): Boolean {
             assert(annClass.isAnnotationType()) { "Annotation type should be passed to annotated members search" }
 
             val annotationFQN = annClass.getQualifiedName()
@@ -70,9 +70,9 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
                 if (notJetAnnotationEntry(elt)) continue
 
                 val result = runReadAction(fun(): Boolean {
-                    val declaration = elt.getStrictParentOfType<JetDeclaration>() ?: return true
+                    val declaration = elt.getStrictParentOfType<KtDeclaration>() ?: return true
 
-                    val annotationEntry = elt as JetAnnotationEntry
+                    val annotationEntry = elt as KtAnnotationEntry
 
                     val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)
                     val annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry) ?: return true
@@ -98,12 +98,12 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
                     return JetAnnotationsIndex.getInstance().get(name, annClass.getProject(), useScope)
                 }
 
-                return (useScope as LocalSearchScope).scope.flatMap { it.collectDescendantsOfType<JetAnnotationEntry>() }
+                return (useScope as LocalSearchScope).scope.flatMap { it.collectDescendantsOfType<KtAnnotationEntry>() }
             })
         }
 
         private fun notJetAnnotationEntry(found: PsiElement): Boolean {
-            if (found is JetAnnotationEntry) return false
+            if (found is KtAnnotationEntry) return false
 
             val faultyContainer = PsiUtilCore.getVirtualFile(found)
             LOG.error("Non annotation in annotations list: $faultyContainer; element:$found")

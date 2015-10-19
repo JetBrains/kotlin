@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 
 import java.util.List;
@@ -58,7 +58,7 @@ public abstract class ExpectedResolveData {
     private static class Position {
         private final PsiElement element;
 
-        private Position(JetFile file, int offset) {
+        private Position(KtFile file, int offset) {
             this.element = file.findElementAt(offset);
         }
 
@@ -84,7 +84,7 @@ public abstract class ExpectedResolveData {
         this.nameToPsiElement = nameToPsiElement;
     }
 
-    public final JetFile createFileFromMarkedUpText(String fileName, String text) {
+    public final KtFile createFileFromMarkedUpText(String fileName, String text) {
         Map<String, Integer> declarationToIntPosition = Maps.newHashMap();
         Map<Integer, String> intPositionToReference = Maps.newHashMap();
         Map<Integer, String> intPositionToType = Maps.newHashMap();
@@ -117,7 +117,7 @@ public abstract class ExpectedResolveData {
             text = text.substring(0, start) + text.substring(matcher.end());
         }
 
-        JetFile jetFile = createJetFile(fileName, text);
+        KtFile jetFile = createJetFile(fileName, text);
 
         for (Map.Entry<Integer, String> entry : intPositionToType.entrySet()) {
             positionToType.put(new Position(jetFile, entry.getKey()), entry.getValue());
@@ -131,9 +131,9 @@ public abstract class ExpectedResolveData {
         return jetFile;
     }
 
-    protected abstract JetFile createJetFile(String fileName, String text);
+    protected abstract KtFile createJetFile(String fileName, String text);
 
-    protected static BindingContext analyze(List<JetFile> files, KotlinCoreEnvironment environment) {
+    protected static BindingContext analyze(List<KtFile> files, KotlinCoreEnvironment environment) {
         if (files.isEmpty()) {
             System.err.println("Suspicious: no files");
             return BindingContext.EMPTY;
@@ -168,9 +168,9 @@ public abstract class ExpectedResolveData {
                 ancestorOfType = element.getContainingFile();
             }
             else {
-                ancestorOfType = getAncestorOfType(JetDeclaration.class, element);
+                ancestorOfType = getAncestorOfType(KtDeclaration.class, element);
                 if (ancestorOfType == null) {
-                    JetPackageDirective directive = getAncestorOfType(JetPackageDirective.class, element);
+                    KtPackageDirective directive = getAncestorOfType(KtPackageDirective.class, element);
                     assert directive != null : "Not a declaration: " + name;
                     ancestorOfType = element;
                 }
@@ -184,7 +184,7 @@ public abstract class ExpectedResolveData {
             String name = entry.getValue();
             PsiElement element = position.getElement();
 
-            JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, JetReferenceExpression.class);
+            KtReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, KtReferenceExpression.class);
             DeclarationDescriptor referenceTarget = bindingContext.get(REFERENCE_TARGET, referenceExpression);
             if ("!".equals(name)) {
                 assertTrue(
@@ -232,10 +232,10 @@ public abstract class ExpectedResolveData {
                 expected = nameToPsiElement.get(name);
             }
 
-            JetReferenceExpression reference = getAncestorOfType(JetReferenceExpression.class, element);
+            KtReferenceExpression reference = getAncestorOfType(KtReferenceExpression.class, element);
             if (expected == null && name.startsWith(STANDARD_PREFIX)) {
                 DeclarationDescriptor expectedDescriptor = nameToDescriptor.get(name);
-                JetTypeReference typeReference = getAncestorOfType(JetTypeReference.class, element);
+                KtTypeReference typeReference = getAncestorOfType(KtTypeReference.class, element);
                 if (expectedDescriptor != null) {
                     DeclarationDescriptor actual = bindingContext.get(REFERENCE_TARGET, reference);
                     assertSame("Expected: " + name, expectedDescriptor.getOriginal(), actual == null
@@ -244,7 +244,7 @@ public abstract class ExpectedResolveData {
                     continue;
                 }
 
-                JetType actualType = bindingContext.get(BindingContext.TYPE, typeReference);
+                KtType actualType = bindingContext.get(BindingContext.TYPE, typeReference);
                 assertNotNull("Type " + name + " not resolved for reference " + name, actualType);
                 ClassifierDescriptor expectedClass = builtIns.getBuiltInClassByName(Name.identifier(name.substring(STANDARD_PREFIX.length())));
                 assertNotNull("Expected class not found: " + name);
@@ -254,7 +254,7 @@ public abstract class ExpectedResolveData {
             assert expected != null : "No declaration for " + name;
 
             if (referenceTarget instanceof PackageViewDescriptor) {
-                JetPackageDirective expectedDirective = PsiTreeUtil.getParentOfType(expected, JetPackageDirective.class);
+                KtPackageDirective expectedDirective = PsiTreeUtil.getParentOfType(expected, KtPackageDirective.class);
                 FqName expectedFqName;
                 if (expectedDirective != null) {
                     expectedFqName = expectedDirective.getFqName();
@@ -274,8 +274,8 @@ public abstract class ExpectedResolveData {
             PsiElement actual = referenceTarget == null
                                 ? bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression)
                                 : DescriptorToSourceUtils.descriptorToDeclaration(referenceTarget);
-            if (actual instanceof JetSimpleNameExpression) {
-                actual = ((JetSimpleNameExpression)actual).getIdentifier();
+            if (actual instanceof KtSimpleNameExpression) {
+                actual = ((KtSimpleNameExpression)actual).getIdentifier();
             }
 
             String actualName = null;
@@ -297,9 +297,9 @@ public abstract class ExpectedResolveData {
             String typeName = entry.getValue();
 
             PsiElement element = position.getElement();
-            JetExpression expression = getAncestorOfType(JetExpression.class, element);
+            KtExpression expression = getAncestorOfType(KtExpression.class, element);
 
-            JetType expressionType = bindingContext.getType(expression);
+            KtType expressionType = bindingContext.getType(expression);
             TypeConstructor expectedTypeConstructor;
             if (typeName.startsWith(STANDARD_PREFIX)) {
                 String name = typeName.substring(STANDARD_PREFIX.length());
@@ -313,14 +313,14 @@ public abstract class ExpectedResolveData {
                 assertNotNull("Undeclared: " + typeName, declarationPosition);
                 PsiElement declElement = declarationPosition.getElement();
                 assertNotNull(declarationPosition);
-                JetDeclaration declaration = getAncestorOfType(JetDeclaration.class, declElement);
+                KtDeclaration declaration = getAncestorOfType(KtDeclaration.class, declElement);
                 assertNotNull(declaration);
-                if (declaration instanceof JetClass) {
+                if (declaration instanceof KtClass) {
                     ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, declaration);
                     expectedTypeConstructor = classDescriptor.getTypeConstructor();
                 }
-                else if (declaration instanceof JetTypeParameter) {
-                    TypeParameterDescriptor typeParameterDescriptor = bindingContext.get(BindingContext.TYPE_PARAMETER, (JetTypeParameter) declaration);
+                else if (declaration instanceof KtTypeParameter) {
+                    TypeParameterDescriptor typeParameterDescriptor = bindingContext.get(BindingContext.TYPE_PARAMETER, (KtTypeParameter) declaration);
                     expectedTypeConstructor = typeParameterDescriptor.getTypeConstructor();
                 }
                 else {
@@ -334,15 +334,15 @@ public abstract class ExpectedResolveData {
         }
     }
 
-    private static String renderReferenceInContext(JetReferenceExpression referenceExpression) {
-        JetExpression statement = referenceExpression;
+    private static String renderReferenceInContext(KtReferenceExpression referenceExpression) {
+        KtExpression statement = referenceExpression;
         while (true) {
             PsiElement parent = statement.getParent();
-            if (!(parent instanceof JetExpression)) break;
-            if (parent instanceof JetBlockExpression) break;
-            statement = (JetExpression) parent;
+            if (!(parent instanceof KtExpression)) break;
+            if (parent instanceof KtBlockExpression) break;
+            statement = (KtExpression) parent;
         }
-        JetDeclaration declaration = PsiTreeUtil.getParentOfType(referenceExpression, JetDeclaration.class);
+        KtDeclaration declaration = PsiTreeUtil.getParentOfType(referenceExpression, KtDeclaration.class);
 
 
 

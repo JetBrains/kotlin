@@ -28,13 +28,13 @@ import com.intellij.util.Query
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import java.util.*
 
 fun PsiElement.isOverridableElement(): Boolean = when (this) {
     is PsiMethod -> PsiUtil.canBeOverriden(this)
-    is JetDeclaration -> isOverridable()
+    is KtDeclaration -> isOverridable()
     else -> false
 }
 

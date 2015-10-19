@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.name.Name
 
 public interface ValueArgument {
     @IfNotParsed
-    public fun getArgumentExpression(): JetExpression?
+    public fun getArgumentExpression(): KtExpression?
 
     public fun getArgumentName(): ValueArgumentName?
 
     public fun isNamed(): Boolean
 
-    public fun asElement(): JetElement
+    public fun asElement(): KtElement
 
     /* The '*' in something like foo(*arr) i.e. pass an array as a number of vararg arguments */
     public fun getSpreadElement(): LeafPsiElement?
@@ -37,12 +37,12 @@ public interface ValueArgument {
 }
 
 public interface FunctionLiteralArgument : ValueArgument {
-    public fun getFunctionLiteral(): JetFunctionLiteralExpression
+    public fun getFunctionLiteral(): KtFunctionLiteralExpression
 
-    override fun getArgumentExpression(): JetExpression
+    override fun getArgumentExpression(): KtExpression
 }
 
 public interface ValueArgumentName {
     public val asName: Name
-    public val referenceExpression: JetSimpleNameExpression?
+    public val referenceExpression: KtSimpleNameExpression?
 }

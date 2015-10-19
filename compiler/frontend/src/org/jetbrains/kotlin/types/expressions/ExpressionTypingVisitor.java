@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetVisitor;
+import org.jetbrains.kotlin.psi.KtVisitor;
 
-/*package*/ abstract class ExpressionTypingVisitor extends JetVisitor<JetTypeInfo, ExpressionTypingContext> {
+/*package*/ abstract class ExpressionTypingVisitor extends KtVisitor<JetTypeInfo, ExpressionTypingContext> {
 
     protected final ExpressionTypingInternals facade;
     protected final ExpressionTypingComponents components;

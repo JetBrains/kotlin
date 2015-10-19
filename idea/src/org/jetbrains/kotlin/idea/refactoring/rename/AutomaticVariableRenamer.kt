@@ -32,16 +32,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetVariableDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.util.*
 
 public class AutomaticVariableRenamer(
@@ -49,7 +49,7 @@ public class AutomaticVariableRenamer(
         newClassName: String,
         usages: Collection<UsageInfo>
 ) : AutomaticRenamer() {
-    private val toUnpluralize = ArrayList<JetNamedDeclaration>()
+    private val toUnpluralize = ArrayList<KtNamedDeclaration>()
 
     init {
         for (usage in usages) {
@@ -57,8 +57,8 @@ public class AutomaticVariableRenamer(
 
             val parameterOrVariable = PsiTreeUtil.getParentOfType(
                     usageElement,
-                    javaClass<JetVariableDeclaration>(),
-                    javaClass<JetParameter>()
+                    javaClass<KtVariableDeclaration>(),
+                    javaClass<KtParameter>()
             ) ?: continue
 
             if (parameterOrVariable.getTypeReference()?.isAncestor(usageElement) != true) continue
@@ -108,7 +108,7 @@ public class AutomaticVariableRenamer(
     }
 }
 
-private fun JetType.isCollectionLikeOf(classPsiElement: PsiNamedElement): Boolean {
+private fun KtType.isCollectionLikeOf(classPsiElement: PsiNamedElement): Boolean {
     val klass = this.getConstructor().getDeclarationDescriptor() as? ClassDescriptor ?: return false
     if (KotlinBuiltIns.isArray(this) || DescriptorUtils.isSubclass(klass, klass.builtIns.getCollection())) {
         val typeArgument = this.getArguments().singleOrNull()?.getType() ?: return false
@@ -120,7 +120,7 @@ private fun JetType.isCollectionLikeOf(classPsiElement: PsiNamedElement): Boolea
 
 
 public class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
-    override fun isApplicable(element: PsiElement) = element is JetClass || element is PsiClass
+    override fun isApplicable(element: PsiElement) = element is KtClass || element is PsiClass
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
             AutomaticVariableRenamer(element as PsiNamedElement, newName, usages)
@@ -132,11 +132,11 @@ public class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
 }
 
 public class AutomaticVariableInJavaRenamerFactory: AutomaticRenamerFactory {
-    override fun isApplicable(element: PsiElement) = element is JetClass && element.toLightClass() != null
+    override fun isApplicable(element: PsiElement) = element is KtClass && element.toLightClass() != null
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
             // Using java variable renamer for java usages
-            com.intellij.refactoring.rename.naming.AutomaticVariableRenamer((element as JetClass).toLightClass()!!, newName, usages)
+            com.intellij.refactoring.rename.naming.AutomaticVariableRenamer((element as KtClass).toLightClass()!!, newName, usages)
 
     override fun isEnabled() = JavaRefactoringSettings.getInstance().isToRenameVariables()
     override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameVariables(enabled)

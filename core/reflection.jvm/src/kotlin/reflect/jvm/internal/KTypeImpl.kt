@@ -16,12 +16,12 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.lang.reflect.Type
 import kotlin.reflect.KType
 
 internal class KTypeImpl(
-        val type: JetType,
+        val type: KtType,
         computeJavaType: () -> Type
 ) : KType {
     internal val javaType: Type by ReflectProperties.lazySoft(computeJavaType)

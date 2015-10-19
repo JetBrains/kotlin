@@ -22,14 +22,14 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class SpecifyExplicitLambdaSignatureIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(javaClass(), "Specify explicit lambda signature"), LowPriorityAction {
+public class SpecifyExplicitLambdaSignatureIntention : JetSelfTargetingIntention<KtFunctionLiteralExpression>(javaClass(), "Specify explicit lambda signature"), LowPriorityAction {
 
-    override fun isApplicableTo(element: JetFunctionLiteralExpression, caretOffset: Int): Boolean {
+    override fun isApplicableTo(element: KtFunctionLiteralExpression, caretOffset: Int): Boolean {
         val arrow = element.getFunctionLiteral().getArrow()
         if (arrow != null) {
             if (caretOffset > arrow.endOffset) return false
@@ -43,8 +43,8 @@ public class SpecifyExplicitLambdaSignatureIntention : JetSelfTargetingIntention
         return functionDescriptor.getValueParameters().none { it.getType().isError() }
     }
 
-    override fun applyTo(element: JetFunctionLiteralExpression, editor: Editor) {
-        val psiFactory = JetPsiFactory(element)
+    override fun applyTo(element: KtFunctionLiteralExpression, editor: Editor) {
+        val psiFactory = KtPsiFactory(element)
         val functionLiteral = element.getFunctionLiteral()
         val functionDescriptor = element.analyze()[BindingContext.FUNCTION, functionLiteral]!!
 

@@ -61,7 +61,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
          every argument boils down to calling LOAD with the corresponding index
          */
 
-        JetCallExpression fakeExpression = constructFakeFunctionCall();
+        KtCallExpression fakeExpression = constructFakeFunctionCall();
         final List<? extends ValueArgument> fakeArguments = fakeExpression.getValueArguments();
 
         final ReceiverValue dispatchReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getDispatchReceiverParameter());
@@ -128,7 +128,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
     }
 
     @NotNull
-    private JetCallExpression constructFakeFunctionCall() {
+    private KtCallExpression constructFakeFunctionCall() {
         StringBuilder fakeFunctionCall = new StringBuilder("callableReferenceFakeCall(");
         for (Iterator<ValueParameterDescriptor> iterator = referencedFunction.getValueParameters().iterator(); iterator.hasNext(); ) {
             ValueParameterDescriptor descriptor = iterator.next();
@@ -138,7 +138,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             }
         }
         fakeFunctionCall.append(")");
-        return (JetCallExpression) JetPsiFactoryKt.JetPsiFactory(state.getProject()).createExpression(fakeFunctionCall.toString());
+        return (KtCallExpression) KtPsiFactoryKt.KtPsiFactory(state.getProject()).createExpression(fakeFunctionCall.toString());
     }
 
     private void computeAndSaveArguments(@NotNull List<? extends ValueArgument> fakeArguments, @NotNull ExpressionCodegen codegen) {
@@ -164,8 +164,8 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
     ) {
         if (receiver == null) return NO_RECEIVER;
 
-        JetExpression receiverExpression = JetPsiFactoryKt
-                .JetPsiFactory(state.getProject()).createExpression("callableReferenceFakeReceiver");
+        KtExpression receiverExpression = KtPsiFactoryKt
+                .KtPsiFactory(state.getProject()).createExpression("callableReferenceFakeReceiver");
         codegen.tempVariables.put(receiverExpression, receiverParameterStackValue(signature));
         return new ExpressionReceiver(receiverExpression, receiver.getType());
     }

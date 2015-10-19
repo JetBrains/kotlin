@@ -28,20 +28,20 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
-public class ChangeAccessorTypeFix extends KotlinQuickFixAction<JetPropertyAccessor> {
-    private JetType type;
+public class ChangeAccessorTypeFix extends KotlinQuickFixAction<KtPropertyAccessor> {
+    private KtType type;
 
-    public ChangeAccessorTypeFix(@NotNull JetPropertyAccessor element) {
+    public ChangeAccessorTypeFix(@NotNull KtPropertyAccessor element) {
         super(element);
     }
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        JetProperty property = PsiTreeUtil.getParentOfType(getElement(), JetProperty.class);
+        KtProperty property = PsiTreeUtil.getParentOfType(getElement(), KtProperty.class);
         if (property == null) return false;
-        JetType type = QuickFixUtil.getDeclarationReturnType(property);
+        KtType type = QuickFixUtil.getDeclarationReturnType(property);
         if (super.isAvailable(project, editor, file) && type != null && !type.isError()) {
             this.type = type;
             return true;
@@ -65,30 +65,30 @@ public class ChangeAccessorTypeFix extends KotlinQuickFixAction<JetPropertyAcces
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetTypeReference newTypeReference = JetPsiFactoryKt
-                .JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        KtTypeReference newTypeReference = KtPsiFactoryKt
+                .KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
 
-        JetTypeReference typeReference;
+        KtTypeReference typeReference;
         if (getElement().isGetter()) {
             typeReference = getElement().getReturnTypeReference();
         }
         else {
-            JetParameter parameter = getElement().getParameter();
+            KtParameter parameter = getElement().getParameter();
             assert parameter != null;
             typeReference = parameter.getTypeReference();
         }
         assert typeReference != null;
 
-        newTypeReference = (JetTypeReference) typeReference.replace(newTypeReference);
+        newTypeReference = (KtTypeReference) typeReference.replace(newTypeReference);
         ShortenReferences.DEFAULT.process(newTypeReference);
     }
 
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<JetPropertyAccessor> createAction(@NotNull Diagnostic diagnostic) {
-                JetPropertyAccessor accessor = QuickFixUtil.getParentElementOfType(diagnostic, JetPropertyAccessor.class);
+            public KotlinQuickFixAction<KtPropertyAccessor> createAction(@NotNull Diagnostic diagnostic) {
+                KtPropertyAccessor accessor = QuickFixUtil.getParentElementOfType(diagnostic, KtPropertyAccessor.class);
                 if (accessor == null) return null;
                 return new ChangeAccessorTypeFix(accessor);
             }

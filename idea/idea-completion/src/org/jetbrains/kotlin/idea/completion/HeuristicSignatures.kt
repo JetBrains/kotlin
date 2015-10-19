@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.types.IndexedParametersSubstitution
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.SubstitutionUtils
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
@@ -41,13 +41,13 @@ public class HeuristicSignatures(
         private val project: Project,
         private val typeResolver: TypeResolver
 ) {
-    public fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor): JetType? {
+    public fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor): KtType? {
         val parameterIndex = function.getValueParameters().indexOf(parameter)
         assert(parameterIndex >= 0)
         return correctedParameterType(function, parameterIndex)
     }
 
-    private fun correctedParameterType(function: FunctionDescriptor, parameterIndex: Int): JetType? {
+    private fun correctedParameterType(function: FunctionDescriptor, parameterIndex: Int): KtType? {
         val ownerType = function.getDispatchReceiverParameter()?.getType() ?: return null
 
         val superFunctions = function.getOverriddenDescriptors()
@@ -74,8 +74,8 @@ public class HeuristicSignatures(
         }
     }
 
-    private fun typeFromText(text: String, typeParameters: Collection<TypeParameterDescriptor>): JetType {
-        val typeRef = JetPsiFactory(project).createType(text)
+    private fun typeFromText(text: String, typeParameters: Collection<TypeParameterDescriptor>): KtType {
+        val typeRef = KtPsiFactory(project).createType(text)
         val rootPackagesScope = SubpackagesScope(moduleDescriptor, FqName.ROOT).memberScopeAsFileScope()
         val scope = LexicalScopeImpl(rootPackagesScope, moduleDescriptor, false, null, "Root packages + type parameters") {
                         typeParameters.forEach { addClassifierDescriptor(it) }

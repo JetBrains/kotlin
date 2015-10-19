@@ -25,9 +25,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetEnumEntry;
-import org.jetbrains.kotlin.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtEnumEntry;
+import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,8 +36,8 @@ import java.util.List;
 public class JetGotoClassContributor implements GotoClassContributor {
     @Override
     public String getQualifiedName(NavigationItem item) {
-        if (item instanceof JetNamedDeclaration) {
-            JetNamedDeclaration jetClass = (JetNamedDeclaration) item;
+        if (item instanceof KtNamedDeclaration) {
+            KtNamedDeclaration jetClass = (KtNamedDeclaration) item;
             FqName name = jetClass.getFqName();
             if (name != null) {
                 return name.asString();
@@ -62,7 +62,7 @@ public class JetGotoClassContributor implements GotoClassContributor {
     @Override
     public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
         GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
-        Collection<JetClassOrObject> classesOrObjects =
+        Collection<KtClassOrObject> classesOrObjects =
                 JetClassShortNameIndex.getInstance().get(name, project, JetSourceFilterScope.kotlinSourceAndClassFiles(scope, project));
 
         if (classesOrObjects.isEmpty()) {
@@ -70,8 +70,8 @@ public class JetGotoClassContributor implements GotoClassContributor {
         }
 
         List<NavigationItem> items = new ArrayList<NavigationItem>();
-        for (JetClassOrObject classOrObject : classesOrObjects) {
-            if (classOrObject != null && !(classOrObject instanceof JetEnumEntry)) {
+        for (KtClassOrObject classOrObject : classesOrObjects) {
+            if (classOrObject != null && !(classOrObject instanceof KtEnumEntry)) {
                 items.add(classOrObject);
             }
         }

@@ -17,30 +17,30 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 public enum class JetValVar(val keywordName: String) {
     None("none") {
-        override fun createKeyword(factory: JetPsiFactory) = null
+        override fun createKeyword(factory: KtPsiFactory) = null
     },
     Val("val") {
-        override fun createKeyword(factory: JetPsiFactory) = factory.createValKeyword()
+        override fun createKeyword(factory: KtPsiFactory) = factory.createValKeyword()
     },
     Var("var"){
-        override fun createKeyword(factory: JetPsiFactory) = factory.createVarKeyword()
+        override fun createKeyword(factory: KtPsiFactory) = factory.createVarKeyword()
     };
 
     override fun toString(): String = keywordName
 
-    abstract fun createKeyword(factory: JetPsiFactory): PsiElement?
+    abstract fun createKeyword(factory: KtPsiFactory): PsiElement?
 }
 
 fun PsiElement?.toValVar(): JetValVar {
     return when {
         this == null -> JetValVar.None
-        getNode().getElementType() == JetTokens.VAL_KEYWORD -> JetValVar.Val
-        getNode().getElementType() == JetTokens.VAR_KEYWORD -> JetValVar.Var
+        getNode().getElementType() == KtTokens.VAL_KEYWORD -> JetValVar.Val
+        getNode().getElementType() == KtTokens.VAR_KEYWORD -> JetValVar.Var
         else -> throw IllegalArgumentException("Unknown val/var token: " + getText())
     }
 }

@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
-import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
@@ -37,9 +37,9 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 val NULL_PTR_EXCEPTION_FQ = "java.lang.NullPointerException"
 val KOTLIN_NULL_PTR_EXCEPTION_FQ = "kotlin.KotlinNullPointerException"
 
-fun JetBinaryExpression.expressionComparedToNull(): JetExpression? {
+fun KtBinaryExpression.expressionComparedToNull(): KtExpression? {
     val operationToken = this.getOperationToken()
-    if (operationToken != JetTokens.EQEQ && operationToken != JetTokens.EXCLEQ) return null
+    if (operationToken != KtTokens.EQEQ && operationToken != KtTokens.EXCLEQ) return null
 
     val right = this.getRight() ?: return null
     val left = this.getLeft() ?: return null
@@ -50,25 +50,25 @@ fun JetBinaryExpression.expressionComparedToNull(): JetExpression? {
     return if (leftIsNull) right else left
 }
 
-fun JetExpression.unwrapBlockOrParenthesis(): JetExpression {
-    val innerExpression = JetPsiUtil.safeDeparenthesize(this)
-    if (innerExpression is JetBlockExpression) {
+fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
+    val innerExpression = KtPsiUtil.safeDeparenthesize(this)
+    if (innerExpression is KtBlockExpression) {
         val statement = innerExpression.getStatements().singleOrNull() ?: return this
-        return JetPsiUtil.safeDeparenthesize(statement)
+        return KtPsiUtil.safeDeparenthesize(statement)
     }
     return innerExpression
 }
 
-fun JetExpression?.isNullExpression(): Boolean = this?.unwrapBlockOrParenthesis()?.getNode()?.getElementType() == JetNodeTypes.NULL
+fun KtExpression?.isNullExpression(): Boolean = this?.unwrapBlockOrParenthesis()?.getNode()?.getElementType() == KtNodeTypes.NULL
 
-fun JetExpression?.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is JetBlockExpression && this.getStatements().isEmpty()
+fun KtExpression?.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is KtBlockExpression && this.getStatements().isEmpty()
 
-fun JetThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
+fun KtThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
     val thrownExpression = this.getThrownExpression()
-    if (thrownExpression !is JetCallExpression) return false
+    if (thrownExpression !is KtCallExpression) return false
 
     val context = this.analyze(BodyResolveMode.PARTIAL)
-    val nameExpression = thrownExpression.calleeExpression as? JetNameReferenceExpression ?: return false
+    val nameExpression = thrownExpression.calleeExpression as? KtNameReferenceExpression ?: return false
     val descriptor = context[BindingContext.REFERENCE_TARGET, nameExpression]
     val declDescriptor = descriptor?.getContainingDeclaration() ?: return false
 
@@ -76,27 +76,27 @@ fun JetThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
     return (exceptionName == NULL_PTR_EXCEPTION_FQ || exceptionName == KOTLIN_NULL_PTR_EXCEPTION_FQ) && thrownExpression.getValueArguments().isEmpty()
 }
 
-fun JetExpression.evaluatesTo(other: JetExpression): Boolean {
+fun KtExpression.evaluatesTo(other: KtExpression): Boolean {
     return this.unwrapBlockOrParenthesis().getText() == other.getText()
 }
 
-fun JetExpression.convertToIfNotNullExpression(conditionLhs: JetExpression, thenClause: JetExpression, elseClause: JetExpression?): JetIfExpression {
-    val condition = JetPsiFactory(this).createExpressionByPattern("$0 != null", conditionLhs)
+fun KtExpression.convertToIfNotNullExpression(conditionLhs: KtExpression, thenClause: KtExpression, elseClause: KtExpression?): KtIfExpression {
+    val condition = KtPsiFactory(this).createExpressionByPattern("$0 != null", conditionLhs)
     return this.convertToIfStatement(condition, thenClause, elseClause)
 }
 
-fun JetExpression.convertToIfNullExpression(conditionLhs: JetExpression, thenClause: JetExpression): JetIfExpression {
-    val condition = JetPsiFactory(this).createExpressionByPattern("$0 == null", conditionLhs)
+fun KtExpression.convertToIfNullExpression(conditionLhs: KtExpression, thenClause: KtExpression): KtIfExpression {
+    val condition = KtPsiFactory(this).createExpressionByPattern("$0 == null", conditionLhs)
     return this.convertToIfStatement(condition, thenClause)
 }
 
-fun JetExpression.convertToIfStatement(condition: JetExpression, thenClause: JetExpression, elseClause: JetExpression? = null): JetIfExpression {
-    return replaced(JetPsiFactory(this).createIf(condition, thenClause, elseClause))
+fun KtExpression.convertToIfStatement(condition: KtExpression, thenClause: KtExpression, elseClause: KtExpression? = null): KtIfExpression {
+    return replaced(KtPsiFactory(this).createIf(condition, thenClause, elseClause))
 }
 
-fun JetIfExpression.introduceValueForCondition(occurrenceInThenClause: JetExpression, editor: Editor) {
+fun KtIfExpression.introduceValueForCondition(occurrenceInThenClause: KtExpression, editor: Editor) {
     val project = this.getProject()
-    val occurrenceInConditional = (this.getCondition() as JetBinaryExpression).getLeft()!!
+    val occurrenceInConditional = (this.getCondition() as KtBinaryExpression).getLeft()!!
     KotlinIntroduceVariableHandler.doRefactoring(project,
                                                  editor,
                                                  occurrenceInConditional,
@@ -104,10 +104,10 @@ fun JetIfExpression.introduceValueForCondition(occurrenceInThenClause: JetExpres
                                                  null)
 }
 
-fun JetNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor) {
-    val declaration = this.mainReference.resolve() as? JetProperty ?: return
+fun KtNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor) {
+    val declaration = this.mainReference.resolve() as? KtProperty ?: return
 
-    val enclosingElement = JetPsiUtil.getEnclosingElementForLocalDeclaration(declaration)
+    val enclosingElement = KtPsiUtil.getEnclosingElementForLocalDeclaration(declaration)
     val isLocal = enclosingElement != null
     if (!isLocal) return
 
@@ -119,19 +119,19 @@ fun JetNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(
     }
 }
 
-fun JetSafeQualifiedExpression.inlineReceiverIfApplicableWithPrompt(editor: Editor) {
-    (this.getReceiverExpression() as? JetNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
+fun KtSafeQualifiedExpression.inlineReceiverIfApplicableWithPrompt(editor: Editor) {
+    (this.getReceiverExpression() as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
-fun JetBinaryExpression.inlineLeftSideIfApplicableWithPrompt(editor: Editor) {
-    (this.getLeft() as? JetNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
+fun KtBinaryExpression.inlineLeftSideIfApplicableWithPrompt(editor: Editor) {
+    (this.getLeft() as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
-fun JetPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Editor) {
-    (this.getBaseExpression() as? JetNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
+fun KtPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Editor) {
+    (this.getBaseExpression() as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
-fun JetExpression.isStableVariable(): Boolean {
+fun KtExpression.isStableVariable(): Boolean {
     val context = this.analyze()
     val descriptor = BindingContextUtils.extractVariableDescriptorIfAny(context, this, false)
     return descriptor is VariableDescriptor &&

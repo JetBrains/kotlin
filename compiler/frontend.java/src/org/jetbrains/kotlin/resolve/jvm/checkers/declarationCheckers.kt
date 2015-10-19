@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -37,12 +37,12 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 public class LocalFunInlineChecker : DeclarationChecker {
 
     override fun check(
-            declaration: JetDeclaration,
+            declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext) {
         if (InlineUtil.isInline(descriptor) &&
-            declaration is JetNamedFunction &&
+            declaration is KtNamedFunction &&
             descriptor is FunctionDescriptor &&
             descriptor.getVisibility() == Visibilities.LOCAL) {
             diagnosticHolder.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(declaration, declaration, descriptor))
@@ -53,20 +53,20 @@ public class LocalFunInlineChecker : DeclarationChecker {
 public class PlatformStaticAnnotationChecker : DeclarationChecker {
 
     override fun check(
-            declaration: JetDeclaration,
+            declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
         if (descriptor.hasPlatformStaticAnnotation()) {
-            if (declaration is JetNamedFunction || declaration is JetProperty || declaration is JetPropertyAccessor) {
+            if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtPropertyAccessor) {
                 checkDeclaration(declaration, descriptor, diagnosticHolder)
             }
         }
     }
 
     private fun checkDeclaration(
-            declaration: JetDeclaration,
+            declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink
     ) {
@@ -81,18 +81,18 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
         }
 
         val checkDeclaration = when(declaration) {
-            is JetPropertyAccessor -> declaration.getParent() as JetProperty
+            is KtPropertyAccessor -> declaration.getParent() as KtProperty
             else -> declaration
         }
 
-        if (insideObject && checkDeclaration.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) == true) {
+        if (insideObject && checkDeclaration.getModifierList()?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
             diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration))
         }
     }
 }
 
 public class JvmNameAnnotationChecker : DeclarationChecker {
-    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
         val platformNameAnnotation = DescriptorUtils.getJvmNameAnnotation(descriptor)
         if (platformNameAnnotation != null) {
             checkDeclaration(descriptor, platformNameAnnotation, diagnosticHolder)
@@ -130,7 +130,7 @@ public class JvmNameAnnotationChecker : DeclarationChecker {
 
 public class VolatileAnnotationChecker : DeclarationChecker {
 
-    override fun check(declaration: JetDeclaration,
+    override fun check(declaration: KtDeclaration,
                        descriptor: DeclarationDescriptor,
                        diagnosticHolder: DiagnosticSink,
                        bindingContext: BindingContext
@@ -145,7 +145,7 @@ public class VolatileAnnotationChecker : DeclarationChecker {
 
 public class SynchronizedAnnotationChecker : DeclarationChecker {
 
-    override fun check(declaration: JetDeclaration,
+    override fun check(declaration: KtDeclaration,
                        descriptor: DeclarationDescriptor,
                        diagnosticHolder: DiagnosticSink,
                        bindingContext: BindingContext
@@ -160,7 +160,7 @@ public class SynchronizedAnnotationChecker : DeclarationChecker {
 
 public class OverloadsAnnotationChecker: DeclarationChecker {
     override fun check(
-            declaration: JetDeclaration,
+            declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
@@ -170,7 +170,7 @@ public class OverloadsAnnotationChecker: DeclarationChecker {
         }
     }
 
-    private fun checkDeclaration(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+    private fun checkDeclaration(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor !is CallableDescriptor) {
             return
         }
@@ -189,7 +189,7 @@ public class OverloadsAnnotationChecker: DeclarationChecker {
 
 public class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
     override fun check(
-            declaration: JetDeclaration,
+            declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
@@ -210,7 +210,7 @@ public class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
 public class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
 
     override fun check(
-            declaration: JetDeclaration,
+            declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
@@ -233,11 +233,11 @@ public class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
     ) {
         for (reifiedTypeParameterDescriptor in typeParameterDescriptors.filter { it.isReified() }) {
             val typeParameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(reifiedTypeParameterDescriptor)
-            if (typeParameterDeclaration !is JetTypeParameter) throw AssertionError("JetTypeParameter expected")
+            if (typeParameterDeclaration !is KtTypeParameter) throw AssertionError("JetTypeParameter expected")
 
             diagnosticHolder.report(
                     Errors.REIFIED_TYPE_PARAMETER_NO_INLINE.on(
-                            typeParameterDeclaration.getModifierList()!!.getModifier(JetTokens.REIFIED_KEYWORD)!!
+                            typeParameterDeclaration.getModifierList()!!.getModifier(KtTokens.REIFIED_KEYWORD)!!
                     )
             )
         }

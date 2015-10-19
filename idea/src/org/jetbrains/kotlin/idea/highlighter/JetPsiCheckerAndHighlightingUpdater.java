@@ -21,31 +21,31 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
+import org.jetbrains.kotlin.psi.KtParameter;
 
 public class JetPsiCheckerAndHighlightingUpdater extends JetPsiChecker {
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
         try {
             super.annotate(element, holder);
-            if (element instanceof JetFile) {
+            if (element instanceof KtFile) {
                 //noinspection StaticMethodReferencedViaSubclass
-                ErrorDuringFileAnalyzeNotificationProviderKt.updateHighlightingResult((JetFile) element, false);
+                ErrorDuringFileAnalyzeNotificationProviderKt.updateHighlightingResult((KtFile) element, false);
             }
         }
         catch (ProcessCanceledException e) {
-            ErrorDuringFileAnalyzeNotificationProviderKt.updateHighlightingResult((JetFile)element.getContainingFile(), false);
+            ErrorDuringFileAnalyzeNotificationProviderKt.updateHighlightingResult((KtFile)element.getContainingFile(), false);
             throw e;
         }
     }
 
     @Override
-    protected boolean shouldSuppressUnusedParameter(@NotNull JetParameter parameter) {
+    protected boolean shouldSuppressUnusedParameter(@NotNull KtParameter parameter) {
         PsiElement grandParent = parameter.getParent().getParent();
-        if (grandParent instanceof JetNamedFunction) {
-            JetNamedFunction function = (JetNamedFunction) grandParent;
+        if (grandParent instanceof KtNamedFunction) {
+            KtNamedFunction function = (KtNamedFunction) grandParent;
             return UnusedSymbolInspection.Companion.isEntryPoint(function);
         }
         return false;

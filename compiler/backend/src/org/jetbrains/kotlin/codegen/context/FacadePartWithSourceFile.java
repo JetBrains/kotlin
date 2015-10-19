@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.codegen.context;
 
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 
 public interface FacadePartWithSourceFile {
 
     @Nullable
-    JetFile getSourceFile();
+    KtFile getSourceFile();
 }

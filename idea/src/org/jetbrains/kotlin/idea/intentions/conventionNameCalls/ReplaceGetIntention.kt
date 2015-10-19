@@ -26,17 +26,17 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 
-public class ExplicitGetInspection : IntentionBasedInspection<JetDotQualifiedExpression>(
+public class ExplicitGetInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
         ReplaceGetIntention(), ExplicitGetInspection.additionalChecker
 
 ) {
     companion object {
-        val additionalChecker = { expression: JetDotQualifiedExpression ->
+        val additionalChecker = { expression: KtDotQualifiedExpression ->
             (expression.toResolvedCall()!!.resultingDescriptor as FunctionDescriptor).isExplicitOperator()
         }
     }
@@ -49,8 +49,8 @@ private fun FunctionDescriptor.isExplicitOperator(): Boolean {
         overriddenDescriptors.any { it.isExplicitOperator() }
 }
 
-public class ReplaceGetIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'get' call with index operator"), HighPriorityAction {
-    override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
+public class ReplaceGetIntention : JetSelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace 'get' call with index operator"), HighPriorityAction {
+    override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         val resolvedCall = element.toResolvedCall() ?: return null
         if (!resolvedCall.isReallySuccess()) return null
         val target = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return null
@@ -68,12 +68,12 @@ public class ReplaceGetIntention : JetSelfTargetingRangeIntention<JetDotQualifie
         return call.getCalleeExpression()!!.getTextRange()
     }
 
-    override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
         applyTo(element)
     }
 
-    fun applyTo(element: JetDotQualifiedExpression) {
-        val expression = JetPsiFactory(element).buildExpression {
+    fun applyTo(element: KtDotQualifiedExpression) {
+        val expression = KtPsiFactory(element).buildExpression {
             appendExpression(element.getReceiverExpression())
 
             appendFixedText("[")

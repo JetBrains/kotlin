@@ -22,7 +22,7 @@ import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import org.jetbrains.kotlin.asJava.KotlinLightElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.j2k.ast.*
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.HashMap
@@ -374,7 +374,7 @@ class TypeConverter(val converter: Converter) {
 
         override fun fromAnnotations(owner: PsiModifierListOwner): Mutability {
             if (owner is KotlinLightElement<*, *>) {
-                val jetDeclaration = owner.getOrigin() as? JetCallableDeclaration ?: return Mutability.Default
+                val jetDeclaration = owner.getOrigin() as? KtCallableDeclaration ?: return Mutability.Default
                 val descriptor = converter.services.resolverForConverter.resolveToDescriptor(jetDeclaration) as? CallableDescriptor ?: return Mutability.Default
                 val type = descriptor.getReturnType() ?: return Mutability.Default
                 val classDescriptor = TypeUtils.getClassDescriptor(type) ?: return Mutability.Default

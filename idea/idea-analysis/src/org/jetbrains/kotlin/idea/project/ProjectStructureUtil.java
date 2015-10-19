@@ -35,10 +35,10 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryCoreUtil;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -51,7 +51,7 @@ public class ProjectStructureUtil {
     private ProjectStructureUtil() {
     }
 
-    public static boolean isJsKotlinModule(@NotNull JetFile file) {
+    public static boolean isJsKotlinModule(@NotNull KtFile file) {
         Module module = ModuleUtilCore.findModuleForPsiElement(file);
         return module != null && isJsKotlinModule(module);
     }
@@ -158,10 +158,10 @@ public class ProjectStructureUtil {
     }
 
     public static boolean hasKotlinFilesInSources(@NotNull Module module) {
-        return FileTypeIndex.containsFileOfType(JetFileType.INSTANCE, module.getModuleScope(false));
+        return FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(false));
     }
 
     public static boolean hasKotlinFilesOnlyInTests(@NotNull Module module) {
-        return !hasKotlinFilesInSources(module) && FileTypeIndex.containsFileOfType(JetFileType.INSTANCE, module.getModuleScope(true));
+        return !hasKotlinFilesInSources(module) && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true));
     }
 }

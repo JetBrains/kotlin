@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetEnumEntry
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import com.intellij.psi.PsiEnumConstantInitializer
 import com.intellij.psi.PsiEnumConstant
 
 public class KotlinLightClassForEnumEntry(
         psiManager: PsiManager,
         fqName: FqName,
-        enumEntry: JetEnumEntry,
+        enumEntry: KtEnumEntry,
         private val enumConstant: PsiEnumConstant
 ): KotlinLightClassForAnonymousDeclaration(psiManager, fqName, enumEntry), PsiEnumConstantInitializer {
     override fun getEnumConstant(): PsiEnumConstant = enumConstant

@@ -24,13 +24,13 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
 
 abstract class KotlinGenerateMemberActionBase<Info : Any> : KotlinGenerateActionBase() {
-    protected abstract fun prepareMembersInfo(klass: JetClassOrObject, project: Project, editor: Editor?): Info?
+    protected abstract fun prepareMembersInfo(klass: KtClassOrObject, project: Project, editor: Editor?): Info?
 
-    protected abstract fun generateMembers(project: Project, editor: Editor?, info: Info): List<JetDeclaration>
+    protected abstract fun generateMembers(project: Project, editor: Editor?, info: Info): List<KtDeclaration>
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
         if (!CodeInsightUtilBase.prepareEditorForWrite(editor)) return
@@ -39,7 +39,7 @@ abstract class KotlinGenerateMemberActionBase<Info : Any> : KotlinGenerateAction
         doInvoke(project, editor, targetClass)
     }
 
-    fun doInvoke(project: Project, editor: Editor?, targetClass: JetClassOrObject) {
+    fun doInvoke(project: Project, editor: Editor?, targetClass: KtClassOrObject) {
         val membersInfo = prepareMembersInfo(targetClass, project, editor) ?: return
 
         project.executeWriteCommand(commandName, this) {

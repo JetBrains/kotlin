@@ -23,33 +23,33 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class AddTypeToLHSOfCallableReferenceFix(
-        expression: JetCallableReferenceExpression
-) : KotlinQuickFixAction<JetCallableReferenceExpression>(expression), CleanupFix {
+        expression: KtCallableReferenceExpression
+) : KotlinQuickFixAction<KtCallableReferenceExpression>(expression), CleanupFix {
     override fun getFamilyName() = "Add type to left-hand side"
     override fun getText() = familyName
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val resolvedCall = element.callableReference.getResolvedCall(element.analyze(BodyResolveMode.PARTIAL)) ?: return
         val receiver = with(resolvedCall) {
             if (dispatchReceiver.exists()) dispatchReceiver
             else if (extensionReceiver.exists()) extensionReceiver
             else return
         }
-        val type = JetPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(receiver.type))
+        val type = KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(receiver.type))
         element.setTypeReference(type)
         ShortenReferences.DEFAULT.process(element)
     }
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            return AddTypeToLHSOfCallableReferenceFix(diagnostic.psiElement.parent as JetCallableReferenceExpression)
+            return AddTypeToLHSOfCallableReferenceFix(diagnostic.psiElement.parent as KtCallableReferenceExpression)
         }
     }
 }

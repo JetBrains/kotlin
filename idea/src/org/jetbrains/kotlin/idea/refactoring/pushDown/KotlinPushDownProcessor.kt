@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.refactoring.pullUp.*
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.util.ArrayList
 
 public class KotlinPushDownContext(
-        val sourceClass: JetClass,
+        val sourceClass: KtClass,
         val membersToMove: List<KotlinMemberInfo>
 ) {
     val resolutionFacade = sourceClass.getResolutionFacade()
@@ -66,7 +66,7 @@ public class KotlinPushDownContext(
 
 public class KotlinPushDownProcessor(
         project: Project,
-        sourceClass: JetClass,
+        sourceClass: KtClass,
         membersToMove: List<KotlinMemberInfo>
 ) : BaseRefactoringProcessor(project) {
     private val context = KotlinPushDownContext(sourceClass, membersToMove)
@@ -94,7 +94,7 @@ public class KotlinPushDownProcessor(
     }
 
     override fun getAfterData(usages: Array<out UsageInfo>) = RefactoringEventData().apply {
-        addElements(usages.map { it.element as? JetClassOrObject }.filterNotNull())
+        addElements(usages.map { it.element as? KtClassOrObject }.filterNotNull())
     }
 
     override fun findUsages(): Array<out UsageInfo> {
@@ -122,7 +122,7 @@ public class KotlinPushDownProcessor(
         return showConflicts(conflicts, usages)
     }
 
-    private fun pushDownToClass(targetClass: JetClassOrObject) {
+    private fun pushDownToClass(targetClass: KtClassOrObject) {
         val targetClassDescriptor = context.resolutionFacade.resolveToDescriptor(targetClass) as ClassDescriptor
         val substitutor = getTypeSubstitutor(context.sourceClassDescriptor.defaultType, targetClassDescriptor.defaultType)
                           ?: TypeSubstitutor.EMPTY
@@ -131,39 +131,39 @@ public class KotlinPushDownProcessor(
             val memberDescriptor = context.memberDescriptors[member] ?: continue
 
             val movedMember = when (member) {
-                is JetProperty, is JetNamedFunction -> {
+                is KtProperty, is KtNamedFunction -> {
                     memberDescriptor as CallableMemberDescriptor
 
                     val targetMemberDescriptor = memberDescriptor.substitute(substitutor)?.let {
                         targetClassDescriptor.findCallableMemberBySignature(it as CallableMemberDescriptor)
                     }
-                    val targetMember = targetMemberDescriptor?.source?.getPsi() as? JetCallableDeclaration
+                    val targetMember = targetMemberDescriptor?.source?.getPsi() as? KtCallableDeclaration
                     targetMember?.apply {
                         if (memberDescriptor.modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
-                            addModifierWithSpace(JetTokens.OVERRIDE_KEYWORD)
+                            addModifierWithSpace(KtTokens.OVERRIDE_KEYWORD)
                         }
                         else if (memberDescriptor.overriddenDescriptors.isEmpty()) {
-                            removeModifier(JetTokens.OVERRIDE_KEYWORD)
+                            removeModifier(KtTokens.OVERRIDE_KEYWORD)
                         }
                         else {
-                            addModifierWithSpace(JetTokens.OVERRIDE_KEYWORD)
+                            addModifierWithSpace(KtTokens.OVERRIDE_KEYWORD)
                         }
                     } ?: addMemberToTarget(member, targetClass).apply {
                         if (context.sourceClassDescriptor.kind == ClassKind.INTERFACE) {
                             if (targetClassDescriptor.kind != ClassKind.INTERFACE && memberDescriptor.modality == Modality.ABSTRACT) {
-                                addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
+                                addModifierWithSpace(KtTokens.ABSTRACT_KEYWORD)
                             }
                         }
                         if (memberDescriptor.modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
-                            if (hasModifier(JetTokens.PRIVATE_KEYWORD)) {
-                                addModifierWithSpace(JetTokens.PROTECTED_KEYWORD)
+                            if (hasModifier(KtTokens.PRIVATE_KEYWORD)) {
+                                addModifierWithSpace(KtTokens.PROTECTED_KEYWORD)
                             }
-                            addModifierWithSpace(JetTokens.OVERRIDE_KEYWORD)
+                            addModifierWithSpace(KtTokens.OVERRIDE_KEYWORD)
                         }
                     }
                 }
 
-                is JetClassOrObject -> {
+                is KtClassOrObject -> {
                     if (memberInfo.overrides != null) {
                         context.sourceClass.getDelegatorToSuperClassByDescriptor(
                                 memberDescriptor as ClassDescriptor,
@@ -189,13 +189,13 @@ public class KotlinPushDownProcessor(
             val member = memberInfo.member
             val memberDescriptor = context.memberDescriptors[member] ?: continue
             when (member) {
-                is JetProperty, is JetNamedFunction -> {
-                    member as JetCallableDeclaration
+                is KtProperty, is KtNamedFunction -> {
+                    member as KtCallableDeclaration
                     memberDescriptor as CallableMemberDescriptor
 
                     if (memberDescriptor.modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
-                        if (member.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
-                            member.addModifierWithSpace(JetTokens.PROTECTED_KEYWORD)
+                        if (member.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
+                            member.addModifierWithSpace(KtTokens.PROTECTED_KEYWORD)
                         }
                         makeAbstract(member, memberDescriptor, TypeSubstitutor.EMPTY, context.sourceClass)
                         member.typeReference?.addToShorteningWaitSet()
@@ -204,7 +204,7 @@ public class KotlinPushDownProcessor(
                         member.delete()
                     }
                 }
-                is JetClassOrObject -> {
+                is KtClassOrObject -> {
                     if (memberInfo.overrides != null) {
                         context.sourceClass.getDelegatorToSuperClassByDescriptor(
                                 memberDescriptor as ClassDescriptor,
@@ -222,12 +222,12 @@ public class KotlinPushDownProcessor(
     }
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
-        val markedElements = ArrayList<JetElement>()
+        val markedElements = ArrayList<KtElement>()
         try {
             context.membersToMove.forEach {
                 markedElements += markElements(it.member, context.sourceClassContext, context.sourceClassDescriptor, null)
             }
-            usages.forEach { (it.element as? JetClassOrObject)?.let { pushDownToClass(it) } }
+            usages.forEach { (it.element as? KtClassOrObject)?.let { pushDownToClass(it) } }
             removeOriginalMembers()
         }
         finally {

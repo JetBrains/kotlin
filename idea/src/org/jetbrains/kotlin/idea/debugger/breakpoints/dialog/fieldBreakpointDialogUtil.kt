@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtProperty
 
 fun PsiClass.collectProperties(): Array<DescriptorMemberChooserObject> {
     if (this is KotlinLightClassForFacade) {
         val result = arrayListOf<DescriptorMemberChooserObject>()
         this.files.forEach {
-            it.getDeclarations().filterIsInstance<JetProperty>().forEach {
+            it.getDeclarations().filterIsInstance<KtProperty>().forEach {
                 result.add(DescriptorMemberChooserObject(it, it.resolveToDescriptor()))
             }
         }
@@ -36,7 +36,7 @@ fun PsiClass.collectProperties(): Array<DescriptorMemberChooserObject> {
     if (this is KotlinLightClass) {
         val origin = this.getOrigin()
         if (origin != null) {
-            return origin.getDeclarations().filterIsInstance<JetProperty>().map {
+            return origin.getDeclarations().filterIsInstance<KtProperty>().map {
                 DescriptorMemberChooserObject(it, it.resolveToDescriptor())
             }.toTypedArray()
         }

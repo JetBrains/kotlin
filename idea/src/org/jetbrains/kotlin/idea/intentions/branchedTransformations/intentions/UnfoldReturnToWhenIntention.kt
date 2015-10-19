@@ -26,21 +26,21 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldReturnToWhenIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'when' expression"), LowPriorityAction {
-    override fun applicabilityRange(element: JetReturnExpression): TextRange? {
-        val whenExpr = element.getReturnedExpression() as? JetWhenExpression ?: return null
-        if (!JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpr)) return null
+public class UnfoldReturnToWhenIntention : JetSelfTargetingRangeIntention<KtReturnExpression>(javaClass(), "Replace return with 'when' expression"), LowPriorityAction {
+    override fun applicabilityRange(element: KtReturnExpression): TextRange? {
+        val whenExpr = element.getReturnedExpression() as? KtWhenExpression ?: return null
+        if (!KtPsiUtil.checkWhenExpressionHasSingleElse(whenExpr)) return null
         if (whenExpr.getEntries().any { it.getExpression() == null }) return null
         return TextRange(element.startOffset, whenExpr.getWhenKeyword().endOffset)
     }
 
-    override fun applyTo(element: JetReturnExpression, editor: Editor) {
-        val whenExpression = element.getReturnedExpression() as JetWhenExpression
+    override fun applyTo(element: KtReturnExpression, editor: Editor) {
+        val whenExpression = element.getReturnedExpression() as KtWhenExpression
         val newWhenExpression = whenExpression.copied()
 
         for (entry in newWhenExpression.getEntries()) {
             val expr = entry.getExpression()!!.lastBlockStatementOrThis()
-            expr.replace(JetPsiFactory(element).createExpressionByPattern("return $0", expr))
+            expr.replace(KtPsiFactory(element).createExpressionByPattern("return $0", expr))
         }
 
         element.replace(newWhenExpression)

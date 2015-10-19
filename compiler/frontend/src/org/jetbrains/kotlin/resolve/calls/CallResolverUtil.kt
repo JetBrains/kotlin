@@ -40,19 +40,19 @@ public enum class ResolveArgumentsMode {
 }
 
 
-public fun hasUnknownFunctionParameter(type: JetType): Boolean {
+public fun hasUnknownFunctionParameter(type: KtType): Boolean {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     return getParameterArgumentsOfCallableType(type).any {
         TypeUtils.containsSpecialType(it.getType(), DONT_CARE) || ErrorUtils.containsUninferredParameter(it.getType())
     }
 }
 
-public fun hasUnknownReturnType(type: JetType): Boolean {
+public fun hasUnknownReturnType(type: KtType): Boolean {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     return ErrorUtils.containsErrorType(getReturnTypeForCallable(type))
 }
 
-public fun replaceReturnTypeByUnknown(type: JetType): JetType {
+public fun replaceReturnTypeByUnknown(type: KtType): KtType {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     val newArguments = Lists.newArrayList<TypeProjection>()
     newArguments.addAll(getParameterArgumentsOfCallableType(type))
@@ -60,13 +60,13 @@ public fun replaceReturnTypeByUnknown(type: JetType): JetType {
     return replaceTypeArguments(type, newArguments)
 }
 
-private fun replaceTypeArguments(type: JetType, newArguments: List<TypeProjection>) =
-        JetTypeImpl.create(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope())
+private fun replaceTypeArguments(type: KtType, newArguments: List<TypeProjection>) =
+        KtTypeImpl.create(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope())
 
-private fun getParameterArgumentsOfCallableType(type: JetType) =
+private fun getParameterArgumentsOfCallableType(type: KtType) =
         type.getArguments().dropLast(1)
 
-private fun getReturnTypeForCallable(type: JetType) =
+private fun getReturnTypeForCallable(type: KtType) =
         type.getArguments().last().getType()
 
 private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constraintSystem: ConstraintSystem): Boolean {
@@ -86,7 +86,7 @@ public fun CallableDescriptor.hasInferredReturnType(constraintSystem: Constraint
     return true
 }
 
-public fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescriptor, descriptor: CallableDescriptor): JetType {
+public fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescriptor, descriptor: CallableDescriptor): KtType {
     var receiverType = receiverParameterDescriptor.getType()
     for (typeParameter in descriptor.getTypeParameters()) {
         if (typeParameter.getTypeConstructor() == receiverType.getConstructor()) {
@@ -97,7 +97,7 @@ public fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterD
     for (typeProjection in receiverType.getArguments()) {
         fakeTypeArguments.add(TypeProjectionImpl(typeProjection.getProjectionKind(), DONT_CARE))
     }
-    return JetTypeImpl.create(receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isMarkedNullable(), fakeTypeArguments,
+    return KtTypeImpl.create(receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isMarkedNullable(), fakeTypeArguments,
                        ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true))
 }
 
@@ -117,14 +117,14 @@ public fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boole
 fun isConventionCall(call: Call): Boolean {
     if (call is CallTransformer.CallForImplicitInvoke) return true
     val callElement = call.callElement
-    if (callElement is JetArrayAccessExpression || callElement is JetMultiDeclarationEntry) return true
-    val calleeExpression = call.calleeExpression as? JetOperationReferenceExpression ?: return false
+    if (callElement is KtArrayAccessExpression || callElement is KtMultiDeclarationEntry) return true
+    val calleeExpression = call.calleeExpression as? KtOperationReferenceExpression ?: return false
     return calleeExpression.getNameForConventionalOperation() != null
 }
 
 fun getUnaryPlusOrMinusOperatorFunctionName(call: Call): Name? {
-    if (call.callElement !is JetPrefixExpression) return null
-    val calleeExpression = call.calleeExpression as? JetOperationReferenceExpression ?: return null
+    if (call.callElement !is KtPrefixExpression) return null
+    val calleeExpression = call.calleeExpression as? KtOperationReferenceExpression ?: return null
     val name = calleeExpression.getNameForConventionalOperation(unaryOperations = true, binaryOperations = false)
     return if (name == OperatorNameConventions.UNARY_PLUS || name == OperatorNameConventions.UNARY_MINUS) name else null
 }
@@ -134,7 +134,7 @@ public fun isInvokeCallOnVariable(call: Call): Boolean {
     val dispatchReceiver = call.getDispatchReceiver()
     //calleeExpressionAsDispatchReceiver for invoke is always ExpressionReceiver, see CallForImplicitInvoke
     val expression = (dispatchReceiver as ExpressionReceiver).getExpression()
-    return expression is JetSimpleNameExpression
+    return expression is KtSimpleNameExpression
 }
 
 public fun isInvokeCallOnExpressionWithBothReceivers(call: Call): Boolean {
@@ -142,11 +142,11 @@ public fun isInvokeCallOnExpressionWithBothReceivers(call: Call): Boolean {
     return call.getExplicitReceiver().exists() && call.getDispatchReceiver().exists()
 }
 
-public fun getSuperCallExpression(call: Call): JetSuperExpression? {
-    return (call.getExplicitReceiver() as? ExpressionReceiver)?.getExpression() as? JetSuperExpression
+public fun getSuperCallExpression(call: Call): KtSuperExpression? {
+    return (call.getExplicitReceiver() as? ExpressionReceiver)?.getExpression() as? KtSuperExpression
 }
 
-public fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument): JetType {
+public fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument): KtType {
     if (argument.getSpreadElement() != null) {
         if (parameterDescriptor.getVarargElementType() == null) {
             // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper

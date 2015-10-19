@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
-public class ConvertForEachToForLoopIntention : JetSelfTargetingOffsetIndependentIntention<JetSimpleNameExpression>(javaClass(), "Replace with a 'for' loop") {
-    override fun isApplicableTo(element: JetSimpleNameExpression): Boolean {
+public class ConvertForEachToForLoopIntention : JetSelfTargetingOffsetIndependentIntention<KtSimpleNameExpression>(javaClass(), "Replace with a 'for' loop") {
+    override fun isApplicableTo(element: KtSimpleNameExpression): Boolean {
         if (element.getReferencedName() != "forEach") return false
 
         val data = extractData(element) ?: return false
@@ -35,7 +35,7 @@ public class ConvertForEachToForLoopIntention : JetSelfTargetingOffsetIndependen
         return true
     }
 
-    override fun applyTo(element: JetSimpleNameExpression, editor: Editor) {
+    override fun applyTo(element: KtSimpleNameExpression, editor: Editor) {
         val (expressionToReplace, receiver, functionLiteral) = extractData(element)!!
 
         val commentSaver = CommentSaver(expressionToReplace)
@@ -47,31 +47,31 @@ public class ConvertForEachToForLoopIntention : JetSelfTargetingOffsetIndependen
     }
 
     private data class Data(
-            val expressionToReplace: JetExpression,
-            val receiver: JetExpression,
-            val functionLiteral: JetFunctionLiteralExpression
+            val expressionToReplace: KtExpression,
+            val receiver: KtExpression,
+            val functionLiteral: KtFunctionLiteralExpression
     )
 
-    private fun extractData(nameExpr: JetSimpleNameExpression): Data? {
+    private fun extractData(nameExpr: KtSimpleNameExpression): Data? {
         val parent = nameExpr.getParent()
         val expression = (when (parent) {
-            is JetCallExpression -> parent.getParent() as? JetDotQualifiedExpression
-            is JetBinaryExpression -> parent
+            is KtCallExpression -> parent.getParent() as? KtDotQualifiedExpression
+            is KtBinaryExpression -> parent
             else -> null
-        } ?: return null) as JetExpression //TODO: submit bug
+        } ?: return null) as KtExpression //TODO: submit bug
 
         val resolvedCall = expression.getResolvedCall(expression.analyze()) ?: return null
         if (DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() != "kotlin.forEach") return null
 
         val receiver = resolvedCall.getCall().getExplicitReceiver() as? ExpressionReceiver ?: return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
-        val functionLiteral = argument.getArgumentExpression() as? JetFunctionLiteralExpression ?: return null
+        val functionLiteral = argument.getArgumentExpression() as? KtFunctionLiteralExpression ?: return null
         return Data(expression, receiver.getExpression(), functionLiteral)
     }
 
-    private fun generateLoop(functionLiteral: JetFunctionLiteralExpression, receiver: JetExpression): JetExpression {
-        val factory = JetPsiFactory(functionLiteral)
-        val loopRange = JetPsiUtil.safeDeparenthesize(receiver)
+    private fun generateLoop(functionLiteral: KtFunctionLiteralExpression, receiver: KtExpression): KtExpression {
+        val factory = KtPsiFactory(functionLiteral)
+        val loopRange = KtPsiUtil.safeDeparenthesize(receiver)
         val body = functionLiteral.getBodyExpression()!!
         val parameter = functionLiteral.getValueParameters().singleOrNull()
         return factory.createExpressionByPattern("for($0 in $1){ $2 }", parameter ?: "it", loopRange, body)

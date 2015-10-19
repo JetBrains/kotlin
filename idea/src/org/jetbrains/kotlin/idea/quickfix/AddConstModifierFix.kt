@@ -31,40 +31,40 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ConstModifierChecker
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
-public class AddConstModifierFix(val property: JetProperty) : AddModifierFix(property, JetTokens.CONST_KEYWORD), CleanupFix {
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+public class AddConstModifierFix(val property: KtProperty) : AddModifierFix(property, KtTokens.CONST_KEYWORD), CleanupFix {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         addConstModifier(property)
     }
 
     companion object {
-        fun addConstModifier(property: JetProperty) {
+        fun addConstModifier(property: KtProperty) {
             replaceReferencesToGetterByReferenceToField(property)
-            property.addModifier(JetTokens.CONST_KEYWORD)
+            property.addModifier(KtTokens.CONST_KEYWORD)
         }
     }
 }
 
-public class AddConstModifierIntention : JetSelfTargetingIntention<JetProperty>(javaClass(), "Add 'const' modifier") {
-    override fun applyTo(element: JetProperty, editor: Editor) {
+public class AddConstModifierIntention : JetSelfTargetingIntention<KtProperty>(javaClass(), "Add 'const' modifier") {
+    override fun applyTo(element: KtProperty, editor: Editor) {
         AddConstModifierFix.addConstModifier(element)
     }
 
-    override fun isApplicableTo(element: JetProperty, caretOffset: Int): Boolean {
+    override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         return isApplicableTo(element)
     }
 
     companion object {
-        fun isApplicableTo(element: JetProperty): Boolean {
+        fun isApplicableTo(element: KtProperty): Boolean {
             if (element.isLocal || element.isVar || element.hasDelegate() || element.initializer == null
                     || element.getter?.hasBody() == true || element.receiverTypeReference != null) {
                 return false
@@ -78,10 +78,10 @@ public class AddConstModifierIntention : JetSelfTargetingIntention<JetProperty>(
 
 public object ConstFixFactory : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val expr = diagnostic.psiElement as? JetReferenceExpression ?: return null
+        val expr = diagnostic.psiElement as? KtReferenceExpression ?: return null
         val bindingContext = expr.analyze(BodyResolveMode.PARTIAL)
         val targetDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expr) as? VariableDescriptor ?: return null
-        val declaration = (targetDescriptor.source as? PsiSourceElement)?.psi as? JetProperty ?: return null
+        val declaration = (targetDescriptor.source as? PsiSourceElement)?.psi as? KtProperty ?: return null
         if (ConstModifierChecker.checkCanBeConst(declaration, declaration, targetDescriptor) == null) {
             return AddConstModifierFix(declaration)
         }
@@ -89,7 +89,7 @@ public object ConstFixFactory : JetSingleIntentionActionFactory() {
     }
 }
 
-fun replaceReferencesToGetterByReferenceToField(property: JetProperty) {
+fun replaceReferencesToGetterByReferenceToField(property: KtProperty) {
     val project = property.project
     val getter = LightClassUtil.getLightClassPropertyMethods(property).getter
 

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
-    override fun isAvailable(position: SourcePosition?) = position?.getFile() is JetFile
+    override fun isAvailable(position: SourcePosition?) = position?.getFile() is KtFile
 
     override fun findSmartStepTargets(position: SourcePosition): List<SmartStepTarget> {
         if (position.getLine() < 0) return emptyList()
@@ -52,7 +52,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         val elementAtOffset = file.findElementAt(lineStart) ?: return emptyList()
 
         val element = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart)
-        if (element !is JetElement) return emptyList()
+        if (element !is KtElement) return emptyList()
 
         val elementTextRange = element.getTextRange() ?: return emptyList()
 
@@ -63,9 +63,9 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         val result = OrderedSet<SmartStepTarget>()
 
         // TODO support class initializers, local functions, delegated properties with specified type, setter for properties
-        element.accept(object: JetTreeVisitorVoid() {
+        element.accept(object: KtTreeVisitorVoid() {
 
-            override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression) {
+            override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression) {
                 val context = expression.analyze()
                 val resolvedCall = expression.getParentCall(context).getResolvedCall(context)
                 if (resolvedCall != null && !InlineUtil.isInline(resolvedCall.getResultingDescriptor())) {
@@ -80,46 +80,46 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 }
             }
 
-            override fun visitObjectLiteralExpression(expression: JetObjectLiteralExpression) {
+            override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
                 // skip calls in object declarations
             }
 
-            override fun visitIfExpression(expression: JetIfExpression) {
+            override fun visitIfExpression(expression: KtIfExpression) {
                 expression.getCondition()?.accept(this)
             }
 
-            override fun visitWhileExpression(expression: JetWhileExpression) {
+            override fun visitWhileExpression(expression: KtWhileExpression) {
                 expression.getCondition()?.accept(this)
             }
 
-            override fun visitDoWhileExpression(expression: JetDoWhileExpression) {
+            override fun visitDoWhileExpression(expression: KtDoWhileExpression) {
                 expression.getCondition()?.accept(this)
             }
 
-            override fun visitForExpression(expression: JetForExpression) {
+            override fun visitForExpression(expression: KtForExpression) {
                 expression.getLoopRange()?.accept(this)
             }
 
-            override fun visitWhenExpression(expression: JetWhenExpression) {
+            override fun visitWhenExpression(expression: KtWhenExpression) {
                 expression.getSubjectExpression()?.accept(this)
             }
 
-            override fun visitArrayAccessExpression(expression: JetArrayAccessExpression) {
+            override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
                 recordFunction(expression)
                 super.visitArrayAccessExpression(expression)
             }
 
-            override fun visitUnaryExpression(expression: JetUnaryExpression) {
+            override fun visitUnaryExpression(expression: KtUnaryExpression) {
                 recordFunction(expression.getOperationReference())
                 super.visitUnaryExpression(expression)
             }
 
-            override fun visitBinaryExpression(expression: JetBinaryExpression) {
+            override fun visitBinaryExpression(expression: KtBinaryExpression) {
                 recordFunction(expression.getOperationReference())
                 super.visitBinaryExpression(expression)
             }
 
-            override fun visitCallExpression(expression: JetCallExpression) {
+            override fun visitCallExpression(expression: KtCallExpression) {
                 val calleeExpression = expression.getCalleeExpression()
                 if (calleeExpression != null) {
                     recordFunction(calleeExpression)
@@ -127,7 +127,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 super.visitCallExpression(expression)
             }
 
-            override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+            override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 val resolvedCall = expression.getResolvedCall(bindingContext)
                 if (resolvedCall != null) {
                     val propertyDescriptor = resolvedCall.getResultingDescriptor()
@@ -137,7 +137,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                             val delegatedResolvedCall = bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor]
                             if (delegatedResolvedCall == null) {
                                 val getter = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), getterDescriptor)
-                                if (getter is JetPropertyAccessor && (getter.getBodyExpression() != null || getter.getEqualsToken() != null)) {
+                                if (getter is KtPropertyAccessor && (getter.getBodyExpression() != null || getter.getEqualsToken() != null)) {
                                     val label = KotlinMethodSmartStepTarget.calcLabel(getterDescriptor)
                                     result.add(KotlinMethodSmartStepTarget(getter, label, expression, lines))
                                 }
@@ -146,9 +146,9 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                                 val delegatedPropertyGetterDescriptor = delegatedResolvedCall.getResultingDescriptor()
                                 if (delegatedPropertyGetterDescriptor is CallableMemberDescriptor) {
                                     val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), delegatedPropertyGetterDescriptor)
-                                    if (function is JetNamedFunction || function is JetSecondaryConstructor) {
+                                    if (function is KtNamedFunction || function is KtSecondaryConstructor) {
                                         val label = "${propertyDescriptor.getName()}." + KotlinMethodSmartStepTarget.calcLabel(delegatedPropertyGetterDescriptor)
-                                        result.add(KotlinMethodSmartStepTarget(function as JetFunction, label, expression, lines))
+                                        result.add(KotlinMethodSmartStepTarget(function as KtFunction, label, expression, lines))
                                     }
                                 }
                             }
@@ -158,15 +158,15 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 super.visitSimpleNameExpression(expression)
             }
 
-            private fun recordFunction(expression: JetExpression) {
+            private fun recordFunction(expression: KtExpression) {
                 val resolvedCall = expression.getResolvedCall(bindingContext) ?: return
 
                 val descriptor = resolvedCall.getResultingDescriptor()
                 if (descriptor is CallableMemberDescriptor && !isIntrinsic(descriptor)) {
                     val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), descriptor)
-                    if (function is JetNamedFunction || function is JetSecondaryConstructor) {
+                    if (function is KtNamedFunction || function is KtSecondaryConstructor) {
                         val label = KotlinMethodSmartStepTarget.calcLabel(descriptor)
-                        result.add(KotlinMethodSmartStepTarget(function as JetFunction, label, expression, lines))
+                        result.add(KotlinMethodSmartStepTarget(function as KtFunction, label, expression, lines))
                     }
                     else if (function is PsiMethod) {
                         result.add(MethodSmartStepTarget(function, null, expression, false, lines))

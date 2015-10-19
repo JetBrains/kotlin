@@ -21,23 +21,23 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTargetingOffsetIndependentIntention<JetNameReferenceExpression> (
+public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTargetingOffsetIndependentIntention<KtNameReferenceExpression> (
         javaClass(), "Replace 'it' with explicit parameter"
 ), LowPriorityAction {
-    override fun isApplicableTo(element: JetNameReferenceExpression)
+    override fun isApplicableTo(element: KtNameReferenceExpression)
             = isAutoCreatedItUsage(element)
 
-    override fun applyTo(element: JetNameReferenceExpression, editor: Editor) {
+    override fun applyTo(element: KtNameReferenceExpression, editor: Editor) {
         val target = element.mainReference.resolveToDescriptors(element.analyze()).single()
 
-        val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as JetFunctionLiteral
+        val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as KtFunctionLiteral
 
-        val newExpr = JetPsiFactory(element).createExpression("{ it -> }") as JetFunctionLiteralExpression
+        val newExpr = KtPsiFactory(element).createExpression("{ it -> }") as KtFunctionLiteralExpression
         functionLiteral.addRangeAfter(
                 newExpr.getFunctionLiteral().getValueParameterList(),
                 newExpr.getFunctionLiteral().getArrow()!!,

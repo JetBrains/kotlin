@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.stubindex.resolve
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.*
 import org.jetbrains.kotlin.name.FqName
@@ -29,7 +29,7 @@ public class PluginDeclarationProviderFactory(
         private val project: Project,
         private val indexedFilesScope: GlobalSearchScope,
         private val storageManager: StorageManager,
-        private val nonIndexedFiles: Collection<JetFile>
+        private val nonIndexedFiles: Collection<KtFile>
 ) : AbstractDeclarationProviderFactory(storageManager) {
     private val fileBasedDeclarationProviderFactory = FileBasedDeclarationProviderFactory(storageManager, nonIndexedFiles)
 

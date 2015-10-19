@@ -27,13 +27,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetFunction;
-import org.jetbrains.kotlin.psi.JetPsiFactory;
-import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtFunction;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
+import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 
-public class AddFunctionBodyFix extends KotlinQuickFixAction<JetFunction> {
-    public AddFunctionBodyFix(@NotNull JetFunction element) {
+public class AddFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
+    public AddFunctionBodyFix(@NotNull KtFunction element) {
         super(element);
     }
 
@@ -55,9 +55,9 @@ public class AddFunctionBodyFix extends KotlinQuickFixAction<JetFunction> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetFunction newElement = (JetFunction) getElement().copy();
-        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        KtFunction newElement = (KtFunction) getElement().copy();
+        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(file);
         if (!(newElement.getLastChild() instanceof PsiWhiteSpace)) {
             newElement.add(psiFactory.createWhiteSpace());
         }
@@ -73,7 +73,7 @@ public class AddFunctionBodyFix extends KotlinQuickFixAction<JetFunction> {
             @Override
             public KotlinQuickFixAction createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
-                JetFunction function = PsiTreeUtil.getParentOfType(element, JetFunction.class, false);
+                KtFunction function = PsiTreeUtil.getParentOfType(element, KtFunction.class, false);
                 if (function == null) return null;
                 return new AddFunctionBodyFix(function);
             }

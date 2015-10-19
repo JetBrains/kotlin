@@ -25,21 +25,21 @@ import com.sun.jdi.Method
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.JetConstructor
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetPropertyAccessor
+import org.jetbrains.kotlin.psi.KtConstructor
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 
 public class KotlinBasicStepMethodFilter(
-        val resolvedFunction: JetElement,
+        val resolvedFunction: KtElement,
         val myCallingExpressionLines: Range<Int>
 ) : NamedMethodFilter {
     private val myTargetMethodName: String
 
     init {
         myTargetMethodName = when (resolvedFunction) {
-            is JetConstructor<*> -> "<init>"
-            is JetPropertyAccessor -> JvmAbi.getterName((resolvedFunction.getParent() as JetProperty).getName()!!)
+            is KtConstructor<*> -> "<init>"
+            is KtPropertyAccessor -> JvmAbi.getterName((resolvedFunction.getParent() as KtProperty).getName()!!)
             else -> resolvedFunction.getName()!!
         }
     }

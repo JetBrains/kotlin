@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.name.FqName
 
 import com.intellij.psi.PsiElement
@@ -34,7 +34,7 @@ public class KotlinObjectStubImpl(
         private val isDefault: Boolean,
         private val isLocal: Boolean,
         private val isObjectLiteral: Boolean
-) : KotlinStubBaseImpl<JetObjectDeclaration>(parent, JetStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {
+) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {
     override fun getFqName() = fqName
     override fun getName() = StringRef.toString(name)
     override fun getSuperNames() = superNames map { it.toString() }

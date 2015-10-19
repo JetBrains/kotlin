@@ -17,41 +17,41 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetThisExpression
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 
 // Explicit reference to function parameter or outer this
-public abstract class JetExplicitReferenceUsage<T : JetElement>(element: T) : JetUsageInfo<T>(element) {
+public abstract class JetExplicitReferenceUsage<T : KtElement>(element: T) : JetUsageInfo<T>(element) {
     abstract fun getReplacementText(changeInfo: JetChangeInfo): String
 
-    protected open fun processReplacedElement(element: JetElement) {
+    protected open fun processReplacedElement(element: KtElement) {
 
     }
 
     override fun processUsage(changeInfo: JetChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean {
-        val newElement = JetPsiFactory(element.getProject()).createExpression(getReplacementText(changeInfo))
-        val elementToReplace = (element.getParent() as? JetThisExpression) ?: element
-        processReplacedElement(elementToReplace.replace(newElement) as JetElement)
+        val newElement = KtPsiFactory(element.getProject()).createExpression(getReplacementText(changeInfo))
+        val elementToReplace = (element.getParent() as? KtThisExpression) ?: element
+        processReplacedElement(elementToReplace.replace(newElement) as KtElement)
         return false
     }
 }
 
 public class JetParameterUsage(
-        element: JetElement,
+        element: KtElement,
         private val parameterInfo: JetParameterInfo,
         val containingCallable: JetCallableDefinitionUsage<*>
-) : JetExplicitReferenceUsage<JetElement>(element) {
-    override fun processReplacedElement(element: JetElement) {
-        val qualifiedExpression = element.getParent() as? JetQualifiedExpression
+) : JetExplicitReferenceUsage<KtElement>(element) {
+    override fun processReplacedElement(element: KtElement) {
+        val qualifiedExpression = element.getParent() as? KtQualifiedExpression
         val elementToShorten = if (qualifiedExpression?.getReceiverExpression() == element) qualifiedExpression!! else element
         elementToShorten.addToShorteningWaitSet(Options(removeThis = true, removeThisLabels = true))
     }
@@ -67,10 +67,10 @@ public class JetParameterUsage(
 }
 
 public class JetNonQualifiedOuterThisUsage(
-        element: JetThisExpression,
+        element: KtThisExpression,
         val targetDescriptor: DeclarationDescriptor
-) : JetExplicitReferenceUsage<JetThisExpression>(element) {
-    override fun processReplacedElement(element: JetElement) {
+) : JetExplicitReferenceUsage<KtThisExpression>(element) {
+    override fun processReplacedElement(element: KtElement) {
         element.addToShorteningWaitSet(Options(removeThisLabels = true))
     }
 

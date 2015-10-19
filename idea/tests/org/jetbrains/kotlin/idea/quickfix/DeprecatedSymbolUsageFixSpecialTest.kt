@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.quickfix.replaceWith.ReplaceWith
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.JetTestUtils
@@ -53,7 +53,7 @@ public class DeprecatedSymbolUsageFixSpecialTest : JetLightCodeInsightFixtureTes
 
         val offset = getEditor().caretModel.offset
         val element = getFile().findElementAt(offset)
-        val nameExpression = element!!.parents.firstIsInstance<JetSimpleNameExpression>()
+        val nameExpression = element!!.parents.firstIsInstance<KtSimpleNameExpression>()
         getProject().executeWriteCommand("") {
             DeprecatedSymbolUsageFix(nameExpression, ReplaceWith(pattern, emptyList())).invoke(getProject(), getEditor(), getFile())
         }

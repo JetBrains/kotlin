@@ -22,9 +22,9 @@ import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 
-public class KotlinTypeParameterFindUsagesDialog<T extends JetNamedDeclaration> extends CommonFindUsagesDialog {
+public class KotlinTypeParameterFindUsagesDialog<T extends KtNamedDeclaration> extends CommonFindUsagesDialog {
     public KotlinTypeParameterFindUsagesDialog(
             T element,
             Project project,
@@ -39,6 +39,6 @@ public class KotlinTypeParameterFindUsagesDialog<T extends JetNamedDeclaration> 
 
     @Override
     public void configureLabelComponent(@NotNull SimpleColoredComponent coloredComponent) {
-        Utils.configureLabelComponent(coloredComponent, (JetNamedDeclaration) myPsiElement);
+        Utils.configureLabelComponent(coloredComponent, (KtNamedDeclaration) myPsiElement);
     }
 }

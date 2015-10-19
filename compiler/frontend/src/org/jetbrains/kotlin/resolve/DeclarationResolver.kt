@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetPackageDirective
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -91,7 +91,7 @@ public class DeclarationResolver(
         }
     }
 
-    public fun checkRedeclarationsInPackages(topLevelDescriptorProvider: TopLevelDescriptorProvider, topLevelFqNames: Multimap<FqName, JetElement>) {
+    public fun checkRedeclarationsInPackages(topLevelDescriptorProvider: TopLevelDescriptorProvider, topLevelFqNames: Multimap<FqName, KtElement>) {
         for ((fqName, declarationsOrPackageDirectives) in topLevelFqNames.asMap()) {
             if (fqName.isRoot()) continue
 
@@ -100,7 +100,7 @@ public class DeclarationResolver(
             if (descriptors.size() > 1) {
                 for (declarationOrPackageDirective in declarationsOrPackageDirectives) {
                     val reportAt =
-                            if (declarationOrPackageDirective is JetPackageDirective) declarationOrPackageDirective.getNameIdentifier()
+                            if (declarationOrPackageDirective is KtPackageDirective) declarationOrPackageDirective.getNameIdentifier()
                             else declarationOrPackageDirective
                     trace.report(Errors.REDECLARATION.on(reportAt, fqName.shortName().asString()))
                 }

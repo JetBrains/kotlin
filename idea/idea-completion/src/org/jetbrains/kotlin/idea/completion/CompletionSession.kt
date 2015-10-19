@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -68,21 +68,21 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                                      protected val parameters: CompletionParameters,
                                      resultSet: CompletionResultSet) {
     protected val position = parameters.getPosition()
-    private val file = position.getContainingFile() as JetFile
+    private val file = position.getContainingFile() as KtFile
     protected val resolutionFacade = file.getResolutionFacade()
     protected val moduleDescriptor = resolutionFacade.moduleDescriptor
     protected val project = position.getProject()
-    protected val isJvmModule = !ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as JetFile)
+    protected val isJvmModule = !ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as KtFile)
 
-    protected val nameExpression: JetSimpleNameExpression?
-    protected val expression: JetExpression?
+    protected val nameExpression: KtSimpleNameExpression?
+    protected val expression: KtExpression?
 
     init {
-        val reference = (position.getParent() as? JetSimpleNameExpression)?.mainReference
+        val reference = (position.getParent() as? KtSimpleNameExpression)?.mainReference
         if (reference != null) {
-            if (reference.expression is JetLabelReferenceExpression) {
+            if (reference.expression is KtLabelReferenceExpression) {
                 this.nameExpression = null
-                this.expression = reference.expression.getParent().getParent() as? JetExpressionWithLabel
+                this.expression = reference.expression.getParent().getParent() as? KtExpressionWithLabel
             }
             else {
                 this.nameExpression = reference.expression
@@ -95,7 +95,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         }
     }
 
-    protected val bindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
+    protected val bindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<KtElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
     protected val inDescriptor = position.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
 
     private val kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart() andNot singleCharPattern('$')
@@ -139,7 +139,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         LookupElementsCollector(prefixMatcher, parameters, resultSet, lookupElementFactory, createSorter())
     }
 
-    protected val originalSearchScope: GlobalSearchScope = getResolveScope(parameters.getOriginalFile() as JetFile)
+    protected val originalSearchScope: GlobalSearchScope = getResolveScope(parameters.getOriginalFile() as KtFile)
 
     // we need to exclude the original file from scope because our resolve session is built with this file replaced by synthetic one
     protected val searchScope: GlobalSearchScope = object : DelegatingGlobalSearchScope(originalSearchScope) {
@@ -150,7 +150,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         get() = KotlinIndicesHelper(resolutionFacade, searchScope, isVisibleFilter, true)
 
     protected val toFromOriginalFileMapper: ToFromOriginalFileMapper
-            = ToFromOriginalFileMapper(parameters.originalFile as JetFile, position.containingFile as JetFile, parameters.offset)
+            = ToFromOriginalFileMapper(parameters.originalFile as KtFile, position.containingFile as KtFile, parameters.offset)
 
     private fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (!configuration.completeJavaClassesNotToBeUsed && descriptor is ClassDescriptor) {
@@ -257,14 +257,14 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     // filters out variable inside its initializer
-    private fun Collection<DeclarationDescriptor>.excludeNonInitializedVariable(expression: JetExpression): Collection<DeclarationDescriptor> {
+    private fun Collection<DeclarationDescriptor>.excludeNonInitializedVariable(expression: KtExpression): Collection<DeclarationDescriptor> {
         for (element in expression.parentsWithSelf) {
             val parent = element.getParent()
-            if (parent is JetVariableDeclaration && element == parent.getInitializer()) {
+            if (parent is KtVariableDeclaration && element == parent.getInitializer()) {
                 val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent]
                 return this.filter { it != descriptor }
             }
-            if (element is JetDeclaration) break // we can use variable inside lambda or anonymous object located in its initializer
+            if (element is KtDeclaration) break // we can use variable inside lambda or anonymous object located in its initializer
         }
         return this
     }
@@ -287,7 +287,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected fun isNoQualifierContext(): Boolean {
         val parent = position.getParent()
-        return parent is JetSimpleNameExpression && !JetPsiUtil.isSelectorInQualified(parent)
+        return parent is KtSimpleNameExpression && !KtPsiUtil.isSelectorInQualified(parent)
     }
 
     protected fun getTopLevelCallables(): Collection<DeclarationDescriptor> {
@@ -313,7 +313,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                 )
     }
 
-    private fun createLookupElementFactory(callType: CallType<*>?, receiverTypes: Collection<JetType>?): LookupElementFactory {
+    private fun createLookupElementFactory(callType: CallType<*>?, receiverTypes: Collection<KtType>?): LookupElementFactory {
         val contextVariablesProvider = {
             nameExpression?.let {
                 referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, CallTypeAndReceiver.DEFAULT)
@@ -323,11 +323,11 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
         val insertHandlerProvider = InsertHandlerProvider(callType) { expectedInfos }
         return LookupElementFactory(resolutionFacade, receiverTypes,
-                                    callType, expression?.parent is JetSimpleNameStringTemplateEntry,
+                                    callType, expression?.parent is KtSimpleNameStringTemplateEntry,
                                     insertHandlerProvider, contextVariablesProvider)
     }
 
-    private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<JetType>?> {
+    private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<KtType>?> {
         if (nameExpression == null) {
             return CallTypeAndReceiver.UNKNOWN to null
         }

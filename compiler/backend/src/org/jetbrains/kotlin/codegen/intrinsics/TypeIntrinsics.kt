@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen.intrinsics
 
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -26,7 +26,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.text.Regex
 
 public object TypeIntrinsics {
-    public @JvmStatic fun instanceOf(v: InstructionAdapter, jetType: JetType, boxedAsmType: Type) {
+    public @JvmStatic fun instanceOf(v: InstructionAdapter, jetType: KtType, boxedAsmType: Type) {
         val functionTypeArity = getFunctionTypeArity(jetType)
         if (functionTypeArity >= 0) {
             v.iconst(functionTypeArity)
@@ -57,7 +57,7 @@ public object TypeIntrinsics {
                 LdcInsnNode(Integer(value))
             }
 
-    public @JvmStatic fun instanceOf(instanceofInsn: TypeInsnNode, instructions: InsnList, jetType: JetType, asmType: Type) {
+    public @JvmStatic fun instanceOf(instanceofInsn: TypeInsnNode, instructions: InsnList, jetType: KtType, asmType: Type) {
         val functionTypeArity = getFunctionTypeArity(jetType)
         if (functionTypeArity >= 0) {
             instructions.insertBefore(instanceofInsn, iconstNode(functionTypeArity))
@@ -78,7 +78,7 @@ public object TypeIntrinsics {
         instanceofInsn.desc = asmType.internalName
     }
 
-    public @JvmStatic fun checkcast(v: InstructionAdapter, jetType: JetType, asmType: Type, safe: Boolean) {
+    public @JvmStatic fun checkcast(v: InstructionAdapter, jetType: KtType, asmType: Type, safe: Boolean) {
         if (safe) {
             v.checkcast(asmType)
             return
@@ -106,7 +106,7 @@ public object TypeIntrinsics {
         v.checkcast(asmType)
     }
 
-    public @JvmStatic fun checkcast(checkcastInsn: TypeInsnNode, instructions: InsnList, jetType: JetType, asmType: Type, safe: Boolean) {
+    public @JvmStatic fun checkcast(checkcastInsn: TypeInsnNode, instructions: InsnList, jetType: KtType, asmType: Type, safe: Boolean) {
         if (safe) {
             checkcastInsn.desc = asmType.internalName
             return
@@ -159,7 +159,7 @@ public object TypeIntrinsics {
     private val IS_MUTABLE_COLLECTION_METHOD_DESCRIPTOR =
             Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"))
 
-    private fun getClassFqName(jetType: JetType): String? {
+    private fun getClassFqName(jetType: KtType): String? {
         val classDescriptor = TypeUtils.getClassDescriptor(jetType) ?: return null
         return DescriptorUtils.getFqName(classDescriptor).asString()
     }
@@ -169,7 +169,7 @@ public object TypeIntrinsics {
     /**
      * @return function type arity (non-negative), or -1 if the given type is not a function type
      */
-    private fun getFunctionTypeArity(jetType: JetType): Int {
+    private fun getFunctionTypeArity(jetType: KtType): Int {
         val classFqName = getClassFqName(jetType) ?: return -1
         val match = KOTLIN_FUNCTION_INTERFACE_REGEX.match(classFqName) ?: return -1
         return Integer.valueOf(match.groups[1]!!.value)
@@ -182,7 +182,7 @@ public object TypeIntrinsics {
         invokestatic(INTRINSICS_CLASS, methodName, methodDescriptor, false)
     }
 
-    private fun getIsMutableCollectionMethodName(jetType: JetType): String? =
+    private fun getIsMutableCollectionMethodName(jetType: KtType): String? =
             IS_MUTABLE_COLLECTION_METHOD_NAME[getClassFqName(jetType)]
 
     private val CHECKCAST_METHOD_NAME = hashMapOf(
@@ -196,7 +196,7 @@ public object TypeIntrinsics {
             "kotlin.MutableMap.MutableEntry" to "asMutableMapEntry"
     )
 
-    private fun getAsMutableCollectionMethodName(jetType: JetType): String? {
+    private fun getAsMutableCollectionMethodName(jetType: KtType): String? {
         val classDescriptor = TypeUtils.getClassDescriptor(jetType) ?: return null
         val classFqName = DescriptorUtils.getFqName(classDescriptor).asString()
         return CHECKCAST_METHOD_NAME[classFqName]

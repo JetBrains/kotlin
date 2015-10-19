@@ -25,29 +25,29 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetSuperExpression
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtSuperExpression
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 
 public fun resolveUnqualifiedSuperFromExpressionContext(
-        superExpression: JetSuperExpression,
-        supertypes: Collection<JetType>,
-        anyType: JetType
-): Collection<JetType> {
+        superExpression: KtSuperExpression,
+        supertypes: Collection<KtType>,
+        anyType: KtType
+): Collection<KtType> {
     val parentElement = superExpression.parent
 
-    if (parentElement is JetDotQualifiedExpression) {
+    if (parentElement is KtDotQualifiedExpression) {
         val selectorExpression = parentElement.selectorExpression
         when (selectorExpression) {
-            is JetCallExpression -> {
+            is KtCallExpression -> {
                 // super.foo(...): foo can be a function or a property of a callable type
                 val calleeExpression = selectorExpression.calleeExpression
-                if (calleeExpression is JetSimpleNameExpression) {
+                if (calleeExpression is KtSimpleNameExpression) {
                     val calleeName = calleeExpression.getReferencedNameAsName()
                     val location = NoLookupLocation.WHEN_TYPING
                     if (isCallingMethodOfAny(selectorExpression, calleeName)) {
@@ -58,7 +58,7 @@ public fun resolveUnqualifiedSuperFromExpressionContext(
                     }
                 }
             }
-            is JetSimpleNameExpression -> {
+            is KtSimpleNameExpression -> {
                 // super.x: x can be a property only
                 // NB there are no properties in kotlin.Any
                 return resolveSupertypesByPropertyName(supertypes, selectorExpression.getReferencedNameAsName(), NoLookupLocation.WHEN_TYPING)
@@ -71,20 +71,20 @@ public fun resolveUnqualifiedSuperFromExpressionContext(
 
 private val ARITY_OF_METHODS_OF_ANY = hashMapOf("hashCode" to 0, "equals" to 1, "toString" to 0)
 
-private fun isCallingMethodOfAny(callExpression: JetCallExpression, calleeName: Name): Boolean =
+private fun isCallingMethodOfAny(callExpression: KtCallExpression, calleeName: Name): Boolean =
         ARITY_OF_METHODS_OF_ANY.getOrElse(calleeName.asString(), { -1 }) == callExpression.valueArguments.size()
 
-public fun isPossiblyAmbiguousUnqualifiedSuper(superExpression: JetSuperExpression, supertypes: Collection<JetType>): Boolean =
+public fun isPossiblyAmbiguousUnqualifiedSuper(superExpression: KtSuperExpression, supertypes: Collection<KtType>): Boolean =
         supertypes.size() > 1 ||
         (supertypes.size() == 1 && supertypes.single().isInterface() && isCallingMethodOfAnyWithSuper(superExpression))
 
-private fun isCallingMethodOfAnyWithSuper(superExpression: JetSuperExpression): Boolean {
+private fun isCallingMethodOfAnyWithSuper(superExpression: KtSuperExpression): Boolean {
     val parent = superExpression.parent
-    if (parent is JetDotQualifiedExpression) {
+    if (parent is KtDotQualifiedExpression) {
         val selectorExpression = parent.selectorExpression
-        if (selectorExpression is JetCallExpression) {
+        if (selectorExpression is KtCallExpression) {
             val calleeExpression = selectorExpression.calleeExpression
-            if (calleeExpression is JetSimpleNameExpression) {
+            if (calleeExpression is KtSimpleNameExpression) {
                 val calleeName = calleeExpression.getReferencedNameAsName()
                 return isCallingMethodOfAny(selectorExpression, calleeName)
             }
@@ -94,10 +94,10 @@ private fun isCallingMethodOfAnyWithSuper(superExpression: JetSuperExpression): 
     return false
 }
 
-private fun JetType.isInterface(): Boolean =
+private fun KtType.isInterface(): Boolean =
         TypeUtils.getClassDescriptor(this)?.kind == ClassKind.INTERFACE
 
-private fun resolveSupertypesForMethodOfAny(supertypes: Collection<JetType>, calleeName: Name, location: LookupLocation, anyType: JetType): Collection<JetType> {
+private fun resolveSupertypesForMethodOfAny(supertypes: Collection<KtType>, calleeName: Name, location: LookupLocation, anyType: KtType): Collection<KtType> {
     val typesWithConcreteOverride = resolveSupertypesByMembers(supertypes, false) { getFunctionMembers(it, calleeName, location) }
     return if (typesWithConcreteOverride.isNotEmpty())
         typesWithConcreteOverride
@@ -105,19 +105,19 @@ private fun resolveSupertypesForMethodOfAny(supertypes: Collection<JetType>, cal
         anyType.singletonList()
 }
 
-private fun resolveSupertypesByCalleeName(supertypes: Collection<JetType>, calleeName: Name, location: LookupLocation): Collection<JetType> =
+private fun resolveSupertypesByCalleeName(supertypes: Collection<KtType>, calleeName: Name, location: LookupLocation): Collection<KtType> =
         resolveSupertypesByMembers(supertypes, true) { getFunctionMembers(it, calleeName, location) + getPropertyMembers(it, calleeName, location) }
 
-private fun resolveSupertypesByPropertyName(supertypes: Collection<JetType>, propertyName: Name, location: LookupLocation): Collection<JetType> =
+private fun resolveSupertypesByPropertyName(supertypes: Collection<KtType>, propertyName: Name, location: LookupLocation): Collection<KtType> =
         resolveSupertypesByMembers(supertypes, true) { getPropertyMembers(it, propertyName, location) }
 
 private inline fun resolveSupertypesByMembers(
-        supertypes: Collection<JetType>,
+        supertypes: Collection<KtType>,
         allowArbitraryMembers: Boolean,
-        getMembers: (JetType) -> Collection<MemberDescriptor>
-): Collection<JetType> {
-    val typesWithConcreteMembers = SmartList<JetType>()
-    val typesWithArbitraryMembers = SmartList<JetType>()
+        getMembers: (KtType) -> Collection<MemberDescriptor>
+): Collection<KtType> {
+    val typesWithConcreteMembers = SmartList<KtType>()
+    val typesWithArbitraryMembers = SmartList<KtType>()
 
     for (supertype in supertypes) {
         val members = getMembers(supertype)
@@ -131,16 +131,16 @@ private inline fun resolveSupertypesByMembers(
 
     return if (typesWithConcreteMembers.isNotEmpty()) typesWithConcreteMembers
         else if (allowArbitraryMembers) typesWithArbitraryMembers
-        else emptyList<JetType>()
+        else emptyList<KtType>()
 }
 
-private fun getFunctionMembers(type: JetType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
+private fun getFunctionMembers(type: KtType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
         type.memberScope.getFunctions(name, location)
 
-private fun getPropertyMembers(type: JetType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
+private fun getPropertyMembers(type: KtType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
         type.memberScope.getProperties(name, location).filterIsInstanceTo(SmartList<MemberDescriptor>())
 
-private fun isConcreteMember(supertype: JetType, memberDescriptor: MemberDescriptor): Boolean {
+private fun isConcreteMember(supertype: KtType, memberDescriptor: MemberDescriptor): Boolean {
     // "Concrete member" is a function or a property that is not abstract,
     // and is not an implicit fake override for a method of Any on an interface.
 

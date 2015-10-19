@@ -22,20 +22,20 @@ import com.intellij.psi.search.searches.ClassesWithAnnotatedMembersSearch
 import com.intellij.psi.search.searches.ScopedQueryExecutor
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class KotlinClassesWithAnnotatedMembersSearcher : ScopedQueryExecutor<PsiClass, ClassesWithAnnotatedMembersSearch.Parameters> {
     override fun getScope(param: ClassesWithAnnotatedMembersSearch.Parameters): GlobalSearchScope {
-        return GlobalSearchScope.getScopeRestrictedByFileTypes(param.annotationClass.project.allScope(), JetFileType.INSTANCE)
+        return GlobalSearchScope.getScopeRestrictedByFileTypes(param.annotationClass.project.allScope(), KotlinFileType.INSTANCE)
     }
 
     override fun execute(queryParameters: ClassesWithAnnotatedMembersSearch.Parameters, consumer: Processor<PsiClass>): Boolean {
-        val processed = hashSetOf<JetClassOrObject>()
+        val processed = hashSetOf<KtClassOrObject>()
         return KotlinAnnotatedElementsSearcher.processAnnotatedMembers(queryParameters.annotationClass, queryParameters.scope) { declaration ->
-            val jetClass = declaration.getNonStrictParentOfType<JetClassOrObject>()
+            val jetClass = declaration.getNonStrictParentOfType<KtClassOrObject>()
             if (jetClass != null && processed.add(jetClass)) {
                 val lightClass = LightClassUtil.getPsiClass(jetClass)
                 if (lightClass != null) consumer.process(lightClass) else true

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.ArrayList;
@@ -48,13 +48,13 @@ public class ExpressionTypingUtils {
     @NotNull
     public static ReceiverValue normalizeReceiverValueForVisibility(@NotNull ReceiverValue receiverValue, @NotNull BindingContext trace) {
         if (receiverValue instanceof ExpressionReceiver) {
-            JetExpression expression = ((ExpressionReceiver) receiverValue).getExpression();
-            JetReferenceExpression referenceExpression = null;
-            if (expression instanceof JetThisExpression) {
-                referenceExpression = ((JetThisExpression) expression).getInstanceReference();
+            KtExpression expression = ((ExpressionReceiver) receiverValue).getExpression();
+            KtReferenceExpression referenceExpression = null;
+            if (expression instanceof KtThisExpression) {
+                referenceExpression = ((KtThisExpression) expression).getInstanceReference();
             }
-            else if (expression instanceof JetConstructorDelegationReferenceExpression) {
-                referenceExpression = (JetReferenceExpression) expression;
+            else if (expression instanceof KtConstructorDelegationReferenceExpression) {
+                referenceExpression = (KtReferenceExpression) expression;
             }
 
             if (referenceExpression != null) {
@@ -68,7 +68,7 @@ public class ExpressionTypingUtils {
     }
 
     @Nullable
-    public static ExpressionReceiver getExpressionReceiver(@NotNull JetExpression expression, @Nullable JetType type) {
+    public static ExpressionReceiver getExpressionReceiver(@NotNull KtExpression expression, @Nullable KtType type) {
         if (type == null) return null;
         return new ExpressionReceiver(expression, type);
     }
@@ -76,7 +76,7 @@ public class ExpressionTypingUtils {
     @Nullable
     public static ExpressionReceiver getExpressionReceiver(
             @NotNull ExpressionTypingFacade facade,
-            @NotNull JetExpression expression,
+            @NotNull KtExpression expression,
             ExpressionTypingContext context
     ) {
         return getExpressionReceiver(expression, facade.getTypeInfo(expression, context).getType());
@@ -85,16 +85,16 @@ public class ExpressionTypingUtils {
     @NotNull
     public static ExpressionReceiver safeGetExpressionReceiver(
             @NotNull ExpressionTypingFacade facade,
-            @NotNull JetExpression expression,
+            @NotNull KtExpression expression,
             ExpressionTypingContext context
     ) {
-        JetType type = safeGetType(facade.safeGetTypeInfo(expression, context));
+        KtType type = safeGetType(facade.safeGetTypeInfo(expression, context));
         return new ExpressionReceiver(expression, type);
     }
 
     @NotNull
-    public static JetType safeGetType(@NotNull JetTypeInfo typeInfo) {
-        JetType type = typeInfo.getType();
+    public static KtType safeGetType(@NotNull JetTypeInfo typeInfo) {
+        KtType type = typeInfo.getType();
         assert type != null : "safeGetType should be invoked on safe JetTypeInfo; safeGetTypeInfo should return @NotNull type";
         return type;
     }
@@ -107,13 +107,13 @@ public class ExpressionTypingUtils {
         return scope;
     }
 
-    public static JetExpression createFakeExpressionOfType(
+    public static KtExpression createFakeExpressionOfType(
             @NotNull Project project,
             @NotNull BindingTrace trace,
             @NotNull String argumentName,
-            @NotNull JetType argumentType
+            @NotNull KtType argumentType
     ) {
-        JetExpression fakeExpression = JetPsiFactoryKt.JetPsiFactory(project).createExpression(argumentName);
+        KtExpression fakeExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(argumentName);
         trace.recordType(fakeExpression, argumentType);
         trace.record(PROCESSED, fakeExpression);
         return fakeExpression;
@@ -134,7 +134,7 @@ public class ExpressionTypingUtils {
 
     public static ObservableBindingTrace makeTraceInterceptingTypeMismatch(
             @NotNull BindingTrace trace,
-            @NotNull final JetElement expressionToWatch,
+            @NotNull final KtElement expressionToWatch,
             @NotNull final boolean[] mismatchFound
     ) {
         return new ObservableBindingTrace(trace) {
@@ -157,7 +157,7 @@ public class ExpressionTypingUtils {
 
     @NotNull
     public static JetTypeInfo getTypeInfoOrNullType(
-            @Nullable JetExpression expression,
+            @Nullable KtExpression expression,
             @NotNull ExpressionTypingContext context,
             @NotNull ExpressionTypingInternals facade
     ) {
@@ -167,24 +167,24 @@ public class ExpressionTypingUtils {
     }
 
     @SuppressWarnings("SuspiciousMethodCalls")
-    public static boolean isBinaryExpressionDependentOnExpectedType(@NotNull JetBinaryExpression expression) {
+    public static boolean isBinaryExpressionDependentOnExpectedType(@NotNull KtBinaryExpression expression) {
         IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
-        return (operationType == JetTokens.IDENTIFIER || OperatorConventions.BINARY_OPERATION_NAMES.containsKey(operationType)
-                || operationType == JetTokens.ELVIS);
+        return (operationType == KtTokens.IDENTIFIER || OperatorConventions.BINARY_OPERATION_NAMES.containsKey(operationType)
+                || operationType == KtTokens.ELVIS);
     }
 
-    public static boolean isUnaryExpressionDependentOnExpectedType(@NotNull JetUnaryExpression expression) {
-        return expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL;
+    public static boolean isUnaryExpressionDependentOnExpectedType(@NotNull KtUnaryExpression expression) {
+        return expression.getOperationReference().getReferencedNameElementType() == KtTokens.EXCLEXCL;
     }
 
-    public static boolean isExclExclExpression(@Nullable JetExpression expression) {
-        return expression instanceof JetUnaryExpression
-               && ((JetUnaryExpression) expression).getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL;
+    public static boolean isExclExclExpression(@Nullable KtExpression expression) {
+        return expression instanceof KtUnaryExpression
+               && ((KtUnaryExpression) expression).getOperationReference().getReferencedNameElementType() == KtTokens.EXCLEXCL;
     }
 
     @NotNull
-    public static List<JetType> getValueParametersTypes(@NotNull List<ValueParameterDescriptor> valueParameters) {
-        List<JetType> parameterTypes = new ArrayList<JetType>(valueParameters.size());
+    public static List<KtType> getValueParametersTypes(@NotNull List<ValueParameterDescriptor> valueParameters) {
+        List<KtType> parameterTypes = new ArrayList<KtType>(valueParameters.size());
         for (ValueParameterDescriptor parameter : valueParameters) {
             parameterTypes.add(parameter.getType());
         }
@@ -222,18 +222,18 @@ public class ExpressionTypingUtils {
         return false;
     }
 
-    public static boolean dependsOnExpectedType(@Nullable JetExpression expression) {
-        JetExpression expr = JetPsiUtil.deparenthesize(expression);
+    public static boolean dependsOnExpectedType(@Nullable KtExpression expression) {
+        KtExpression expr = KtPsiUtil.deparenthesize(expression);
         if (expr == null) return false;
 
-        if (expr instanceof JetBinaryExpressionWithTypeRHS) {
+        if (expr instanceof KtBinaryExpressionWithTypeRHS) {
             return false;
         }
-        if (expr instanceof JetBinaryExpression) {
-            return isBinaryExpressionDependentOnExpectedType((JetBinaryExpression) expr);
+        if (expr instanceof KtBinaryExpression) {
+            return isBinaryExpressionDependentOnExpectedType((KtBinaryExpression) expr);
         }
-        if (expr instanceof JetUnaryExpression) {
-            return isUnaryExpressionDependentOnExpectedType((JetUnaryExpression) expr);
+        if (expr instanceof KtUnaryExpression) {
+            return isUnaryExpressionDependentOnExpectedType((KtUnaryExpression) expr);
         }
         return true;
     }

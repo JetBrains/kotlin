@@ -52,9 +52,9 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -165,7 +165,7 @@ public class LazyJavaClassMemberScope(
             val descriptor = resolveMethodToFunctionDescriptor(javaMethod)
             if (descriptor.valueParameters.size != 0) return@factory null
 
-            descriptor.check { JetTypeChecker.DEFAULT.isSubtypeOf(descriptor.returnType ?: return@check false, type) }
+            descriptor.check { KotlinTypeChecker.DEFAULT.isSubtypeOf(descriptor.returnType ?: return@check false, type) }
         }
     }
 
@@ -176,7 +176,7 @@ public class LazyJavaClassMemberScope(
             if (descriptor.valueParameters.size != 1) return@factory null
 
             if (!KotlinBuiltIns.isUnit(descriptor.returnType ?: return@factory null)) return@factory null
-            descriptor.check { JetTypeChecker.DEFAULT.equalTypes(descriptor.valueParameters.single().type, type) }
+            descriptor.check { KotlinTypeChecker.DEFAULT.equalTypes(descriptor.valueParameters.single().type, type) }
         }
     }
 
@@ -263,7 +263,7 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun createPropertyDescriptorWithDefaultGetter(
-            method: JavaMethod, givenType: JetType? = null, modality: Modality
+            method: JavaMethod, givenType: KtType? = null, modality: Modality
     ): JavaPropertyDescriptor {
         val annotations = c.resolveAnnotations(method)
 
@@ -277,7 +277,7 @@ public class LazyJavaClassMemberScope(
         propertyDescriptor.initialize(getter, null)
 
         val returnType = givenType ?: computeMethodReturnType(method, annotations, c.child(propertyDescriptor, method))
-        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null as JetType?)
+        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null as KtType?)
         getter.initialize(returnType)
 
         return propertyDescriptor
@@ -302,7 +302,7 @@ public class LazyJavaClassMemberScope(
                 /* isStaticFinal = */ false
         )
 
-        propertyDescriptor.setType(getterMethod.returnType!!, listOf(), getDispatchReceiverParameter(), null as JetType?)
+        propertyDescriptor.setType(getterMethod.returnType!!, listOf(), getDispatchReceiverParameter(), null as KtType?)
 
         val getter = DescriptorFactory.createGetter(
                 propertyDescriptor, getterMethod.annotations, /* isDefault = */false,
@@ -326,7 +326,7 @@ public class LazyJavaClassMemberScope(
     }
 
     override fun resolveMethodSignature(
-            method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: JetType,
+            method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KtType,
             valueParameters: LazyJavaScope.ResolvedValueParameters
     ): LazyJavaScope.MethodSignatureData {
         val propagated = c.components.externalSignatureResolver.resolvePropagatedSignature(
@@ -406,12 +406,12 @@ public class LazyJavaClassMemberScope(
             val currentType = valueParameters[index].type
             val overriddenCandidate = RawSubstitution.eraseType(
                     builtinWithErasedParameters.original.valueParameters[index].type)
-            JetTypeChecker.DEFAULT.equalTypes(currentType, overriddenCandidate)
+            KotlinTypeChecker.DEFAULT.equalTypes(currentType, overriddenCandidate)
         } && returnType.isSubtypeOf(builtinWithErasedParameters.returnType)
     }
 
-    private fun JetType?.isSubtypeOf(other: JetType?): Boolean {
-        return JetTypeChecker.DEFAULT.isSubtypeOf(this ?: return false, other ?: return false)
+    private fun KtType?.isSubtypeOf(other: KtType?): Boolean {
+        return KotlinTypeChecker.DEFAULT.isSubtypeOf(this ?: return false, other ?: return false)
     }
 
     private fun resolveConstructor(constructor: JavaConstructor): JavaConstructorDescriptor {
@@ -510,8 +510,8 @@ public class LazyJavaClassMemberScope(
             constructor: ConstructorDescriptor,
             index: Int,
             method: JavaMethod,
-            returnType: JetType,
-            varargElementType: JetType?
+            returnType: KtType,
+            varargElementType: KtType?
     ) {
         add(ValueParameterDescriptorImpl(
                 constructor,

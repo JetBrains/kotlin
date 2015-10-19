@@ -43,10 +43,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.lang.reflect.*
@@ -55,9 +55,9 @@ import java.util.*
 public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        if (!(ProjectRootsUtil.isInProjectOrLibraryContent(element) || element.getContainingFile() is JetCodeFragment)) return
+        if (!(ProjectRootsUtil.isInProjectOrLibraryContent(element) || element.getContainingFile() is KtCodeFragment)) return
 
-        val file = element.getContainingFile() as JetFile
+        val file = element.getContainingFile() as KtFile
 
         val analysisResult = file.analyzeFullyAndGetResult()
         if (analysisResult.isError()) {
@@ -72,13 +72,13 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
     }
 
     override fun isForceHighlightParents(file: PsiFile): Boolean {
-        return file is JetFile
+        return file is KtFile
     }
 
-    open protected fun shouldSuppressUnusedParameter(parameter: JetParameter): Boolean = false
+    open protected fun shouldSuppressUnusedParameter(parameter: KtParameter): Boolean = false
 
     fun annotateElement(element: PsiElement, holder: AnnotationHolder, diagnostics: Diagnostics) {
-        if (ProjectRootsUtil.isInProjectSource(element) || element.getContainingFile() is JetCodeFragment) {
+        if (ProjectRootsUtil.isInProjectSource(element) || element.getContainingFile() is KtCodeFragment) {
             val elementAnnotator = ElementAnnotator(element, holder)
             for (diagnostic in diagnostics.forElement(element)) {
                 elementAnnotator.registerDiagnosticAnnotations(diagnostic)
@@ -100,7 +100,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                 Severity.ERROR -> {
                     when (factory) {
                         in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS -> {
-                            val referenceExpression = element as JetReferenceExpression
+                            val referenceExpression = element as KtReferenceExpression
                             val reference = referenceExpression.mainReference
                             if (reference is MultiRangeReference) {
                                 AnnotationPresentationInfo(diagnostic,
@@ -127,7 +127,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                     }
                 }
                 Severity.WARNING -> {
-                    if (factory == Errors.UNUSED_PARAMETER && shouldSuppressUnusedParameter(element as JetParameter)) {
+                    if (factory == Errors.UNUSED_PARAMETER && shouldSuppressUnusedParameter(element as KtParameter)) {
                         return
                     }
 

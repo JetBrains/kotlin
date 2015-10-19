@@ -25,22 +25,22 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class RemoveNameFromFunctionExpressionFix(element: JetNamedFunction) : KotlinQuickFixAction<JetNamedFunction>(element), CleanupFix {
+public class RemoveNameFromFunctionExpressionFix(element: KtNamedFunction) : KotlinQuickFixAction<KtNamedFunction>(element), CleanupFix {
     override fun getText(): String = "Remove identifier from function expression"
     override fun getFamilyName(): String = getText()
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) = removeNameFromFunction(element)
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) = removeNameFromFunction(element)
 
     companion object : JetSingleIntentionActionFactory() {
 
         override fun createAction(diagnostic: Diagnostic) =
                 diagnostic.createIntentionForFirstParentOfType(::RemoveNameFromFunctionExpressionFix)
 
-        private fun removeNameFromFunction(function: JetNamedFunction) {
+        private fun removeNameFromFunction(function: KtNamedFunction) {
             var wereAutoLabelUsages = false
             val name = function.getNameAsName() ?: return
 
-            function.forEachDescendantOfType<JetReturnExpression> {
+            function.forEachDescendantOfType<KtReturnExpression> {
                 if (!wereAutoLabelUsages && it.getLabelNameAsName() == name) {
                     wereAutoLabelUsages = it.analyze().get(BindingContext.LABEL_TARGET, it.getTargetLabel()) == function
                 }
@@ -49,7 +49,7 @@ public class RemoveNameFromFunctionExpressionFix(element: JetNamedFunction) : Ko
             function.getNameIdentifier()?.delete()
 
             if (wereAutoLabelUsages) {
-                val psiFactory = JetPsiFactory(function)
+                val psiFactory = KtPsiFactory(function)
                 val newFunction = psiFactory.createExpressionByPattern("$0@ $1", name, function)
                 function.replace(newFunction)
             }

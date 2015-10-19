@@ -39,7 +39,7 @@ public final class QualifiedExpressionTranslator {
     }
 
     @NotNull
-    public static AccessTranslator getAccessTranslator(@NotNull JetQualifiedExpression expression,
+    public static AccessTranslator getAccessTranslator(@NotNull KtQualifiedExpression expression,
                                                        @NotNull TranslationContext context, boolean forceOrderOfEvaluation) {
         JsExpression receiver = translateReceiver(expression, context);
         if (forceOrderOfEvaluation && receiver != null) {
@@ -52,30 +52,30 @@ public final class QualifiedExpressionTranslator {
 
     @NotNull
     public static JsNode translateQualifiedExpression(
-            @NotNull JetQualifiedExpression expression,
+            @NotNull KtQualifiedExpression expression,
             @NotNull TranslationContext context
     ) {
         JsExpression receiver = translateReceiver(expression, context);
-        JetExpression selector = getSelector(expression);
+        KtExpression selector = getSelector(expression);
         return dispatchToCorrectTranslator(receiver, selector, context);
     }
 
     @NotNull
     private static JsNode dispatchToCorrectTranslator(
             @Nullable JsExpression receiver,
-            @NotNull JetExpression selector,
+            @NotNull KtExpression selector,
             @NotNull TranslationContext context
     ) {
         if (ReferenceTranslator.canBePropertyAccess(selector, context)) {
-            assert selector instanceof JetSimpleNameExpression : "Selectors for properties must be simple names.";
-            return VariableAccessTranslator.newInstance(context, (JetSimpleNameExpression)selector, receiver).translateAsGet();
+            assert selector instanceof KtSimpleNameExpression : "Selectors for properties must be simple names.";
+            return VariableAccessTranslator.newInstance(context, (KtSimpleNameExpression)selector, receiver).translateAsGet();
         }
-        if (selector instanceof JetCallExpression) {
+        if (selector instanceof KtCallExpression) {
             return invokeCallExpressionTranslator(receiver, selector, context);
         }
         //TODO: never get there
-        if (selector instanceof JetSimpleNameExpression) {
-            return ReferenceTranslator.translateSimpleNameWithQualifier((JetSimpleNameExpression) selector, receiver, context);
+        if (selector instanceof KtSimpleNameExpression) {
+            return ReferenceTranslator.translateSimpleNameWithQualifier((KtSimpleNameExpression) selector, receiver, context);
         }
         throw new AssertionError("Unexpected qualified expression: " + selector.getText());
     }
@@ -83,20 +83,20 @@ public final class QualifiedExpressionTranslator {
     @NotNull
     private static JsNode invokeCallExpressionTranslator(
             @Nullable JsExpression receiver,
-            @NotNull JetExpression selector,
+            @NotNull KtExpression selector,
             @NotNull TranslationContext context
     ) {
         try {
-            return CallExpressionTranslator.translate((JetCallExpression) selector, receiver, context);
+            return CallExpressionTranslator.translate((KtCallExpression) selector, receiver, context);
         } catch (RuntimeException e) {
             throw  ErrorReportingUtils.reportErrorWithLocation(selector, e);
         }
     }
 
     @Nullable
-    private static JsExpression translateReceiver(@NotNull JetQualifiedExpression expression,
+    private static JsExpression translateReceiver(@NotNull KtQualifiedExpression expression,
                                                   @NotNull TranslationContext context) {
-        JetExpression receiverExpression = expression.getReceiverExpression();
+        KtExpression receiverExpression = expression.getReceiverExpression();
         if (isFullQualifierForExpression(receiverExpression, context)) {
             return null;
         }
@@ -104,19 +104,19 @@ public final class QualifiedExpressionTranslator {
     }
 
     //TODO: prove correctness
-    private static boolean isFullQualifierForExpression(@Nullable JetExpression receiverExpression, @NotNull TranslationContext context) {
+    private static boolean isFullQualifierForExpression(@Nullable KtExpression receiverExpression, @NotNull TranslationContext context) {
         if (receiverExpression == null) {
             return false;
         }
-        if (receiverExpression instanceof JetReferenceExpression) {
+        if (receiverExpression instanceof KtReferenceExpression) {
             DeclarationDescriptor descriptorForReferenceExpression =
-                getDescriptorForReferenceExpression(context.bindingContext(), (JetReferenceExpression)receiverExpression);
+                getDescriptorForReferenceExpression(context.bindingContext(), (KtReferenceExpression)receiverExpression);
             if (descriptorForReferenceExpression instanceof PackageViewDescriptor) {
                 return true;
             }
         }
-        if (receiverExpression instanceof JetQualifiedExpression) {
-            return isFullQualifierForExpression(((JetQualifiedExpression)receiverExpression).getSelectorExpression(), context);
+        if (receiverExpression instanceof KtQualifiedExpression) {
+            return isFullQualifierForExpression(((KtQualifiedExpression)receiverExpression).getSelectorExpression(), context);
         }
         return false;
     }

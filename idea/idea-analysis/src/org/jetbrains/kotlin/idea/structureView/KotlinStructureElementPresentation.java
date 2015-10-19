@@ -31,9 +31,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider;
-import org.jetbrains.kotlin.psi.JetClassInitializer;
-import org.jetbrains.kotlin.psi.JetModifierListOwner;
-import org.jetbrains.kotlin.psi.JetPsiUtil;
+import org.jetbrains.kotlin.psi.KtClassInitializer;
+import org.jetbrains.kotlin.psi.KtModifierListOwner;
+import org.jetbrains.kotlin.psi.KtPsiUtil;
 
 import javax.swing.*;
 import java.util.Set;
@@ -101,7 +101,7 @@ class KotlinStructureElementPresentation implements ColoredItemPresentation, Loc
             return CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES;
         }
 
-        if (navigatablePsiElement instanceof JetModifierListOwner && JetPsiUtil.isDeprecated((JetModifierListOwner) navigatablePsiElement)) {
+        if (navigatablePsiElement instanceof KtModifierListOwner && KtPsiUtil.isDeprecated((KtModifierListOwner) navigatablePsiElement)) {
             return CodeInsightColors.DEPRECATED_ATTRIBUTES;
         }
 
@@ -128,7 +128,7 @@ class KotlinStructureElementPresentation implements ColoredItemPresentation, Loc
             return text;
         }
 
-        if (navigatablePsiElement instanceof JetClassInitializer) {
+        if (navigatablePsiElement instanceof KtClassInitializer) {
             return "<class initializer>";
         }
 

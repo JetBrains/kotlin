@@ -21,12 +21,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
 
 import java.util.Collection;
 
-public class JetProbablyNothingFunctionShortNameIndex extends StringStubIndexExtension<JetNamedFunction> {
-    private static final StubIndexKey<String, JetNamedFunction> KEY = KotlinIndexUtil.createIndexKey(JetProbablyNothingFunctionShortNameIndex.class);
+public class JetProbablyNothingFunctionShortNameIndex extends StringStubIndexExtension<KtNamedFunction> {
+    private static final StubIndexKey<String, KtNamedFunction> KEY = KotlinIndexUtil.createIndexKey(JetProbablyNothingFunctionShortNameIndex.class);
 
     private static final JetProbablyNothingFunctionShortNameIndex ourInstance = new JetProbablyNothingFunctionShortNameIndex();
 
@@ -38,13 +38,13 @@ public class JetProbablyNothingFunctionShortNameIndex extends StringStubIndexExt
 
     @NotNull
     @Override
-    public StubIndexKey<String, JetNamedFunction> getKey() {
+    public StubIndexKey<String, KtNamedFunction> getKey() {
         return KEY;
     }
 
     @NotNull
     @Override
-    public Collection<JetNamedFunction> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+    public Collection<KtNamedFunction> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
         return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
     }
 }

@@ -36,20 +36,20 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
-private var JetElement.newFqName: FqName? by CopyableUserDataProperty(Key.create("NEW_FQ_NAME"))
-private var JetElement.replaceWithTargetThis: Boolean? by CopyableUserDataProperty(Key.create("REPLACE_WITH_TARGET_THIS"))
-private var JetElement.newTypeText: ((TypeSubstitutor) -> String?)? by CopyableUserDataProperty(Key.create("NEW_TYPE_TEXT"))
+private var KtElement.newFqName: FqName? by CopyableUserDataProperty(Key.create("NEW_FQ_NAME"))
+private var KtElement.replaceWithTargetThis: Boolean? by CopyableUserDataProperty(Key.create("REPLACE_WITH_TARGET_THIS"))
+private var KtElement.newTypeText: ((TypeSubstitutor) -> String?)? by CopyableUserDataProperty(Key.create("NEW_TYPE_TEXT"))
 
 fun markElements(
-        declaration: JetNamedDeclaration,
+        declaration: KtNamedDeclaration,
         context: BindingContext,
         sourceClassDescriptor: ClassDescriptor, targetClassDescriptor: ClassDescriptor?
-): List<JetElement> {
-    val affectedElements = ArrayList<JetElement>()
+): List<KtElement> {
+    val affectedElements = ArrayList<KtElement>()
 
     declaration.accept(
-            object : JetVisitorVoid() {
-                private fun visitSuperOrThis(expression: JetInstanceExpressionWithLabel) {
+            object : KtVisitorVoid() {
+                private fun visitSuperOrThis(expression: KtInstanceExpressionWithLabel) {
                     if (targetClassDescriptor == null) return
 
                     val referenceTarget = context[BindingContext.REFERENCE_TARGET, expression.instanceReference]
@@ -63,7 +63,7 @@ fun markElements(
                     element.allChildren.forEach { it.accept(this) }
                 }
 
-                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                     val resolvedCall = expression.getResolvedCall(context) ?: return
                     var receiver = resolvedCall.getExplicitReceiverValue()
                     if (!receiver.exists()) {
@@ -84,15 +84,15 @@ fun markElements(
                     }
                 }
 
-                override fun visitThisExpression(expression: JetThisExpression) {
+                override fun visitThisExpression(expression: KtThisExpression) {
                     visitSuperOrThis(expression)
                 }
 
-                override fun visitSuperExpression(expression: JetSuperExpression) {
+                override fun visitSuperExpression(expression: KtSuperExpression) {
                     visitSuperOrThis(expression)
                 }
 
-                override fun visitTypeReference(typeReference: JetTypeReference) {
+                override fun visitTypeReference(typeReference: KtTypeReference) {
                     val oldType = context[BindingContext.TYPE, typeReference] ?: return
                     typeReference.newTypeText = f@ { substitutor ->
                         substitutor.substitute(oldType, Variance.INVARIANT)?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) }
@@ -106,20 +106,20 @@ fun markElements(
 }
 
 fun applyMarking(
-        declaration: JetNamedDeclaration,
+        declaration: KtNamedDeclaration,
         substitutor: TypeSubstitutor, targetClassDescriptor: ClassDescriptor
 ) {
-    val psiFactory = JetPsiFactory(declaration)
+    val psiFactory = KtPsiFactory(declaration)
     val targetThis = psiFactory.createExpression("this@${targetClassDescriptor.name.asString()}")
     val shorteningOptionsForThis = ShortenReferences.Options(removeThisLabels = true, removeThis = true)
 
     declaration.accept(
-            object : JetVisitorVoid() {
-                private fun visitSuperOrThis(expression: JetInstanceExpressionWithLabel) {
+            object : KtVisitorVoid() {
+                private fun visitSuperOrThis(expression: KtInstanceExpressionWithLabel) {
                     expression.replaceWithTargetThis?.let {
                         expression.replaceWithTargetThis = null
 
-                        val newThisExpression = expression.replace(targetThis) as JetExpression
+                        val newThisExpression = expression.replace(targetThis) as KtExpression
                         newThisExpression.getQualifiedExpressionForReceiverOrThis().addToShorteningWaitSet(shorteningOptionsForThis)
                     }
                 }
@@ -130,7 +130,7 @@ fun applyMarking(
                     }
                 }
 
-                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                     expression.newFqName?.let {
                         expression.newFqName = null
 
@@ -138,27 +138,27 @@ fun applyMarking(
                     }
                 }
 
-                override fun visitThisExpression(expression: JetThisExpression) {
+                override fun visitThisExpression(expression: KtThisExpression) {
                     this.visitSuperOrThis(expression)
                 }
 
-                override fun visitSuperExpression(expression: JetSuperExpression) {
+                override fun visitSuperExpression(expression: KtSuperExpression) {
                     this.visitSuperOrThis(expression)
                 }
 
-                override fun visitTypeReference(typeReference: JetTypeReference) {
+                override fun visitTypeReference(typeReference: KtTypeReference) {
                     typeReference.newTypeText?.let f@ {
                         typeReference.newTypeText = null
 
                         val newTypeText = it(substitutor) ?: return@f
-                        (typeReference.replace(psiFactory.createType(newTypeText)) as JetElement).addToShorteningWaitSet()
+                        (typeReference.replace(psiFactory.createType(newTypeText)) as KtElement).addToShorteningWaitSet()
                     }
                 }
             }
     )
 }
 
-fun clearMarking(markedElements: List<JetElement>) {
+fun clearMarking(markedElements: List<KtElement>) {
     markedElements.forEach {
         it.newFqName = null
         it.newTypeText = null

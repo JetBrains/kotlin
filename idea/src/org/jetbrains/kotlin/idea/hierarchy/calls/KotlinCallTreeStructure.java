@@ -43,9 +43,9 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
         this.scopeType = scopeType;
     }
 
-    protected static JetElement getEnclosingElementForLocalDeclaration(PsiElement element) {
-        return element instanceof JetNamedDeclaration
-                                   ? JetPsiUtil.getEnclosingElementForLocalDeclaration((JetNamedDeclaration) element)
+    protected static KtElement getEnclosingElementForLocalDeclaration(PsiElement element) {
+        return element instanceof KtNamedDeclaration
+                                   ? KtPsiUtil.getEnclosingElementForLocalDeclaration((KtNamedDeclaration) element)
                                    : null;
     }
 
@@ -53,7 +53,7 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
             Project project, PsiElement element, HierarchyNodeDescriptor parent, boolean navigateToReference
     ) {
         boolean root = (parent == null);
-        return element instanceof JetElement
+        return element instanceof KtElement
                ? new KotlinCallHierarchyNodeDescriptor(project, parent, element, root, navigateToReference)
                : new CallHierarchyNodeDescriptor(project, parent, element, root, navigateToReference);
     }
@@ -68,8 +68,8 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
         @Override
         public Boolean invoke(@javax.annotation.Nullable PsiElement input) {
             return input instanceof PsiMethod
-                   || ((input instanceof JetNamedFunction || input instanceof JetClassOrObject || input instanceof JetProperty)
-                       && !JetPsiUtil.isLocal((JetNamedDeclaration) input));
+                   || ((input instanceof KtNamedFunction || input instanceof KtClassOrObject || input instanceof KtProperty)
+                       && !KtPsiUtil.isLocal((KtNamedDeclaration) input));
         }
     };
 
@@ -91,18 +91,18 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
             return (PsiMethod) element;
         }
 
-        if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
-            return LightClassUtil.INSTANCE$.getLightClassMethod((JetFunction) element);
+        if (element instanceof KtNamedFunction || element instanceof KtSecondaryConstructor) {
+            return LightClassUtil.INSTANCE$.getLightClassMethod((KtFunction) element);
         }
 
-        if (element instanceof JetProperty) {
+        if (element instanceof KtProperty) {
             LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
-                    LightClassUtil.INSTANCE$.getLightClassPropertyMethods((JetProperty) element);
+                    LightClassUtil.INSTANCE$.getLightClassPropertyMethods((KtProperty) element);
             return (propertyMethods.getGetter() != null) ? propertyMethods.getGetter() : propertyMethods.getSetter();
         }
 
-        if (element instanceof JetClassOrObject) {
-            PsiClass psiClass = LightClassUtil.INSTANCE$.getPsiClass((JetClassOrObject) element);
+        if (element instanceof KtClassOrObject) {
+            PsiClass psiClass = LightClassUtil.INSTANCE$.getPsiClass((KtClassOrObject) element);
             if (psiClass == null) return null;
 
             PsiMethod[] constructors = psiClass.getConstructors();

@@ -23,15 +23,15 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.editor.fixers.range
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetForExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class RemoveForLoopIndicesInspection : IntentionBasedInspection<JetForExpression>(
+public class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpression>(
         listOf(IntentionBasedInspection.IntentionData(RemoveForLoopIndicesIntention())),
         "Index is not used in the loop body",
         javaClass()
@@ -40,11 +40,11 @@ public class RemoveForLoopIndicesInspection : IntentionBasedInspection<JetForExp
         get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-public class RemoveForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForExpression>(javaClass(), "Remove indices in 'for' loop") {
+public class RemoveForLoopIndicesIntention : JetSelfTargetingRangeIntention<KtForExpression>(javaClass(), "Remove indices in 'for' loop") {
     private val WITH_INDEX_FQ_NAME = "kotlin.withIndex"
 
-    override fun applicabilityRange(element: JetForExpression): TextRange? {
-        val loopRange = element.loopRange as? JetDotQualifiedExpression ?: return null
+    override fun applicabilityRange(element: KtForExpression): TextRange? {
+        val loopRange = element.loopRange as? KtDotQualifiedExpression ?: return null
         val multiParameter = element.multiParameter ?: return null
         if (multiParameter.entries.size() != 2) return null
 
@@ -59,12 +59,12 @@ public class RemoveForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetF
         return indexVar.nameIdentifier?.range
     }
 
-    override fun applyTo(element: JetForExpression, editor: Editor) {
+    override fun applyTo(element: KtForExpression, editor: Editor) {
         val multiParameter = element.multiParameter!!
-        val loopRange = element.loopRange as JetDotQualifiedExpression
+        val loopRange = element.loopRange as KtDotQualifiedExpression
 
         val elementVar = multiParameter.entries[1]
-        val loop = JetPsiFactory(element).createExpressionByPattern("for ($0 in _) {}", elementVar.text) as JetForExpression
+        val loop = KtPsiFactory(element).createExpressionByPattern("for ($0 in _) {}", elementVar.text) as KtForExpression
         multiParameter.replace(loop.loopParameter!!)
 
         loopRange.replace(loopRange.receiverExpression)

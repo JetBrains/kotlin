@@ -25,10 +25,10 @@ import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
 import com.intellij.spellchecker.tokenizer.SuppressibleSpellcheckingStrategy
 import com.intellij.spellchecker.tokenizer.Tokenizer
 import com.intellij.spellchecker.tokenizer.TokenizerBase
-import org.jetbrains.kotlin.psi.JetLiteralStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 
 class KotlinSpellcheckingStrategy: SpellcheckingStrategy() {
-    private val plainTextTokenizer = TokenizerBase<JetLiteralStringTemplateEntry>(PlainTextSplitter.getInstance())
+    private val plainTextTokenizer = TokenizerBase<KtLiteralStringTemplateEntry>(PlainTextSplitter.getInstance())
     private val emptyTokenizer = SpellcheckingStrategy.EMPTY_TOKENIZER
 
     override fun getTokenizer(element: PsiElement?): Tokenizer<out PsiElement?> {
@@ -37,7 +37,7 @@ class KotlinSpellcheckingStrategy: SpellcheckingStrategy() {
             element is PsiNameIdentifierOwner || element is PsiComment ->
                 super.getTokenizer(element)
 
-            element is JetLiteralStringTemplateEntry -> plainTextTokenizer
+            element is KtLiteralStringTemplateEntry -> plainTextTokenizer
 
             else ->
                 emptyTokenizer

@@ -19,20 +19,20 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.lang.ExpressionTypeProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.actions.ShowExpressionTypeAction
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetStatementExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtStatementExpression
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
-class KotlinExpressionTypeProvider : ExpressionTypeProvider<JetExpression>() {
-    override fun getExpressionsAt(elementAt: PsiElement): List<JetExpression> =
-            elementAt.parentsWithSelf.filterIsInstance<JetExpression>().filterNot { it.shouldSkip() }.toArrayList()
+class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
+    override fun getExpressionsAt(elementAt: PsiElement): List<KtExpression> =
+            elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filterNot { it.shouldSkip() }.toArrayList()
 
-    private fun JetExpression.shouldSkip(): Boolean {
-        return this is JetStatementExpression && this !is JetFunction
+    private fun KtExpression.shouldSkip(): Boolean {
+        return this is KtStatementExpression && this !is KtFunction
     }
 
-    override fun getInformationHint(element: JetExpression): String {
+    override fun getInformationHint(element: KtExpression): String {
         val type = ShowExpressionTypeAction.typeByExpression(element) ?: return "Type is unknown"
         return ShowExpressionTypeAction.renderTypeHint(type)
     }

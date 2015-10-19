@@ -17,19 +17,19 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
 public interface LocalDescriptorResolver {
-    fun resolveLocalDeclaration(declaration: JetDeclaration): DeclarationDescriptor
+    fun resolveLocalDeclaration(declaration: KtDeclaration): DeclarationDescriptor
 }
 
 public class CompilerLocalDescriptorResolver(
         private val lazyDeclarationResolver: LazyDeclarationResolver
 ) : LocalDescriptorResolver {
-    override fun resolveLocalDeclaration(declaration: JetDeclaration): DeclarationDescriptor {
+    override fun resolveLocalDeclaration(declaration: KtDeclaration): DeclarationDescriptor {
         return lazyDeclarationResolver.resolveToDescriptor(declaration)
     }
 }

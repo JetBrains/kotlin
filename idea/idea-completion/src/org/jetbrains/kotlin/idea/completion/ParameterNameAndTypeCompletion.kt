@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.util.*
 
 class ParameterNameAndTypeCompletion(
@@ -101,8 +101,8 @@ class ParameterNameAndTypeCompletion(
 
     public fun addFromParametersInFile(position: PsiElement, resolutionFacade: ResolutionFacade, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
         val lookupElementToCount = LinkedHashMap<LookupElement, Int>()
-        position.getContainingFile().forEachDescendantOfType<JetParameter>(
-                canGoInside = { it !is JetExpression || it is JetDeclaration } // we analyze parameters inside bodies to not resolve too much
+        position.getContainingFile().forEachDescendantOfType<KtParameter>(
+                canGoInside = { it !is KtExpression || it is KtDeclaration } // we analyze parameters inside bodies to not resolve too much
         ) { parameter ->
             ProgressManager.checkCanceled()
 
@@ -152,7 +152,7 @@ class ParameterNameAndTypeCompletion(
         }
     }
 
-    private fun JetType.isVisible(visibilityFilter: (DeclarationDescriptor) -> Boolean): Boolean {
+    private fun KtType.isVisible(visibilityFilter: (DeclarationDescriptor) -> Boolean): Boolean {
         if (isError()) return false
         val classifier = getConstructor().getDeclarationDescriptor() ?: return false
         return visibilityFilter(classifier) && getArguments().all { it.isStarProjection || it.getType().isVisible(visibilityFilter) }
@@ -175,7 +175,7 @@ class ParameterNameAndTypeCompletion(
                 = lookupElementFactory.createLookupElementForJavaClass(psiClass, qualifyNestedClasses = true)
     }
 
-    private class ArbitraryType(private val type: JetType) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)) {
+    private class ArbitraryType(private val type: KtType) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)) {
         override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
                 = lookupElementFactory.createLookupElementForType(type)
     }

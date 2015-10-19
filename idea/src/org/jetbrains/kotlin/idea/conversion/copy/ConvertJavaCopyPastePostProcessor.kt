@@ -43,8 +43,8 @@ import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.j2k.ParseContext
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import java.awt.datatransfer.Transferable
 import java.util.*
 
@@ -78,7 +78,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         if (data !is CopiedJavaCode) return
 
         val document = editor.getDocument()
-        val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(document) as? JetFile ?: return
+        val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(document) as? KtFile ?: return
 
         data class Result(val text: String?, val referenceData: Collection<KotlinReferenceData>, val explicitImports: Set<FqName>)
 
@@ -201,7 +201,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         return ConversionResult(convertedCode, parseContext ?: ParseContext.CODE_BLOCK, importsToAdd, convertedCode != originalCode)
     }
 
-    private fun buildReferenceData(text: String, parseContext: ParseContext, importsAndPackage: String, targetFile: JetFile): Collection<KotlinReferenceData> {
+    private fun buildReferenceData(text: String, parseContext: ParseContext, importsAndPackage: String, targetFile: KtFile): Collection<KotlinReferenceData> {
         var blockStart: Int? = null
         var blockEnd: Int? = null
         val fileText = StringBuilder {
@@ -221,7 +221,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
             append(contextSuffix)
         }.toString()
 
-        val dummyFile = JetPsiFactory(targetFile.getProject()).createAnalyzableFile("dummy.kt", fileText, targetFile)
+        val dummyFile = KtPsiFactory(targetFile.getProject()).createAnalyzableFile("dummy.kt", fileText, targetFile)
 
         return KotlinCopyPasteReferenceProcessor().collectReferenceData(dummyFile, intArrayOf(blockStart!!), intArrayOf(blockEnd!!))
     }

@@ -24,14 +24,14 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtProperty
 import java.util.*
 
 public abstract class AndroidLayoutXmlFileManager(val project: Project) {
 
     public abstract val androidModuleInfo: AndroidModuleInfo?
 
-    public open fun propertyToXmlAttributes(property: JetProperty): List<PsiElement> = listOf()
+    public open fun propertyToXmlAttributes(property: KtProperty): List<PsiElement> = listOf()
 
     public fun getLayoutXmlFiles(): Map<String, List<PsiFile>> {
         val info = androidModuleInfo ?: return mapOf()

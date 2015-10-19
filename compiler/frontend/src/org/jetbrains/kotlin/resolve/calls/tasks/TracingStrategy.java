@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collection;
 
@@ -89,10 +89,10 @@ public interface TracingStrategy {
         ) {}
 
         @Override
-        public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke) {}
+        public void unsafeCall(@NotNull BindingTrace trace, @NotNull KtType type, boolean isCallForImplicitInvoke) {}
 
         @Override
-        public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {}
+        public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull KtType type) {}
 
         @Override
         public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {}
@@ -145,9 +145,9 @@ public interface TracingStrategy {
             @NotNull ExplicitReceiverKind explicitReceiverKind
     );
 
-    void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke);
+    void unsafeCall(@NotNull BindingTrace trace, @NotNull KtType type, boolean isCallForImplicitInvoke);
 
-    void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type);
+    void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull KtType type);
 
     void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor);
 

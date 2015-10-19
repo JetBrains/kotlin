@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
@@ -108,7 +108,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
 
         String text = FileUtil.loadFile(file, true);
 
-        JetFile psiFile = JetTestUtils.createFile(file.getName(), text, jetCoreEnvironment.getProject());
+        KtFile psiFile = JetTestUtils.createFile(file.getName(), text, jetCoreEnvironment.getProject());
 
         ModuleVisibilityManager.SERVICE.getInstance(jetCoreEnvironment.getProject()).addModule(new ModuleBuilder("module for test", tmpdir.getAbsolutePath(), "test"));
 

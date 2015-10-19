@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.idea.findUsages
 import com.intellij.usages.Usage
 import com.intellij.usages.rules.ImportFilteringRule
 import com.intellij.usages.rules.PsiElementUsage
-import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 public class JetImportFilteringRule : ImportFilteringRule() {
     public override fun isVisible(usage: Usage): Boolean {
         if (usage is PsiElementUsage) {
-            return usage.getElement()?.getNonStrictParentOfType<JetImportDirective>() == null
+            return usage.getElement()?.getNonStrictParentOfType<KtImportDirective>() == null
         }
 
         return true

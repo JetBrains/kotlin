@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 
 public interface PseudoValue {
     public val debugName: String
-    public val element: JetElement?
+    public val element: KtElement?
     public val createdAt: InstructionWithValue?
 }
 
 public interface PseudoValueFactory {
-    public fun newValue(element: JetElement?, instruction: InstructionWithValue?): PseudoValue
+    public fun newValue(element: KtElement?, instruction: InstructionWithValue?): PseudoValue
 }

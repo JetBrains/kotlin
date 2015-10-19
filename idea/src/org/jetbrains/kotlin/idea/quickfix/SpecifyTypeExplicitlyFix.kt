@@ -22,9 +22,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 public class SpecifyTypeExplicitlyFix : PsiElementBaseIntentionAction() {
@@ -38,10 +38,10 @@ public class SpecifyTypeExplicitlyFix : PsiElementBaseIntentionAction() {
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
         val declaration = declarationByElement(element)
-        if (declaration is JetProperty) {
+        if (declaration is KtProperty) {
             setText("Specify type explicitly")
         }
-        else if (declaration is JetNamedFunction) {
+        else if (declaration is KtNamedFunction) {
             setText("Specify return type explicitly")
         }
         else {
@@ -51,7 +51,7 @@ public class SpecifyTypeExplicitlyFix : PsiElementBaseIntentionAction() {
         return !SpecifyTypeExplicitlyIntention.getTypeForDeclaration(declaration).isError()
     }
 
-    private fun declarationByElement(element: PsiElement): JetCallableDeclaration? {
-        return PsiTreeUtil.getParentOfType(element, javaClass<JetProperty>(), javaClass<JetNamedFunction>()) as JetCallableDeclaration?
+    private fun declarationByElement(element: PsiElement): KtCallableDeclaration? {
+        return PsiTreeUtil.getParentOfType(element, javaClass<KtProperty>(), javaClass<KtNamedFunction>()) as KtCallableDeclaration?
     }
 }

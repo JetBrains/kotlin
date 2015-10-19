@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.codegen.when;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.FrameMap;
-import org.jetbrains.kotlin.psi.JetWhenEntry;
-import org.jetbrains.kotlin.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.KtWhenEntry;
+import org.jetbrains.kotlin.psi.KtWhenExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -33,7 +33,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.*;
 
 abstract public class SwitchCodegen {
-    protected final JetWhenExpression expression;
+    protected final KtWhenExpression expression;
     protected final boolean isStatement;
     protected final ExpressionCodegen codegen;
     protected final BindingContext bindingContext;
@@ -48,7 +48,7 @@ abstract public class SwitchCodegen {
     protected Label defaultLabel;
 
     public SwitchCodegen(
-            @NotNull JetWhenExpression expression, boolean isStatement,
+            @NotNull KtWhenExpression expression, boolean isStatement,
             @NotNull ExpressionCodegen codegen
     ) {
         this.expression = expression;
@@ -93,7 +93,7 @@ abstract public class SwitchCodegen {
      * Behaviour may be changed by overriding processConstant
      */
     private void prepareConfiguration() {
-        for (JetWhenEntry entry : expression.getEntries()) {
+        for (KtWhenEntry entry : expression.getEntries()) {
             Label entryLabel = new Label();
 
             for (ConstantValue<?> constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext)) {
@@ -131,7 +131,7 @@ abstract public class SwitchCodegen {
 
     protected void generateNullCheckIfNeeded() {
         assert expression.getSubjectExpression() != null : "subject expression can't be null";
-        JetType subjectJetType = bindingContext.getType(expression.getSubjectExpression());
+        KtType subjectJetType = bindingContext.getType(expression.getSubjectExpression());
 
         assert subjectJetType != null : "subject type can't be null (i.e. void)";
 
@@ -151,9 +151,9 @@ abstract public class SwitchCodegen {
         }
     }
 
-    private int findNullEntryIndex(@NotNull JetWhenExpression expression) {
+    private int findNullEntryIndex(@NotNull KtWhenExpression expression) {
         int entryIndex = 0;
-        for (JetWhenEntry entry : expression.getEntries()) {
+        for (KtWhenEntry entry : expression.getEntries()) {
             for (ConstantValue<?> constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext)) {
                 if (constant instanceof NullValue) {
                     return entryIndex;
@@ -214,7 +214,7 @@ abstract public class SwitchCodegen {
     protected void generateEntries() {
         // resolving entries' entryLabels and generating entries' code
         Iterator<Label> entryLabelsIterator = entryLabels.iterator();
-        for (JetWhenEntry entry : expression.getEntries()) {
+        for (KtWhenEntry entry : expression.getEntries()) {
             v.visitLabel(entryLabelsIterator.next());
 
             FrameMap.Mark mark = codegen.myFrameMap.mark();

@@ -23,40 +23,40 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 
-public class ConvertToStringTemplateInspection : IntentionBasedInspection<JetBinaryExpression>(
+public class ConvertToStringTemplateInspection : IntentionBasedInspection<KtBinaryExpression>(
         ConvertToStringTemplateIntention(),
         { ConvertToStringTemplateIntention().shouldSuggestToConvert(it) }
 )
 
-public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Convert concatenation to template") {
-    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
+public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependentIntention<KtBinaryExpression>(javaClass(), "Convert concatenation to template") {
+    override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         if (!isApplicableToNoParentCheck(element)) return false
 
         val parent = element.getParent()
-        if (parent is JetBinaryExpression && isApplicableToNoParentCheck(parent)) return false
+        if (parent is KtBinaryExpression && isApplicableToNoParentCheck(parent)) return false
 
         return true
     }
 
-    override fun applyTo(element: JetBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
         applyTo(element)
     }
 
-    public fun applyTo(element: JetBinaryExpression): JetStringTemplateExpression {
+    public fun applyTo(element: KtBinaryExpression): KtStringTemplateExpression {
         return element.replaced(buildReplacement(element))
     }
 
-    public fun shouldSuggestToConvert(expression: JetBinaryExpression): Boolean {
+    public fun shouldSuggestToConvert(expression: KtBinaryExpression): Boolean {
         val entries = buildReplacement(expression).entries
-        return entries.none { it is JetBlockStringTemplateEntry } && entries.count { it is JetLiteralStringTemplateEntry } > 1
+        return entries.none { it is KtBlockStringTemplateEntry } && entries.count { it is KtLiteralStringTemplateEntry } > 1
     }
 
-    private fun isApplicableToNoParentCheck(expression: JetBinaryExpression): Boolean {
-        if (expression.getOperationToken() != JetTokens.PLUS) return false
+    private fun isApplicableToNoParentCheck(expression: KtBinaryExpression): Boolean {
+        if (expression.getOperationToken() != KtTokens.PLUS) return false
         if (!KotlinBuiltIns.isString(expression.analyze().getType(expression))) return false
 
         val left = expression.getLeft() ?: return false
@@ -64,36 +64,36 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
         return !PsiUtilCore.hasErrorElementChild(left) && !PsiUtilCore.hasErrorElementChild(right)
     }
 
-    private fun buildReplacement(expression: JetBinaryExpression): JetStringTemplateExpression {
+    private fun buildReplacement(expression: KtBinaryExpression): KtStringTemplateExpression {
         val rightText = buildText(expression.getRight(), false)
-        return fold(expression.getLeft(), rightText, JetPsiFactory(expression))
+        return fold(expression.getLeft(), rightText, KtPsiFactory(expression))
     }
 
-    private fun fold(left: JetExpression?, right: String, factory: JetPsiFactory): JetStringTemplateExpression {
+    private fun fold(left: KtExpression?, right: String, factory: KtPsiFactory): KtStringTemplateExpression {
         val forceBraces = !right.isEmpty() && right.first() != '$' && right.first().isJavaIdentifierPart()
 
-        if (left is JetBinaryExpression && isApplicableToNoParentCheck(left)) {
+        if (left is KtBinaryExpression && isApplicableToNoParentCheck(left)) {
             val leftRight = buildText(left.getRight(), forceBraces)
             return fold(left.getLeft(), leftRight + right, factory)
         }
         else {
             val leftText = buildText(left, forceBraces)
-            return factory.createExpression("\"$leftText$right\"") as JetStringTemplateExpression
+            return factory.createExpression("\"$leftText$right\"") as KtStringTemplateExpression
         }
     }
 
-    private fun buildText(expr: JetExpression?, forceBraces: Boolean): String {
+    private fun buildText(expr: KtExpression?, forceBraces: Boolean): String {
         if (expr == null) return ""
-        val expression = JetPsiUtil.safeDeparenthesize(expr)
+        val expression = KtPsiUtil.safeDeparenthesize(expr)
         val expressionText = expression.getText()
         return when (expression) {
-            is JetConstantExpression -> {
+            is KtConstantExpression -> {
                 val bindingContext = expression.analyze()
                 val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
                 constant?.getValue(bindingContext.getType(expression)!!).toString()
             }
 
-            is JetStringTemplateExpression -> {
+            is KtStringTemplateExpression -> {
                 val base = if (expressionText.startsWith("\"\"\"") && expressionText.endsWith("\"\"\"")) {
                     val unquoted = expressionText.substring(3, expressionText.length() - 3)
                     StringUtil.escapeStringCharacters(unquoted)
@@ -109,7 +109,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
                 }
             }
 
-            is JetNameReferenceExpression ->
+            is KtNameReferenceExpression ->
                 "$" + (if (forceBraces) "{$expressionText}" else expressionText)
 
             null -> ""

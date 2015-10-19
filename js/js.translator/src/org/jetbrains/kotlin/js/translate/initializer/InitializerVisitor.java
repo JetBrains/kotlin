@@ -43,8 +43,8 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public final Void visitProperty(@NotNull JetProperty property, @NotNull TranslationContext context) {
-        JetExpression initializer = property.getInitializer();
+    public final Void visitProperty(@NotNull KtProperty property, @NotNull TranslationContext context) {
+        KtExpression initializer = property.getInitializer();
         if (initializer != null) {
             result.add(generateInitializerForProperty(context, getPropertyDescriptor(context.bindingContext(), property),
                                                       Translation.translateAsExpression(initializer, context)));
@@ -57,8 +57,8 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitAnonymousInitializer(@NotNull JetClassInitializer initializer, @NotNull TranslationContext context) {
-        JetExpression initializerBody = initializer.getBody();
+    public Void visitAnonymousInitializer(@NotNull KtClassInitializer initializer, @NotNull TranslationContext context) {
+        KtExpression initializerBody = initializer.getBody();
         if (initializerBody != null) {
             result.add(translateAsStatementAndMergeInBlockIfNeeded(initializerBody, context));
         }
@@ -67,12 +67,12 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
 
     @Override
     // Not interested in other types of declarations, they do not contain initializers.
-    public Void visitDeclaration(@NotNull JetDeclaration expression, @NotNull TranslationContext context) {
+    public Void visitDeclaration(@NotNull KtDeclaration expression, @NotNull TranslationContext context) {
         return null;
     }
 
     @Override
-    public Void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, @NotNull TranslationContext context) {
+    public Void visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, @NotNull TranslationContext context) {
         if (!declaration.isCompanion()) {
             InitializerUtils.generateObjectInitializer(declaration, result, context);
         }
@@ -80,7 +80,7 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, TranslationContext data) {
+    public Void visitSecondaryConstructor(@NotNull KtSecondaryConstructor constructor, TranslationContext data) {
         return null;
     }
 }

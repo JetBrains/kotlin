@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.psi.*;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.lexer.JetTokens.OVERRIDE_KEYWORD;
-import static org.jetbrains.kotlin.lexer.JetTokens.PUBLIC_KEYWORD;
+import static org.jetbrains.kotlin.lexer.KtTokens.OVERRIDE_KEYWORD;
+import static org.jetbrains.kotlin.lexer.KtTokens.PUBLIC_KEYWORD;
 
 public class AddOverrideToEqualsHashCodeToStringFix extends KotlinQuickFixAction<PsiElement> {
     public AddOverrideToEqualsHashCodeToStringFix(@NotNull PsiElement element) {
@@ -59,14 +59,14 @@ public class AddOverrideToEqualsHashCodeToStringFix extends KotlinQuickFixAction
     }
 
     private static boolean isEqualsHashCodeOrToString(@Nullable PsiElement element) {
-        if (!(element instanceof JetNamedFunction)) return false;
-        JetNamedFunction function = (JetNamedFunction) element;
+        if (!(element instanceof KtNamedFunction)) return false;
+        KtNamedFunction function = (KtNamedFunction) element;
         String name = function.getName();
 
         if ("equals".equals(name)) {
-            List<JetParameter> parameters = function.getValueParameters();
+            List<KtParameter> parameters = function.getValueParameters();
             if (parameters.size() != 1) return false;
-            JetTypeReference parameterType = parameters.iterator().next().getTypeReference();
+            KtTypeReference parameterType = parameters.iterator().next().getTypeReference();
             return parameterType != null && "Any?".equals(parameterType.getText());
         }
 
@@ -78,14 +78,14 @@ public class AddOverrideToEqualsHashCodeToStringFix extends KotlinQuickFixAction
     }
 
     @Override
-    protected void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(file.getProject());
+    protected void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        Collection<KtFile> files = PluginJetFilesProvider.allFilesInProject(file.getProject());
 
-        for (JetFile jetFile : files) {
+        for (KtFile jetFile : files) {
             for (Diagnostic diagnostic : ResolutionUtils.analyzeFully(jetFile).getDiagnostics()) {
                 if (diagnostic.getFactory() != Errors.VIRTUAL_MEMBER_HIDDEN) continue;
 
-                JetModifierListOwner element = (JetModifierListOwner) diagnostic.getPsiElement();
+                KtModifierListOwner element = (KtModifierListOwner) diagnostic.getPsiElement();
                 if (!isEqualsHashCodeOrToString(element)) continue;
 
                 element.addModifier(OVERRIDE_KEYWORD);

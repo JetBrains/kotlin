@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.DelegatingType
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.io.Serializable
 
 class BuiltInClassesAreSerializableOnJvm(
@@ -40,14 +40,14 @@ class BuiltInClassesAreSerializableOnJvm(
 
     private val mockSerializableType = createMockJavaIoSerializableType()
 
-    private fun createMockJavaIoSerializableType(): JetType {
+    private fun createMockJavaIoSerializableType(): KtType {
         val mockJavaIoPackageFragment = object : PackageFragmentDescriptorImpl(moduleDescriptor, FqName("java.io")) {
-            override fun getMemberScope() = JetScope.Empty
+            override fun getMemberScope() = KtScope.Empty
         }
 
         //NOTE: can't reference anyType right away, because this is sometimes called when JvmBuiltIns are initializing
         val superTypes = listOf(object : DelegatingType() {
-            override fun getDelegate(): JetType {
+            override fun getDelegate(): KtType {
                 return JvmBuiltIns.Instance.anyType
             }
         })
@@ -56,11 +56,11 @@ class BuiltInClassesAreSerializableOnJvm(
                 mockJavaIoPackageFragment, Name.identifier("Serializable"), Modality.ABSTRACT, superTypes, SourceElement.NO_SOURCE
         )
 
-        mockSerializableClass.initialize(JetScope.Empty, emptySet(), null)
+        mockSerializableClass.initialize(KtScope.Empty, emptySet(), null)
         return mockSerializableClass.defaultType
     }
 
-    override fun forClass(classDescriptor: DeserializedClassDescriptor): Collection<JetType> {
+    override fun forClass(classDescriptor: DeserializedClassDescriptor): Collection<KtType> {
         if (isSerializableInJava(classDescriptor.fqNameSafe)) {
             return listOf(mockSerializableType)
         }

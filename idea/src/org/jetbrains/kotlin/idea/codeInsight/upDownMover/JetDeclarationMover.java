@@ -25,7 +25,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 
 import java.util.ArrayList;
@@ -73,21 +73,21 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
     }
 
     @NotNull
-    private static List<PsiElement> getDeclarationAnchors(@NotNull JetDeclaration declaration) {
+    private static List<PsiElement> getDeclarationAnchors(@NotNull KtDeclaration declaration) {
         final List<PsiElement> memberSuspects = new ArrayList<PsiElement>();
 
-        JetModifierList modifierList = declaration.getModifierList();
+        KtModifierList modifierList = declaration.getModifierList();
         if (modifierList != null) memberSuspects.add(modifierList);
 
-        if (declaration instanceof JetNamedDeclaration) {
-            PsiElement nameIdentifier = ((JetNamedDeclaration) declaration).getNameIdentifier();
+        if (declaration instanceof KtNamedDeclaration) {
+            PsiElement nameIdentifier = ((KtNamedDeclaration) declaration).getNameIdentifier();
             if (nameIdentifier != null) memberSuspects.add(nameIdentifier);
         }
 
         declaration.accept(
-                new JetVisitorVoid() {
+                new KtVisitorVoid() {
                     @Override
-                    public void visitAnonymousInitializer(@NotNull JetClassInitializer initializer) {
+                    public void visitAnonymousInitializer(@NotNull KtClassInitializer initializer) {
                         PsiElement brace = initializer.getOpenBraceNode();
                         if (brace != null) {
                             memberSuspects.add(brace);
@@ -95,32 +95,32 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
                     }
 
                     @Override
-                    public void visitNamedFunction(@NotNull JetNamedFunction function) {
+                    public void visitNamedFunction(@NotNull KtNamedFunction function) {
                         PsiElement equalsToken = function.getEqualsToken();
                         if (equalsToken != null) memberSuspects.add(equalsToken);
 
-                        JetTypeParameterList typeParameterList = function.getTypeParameterList();
+                        KtTypeParameterList typeParameterList = function.getTypeParameterList();
                         if (typeParameterList != null) memberSuspects.add(typeParameterList);
 
-                        JetTypeReference receiverTypeRef = function.getReceiverTypeReference();
+                        KtTypeReference receiverTypeRef = function.getReceiverTypeReference();
                         if (receiverTypeRef != null) memberSuspects.add(receiverTypeRef);
 
-                        JetTypeReference returnTypeRef = function.getTypeReference();
+                        KtTypeReference returnTypeRef = function.getTypeReference();
                         if (returnTypeRef != null) memberSuspects.add(returnTypeRef);
                     }
 
                     @Override
-                    public void visitProperty(@NotNull JetProperty property) {
+                    public void visitProperty(@NotNull KtProperty property) {
                         PsiElement valOrVarKeyword = property.getValOrVarKeyword();
                         if (valOrVarKeyword != null) memberSuspects.add(valOrVarKeyword);
 
-                        JetTypeParameterList typeParameterList = property.getTypeParameterList();
+                        KtTypeParameterList typeParameterList = property.getTypeParameterList();
                         if (typeParameterList != null) memberSuspects.add(typeParameterList);
 
-                        JetTypeReference receiverTypeRef = property.getReceiverTypeReference();
+                        KtTypeReference receiverTypeRef = property.getReceiverTypeReference();
                         if (receiverTypeRef != null) memberSuspects.add(receiverTypeRef);
 
-                        JetTypeReference returnTypeRef = property.getTypeReference();
+                        KtTypeReference returnTypeRef = property.getTypeReference();
                         if (returnTypeRef != null) memberSuspects.add(returnTypeRef);
                     }
                 }
@@ -130,17 +130,17 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
     }
 
     private static final Class[] DECLARATION_CONTAINER_CLASSES =
-            {JetClassBody.class, JetClassInitializer.class, JetFunction.class, JetPropertyAccessor.class, JetFile.class};
+            {KtClassBody.class, KtClassInitializer.class, KtFunction.class, KtPropertyAccessor.class, KtFile.class};
 
-    private static final Class[] CLASSBODYLIKE_DECLARATION_CONTAINER_CLASSES = {JetClassBody.class, JetFile.class};
+    private static final Class[] CLASSBODYLIKE_DECLARATION_CONTAINER_CLASSES = {KtClassBody.class, KtFile.class};
 
     @Nullable
-    private static JetDeclaration getMovableDeclaration(@Nullable PsiElement element) {
+    private static KtDeclaration getMovableDeclaration(@Nullable PsiElement element) {
         if (element == null) return null;
 
-        JetDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetDeclaration.class, false);
-        if (declaration instanceof JetParameter) return null;
-        if (declaration instanceof JetTypeParameter) {
+        KtDeclaration declaration = PsiTreeUtil.getParentOfType(element, KtDeclaration.class, false);
+        if (declaration instanceof KtParameter) return null;
+        if (declaration instanceof KtTypeParameter) {
             return getMovableDeclaration(declaration.getParent());
         }
 
@@ -151,7 +151,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
 
     @Override
     protected boolean checkSourceElement(@NotNull PsiElement element) {
-        return element instanceof JetDeclaration;
+        return element instanceof KtDeclaration;
     }
 
     @Override
@@ -159,7 +159,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         PsiElement first;
         PsiElement last;
 
-        if (element instanceof JetDeclaration) {
+        if (element instanceof KtDeclaration) {
             first = element.getFirstChild();
             last = element.getLastChild();
 
@@ -188,8 +188,8 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
 
         TextRange lineTextRange = new TextRange(doc.getLineStartOffset(oldRange.startLine),
                                                 doc.getLineEndOffset(oldRange.endLine));
-        if (element instanceof JetDeclaration) {
-            for (PsiElement anchor : getDeclarationAnchors((JetDeclaration) element)) {
+        if (element instanceof KtDeclaration) {
+            for (PsiElement anchor : getDeclarationAnchors((KtDeclaration) element)) {
                 TextRange suspectTextRange = anchor.getTextRange();
                 if (suspectTextRange != null && lineTextRange.intersects(suspectTextRange)) return new LineRange(startLine, endLine);
             }
@@ -211,27 +211,27 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         PsiElement nextParent = null;
 
         // moving out of code block
-        if (sibling.getNode().getElementType() == (down ? JetTokens.RBRACE : JetTokens.LBRACE)) {
+        if (sibling.getNode().getElementType() == (down ? KtTokens.RBRACE : KtTokens.LBRACE)) {
             // elements which aren't immediately placed in class body can't leave the block
             PsiElement parent = sibling.getParent();
-            if (!(parent instanceof JetClassBody)) return null;
-            if (target instanceof JetEnumEntry) return null;
+            if (!(parent instanceof KtClassBody)) return null;
+            if (target instanceof KtEnumEntry) return null;
 
-            JetClassOrObject jetClassOrObject = (JetClassOrObject) parent.getParent();
-            assert jetClassOrObject != null;
+            KtClassOrObject ktClassOrObject = (KtClassOrObject) parent.getParent();
+            assert ktClassOrObject != null;
 
-            nextParent = jetClassOrObject.getParent();
+            nextParent = ktClassOrObject.getParent();
 
             if (!down) {
-                start = jetClassOrObject;
+                start = ktClassOrObject;
             }
         }
         // moving into code block
         // element may move only into class body
         else {
-            if (sibling instanceof JetClassOrObject) {
-                JetClassOrObject jetClassOrObject = (JetClassOrObject) sibling;
-                JetClassBody classBody = jetClassOrObject.getBody();
+            if (sibling instanceof KtClassOrObject) {
+                KtClassOrObject ktClassOrObject = (KtClassOrObject) sibling;
+                KtClassBody classBody = ktClassOrObject.getBody();
 
                 // confined elements can't leave their block
                 if (classBody != null) {
@@ -245,19 +245,19 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         }
 
         if (nextParent != null) {
-            if (target instanceof JetClassInitializer && !(nextParent instanceof JetClassBody)) return null;
+            if (target instanceof KtClassInitializer && !(nextParent instanceof KtClassBody)) return null;
 
-            if (target instanceof JetEnumEntry) {
-                if (!(nextParent instanceof JetClassBody)) return null;
+            if (target instanceof KtEnumEntry) {
+                if (!(nextParent instanceof KtClassBody)) return null;
 
-                JetClassOrObject nextClassOrObject = (JetClassOrObject) nextParent.getParent();
+                KtClassOrObject nextClassOrObject = (KtClassOrObject) nextParent.getParent();
                 assert nextClassOrObject != null;
 
-                if (!nextClassOrObject.hasModifier(JetTokens.ENUM_KEYWORD)) return null;
+                if (!nextClassOrObject.hasModifier(KtTokens.ENUM_KEYWORD)) return null;
             }
         }
 
-        if (target instanceof JetPropertyAccessor && !(sibling instanceof JetPropertyAccessor)) return null;
+        if (target instanceof KtPropertyAccessor && !(sibling instanceof KtPropertyAccessor)) return null;
 
         return start != null && end != null ? new LineRange(start, end, editor.getDocument()) : null;
     }
@@ -271,12 +271,12 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         Pair<PsiElement, PsiElement> psiRange = getElementRange(editor, file, oldRange);
         if (psiRange == null) return false;
 
-        JetDeclaration firstDecl = getMovableDeclaration(psiRange.getFirst());
+        KtDeclaration firstDecl = getMovableDeclaration(psiRange.getFirst());
         if (firstDecl == null) return false;
 
-        moveEnumConstant = firstDecl instanceof JetEnumEntry;
+        moveEnumConstant = firstDecl instanceof KtEnumEntry;
 
-        JetDeclaration lastDecl = getMovableDeclaration(psiRange.getSecond());
+        KtDeclaration lastDecl = getMovableDeclaration(psiRange.getSecond());
         if (lastDecl == null) return false;
 
         //noinspection ConstantConditions

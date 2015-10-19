@@ -24,12 +24,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.refactoring.rename.RenameHandlerRegistry
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-class RenameUnderscoreFix(declaration: JetDeclaration) : KotlinQuickFixAction<JetDeclaration>(declaration) {
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+class RenameUnderscoreFix(declaration: KtDeclaration) : KotlinQuickFixAction<KtDeclaration>(declaration) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (editor == null) return
         val dataContext = DataManager.getInstance().getDataContext(editor.component)
         val renameHandler = RenameHandlerRegistry.getInstance().getRenameHandler(dataContext)
@@ -45,7 +45,7 @@ class RenameUnderscoreFix(declaration: JetDeclaration) : KotlinQuickFixAction<Je
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val declaration = diagnostic.psiElement.getNonStrictParentOfType<JetDeclaration>() ?: return null
+            val declaration = diagnostic.psiElement.getNonStrictParentOfType<KtDeclaration>() ?: return null
             if (diagnostic.psiElement == (declaration as? PsiNameIdentifierOwner)?.nameIdentifier) {
                 return RenameUnderscoreFix(declaration)
             }

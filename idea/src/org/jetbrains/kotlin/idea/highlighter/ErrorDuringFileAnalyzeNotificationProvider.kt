@@ -21,10 +21,10 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.fileEditor.FileEditor
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.psi.PsiManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import com.intellij.icons.AllIcons
 import com.intellij.ide.actions.ActivateToolWindowAction
 import com.intellij.notification.EventLog
@@ -32,7 +32,7 @@ import com.intellij.notification.EventLog
 private val ERROR_HIGHLIGHT_PANEL_KEY = Key.create<EditorNotificationPanel>("kotlin.error.highlight.panel.key")
 private val HAS_ERRORS_IN_HIGHLIHTING_KEY = Key.create<Boolean>("kotlin.has.errors.in.higlighting.key")
 
-fun updateHighlightingResult(file: JetFile, hasErrors: Boolean) {
+fun updateHighlightingResult(file: KtFile, hasErrors: Boolean) {
     if (hasErrors != file.getUserData(HAS_ERRORS_IN_HIGHLIHTING_KEY)) {
         file.putUserData(HAS_ERRORS_IN_HIGHLIHTING_KEY, hasErrors)
 
@@ -55,13 +55,13 @@ public class ErrorDuringFileAnalyzeNotificationProvider(val project: Project) : 
     override fun getKey() = ERROR_HIGHLIGHT_PANEL_KEY
 
     override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
-        if (file.getFileType() != JetFileType.INSTANCE) {
+        if (file.getFileType() != KotlinFileType.INSTANCE) {
             return null
         }
 
         val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
 
-        if (psiFile !is JetFile) {
+        if (psiFile !is KtFile) {
             return null
         }
 

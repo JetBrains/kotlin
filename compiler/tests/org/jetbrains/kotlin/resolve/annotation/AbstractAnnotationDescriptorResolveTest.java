@@ -33,15 +33,15 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetAnnotationEntry;
-import org.jetbrains.kotlin.psi.JetAnnotationUseSiteTarget;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtAnnotationEntry;
+import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.types.TypeProjection;
@@ -84,7 +84,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     }
 
     protected void checkAnnotationOnAllExceptLocalDeclarations(String content, String expectedAnnotation) {
-        JetFile testFile = getFile(content);
+        KtFile testFile = getFile(content);
         PackageFragmentDescriptor testPackage = getPackage(testFile);
 
         checkAnnotationsOnFile(expectedAnnotation, testFile);
@@ -121,14 +121,14 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         checkDescriptor(expectedAnnotation, getConstructorParameterDescriptor(myClass, "param"));
     }
 
-    private void checkAnnotationsOnFile(String expectedAnnotation, JetFile file) {
-        String actualAnnotation = StringUtil.join(file.getAnnotationEntries(), new Function<JetAnnotationEntry, String>() {
+    private void checkAnnotationsOnFile(String expectedAnnotation, KtFile file) {
+        String actualAnnotation = StringUtil.join(file.getAnnotationEntries(), new Function<KtAnnotationEntry, String>() {
             @Override
-            public String fun(JetAnnotationEntry annotationEntry) {
+            public String fun(KtAnnotationEntry annotationEntry) {
                 AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
                 assertNotNull(annotationDescriptor);
 
-                JetAnnotationUseSiteTarget target = annotationEntry.getUseSiteTarget();
+                KtAnnotationUseSiteTarget target = annotationEntry.getUseSiteTarget();
 
                 if (target != null) {
                     return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(
@@ -167,7 +167,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     protected static FunctionDescriptor getFunctionDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name) {
         Name functionName = Name.identifier(name);
-        JetScope memberScope = packageView.getMemberScope();
+        KtScope memberScope = packageView.getMemberScope();
         Collection<FunctionDescriptor> functions = memberScope.getFunctions(functionName, NoLookupLocation.FROM_TEST);
         assert functions.size() == 1 : "Failed to find function " + functionName + " in class" + "." + packageView.getName();
         return functions.iterator().next();
@@ -176,7 +176,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     private static FunctionDescriptor getFunctionDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name functionName = Name.identifier(name);
-        JetScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
+        KtScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
         Collection<FunctionDescriptor> functions = memberScope.getFunctions(functionName, NoLookupLocation.FROM_TEST);
         assert functions.size() == 1 : "Failed to find function " + functionName + " in class" + "." + classDescriptor.getName();
         return functions.iterator().next();
@@ -185,7 +185,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @Nullable
     protected static PropertyDescriptor getPropertyDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name, boolean failOnMissing) {
         Name propertyName = Name.identifier(name);
-        JetScope memberScope = packageView.getMemberScope();
+        KtScope memberScope = packageView.getMemberScope();
         Collection<VariableDescriptor> properties = memberScope.getProperties(propertyName, NoLookupLocation.FROM_TEST);
         if (properties.isEmpty()) {
             for (DeclarationDescriptor descriptor : memberScope.getAllDescriptors()) {
@@ -212,7 +212,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     private static PropertyDescriptor getPropertyDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
-        JetScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
+        KtScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
         Collection<VariableDescriptor> properties = memberScope.getProperties(propertyName, NoLookupLocation.FROM_TEST);
         assert properties.size() == 1 : "Failed to find property " + propertyName + " in class " + classDescriptor.getName();
         return (PropertyDescriptor) properties.iterator().next();
@@ -230,7 +230,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     private static ClassDescriptor getInnerClassDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
-        JetScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
+        KtScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
         ClassifierDescriptor innerClass = memberScope.getClassifier(propertyName, NoLookupLocation.FROM_TEST);
         assert innerClass instanceof ClassDescriptor : "Failed to find inner class " +
                                                        propertyName +
@@ -336,8 +336,8 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     }
 
     @NotNull
-    protected JetFile getFile(@NotNull String content) {
-        JetFile ktFile = JetTestUtils.createFile("dummy.kt", content, getProject());
+    protected KtFile getFile(@NotNull String content) {
+        KtFile ktFile = JetTestUtils.createFile("dummy.kt", content, getProject());
         AnalysisResult analysisResult = JetTestUtils.analyzeFile(ktFile, getEnvironment());
         context = analysisResult.getBindingContext();
 
@@ -345,7 +345,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     }
 
     @NotNull
-    protected PackageFragmentDescriptor getPackage(@NotNull JetFile ktFile) {
+    protected PackageFragmentDescriptor getPackage(@NotNull KtFile ktFile) {
         PackageFragmentDescriptor packageFragment = context.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile);
         assertNotNull("Failed to find package: " + PACKAGE, packageFragment);
         return packageFragment;

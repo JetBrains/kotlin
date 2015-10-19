@@ -35,11 +35,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper;
 import org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collection;
 
@@ -62,24 +62,24 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
                 return target;
             }
 
-            if (target instanceof JetClassOrObject) {
-                return JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((JetClassOrObject) target);
+            if (target instanceof KtClassOrObject) {
+                return JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((KtClassOrObject) target);
             }
             // Factory methods
-            else if (target instanceof JetNamedFunction) {
-                JetNamedFunction function = (JetNamedFunction) target;
+            else if (target instanceof KtNamedFunction) {
+                KtNamedFunction function = (KtNamedFunction) target;
                 String functionName = function.getName();
                 FunctionDescriptor functionDescriptor = ResolutionUtils.analyze(function)
                         .get(BindingContext.FUNCTION, target);
                 if (functionDescriptor != null) {
-                    JetType type = functionDescriptor.getReturnType();
+                    KtType type = functionDescriptor.getReturnType();
                     if (type != null) {
                         String returnTypeText = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
                         if (returnTypeText.equals(functionName)) {
-                            Collection<JetClassOrObject> classOrObjects =
+                            Collection<KtClassOrObject> classOrObjects =
                                     JetClassShortNameIndex.getInstance().get(functionName, project, GlobalSearchScope.allScope(project));
                             if (classOrObjects.size() == 1) {
-                                JetClassOrObject classOrObject = classOrObjects.iterator().next();
+                                KtClassOrObject classOrObject = classOrObjects.iterator().next();
                                 return JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(classOrObject);
                             }
                         }
@@ -91,15 +91,15 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
             PsiElement element = file.findElementAt(offset);
             if (element == null) return null;
 
-            JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class);
+            KtClassOrObject classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject.class);
             if (classOrObject != null) {
                 return JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(classOrObject);
             }
         }
         else {
             PsiElement element = LangDataKeys.PSI_ELEMENT.getData(dataContext);
-            if (element instanceof JetClassOrObject) {
-                return JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((JetClassOrObject) element);
+            if (element instanceof KtClassOrObject) {
+                return JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((KtClassOrObject) element);
             }
         }
 

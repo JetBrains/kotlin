@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.diagnostics.Errors.NO_COMPANION_OBJECT
 import org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETER_ON_LHS_OF_DOT
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.BindingContext.QUALIFIER
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
@@ -35,10 +35,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -46,7 +46,7 @@ import kotlin.properties.Delegates
 
 public interface Qualifier: ReceiverValue {
 
-    public val expression: JetExpression
+    public val expression: KtExpression
 
     public val packageView: PackageViewDescriptor?
 
@@ -58,23 +58,23 @@ public interface Qualifier: ReceiverValue {
     // package, classifier or companion object descriptor
     public val resultingDescriptor: DeclarationDescriptor
 
-    public val scope: JetScope
+    public val scope: KtScope
 }
 
 class QualifierReceiver (
-        val referenceExpression: JetSimpleNameExpression,
+        val referenceExpression: KtSimpleNameExpression,
         override val packageView: PackageViewDescriptor?,
         override val classifier: ClassifierDescriptor?
 ) : Qualifier {
 
-    override val expression: JetExpression = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
+    override val expression: KtExpression = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
 
     val descriptor: DeclarationDescriptor
         get() = classifier ?: packageView ?: throw AssertionError("PackageView and classifier both are null")
 
     override var resultingDescriptor: DeclarationDescriptor by Delegates.notNull()
 
-    override val scope: JetScope get() {
+    override val scope: KtScope get() {
         val classObjectTypeScope = (classifier as? ClassDescriptor)?.classObjectType?.getMemberScope()?.let {
             FilteringScope(it) { it !is ClassDescriptor }
         }
@@ -86,8 +86,8 @@ class QualifierReceiver (
             (classifier as? ClassDescriptor)?.classObjectType?.let { ExpressionReceiver(referenceExpression, it) }
             ?: ReceiverValue.NO_RECEIVER
 
-    fun getNestedClassesAndPackageMembersScope(): JetScope {
-        val scopes = ArrayList<JetScope>(4)
+    fun getNestedClassesAndPackageMembersScope(): KtScope {
+        val scopes = ArrayList<KtScope>(4)
 
         scopes.addIfNotNull(packageView?.memberScope)
 
@@ -102,7 +102,7 @@ class QualifierReceiver (
         return ChainedScope(descriptor, "Static scope for " + name + " as package or class or object", *scopes.toTypedArray())
     }
 
-    override fun getType(): JetType = throw IllegalStateException("No type corresponds to QualifierReceiver '$this'")
+    override fun getType(): KtType = throw IllegalStateException("No type corresponds to QualifierReceiver '$this'")
 
     override fun exists() = true
 
@@ -110,7 +110,7 @@ class QualifierReceiver (
 }
 
 fun createQualifier(
-        expression: JetSimpleNameExpression,
+        expression: KtSimpleNameExpression,
         receiver: ReceiverValue,
         context: ExpressionTypingContext
 ): QualifierReceiver? {
@@ -136,7 +136,7 @@ fun createQualifier(
 fun QualifierReceiver.resolveAsStandaloneExpression(
         context: ExpressionTypingContext,
         symbolUsageValidator: SymbolUsageValidator
-): JetType? {
+): KtType? {
     resolveAndRecordReferenceTarget(context, symbolUsageValidator, selector = null)
     if (classifier is TypeParameterDescriptor) {
         context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(referenceExpression, classifier))

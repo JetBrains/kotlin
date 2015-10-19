@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
@@ -71,7 +71,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
                 var element = origin.element
 
                 // TODO Remove this code after dropping package facades
-                if (element is JetNamedFunction && mainFunctionDetector.isMain(element) && !element.isInsideJvmMultifileClassFile()) return
+                if (element is KtNamedFunction && mainFunctionDetector.isMain(element) && !element.isInsideJvmMultifileClassFile()) return
 
                 if (element == null || origin.originKind in EXTERNAL_SOURCES_KINDS) {
                     element = data.classOrigin.element

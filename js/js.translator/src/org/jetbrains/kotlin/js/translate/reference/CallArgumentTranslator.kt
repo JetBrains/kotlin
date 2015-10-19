@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.js.translate.expression.PatternTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.*
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 import java.util.ArrayList
 import java.util.Collections
@@ -336,7 +336,7 @@ public class CallArgumentTranslator private constructor(
 
 }
 
-private fun Map<TypeParameterDescriptor, JetType>.addReifiedTypeArgsTo(
+private fun Map<TypeParameterDescriptor, KtType>.addReifiedTypeArgsTo(
         info: CallArgumentTranslator.ArgumentsInfo,
         context: TranslationContext
 ): CallArgumentTranslator.ArgumentsInfo {

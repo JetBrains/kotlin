@@ -250,13 +250,13 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
 
         @Nullable
         public static OptionsParser getParserByPsiElementClass(@NotNull Class<? extends PsiElement> klass) {
-            if (klass == JetNamedFunction.class) {
+            if (klass == KtNamedFunction.class) {
                 return FUNCTION;
             }
-            if (klass == JetProperty.class || klass == JetParameter.class) {
+            if (klass == KtProperty.class || klass == KtParameter.class) {
                 return PROPERTY;
             }
-            if (klass == JetClass.class) {
+            if (klass == KtClass.class) {
                 return CLASS;
             }
             if (klass == PsiMethod.class) {
@@ -271,7 +271,7 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
             if (klass == PsiPackage.class) {
                 return JAVA_PACKAGE;
             }
-            if (klass == JetTypeParameter.class) {
+            if (klass == KtTypeParameter.class) {
                 return DEFAULT;
             }
 

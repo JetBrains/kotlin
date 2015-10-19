@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessT
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
@@ -40,23 +40,23 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
-object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<JetSimpleNameExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetSimpleNameExpression? {
-        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetSimpleNameExpression>()) ?: return null
+object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSimpleNameExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtSimpleNameExpression? {
+        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtSimpleNameExpression>()) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
-        if (refExpr.getReferencedNameElementType() != JetTokens.IDENTIFIER) return null
+        if (refExpr.getReferencedNameElementType() != KtTokens.IDENTIFIER) return null
         return refExpr
     }
 
     override fun extractFixData(
-            element: JetSimpleNameExpression,
+            element: KtSimpleNameExpression,
             diagnostic: Diagnostic
-    ): CreateParameterData<JetSimpleNameExpression>? {
-        val result = (diagnostic.psiFile as? JetFile)?.analyzeFullyAndGetResult() ?: return null
+    ): CreateParameterData<KtSimpleNameExpression>? {
+        val result = (diagnostic.psiFile as? KtFile)?.analyzeFullyAndGetResult() ?: return null
         val context = result.bindingContext
         val moduleDescriptor = result.moduleDescriptor
 
@@ -74,35 +74,35 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<JetSi
 
         fun chooseFunction(): PsiElement? {
             if (varExpected) return null
-            return element.parents.filter { it is JetNamedFunction || it is JetSecondaryConstructor }.firstOrNull()
+            return element.parents.filter { it is KtNamedFunction || it is KtSecondaryConstructor }.firstOrNull()
         }
 
-        fun chooseContainingClass(it: PsiElement): JetClass? {
+        fun chooseContainingClass(it: PsiElement): KtClass? {
             valOrVar = if (varExpected) JetValVar.Var else JetValVar.Val
-            return it.parents.firstIsInstanceOrNull<JetClassOrObject>() as? JetClass
+            return it.parents.firstIsInstanceOrNull<KtClassOrObject>() as? KtClass
         }
 
         // todo: skip lambdas for now because Change Signature doesn't apply to them yet
         fun chooseContainerPreferringClass(): PsiElement? {
             return element.parents
                     .filter {
-                        it is JetNamedFunction || it is JetSecondaryConstructor || it is JetPropertyAccessor ||
-                        it is JetClassBody || it is JetClassInitializer || it is JetDelegationSpecifier
+                        it is KtNamedFunction || it is KtSecondaryConstructor || it is KtPropertyAccessor ||
+                        it is KtClassBody || it is KtClassInitializer || it is KtDelegationSpecifier
                     }
                     .firstOrNull()
                     ?.let {
                         when {
-                            (it is JetNamedFunction || it is JetSecondaryConstructor) && varExpected,
-                            it is JetPropertyAccessor -> chooseContainingClass(it)
-                            it is JetClassInitializer -> it.parent?.parent as? JetClass
-                            it is JetDelegationSpecifier -> {
-                                val klass = it.getStrictParentOfType<JetClassOrObject>()
-                                if (klass is JetClass && !klass.isInterface() && klass !is JetEnumEntry) klass else null
+                            (it is KtNamedFunction || it is KtSecondaryConstructor) && varExpected,
+                            it is KtPropertyAccessor -> chooseContainingClass(it)
+                            it is KtClassInitializer -> it.parent?.parent as? KtClass
+                            it is KtDelegationSpecifier -> {
+                                val klass = it.getStrictParentOfType<KtClassOrObject>()
+                                if (klass is KtClass && !klass.isInterface() && klass !is KtEnumEntry) klass else null
                             }
-                            it is JetClassBody -> {
-                                val klass = it.parent as? JetClass
+                            it is KtClassBody -> {
+                                val klass = it.parent as? KtClass
                                 when {
-                                    klass is JetEnumEntry -> chooseContainingClass(klass)
+                                    klass is KtEnumEntry -> chooseContainingClass(klass)
                                     klass != null && klass.isInterface() -> null
                                     else -> klass
                                 }
@@ -131,7 +131,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<JetSi
     }
 }
 
-fun JetType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, context: BindingContext): Boolean {
+fun KtType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, context: BindingContext): Boolean {
     val typeParametersToAdd = LinkedHashSet(getTypeParameters())
     typeParametersToAdd.removeAll(functionDescriptor.typeParameters)
     if (typeParametersToAdd.isEmpty()) return false
@@ -143,7 +143,7 @@ fun JetType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, conte
                 }
 
                 is FunctionDescriptor -> {
-                    val function = functionDescriptor.source.getPsi() as? JetFunction
+                    val function = functionDescriptor.source.getPsi() as? KtFunction
                     function?.let { context[BindingContext.RESOLUTION_SCOPE, it.bodyExpression] }
                 }
 

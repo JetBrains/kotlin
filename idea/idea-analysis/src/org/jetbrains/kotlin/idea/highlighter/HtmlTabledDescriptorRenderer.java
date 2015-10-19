@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.Table
 import org.jetbrains.kotlin.idea.highlighter.renderersUtil.RenderersUtilKt;
 import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -43,7 +43,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
     @NotNull
     @Override
-    public Renderer<JetType> getTypeRenderer() {
+    public Renderer<KtType> getTypeRenderer() {
         return IdeRenderers.HTML_RENDER_TYPE;
     }
 
@@ -117,8 +117,8 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
     }
 
     private void renderFunctionArguments(
-            @Nullable JetType receiverType,
-            @NotNull List<JetType> argumentTypes,
+            @Nullable KtType receiverType,
+            @NotNull List<KtType> argumentTypes,
             Predicate<ConstraintPosition> isErrorPosition,
             StringBuilder result
     ) {
@@ -141,8 +141,8 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
         td(result, RenderersUtilKt.renderStrong("("));
         int i = 0;
-        for (Iterator<JetType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
-            JetType argumentType = iterator.next();
+        for (Iterator<KtType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
+            KtType argumentType = iterator.next();
             boolean error = false;
             if (isErrorPosition.apply(VALUE_PARAMETER_POSITION.position(i))) {
                 error = true;

@@ -17,17 +17,17 @@
 package org.jetbrains.kotlin.psi.codeFragmentUtil
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetTypeReference
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.types.KtType
 
 public val SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE: Key<Boolean> = Key.create<Boolean>("SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE")
 
-public var JetFile.suppressDiagnosticsInDebugMode: Boolean
+public var KtFile.suppressDiagnosticsInDebugMode: Boolean
     get() = when (this) {
-        is JetCodeFragment -> true
-        is JetFile -> getUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE) ?: false
+        is KtCodeFragment -> true
+        is KtFile -> getUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE) ?: false
         else -> false
     }
     set(skip: Boolean) {
@@ -36,10 +36,10 @@ public var JetFile.suppressDiagnosticsInDebugMode: Boolean
 
 public val DEBUG_TYPE_REFERENCE_STRING: String = "DebugTypeKotlinRulezzzz"
 
-public val DEBUG_TYPE_INFO: Key<JetType> = Key.create<JetType>("DEBUG_TYPE_INFO")
-public var JetTypeReference.debugTypeInfo: JetType?
+public val DEBUG_TYPE_INFO: Key<KtType> = Key.create<KtType>("DEBUG_TYPE_INFO")
+public var KtTypeReference.debugTypeInfo: KtType?
     get() = getUserData(DEBUG_TYPE_INFO)
-    set(type: JetType?) {
+    set(type: KtType?) {
         if (type != null && this.getText() == DEBUG_TYPE_REFERENCE_STRING) {
             putUserData(DEBUG_TYPE_INFO, type)
         }

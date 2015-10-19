@@ -20,9 +20,9 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 fun DeclarationDescriptorWithVisibility.isVisible(
         from: DeclarationDescriptor,
         bindingContext: BindingContext? = null,
-        element: JetSimpleNameExpression? = null
+        element: KtSimpleNameExpression? = null
 ): Boolean {
     if (Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, this, from)) return true
     if (bindingContext == null || element == null) return false
@@ -97,15 +97,15 @@ public fun compareDescriptors(project: Project, currentDescriptor: DeclarationDe
     return false
 }
 
-public fun Visibility.toKeywordToken(): JetModifierKeywordToken {
+public fun Visibility.toKeywordToken(): KtModifierKeywordToken {
     val normalized = normalize()
     when (normalized) {
-        Visibilities.PUBLIC -> return JetTokens.PUBLIC_KEYWORD
-        Visibilities.PROTECTED -> return JetTokens.PROTECTED_KEYWORD
-        Visibilities.INTERNAL -> return JetTokens.INTERNAL_KEYWORD
+        Visibilities.PUBLIC -> return KtTokens.PUBLIC_KEYWORD
+        Visibilities.PROTECTED -> return KtTokens.PROTECTED_KEYWORD
+        Visibilities.INTERNAL -> return KtTokens.INTERNAL_KEYWORD
         else -> {
             if (Visibilities.isPrivate(normalized)) {
-                return JetTokens.PRIVATE_KEYWORD
+                return KtTokens.PRIVATE_KEYWORD
             }
             error("Unexpected visibility '$normalized'")
         }

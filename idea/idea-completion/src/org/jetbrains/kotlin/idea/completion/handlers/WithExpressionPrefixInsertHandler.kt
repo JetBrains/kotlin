@@ -20,10 +20,10 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class WithExpressionPrefixInsertHandler(val prefix: String) : InsertHandler<LookupElement> {
@@ -40,14 +40,14 @@ class WithExpressionPrefixInsertHandler(val prefix: String) : InsertHandler<Look
 
         val offset = context.getStartOffset()
         val token = context.getFile().findElementAt(offset)!!
-        var expression = token.getStrictParentOfType<JetExpression>() ?: return
-        if (expression is JetSimpleNameExpression) {
+        var expression = token.getStrictParentOfType<KtExpression>() ?: return
+        if (expression is KtSimpleNameExpression) {
             var parent = expression.getParent()
-            if (parent is JetCallExpression && expression == parent.getCalleeExpression()) {
+            if (parent is KtCallExpression && expression == parent.getCalleeExpression()) {
                 expression = parent
                 parent = parent.getParent()
             }
-            if (parent is JetDotQualifiedExpression && expression == parent.getSelectorExpression()) {
+            if (parent is KtDotQualifiedExpression && expression == parent.getSelectorExpression()) {
                 expression = parent
             }
         }

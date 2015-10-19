@@ -23,7 +23,7 @@ import com.intellij.openapi.options.colors.AttributesDescriptor
 import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.JetIcons
+import org.jetbrains.kotlin.idea.KtIcons
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 import javax.swing.*
@@ -32,7 +32,7 @@ import java.lang.reflect.Modifier
 import java.util.HashMap
 
 public class KotlinColorSettingsPage : ColorSettingsPage {
-    override fun getIcon() = JetIcons.SMALL_LOGO
+    override fun getIcon() = KtIcons.SMALL_LOGO
     override fun getHighlighter(): SyntaxHighlighter = JetHighlighter()
 
     override fun getDemoText(): String {

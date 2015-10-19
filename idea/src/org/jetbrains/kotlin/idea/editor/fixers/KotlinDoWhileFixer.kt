@@ -20,12 +20,12 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetDoWhileExpression
-import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.KtDoWhileExpression
+import org.jetbrains.kotlin.psi.KtBlockExpression
 
 public class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
-        if (psiElement !is JetDoWhileExpression) return
+        if (psiElement !is KtDoWhileExpression) return
 
         val doc = editor.getDocument()
         val start = psiElement.range.start
@@ -41,7 +41,7 @@ public class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmar
             }
             return
         }
-        else if (whileKeyword != null && body !is JetBlockExpression && body.startLine(doc) > psiElement.startLine(doc)) {
+        else if (whileKeyword != null && body !is KtBlockExpression && body.startLine(doc) > psiElement.startLine(doc)) {
             doc.insertString(whileKeyword.range.start, "}")
             doc.insertString(start + "do".length(), "{")
 

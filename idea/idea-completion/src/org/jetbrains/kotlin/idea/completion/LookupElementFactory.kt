@@ -38,13 +38,13 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
-        private val receiverTypes: Collection<JetType>?,
+        private val receiverTypes: Collection<KtType>?,
         private val callType: CallType<*>?,
         private val isInStringTemplateAfterDollar: Boolean,
         public val insertHandlerProvider: InsertHandlerProvider,
@@ -104,7 +104,7 @@ class LookupElementFactory(
         }
     }
 
-    private fun createFunctionCallElementWithLambda(descriptor: FunctionDescriptor, parameterType: JetType, explicitLambdaParameters: Boolean, useReceiverTypes: Boolean): LookupElement {
+    private fun createFunctionCallElementWithLambda(descriptor: FunctionDescriptor, parameterType: KtType, explicitLambdaParameters: Boolean, useReceiverTypes: Boolean): LookupElement {
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
         val inputTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal).inputTypeArguments
         val lambdaInfo = GenerateLambdaInfo(parameterType, explicitLambdaParameters)

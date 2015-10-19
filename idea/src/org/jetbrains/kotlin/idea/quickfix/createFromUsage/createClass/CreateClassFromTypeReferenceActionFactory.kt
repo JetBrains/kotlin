@@ -22,26 +22,26 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
-import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetUserType
+import org.jetbrains.kotlin.psi.KtConstructorCalleeExpression
+import org.jetbrains.kotlin.psi.KtDelegatorToSuperClass
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.Variance
 import java.util.Collections
 
-public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<JetUserType>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetUserType? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetUserType>())
+public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<KtUserType>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtUserType? {
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtUserType>())
     }
 
-    override fun getPossibleClassKinds(element: JetUserType, diagnostic: Diagnostic): List<ClassKind> {
+    override fun getPossibleClassKinds(element: KtUserType, diagnostic: Diagnostic): List<ClassKind> {
         val typeRefParent = element.parent?.parent
-        if (typeRefParent is JetConstructorCalleeExpression) return Collections.emptyList()
+        if (typeRefParent is KtConstructorCalleeExpression) return Collections.emptyList()
 
-        val interfaceExpected = typeRefParent is JetDelegatorToSuperClass
+        val interfaceExpected = typeRefParent is KtDelegatorToSuperClass
 
-        val isQualifier = (element.parent as? JetUserType)?.let { it.qualifier == element } ?: false
+        val isQualifier = (element.parent as? KtUserType)?.let { it.qualifier == element } ?: false
 
         return when {
             interfaceExpected -> Collections.singletonList(ClassKind.INTERFACE)
@@ -58,11 +58,11 @@ public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFa
         }
     }
 
-    override fun extractFixData(element: JetUserType, diagnostic: Diagnostic): ClassInfo? {
+    override fun extractFixData(element: KtUserType, diagnostic: Diagnostic): ClassInfo? {
         val name = element.referenceExpression?.getReferencedName() ?: return null
-        if (element.parent?.parent is JetConstructorCalleeExpression) return null
+        if (element.parent?.parent is KtConstructorCalleeExpression) return null
 
-        val file = element.containingFile as? JetFile ?: return null
+        val file = element.containingFile as? KtFile ?: return null
 
         val (context, module) = element.analyzeAndGetResult()
         val qualifier = element.qualifier?.referenceExpression

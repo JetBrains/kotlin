@@ -16,19 +16,19 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 public interface DeclarationProvider {
-    public fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration>
+    public fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration>
 
-    public fun getFunctionDeclarations(name: Name): Collection<JetNamedFunction>
+    public fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction>
 
-    public fun getPropertyDeclarations(name: Name): Collection<JetProperty>
+    public fun getPropertyDeclarations(name: Name): Collection<KtProperty>
 
     public fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo>
 }

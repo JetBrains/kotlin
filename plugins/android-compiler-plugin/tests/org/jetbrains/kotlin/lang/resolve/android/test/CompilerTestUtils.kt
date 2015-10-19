@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 private class AndroidTestExternalDeclarationsProvider(
@@ -41,7 +41,7 @@ private class AndroidTestExternalDeclarationsProvider(
         val manifestPath: String,
         val supportV4: Boolean
 ) : ExternalDeclarationsProvider {
-    override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
+    override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<KtFile> {
         val parser = CliSyntheticFileGeneratorForConversionTest(project, manifestPath, resPaths, supportV4)
         return parser.getSyntheticFiles()
     }

@@ -20,7 +20,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -43,7 +43,7 @@ public class TraitDefaultMethodCallChecker : CallChecker {
             if (classifier != null && DescriptorUtils.isInterface(classifier)) {
                 context.trace.report(
                         ErrorsJvm.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(
-                                PsiTreeUtil.getParentOfType(resolvedCall.getCall().getCallElement(), javaClass<JetExpression>())
+                                PsiTreeUtil.getParentOfType(resolvedCall.getCall().getCallElement(), javaClass<KtExpression>())
                         )
                 )
             }

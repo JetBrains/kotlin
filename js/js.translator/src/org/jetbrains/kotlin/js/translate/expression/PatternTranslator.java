@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetIsExpression;
-import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtIsExpression;
+import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeByReference;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
@@ -50,9 +50,9 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsExpression translateIsExpression(@NotNull JetIsExpression expression) {
+    public JsExpression translateIsExpression(@NotNull KtIsExpression expression) {
         JsExpression left = Translation.translateAsExpression(expression.getLeftHandSide(), context());
-        JetTypeReference typeReference = expression.getTypeReference();
+        KtTypeReference typeReference = expression.getTypeReference();
         assert typeReference != null;
         JsExpression result = translateIsCheck(left, typeReference);
         if (expression.isNegated()) {
@@ -62,8 +62,8 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsExpression translateIsCheck(@NotNull JsExpression subject, @NotNull JetTypeReference typeReference) {
-        JetType type = BindingUtils.getTypeByReference(bindingContext(), typeReference);
+    public JsExpression translateIsCheck(@NotNull JsExpression subject, @NotNull KtTypeReference typeReference) {
+        KtType type = BindingUtils.getTypeByReference(bindingContext(), typeReference);
         JsExpression checkFunReference = getIsTypeCheckCallable(type);
         JsInvocation isCheck = new JsInvocation(checkFunReference, subject);
 
@@ -75,7 +75,7 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsExpression getIsTypeCheckCallable(@NotNull JetType type) {
+    public JsExpression getIsTypeCheckCallable(@NotNull KtType type) {
         JsExpression builtinCheck = getIsTypeCheckCallableForBuiltin(type);
         if (builtinCheck != null) return builtinCheck;
 
@@ -94,7 +94,7 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull JetType type) {
+    private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull KtType type) {
         Name typeName = DescriptorUtilsKt.getNameIfStandardType(type);
 
         if (NamePredicate.STRING.apply(typeName)) {
@@ -142,24 +142,24 @@ public final class PatternTranslator extends AbstractTranslator {
         return or(TranslationUtils.isNullCheck(expressionToMatch), isCheck);
     }
 
-    private boolean isNullable(JetTypeReference typeReference) {
+    private boolean isNullable(KtTypeReference typeReference) {
         return getTypeByReference(bindingContext(), typeReference).isMarkedNullable();
     }
 
     @NotNull
-    private JsNameRef getClassNameReference(@NotNull JetType type) {
+    private JsNameRef getClassNameReference(@NotNull KtType type) {
         ClassDescriptor referencedClass = DescriptorUtils.getClassDescriptorForType(type);
         return context().getQualifiedReference(referencedClass);
     }
 
     @NotNull
-    public JsExpression translateExpressionPattern(@NotNull JsExpression expressionToMatch, @NotNull JetExpression patternExpression) {
+    public JsExpression translateExpressionPattern(@NotNull JsExpression expressionToMatch, @NotNull KtExpression patternExpression) {
         JsExpression expressionToMatchAgainst = translateExpressionForExpressionPattern(patternExpression);
         return equality(expressionToMatch, expressionToMatchAgainst);
     }
 
     @NotNull
-    public JsExpression translateExpressionForExpressionPattern(@NotNull JetExpression patternExpression) {
+    public JsExpression translateExpressionForExpressionPattern(@NotNull KtExpression patternExpression) {
         return Translation.translateAsExpression(patternExpression, context());
     }
 }

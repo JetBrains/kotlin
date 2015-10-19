@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
@@ -38,32 +38,32 @@ import java.util.*
 
 object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetSimpleNameExpression>()) ?: return null
+        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtSimpleNameExpression>()) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
-        if (refExpr.getReferencedNameElementType() != JetTokens.IDENTIFIER) return null
+        if (refExpr.getReferencedNameElementType() != KtTokens.IDENTIFIER) return null
 
         val propertyName = refExpr.getReferencedName()
 
         val container = refExpr.parents
-                .filter { it is JetBlockExpression || it is JetDeclarationWithBody }
-                .firstOrNull() as? JetElement ?: return null
+                .filter { it is KtBlockExpression || it is KtDeclarationWithBody }
+                .firstOrNull() as? KtElement ?: return null
 
-        return object: CreateFromUsageFixBase<JetSimpleNameExpression>(refExpr) {
+        return object: CreateFromUsageFixBase<KtSimpleNameExpression>(refExpr) {
             override fun getText(): String = JetBundle.message("create.local.variable.from.usage", propertyName)
 
-            override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+            override fun invoke(project: Project, editor: Editor?, file: KtFile) {
                 val assignment = refExpr.getAssignmentByLHS()
                 val varExpected = assignment != null
                 var originalElement = assignment ?: refExpr
 
                 val actualContainer = when (container) {
-                    is JetBlockExpression -> container
-                    else -> ConvertToBlockBodyIntention.convert(container as JetDeclarationWithBody).bodyExpression!!
-                } as JetBlockExpression
+                    is KtBlockExpression -> container
+                    else -> ConvertToBlockBodyIntention.convert(container as KtDeclarationWithBody).bodyExpression!!
+                } as KtBlockExpression
 
                 if (actualContainer != container) {
                     val bodyExpression = actualContainer.statements.first()!!
-                    originalElement = (bodyExpression as? JetReturnExpression)?.returnedExpression ?: bodyExpression
+                    originalElement = (bodyExpression as? KtReturnExpression)?.returnedExpression ?: bodyExpression
                 }
 
                 val typeInfo = TypeInfo(

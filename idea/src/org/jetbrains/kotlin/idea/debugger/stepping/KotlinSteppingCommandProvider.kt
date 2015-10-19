@@ -65,10 +65,10 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     }
 
     fun getStepOverCommand(suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean, sourcePosition: SourcePosition): DebugProcessImpl.ResumeCommand? {
-        val file = sourcePosition.file as? JetFile ?: return null
+        val file = sourcePosition.file as? KtFile ?: return null
         if (sourcePosition.line < 0) return null
 
-        val containingFunction = sourcePosition.elementAt.getParentOfType<JetNamedFunction>(false) ?: return null
+        val containingFunction = sourcePosition.elementAt.getParentOfType<KtNamedFunction>(false) ?: return null
 
         val startLineNumber = containingFunction.getLineNumber(true)
         val endLineNumber = containingFunction.getLineNumber(false)
@@ -92,25 +92,25 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
 
     private fun PsiElement.getAdditionalElementsToSkip(): List<PsiElement> {
         val result = arrayListOf<PsiElement>()
-        val ifParent = getParentOfType<JetIfExpression>(false)
+        val ifParent = getParentOfType<KtIfExpression>(false)
         if (ifParent != null) {
             if (ifParent.then.contains(this)) {
                 ifParent.elseKeyword?.let { result.add(it) }
                 ifParent.`else`?.let { result.add(it) }
             }
         }
-        val tryParent = getParentOfType<JetTryExpression>(false)
+        val tryParent = getParentOfType<KtTryExpression>(false)
         if (tryParent != null) {
-            val catchClause = getParentOfType<JetCatchClause>(false)
+            val catchClause = getParentOfType<KtCatchClause>(false)
             if (catchClause != null) {
                 result.addAll(tryParent.catchClauses.filter { it != catchClause })
             }
         }
 
-        val whenEntry = getParentOfType<JetWhenEntry>(false)
+        val whenEntry = getParentOfType<KtWhenEntry>(false)
         if (whenEntry != null) {
             if (whenEntry.expression.contains(this)) {
-                val whenParent = whenEntry.getParentOfType<JetWhenExpression>(false)
+                val whenParent = whenEntry.getParentOfType<KtWhenExpression>(false)
                 if (whenParent != null) {
                     result.addAll(whenParent.entries.filter { it != whenEntry })
                 }
@@ -121,7 +121,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     }
 
     private fun PsiElement.shouldNotUseStepOver(elementAt: PsiElement): Boolean {
-        val ifParent = getParentOfType<JetIfExpression>(false)
+        val ifParent = getParentOfType<KtIfExpression>(false)
         if (ifParent != null) {
             // if (inlineFunCall()) {...}
             if (ifParent.condition.contains(this)) {
@@ -132,7 +132,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
             <caret>if (...) inlineFunCall()
                        else inlineFunCall()
              */
-            val ifParentElementAt = elementAt.getParentOfType<JetIfExpression>(false)
+            val ifParentElementAt = elementAt.getParentOfType<KtIfExpression>(false)
             if (ifParentElementAt == null) {
                 if (ifParent.then.contains(this)) {
                     return true
@@ -143,7 +143,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
             }
         }
 
-        val tryParent = getParentOfType<JetTryExpression>(false)
+        val tryParent = getParentOfType<KtTryExpression>(false)
         if (tryParent != null) {
             /* try { inlineFunCall() }
                catch()...
@@ -153,7 +153,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
             }
         }
 
-        val whenEntry = getParentOfType<JetWhenEntry>(false)
+        val whenEntry = getParentOfType<KtWhenEntry>(false)
         if (whenEntry != null) {
             // <caret>inlineFunCall -> ...
             if (whenEntry.conditions.any { it.contains(this) } ) {
@@ -162,7 +162,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
 
             // <caret>1 == 2 -> inlineFunCall()
             if (whenEntry.expression.contains(this)) {
-                val parentEntryElementAt = elementAt.getParentOfType<JetWhenEntry>(false) ?: return true
+                val parentEntryElementAt = elementAt.getParentOfType<KtWhenEntry>(false) ?: return true
                 return parentEntryElementAt == whenEntry &&
                         whenEntry.conditions.any { it.contains(elementAt) }
             }
@@ -188,7 +188,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     }
 
     private fun getStepOutCommand(suspendContext: SuspendContextImpl, sourcePosition: SourcePosition): DebugProcessImpl.ResumeCommand? {
-        val file = sourcePosition.file as? JetFile ?: return null
+        val file = sourcePosition.file as? KtFile ?: return null
         if (sourcePosition.line < 0) return null
 
         val lineStartOffset = file.getLineStartOffset(sourcePosition.line) ?: return null
@@ -201,9 +201,9 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         return DebuggerSteppingHelper.createStepOutCommand(suspendContext, true, inlineFunctions, inlinedArgument)
     }
 
-    private fun getInlineFunctionsIfAny(file: JetFile, offset: Int): List<JetNamedFunction> {
+    private fun getInlineFunctionsIfAny(file: KtFile, offset: Int): List<KtNamedFunction> {
         val elementAt = file.findElementAt(offset) ?: return emptyList()
-        val containingFunction = elementAt.getParentOfType<JetNamedFunction>(false) ?: return emptyList()
+        val containingFunction = elementAt.getParentOfType<KtNamedFunction>(false) ?: return emptyList()
 
         val descriptor = containingFunction.resolveToDescriptor()
         if (!InlineUtil.isInline(descriptor)) return emptyList()
@@ -213,22 +213,22 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
                 containingFunction.analyzeFully(),
                 containingFunction,
                 false
-        ).filterIsInstance<JetNamedFunction>()
+        ).filterIsInstance<KtNamedFunction>()
 
         return inlineFunctionsCalls
     }
 
-    private fun getInlineArgumentsIfAny(inlineFunctionCalls: List<JetCallExpression>): List<JetFunction> {
+    private fun getInlineArgumentsIfAny(inlineFunctionCalls: List<KtCallExpression>): List<KtFunction> {
         return inlineFunctionCalls.flatMap {
             it.valueArguments
                     .map { it.getArgumentExpression()  }
-                    .filterIsInstance<JetFunctionLiteralExpression>()
+                    .filterIsInstance<KtFunctionLiteralExpression>()
                     .map { it.functionLiteral }
         }
     }
 
-    private fun getInlineFunctionCallsIfAny(sourcePosition: SourcePosition): List<JetCallExpression> {
-        val file = sourcePosition.file as? JetFile ?: return emptyList()
+    private fun getInlineFunctionCallsIfAny(sourcePosition: SourcePosition): List<KtCallExpression> {
+        val file = sourcePosition.file as? KtFile ?: return emptyList()
         val lineNumber = sourcePosition.line
         var elementAt = sourcePosition.elementAt
 
@@ -236,7 +236,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         var endOffset = file.getLineEndOffset(lineNumber) ?: elementAt.endOffset
 
         var topMostElement: PsiElement? = null
-        while (topMostElement !is JetElement && startOffset < endOffset) {
+        while (topMostElement !is KtElement && startOffset < endOffset) {
             elementAt = file.findElementAt(startOffset)
             if (elementAt != null) {
                 topMostElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, startOffset)
@@ -244,21 +244,21 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
             startOffset++
         }
 
-        if (topMostElement !is JetElement) return emptyList()
+        if (topMostElement !is KtElement) return emptyList()
 
         val start = topMostElement.startOffset
         val end = topMostElement.endOffset
 
-        fun isInlineCall(expr: JetExpression): Boolean {
+        fun isInlineCall(expr: KtExpression): Boolean {
             val context = expr.analyze(BodyResolveMode.PARTIAL)
             val resolvedCall = expr.getResolvedCall(context) ?: return false
             return InlineUtil.isInline(resolvedCall.resultingDescriptor)
         }
 
         val allInlineFunctionCalls = CodeInsightUtils.
-                findElementsOfClassInRange(file, start, end, JetExpression::class.java)
-                .map { JetPsiUtil.getParentCallIfPresent(it as JetExpression) }
-                .filterIsInstance<JetCallExpression>()
+                findElementsOfClassInRange(file, start, end, KtExpression::class.java)
+                .map { KtPsiUtil.getParentCallIfPresent(it as KtExpression) }
+                .filterIsInstance<KtCallExpression>()
                 .filter { isInlineCall(it) }
                 .toSet()
 
@@ -276,9 +276,9 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
 
 fun getStepOutPosition(
         location: Location,
-        file: JetFile,
+        file: KtFile,
         range: Range<Int>,
-        inlinedArguments: List<JetElement>,
+        inlinedArguments: List<KtElement>,
         elementsToSkip: List<PsiElement>
 ): XSourcePositionImpl? {
     val computedReferenceType = location.declaringType() ?: return null
@@ -306,8 +306,8 @@ fun getStepOutPosition(
 fun getStepOverPosition(
         location: Location,
         suspendContext: SuspendContextImpl,
-        inlineFunctions: List<JetNamedFunction>,
-        inlinedArgument: JetFunctionLiteral?
+        inlineFunctions: List<KtNamedFunction>,
+        inlinedArgument: KtFunctionLiteral?
 ): XSourcePositionImpl? {
     val computedReferenceType = location.declaringType() ?: return null
 
@@ -327,7 +327,7 @@ fun getStepOverPosition(
 
 private fun SuspendContextImpl.getXPositionForStepOutFromInlineFunction(
         locations: List<Location>,
-        inlineFunctionsToSkip: List<JetNamedFunction>
+        inlineFunctionsToSkip: List<KtNamedFunction>
 ): XSourcePositionImpl? {
     return getNextPositionWithFilter(locations) {
         file, offset ->
@@ -342,7 +342,7 @@ private fun SuspendContextImpl.getXPositionForStepOutFromInlineFunction(
 
 private fun SuspendContextImpl.getXPositionForStepOutFromInlinedArgument(
         locations: List<Location>,
-        inlinedArgumentToSkip: JetFunctionLiteral
+        inlinedArgumentToSkip: KtFunctionLiteral
 ): XSourcePositionImpl? {
     return getNextPositionWithFilter(locations) {
         file, offset ->
@@ -352,11 +352,11 @@ private fun SuspendContextImpl.getXPositionForStepOutFromInlinedArgument(
 
 private fun SuspendContextImpl.getNextPositionWithFilter(
         locations: List<Location>,
-        skip: (JetFile, Int) -> Boolean
+        skip: (KtFile, Int) -> Boolean
 ): XSourcePositionImpl? {
     for (location in locations) {
         val file = try {
-            this.debugProcess.positionManager.getSourcePosition(location)?.file as? JetFile
+            this.debugProcess.positionManager.getSourcePosition(location)?.file as? KtFile
         }
         catch(e: NoDataException) {
             null
@@ -373,9 +373,9 @@ private fun SuspendContextImpl.getNextPositionWithFilter(
     return null
 }
 
-private fun getInlineArgumentIfAny(file: JetFile, offset: Int): JetFunctionLiteral? {
+private fun getInlineArgumentIfAny(file: KtFile, offset: Int): KtFunctionLiteral? {
     val elementAt = file.findElementAt(offset) ?: return null
-    val functionLiteralExpression = elementAt.getParentOfType<JetFunctionLiteralExpression>(false) ?: return null
+    val functionLiteralExpression = elementAt.getParentOfType<KtFunctionLiteralExpression>(false) ?: return null
 
     val context = functionLiteralExpression.analyze(BodyResolveMode.PARTIAL)
     if (!InlineUtil.isInlinedArgument(functionLiteralExpression.functionLiteral, context, false)) return null

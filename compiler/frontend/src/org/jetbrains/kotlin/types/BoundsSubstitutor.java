@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 public class BoundsSubstitutor {
-    private static final Function<TypeProjection,JetType> PROJECTIONS_TO_TYPES = new Function<TypeProjection, JetType>() {
+    private static final Function<TypeProjection,KtType> PROJECTIONS_TO_TYPES = new Function<TypeProjection, KtType>() {
         @Override
-        public JetType apply(TypeProjection projection) {
+        public KtType apply(TypeProjection projection) {
             return projection.getType();
         }
     };
@@ -60,8 +60,8 @@ public class BoundsSubstitutor {
 
         // todo assert: no loops
         for (TypeParameterDescriptor descriptor : topologicallySortTypeParameters(typeParameters)) {
-            JetType upperBoundsAsType = descriptor.getUpperBoundsAsType();
-            JetType substitutedUpperBoundsAsType = substitutor.substitute(upperBoundsAsType, Variance.INVARIANT);
+            KtType upperBoundsAsType = descriptor.getUpperBoundsAsType();
+            KtType substitutedUpperBoundsAsType = substitutor.substitute(upperBoundsAsType, Variance.INVARIANT);
             mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjectionImpl(substitutedUpperBoundsAsType));
         }
 
@@ -96,16 +96,16 @@ public class BoundsSubstitutor {
     ) {
         return DFS.dfs(
                 current.getUpperBounds(),
-                new DFS.Neighbors<JetType>() {
+                new DFS.Neighbors<KtType>() {
                     @NotNull
                     @Override
-                    public Iterable<JetType> getNeighbors(JetType current) {
+                    public Iterable<KtType> getNeighbors(KtType current) {
                         return Collections2.transform(current.getArguments(), PROJECTIONS_TO_TYPES);
                     }
                 },
-                new DFS.NodeHandlerWithListResult<JetType, TypeParameterDescriptor>() {
+                new DFS.NodeHandlerWithListResult<KtType, TypeParameterDescriptor>() {
                     @Override
-                    public boolean beforeChildren(JetType current) {
+                    public boolean beforeChildren(KtType current) {
                         ClassifierDescriptor declarationDescriptor = current.getConstructor().getDeclarationDescriptor();
                         // typeParameters in a list, but it contains very few elements, so it's fine to call contains() on it
                         //noinspection SuspiciousMethodCalls

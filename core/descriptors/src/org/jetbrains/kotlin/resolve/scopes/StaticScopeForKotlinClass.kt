@@ -27,7 +27,7 @@ import java.util.ArrayList
 
 public class StaticScopeForKotlinClass(
         private val containingClass: ClassDescriptor
-) : JetScopeImpl() {
+) : KtScopeImpl() {
     override fun getClassifier(name: Name, location: LookupLocation) = null // TODO
 
     private val functions: List<FunctionDescriptor> by lazy {

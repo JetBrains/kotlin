@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
-import org.jetbrains.kotlin.psi.JetVisitorVoid
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 import com.intellij.psi.PsiElement
 import com.intellij.ide.actions.CopyReferenceAction
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.ArrayList
 import kotlin.test.assertEquals
 
@@ -74,12 +74,12 @@ public class QualifiedNamesTest: LightCodeInsightTestCase() {
 
     private fun getQualifiedNamesForDeclarations(): List<String?> {
         val result = ArrayList<String?>()
-        LightPlatformCodeInsightTestCase.myFile.accept(object : JetVisitorVoid() {
+        LightPlatformCodeInsightTestCase.myFile.accept(object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {
                 element.acceptChildren(this)
             }
 
-            override fun visitNamedDeclaration(declaration: JetNamedDeclaration) {
+            override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
                 result.add(CopyReferenceAction.elementToFqn(declaration))
                 super.visitNamedDeclaration(declaration)
             }

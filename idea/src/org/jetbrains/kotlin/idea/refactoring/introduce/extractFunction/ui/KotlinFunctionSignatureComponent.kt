@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.refactoring.ui.MethodSignatureComponent
 
 public class KotlinFunctionSignatureComponent(
         signature: String, project: Project
-) : MethodSignatureComponent(signature, project, JetFileType.INSTANCE) {
-    private val myFileName = "dummy." + JetFileType.EXTENSION
+) : MethodSignatureComponent(signature, project, KotlinFileType.INSTANCE) {
+    private val myFileName = "dummy." + KotlinFileType.EXTENSION
 
     override fun getFileName(): String = myFileName
 }

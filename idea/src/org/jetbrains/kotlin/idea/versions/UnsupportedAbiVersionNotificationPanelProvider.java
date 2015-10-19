@@ -48,7 +48,7 @@ import com.intellij.ui.EditorNotifications;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
@@ -196,7 +196,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
         try {
             if (DumbService.isDumb(project)) return null;
             if (ApplicationManager.getApplication().isUnitTestMode()) return null;
-            if (file.getFileType() != JetFileType.INSTANCE) return null;
+            if (file.getFileType() != KotlinFileType.INSTANCE) return null;
 
             if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null;
 

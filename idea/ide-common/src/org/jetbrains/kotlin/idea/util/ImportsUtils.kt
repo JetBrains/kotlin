@@ -20,13 +20,13 @@ package org.jetbrains.kotlin.idea.imports
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {
@@ -51,13 +51,13 @@ public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
     }
 }
 
-public fun JetType.canBeReferencedViaImport(): Boolean {
+public fun KtType.canBeReferencedViaImport(): Boolean {
     val descriptor = getConstructor().getDeclarationDescriptor()
     return descriptor != null && descriptor.canBeReferencedViaImport()
 }
 
 // for cases when class qualifier refers companion object treats it like reference to class itself
-public fun JetReferenceExpression.getImportableTargets(bindingContext: BindingContext): Collection<DeclarationDescriptor> {
+public fun KtReferenceExpression.getImportableTargets(bindingContext: BindingContext): Collection<DeclarationDescriptor> {
     val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, this]?.let { listOf(it) }
                   ?: getReferenceTargets(bindingContext)
     return targets.map { it.getImportableDescriptor() }.toSet()

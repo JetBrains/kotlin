@@ -19,29 +19,29 @@ package org.jetbrains.kotlin.idea.joinLines
 import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
-        if (file !is JetFile) return -1
+        if (file !is KtFile) return -1
 
         if (start == 0) return -1
         val c = document.getCharsSequence()[start]
         val index = if (c == '\n') start - 1 else start
 
         val brace = file.findElementAt(index)!!
-        if (brace.getNode()!!.getElementType() != JetTokens.LBRACE) return -1
+        if (brace.getNode()!!.getElementType() != KtTokens.LBRACE) return -1
 
-        val block = brace.getParent() as? JetBlockExpression ?: return -1
+        val block = brace.getParent() as? KtBlockExpression ?: return -1
         val statement = block.getStatements().singleOrNull() ?: return -1
         val parent = block.getParent()
-        if (parent !is JetContainerNode && parent !is JetWhenEntry) return -1
-        if (block.getNode().getChildren(JetTokens.COMMENTS).isNotEmpty()) return -1 // otherwise we will loose comments
+        if (parent !is KtContainerNode && parent !is KtWhenEntry) return -1
+        if (block.getNode().getChildren(KtTokens.COMMENTS).isNotEmpty()) return -1 // otherwise we will loose comments
 
         // handle nested if's
         val pparent = parent.getParent()
-        if (pparent is JetIfExpression && block == pparent.getThen() && statement is JetIfExpression && statement.getElse() == null) {
+        if (pparent is KtIfExpression && block == pparent.getThen() && statement is KtIfExpression && statement.getElse() == null) {
             // if outer if has else-branch and inner does not have it, do not remove braces otherwise else-branch will belong to different if!
             if (pparent.getElse() != null) return -1
 
@@ -49,7 +49,7 @@ public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
             val condition2 = statement.getCondition()
             val body = statement.getThen()
             if (condition1 != null && condition2 != null && body != null) {
-                val newCondition = JetPsiFactory(pparent).createExpressionByPattern("$0 && $1", condition1, condition2)
+                val newCondition = KtPsiFactory(pparent).createExpressionByPattern("$0 && $1", condition1, condition2)
                 condition1.replace(newCondition)
                 val newBody = block.replace(body)
                 return newBody.getTextRange()!!.getStartOffset()

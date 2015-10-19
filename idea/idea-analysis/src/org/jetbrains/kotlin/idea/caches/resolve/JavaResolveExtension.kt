@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 
 private fun PsiElement.getJavaDescriptorResolver(): JavaDescriptorResolver? {
     if (!ProjectRootsUtil.isInProjectOrLibraryClassFile(this)) return null
@@ -78,7 +78,7 @@ public fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescri
     return getContainingScope(field)?.getProperties(field.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(field) as? PropertyDescriptor
 }
 
-private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): JetScope? {
+private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): KtScope? {
     val containingClass = resolveClass(member.getContainingClass())
     return if (member.isStatic())
         containingClass?.getStaticScope()

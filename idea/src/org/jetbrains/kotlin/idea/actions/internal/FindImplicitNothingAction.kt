@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import com.intellij.usages.UsageViewManager
@@ -58,21 +58,21 @@ public class FindImplicitNothingAction : AnAction() {
                 project)
     }
 
-    private fun find(files: Collection<JetFile>, project: Project) {
+    private fun find(files: Collection<KtFile>, project: Project) {
         val progressIndicator = ProgressManager.getInstance().getProgressIndicator()
-        val found = ArrayList<JetCallExpression>()
+        val found = ArrayList<KtCallExpression>()
         for ((i, file) in files.withIndex()) {
             progressIndicator?.setText("Scanning files: $i of ${files.size()} file. ${found.size()} occurences found")
             progressIndicator?.setText2(file.getVirtualFile().getPath())
 
             val resolutionFacade = file.getResolutionFacade()
-            file.acceptChildren(object : JetVisitorVoid() {
-                override fun visitJetElement(element: JetElement) {
+            file.acceptChildren(object : KtVisitorVoid() {
+                override fun visitJetElement(element: KtElement) {
                     ProgressManager.checkCanceled()
                     element.acceptChildren(this)
                 }
 
-                override fun visitCallExpression(expression: JetCallExpression) {
+                override fun visitCallExpression(expression: KtCallExpression) {
                     expression.acceptChildren(this)
 
                     try {
@@ -107,13 +107,13 @@ public class FindImplicitNothingAction : AnAction() {
         }
     }
 
-    private fun JetExpression.hasExplicitNothing(bindingContext: BindingContext): Boolean {
+    private fun KtExpression.hasExplicitNothing(bindingContext: BindingContext): Boolean {
         val callee = getCalleeExpressionIfAny() ?: return false
         when (callee) {
-            is JetSimpleNameExpression -> {
+            is KtSimpleNameExpression -> {
                 val target = bindingContext[BindingContext.REFERENCE_TARGET, callee] ?: return false
                 val callableDescriptor = (target as? CallableDescriptor ?: return false).getOriginal()
-                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor) as? JetCallableDeclaration
+                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor) as? KtCallableDeclaration
                 if (declaration != null && declaration.getTypeReference() == null) return false // implicit type
                 val type = callableDescriptor.getReturnType() ?: return false
                 return type.isNothingOrNothingFunctionType()
@@ -125,7 +125,7 @@ public class FindImplicitNothingAction : AnAction() {
         }
     }
 
-    private fun JetType.isNothingOrNothingFunctionType(): Boolean {
+    private fun KtType.isNothingOrNothingFunctionType(): Boolean {
         return when {
             KotlinBuiltIns.isNothing(this) -> true
 
@@ -144,17 +144,17 @@ public class FindImplicitNothingAction : AnAction() {
         e.getPresentation().setEnabled(selectedKotlinFiles(e).any())
     }
 
-    private fun selectedKotlinFiles(e: AnActionEvent): Sequence<JetFile> {
+    private fun selectedKotlinFiles(e: AnActionEvent): Sequence<KtFile> {
         val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return sequenceOf()
         val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return sequenceOf()
         return allKotlinFiles(virtualFiles, project)
     }
 
-    private fun allKotlinFiles(filesOrDirs: Array<VirtualFile>, project: Project): Sequence<JetFile> {
+    private fun allKotlinFiles(filesOrDirs: Array<VirtualFile>, project: Project): Sequence<KtFile> {
         val manager = PsiManager.getInstance(project)
         return allFiles(filesOrDirs)
                 .asSequence()
-                .map { manager.findFile(it) as? JetFile }
+                .map { manager.findFile(it) as? KtFile }
                 .filterNotNull()
     }
 

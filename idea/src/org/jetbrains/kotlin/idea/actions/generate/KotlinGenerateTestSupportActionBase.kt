@@ -50,10 +50,10 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.setupE
 import org.jetbrains.kotlin.idea.quickfix.insertMember
 import org.jetbrains.kotlin.idea.testIntegration.findSuitableFrameworks
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.ifEmpty
 
@@ -61,9 +61,9 @@ abstract class KotlinGenerateTestSupportActionBase(
         private val methodKind : MethodKind
 ) : KotlinGenerateActionBase(), GenerateActionPopupTemplateInjector {
     companion object {
-        private fun findTargetClass(editor: Editor, file: PsiFile): JetClassOrObject? {
+        private fun findTargetClass(editor: Editor, file: PsiFile): KtClassOrObject? {
             val elementAtCaret = file.findElementAt(editor.caretModel.offset) ?: return null
-            return elementAtCaret.parentsWithSelf.filterIsInstance<JetClassOrObject>().firstOrNull { !it.isLocal() }
+            return elementAtCaret.parentsWithSelf.filterIsInstance<KtClassOrObject>().firstOrNull { !it.isLocal() }
         }
 
         private fun chooseAndPerform(editor: Editor, frameworks: List<TestFramework>, consumer: (TestFramework) -> Unit) {
@@ -94,37 +94,37 @@ abstract class KotlinGenerateTestSupportActionBase(
     }
 
     public class SetUp : KotlinGenerateTestSupportActionBase(MethodKind.SET_UP) {
-        override fun isApplicableTo(framework: TestFramework, targetClass: JetClassOrObject): Boolean {
+        override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject): Boolean {
             return framework.findSetUpMethod(targetClass.toLightClass()!!) == null
         }
     }
 
     public class Test : KotlinGenerateTestSupportActionBase(MethodKind.TEST) {
-        override fun isApplicableTo(framework: TestFramework, targetClass: JetClassOrObject) = true
+        override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject) = true
     }
 
     public class Data : KotlinGenerateTestSupportActionBase(MethodKind.DATA) {
-        override fun isApplicableTo(framework: TestFramework, targetClass: JetClassOrObject): Boolean {
+        override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject): Boolean {
             if (framework !is JavaTestFramework) return false
             return framework.findParametersMethod(targetClass.toLightClass()) == null
         }
     }
 
     public class TearDown : KotlinGenerateTestSupportActionBase(MethodKind.TEAR_DOWN) {
-        override fun isApplicableTo(framework: TestFramework, targetClass: JetClassOrObject): Boolean {
+        override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject): Boolean {
             return framework.findTearDownMethod(targetClass.toLightClass()!!) == null
         }
     }
 
-    override fun getTargetClass(editor: Editor, file: PsiFile): JetClassOrObject? {
+    override fun getTargetClass(editor: Editor, file: PsiFile): KtClassOrObject? {
         return findTargetClass(editor, file)
     }
 
-    override fun isValidForClass(targetClass: JetClassOrObject): Boolean {
+    override fun isValidForClass(targetClass: KtClassOrObject): Boolean {
         return findSuitableFrameworks(targetClass).any { isApplicableTo(it, targetClass) }
     }
 
-    protected abstract fun isApplicableTo(framework: TestFramework, targetClass: JetClassOrObject): Boolean
+    protected abstract fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject): Boolean
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
         val klass = findTargetClass(editor, file) ?: return
@@ -133,7 +133,7 @@ abstract class KotlinGenerateTestSupportActionBase(
         chooseAndPerform(editor, frameworks) { doGenerate(editor, file, klass, it) }
     }
 
-    private fun doGenerate(editor: Editor, file: PsiFile, klass: JetClassOrObject, framework: TestFramework) {
+    private fun doGenerate(editor: Editor, file: PsiFile, klass: KtClassOrObject, framework: TestFramework) {
         val project = file.project
         val commandName = "Generate test function"
         project.executeWriteCommand(commandName) {
@@ -155,7 +155,7 @@ abstract class KotlinGenerateTestSupportActionBase(
                 val factory = PsiElementFactory.SERVICE.getInstance(project)
                 val psiMethod = factory.createMethodFromText(templateText, null)
                 psiMethod.throwsList.referenceElements.forEach { it.delete() }
-                val function = psiMethod.j2k() as? JetNamedFunction
+                val function = psiMethod.j2k() as? KtNamedFunction
                 if (function == null) {
                     HintManager.getInstance().showErrorHint(editor, "Couldn't convert Java template to Kotlin")
                     return@executeWriteCommand
@@ -170,10 +170,10 @@ abstract class KotlinGenerateTestSupportActionBase(
                     else -> generateUnsupportedOrSuperCall(overriddenDescriptors.first(), BodyType.QUALIFIED_SUPER)
                 }
                 functionInPlace.bodyExpression?.delete()
-                functionInPlace.add(JetPsiFactory(project).createBlock(bodyText))
+                functionInPlace.add(KtPsiFactory(project).createBlock(bodyText))
 
                 if (overriddenDescriptors.isNotEmpty()) {
-                    functionInPlace.addModifier(JetTokens.OVERRIDE_KEYWORD)
+                    functionInPlace.addModifier(KtTokens.OVERRIDE_KEYWORD)
                 }
 
                 setupEditorSelection(editor, functionInPlace)

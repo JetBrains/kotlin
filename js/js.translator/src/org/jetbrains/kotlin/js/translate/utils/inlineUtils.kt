@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineStrategy
  */
 fun setInlineCallMetadata(
         expression: JsExpression,
-        psiElement: JetExpression,
+        psiElement: KtExpression,
         resolvedCall: ResolvedCall<*>,
         context: TranslationContext
 ) {

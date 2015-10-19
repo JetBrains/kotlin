@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantL
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.js.JsProtoBuf
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget> {
 
@@ -79,6 +79,6 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
     override fun loadPropertyConstant(
             container: ProtoContainer,
             proto: ProtoBuf.Property,
-            expectedType: JetType
+            expectedType: KtType
     ) {}
 }

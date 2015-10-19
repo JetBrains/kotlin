@@ -20,14 +20,14 @@ import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
 public class JetFunctionPsiElementCellRenderer extends DefaultPsiElementCellRenderer {
     @Override
     public String getElementText(PsiElement element) {
-        if (element instanceof JetNamedFunction) {
-            JetNamedFunction function = (JetNamedFunction) element;
+        if (element instanceof KtNamedFunction) {
+            KtNamedFunction function = (KtNamedFunction) element;
             DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(function);
             return DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor);
         }

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.test.JetLiteFixture
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.tests.di.createContainerForTests
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 import java.util.ArrayList
@@ -86,7 +86,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         constraintSystem.registerTypeVariables(typeParameterDescriptors, { Variance.INVARIANT })
 
         val constraints = parseConstraints(constraintsFileText)
-        fun JetType.assertNotError(): JetType {
+        fun KtType.assertNotError(): KtType {
             assert(!ErrorUtils.containsErrorType(this)) { "Type $this is resolved to or contains error type" }
             return this
         }

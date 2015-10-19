@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -33,7 +33,7 @@ public class ValueParameterResolver(
         private val constantExpressionEvaluator: ConstantExpressionEvaluator
 ) {
     public fun resolveValueParameters(
-            valueParameters: List<JetParameter>,
+            valueParameters: List<KtParameter>,
             valueParameterDescriptors: List<ValueParameterDescriptor>,
             declaringScope: LexicalScope,
             dataFlowInfo: DataFlowInfo,
@@ -45,7 +45,7 @@ public class ValueParameterResolver(
     }
 
     public fun resolveValueParameters(
-            valueParameters: List<JetParameter>,
+            valueParameters: List<KtParameter>,
             valueParameterDescriptors: List<ValueParameterDescriptor>,
             context: ExpressionTypingContext
     ) {
@@ -57,7 +57,7 @@ public class ValueParameterResolver(
 
     private fun resolveDefaultValue(
             valueParameterDescriptor: ValueParameterDescriptor,
-            jetParameter: JetParameter,
+            jetParameter: KtParameter,
             context: ExpressionTypingContext
     ) {
         if (!valueParameterDescriptor.declaresDefaultValue()) return

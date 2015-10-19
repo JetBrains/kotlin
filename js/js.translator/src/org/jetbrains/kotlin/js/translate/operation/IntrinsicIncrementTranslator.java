@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.js.translate.operation;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.lexer.JetToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
-import org.jetbrains.kotlin.psi.JetUnaryExpression;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
+import org.jetbrains.kotlin.psi.KtUnaryExpression;
 
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isPrefix;
@@ -31,13 +31,13 @@ import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.isPrefix;
 public final class IntrinsicIncrementTranslator extends IncrementTranslator {
 
     @NotNull
-    public static JsExpression doTranslate(@NotNull JetUnaryExpression expression,
+    public static JsExpression doTranslate(@NotNull KtUnaryExpression expression,
                                            @NotNull TranslationContext context) {
         return (new IntrinsicIncrementTranslator(expression, context))
                 .translate();
     }
 
-    private IntrinsicIncrementTranslator(@NotNull JetUnaryExpression expression,
+    private IntrinsicIncrementTranslator(@NotNull KtUnaryExpression expression,
                                          @NotNull TranslationContext context) {
         super(expression, context);
     }
@@ -51,7 +51,7 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     }
 
     private boolean isPrimitiveExpressionIncrement() {
-        return expression.getBaseExpression() instanceof JetSimpleNameExpression;
+        return expression.getBaseExpression() instanceof KtSimpleNameExpression;
     }
 
     @NotNull
@@ -75,11 +75,11 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     @NotNull
     private JsBinaryOperation unaryAsBinary(@NotNull JsExpression leftExpression) {
         JsNumberLiteral oneLiteral = program().getNumberLiteral(1);
-        JetToken token = getOperationToken(expression);
-        if (token.equals(JetTokens.PLUSPLUS)) {
+        KtToken token = getOperationToken(expression);
+        if (token.equals(KtTokens.PLUSPLUS)) {
             return new JsBinaryOperation(JsBinaryOperator.ADD, leftExpression, oneLiteral);
         }
-        if (token.equals(JetTokens.MINUSMINUS)) {
+        if (token.equals(KtTokens.MINUSMINUS)) {
             return new JsBinaryOperation(JsBinaryOperator.SUB, leftExpression, oneLiteral);
         }
         throw new AssertionError("This method should be called only for increment and decrement operators");

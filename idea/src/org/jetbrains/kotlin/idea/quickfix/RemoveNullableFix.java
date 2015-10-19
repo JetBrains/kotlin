@@ -23,17 +23,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetNullableType;
-import org.jetbrains.kotlin.psi.JetTypeElement;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtNullableType;
+import org.jetbrains.kotlin.psi.KtTypeElement;
 
-public class RemoveNullableFix extends KotlinQuickFixAction<JetNullableType> {
+public class RemoveNullableFix extends KotlinQuickFixAction<KtNullableType> {
     public enum NullableKind {
         REDUNDANT, SUPERTYPE, USELESS
     }
     private final NullableKind typeOfError;
 
-    public RemoveNullableFix(@NotNull JetNullableType element, @NotNull NullableKind type) {
+    public RemoveNullableFix(@NotNull KtNullableType element, @NotNull NullableKind type) {
         super(element);
         typeOfError = type;
     }
@@ -58,8 +58,8 @@ public class RemoveNullableFix extends KotlinQuickFixAction<JetNullableType> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetTypeElement type = super.getElement().getInnerType();
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        KtTypeElement type = super.getElement().getInnerType();
         assert type != null : "No inner type " + getElement().getText() + ", should have been rejected in createFactory()";
         super.getElement().replace(type);
     }
@@ -67,8 +67,8 @@ public class RemoveNullableFix extends KotlinQuickFixAction<JetNullableType> {
     public static JetSingleIntentionActionFactory createFactory(final NullableKind typeOfError) {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<JetNullableType> createAction(Diagnostic diagnostic) {
-                JetNullableType nullType = QuickFixUtil.getParentElementOfType(diagnostic, JetNullableType.class);
+            public KotlinQuickFixAction<KtNullableType> createAction(Diagnostic diagnostic) {
+                KtNullableType nullType = QuickFixUtil.getParentElementOfType(diagnostic, KtNullableType.class);
                 if (nullType == null || nullType.getInnerType() == null) return null;
                 return new RemoveNullableFix(nullType, typeOfError);
             }

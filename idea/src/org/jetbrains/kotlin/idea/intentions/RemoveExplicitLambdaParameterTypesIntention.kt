@@ -17,23 +17,23 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
-public class RemoveExplicitLambdaParameterTypesIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(javaClass(), "Remove explicit lambda parameter types (may break code)") {
-    override fun isApplicableTo(element: JetFunctionLiteralExpression, caretOffset: Int): Boolean {
+public class RemoveExplicitLambdaParameterTypesIntention : JetSelfTargetingIntention<KtFunctionLiteralExpression>(javaClass(), "Remove explicit lambda parameter types (may break code)") {
+    override fun isApplicableTo(element: KtFunctionLiteralExpression, caretOffset: Int): Boolean {
         if (element.getValueParameters().none { it.getTypeReference() != null }) return false
         val arrow = element.getFunctionLiteral().getArrow() ?: return false
         return caretOffset <= arrow.endOffset
     }
 
-    override fun applyTo(element: JetFunctionLiteralExpression, editor: Editor) {
+    override fun applyTo(element: KtFunctionLiteralExpression, editor: Editor) {
         val oldParameterList = element.getFunctionLiteral().getValueParameterList()!!
 
         val parameterString = oldParameterList.getParameters().map { it.getName() }.joinToString(", ")
-        val newParameterList = JetPsiFactory(element).createFunctionLiteralParameterList(parameterString)
+        val newParameterList = KtPsiFactory(element).createFunctionLiteralParameterList(parameterString)
         oldParameterList.replace(newParameterList)
     }
 }

@@ -27,19 +27,19 @@ import com.intellij.psi.impl.java.stubs.*;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.KtDeclaration;
 
 class ClsWrapperStubPsiFactory extends StubPsiFactory {
     public static final Key<PsiElement> ORIGIN_ELEMENT = Key.create("ORIGIN_ELEMENT");
     private final StubPsiFactory delegate = new ClsStubPsiFactory();
 
-    public static JetDeclaration getOriginalDeclaration(PsiMember member) {
+    public static KtDeclaration getOriginalDeclaration(PsiMember member) {
         if (member instanceof ClsRepositoryPsiElement<?>) {
             StubElement stubElement = ((ClsRepositoryPsiElement<?>) member).getStub();
             if (stubElement instanceof UserDataHolder) {
                 PsiElement original = ((UserDataHolder) stubElement).getUserData(ORIGIN_ELEMENT);
-                if (original instanceof JetDeclaration) {
-                    return (JetDeclaration) original;
+                if (original instanceof KtDeclaration) {
+                    return (KtDeclaration) original;
                 }
             }
         }

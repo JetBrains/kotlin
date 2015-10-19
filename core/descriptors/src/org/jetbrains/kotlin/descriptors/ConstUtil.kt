@@ -19,11 +19,11 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 object ConstUtil {
     @JvmStatic
-    public fun canBeUsedForConstVal(type: JetType) = type.canBeUsedForConstVal()
+    public fun canBeUsedForConstVal(type: KtType) = type.canBeUsedForConstVal()
 }
 
-public fun JetType.canBeUsedForConstVal() = KotlinBuiltIns.isPrimitiveType(this) || KotlinBuiltIns.isString(this)
+public fun KtType.canBeUsedForConstVal() = KotlinBuiltIns.isPrimitiveType(this) || KotlinBuiltIns.isString(this)

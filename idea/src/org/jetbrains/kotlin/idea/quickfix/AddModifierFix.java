@@ -26,25 +26,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetModifierListOwner;
-import org.jetbrains.kotlin.psi.JetObjectDeclaration;
-import org.jetbrains.kotlin.psi.JetPropertyAccessor;
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtModifierListOwner;
+import org.jetbrains.kotlin.psi.KtObjectDeclaration;
+import org.jetbrains.kotlin.psi.KtPropertyAccessor;
 
-import static org.jetbrains.kotlin.lexer.JetTokens.ABSTRACT_KEYWORD;
+import static org.jetbrains.kotlin.lexer.KtTokens.ABSTRACT_KEYWORD;
 
-public class AddModifierFix extends KotlinQuickFixAction<JetModifierListOwner> {
-    @NotNull private final JetModifierKeywordToken modifier;
+public class AddModifierFix extends KotlinQuickFixAction<KtModifierListOwner> {
+    @NotNull private final KtModifierKeywordToken modifier;
 
-    public AddModifierFix(@NotNull JetModifierListOwner element, @NotNull JetModifierKeywordToken modifier) {
+    public AddModifierFix(@NotNull KtModifierListOwner element, @NotNull KtModifierKeywordToken modifier) {
         super(element);
         this.modifier = modifier;
     }
 
     @NotNull
-    /*package*/ static String getElementName(@NotNull JetModifierListOwner modifierListOwner) {
+    /*package*/ static String getElementName(@NotNull KtModifierListOwner modifierListOwner) {
         String name = null;
         if (modifierListOwner instanceof PsiNameIdentifierOwner) {
             PsiElement nameIdentifier = ((PsiNameIdentifierOwner) modifierListOwner).getNameIdentifier();
@@ -52,8 +52,8 @@ public class AddModifierFix extends KotlinQuickFixAction<JetModifierListOwner> {
                 name = nameIdentifier.getText();
             }
         }
-        else if (modifierListOwner instanceof JetPropertyAccessor) {
-            name = ((JetPropertyAccessor) modifierListOwner).getNamePlaceholder().getText();
+        else if (modifierListOwner instanceof KtPropertyAccessor) {
+            name = ((KtPropertyAccessor) modifierListOwner).getNamePlaceholder().getText();
         }
         if (name == null) {
             name = modifierListOwner.getText();
@@ -64,7 +64,7 @@ public class AddModifierFix extends KotlinQuickFixAction<JetModifierListOwner> {
     @NotNull
     @Override
     public String getText() {
-        if (modifier == ABSTRACT_KEYWORD || modifier == JetTokens.OPEN_KEYWORD) {
+        if (modifier == ABSTRACT_KEYWORD || modifier == KtTokens.OPEN_KEYWORD) {
             return JetBundle.message("make.element.modifier", getElementName(getElement()), modifier.getValue());
         }
         return JetBundle.message("add.modifier", modifier.getValue());
@@ -77,7 +77,7 @@ public class AddModifierFix extends KotlinQuickFixAction<JetModifierListOwner> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
         getElement().addModifier(modifier);
     }
 
@@ -86,23 +86,23 @@ public class AddModifierFix extends KotlinQuickFixAction<JetModifierListOwner> {
         return true;
     }
 
-    public static <T extends JetModifierListOwner> JetSingleIntentionActionFactory createFactory(final JetModifierKeywordToken modifier, final Class<T> modifierOwnerClass) {
+    public static <T extends KtModifierListOwner> JetSingleIntentionActionFactory createFactory(final KtModifierKeywordToken modifier, final Class<T> modifierOwnerClass) {
         return new JetSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                JetModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, modifierOwnerClass);
+                KtModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, modifierOwnerClass);
                 if (modifierListOwner == null) return null;
 
-                if (modifier == JetTokens.ABSTRACT_KEYWORD &&
-                    modifierListOwner instanceof JetObjectDeclaration &&
-                    ((JetObjectDeclaration) modifierListOwner).isObjectLiteral()) return null;
+                if (modifier == KtTokens.ABSTRACT_KEYWORD &&
+                    modifierListOwner instanceof KtObjectDeclaration &&
+                    ((KtObjectDeclaration) modifierListOwner).isObjectLiteral()) return null;
 
                 return new AddModifierFix(modifierListOwner, modifier);
             }
         };
     }
 
-    public static JetSingleIntentionActionFactory createFactory(JetModifierKeywordToken modifier) {
-        return createFactory(modifier, JetModifierListOwner.class);
+    public static JetSingleIntentionActionFactory createFactory(KtModifierKeywordToken modifier) {
+        return createFactory(modifier, KtModifierListOwner.class);
     }
 }

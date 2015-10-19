@@ -21,9 +21,9 @@ import com.intellij.usages.UsageGroup
 import com.intellij.usages.Usage
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.usages.rules.UsageGroupingRule
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import com.intellij.usages.PsiNamedElementUsageGroupBase
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import com.intellij.usages.impl.FileStructureGroupRuleProvider
 import com.intellij.openapi.project.Project
 
@@ -34,9 +34,9 @@ public class KotlinDeclarationGroupRuleProvider : FileStructureGroupRuleProvider
             if (element == null) return null
 
             val containingFile = element.getContainingFile()
-            if (containingFile !is JetFile) return null
+            if (containingFile !is KtFile) return null
 
-            return PsiTreeUtil.getTopmostParentOfType(element, javaClass<JetNamedDeclaration>())?.let { container ->
+            return PsiTreeUtil.getTopmostParentOfType(element, javaClass<KtNamedDeclaration>())?.let { container ->
                 PsiNamedElementUsageGroupBase(container)
             }
         }

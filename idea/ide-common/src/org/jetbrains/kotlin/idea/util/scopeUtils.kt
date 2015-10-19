@@ -22,21 +22,21 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 
 
-public fun JetScope.getAllAccessibleVariables(name: Name): Collection<VariableDescriptor>
+public fun KtScope.getAllAccessibleVariables(name: Name): Collection<VariableDescriptor>
         = getVariablesFromImplicitReceivers(name) + getProperties(name, NoLookupLocation.FROM_IDE) + listOfNotNull(getLocalVariable(name))
 
-public fun JetScope.getAllAccessibleFunctions(name: Name): Collection<FunctionDescriptor>
+public fun KtScope.getAllAccessibleFunctions(name: Name): Collection<FunctionDescriptor>
         = getImplicitReceiversWithInstance().flatMap { it.type.memberScope.getFunctions(name, NoLookupLocation.FROM_IDE) } +
           getFunctions(name, NoLookupLocation.FROM_IDE)
 
-public fun JetScope.getVariablesFromImplicitReceivers(name: Name): Collection<VariableDescriptor> = getImplicitReceiversWithInstance().flatMap {
+public fun KtScope.getVariablesFromImplicitReceivers(name: Name): Collection<VariableDescriptor> = getImplicitReceiversWithInstance().flatMap {
     it.type.memberScope.getProperties(name, NoLookupLocation.FROM_IDE)
 }
 
-public fun JetScope.getVariableFromImplicitReceivers(name: Name): VariableDescriptor? {
+public fun KtScope.getVariableFromImplicitReceivers(name: Name): VariableDescriptor? {
     getImplicitReceiversWithInstance().forEach {
         it.type.memberScope.getProperties(name, NoLookupLocation.FROM_IDE).singleOrNull()?.let { return it }
     }

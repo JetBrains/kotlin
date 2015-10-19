@@ -21,34 +21,34 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class AddBracesIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Add braces") {
-    override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
+public class AddBracesIntention : JetSelfTargetingIntention<KtExpression>(javaClass(), "Add braces") {
+    override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
         val expression = element.getTargetExpression(caretOffset) ?: return false
-        if (expression is JetBlockExpression) return false
+        if (expression is KtBlockExpression) return false
 
-        val description = (expression.getParent() as JetContainerNode).description()!!
+        val description = (expression.getParent() as KtContainerNode).description()!!
         setText("Add braces to '$description' statement")
         return true
     }
 
-    override fun applyTo(element: JetExpression, editor: Editor) {
+    override fun applyTo(element: KtExpression, editor: Editor) {
         val expression = element.getTargetExpression(editor.getCaretModel().getOffset())!!
 
         if (element.getNextSibling()?.getText() == ";") {
             element.getNextSibling()!!.delete()
         }
 
-        val psiFactory = JetPsiFactory(element)
+        val psiFactory = KtPsiFactory(element)
         expression.replace(psiFactory.createSingleStatementBlock(expression))
 
-        if (element is JetDoWhileExpression) { // remove new line between '}' and while
+        if (element is KtDoWhileExpression) { // remove new line between '}' and while
             (element.getBody()!!.getParent().getNextSibling() as? PsiWhiteSpace)?.delete()
         }
     }
 
-    private fun JetExpression.getTargetExpression(caretLocation: Int): JetExpression? {
+    private fun KtExpression.getTargetExpression(caretLocation: Int): KtExpression? {
         when (this) {
-            is JetIfExpression -> {
+            is KtIfExpression -> {
                 val thenExpr = getThen() ?: return null
                 val elseExpr = getElse()
                 if (elseExpr != null && caretLocation >= getElseKeyword()!!.startOffset) {
@@ -57,11 +57,11 @@ public class AddBracesIntention : JetSelfTargetingIntention<JetExpression>(javaC
                 return thenExpr
             }
 
-            is JetWhileExpression -> return getBody()
+            is KtWhileExpression -> return getBody()
 
-            is JetDoWhileExpression -> return getBody()
+            is KtDoWhileExpression -> return getBody()
 
-            is JetForExpression -> return getBody()
+            is KtForExpression -> return getBody()
 
             else -> return null
         }

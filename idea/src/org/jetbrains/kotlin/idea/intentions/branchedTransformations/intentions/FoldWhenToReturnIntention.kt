@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.*
 
-public class FoldWhenToReturnIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Replace 'when' expression with return") {
-    override fun applicabilityRange(element: JetWhenExpression): TextRange? {
-        if (!JetPsiUtil.checkWhenExpressionHasSingleElse(element)) return null
+public class FoldWhenToReturnIntention : JetSelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Replace 'when' expression with return") {
+    override fun applicabilityRange(element: KtWhenExpression): TextRange? {
+        if (!KtPsiUtil.checkWhenExpressionHasSingleElse(element)) return null
 
         val entries = element.getEntries()
 
@@ -37,11 +37,11 @@ public class FoldWhenToReturnIntention : JetSelfTargetingRangeIntention<JetWhenE
         return element.getWhenKeyword().getTextRange()
     }
 
-    override fun applyTo(element: JetWhenExpression, editor: Editor) {
+    override fun applyTo(element: KtWhenExpression, editor: Editor) {
         assert(!element.getEntries().isEmpty())
 
-        val newReturnExpression = JetPsiFactory(element).createExpressionByPattern("return $0", element) as JetReturnExpression
-        val newWhenExpression = newReturnExpression.getReturnedExpression() as JetWhenExpression
+        val newReturnExpression = KtPsiFactory(element).createExpressionByPattern("return $0", element) as KtReturnExpression
+        val newWhenExpression = newReturnExpression.getReturnedExpression() as KtWhenExpression
 
         for (entry in newWhenExpression.getEntries()) {
             val currReturn = BranchedFoldingUtils.getFoldableBranchedReturn(entry.getExpression()!!)!!

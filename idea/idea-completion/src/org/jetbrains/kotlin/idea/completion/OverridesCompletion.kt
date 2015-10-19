@@ -38,10 +38,10 @@ import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.quickfix.moveCaretIntoGeneratedElement
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetPrimaryConstructor
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -55,9 +55,9 @@ class OverridesCompletion(
     }
 
     fun complete(position: PsiElement) {
-        val isConstructorParameter = position.getNonStrictParentOfType<JetPrimaryConstructor>() != null
+        val isConstructorParameter = position.getNonStrictParentOfType<KtPrimaryConstructor>() != null
 
-        val classOrObject = position.getNonStrictParentOfType<JetClassOrObject>() ?: return
+        val classOrObject = position.getNonStrictParentOfType<KtClassOrObject>() ?: return
 
         val members = OverrideMembersHandler().collectMembersToGenerate(classOrObject)
 
@@ -104,10 +104,10 @@ class OverridesCompletion(
 
                     PsiDocumentManager.getInstance(context.project).commitAllDocuments()
 
-                    val dummyMember = context.file.findElementAt(context.startOffset)!!.getStrictParentOfType<JetNamedDeclaration>()!!
+                    val dummyMember = context.file.findElementAt(context.startOffset)!!.getStrictParentOfType<KtNamedDeclaration>()!!
 
                     // keep original modifiers
-                    val modifierList = JetPsiFactory(context.project).createModifierList(dummyMember.modifierList!!.text)
+                    val modifierList = KtPsiFactory(context.project).createModifierList(dummyMember.modifierList!!.text)
 
                     val prototype = memberObject.generateMember(context.project, isConstructorParameter)
                     prototype.modifierList!!.replace(modifierList)

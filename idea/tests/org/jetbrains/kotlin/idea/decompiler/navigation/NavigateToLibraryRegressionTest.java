@@ -24,7 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 
@@ -67,7 +67,7 @@ public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTest
     }
 
     protected PsiElement configureAndResolve(String text) {
-        myFixture.configureByText(JetFileType.INSTANCE, text);
+        myFixture.configureByText(KotlinFileType.INSTANCE, text);
         PsiReference ref = myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
         //noinspection ConstantConditions
         return ref.resolve().getNavigationElement();

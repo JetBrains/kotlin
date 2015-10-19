@@ -26,7 +26,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.idea.JetIcons
+import org.jetbrains.kotlin.idea.KtIcons
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.getResolutionScope
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
 import java.util.*
@@ -188,35 +188,35 @@ class ThisItemLookupObject(val receiverParameter: ReceiverParameterDescriptor, v
 fun ThisItemLookupObject.createLookupElement() = createKeywordElement("this", labelName.labelNameToTail(), lookupObject = this)
         .withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(receiverParameter.type))
 
-fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression, prefix: String, resolutionFacade: ResolutionFacade): Collection<ThisItemLookupObject> {
+fun thisExpressionItems(bindingContext: BindingContext, position: KtExpression, prefix: String, resolutionFacade: ResolutionFacade): Collection<ThisItemLookupObject> {
     val scope = position.getResolutionScope(bindingContext, resolutionFacade)
 
-    val psiFactory = JetPsiFactory(position)
+    val psiFactory = KtPsiFactory(position)
 
     val result = ArrayList<ThisItemLookupObject>()
     for ((receiver, expressionFactory) in scope.asJetScope().getImplicitReceiversWithInstanceToExpression()) {
         if (expressionFactory == null) continue
         // if prefix does not start with "this@" do not include immediate this in the form with label
-        val expression = expressionFactory.createExpression(psiFactory, shortThis = !prefix.startsWith("this@")) as? JetThisExpression ?: continue
+        val expression = expressionFactory.createExpression(psiFactory, shortThis = !prefix.startsWith("this@")) as? KtThisExpression ?: continue
         result.add(ThisItemLookupObject(receiver, expression.getLabelNameAsName()))
     }
     return result
 }
 
-fun returnExpressionItems(bindingContext: BindingContext, position: JetElement): Collection<LookupElement> {
+fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): Collection<LookupElement> {
     val result = ArrayList<LookupElement>()
     for (parent in position.parentsWithSelf) {
-        if (parent is JetDeclarationWithBody) {
+        if (parent is KtDeclarationWithBody) {
             val returnType = parent.returnType(bindingContext)
             val isUnit = returnType == null || KotlinBuiltIns.isUnit(returnType)
-            if (parent is JetFunctionLiteral) {
+            if (parent is KtFunctionLiteral) {
                 val (label, call) = parent.findLabelAndCall()
                 if (label != null) {
                     result.add(createKeywordElementWithSpace("return", tail = label.labelNameToTail(), addSpaceAfter = !isUnit))
                 }
 
                 // check if the current function literal is inlined and stop processing outer declarations if it's not
-                val callee = call?.getCalleeExpression() as? JetReferenceExpression ?: break // not inlined
+                val callee = call?.getCalleeExpression() as? KtReferenceExpression ?: break // not inlined
                 if (!InlineUtil.isInline(bindingContext[BindingContext.REFERENCE_TARGET, callee])) break // not inlined
             }
             else {
@@ -247,7 +247,7 @@ fun returnExpressionItems(bindingContext: BindingContext, position: JetElement):
     return result
 }
 
-private fun JetDeclarationWithBody.returnType(bindingContext: BindingContext): JetType? {
+private fun KtDeclarationWithBody.returnType(bindingContext: BindingContext): KtType? {
     val callable = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? CallableDescriptor ?: return null
     return callable.getReturnType()
 }
@@ -287,35 +287,35 @@ private fun createKeywordElement(
     return element
 }
 
-fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String): Collection<LookupElement> {
+fun breakOrContinueExpressionItems(position: KtElement, breakOrContinue: String): Collection<LookupElement> {
     val result = ArrayList<LookupElement>()
 
     parentsLoop@
     for (parent in position.parentsWithSelf) {
         when (parent) {
-            is JetLoopExpression -> {
+            is KtLoopExpression -> {
                 if (result.isEmpty()) {
                     result.add(createKeywordElement(breakOrContinue))
                 }
 
-                val label = (parent.getParent() as? JetLabeledExpression)?.getLabelNameAsName()
+                val label = (parent.getParent() as? KtLabeledExpression)?.getLabelNameAsName()
                 if (label != null) {
                     result.add(createKeywordElement(breakOrContinue, tail = label.labelNameToTail()))
                 }
             }
 
-            is JetDeclarationWithBody -> break@parentsLoop //TODO: support non-local break's&continue's when they are supported by compiler
+            is KtDeclarationWithBody -> break@parentsLoop //TODO: support non-local break's&continue's when they are supported by compiler
         }
     }
     return result
 }
 
-fun LookupElementFactory.createLookupElementForType(type: JetType): LookupElement? {
+fun LookupElementFactory.createLookupElementForType(type: KtType): LookupElement? {
     if (type.isError()) return null
 
     if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
         val text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-        val baseLookupElement = LookupElementBuilder.create(text).withIcon(JetIcons.LAMBDA)
+        val baseLookupElement = LookupElementBuilder.create(text).withIcon(KtIcons.LAMBDA)
         return BaseTypeLookupElement(type, baseLookupElement)
     }
     else {
@@ -339,7 +339,7 @@ fun LookupElementFactory.createLookupElementForType(type: JetType): LookupElemen
     }
 }
 
-private open class BaseTypeLookupElement(type: JetType, baseLookupElement: LookupElement) : LookupElementDecorator<LookupElement>(baseLookupElement) {
+private open class BaseTypeLookupElement(type: KtType, baseLookupElement: LookupElement) : LookupElementDecorator<LookupElement>(baseLookupElement) {
     val fullText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
 
     override fun equals(other: Any?) = other is BaseTypeLookupElement && fullText == other.fullText
@@ -358,7 +358,7 @@ private open class BaseTypeLookupElement(type: JetType, baseLookupElement: Looku
 
 fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: Int) {
     PsiDocumentManager.getInstance(context.project).commitAllDocuments()
-    ShortenReferences.DEFAULT.process(context.file as JetFile, startOffset, endOffset)
+    ShortenReferences.DEFAULT.process(context.file as KtFile, startOffset, endOffset)
 }
 
 fun <T> ElementPattern<T>.and(rhs: ElementPattern<T>) = StandardPatterns.and(this, rhs)

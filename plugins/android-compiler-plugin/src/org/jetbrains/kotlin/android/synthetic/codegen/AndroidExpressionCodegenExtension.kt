@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -97,7 +97,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
             val classBuilder: ClassBuilder,
             val state: GenerationState,
             val descriptor: ClassDescriptor,
-            val classOrObject: JetClassOrObject,
+            val classOrObject: KtClassOrObject,
             val androidClassType: AndroidClassType)
 
     override fun applyProperty(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
@@ -234,7 +234,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
     override fun generateClassSyntheticParts(
             classBuilder: ClassBuilder,
             state: GenerationState,
-            classOrObject: JetClassOrObject,
+            classOrObject: KtClassOrObject,
             descriptor: ClassDescriptor
     ) {
         if (descriptor.kind != ClassKind.CLASS || descriptor.isInner || DescriptorUtils.isLocal(descriptor)) return

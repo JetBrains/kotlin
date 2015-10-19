@@ -29,9 +29,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
-import org.jetbrains.kotlin.psi.JetBlockExpression;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetFunctionLiteral;
+import org.jetbrains.kotlin.psi.KtBlockExpression;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 
 public abstract class AbstractJetUpDownMover extends LineMover {
     protected AbstractJetUpDownMover() {
@@ -57,8 +57,8 @@ public abstract class AbstractJetUpDownMover extends LineMover {
         int topExtension = 0;
         int bottomExtension = 0;
 
-        if (parent instanceof JetFunctionLiteral) {
-            JetBlockExpression block = ((JetFunctionLiteral) parent).getBodyExpression();
+        if (parent instanceof KtFunctionLiteral) {
+            KtBlockExpression block = ((KtFunctionLiteral) parent).getBodyExpression();
             if (block != null) {
                 PsiElement comment = null;
 
@@ -145,7 +145,7 @@ public abstract class AbstractJetUpDownMover extends LineMover {
         return lastElement;
     }
 
-    private static boolean checkCommentAtBlockBound(PsiElement blockElement, PsiElement comment, JetBlockExpression block) {
+    private static boolean checkCommentAtBlockBound(PsiElement blockElement, PsiElement comment, KtBlockExpression block) {
         return PsiTreeUtil.isAncestor(block, blockElement, true) && comment instanceof PsiComment;
     }
 
@@ -166,6 +166,6 @@ public abstract class AbstractJetUpDownMover extends LineMover {
 
     @Override
     public boolean checkAvailable(@NotNull Editor editor, @NotNull PsiFile file, @NotNull MoveInfo info, boolean down) {
-        return (file instanceof JetFile) && super.checkAvailable(editor, file, info, down);
+        return (file instanceof KtFile) && super.checkAvailable(editor, file, info, down);
     }
 }

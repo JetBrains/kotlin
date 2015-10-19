@@ -37,17 +37,13 @@ import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -59,9 +55,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ListIterator;
-
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 
 public class InlineCodegenUtil {
     public static final boolean GENERATE_SMAP = true;
@@ -185,7 +178,7 @@ public class InlineCodegenUtil {
             if (file == null) {
                 implementationOwnerType = CodegenContextUtil.getImplementationOwnerClassType(codegenContext);
             } else {
-                implementationOwnerType = FileClasses.getFileClassType(fileClassesProvider, (JetFile) file);
+                implementationOwnerType = FileClasses.getFileClassType(fileClassesProvider, (KtFile) file);
             }
 
             if (implementationOwnerType == null) {

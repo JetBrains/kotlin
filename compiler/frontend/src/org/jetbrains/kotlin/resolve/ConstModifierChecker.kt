@@ -21,20 +21,20 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 
 public object ConstModifierChecker : DeclarationChecker {
     override fun check(
-            declaration: JetDeclaration,
+            declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (descriptor !is VariableDescriptor || !declaration.hasModifier(JetTokens.CONST_KEYWORD)) return
+        if (descriptor !is VariableDescriptor || !declaration.hasModifier(KtTokens.CONST_KEYWORD)) return
 
-        val constModifierPsiElement = declaration.modifierList!!.getModifier(JetTokens.CONST_KEYWORD)!!
+        val constModifierPsiElement = declaration.modifierList!!.getModifier(KtTokens.CONST_KEYWORD)!!
 
         val diagnostic = checkCanBeConst(declaration, constModifierPsiElement, descriptor)
         if (diagnostic != null) {
@@ -42,11 +42,11 @@ public object ConstModifierChecker : DeclarationChecker {
         }
     }
 
-    fun checkCanBeConst(declaration: JetDeclaration,
+    fun checkCanBeConst(declaration: KtDeclaration,
                         constModifierPsiElement: PsiElement,
                         descriptor: VariableDescriptor): Diagnostic? {
         if (descriptor.isVar) {
-            return Errors.WRONG_MODIFIER_TARGET.on(constModifierPsiElement, JetTokens.CONST_KEYWORD, "vars")
+            return Errors.WRONG_MODIFIER_TARGET.on(constModifierPsiElement, KtTokens.CONST_KEYWORD, "vars")
         }
 
         val containingDeclaration = descriptor.containingDeclaration
@@ -54,7 +54,7 @@ public object ConstModifierChecker : DeclarationChecker {
             return Errors.CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT.on(constModifierPsiElement)
         }
 
-        if (declaration !is JetProperty || descriptor !is PropertyDescriptor) return null
+        if (declaration !is KtProperty || descriptor !is PropertyDescriptor) return null
 
         if (declaration.hasDelegate()) {
             return Errors.CONST_VAL_WITH_DELEGATE.on(declaration.delegate!!)

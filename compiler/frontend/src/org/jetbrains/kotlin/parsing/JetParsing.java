@@ -22,15 +22,15 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.JetNodeType;
-import org.jetbrains.kotlin.lexer.JetKeywordToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.KtNodeType;
+import org.jetbrains.kotlin.lexer.KtKeywordToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.JetNodeTypes.*;
-import static org.jetbrains.kotlin.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.KtNodeTypes.*;
+import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.*;
 import static org.jetbrains.kotlin.parsing.JetParsing.DeclarationParsingMode.*;
 
@@ -41,7 +41,7 @@ public class JetParsing extends AbstractJetParsing {
     public static final Map<String, IElementType> MODIFIER_KEYWORD_MAP = new HashMap<String, IElementType>();
     static {
         for (IElementType softKeyword : MODIFIER_KEYWORDS.getTypes()) {
-            MODIFIER_KEYWORD_MAP.put(((JetKeywordToken) softKeyword).getValue(), softKeyword);
+            MODIFIER_KEYWORD_MAP.put(((KtKeywordToken) softKeyword).getValue(), softKeyword);
         }
     }
 
@@ -643,7 +643,7 @@ public class JetParsing extends AbstractJetParsing {
             return true;
         }
 
-        JetKeywordToken targetKeyword = atTargetKeyword();
+        KtKeywordToken targetKeyword = atTargetKeyword();
         if (mode == FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(targetKeyword == FILE_KEYWORD && lookahead(1) == COLON)) {
             return false;
         }
@@ -665,7 +665,7 @@ public class JetParsing extends AbstractJetParsing {
         return true;
     }
 
-    private void parseAnnotationTarget(AnnotationParsingMode mode, JetKeywordToken keyword) {
+    private void parseAnnotationTarget(AnnotationParsingMode mode, KtKeywordToken keyword) {
         if (keyword == FILE_KEYWORD && !mode.isFileAnnotationParsingMode && at(keyword) && lookahead(1) == COLON) {
             errorAndAdvance(AT.getValue() + keyword.getValue() + " annotations are only allowed before package declaration", 2);
             return;
@@ -686,9 +686,9 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     @Nullable
-    private JetKeywordToken atTargetKeyword() {
+    private KtKeywordToken atTargetKeyword() {
         for (IElementType target : ANNOTATION_TARGETS.getTypes()) {
-            if (at(target)) return (JetKeywordToken) target;
+            if (at(target)) return (KtKeywordToken) target;
         }
         return null;
     }
@@ -1181,7 +1181,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers "typealias" SimpleName (typeParameters typeConstraints)? "=" type
      *   ;
      */
-    JetNodeType parseTypeAlias() {
+    KtNodeType parseTypeAlias() {
         assert _at(TYPE_ALIAS_KEYWORD);
 
         advance(); // TYPE_ALIAS_KEYWORD
@@ -2242,10 +2242,10 @@ public class JetParsing extends AbstractJetParsing {
 
         @Override
         public void consume(IElementType item) {
-            if (item == JetTokens.ENUM_KEYWORD) {
+            if (item == KtTokens.ENUM_KEYWORD) {
                 enumDetected = true;
             }
-            else if (item == JetTokens.COMPANION_KEYWORD) {
+            else if (item == KtTokens.COMPANION_KEYWORD) {
                 defaultDetected = true;
             }
         }

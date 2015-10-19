@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
@@ -45,8 +45,8 @@ import org.jetbrains.kotlin.js.test.rhino.RhinoResultChecker;
 import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils;
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
 import org.jetbrains.kotlin.js.translate.context.Namer;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetPsiFactory;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
@@ -172,7 +172,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     ) throws Exception {
         Project project = getProject();
         List<String> allFiles = withAdditionalKotlinFiles(files);
-        List<JetFile> jetFiles = createJetFileList(project, allFiles, null);
+        List<KtFile> jetFiles = createJetFileList(project, allFiles, null);
 
         Config config = createConfig(getProject(), moduleName, version, libraries);
         File outputFile = new File(getOutputFilePath(testName, version));
@@ -185,7 +185,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     }
 
     protected void translateFiles(
-            @NotNull List<JetFile> jetFiles,
+            @NotNull List<KtFile> jetFiles,
             @NotNull File outputFile,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull Config config
@@ -225,8 +225,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return false;
     }
 
-    protected void processJsProgram(@NotNull JsProgram program, @NotNull List<JetFile> jetFiles) throws Exception {
-        for (JetFile file : jetFiles) {
+    protected void processJsProgram(@NotNull JsProgram program, @NotNull List<KtFile> jetFiles) throws Exception {
+        for (KtFile file : jetFiles) {
             String text = file.getText();
             DirectiveTestUtils.processDirectives(program, text);
         }
@@ -254,9 +254,9 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         List<String> additionalFiles = Lists.newArrayList();
 
         // add all kotlin files from testData/_commonFiles
-        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JetFileType.EXTENSION));
+        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(TEST_DATA_DIR_PATH + COMMON_FILES_DIR, KotlinFileType.EXTENSION));
         // add all kotlin files from <testDir>/_commonFiles
-        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(pathToTestDir() + COMMON_FILES_DIR, JetFileType.EXTENSION));
+        additionalFiles.addAll(JsTestUtils.getFilesInDirectoryByExtension(pathToTestDir() + COMMON_FILES_DIR, KotlinFileType.EXTENSION));
 
         return additionalFiles;
     }
@@ -347,8 +347,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return allFiles;
     }
 
-    private static List<JetFile> createJetFileList(@NotNull Project project, @NotNull List<String> list, @Nullable String root) {
-        List<JetFile> libFiles = Lists.newArrayList();
+    private static List<KtFile> createJetFileList(@NotNull Project project, @NotNull List<String> list, @Nullable String root) {
+        List<KtFile> libFiles = Lists.newArrayList();
 
         PsiManager psiManager = PsiManager.getInstance(project);
         VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
@@ -360,7 +360,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             //TODO logging?
             assert virtualFile != null;
             PsiFile psiFile = psiManager.findFile(virtualFile);
-            libFiles.add((JetFile) psiFile);
+            libFiles.add((KtFile) psiFile);
         }
         return libFiles;
     }
@@ -368,8 +368,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     @NotNull
     protected String getPackageName(@NotNull String filename) throws IOException {
         String content = FileUtil.loadFile(new File(filename), true);
-        JetPsiFactory psiFactory = new JetPsiFactory(getProject());
-        JetFile jetFile = psiFactory.createFile(content);
+        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
+        KtFile jetFile = psiFactory.createFile(content);
         String packageName = jetFile.getPackageFqName().asString();
         return packageName.isEmpty() ? Namer.getRootPackageName() : packageName;
     }

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParentContainedIn
@@ -130,8 +130,8 @@ fun selectElementsWithTargetParent(
     selectSingleExpression()
 }
 
-fun PsiElement.findExpressionByCopyableDataAndClearIt(key: Key<Boolean>): JetExpression {
-    val result = findDescendantOfType<JetExpression> { it.getCopyableUserData(key) != null }!!
+fun PsiElement.findExpressionByCopyableDataAndClearIt(key: Key<Boolean>): KtExpression {
+    val result = findDescendantOfType<KtExpression> { it.getCopyableUserData(key) != null }!!
     result.putCopyableUserData(key, null)
     return result
 }
@@ -142,8 +142,8 @@ fun PsiElement.findElementByCopyableDataAndClearIt(key: Key<Boolean>): PsiElemen
     return result
 }
 
-fun PsiElement.findExpressionsByCopyableDataAndClearIt(key: Key<Boolean>): List<JetExpression> {
-    val results = collectDescendantsOfType<JetExpression> { it.getCopyableUserData(key) != null }
+fun PsiElement.findExpressionsByCopyableDataAndClearIt(key: Key<Boolean>): List<KtExpression> {
+    val results = collectDescendantsOfType<KtExpression> { it.getCopyableUserData(key) != null }
     results.forEach { it.putCopyableUserData(key, null) }
     return results
 }

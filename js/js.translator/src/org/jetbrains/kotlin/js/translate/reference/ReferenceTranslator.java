@@ -20,20 +20,19 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetQualifiedExpression;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtQualifiedExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.setQualifier;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSelectorAsSimpleName;
-import static org.jetbrains.kotlin.psi.JetPsiUtil.isBackingFieldReference;
+import static org.jetbrains.kotlin.psi.KtPsiUtil.isBackingFieldReference;
 
 public final class ReferenceTranslator {
 
@@ -41,14 +40,14 @@ public final class ReferenceTranslator {
     }
 
     @NotNull
-    public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
+    public static JsExpression translateSimpleName(@NotNull KtSimpleNameExpression expression,
             @NotNull TranslationContext context) {
         return getAccessTranslator(expression, context).translateAsGet();
     }
 
     @NotNull
     public static JsExpression translateSimpleNameWithQualifier(
-            @NotNull JetSimpleNameExpression expression,
+            @NotNull KtSimpleNameExpression expression,
             @Nullable JsExpression qualifier,
             @NotNull TranslationContext context
     ) {
@@ -95,13 +94,13 @@ public final class ReferenceTranslator {
     }
 
     @NotNull
-    public static AccessTranslator getAccessTranslator(@NotNull JetSimpleNameExpression referenceExpression,
+    public static AccessTranslator getAccessTranslator(@NotNull KtSimpleNameExpression referenceExpression,
             @NotNull TranslationContext context) {
         return getAccessTranslator(referenceExpression, null, context);
     }
 
     @NotNull
-    public static AccessTranslator getAccessTranslator(@NotNull JetSimpleNameExpression referenceExpression,
+    public static AccessTranslator getAccessTranslator(@NotNull KtSimpleNameExpression referenceExpression,
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context) {
         if (isBackingFieldReference(referenceExpression, getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression))) {
@@ -116,13 +115,13 @@ public final class ReferenceTranslator {
         return ReferenceAccessTranslator.newInstance(referenceExpression, context);
     }
 
-    public static boolean canBePropertyAccess(@NotNull JetExpression expression, @NotNull TranslationContext context) {
-        JetSimpleNameExpression simpleNameExpression = null;
-        if (expression instanceof JetQualifiedExpression) {
-            simpleNameExpression = getSelectorAsSimpleName((JetQualifiedExpression) expression);
+    public static boolean canBePropertyAccess(@NotNull KtExpression expression, @NotNull TranslationContext context) {
+        KtSimpleNameExpression simpleNameExpression = null;
+        if (expression instanceof KtQualifiedExpression) {
+            simpleNameExpression = getSelectorAsSimpleName((KtQualifiedExpression) expression);
         }
-        else if (expression instanceof JetSimpleNameExpression) {
-            simpleNameExpression = (JetSimpleNameExpression) expression;
+        else if (expression instanceof KtSimpleNameExpression) {
+            simpleNameExpression = (KtSimpleNameExpression) expression;
         }
 
         if (simpleNameExpression == null) return false;

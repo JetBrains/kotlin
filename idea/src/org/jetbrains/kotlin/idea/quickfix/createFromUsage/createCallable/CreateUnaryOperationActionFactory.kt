@@ -20,18 +20,18 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.kotlin.psi.JetUnaryExpression
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public object CreateUnaryOperationActionFactory: CreateCallableMemberFromUsageFactory<JetUnaryExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetUnaryExpression? {
-        return diagnostic.psiElement.parent as? JetUnaryExpression
+public object CreateUnaryOperationActionFactory: CreateCallableMemberFromUsageFactory<KtUnaryExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtUnaryExpression? {
+        return diagnostic.psiElement.parent as? KtUnaryExpression
     }
 
-    override fun createCallableInfo(element: JetUnaryExpression, diagnostic: Diagnostic): CallableInfo? {
-        val token = element.operationToken as JetToken
+    override fun createCallableInfo(element: KtUnaryExpression, diagnostic: Diagnostic): CallableInfo? {
+        val token = element.operationToken as KtToken
         val operationName = OperatorConventions.getNameForOperationSymbol(token, true, false) ?: return null
         val incDec = token in OperatorConventions.INCREMENT_OPERATIONS
 

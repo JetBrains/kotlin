@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 public class LocalVariableDescriptor extends VariableDescriptorWithInitializerImpl {
@@ -29,7 +29,7 @@ public class LocalVariableDescriptor extends VariableDescriptorWithInitializerIm
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Name name,
-            @Nullable JetType type,
+            @Nullable KtType type,
             boolean mutable,
             @NotNull SourceElement source
     ) {

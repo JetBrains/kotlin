@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.lexer.JetTokens.*
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.kotlin.psi.JetModifierList
-import org.jetbrains.kotlin.psi.JetModifierListOwner
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import java.util.*
 
 public object ModifierCheckerCore {
@@ -56,7 +56,7 @@ public object ModifierCheckerCore {
                                                       MEMBER_FUNCTION, TOP_LEVEL_FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER,
                                                       MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, CONSTRUCTOR)
 
-    val possibleTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
+    val possibleTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
             ENUM_KEYWORD      to EnumSet.of(ENUM_CLASS),
             ABSTRACT_KEYWORD  to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
             OPEN_KEYWORD      to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
@@ -89,13 +89,13 @@ public object ModifierCheckerCore {
     )
 
     // NOTE: redundant targets must be possible!
-    private val redundantTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
+    private val redundantTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
             ABSTRACT_KEYWORD  to EnumSet.of(INTERFACE),
             OPEN_KEYWORD      to EnumSet.of(INTERFACE),
             FINAL_KEYWORD     to EnumSet.of(ENUM_CLASS, OBJECT)
     )
 
-    val possibleParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
+    val possibleParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
             INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, ENUM_ENTRY),
             OVERRIDE_KEYWORD  to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
                                             INTERFACE, ENUM_CLASS, ENUM_ENTRY),
@@ -107,7 +107,7 @@ public object ModifierCheckerCore {
             COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE)
     )
 
-    val deprecatedParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
+    val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
             // Deprecated in M15
             FINAL_KEYWORD     to EnumSet.of(INTERFACE),
             PROTECTED_KEYWORD to EnumSet.of(OBJECT)
@@ -116,8 +116,8 @@ public object ModifierCheckerCore {
     // First modifier in pair should be also first in declaration
     private val mutualCompatibility = buildCompatibilityMap()
 
-    private fun buildCompatibilityMap(): Map<Pair<JetModifierKeywordToken, JetModifierKeywordToken>, Compatibility> {
-        val result = hashMapOf<Pair<JetModifierKeywordToken, JetModifierKeywordToken>, Compatibility>()
+    private fun buildCompatibilityMap(): Map<Pair<KtModifierKeywordToken, KtModifierKeywordToken>, Compatibility> {
+        val result = hashMapOf<Pair<KtModifierKeywordToken, KtModifierKeywordToken>, Compatibility>()
         // Variance: in + out are incompatible
         result += incompatibilityRegister(IN_KEYWORD, OUT_KEYWORD)
         // Visibilities: incompatible
@@ -149,17 +149,17 @@ public object ModifierCheckerCore {
     }
 
     private fun redundantRegister(
-            sufficient: JetModifierKeywordToken,
-            redundant: JetModifierKeywordToken
-    ): Map<Pair<JetModifierKeywordToken, JetModifierKeywordToken>, Compatibility> {
+            sufficient: KtModifierKeywordToken,
+            redundant: KtModifierKeywordToken
+    ): Map<Pair<KtModifierKeywordToken, KtModifierKeywordToken>, Compatibility> {
         return mapOf(Pair(sufficient, redundant) to Compatibility.REDUNDANT,
                      Pair(redundant, sufficient) to Compatibility.REVERSE_REDUNDANT)
     }
 
     private fun compatibilityRegister(
-            compatibility: Compatibility, vararg list: JetModifierKeywordToken
-    ): Map<Pair<JetModifierKeywordToken, JetModifierKeywordToken>, Compatibility> {
-        val result = hashMapOf<Pair<JetModifierKeywordToken, JetModifierKeywordToken>, Compatibility>()
+            compatibility: Compatibility, vararg list: KtModifierKeywordToken
+    ): Map<Pair<KtModifierKeywordToken, KtModifierKeywordToken>, Compatibility> {
+        val result = hashMapOf<Pair<KtModifierKeywordToken, KtModifierKeywordToken>, Compatibility>()
         for (first in list) {
             for (second in list) {
                 if (first != second) {
@@ -170,14 +170,14 @@ public object ModifierCheckerCore {
         return result
     }
 
-    private fun compatibilityForClassesRegister(vararg list: JetModifierKeywordToken) =
+    private fun compatibilityForClassesRegister(vararg list: KtModifierKeywordToken) =
             compatibilityRegister(Compatibility.COMPATIBLE_FOR_CLASSES_ONLY, *list)
 
-    private fun incompatibilityRegister(vararg list: JetModifierKeywordToken) = compatibilityRegister(Compatibility.INCOMPATIBLE, *list)
+    private fun incompatibilityRegister(vararg list: KtModifierKeywordToken) = compatibilityRegister(Compatibility.INCOMPATIBLE, *list)
 
-    private fun deprecationRegister(vararg list: JetModifierKeywordToken) = compatibilityRegister(Compatibility.DEPRECATED, *list)
+    private fun deprecationRegister(vararg list: KtModifierKeywordToken) = compatibilityRegister(Compatibility.DEPRECATED, *list)
 
-    private fun compatibility(first: JetModifierKeywordToken, second: JetModifierKeywordToken): Compatibility {
+    private fun compatibility(first: KtModifierKeywordToken, second: KtModifierKeywordToken): Compatibility {
         if (first == second) {
             return Compatibility.REPEATED
         }
@@ -191,8 +191,8 @@ public object ModifierCheckerCore {
                                    secondNode: ASTNode,
                                    owner: PsiElement,
                                    incorrectNodes: MutableSet<ASTNode>) {
-        val first = firstNode.elementType as JetModifierKeywordToken
-        val second = secondNode.elementType as JetModifierKeywordToken
+        val first = firstNode.elementType as KtModifierKeywordToken
+        val second = secondNode.elementType as KtModifierKeywordToken
         val compatibility = compatibility(first, second)
         when (compatibility) {
             Compatibility.COMPATIBLE -> {}
@@ -209,7 +209,7 @@ public object ModifierCheckerCore {
             }
             Compatibility.COMPATIBLE_FOR_CLASSES_ONLY, Compatibility.INCOMPATIBLE -> {
                 if (compatibility == Compatibility.COMPATIBLE_FOR_CLASSES_ONLY) {
-                    if (owner is JetClassOrObject) return
+                    if (owner is KtClassOrObject) return
                 }
                 if (incorrectNodes.add(firstNode)) {
                     trace.report(Errors.INCOMPATIBLE_MODIFIERS.on(firstNode.psi, first, second))
@@ -223,7 +223,7 @@ public object ModifierCheckerCore {
 
     // Should return false if error is reported, true otherwise
     private fun checkTarget(trace: BindingTrace, node: ASTNode, actualTargets: List<KotlinTarget>): Boolean {
-        val modifier = node.elementType as JetModifierKeywordToken
+        val modifier = node.elementType as KtModifierKeywordToken
         val possibleTargets = possibleTargetMap[modifier] ?: emptySet()
         if (!actualTargets.any { it in possibleTargets }) {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
@@ -238,7 +238,7 @@ public object ModifierCheckerCore {
 
     // Should return false if error is reported, true otherwise
     private fun checkParent(trace: BindingTrace, node: ASTNode, parentDescriptor: DeclarationDescriptor?): Boolean {
-        val modifier = node.elementType as JetModifierKeywordToken
+        val modifier = node.elementType as KtModifierKeywordToken
         val actualParents: List<KotlinTarget> = when (parentDescriptor) {
             is ClassDescriptor -> KotlinTarget.classActualTargets(parentDescriptor)
             is FunctionDescriptor -> listOf(FUNCTION)
@@ -256,9 +256,9 @@ public object ModifierCheckerCore {
         return false
     }
 
-    private val MODIFIER_KEYWORD_SET = TokenSet.orSet(JetTokens.SOFT_KEYWORDS, TokenSet.create(JetTokens.IN_KEYWORD))
+    private val MODIFIER_KEYWORD_SET = TokenSet.orSet(KtTokens.SOFT_KEYWORDS, TokenSet.create(KtTokens.IN_KEYWORD))
 
-    private fun checkModifierList(list: JetModifierList, trace: BindingTrace, parentDescriptor: DeclarationDescriptor?, actualTargets: List<KotlinTarget>) {
+    private fun checkModifierList(list: KtModifierList, trace: BindingTrace, parentDescriptor: DeclarationDescriptor?, actualTargets: List<KotlinTarget>) {
         // It's a list of all nodes with error already reported
         // General strategy: report no more than one error but any number of warnings
         val incorrectNodes = hashSetOf<ASTNode>()
@@ -281,8 +281,8 @@ public object ModifierCheckerCore {
         }
     }
 
-    public fun check(listOwner: JetModifierListOwner, trace: BindingTrace, descriptor: DeclarationDescriptor?) {
-        if (listOwner is JetDeclarationWithBody) {
+    public fun check(listOwner: KtModifierListOwner, trace: BindingTrace, descriptor: DeclarationDescriptor?) {
+        if (listOwner is KtDeclarationWithBody) {
             // JetFunction or JetPropertyAccessor
             for (parameter in listOwner.valueParameters) {
                 if (!parameter.hasValOrVar()) {

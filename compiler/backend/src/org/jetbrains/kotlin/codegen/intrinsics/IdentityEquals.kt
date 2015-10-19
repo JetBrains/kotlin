@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 
@@ -37,16 +37,16 @@ public class IdentityEquals : IntrinsicMethod() {
                     val element = resolvedCall.getCall().getCallElement()
                     val left: StackValue
                     val right: StackValue
-                    if (element is JetCallExpression) {
+                    if (element is KtCallExpression) {
                         left = StackValue.receiver(resolvedCall, receiver, codegen, this)
                         right = codegen.gen(resolvedCall.getValueArgumentsByIndex()!!.single().getArguments().single().getArgumentExpression())
                     }
                     else {
-                        element as JetBinaryExpression
+                        element as KtBinaryExpression
                         left = codegen.gen(element.getLeft())
                         right = codegen.gen(element.getRight())
                     }
-                    return StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE, left, right)
+                    return StackValue.cmp(KtTokens.EQEQEQ, OBJECT_TYPE, left, right)
                 }
             }
 }

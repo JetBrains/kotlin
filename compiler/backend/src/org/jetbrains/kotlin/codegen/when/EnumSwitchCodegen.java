@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.when;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.KtWhenExpression;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.org.objectweb.asm.Label;
@@ -28,7 +28,7 @@ public class EnumSwitchCodegen extends SwitchCodegen {
     private final WhenByEnumsMapping mapping;
 
     public EnumSwitchCodegen(
-            @NotNull JetWhenExpression expression,
+            @NotNull KtWhenExpression expression,
             boolean isStatement,
             @NotNull ExpressionCodegen codegen,
             @NotNull WhenByEnumsMapping mapping

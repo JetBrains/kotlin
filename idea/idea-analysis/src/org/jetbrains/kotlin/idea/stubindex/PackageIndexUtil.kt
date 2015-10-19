@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.stubindex
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.name.FqName
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
@@ -44,7 +44,7 @@ public object PackageIndexUtil {
             packageFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
-    ): Collection<JetFile> {
+    ): Collection<KtFile> {
         return JetExactPackagesIndex.getInstance().get(packageFqName.asString(), project, searchScope)
     }
 
@@ -65,8 +65,8 @@ public object PackageIndexUtil {
             project: Project
     ): Boolean {
         var result = false
-        StubIndex.getInstance().processElements<String, JetFile>(
-                JetExactPackagesIndex.getInstance().getKey(), packageFqName.asString(), project, searchScope, javaClass<JetFile>()
+        StubIndex.getInstance().processElements<String, KtFile>(
+                JetExactPackagesIndex.getInstance().getKey(), packageFqName.asString(), project, searchScope, javaClass<KtFile>()
         ) {
             result = true
             false

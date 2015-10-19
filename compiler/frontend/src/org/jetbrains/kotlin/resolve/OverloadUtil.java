@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeCapabilitiesKt;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.List;
 
@@ -65,13 +65,13 @@ public class OverloadUtil {
             return receiverAndParameterResult;
         }
 
-        List<JetType> superValueParameters = OverridingUtil.compiledValueParameters(superDescriptor);
-        List<JetType> subValueParameters = OverridingUtil.compiledValueParameters(subDescriptor);
+        List<KtType> superValueParameters = OverridingUtil.compiledValueParameters(superDescriptor);
+        List<KtType> subValueParameters = OverridingUtil.compiledValueParameters(subDescriptor);
 
         for (int i = 0; i < superValueParameters.size(); ++i) {
-            JetType superValueParameterType = OverridingUtil.getUpperBound(superValueParameters.get(i));
-            JetType subValueParameterType = OverridingUtil.getUpperBound(subValueParameters.get(i));
-            if (!JetTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType)
+            KtType superValueParameterType = OverridingUtil.getUpperBound(superValueParameters.get(i));
+            KtType subValueParameterType = OverridingUtil.getUpperBound(subValueParameters.get(i));
+            if (!KotlinTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType)
                 || TypeCapabilitiesKt.oneMoreSpecificThanAnother(subValueParameterType, superValueParameterType)) {
                 return OverridingUtil.OverrideCompatibilityInfo
                         .valueParameterTypeMismatch(superValueParameterType, subValueParameterType, INCOMPATIBLE);

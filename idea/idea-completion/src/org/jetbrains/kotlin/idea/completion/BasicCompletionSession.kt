@@ -110,7 +110,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         if (nameExpression == null) {
-            val parameter = position.getParent() as? JetParameter
+            val parameter = position.getParent() as? KtParameter
             return if (parameter != null && position == parameter.getNameIdentifier())
                 CompletionKind.PARAMETER_NAME
             else
@@ -119,13 +119,13 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         // Check that completion in the type annotation context and if there's a qualified
         // expression we are at first of it
-        val typeReference = position.getStrictParentOfType<JetTypeReference>()
+        val typeReference = position.getStrictParentOfType<KtTypeReference>()
         if (typeReference != null) {
-            if (typeReference.parent is JetSuperExpression) {
+            if (typeReference.parent is KtSuperExpression) {
                 return CompletionKind.SUPER_QUALIFIER
             }
 
-            val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<JetSimpleNameExpression>())
+            val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<KtSimpleNameExpression>())
             if (firstPartReference == nameExpression) {
                 return CompletionKind.TYPES
             }
@@ -137,13 +137,13 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     private fun shouldCompleteParameterNameAndType(): Boolean {
         if (completionKind != CompletionKind.PARAMETER_NAME) return false
 
-        val parameter = position.getNonStrictParentOfType<JetParameter>()!!
-        val list = parameter.parent as? JetParameterList ?: return false
+        val parameter = position.getNonStrictParentOfType<KtParameter>()!!
+        val list = parameter.parent as? KtParameterList ?: return false
         val owner = list.parent
         return when (owner) {
-            is JetCatchClause, is JetPropertyAccessor, is JetFunctionLiteral -> false
-            is JetNamedFunction -> owner.nameIdentifier != null
-            is JetPrimaryConstructor -> !owner.getContainingClassOrObject().isAnnotation()
+            is KtCatchClause, is KtPropertyAccessor, is KtFunctionLiteral -> false
+            is KtNamedFunction -> owner.nameIdentifier != null
+            is KtPrimaryConstructor -> !owner.getContainingClassOrObject().isAnnotation()
             else -> true
         }
     }
@@ -221,7 +221,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, originalSearchScope, project, prefixMatcher.asNameFilter())
                         .toMutableSet()
 
-                if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
+                if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as KtFile)) {
                     JavaPsiFacade.getInstance(project).findPackage("")?.getSubPackages(originalSearchScope)?.forEach { psiPackage ->
                         val name = psiPackage.getName()
                         if (Name.isValidIdentifier(name!!)) {
@@ -242,7 +242,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
                 completeNonImported()
 
-                if (position.getContainingFile() is JetCodeFragment) {
+                if (position.getContainingFile() is KtCodeFragment) {
                     flushToResultSet()
                     collector.addDescriptorElements(getRuntimeReceiverTypeReferenceVariants(), withReceiverCast = true)
                 }
@@ -339,7 +339,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun completeSuperQualifier() {
-        val classOrObject = position.parents.firstIsInstanceOrNull<JetClassOrObject>() ?: return
+        val classOrObject = position.parents.firstIsInstanceOrNull<KtClassOrObject>() ?: return
         val classDescriptor = resolutionFacade.resolveToDescriptor(classOrObject) as ClassDescriptor
         var superClasses = classDescriptor.defaultType.constructor.supertypes
                 .map { it.constructor.declarationDescriptor as? ClassDescriptor }

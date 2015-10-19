@@ -22,7 +22,7 @@ import com.intellij.psi.*
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
 public class DeprecatedObjectInstanceFieldReferenceInspection : LocalInspectionTool(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -32,7 +32,7 @@ public class DeprecatedObjectInstanceFieldReferenceInspection : LocalInspectionT
                 if (!(resolvedTo is PsiField && resolvedTo.name == JvmAbi.DEPRECATED_INSTANCE_FIELD)) return
 
                 val containingClass = resolvedTo.containingClass
-                if (containingClass !is KotlinLightClass || containingClass.getOrigin() !is JetObjectDeclaration) return
+                if (containingClass !is KotlinLightClass || containingClass.getOrigin() !is KtObjectDeclaration) return
 
                 holder.registerProblem(
                         expression, "Use of deprecated '${JvmAbi.DEPRECATED_INSTANCE_FIELD}' field",

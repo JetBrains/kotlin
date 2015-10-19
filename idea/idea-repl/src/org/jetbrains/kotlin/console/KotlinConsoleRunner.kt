@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.console.highlight.KotlinReplOutputHighlighter
 import org.jetbrains.kotlin.console.highlight.ReplColors
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.completion.doNotComplete
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Color
 import java.awt.Font
 import kotlin.properties.Delegates
@@ -162,7 +162,7 @@ public class KotlinConsoleRunner(
 
     private fun disableCompletion(consoleView: LanguageConsoleView) {
         val consoleFile = consoleView.virtualFile
-        val jetFile = PsiManager.getInstance(project).findFile(consoleFile) as? JetFile ?: return
+        val jetFile = PsiManager.getInstance(project).findFile(consoleFile) as? KtFile ?: return
         jetFile.doNotComplete = true
     }
 

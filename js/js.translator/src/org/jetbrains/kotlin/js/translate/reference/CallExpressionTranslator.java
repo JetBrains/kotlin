@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.js.parser.ParserUtilsKt;
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.psi.JetCallExpression;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtCallExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -43,7 +43,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
 
     @NotNull
     public static JsNode translate(
-            @NotNull JetCallExpression expression,
+            @NotNull KtCallExpression expression,
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context
     ) {
@@ -62,7 +62,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         return callExpression;
     }
 
-    public static boolean shouldBeInlined(@NotNull JetCallExpression expression, @NotNull TranslationContext context) {
+    public static boolean shouldBeInlined(@NotNull KtCallExpression expression, @NotNull TranslationContext context) {
         if (!context.getConfig().isInlineEnabled()) return false;
 
         CallableDescriptor descriptor = getFunctionDescriptor(expression, context);
@@ -83,7 +83,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     }
 
     private CallExpressionTranslator(
-            @NotNull JetCallExpression expression,
+            @NotNull KtCallExpression expression,
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context
     ) {
@@ -98,7 +98,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     @NotNull
     private JsNode translateJsCode() {
         List<? extends ValueArgument> arguments = expression.getValueArguments();
-        JetExpression argumentExpression = arguments.get(0).getArgumentExpression();
+        KtExpression argumentExpression = arguments.get(0).getArgumentExpression();
         assert argumentExpression != null;
 
         List<JsStatement> statements = parseJsCode(argumentExpression);
@@ -119,7 +119,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     }
 
     @NotNull
-    private List<JsStatement> parseJsCode(@NotNull JetExpression jsCodeExpression) {
+    private List<JsStatement> parseJsCode(@NotNull KtExpression jsCodeExpression) {
         String jsCode = JsCallChecker.extractStringValue(getConstant(jsCodeExpression, context().bindingContext()));
 
         assert jsCode != null : "jsCode must be compile time string " + jsCodeExpression.getText();

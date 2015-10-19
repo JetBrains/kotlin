@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.annotation.Target
 
@@ -52,7 +52,7 @@ public class JavaAnnotationCallChecker : CallChecker {
     }
 
     private fun reportDeprecatedJavaAnnotation(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
-        val annotationEntry = resolvedCall.call.callElement as? JetAnnotationEntry ?: return
+        val annotationEntry = resolvedCall.call.callElement as? KtAnnotationEntry ?: return
         val type = context.trace.get(BindingContext.TYPE, annotationEntry.typeReference) ?: return
         JavaAnnotationMapper.javaToKotlinNameMap[type.constructor.declarationDescriptor?.let { DescriptorUtils.getFqNameSafe(it) }]?.let {
             context.trace.report(ErrorsJvm.DEPRECATED_JAVA_ANNOTATION.on(annotationEntry, it))
@@ -71,7 +71,7 @@ public class JavaAnnotationCallChecker : CallChecker {
     private fun reportOnValueArgument(
             context: BasicCallResolutionContext,
             argument: Map.Entry<ValueParameterDescriptor, ResolvedValueArgument>,
-            diagnostic: DiagnosticFactory0<JetExpression>
+            diagnostic: DiagnosticFactory0<KtExpression>
     ) {
         argument.getValue().getArguments().forEach {
             if (it.getArgumentExpression() != null) {

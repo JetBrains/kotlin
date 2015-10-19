@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.navigation;
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public abstract class AbstractGotoSuperTest extends LightCodeInsightFixtureTestC
     protected void doTest(String testPath) {
         List<String> parts = JetTestUtils.loadBeforeAfterText(testPath);
 
-        myFixture.configureByText(JetFileType.INSTANCE, parts.get(0));
+        myFixture.configureByText(KotlinFileType.INSTANCE, parts.get(0));
 
         CodeInsightActionHandler gotoSuperAction = (CodeInsightActionHandler) ActionManager.getInstance().getAction("GotoSuperMethod");
         gotoSuperAction.invoke(getProject(), myFixture.getEditor(), myFixture.getFile());

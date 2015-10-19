@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.highlighter.markers.SuperDeclarationMarkerNavigationHandler;
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.ReferenceUtils;
 import org.jetbrains.kotlin.test.TagsTestDataUtil;
@@ -115,7 +115,7 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
 
     private void assertNavigationElements(List<LineMarkerInfo> markers) {
         List<String> navigationDataComments = JetTestUtils.getLastCommentsInFile(
-                (JetFile) myFixture.getFile(), JetTestUtils.CommentType.BLOCK_COMMENT, false);
+                (KtFile) myFixture.getFile(), JetTestUtils.CommentType.BLOCK_COMMENT, false);
         if (navigationDataComments.isEmpty()) return;
 
         for (String navigationComment : navigationDataComments) {

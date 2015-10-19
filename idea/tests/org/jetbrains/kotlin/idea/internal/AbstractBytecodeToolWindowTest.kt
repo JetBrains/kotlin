@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.idea.internal
 
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
@@ -34,9 +34,9 @@ public abstract class AbstractBytecodeToolWindowTest: JetLightCodeInsightFixture
         mainDir.listFiles { file, name -> name != mainFileName }.forEach { myFixture.configureByFile(testPath + "/" + it.getName()) }
 
         val mainFileText = File("$testPath/$mainFileName").readText()
-        myFixture.configureByText(JetFileType.INSTANCE, mainFileText)
+        myFixture.configureByText(KotlinFileType.INSTANCE, mainFileText)
 
-        val file = myFixture.getFile() as JetFile
+        val file = myFixture.getFile() as KtFile
 
         val enableInline = InTextDirectivesUtils.getPrefixedBoolean(mainFileText, "// INLINE:") ?: true
         val bytecodes = KotlinBytecodeToolWindow.getBytecodeForFile(file, enableInline, true, true)

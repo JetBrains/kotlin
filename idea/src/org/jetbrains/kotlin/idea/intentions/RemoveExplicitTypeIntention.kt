@@ -19,23 +19,23 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.*
 
-public class RemoveExplicitTypeIntention : JetSelfTargetingIntention<JetCallableDeclaration>(javaClass(), "Remove explicit type specification") {
-    override fun isApplicableTo(element: JetCallableDeclaration, caretOffset: Int): Boolean {
-        if (element.getContainingFile() is JetCodeFragment) return false
+public class RemoveExplicitTypeIntention : JetSelfTargetingIntention<KtCallableDeclaration>(javaClass(), "Remove explicit type specification") {
+    override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {
+        if (element.getContainingFile() is KtCodeFragment) return false
         if (element.getTypeReference() == null) return false
 
-        val initializer = (element as? JetWithExpressionInitializer)?.getInitializer()
+        val initializer = (element as? KtWithExpressionInitializer)?.getInitializer()
         if (initializer != null && initializer.getTextRange().containsOffset(caretOffset)) return false
 
         return when (element) {
-            is JetProperty -> initializer != null
-            is JetNamedFunction -> !element.hasBlockBody() && initializer != null
-            is JetParameter -> element.isLoopParameter()
+            is KtProperty -> initializer != null
+            is KtNamedFunction -> !element.hasBlockBody() && initializer != null
+            is KtParameter -> element.isLoopParameter()
             else -> false
         }
     }
 
-    override fun applyTo(element: JetCallableDeclaration, editor: Editor) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor) {
         element.setTypeReference(null)
     }
 }

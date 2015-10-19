@@ -19,41 +19,41 @@ package org.jetbrains.kotlin.android.navigation
 import org.jetbrains.android.util.AndroidResourceUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.facet.AndroidFacet
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiClass
 import org.jetbrains.android.util.AndroidUtils
 import com.android.SdkConstants
 import org.jetbrains.android.augment.AndroidPsiElementFinder
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 
-fun getReferenceExpression(element: PsiElement?): JetSimpleNameExpression? {
-    return PsiTreeUtil.getParentOfType<JetSimpleNameExpression>(element, javaClass<JetSimpleNameExpression>())
+fun getReferenceExpression(element: PsiElement?): KtSimpleNameExpression? {
+    return PsiTreeUtil.getParentOfType<KtSimpleNameExpression>(element, javaClass<KtSimpleNameExpression>())
 }
 
 // given 'R.a.b' returns info for all three parts of the expression 'a', 'b', 'R'
 fun getInfo(
-        referenceExpression: JetSimpleNameExpression,
+        referenceExpression: KtSimpleNameExpression,
         facet: AndroidFacet
 ): AndroidResourceUtil.MyReferredResourceFieldInfo? {
     val info = getReferredInfo(referenceExpression, facet)
     if (info != null) return info
 
     val topMostQualified = referenceExpression.getParentQualified().getParentQualified() ?: return null
-    val selectorCandidate = topMostQualified.getSelectorExpression() as? JetSimpleNameExpression ?: return null
+    val selectorCandidate = topMostQualified.getSelectorExpression() as? KtSimpleNameExpression ?: return null
     return getReferredInfo(selectorCandidate, facet)
 }
 
-private fun JetExpression?.getParentQualified(): JetDotQualifiedExpression? {
-    return this?.getParent() as? JetDotQualifiedExpression
+private fun KtExpression?.getParentQualified(): KtDotQualifiedExpression? {
+    return this?.getParent() as? KtDotQualifiedExpression
 }
 
 // returns info if passed expression is 'b' in 'R.a.b'
 private fun getReferredInfo(
-        lastPart: JetSimpleNameExpression,
+        lastPart: KtSimpleNameExpression,
         facet: AndroidFacet
 ): AndroidResourceUtil.MyReferredResourceFieldInfo? {
     val resFieldName = lastPart.getReferencedName()
@@ -96,14 +96,14 @@ private fun getReferredInfo(
     return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, false, fromManifest)
 }
 
-private fun getReceiverAsSimpleNameExpression(exp: JetSimpleNameExpression): JetSimpleNameExpression? {
+private fun getReceiverAsSimpleNameExpression(exp: KtSimpleNameExpression): KtSimpleNameExpression? {
     val receiver = exp.getReceiverExpression()
     return when (receiver) {
-        is JetSimpleNameExpression -> {
+        is KtSimpleNameExpression -> {
             receiver
         }
-        is JetDotQualifiedExpression -> {
-            receiver.getSelectorExpression() as? JetSimpleNameExpression
+        is KtDotQualifiedExpression -> {
+            receiver.getSelectorExpression() as? KtSimpleNameExpression
         }
         else -> null
     }

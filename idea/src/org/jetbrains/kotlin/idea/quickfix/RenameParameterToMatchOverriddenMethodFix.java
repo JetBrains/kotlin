@@ -30,15 +30,15 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
-public class RenameParameterToMatchOverriddenMethodFix extends KotlinQuickFixAction<JetParameter>{
-    private final JetParameter parameter;
+public class RenameParameterToMatchOverriddenMethodFix extends KotlinQuickFixAction<KtParameter>{
+    private final KtParameter parameter;
     private String parameterFromSuperclassName;
 
-    public RenameParameterToMatchOverriddenMethodFix(@NotNull JetParameter parameter) {
+    public RenameParameterToMatchOverriddenMethodFix(@NotNull KtParameter parameter) {
         super(parameter);
         this.parameter = parameter;
     }
@@ -79,7 +79,7 @@ public class RenameParameterToMatchOverriddenMethodFix extends KotlinQuickFixAct
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
         new RenameProcessor(project, parameter, parameterFromSuperclassName, false, false).run();
     }
 
@@ -89,7 +89,7 @@ public class RenameParameterToMatchOverriddenMethodFix extends KotlinQuickFixAct
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                JetParameter parameter = QuickFixUtil.getParentElementOfType(diagnostic, JetParameter.class);
+                KtParameter parameter = QuickFixUtil.getParentElementOfType(diagnostic, KtParameter.class);
                 return parameter == null ? null : new RenameParameterToMatchOverriddenMethodFix(parameter);
             }
         };

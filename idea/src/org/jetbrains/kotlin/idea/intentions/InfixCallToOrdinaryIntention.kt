@@ -17,28 +17,28 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class InfixCallToOrdinaryIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Replace infix call with ordinary call") {
-    override fun isApplicableTo(element: JetBinaryExpression, caretOffset: Int): Boolean {
-        if (element.getOperationToken() != JetTokens.IDENTIFIER || element.getLeft() == null || element.getRight() == null) return false
+public class InfixCallToOrdinaryIntention : JetSelfTargetingIntention<KtBinaryExpression>(javaClass(), "Replace infix call with ordinary call") {
+    override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
+        if (element.getOperationToken() != KtTokens.IDENTIFIER || element.getLeft() == null || element.getRight() == null) return false
         return element.getOperationReference().getTextRange().containsOffset(caretOffset)
     }
 
-    override fun applyTo(element: JetBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
         convert(element)
     }
 
     companion object {
-        public fun convert(element: JetBinaryExpression): JetExpression {
-            val argument = JetPsiUtil.safeDeparenthesize(element.getRight()!!)
+        public fun convert(element: KtBinaryExpression): KtExpression {
+            val argument = KtPsiUtil.safeDeparenthesize(element.getRight()!!)
             val pattern = "$0.$1" + when (argument) {
-                is JetFunctionLiteralExpression -> " $2:'{}'"
+                is KtFunctionLiteralExpression -> " $2:'{}'"
                 else -> "($2)"
             }
-            val replacement = JetPsiFactory(element).createExpressionByPattern(pattern, element.getLeft()!!, element.getOperationReference().getText(), argument)
-            return element.replace(replacement) as JetExpression
+            val replacement = KtPsiFactory(element).createExpressionByPattern(pattern, element.getLeft()!!, element.getOperationReference().getText(), argument)
+            return element.replace(replacement) as KtExpression
         }
     }
 }

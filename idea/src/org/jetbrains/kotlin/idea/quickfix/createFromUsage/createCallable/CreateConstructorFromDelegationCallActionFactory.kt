@@ -28,21 +28,21 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.SecondaryConstructorInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetConstructorDelegationCall
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.Variance
 
-object CreateConstructorFromDelegationCallActionFactory : CreateCallableMemberFromUsageFactory<JetConstructorDelegationCall>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetConstructorDelegationCall? {
-        return diagnostic.psiElement.getStrictParentOfType<JetConstructorDelegationCall>()
+object CreateConstructorFromDelegationCallActionFactory : CreateCallableMemberFromUsageFactory<KtConstructorDelegationCall>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtConstructorDelegationCall? {
+        return diagnostic.psiElement.getStrictParentOfType<KtConstructorDelegationCall>()
     }
 
-    override fun createCallableInfo(element: JetConstructorDelegationCall, diagnostic: Diagnostic): CallableInfo? {
+    override fun createCallableInfo(element: KtConstructorDelegationCall, diagnostic: Diagnostic): CallableInfo? {
         val calleeExpression = element.calleeExpression ?: return null
-        val currentClass = element.getStrictParentOfType<JetClass>() ?: return null
+        val currentClass = element.getStrictParentOfType<KtClass>() ?: return null
 
         val project = currentClass.project
 
@@ -56,7 +56,7 @@ object CreateConstructorFromDelegationCallActionFactory : CreateCallableMemberFr
                     DescriptorUtils.getSuperclassDescriptors(classDescriptor).singleOrNull { it.kind == ClassKind.CLASS } ?: return null
             DescriptorToSourceUtilsIde.getAnyDeclaration(project, superClassDescriptor) ?: return null
         }
-        if (!(targetClass.canRefactor() && (targetClass is JetClass || targetClass is PsiClass))) return null
+        if (!(targetClass.canRefactor() && (targetClass is KtClass || targetClass is PsiClass))) return null
 
         val anyType = classDescriptor.builtIns.nullableAnyType
         val parameters = element.valueArguments.map {

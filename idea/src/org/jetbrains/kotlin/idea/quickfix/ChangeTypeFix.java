@@ -29,17 +29,17 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetParameter;
-import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
-import org.jetbrains.kotlin.psi.JetTypeReference;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtTypeReference;
+import org.jetbrains.kotlin.types.KtType;
 
-public class ChangeTypeFix extends KotlinQuickFixAction<JetTypeReference> {
-    private final JetType type;
+public class ChangeTypeFix extends KotlinQuickFixAction<KtTypeReference> {
+    private final KtType type;
     private final String renderedType;
 
-    public ChangeTypeFix(@NotNull JetTypeReference element, JetType type) {
+    public ChangeTypeFix(@NotNull KtTypeReference element, KtType type) {
         super(element);
         this.type = type;
         renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(type);
@@ -59,8 +59,8 @@ public class ChangeTypeFix extends KotlinQuickFixAction<JetTypeReference> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetTypeReference newTypeRef = (JetTypeReference) getElement().replace(JetPsiFactoryKt.JetPsiFactory(file).createType(renderedType));
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        KtTypeReference newTypeRef = (KtTypeReference) getElement().replace(KtPsiFactoryKt.KtPsiFactory(file).createType(renderedType));
         ShortenReferences.DEFAULT.process(newTypeRef);
     }
 
@@ -70,8 +70,8 @@ public class ChangeTypeFix extends KotlinQuickFixAction<JetTypeReference> {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters1<JetParameter, JetType> diagnosticWithParameters = Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.cast(diagnostic);
-                JetTypeReference typeReference = diagnosticWithParameters.getPsiElement().getTypeReference();
+                DiagnosticWithParameters1<KtParameter, KtType> diagnosticWithParameters = Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.cast(diagnostic);
+                KtTypeReference typeReference = diagnosticWithParameters.getPsiElement().getTypeReference();
                 assert typeReference != null : "EXPECTED_PARAMETER_TYPE_MISMATCH reported on parameter without explicitly declared type";
                 return new ChangeTypeFix(typeReference, diagnosticWithParameters.getA());
             }

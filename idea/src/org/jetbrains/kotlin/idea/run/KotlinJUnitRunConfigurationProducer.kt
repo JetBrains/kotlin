@@ -31,10 +31,10 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
@@ -81,11 +81,11 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
             return false
         }
 
-        if (leaf.getContainingFile() !is JetFile) {
+        if (leaf.getContainingFile() !is KtFile) {
             return false
         }
 
-        val jetFile = leaf.getContainingFile() as JetFile
+        val jetFile = leaf.getContainingFile() as KtFile
 
         if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
             return false
@@ -133,10 +133,10 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
     }
 
     private fun getTestMethodLocation(leaf: PsiElement): Location<PsiMethod>? {
-        val function = leaf.getParentOfType<JetNamedFunction>(false) ?: return null
-        val owner = PsiTreeUtil.getParentOfType(function, javaClass<JetFunction>(), javaClass<JetClass>())
+        val function = leaf.getParentOfType<KtNamedFunction>(false) ?: return null
+        val owner = PsiTreeUtil.getParentOfType(function, javaClass<KtFunction>(), javaClass<KtClass>())
 
-        if (owner is JetClass) {
+        if (owner is KtClass) {
             val delegate = LightClassUtil.getPsiClass(owner) ?: return null
             val method = delegate.getMethods().firstOrNull() { it.getNavigationElement() == function } ?: return null
             val methodLocation = PsiLocation.fromPsiElement(method)
@@ -148,8 +148,8 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
     }
 
     private fun getTestClass(leaf: PsiElement): PsiClass? {
-        val containingFile = leaf.getContainingFile() as? JetFile ?: return null
-        var jetClass = leaf.getParentOfType<JetClass>(false)
+        val containingFile = leaf.getContainingFile() as? KtFile ?: return null
+        var jetClass = leaf.getParentOfType<KtClass>(false)
         if (!jetClass.isJUnitTestClass()) {
             jetClass = getTestClassInFile(containingFile)
         }
@@ -159,9 +159,9 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
         return null
     }
 
-    private fun JetClass?.isJUnitTestClass() =
+    private fun KtClass?.isJUnitTestClass() =
             LightClassUtil.getPsiClass(this)?.let { JUnitUtil.isTestClass(it, false, true) } ?: false
 
-    private fun getTestClassInFile(jetFile: JetFile) =
-            jetFile.getDeclarations().filterIsInstance<JetClass>().singleOrNull { it.isJUnitTestClass() }
+    private fun getTestClassInFile(jetFile: KtFile) =
+            jetFile.getDeclarations().filterIsInstance<KtClass>().singleOrNull { it.isJUnitTestClass() }
 }

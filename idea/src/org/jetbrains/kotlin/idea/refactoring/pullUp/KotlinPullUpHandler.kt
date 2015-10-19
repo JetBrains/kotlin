@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.idea.refactoring.AbstractPullPushMembersHandler
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfoStorage
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedClassNameForRendering
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
@@ -53,7 +53,7 @@ public class KotlinPullUpHandler : AbstractPullPushMembersHandler(
         fun chooseSuperClass(superClasses: List<PsiNamedElement>): PsiNamedElement
     }
 
-    private fun reportNoSuperClasses(project: Project, editor: Editor?, classOrObject: JetClassOrObject) {
+    private fun reportNoSuperClasses(project: Project, editor: Editor?, classOrObject: KtClassOrObject) {
         val message = RefactoringBundle.getCannotRefactorMessage(
                 RefactoringBundle.message("class.does.not.have.base.classes.interfaces.in.current.project",
                                           classOrObject.qualifiedClassNameForRendering())
@@ -62,10 +62,10 @@ public class KotlinPullUpHandler : AbstractPullPushMembersHandler(
     }
 
     override fun invoke(project: Project,
-                       editor: Editor?,
-                       classOrObject: JetClassOrObject?,
-                       member: JetNamedDeclaration?,
-                       dataContext: DataContext?) {
+                        editor: Editor?,
+                        classOrObject: KtClassOrObject?,
+                        member: KtNamedDeclaration?,
+                        dataContext: DataContext?) {
         if (classOrObject == null) {
             reportWrongContext(project, editor)
             return
@@ -78,7 +78,7 @@ public class KotlinPullUpHandler : AbstractPullPushMembersHandler(
                 .map {
                     val descriptor = it.constructor.declarationDescriptor
                     val declaration = descriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-                    if ((declaration is JetClass || declaration is PsiClass)
+                    if ((declaration is KtClass || declaration is PsiClass)
                         && declaration.canRefactor()) declaration as PsiNamedElement else null
                 }
                 .filterNotNull()
@@ -86,7 +86,7 @@ public class KotlinPullUpHandler : AbstractPullPushMembersHandler(
                 .sortedBy { it.qualifiedClassNameForRendering() }
 
         if (superClasses.isEmpty()) {
-            val containingClass = classOrObject.getStrictParentOfType<JetClassOrObject>()
+            val containingClass = classOrObject.getStrictParentOfType<KtClassOrObject>()
             if (containingClass != null) {
                 invoke(project, editor, containingClass, classOrObject, dataContext)
             }

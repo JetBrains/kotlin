@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
@@ -35,14 +35,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -53,7 +53,7 @@ public class ReferenceVariantsHelper(
 ) {
     @JvmOverloads
     public fun getReferenceVariants(
-            expression: JetSimpleNameExpression,
+            expression: KtSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             callTypeAndReceiver: CallTypeAndReceiver<*, *> = CallTypeAndReceiver.detect(expression),
@@ -85,7 +85,7 @@ public class ReferenceVariantsHelper(
     }
 
     private fun getReferenceVariantsNoVisibilityFilter(
-            expression: JetSimpleNameExpression,
+            expression: KtSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
@@ -96,7 +96,7 @@ public class ReferenceVariantsHelper(
         @Suppress("NAME_SHADOWING")
         val kindFilter = kindFilter.intersect(callType.descriptorKindFilter)
 
-        val receiverExpression: JetExpression?
+        val receiverExpression: KtExpression?
         when (callTypeAndReceiver) {
             is CallTypeAndReceiver.IMPORT_DIRECTIVE -> {
                 return getVariantsForImportOrPackageDirective(callTypeAndReceiver.receiver, kindFilter, nameFilter)
@@ -115,7 +115,7 @@ public class ReferenceVariantsHelper(
             }
 
             is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
-                val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression.parent as JetExpression] ?: return emptyList()
+                val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression.parent as KtExpression] ?: return emptyList()
                 return getVariantsForCallableReference(callTypeAndReceiver.receiver, resolutionScope, kindFilter, nameFilter)
             }
 
@@ -168,8 +168,8 @@ public class ReferenceVariantsHelper(
     }
 
     private fun getVariantsForUserType(
-            receiverExpression: JetExpression?,
-            expression: JetSimpleNameExpression,
+            receiverExpression: KtExpression?,
+            expression: KtSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
@@ -178,7 +178,7 @@ public class ReferenceVariantsHelper(
             return qualifier.scope.getDescriptorsFiltered(kindFilter, nameFilter)
         }
         else {
-            val lexicalScope = expression.getParentOfType<JetTypeReference>(strict = true)?.let {
+            val lexicalScope = expression.getParentOfType<KtTypeReference>(strict = true)?.let {
                 context[BindingContext.LEXICAL_SCOPE, it]
             } ?: return emptyList()
             return lexicalScope.getDescriptorsFiltered(kindFilter, nameFilter)
@@ -186,8 +186,8 @@ public class ReferenceVariantsHelper(
     }
 
     private fun getVariantsForCallableReference(
-            qualifierTypeRef: JetTypeReference?,
-            resolutionScope: JetScope,
+            qualifierTypeRef: KtTypeReference?,
+            resolutionScope: KtScope,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
@@ -207,7 +207,7 @@ public class ReferenceVariantsHelper(
     }
 
     private fun getVariantsForImportOrPackageDirective(
-            receiverExpression: JetExpression?,
+            receiverExpression: KtExpression?,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
@@ -222,9 +222,9 @@ public class ReferenceVariantsHelper(
     }
 
     private fun MutableSet<DeclarationDescriptor>.processAll(
-            implicitReceiverTypes: Collection<JetType>,
-            receiverTypes: Collection<JetType>,
-            resolutionScope: JetScope,
+            implicitReceiverTypes: Collection<KtType>,
+            receiverTypes: Collection<KtType>,
+            resolutionScope: KtScope,
             callType: CallType<*>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
@@ -235,8 +235,8 @@ public class ReferenceVariantsHelper(
     }
 
     private fun MutableSet<DeclarationDescriptor>.addMemberExtensions(
-            dispatchReceiverTypes: Collection<JetType>,
-            extensionReceiverTypes: Collection<JetType>,
+            dispatchReceiverTypes: Collection<KtType>,
+            extensionReceiverTypes: Collection<KtType>,
             callType: CallType<*>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
@@ -250,7 +250,7 @@ public class ReferenceVariantsHelper(
     }
 
     private fun MutableSet<DeclarationDescriptor>.addNonExtensionMembers(
-            receiverTypes: Collection<JetType>,
+            receiverTypes: Collection<KtType>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             constructorFilter: (ClassDescriptor) -> Boolean
@@ -261,7 +261,7 @@ public class ReferenceVariantsHelper(
     }
 
     private fun MutableSet<DeclarationDescriptor>.addNonExtensionCallablesAndConstructors(
-            scope: JetScope,
+            scope: KtScope,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             constructorFilter: (ClassDescriptor) -> Boolean
@@ -286,8 +286,8 @@ public class ReferenceVariantsHelper(
     }
 
     private fun MutableSet<DeclarationDescriptor>.addScopeAndSyntheticExtensions(
-            resolutionScope: JetScope,
-            receiverTypes: Collection<JetType>,
+            resolutionScope: KtScope,
+            receiverTypes: Collection<KtType>,
             callType: CallType<*>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
@@ -320,10 +320,10 @@ public class ReferenceVariantsHelper(
         }
     }
 
-    private fun getQualifierRuntimeType(receiver: JetExpression): JetType? {
+    private fun getQualifierRuntimeType(receiver: KtExpression): KtType? {
         val type = context.getType(receiver)
-        if (type != null && TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)) {
-            val evaluator = receiver.getContainingFile().getCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR)
+        if (type != null && TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type)) {
+            val evaluator = receiver.getContainingFile().getCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR)
             val runtimeType = evaluator?.invoke(receiver)
             if (runtimeType == type) return null
             return runtimeType
@@ -332,7 +332,7 @@ public class ReferenceVariantsHelper(
     }
 
     public fun getPackageReferenceVariants(
-            expression: JetSimpleNameExpression,
+            expression: KtSimpleNameExpression,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
         val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()

@@ -48,25 +48,25 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 
-class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<JetCallExpression>(UsePropertyAccessSyntaxIntention()), CleanupLocalInspectionTool
+class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpression>(UsePropertyAccessSyntaxIntention()), CleanupLocalInspectionTool
 
-class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntention<JetCallExpression>(javaClass(), "Use property access syntax") {
-    override fun isApplicableTo(element: JetCallExpression): Boolean {
+class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntention<KtCallExpression>(javaClass(), "Use property access syntax") {
+    override fun isApplicableTo(element: KtCallExpression): Boolean {
         return detectPropertyNameToUse(element) != null
     }
 
-    override fun applyTo(element: JetCallExpression, editor: Editor) {
+    override fun applyTo(element: KtCallExpression, editor: Editor) {
         applyTo(element, detectPropertyNameToUse(element)!!)
     }
 
-    public fun applyTo(element: JetCallExpression, propertyName: Name): JetExpression {
+    public fun applyTo(element: KtCallExpression, propertyName: Name): KtExpression {
         val arguments = element.getValueArguments()
         return when (arguments.size()) {
             0 -> replaceWithPropertyGet(element, propertyName)
@@ -75,10 +75,10 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         }
     }
 
-    public fun detectPropertyNameToUse(callExpression: JetCallExpression): Name? {
-        if (callExpression.getQualifiedExpressionForSelector()?.getReceiverExpression() is JetSuperExpression) return null // cannot call extensions on "super"
+    public fun detectPropertyNameToUse(callExpression: KtCallExpression): Name? {
+        if (callExpression.getQualifiedExpressionForSelector()?.getReceiverExpression() is KtSuperExpression) return null // cannot call extensions on "super"
 
-        val callee = callExpression.getCalleeExpression() as? JetNameReferenceExpression ?: return null
+        val callee = callExpression.getCalleeExpression() as? KtNameReferenceExpression ?: return null
 
         val resolutionFacade = callExpression.getResolutionFacade()
         val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)
@@ -98,7 +98,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         val isSetUsage = callExpression.valueArguments.size() == 1
         if (isSetUsage && property.type != function.valueParameters.single().type) {
             val qualifiedExpressionCopy = qualifiedExpression.copied()
-            val callExpressionCopy = ((qualifiedExpressionCopy as? JetQualifiedExpression)?.selectorExpression ?: qualifiedExpressionCopy) as JetCallExpression
+            val callExpressionCopy = ((qualifiedExpressionCopy as? KtQualifiedExpression)?.selectorExpression ?: qualifiedExpressionCopy) as KtCallExpression
             val newExpression = applyTo(callExpressionCopy, property.name)
             val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
             val newBindingContext = newExpression.analyzeInContext(
@@ -121,15 +121,15 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
             bindingContext: BindingContext,
             resolutionScope: LexicalScope,
             dataFlowInfo: DataFlowInfo,
-            expectedType: JetType,
+            expectedType: KtType,
             facade: ResolutionFacade
     ): Boolean {
         val project = resolvedCall.call.callElement.project
         val newCall = object : DelegatingCall(resolvedCall.call) {
-            private val newCallee = JetPsiFactory(project).createExpressionByPattern("$0", property.name)
+            private val newCallee = KtPsiFactory(project).createExpressionByPattern("$0", property.name)
 
             override fun getCalleeExpression() = newCallee
-            override fun getValueArgumentList(): JetValueArgumentList? = null
+            override fun getValueArgumentList(): KtValueArgumentList? = null
             override fun getValueArguments(): List<ValueArgument> = emptyList()
             override fun getFunctionLiteralArguments(): List<FunctionLiteralArgument> = emptyList()
         }
@@ -143,7 +143,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         return result.isSuccess && result.resultingDescriptor.original == property
     }
 
-    private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: JetScope): SyntheticJavaPropertyDescriptor? {
+    private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: KtScope): SyntheticJavaPropertyDescriptor? {
         SyntheticJavaPropertyDescriptor.findByGetterOrSetter(function, resolutionScope)?.let { return it }
 
         for (overridden in function.getOverriddenDescriptors()) {
@@ -153,21 +153,21 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         return null
     }
 
-    private fun replaceWithPropertyGet(callExpression: JetCallExpression, propertyName: Name): JetExpression {
-        val newExpression = JetPsiFactory(callExpression).createExpression(propertyName.render())
+    private fun replaceWithPropertyGet(callExpression: KtCallExpression, propertyName: Name): KtExpression {
+        val newExpression = KtPsiFactory(callExpression).createExpression(propertyName.render())
         return callExpression.replaced(newExpression)
     }
 
     //TODO: what if it was used as expression (of type Unit)?
-    private fun replaceWithPropertySet(callExpression: JetCallExpression, propertyName: Name, argument: JetValueArgument): JetExpression {
+    private fun replaceWithPropertySet(callExpression: KtCallExpression, propertyName: Name, argument: KtValueArgument): KtExpression {
         val qualifiedExpression = callExpression.getQualifiedExpressionForSelector()
         if (qualifiedExpression != null) {
             val pattern = when (qualifiedExpression) {
-                is JetDotQualifiedExpression -> "$0.$1=$2"
-                is JetSafeQualifiedExpression -> "$0?.$1=$2"
+                is KtDotQualifiedExpression -> "$0.$1=$2"
+                is KtSafeQualifiedExpression -> "$0?.$1=$2"
                 else -> error(qualifiedExpression) //TODO: make it sealed?
             }
-            val newExpression = JetPsiFactory(callExpression).createExpressionByPattern(
+            val newExpression = KtPsiFactory(callExpression).createExpressionByPattern(
                     pattern,
                     qualifiedExpression.getReceiverExpression(),
                     propertyName,
@@ -176,7 +176,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
             return qualifiedExpression.replaced(newExpression)
         }
         else {
-            val newExpression = JetPsiFactory(callExpression).createExpressionByPattern("$0=$1", propertyName, argument.getArgumentExpression()!!)
+            val newExpression = KtPsiFactory(callExpression).createExpressionByPattern("$0=$1", propertyName, argument.getArgumentExpression()!!)
             return callExpression.replaced(newExpression)
         }
     }

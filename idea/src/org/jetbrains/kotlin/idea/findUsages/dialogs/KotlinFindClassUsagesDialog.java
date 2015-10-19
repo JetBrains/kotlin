@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
+import org.jetbrains.kotlin.psi.KtClass;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 
 import javax.swing.*;
@@ -47,7 +47,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
     private StateRestoringCheckBox derivedTraits;
 
     public KotlinFindClassUsagesDialog(
-            JetClassOrObject classOrObject,
+            KtClassOrObject classOrObject,
             Project project,
             FindUsagesOptions findUsagesOptions,
             boolean toShowInNewTab,
@@ -58,10 +58,10 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         super(getRepresentingPsiClass(classOrObject), project, findUsagesOptions, toShowInNewTab, mustOpenInNewTab, isSingleFile, handler);
     }
 
-    private static final Key<JetClassOrObject> ORIGINAL_CLASS = Key.create("ORIGINAL_CLASS");
+    private static final Key<KtClassOrObject> ORIGINAL_CLASS = Key.create("ORIGINAL_CLASS");
 
     @NotNull
-    private static PsiClass getRepresentingPsiClass(@NotNull JetClassOrObject classOrObject) {
+    private static PsiClass getRepresentingPsiClass(@NotNull KtClassOrObject classOrObject) {
         PsiClass lightClass = LightClassUtil.INSTANCE$.getPsiClass(classOrObject);
         if (lightClass != null) return lightClass;
 
@@ -74,8 +74,8 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         }
 
         PsiClass javaClass;
-        if (classOrObject instanceof JetClass) {
-            JetClass klass = (JetClass) classOrObject;
+        if (classOrObject instanceof KtClass) {
+            KtClass klass = (KtClass) classOrObject;
             javaClass = !klass.isInterface()
                         ? factory.createClass(name)
                         : klass.isAnnotation()
@@ -90,7 +90,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         //noinspection ConstantConditions
         javaClass.getModifierList().setModifierProperty(
                 PsiModifier.FINAL,
-                !(classOrObject instanceof JetClass && JetPsiUtilKt.isInheritable((JetClass) classOrObject))
+                !(classOrObject instanceof KtClass && JetPsiUtilKt.isInheritable((KtClass) classOrObject))
         );
 
         javaClass.putUserData(ORIGINAL_CLASS, classOrObject);
@@ -148,8 +148,8 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
     public void configureLabelComponent(@NotNull SimpleColoredComponent coloredComponent) {
         PsiElement klass = LightClassUtilsKt.getUnwrapped(getPsiElement());
         //noinspection ConstantConditions
-        JetClassOrObject originalClass = klass instanceof JetClassOrObject
-                                         ? (JetClassOrObject) klass
+        KtClassOrObject originalClass = klass instanceof KtClassOrObject
+                                         ? (KtClassOrObject) klass
                                          : klass.getUserData(ORIGINAL_CLASS);
 
         if (originalClass != null) {

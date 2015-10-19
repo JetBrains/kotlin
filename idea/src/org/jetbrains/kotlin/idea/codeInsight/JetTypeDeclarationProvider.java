@@ -22,20 +22,20 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 public class JetTypeDeclarationProvider implements TypeDeclarationProvider {
     @Override
     public PsiElement[] getSymbolTypeDeclarations(PsiElement symbol) {
-        if (symbol instanceof JetElement && symbol.getContainingFile() instanceof JetFile) {
-            BindingContext bindingContext = ResolutionUtils.analyze((JetElement)symbol);
+        if (symbol instanceof KtElement && symbol.getContainingFile() instanceof KtFile) {
+            BindingContext bindingContext = ResolutionUtils.analyze((KtElement)symbol);
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol);
             if (descriptor instanceof CallableDescriptor) {
-                JetType type = ((CallableDescriptor) descriptor).getReturnType();
+                KtType type = ((CallableDescriptor) descriptor).getReturnType();
                 if (type != null) {
                     ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
                     if (classifierDescriptor != null) {

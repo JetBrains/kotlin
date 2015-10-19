@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
@@ -81,7 +81,7 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
 
-        AnalysisResult exhaust = JvmResolveUtil.analyzeFilesWithJavaIntegration(environment.getProject(), Collections.<JetFile>emptySet(), environment);
+        AnalysisResult exhaust = JvmResolveUtil.analyzeFilesWithJavaIntegration(environment.getProject(), Collections.<KtFile>emptySet(), environment);
         PackageViewDescriptor packageView = exhaust.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
         assertFalse(packageView.isEmpty());
 

@@ -25,9 +25,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import kotlin.CollectionsKt;
 import kotlin.Pair;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -36,7 +34,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -58,7 +55,7 @@ public class DebuggerUtils {
     private static final Set<String> KOTLIN_EXTENSIONS = Sets.newHashSet("kt", "kts");
 
     @Nullable
-    public static JetFile findSourceFileForClass(
+    public static KtFile findSourceFileForClass(
             @NotNull Project project,
             @NotNull GlobalSearchScope searchScope,
             @NotNull JvmClassName className,
@@ -68,10 +65,10 @@ public class DebuggerUtils {
         if (!KOTLIN_EXTENSIONS.contains(extension)) return null;
         if (DumbService.getInstance(project).isDumb()) return null;
 
-        Collection<JetFile> filesInPackage = findFilesWithExactPackage(className.getPackageFqName(), searchScope, project);
-        Collection<JetFile> filesWithExactName = Collections2.filter(filesInPackage, new Predicate<JetFile>() {
+        Collection<KtFile> filesInPackage = findFilesWithExactPackage(className.getPackageFqName(), searchScope, project);
+        Collection<KtFile> filesWithExactName = Collections2.filter(filesInPackage, new Predicate<KtFile>() {
             @Override
-            public boolean apply(@Nullable JetFile file) {
+            public boolean apply(@Nullable KtFile file) {
                 return file != null && file.getName().equals(fileName);
             }
         });
@@ -84,9 +81,9 @@ public class DebuggerUtils {
 
         // Static facade or inner class of such facade?
         FqName partFqName = className.getFqNameForClassNameWithoutDollars();
-        Collection<JetFile> filesForPart = StaticFacadeIndexUtil.findFilesForFilePart(partFqName, searchScope, project);
+        Collection<KtFile> filesForPart = StaticFacadeIndexUtil.findFilesForFilePart(partFqName, searchScope, project);
         if (!filesForPart.isEmpty()) {
-            for (JetFile file : filesForPart) {
+            for (KtFile file : filesForPart) {
                 if (file.getName().equals(fileName)) {
                     return file;
                 }
@@ -99,13 +96,13 @@ public class DebuggerUtils {
     }
 
     @NotNull
-    public static Pair<BindingContext, List<JetFile>> analyzeInlinedFunctions(
+    public static Pair<BindingContext, List<KtFile>> analyzeInlinedFunctions(
             @NotNull ResolutionFacade resolutionFacadeForFile,
             @NotNull BindingContext bindingContextForFile,
-            @NotNull JetFile file,
+            @NotNull KtFile file,
             boolean analyzeOnlyReifiedInlineFunctions
     ) {
-        Set<JetElement> analyzedElements = new HashSet<JetElement>();
+        Set<KtElement> analyzedElements = new HashSet<KtElement>();
         BindingContext context = analyzeElementWithInline(
                 resolutionFacadeForFile,
                 bindingContextForFile,
@@ -116,25 +113,25 @@ public class DebuggerUtils {
 
         //We processing another files just to annotate anonymous classes within their inline functions
         //Bytecode not produced for them cause of filtering via generateClassFilter
-        Set<JetFile> toProcess = new LinkedHashSet<JetFile>();
+        Set<KtFile> toProcess = new LinkedHashSet<KtFile>();
         toProcess.add(file);
 
-        for (JetElement collectedElement : analyzedElements) {
-            JetFile containingFile = collectedElement.getContainingJetFile();
+        for (KtElement collectedElement : analyzedElements) {
+            KtFile containingFile = collectedElement.getContainingJetFile();
             toProcess.add(containingFile);
         }
 
-        return new Pair<BindingContext, List<JetFile>>(context, new ArrayList<JetFile>(toProcess));
+        return new Pair<BindingContext, List<KtFile>>(context, new ArrayList<KtFile>(toProcess));
     }
 
     @NotNull
-    public static Collection<JetElement> analyzeElementWithInline(
+    public static Collection<KtElement> analyzeElementWithInline(
             @NotNull ResolutionFacade resolutionFacade,
             @NotNull BindingContext bindingContext,
-            @NotNull JetNamedFunction function,
+            @NotNull KtNamedFunction function,
             boolean analyzeInlineFunctions
     ) {
-        Set<JetElement> analyzedElements = new HashSet<JetElement>();
+        Set<KtElement> analyzedElements = new HashSet<KtElement>();
         analyzeElementWithInline(resolutionFacade, bindingContext, function, 1, analyzedElements, !analyzeInlineFunctions);
         return analyzedElements;
     }
@@ -143,17 +140,17 @@ public class DebuggerUtils {
     private static BindingContext analyzeElementWithInline(
             @NotNull ResolutionFacade resolutionFacade,
             @NotNull final BindingContext bindingContext,
-            @NotNull JetElement element,
+            @NotNull KtElement element,
             int deep,
-            @NotNull final Set<JetElement> analyzedElements,
+            @NotNull final Set<KtElement> analyzedElements,
             final boolean analyzeInlineFunctions
     ) {
         final Project project = element.getProject();
-        final Set<JetNamedFunction> collectedElements = new HashSet<JetNamedFunction>();
+        final Set<KtNamedFunction> collectedElements = new HashSet<KtNamedFunction>();
 
-        element.accept(new JetTreeVisitorVoid() {
+        element.accept(new KtTreeVisitorVoid() {
             @Override
-            public void visitExpression(@NotNull JetExpression expression) {
+            public void visitExpression(@NotNull KtExpression expression) {
                 super.visitExpression(expression);
 
                 Call call = bindingContext.get(BindingContext.CALL, expression);
@@ -164,10 +161,10 @@ public class DebuggerUtils {
             }
 
             @Override
-            public void visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration) {
+            public void visitMultiDeclaration(@NotNull KtMultiDeclaration multiDeclaration) {
                 super.visitMultiDeclaration(multiDeclaration);
 
-                for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+                for (KtMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
                     ResolvedCall<FunctionDescriptor> resolvedCall =
                             bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                     checkResolveCall(resolvedCall);
@@ -175,7 +172,7 @@ public class DebuggerUtils {
             }
 
             @Override
-            public void visitForExpression(@NotNull JetForExpression expression) {
+            public void visitForExpression(@NotNull KtForExpression expression) {
                 super.visitForExpression(expression);
 
                 checkResolveCall(bindingContext.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.getLoopRange()));
@@ -191,8 +188,8 @@ public class DebuggerUtils {
 
                 if (InlineUtil.isInline(descriptor) && (analyzeInlineFunctions || hasReifiedTypeParameters(descriptor))) {
                     PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, descriptor);
-                    if (declaration != null && declaration instanceof JetNamedFunction && !analyzedElements.contains(declaration)) {
-                        collectedElements.add((JetNamedFunction) declaration);
+                    if (declaration != null && declaration instanceof KtNamedFunction && !analyzedElements.contains(declaration)) {
+                        collectedElements.add((KtNamedFunction) declaration);
                     }
                 }
             }
@@ -202,8 +199,8 @@ public class DebuggerUtils {
 
         if (!collectedElements.isEmpty() && deep < 10) {
             List<BindingContext> innerContexts = new ArrayList<BindingContext>();
-            for (JetNamedFunction inlineFunctions : collectedElements) {
-                JetExpression body = inlineFunctions.getBodyExpression();
+            for (KtNamedFunction inlineFunctions : collectedElements) {
+                KtExpression body = inlineFunctions.getBodyExpression();
                 if (body != null) {
                     BindingContext bindingContextForFunction = resolutionFacade.analyze(body, BodyResolveMode.FULL);
                     innerContexts.add(analyzeElementWithInline(resolutionFacade, bindingContextForFunction, inlineFunctions, deep + 1,

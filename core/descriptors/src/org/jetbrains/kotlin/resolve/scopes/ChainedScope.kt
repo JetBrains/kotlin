@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
@@ -28,8 +28,8 @@ import java.util.ArrayList
 public open class ChainedScope(
         private val containingDeclaration: DeclarationDescriptor?/* it's nullable as a hack for TypeUtils.intersect() */,
         private val debugName: String,
-        vararg scopes: JetScope
-) : JetScope {
+        vararg scopes: KtScope
+) : KtScope {
     private val scopeChain = scopes.clone()
     private var implicitReceiverHierarchy: List<ReceiverParameterDescriptor>? = null
 
@@ -48,16 +48,16 @@ public open class ChainedScope(
     override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
             = getFromAllScopes(scopeChain) { it.getFunctions(name, location) }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
             = getFromAllScopes(scopeChain) { it.getSyntheticExtensionProperties(receiverTypes, name, location) }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
             = getFromAllScopes(scopeChain) { it.getSyntheticExtensionFunctions(receiverTypes, name, location) }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>): Collection<PropertyDescriptor>
             = getFromAllScopes(scopeChain) { it.getSyntheticExtensionProperties(receiverTypes) }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor>
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>): Collection<FunctionDescriptor>
             = getFromAllScopes(scopeChain) { it.getSyntheticExtensionFunctions(receiverTypes) }
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {

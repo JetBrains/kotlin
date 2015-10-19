@@ -22,14 +22,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 
 public class JetPairMatcher implements PairedBraceMatcher {
     private final BracePair[] pairs = new BracePair[]{
-            new BracePair(JetTokens.LPAR, JetTokens.RPAR, false),
-            new BracePair(JetTokens.LONG_TEMPLATE_ENTRY_START, JetTokens.LONG_TEMPLATE_ENTRY_END, false),
-            new BracePair(JetTokens.LBRACE, JetTokens.RBRACE, true),
-            new BracePair(JetTokens.LBRACKET, JetTokens.RBRACKET, false),
+            new BracePair(KtTokens.LPAR, KtTokens.RPAR, false),
+            new BracePair(KtTokens.LONG_TEMPLATE_ENTRY_START, KtTokens.LONG_TEMPLATE_ENTRY_END, false),
+            new BracePair(KtTokens.LBRACE, KtTokens.RBRACE, true),
+            new BracePair(KtTokens.LBRACKET, KtTokens.RBRACKET, false),
     };
 
     @Override
@@ -39,19 +39,19 @@ public class JetPairMatcher implements PairedBraceMatcher {
 
     @Override
     public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, @Nullable IElementType contextType) {
-        if (lbraceType.equals(JetTokens.LONG_TEMPLATE_ENTRY_START)) {
+        if (lbraceType.equals(KtTokens.LONG_TEMPLATE_ENTRY_START)) {
             // KotlinTypedHandler insert paired brace in this case
             return false;
         }
 
-        return  JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(contextType)
-                || contextType == JetTokens.SEMICOLON
-                || contextType == JetTokens.COMMA
-                || contextType == JetTokens.RPAR
-                || contextType == JetTokens.RBRACKET
-                || contextType == JetTokens.RBRACE
-                || contextType == JetTokens.LBRACE
-                || contextType == JetTokens.LONG_TEMPLATE_ENTRY_END;
+        return KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(contextType)
+               || contextType == KtTokens.SEMICOLON
+               || contextType == KtTokens.COMMA
+               || contextType == KtTokens.RPAR
+               || contextType == KtTokens.RBRACKET
+               || contextType == KtTokens.RBRACE
+               || contextType == KtTokens.LBRACE
+               || contextType == KtTokens.LONG_TEMPLATE_ENTRY_END;
     }
 
     @Override

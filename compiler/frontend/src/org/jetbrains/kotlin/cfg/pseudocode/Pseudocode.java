@@ -23,14 +23,14 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDec
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
-import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.KtElement;
 
 import java.util.List;
 import java.util.Set;
 
 public interface Pseudocode {
     @NotNull
-    JetElement getCorrespondingElement();
+    KtElement getCorrespondingElement();
 
     @Nullable
     Pseudocode getParent();
@@ -57,10 +57,10 @@ public interface Pseudocode {
     SubroutineEnterInstruction getEnterInstruction();
 
     @Nullable
-    PseudoValue getElementValue(@Nullable JetElement element);
+    PseudoValue getElementValue(@Nullable KtElement element);
 
     @NotNull
-    List<? extends JetElement> getValueElements(@Nullable PseudoValue value);
+    List<? extends KtElement> getValueElements(@Nullable PseudoValue value);
 
     @NotNull
     List<? extends Instruction> getUsages(@Nullable PseudoValue value);

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -43,7 +43,7 @@ public class NoErrorsInStdlibTest : JetLightCodeInsightFixtureTestCase() {
         VfsUtil.processFileRecursivelyWithoutIgnored(root) { file ->
             if (!file!!.isDirectory()) {
                 val psiFile = psiManager.findFile(file)
-                if (psiFile is JetFile) {
+                if (psiFile is KtFile) {
                     hasAtLeastOneFile = true
                     val bindingContext = psiFile.analyzeFully()
                     val errors = bindingContext.getDiagnostics().all().filter { it.getSeverity() == Severity.ERROR }

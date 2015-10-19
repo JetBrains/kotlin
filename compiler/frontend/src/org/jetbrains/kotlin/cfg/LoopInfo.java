@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cfg;
 
-import org.jetbrains.kotlin.psi.JetLoopExpression;
+import org.jetbrains.kotlin.psi.KtLoopExpression;
 
 public class LoopInfo extends BreakableBlockInfo {
     private final Label bodyEntryPoint;
@@ -24,7 +24,7 @@ public class LoopInfo extends BreakableBlockInfo {
     private final Label conditionEntryPoint;
 
     public LoopInfo(
-            JetLoopExpression loopExpression,
+            KtLoopExpression loopExpression,
             Label entryPoint,
             Label exitPoint,
             Label bodyEntryPoint,
@@ -39,8 +39,8 @@ public class LoopInfo extends BreakableBlockInfo {
     }
 
     @Override
-    public JetLoopExpression getElement() {
-        return (JetLoopExpression) super.getElement();
+    public KtLoopExpression getElement() {
+        return (KtLoopExpression) super.getElement();
     }
 
     public Label getBodyEntryPoint() {

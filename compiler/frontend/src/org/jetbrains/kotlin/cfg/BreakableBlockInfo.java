@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.cfg;
 
 import com.google.common.collect.Sets;
-import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.KtElement;
 
 import java.util.Collections;
 import java.util.Set;
 
 public class BreakableBlockInfo extends BlockInfo {
-    private final JetElement element;
+    private final KtElement element;
     private final Label entryPoint;
     private final Label exitPoint;
     private final Set<Label> referablePoints = Sets.newHashSet();
 
-    public BreakableBlockInfo(JetElement element, Label entryPoint, Label exitPoint) {
+    public BreakableBlockInfo(KtElement element, Label entryPoint, Label exitPoint) {
         this.element = element;
         this.entryPoint = entryPoint;
         this.exitPoint = exitPoint;
@@ -39,7 +39,7 @@ public class BreakableBlockInfo extends BlockInfo {
         Collections.addAll(referablePoints, labels);
     }
 
-    public JetElement getElement() {
+    public KtElement getElement() {
         return element;
     }
 

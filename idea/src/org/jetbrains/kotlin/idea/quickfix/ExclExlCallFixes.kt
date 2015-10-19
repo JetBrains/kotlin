@@ -25,18 +25,18 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPostfixExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPostfixExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 public abstract class ExclExclCallFix : IntentionAction {
     override fun getFamilyName(): String = getText()
 
     override fun startInWriteAction(): Boolean = true
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) = file is JetFile
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) = file is KtFile
 }
 
 public class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix(), CleanupFix {
@@ -50,13 +50,13 @@ public class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
         val postfixExpression = getExclExclPostfixExpression() ?: return
-        val expression = JetPsiFactory(project).createExpression(postfixExpression.getBaseExpression()!!.getText())
+        val expression = KtPsiFactory(project).createExpression(postfixExpression.getBaseExpression()!!.getText())
         postfixExpression.replace(expression)
     }
 
-    private fun getExclExclPostfixExpression(): JetPostfixExpression? {
+    private fun getExclExclPostfixExpression(): KtPostfixExpression? {
         val operationParent = psiElement.getParent()
-        if (operationParent is JetPostfixExpression && operationParent.getBaseExpression() != null) {
+        if (operationParent is KtPostfixExpression && operationParent.getBaseExpression() != null) {
             return operationParent
         }
         return null
@@ -77,14 +77,14 @@ public class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() 
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
         val modifiedExpression = getExpressionForIntroduceCall() ?: return
-        val exclExclExpression = JetPsiFactory(project).createExpression(modifiedExpression.getText() + "!!")
+        val exclExclExpression = KtPsiFactory(project).createExpression(modifiedExpression.getText() + "!!")
         modifiedExpression.replace(exclExclExpression)
     }
 
-    protected fun getExpressionForIntroduceCall(): JetExpression? {
-        if (psiElement is LeafPsiElement && psiElement.getElementType() == JetTokens.DOT) {
+    protected fun getExpressionForIntroduceCall(): KtExpression? {
+        if (psiElement is LeafPsiElement && psiElement.getElementType() == KtTokens.DOT) {
             val sibling = psiElement.getPrevSibling()
-            if (sibling is JetExpression) {
+            if (sibling is KtExpression) {
                 return sibling
             }
         }

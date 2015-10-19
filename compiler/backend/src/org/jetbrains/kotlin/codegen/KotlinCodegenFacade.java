@@ -21,11 +21,10 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetScript;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.ScriptNameUtil;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -36,10 +35,10 @@ import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.registerClassN
 public class KotlinCodegenFacade {
 
     public static void prepareForCompilation(@NotNull GenerationState state) {
-        for (JetFile file : state.getFiles()) {
+        for (KtFile file : state.getFiles()) {
             if (file.isScript()) {
                 // SCRIPT: register class name for scripting from this file, move outside of this function
-                JetScript script = file.getScript();
+                KtScript script = file.getScript();
                 assert script != null;
 
                 FqName name = ScriptNameUtil.classNameForScript(script);
@@ -65,14 +64,14 @@ public class KotlinCodegenFacade {
     }
 
     public static void doGenerateFiles(
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull GenerationState state,
             @NotNull CompilationErrorHandler errorHandler
     ) {
-        MultiMap<FqName, JetFile> filesInPackages = new MultiMap<FqName, JetFile>();
-        MultiMap<FqName, JetFile> filesInMultifileClasses = new MultiMap<FqName, JetFile>();
+        MultiMap<FqName, KtFile> filesInPackages = new MultiMap<FqName, KtFile>();
+        MultiMap<FqName, KtFile> filesInMultifileClasses = new MultiMap<FqName, KtFile>();
 
-        for (JetFile file : files) {
+        for (KtFile file : files) {
             if (file == null) throw new IllegalArgumentException("A null file given for compilation");
 
             JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
@@ -110,7 +109,7 @@ public class KotlinCodegenFacade {
     public static void generatePackage(
             @NotNull GenerationState state,
             @NotNull FqName packageFqName,
-            @NotNull Collection<JetFile> jetFiles,
+            @NotNull Collection<KtFile> jetFiles,
             @NotNull CompilationErrorHandler errorHandler
     ) {
         // We do not really generate package class, but use old package fqName to identify package in module-info.
@@ -122,7 +121,7 @@ public class KotlinCodegenFacade {
     private static void generateMultifileClass(
             @NotNull GenerationState state,
             @NotNull FqName multifileClassFqName,
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull CompilationErrorHandler handler
     ) {
         MultifileClassCodegen codegen = state.getFactory().forMultifileClass(multifileClassFqName, files);

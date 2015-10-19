@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 public abstract class AbstractReceiverValue implements ReceiverValue {
-    protected final JetType receiverType;
+    protected final KtType receiverType;
 
-    public AbstractReceiverValue(@NotNull JetType receiverType) {
+    public AbstractReceiverValue(@NotNull KtType receiverType) {
         this.receiverType = receiverType;
     }
 
     @Override
     @NotNull
-    public JetType getType() {
+    public KtType getType() {
         return receiverType;
     }
 

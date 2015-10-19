@@ -35,15 +35,15 @@ import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopParameter
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopRange
 import org.jetbrains.kotlin.js.translate.utils.TemporariesUtils.temporariesInitialization
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetForExpression
-import org.jetbrains.kotlin.psi.JetMultiDeclaration
-import org.jetbrains.kotlin.psi.JetWhileExpressionBase
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtMultiDeclaration
+import org.jetbrains.kotlin.psi.KtWhileExpressionBase
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-public fun createWhile(doWhile: Boolean, expression: JetWhileExpressionBase, context: TranslationContext): JsNode {
+public fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: TranslationContext): JsNode {
     val conditionExpression = expression.getCondition() ?:
                               throw IllegalArgumentException("condition expression should not be null: ${expression.getText()}")
     val conditionBlock = JsBlock()
@@ -95,7 +95,7 @@ public fun createWhile(doWhile: Boolean, expression: JetWhileExpressionBase, con
     return result.source(expression)!!
 }
 
-public fun translateForExpression(expression: JetForExpression, context: TranslationContext): JsStatement {
+public fun translateForExpression(expression: KtForExpression, context: TranslationContext): JsStatement {
     val loopRange = getLoopRange(expression)
     val rangeType = getTypeForExpression(context.bindingContext(), loopRange)
 
@@ -106,7 +106,7 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
     }
 
     fun isForOverRangeLiteral(): Boolean =
-            loopRange is JetBinaryExpression && loopRange.getOperationToken() == JetTokens.RANGE && isForOverRange()
+            loopRange is KtBinaryExpression && loopRange.getOperationToken() == KtTokens.RANGE && isForOverRange()
 
    fun isForOverArray(): Boolean {
         //TODO: better check
@@ -115,7 +115,7 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
                getClassDescriptorForType(rangeType).getName().asString() == "IntArray"
     }
 
-    val multiParameter: JetMultiDeclaration? = expression.getMultiParameter();
+    val multiParameter: KtMultiDeclaration? = expression.getMultiParameter();
 
     fun declareParameter(): JsName {
         val loopParameter = getLoopParameter(expression)
@@ -150,7 +150,7 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
 
     // TODO: implement reverse semantics
     fun translateForOverLiteralRange(): JsStatement {
-        if (loopRange !is JetBinaryExpression) throw IllegalStateException("expected JetBinaryExpression, but ${loopRange.getText()}")
+        if (loopRange !is KtBinaryExpression) throw IllegalStateException("expected JetBinaryExpression, but ${loopRange.getText()}")
 
         val startBlock = JsBlock()
         val leftExpression = TranslationUtils.translateLeftExpression(context, loopRange, startBlock)

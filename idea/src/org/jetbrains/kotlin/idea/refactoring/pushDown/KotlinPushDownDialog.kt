@@ -25,10 +25,10 @@ import com.intellij.refactoring.ui.RefactoringDialog
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedClassNameForRendering
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -40,14 +40,14 @@ import javax.swing.JPanel
 public class KotlinPushDownDialog(
         project: Project,
         private val memberInfos: List<KotlinMemberInfo>,
-        private val sourceClass: JetClass
+        private val sourceClass: KtClass
 ) : RefactoringDialog(project, true) {
     init {
         title = PUSH_MEMBERS_DOWN
         init()
     }
 
-    private var memberInfoModel: AbstractMemberInfoModel<JetNamedDeclaration, KotlinMemberInfo>? = null
+    private var memberInfoModel: AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>? = null
 
     public val selectedMemberInfos: List<KotlinMemberInfo>
         get() = memberInfos.filter { it.isChecked && memberInfoModel?.isMemberEnabled(it) ?: false }
@@ -79,12 +79,12 @@ public class KotlinPushDownDialog(
                 RefactoringBundle.message("keep.abstract.column.header"))
         panel.add(memberSelectionPanel, BorderLayout.CENTER)
 
-        memberInfoModel = object : AbstractMemberInfoModel<JetNamedDeclaration, KotlinMemberInfo>() {
+        memberInfoModel = object : AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>() {
             override fun isFixedAbstract(member: KotlinMemberInfo?) = null
 
             override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
                 val member = memberInfo.member
-                return member is JetNamedFunction || member is JetProperty
+                return member is KtNamedFunction || member is KtProperty
             }
         }
         memberInfoModel!!.memberInfoChanged(MemberInfoChange(memberInfos))

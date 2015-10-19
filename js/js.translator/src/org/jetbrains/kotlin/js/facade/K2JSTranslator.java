@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.inline.JsInliner;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 
@@ -54,7 +54,7 @@ public final class K2JSTranslator {
 
     @NotNull
     public TranslationResult translate(
-            @NotNull List<JetFile> files,
+            @NotNull List<KtFile> files,
             @NotNull MainCallParameters mainCallParameters
     ) throws TranslationException {
         return translate(files, mainCallParameters, null);
@@ -62,7 +62,7 @@ public final class K2JSTranslator {
 
     @NotNull
     public TranslationResult translate(
-            @NotNull List<JetFile> files,
+            @NotNull List<KtFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @Nullable JsAnalysisResult analysisResult
     ) throws TranslationException {

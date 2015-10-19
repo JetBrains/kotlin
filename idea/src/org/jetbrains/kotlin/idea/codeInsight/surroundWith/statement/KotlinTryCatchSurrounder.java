@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetTryExpression;
+import org.jetbrains.kotlin.psi.KtTryExpression;
 
 public class KotlinTryCatchSurrounder extends KotlinTrySurrounderBase {
 
@@ -30,7 +30,7 @@ public class KotlinTryCatchSurrounder extends KotlinTrySurrounderBase {
 
     @NotNull
     @Override
-    protected TextRange getTextRangeForCaret(@NotNull JetTryExpression expression) {
+    protected TextRange getTextRangeForCaret(@NotNull KtTryExpression expression) {
         return getCatchTypeParameterTextRange(expression);
     }
 

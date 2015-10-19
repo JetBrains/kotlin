@@ -36,13 +36,13 @@ import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -91,18 +91,18 @@ public class JetAnonymousSuperMacro extends Macro {
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
         PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.getEditor().getDocument());
-        if (!(psiFile instanceof JetFile)) return null;
+        if (!(psiFile instanceof KtFile)) return null;
 
-        JetExpression expression = PsiTreeUtil.getParentOfType(psiFile.findElementAt(context.getStartOffset()), JetExpression.class);
+        KtExpression expression = PsiTreeUtil.getParentOfType(psiFile.findElementAt(context.getStartOffset()), KtExpression.class);
         if (expression == null) return null;
 
         BindingContext bc = ResolutionUtils.analyze(expression, BodyResolveMode.FULL);
-        JetScope scope = bc.get(BindingContext.RESOLUTION_SCOPE, expression);
+        KtScope scope = bc.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope == null) return null;
 
         List<PsiNamedElement> result = new ArrayList<PsiNamedElement>();
 
-        for (DeclarationDescriptor descriptor : scope.getDescriptors(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, JetScope.Companion.getALL_NAME_FILTER())) {
+        for (DeclarationDescriptor descriptor : scope.getDescriptors(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, KtScope.Companion.getALL_NAME_FILTER())) {
             if (!(descriptor instanceof ClassDescriptor)) continue;
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (!classDescriptor.getModality().isOverridable()) continue;

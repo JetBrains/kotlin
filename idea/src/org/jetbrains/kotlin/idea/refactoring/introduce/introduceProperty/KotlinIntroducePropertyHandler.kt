@@ -59,19 +59,19 @@ public class KotlinIntroducePropertyHandler(
                 editor,
                 file,
                 { elements, parent ->
-                    parent.getExtractionContainers(strict = true, includeAll = true).filter { it is JetClassBody || it is JetFile }
+                    parent.getExtractionContainers(strict = true, includeAll = true).filter { it is KtClassBody || it is KtFile }
                 },
                 continuation
         )
     }
 
-    public fun doInvoke(project: Project, editor: Editor, file: JetFile, elements: List<PsiElement>, targetSibling: PsiElement) {
-        val adjustedElements = (elements.singleOrNull() as? JetBlockExpression)?.getStatements() ?: elements
+    public fun doInvoke(project: Project, editor: Editor, file: KtFile, elements: List<PsiElement>, targetSibling: PsiElement) {
+        val adjustedElements = (elements.singleOrNull() as? KtBlockExpression)?.getStatements() ?: elements
         if (adjustedElements.isNotEmpty()) {
             val options = ExtractionOptions(extractAsProperty = true)
             val extractionData = ExtractionData(file, adjustedElements.toRange(), targetSibling, null, options)
             ExtractionEngine(helper).run(editor, extractionData) {
-                val property = it.declaration as JetProperty
+                val property = it.declaration as KtProperty
                 val descriptor = it.config.descriptor
 
                 editor.getCaretModel().moveToOffset(property.getTextOffset())
@@ -105,7 +105,7 @@ public class KotlinIntroducePropertyHandler(
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        if (file !is JetFile) return
+        if (file !is KtFile) return
         selectElements(editor, file) { elements, targetSibling -> doInvoke(project, editor, file, elements, targetSibling) }
     }
 

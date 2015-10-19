@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.preprocessor
 
-import org.jetbrains.kotlin.psi.JetStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtStringTemplateEntry
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 
@@ -32,4 +32,4 @@ fun List<ValueArgument>.splitToPositionalAndNamed(): PositionalAndNamedArguments
 }
 
 fun ValueArgument.parseIntegerValue(): Int = getArgumentExpression()!!.text.toInt()
-fun ValueArgument.parseStringValue(): String = getArgumentExpression()!!.getChildrenOfType<JetStringTemplateEntry>().joinToString("") { it.text }
+fun ValueArgument.parseStringValue(): String = getArgumentExpression()!!.getChildrenOfType<KtStringTemplateEntry>().joinToString("") { it.text }

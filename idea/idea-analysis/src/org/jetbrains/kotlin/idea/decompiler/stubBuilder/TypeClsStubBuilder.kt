@@ -20,15 +20,15 @@ import com.google.protobuf.MessageLite
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -46,7 +46,7 @@ import java.util.*
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     fun createTypeReferenceStub(parent: StubElement<out PsiElement>, type: Type) {
-        val typeReference = KotlinPlaceHolderStubImpl<JetTypeReference>(parent, JetStubElementTypes.TYPE_REFERENCE)
+        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtStubElementTypes.TYPE_REFERENCE)
 
         val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver).filterNot {
             val isTopLevelClass = !it.isNestedClass()
@@ -54,7 +54,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
 
         val effectiveParent =
-                if (type.getNullable()) KotlinPlaceHolderStubImpl<JetNullableType>(typeReference, JetStubElementTypes.NULLABLE_TYPE)
+                if (type.getNullable()) KotlinPlaceHolderStubImpl<KtNullableType>(typeReference, KtStubElementTypes.NULLABLE_TYPE)
                 else typeReference
 
         fun createTypeParameterStub(name: Name) {
@@ -74,7 +74,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val id = c.nameResolver.getString(type.getFlexibleTypeCapabilitiesId())
 
             if (id == DynamicTypeCapabilities.id) {
-                KotlinPlaceHolderStubImpl<JetDynamicType>(parent, JetStubElementTypes.DYNAMIC_TYPE)
+                KotlinPlaceHolderStubImpl<KtDynamicType>(parent, KtStubElementTypes.DYNAMIC_TYPE)
                 return
             }
         }
@@ -101,12 +101,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (typeArgumentProtoList.isEmpty()) {
             return
         }
-        val typeArgumentsListStub = KotlinPlaceHolderStubImpl<JetTypeArgumentList>(typeStub, JetStubElementTypes.TYPE_ARGUMENT_LIST)
+        val typeArgumentsListStub = KotlinPlaceHolderStubImpl<KtTypeArgumentList>(typeStub, KtStubElementTypes.TYPE_ARGUMENT_LIST)
         typeArgumentProtoList.forEach { typeArgumentProto ->
             val projectionKind = typeArgumentProto.projection.toProjectionKind()
             val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal())
-            if (projectionKind != JetProjectionKind.STAR) {
-                val modifierKeywordToken = projectionKind.token as? JetModifierKeywordToken
+            if (projectionKind != KtProjectionKind.STAR) {
+                val modifierKeywordToken = projectionKind.token as? KtModifierKeywordToken
                 createModifierListStub(typeProjection, modifierKeywordToken.singletonOrEmptyList())
                 createTypeReferenceStub(typeProjection, typeArgumentProto.type(c.typeTable)!!)
             }
@@ -114,23 +114,23 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun Projection.toProjectionKind() = when (this) {
-        Projection.IN -> JetProjectionKind.IN
-        Projection.OUT -> JetProjectionKind.OUT
-        Projection.INV -> JetProjectionKind.NONE
-        Projection.STAR -> JetProjectionKind.STAR
+        Projection.IN -> KtProjectionKind.IN
+        Projection.OUT -> KtProjectionKind.OUT
+        Projection.INV -> KtProjectionKind.NONE
+        Projection.STAR -> KtProjectionKind.STAR
     }
 
     private fun createFunctionTypeStub(parent: StubElement<out PsiElement>, type: Type, isExtensionFunctionType: Boolean) {
         val typeArgumentList = type.argumentList
-        val functionType = KotlinPlaceHolderStubImpl<JetFunctionType>(parent, JetStubElementTypes.FUNCTION_TYPE)
+        val functionType = KotlinPlaceHolderStubImpl<KtFunctionType>(parent, KtStubElementTypes.FUNCTION_TYPE)
         if (isExtensionFunctionType) {
             val functionTypeReceiverStub
-                    = KotlinPlaceHolderStubImpl<JetFunctionTypeReceiver>(functionType, JetStubElementTypes.FUNCTION_TYPE_RECEIVER)
+                    = KotlinPlaceHolderStubImpl<KtFunctionTypeReceiver>(functionType, KtStubElementTypes.FUNCTION_TYPE_RECEIVER)
             val receiverTypeProto = typeArgumentList.first().type(c.typeTable)!!
             createTypeReferenceStub(functionTypeReceiverStub, receiverTypeProto)
         }
 
-        val parameterList = KotlinPlaceHolderStubImpl<JetParameterList>(functionType, JetStubElementTypes.VALUE_PARAMETER_LIST)
+        val parameterList = KotlinPlaceHolderStubImpl<KtParameterList>(functionType, KtStubElementTypes.VALUE_PARAMETER_LIST)
         val typeArgumentsWithoutReceiverAndReturnType
                 = typeArgumentList.subList(if (isExtensionFunctionType) 1 else 0, typeArgumentList.size() - 1)
         typeArgumentsWithoutReceiverAndReturnType.forEach { argument ->
@@ -150,7 +150,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             parameters: List<ProtoBuf.ValueParameter>,
             container: ProtoContainer
     ) {
-        val parameterListStub = KotlinPlaceHolderStubImpl<JetParameterList>(parent, JetStubElementTypes.VALUE_PARAMETER_LIST)
+        val parameterListStub = KotlinPlaceHolderStubImpl<KtParameterList>(parent, KtStubElementTypes.VALUE_PARAMETER_LIST)
         for ((index, valueParameterProto) in parameters.withIndex()) {
             val name = c.nameResolver.getName(valueParameterProto.name)
             val parameterStub = KotlinParameterStubImpl(
@@ -163,11 +163,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             )
             val varargElementType = valueParameterProto.varargElementType(c.typeTable)
             val typeProto = varargElementType ?: valueParameterProto.type(c.typeTable)
-            val modifiers = arrayListOf<JetModifierKeywordToken>()
+            val modifiers = arrayListOf<KtModifierKeywordToken>()
 
-            if (varargElementType != null) { modifiers.add(JetTokens.VARARG_KEYWORD) }
-            if (Flags.IS_CROSSINLINE.get(valueParameterProto.flags)) { modifiers.add(JetTokens.CROSSINLINE_KEYWORD) }
-            if (Flags.IS_NOINLINE.get(valueParameterProto.flags)) { modifiers.add(JetTokens.NOINLINE_KEYWORD) }
+            if (varargElementType != null) { modifiers.add(KtTokens.VARARG_KEYWORD) }
+            if (Flags.IS_CROSSINLINE.get(valueParameterProto.flags)) { modifiers.add(KtTokens.CROSSINLINE_KEYWORD) }
+            if (Flags.IS_NOINLINE.get(valueParameterProto.flags)) { modifiers.add(KtTokens.NOINLINE_KEYWORD) }
 
             val modifierList = createModifierListStub(parameterStub, modifiers)
             val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
@@ -185,7 +185,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         return KotlinModifierListStubImpl(
                 parameterStub,
                 ModifierMaskUtils.computeMask { false },
-                JetStubElementTypes.MODIFIER_LIST
+                KtStubElementTypes.MODIFIER_LIST
         )
     }
 
@@ -195,7 +195,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     ): List<Pair<Name, Type>> {
         if (typeParameterProtoList.isEmpty()) return listOf()
 
-        val typeParameterListStub = KotlinPlaceHolderStubImpl<JetTypeParameterList>(parent, JetStubElementTypes.TYPE_PARAMETER_LIST)
+        val typeParameterListStub = KotlinPlaceHolderStubImpl<KtTypeParameterList>(parent, KtStubElementTypes.TYPE_PARAMETER_LIST)
         val protosForTypeConstraintList = arrayListOf<Pair<Name, Type>>()
         for (proto in typeParameterProtoList) {
             val name = c.nameResolver.getName(proto.name)
@@ -225,9 +225,9 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (protosForTypeConstraintList.isEmpty()) {
             return
         }
-        val typeConstraintListStub = KotlinPlaceHolderStubImpl<JetTypeConstraintList>(parent, JetStubElementTypes.TYPE_CONSTRAINT_LIST)
+        val typeConstraintListStub = KotlinPlaceHolderStubImpl<KtTypeConstraintList>(parent, KtStubElementTypes.TYPE_CONSTRAINT_LIST)
         for ((name, type) in protosForTypeConstraintList) {
-            val typeConstraintStub = KotlinPlaceHolderStubImpl<JetTypeConstraint>(typeConstraintListStub, JetStubElementTypes.TYPE_CONSTRAINT)
+            val typeConstraintStub = KotlinPlaceHolderStubImpl<KtTypeConstraint>(typeConstraintListStub, KtStubElementTypes.TYPE_CONSTRAINT)
             KotlinNameReferenceExpressionStubImpl(typeConstraintStub, name.ref())
             createTypeReferenceStub(typeConstraintStub, type)
         }
@@ -237,13 +237,13 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             typeParameterStub: KotlinTypeParameterStubImpl,
             typeParameterProto: ProtoBuf.TypeParameter
     ) {
-        val modifiers = ArrayList<JetModifierKeywordToken>()
+        val modifiers = ArrayList<KtModifierKeywordToken>()
         when (typeParameterProto.getVariance()) {
-            Variance.IN -> modifiers.add(JetTokens.IN_KEYWORD)
-            Variance.OUT -> modifiers.add(JetTokens.OUT_KEYWORD)
+            Variance.IN -> modifiers.add(KtTokens.IN_KEYWORD)
+            Variance.OUT -> modifiers.add(KtTokens.OUT_KEYWORD)
         }
         if (typeParameterProto.getReified()) {
-            modifiers.add(JetTokens.REIFIED_KEYWORD)
+            modifiers.add(KtTokens.REIFIED_KEYWORD)
         }
         createModifierListStub(typeParameterStub, modifiers)
     }

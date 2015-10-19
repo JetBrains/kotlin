@@ -18,42 +18,42 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.impl.source.tree.PsiErrorElementImpl
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingOffsetIndependentIntention<JetPrefixExpression>(javaClass(), "DeMorgan Law") {
+public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingOffsetIndependentIntention<KtPrefixExpression>(javaClass(), "DeMorgan Law") {
 
-    override fun isApplicableTo(element: JetPrefixExpression): Boolean {
+    override fun isApplicableTo(element: KtPrefixExpression): Boolean {
         val prefixOperator = element.getOperationReference().getReferencedNameElementType()
-        if (prefixOperator != JetTokens.EXCL) return false
+        if (prefixOperator != KtTokens.EXCL) return false
 
-        val parenthesizedExpression = element.getBaseExpression() as? JetParenthesizedExpression
-        val baseExpression = parenthesizedExpression?.getExpression() as? JetBinaryExpression ?: return false
+        val parenthesizedExpression = element.getBaseExpression() as? KtParenthesizedExpression
+        val baseExpression = parenthesizedExpression?.getExpression() as? KtBinaryExpression ?: return false
 
         when (baseExpression.getOperationToken()) {
-            JetTokens.ANDAND -> setText("Replace '&&' with '||'")
-            JetTokens.OROR -> setText("Replace '||' with '&&'")
+            KtTokens.ANDAND -> setText("Replace '&&' with '||'")
+            KtTokens.OROR -> setText("Replace '||' with '&&'")
             else -> return false
         }
 
         return splitBooleanSequence(baseExpression) != null
     }
 
-    override fun applyTo(element: JetPrefixExpression, editor: Editor) {
-        val parenthesizedExpression = element.getBaseExpression() as JetParenthesizedExpression
-        val baseExpression = parenthesizedExpression.getExpression() as JetBinaryExpression
+    override fun applyTo(element: KtPrefixExpression, editor: Editor) {
+        val parenthesizedExpression = element.getBaseExpression() as KtParenthesizedExpression
+        val baseExpression = parenthesizedExpression.getExpression() as KtBinaryExpression
 
         val operatorText = when (baseExpression.getOperationToken()) {
-            JetTokens.ANDAND -> JetTokens.OROR.getValue()
-            JetTokens.OROR -> JetTokens.ANDAND.getValue()
+            KtTokens.ANDAND -> KtTokens.OROR.getValue()
+            KtTokens.OROR -> KtTokens.ANDAND.getValue()
             else -> throw IllegalArgumentException()
         }
 
         val operands = splitBooleanSequence(baseExpression)!!.asReversed()
 
-        val newExpression = JetPsiFactory(element).buildExpression {
+        val newExpression = KtPsiFactory(element).buildExpression {
             for ((i, operand) in operands.withIndex()) {
                 if (i > 0) {
                     appendFixedText(operatorText)
@@ -65,16 +65,16 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
         element.replace(newExpression)
     }
 
-    private fun splitBooleanSequence(expression: JetBinaryExpression): List<JetExpression>? {
-        val result = ArrayList<JetExpression>()
+    private fun splitBooleanSequence(expression: KtBinaryExpression): List<KtExpression>? {
+        val result = ArrayList<KtExpression>()
         val firstOperator = expression.getOperationToken()
 
-        var remainingExpression: JetExpression = expression
+        var remainingExpression: KtExpression = expression
         while (true) {
-            if (remainingExpression !is JetBinaryExpression) break
+            if (remainingExpression !is KtBinaryExpression) break
 
             val operation = remainingExpression.getOperationToken()
-            if (operation != JetTokens.ANDAND && operation != JetTokens.OROR) break
+            if (operation != KtTokens.ANDAND && operation != KtTokens.OROR) break
 
             if (operation != firstOperator) return null //Boolean sequence must be homogenous
 

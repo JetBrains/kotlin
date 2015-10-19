@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
@@ -30,7 +30,7 @@ import java.util.ArrayList
 class FunctionClassScope(
         private val storageManager: StorageManager,
         private val functionClass: FunctionClassDescriptor
-) : JetScopeImpl() {
+) : KtScopeImpl() {
     private val allDescriptors = storageManager.createLazyValue {
         if (functionClass.functionKind == FunctionClassDescriptor.Kind.Function) {
             val invoke = FunctionInvokeDescriptor.create(functionClass)

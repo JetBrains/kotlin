@@ -21,17 +21,17 @@ import com.google.common.collect.Multimap
 import com.intellij.openapi.util.Key
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetTypeReference
-import org.jetbrains.kotlin.psi.JetUserType
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.KtUserType
 
-public fun JetUserType.aliasImportMap(): Multimap<String, String> {
+public fun KtUserType.aliasImportMap(): Multimap<String, String> {
     // we need to access containing file via stub because getPsi() may return null when indexing and getContainingFile() will crash
     val file = getStub()?.getContainingFileStub()?.getPsi() ?: return HashMultimap.create()
-    return (file as JetFile).aliasImportMap()
+    return (file as KtFile).aliasImportMap()
 }
 
-private fun JetFile.aliasImportMap(): Multimap<String, String> {
+private fun KtFile.aliasImportMap(): Multimap<String, String> {
     val cached = getUserData(ALIAS_IMPORT_DATA_KEY)
     val modificationStamp = getModificationStamp()
     if (cached != null && modificationStamp == cached.fileModificationStamp) {
@@ -43,7 +43,7 @@ private fun JetFile.aliasImportMap(): Multimap<String, String> {
     return data.map
 }
 
-private fun JetFile.buildAliasImportMap(): Multimap<String, String> {
+private fun KtFile.buildAliasImportMap(): Multimap<String, String> {
     val map = HashMultimap.create<String, String>()
     val importList = getImportList() ?: return map
     for (import in importList.getImports()) {
@@ -58,12 +58,12 @@ private class CachedAliasImportData(val map: Multimap<String, String>, val fileM
 
 private val ALIAS_IMPORT_DATA_KEY = Key<CachedAliasImportData>("ALIAS_IMPORT_MAP_KEY")
 
-public fun JetTypeReference?.isProbablyNothing(): Boolean {
-    val userType = this?.typeElement as? JetUserType ?: return false
+public fun KtTypeReference?.isProbablyNothing(): Boolean {
+    val userType = this?.typeElement as? KtUserType ?: return false
     return userType.isProbablyNothing()
 }
 
-public fun JetUserType?.isProbablyNothing(): Boolean {
+public fun KtUserType?.isProbablyNothing(): Boolean {
     if (this == null) return false
     val referencedName = getReferencedName()
     return referencedName == "Nothing" || aliasImportMap()[referencedName].contains("Nothing")

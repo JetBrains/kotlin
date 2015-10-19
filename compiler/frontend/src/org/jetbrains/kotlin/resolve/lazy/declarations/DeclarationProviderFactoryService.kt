@@ -20,7 +20,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.StorageManager
 import com.intellij.openapi.vfs.VirtualFile
 import java.util.HashSet
@@ -30,7 +30,7 @@ public abstract class DeclarationProviderFactoryService {
     public abstract fun create(
             project: Project,
             storageManager: StorageManager,
-            syntheticFiles: Collection<JetFile>,
+            syntheticFiles: Collection<KtFile>,
             filesScope: GlobalSearchScope
     ): DeclarationProviderFactory
 
@@ -39,14 +39,14 @@ public abstract class DeclarationProviderFactoryService {
         public fun createDeclarationProviderFactory(
                 project: Project,
                 storageManager: StorageManager,
-                syntheticFiles: Collection<JetFile>,
+                syntheticFiles: Collection<KtFile>,
                 filesScope: GlobalSearchScope
         ): DeclarationProviderFactory {
             return ServiceManager.getService(project, javaClass<DeclarationProviderFactoryService>())!!
                     .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, filesScope))
         }
 
-        private fun filteringScope(syntheticFiles: Collection<JetFile>, baseScope: GlobalSearchScope): GlobalSearchScope {
+        private fun filteringScope(syntheticFiles: Collection<KtFile>, baseScope: GlobalSearchScope): GlobalSearchScope {
             if (syntheticFiles.isEmpty()) {
                 return baseScope
             }
@@ -55,7 +55,7 @@ public abstract class DeclarationProviderFactoryService {
     }
 
 
-    private class SyntheticFilesFilteringScope(syntheticFiles: Collection<JetFile>, baseScope: GlobalSearchScope)
+    private class SyntheticFilesFilteringScope(syntheticFiles: Collection<KtFile>, baseScope: GlobalSearchScope)
         : DelegatingGlobalSearchScope(baseScope) {
 
         private val originals = syntheticFiles

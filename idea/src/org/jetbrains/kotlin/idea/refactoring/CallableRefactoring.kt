@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import java.util.*
 
@@ -183,9 +183,9 @@ fun getAffectedCallables(project: Project, descriptorsForChange: Collection<Call
     }
 }
 
-fun DeclarationDescriptor.getContainingScope(): JetScope? {
+fun DeclarationDescriptor.getContainingScope(): KtScope? {
     val declaration = DescriptorToSourceUtils.descriptorToDeclaration(this)
-    val block = declaration?.getParent() as? JetBlockExpression
+    val block = declaration?.getParent() as? KtBlockExpression
     if (block != null) {
         val lastStatement = block.statements.last()
         return lastStatement.analyze()[BindingContext.RESOLUTION_SCOPE, lastStatement]
@@ -200,7 +200,7 @@ fun DeclarationDescriptor.getContainingScope(): JetScope? {
     }
 }
 
-fun JetDeclarationWithBody.getBodyScope(bindingContext: BindingContext): JetScope? {
-    val expression = getBodyExpression()?.getChildren()?.firstOrNull { it is JetExpression } as JetExpression?
+fun KtDeclarationWithBody.getBodyScope(bindingContext: BindingContext): KtScope? {
+    val expression = getBodyExpression()?.getChildren()?.firstOrNull { it is KtExpression } as KtExpression?
     return expression?.let { bindingContext[BindingContext.RESOLUTION_SCOPE, it] }
 }

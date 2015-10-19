@@ -34,10 +34,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.idea.kdoc.KDocHighlightingVisitor
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 
 public class KotlinBeforeResolveHighlightingPass(
-        private val file: JetFile,
+        private val file: KtFile,
         document: Document
 ) : TextEditorHighlightingPass(file.project, document), DumbAware {
 
@@ -74,7 +74,7 @@ public class KotlinBeforeResolveHighlightingPass(
         }
 
         override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {
-            if (file !is JetFile) return null
+            if (file !is KtFile) return null
             return KotlinBeforeResolveHighlightingPass(file, editor.document)
         }
     }

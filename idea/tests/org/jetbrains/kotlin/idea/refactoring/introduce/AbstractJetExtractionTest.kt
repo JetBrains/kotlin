@@ -48,8 +48,8 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
@@ -66,7 +66,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
     protected fun doIntroduceVariableTest(path: String) {
         doTest(path) { file ->
-            file as JetFile
+            file as KtFile
 
             KotlinIntroduceVariableHandler().invoke(
                     fixture.getProject(),
@@ -107,7 +107,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                 KotlinIntroduceParameterHandler(HelperImpl())
             }
             with (handler) {
-                val target = (file as JetFile).findElementByCommentPrefix("// TARGET:") as? JetNamedDeclaration
+                val target = (file as KtFile).findElementByCommentPrefix("// TARGET:") as? KtNamedDeclaration
                 if (target != null) {
                     JetRefactoringUtil.selectExpression(fixture.getEditor(), file, true) { expression ->
                         invoke(fixture.getProject(), fixture.getEditor(), expression!!, target)
@@ -204,7 +204,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
     protected fun doIntroducePropertyTest(path: String) {
         doTest(path) { file ->
-            file as JetFile
+            file as KtFile
 
             val extractionTarget = propertyTargets.single {
                 it.targetName == InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// EXTRACTION_TARGET: ")
@@ -236,7 +236,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
     protected fun doExtractFunctionTest(path: String) {
         doTest(path) { file ->
-            file as JetFile
+            file as KtFile
 
             val explicitPreviousSibling = file.findElementByCommentPrefix("// SIBLING:")
             val fileText = file.getText() ?: ""

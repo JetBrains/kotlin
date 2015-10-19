@@ -24,9 +24,9 @@ import com.intellij.psi.PsiParameterList
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.JetNodeTypes
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
@@ -41,81 +41,81 @@ import kotlin.test.assertTrue
 
 // ----------- Calls and qualified expressions ---------------------------------------------------------------------------------------------
 
-public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
+public fun KtCallElement.getCallNameExpression(): KtSimpleNameExpression? {
     val calleeExpression = getCalleeExpression() ?: return null
 
     return when (calleeExpression) {
-        is JetSimpleNameExpression -> calleeExpression
-        is JetConstructorCalleeExpression -> calleeExpression.getConstructorReferenceExpression()
+        is KtSimpleNameExpression -> calleeExpression
+        is KtConstructorCalleeExpression -> calleeExpression.getConstructorReferenceExpression()
         else -> null
     }
 }
 
 /**
- * Returns enclosing qualifying element for given [[JetSimpleNameExpression]]
- * ([[JetQualifiedExpression]] or [[JetUserType]] or original expression)
+ * Returns enclosing qualifying element for given [[KtSimpleNameExpression]]
+ * ([[KtQualifiedExpression]] or [[KtUserType]] or original expression)
  */
-public fun JetSimpleNameExpression.getQualifiedElement(): JetElement {
-    val baseExpression = (parent as? JetCallExpression) ?: this
+public fun KtSimpleNameExpression.getQualifiedElement(): KtElement {
+    val baseExpression = (parent as? KtCallExpression) ?: this
     val parent = baseExpression.parent
     return when (parent) {
-        is JetQualifiedExpression -> if (parent.selectorExpression == baseExpression) parent else baseExpression
-        is JetUserType -> if (parent.referenceExpression == baseExpression) parent else baseExpression
+        is KtQualifiedExpression -> if (parent.selectorExpression == baseExpression) parent else baseExpression
+        is KtUserType -> if (parent.referenceExpression == baseExpression) parent else baseExpression
         else -> baseExpression
     }
 }
 
-public fun JetSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): JetQualifiedExpression? {
-    return sequence<JetExpression>(this) {
-        val parentQualified = it.getParent() as? JetQualifiedExpression
+public fun KtSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): KtQualifiedExpression? {
+    return sequence<KtExpression>(this) {
+        val parentQualified = it.getParent() as? KtQualifiedExpression
         if (parentQualified?.getSelectorExpression() == it) parentQualified else null
-    }.last() as? JetQualifiedExpression
+    }.last() as? KtQualifiedExpression
 }
 
 /**
  * Returns rightmost selector of the qualified element (null if there is no such selector)
  */
-public fun JetElement.getQualifiedElementSelector(): JetElement? {
+public fun KtElement.getQualifiedElementSelector(): KtElement? {
     return when (this) {
-        is JetSimpleNameExpression -> this
-        is JetCallExpression -> getCalleeExpression()
-        is JetQualifiedExpression -> {
+        is KtSimpleNameExpression -> this
+        is KtCallExpression -> getCalleeExpression()
+        is KtQualifiedExpression -> {
             val selector = getSelectorExpression()
-            if (selector is JetCallExpression) selector.getCalleeExpression() else selector
+            if (selector is KtCallExpression) selector.getCalleeExpression() else selector
         }
-        is JetUserType -> getReferenceExpression()
+        is KtUserType -> getReferenceExpression()
         else -> null
     }
 }
 
-public fun JetSimpleNameExpression.getReceiverExpression(): JetExpression? {
+public fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
     val parent = getParent()
     when {
-        parent is JetQualifiedExpression -> {
+        parent is KtQualifiedExpression -> {
             val receiverExpression = parent.getReceiverExpression()
             // Name expression can't be receiver for itself
             if (receiverExpression != this) {
                 return receiverExpression
             }
         }
-        parent is JetCallExpression -> {
+        parent is KtCallExpression -> {
             //This is in case `a().b()`
             val callExpression = parent
             val grandParent = callExpression.getParent()
-            if (grandParent is JetQualifiedExpression) {
+            if (grandParent is KtQualifiedExpression) {
                 val parentsReceiver = grandParent.getReceiverExpression()
                 if (parentsReceiver != callExpression) {
                     return parentsReceiver
                 }
             }
         }
-        parent is JetBinaryExpression && parent.getOperationReference() == this -> {
+        parent is KtBinaryExpression && parent.getOperationReference() == this -> {
             return if (parent.getOperationToken() in OperatorConventions.IN_OPERATIONS) parent.getRight() else parent.getLeft()
         }
-        parent is JetUnaryExpression && parent.getOperationReference() == this -> {
+        parent is KtUnaryExpression && parent.getOperationReference() == this -> {
             return parent.getBaseExpression()!!
         }
-        parent is JetUserType -> {
+        parent is KtUserType -> {
             val qualifier = parent.getQualifier()
             if (qualifier != null) {
                 return qualifier.getReferenceExpression()!!
@@ -125,31 +125,31 @@ public fun JetSimpleNameExpression.getReceiverExpression(): JetExpression? {
     return null
 }
 
-public fun JetElement.getQualifiedExpressionForSelector(): JetQualifiedExpression? {
+public fun KtElement.getQualifiedExpressionForSelector(): KtQualifiedExpression? {
     val parent = getParent()
-    return if (parent is JetQualifiedExpression && parent.getSelectorExpression() == this) parent else null
+    return if (parent is KtQualifiedExpression && parent.getSelectorExpression() == this) parent else null
 }
 
-public fun JetExpression.getQualifiedExpressionForSelectorOrThis(): JetExpression {
+public fun KtExpression.getQualifiedExpressionForSelectorOrThis(): KtExpression {
     return getQualifiedExpressionForSelector() ?: this
 }
 
-public fun JetExpression.getQualifiedExpressionForReceiver(): JetQualifiedExpression? {
+public fun KtExpression.getQualifiedExpressionForReceiver(): KtQualifiedExpression? {
     val parent = getParent()
-    return if (parent is JetQualifiedExpression && parent.getReceiverExpression() == this) parent else null
+    return if (parent is KtQualifiedExpression && parent.getReceiverExpression() == this) parent else null
 }
 
-public fun JetExpression.getQualifiedExpressionForReceiverOrThis(): JetExpression {
+public fun KtExpression.getQualifiedExpressionForReceiverOrThis(): KtExpression {
     return getQualifiedExpressionForReceiver() ?: this
 }
 
-public fun JetExpression.isDotReceiver(): Boolean =
-        (getParent() as? JetDotQualifiedExpression)?.getReceiverExpression() == this
+public fun KtExpression.isDotReceiver(): Boolean =
+        (getParent() as? KtDotQualifiedExpression)?.getReceiverExpression() == this
 
-public fun JetElement.getCalleeHighlightingRange(): TextRange {
-    val annotationEntry: JetAnnotationEntry =
-            PsiTreeUtil.getParentOfType<JetAnnotationEntry>(
-                    this, javaClass<JetAnnotationEntry>(), /* strict = */false, javaClass<JetValueArgumentList>()
+public fun KtElement.getCalleeHighlightingRange(): TextRange {
+    val annotationEntry: KtAnnotationEntry =
+            PsiTreeUtil.getParentOfType<KtAnnotationEntry>(
+                    this, javaClass<KtAnnotationEntry>(), /* strict = */false, javaClass<KtValueArgumentList>()
             ) ?: return getTextRange()
 
     val startOffset = annotationEntry.getAtSymbol()?.getTextRange()?.getStartOffset()
@@ -160,13 +160,13 @@ public fun JetElement.getCalleeHighlightingRange(): TextRange {
 
 // ---------- Block expression -------------------------------------------------------------------------------------------------------------
 
-public fun JetElement.blockExpressionsOrSingle(): Sequence<JetElement> =
-        if (this is JetBlockExpression) getStatements().asSequence() else sequenceOf(this)
+public fun KtElement.blockExpressionsOrSingle(): Sequence<KtElement> =
+        if (this is KtBlockExpression) getStatements().asSequence() else sequenceOf(this)
 
-public fun JetExpression.lastBlockStatementOrThis(): JetExpression
-        = (this as? JetBlockExpression)?.getStatements()?.lastOrNull() ?: this
+public fun KtExpression.lastBlockStatementOrThis(): KtExpression
+        = (this as? KtBlockExpression)?.getStatements()?.lastOrNull() ?: this
 
-public fun JetBlockExpression.contentRange(): PsiChildRange {
+public fun KtBlockExpression.contentRange(): PsiChildRange {
     val first = (getLBrace()?.getNextSibling() ?: getFirstChild())
             ?.siblings(withItself = false)
             ?.firstOrNull { it !is PsiWhiteSpace }
@@ -180,24 +180,24 @@ public fun JetBlockExpression.contentRange(): PsiChildRange {
 
 // ----------- Inheritance -----------------------------------------------------------------------------------------------------------------
 
-public fun JetClass.isInheritable(): Boolean {
-    return isInterface() || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.ABSTRACT_KEYWORD)
+public fun KtClass.isInheritable(): Boolean {
+    return isInterface() || hasModifier(KtTokens.OPEN_KEYWORD) || hasModifier(KtTokens.ABSTRACT_KEYWORD)
 }
 
-public fun JetDeclaration.isOverridable(): Boolean {
+public fun KtDeclaration.isOverridable(): Boolean {
     val parent = getParent()
-    if (!(parent is JetClassBody || parent is JetParameterList)) return false
+    if (!(parent is KtClassBody || parent is KtParameterList)) return false
 
-    val klass = parent.getParent() as? JetClass ?: return false
+    val klass = parent.getParent() as? KtClass ?: return false
     if (!klass.isInheritable() && !klass.isEnum()) return false
 
-    if (hasModifier(JetTokens.FINAL_KEYWORD) || hasModifier(JetTokens.PRIVATE_KEYWORD)) return false
+    if (hasModifier(KtTokens.FINAL_KEYWORD) || hasModifier(KtTokens.PRIVATE_KEYWORD)) return false
 
     return klass.isInterface() ||
-           hasModifier(JetTokens.ABSTRACT_KEYWORD) || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.OVERRIDE_KEYWORD)
+           hasModifier(KtTokens.ABSTRACT_KEYWORD) || hasModifier(KtTokens.OPEN_KEYWORD) || hasModifier(KtTokens.OVERRIDE_KEYWORD)
 }
 
-public fun JetClass.isAbstract(): Boolean = isInterface() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
+public fun KtClass.isAbstract(): Boolean = isInterface() || hasModifier(KtTokens.ABSTRACT_KEYWORD)
 
 /**
  * Returns the list of unqualified names that are indexed as the superclass names of this class. For the names that might be imported
@@ -205,33 +205,33 @@ public fun JetClass.isAbstract(): Boolean = isInterface() || hasModifier(JetToke
  *
  * @return the list of possible superclass names
  */
-public fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out JetClassOrObject>>.getSuperNames(): List<String> {
+public fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.getSuperNames(): List<String> {
     fun addSuperName(result: MutableList<String>, referencedName: String): Unit {
         result.add(referencedName)
 
         val file = getContainingFile()
-        if (file is JetFile) {
+        if (file is KtFile) {
             val directive = file.findImportByAlias(referencedName)
             if (directive != null) {
                 var reference = directive.getImportedReference()
-                while (reference is JetDotQualifiedExpression) {
+                while (reference is KtDotQualifiedExpression) {
                     reference = reference.getSelectorExpression()
                 }
-                if (reference is JetSimpleNameExpression) {
+                if (reference is KtSimpleNameExpression) {
                     result.add(reference.getReferencedName())
                 }
             }
         }
     }
 
-    assertTrue(this is JetClassOrObject)
+    assertTrue(this is KtClassOrObject)
 
     val stub = getStub()
     if (stub != null) {
         return stub.getSuperNames()
     }
 
-    val specifiers = (this as JetClassOrObject).getDelegationSpecifiers()
+    val specifiers = (this as KtClassOrObject).getDelegationSpecifiers()
     if (specifiers.isEmpty()) return Collections.emptyList<String>()
 
     val result = ArrayList<String>()
@@ -251,39 +251,39 @@ public fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out JetClassOrObj
 // ------------ Annotations ----------------------------------------------------------------------------------------------------------------
 
 // Annotations on labeled expression lies on it's base expression
-public fun JetExpression.getAnnotationEntries(): List<JetAnnotationEntry> {
+public fun KtExpression.getAnnotationEntries(): List<KtAnnotationEntry> {
     val parent = getParent()
     return when (parent) {
-        is JetAnnotatedExpression -> parent.getAnnotationEntries()
-        is JetLabeledExpression -> parent.getAnnotationEntries()
-        else -> emptyList<JetAnnotationEntry>()
+        is KtAnnotatedExpression -> parent.getAnnotationEntries()
+        is KtLabeledExpression -> parent.getAnnotationEntries()
+        else -> emptyList<KtAnnotationEntry>()
     }
 }
 
-public fun JetAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<JetAnnotationEntry> {
+public fun KtAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<KtAnnotationEntry> {
     return when (this) {
         is StubBasedPsiElementBase<*> -> getStub()?.collectAnnotationEntriesFromStubElement() ?: collectAnnotationEntriesFromPsi()
         else -> collectAnnotationEntriesFromPsi()
     }
 }
 
-private fun StubElement<*>.collectAnnotationEntriesFromStubElement(): List<JetAnnotationEntry> {
+private fun StubElement<*>.collectAnnotationEntriesFromStubElement(): List<KtAnnotationEntry> {
     return getChildrenStubs().flatMap {
         child ->
         when (child.getStubType()) {
-            JetNodeTypes.ANNOTATION_ENTRY -> listOf(child.getPsi() as JetAnnotationEntry)
-            JetNodeTypes.ANNOTATION -> (child.getPsi() as JetAnnotation).getEntries()
-            else -> emptyList<JetAnnotationEntry>()
+            KtNodeTypes.ANNOTATION_ENTRY -> listOf(child.getPsi() as KtAnnotationEntry)
+            KtNodeTypes.ANNOTATION -> (child.getPsi() as KtAnnotation).getEntries()
+            else -> emptyList<KtAnnotationEntry>()
         }
     }
 }
 
-private fun JetAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<JetAnnotationEntry> {
+private fun KtAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<KtAnnotationEntry> {
     return getChildren().flatMap { child ->
         when (child) {
-            is JetAnnotationEntry -> listOf(child)
-            is JetAnnotation -> child.getEntries()
-            else -> emptyList<JetAnnotationEntry>()
+            is KtAnnotationEntry -> listOf(child)
+            is KtAnnotation -> child.getEntries()
+            else -> emptyList<KtAnnotationEntry>()
         }
     }
 }
@@ -292,9 +292,9 @@ private fun JetAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<JetA
 
 // Calls `block` on each descendant of T type
 // Note, that calls happen in order of DFS-exit, so deeper nodes are applied earlier
-public inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(noinline block: (T) -> Unit): JetVisitorVoid {
-    return object : JetTreeVisitorVoid() {
-        override fun visitJetElement(element: JetElement) {
+public inline fun <reified T : KtElement> forEachDescendantOfTypeVisitor(noinline block: (T) -> Unit): KtVisitorVoid {
+    return object : KtTreeVisitorVoid() {
+        override fun visitJetElement(element: KtElement) {
             super.visitJetElement(element)
             if (element is T) {
                 block(element)
@@ -303,107 +303,107 @@ public inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(noinli
     }
 }
 
-public inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(accumulator: MutableCollection<R>, noinline map: (T) -> Collection<R>): JetVisitorVoid {
+public inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(accumulator: MutableCollection<R>, noinline map: (T) -> Collection<R>): KtVisitorVoid {
     return forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
 }
 
 // ----------- Other -----------------------------------------------------------------------------------------------------------------------
 
-public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> {
+public fun KtClassOrObject.effectiveDeclarations(): List<KtDeclaration> {
     return when(this) {
-        is JetClass -> getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.hasValOrVar() }
+        is KtClass -> getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.hasValOrVar() }
         else -> getDeclarations()
     }
 }
 
-public fun JetDeclaration.isExtensionDeclaration(): Boolean {
-    val callable: JetCallableDeclaration? = when (this) {
-        is JetNamedFunction, is JetProperty -> this as JetCallableDeclaration
-        is JetPropertyAccessor -> getNonStrictParentOfType<JetProperty>()
+public fun KtDeclaration.isExtensionDeclaration(): Boolean {
+    val callable: KtCallableDeclaration? = when (this) {
+        is KtNamedFunction, is KtProperty -> this as KtCallableDeclaration
+        is KtPropertyAccessor -> getNonStrictParentOfType<KtProperty>()
         else -> null
     }
 
     return callable?.getReceiverTypeReference() != null
 }
 
-public fun JetClassOrObject.isObjectLiteral(): Boolean = this is JetObjectDeclaration && isObjectLiteral()
+public fun KtClassOrObject.isObjectLiteral(): Boolean = this is KtObjectDeclaration && isObjectLiteral()
 
 //TODO: strange method, and not only Kotlin specific (also Java)
 public fun PsiElement.parameterIndex(): Int {
     val parent = getParent()
     return when {
-        this is JetParameter && parent is JetParameterList -> parent.getParameters().indexOf(this)
+        this is KtParameter && parent is KtParameterList -> parent.getParameters().indexOf(this)
         this is PsiParameter && parent is PsiParameterList -> parent.getParameterIndex(this)
         else -> -1
     }
 }
 
-public fun JetModifierListOwner.isPrivate(): Boolean = hasModifier(JetTokens.PRIVATE_KEYWORD)
+public fun KtModifierListOwner.isPrivate(): Boolean = hasModifier(KtTokens.PRIVATE_KEYWORD)
 
-public fun JetSimpleNameExpression.isImportDirectiveExpression(): Boolean {
+public fun KtSimpleNameExpression.isImportDirectiveExpression(): Boolean {
     val parent = getParent()
-    return parent is JetImportDirective || parent?.getParent() is JetImportDirective
+    return parent is KtImportDirective || parent?.getParent() is KtImportDirective
 }
 
-public fun JetSimpleNameExpression.isPackageDirectiveExpression(): Boolean {
+public fun KtSimpleNameExpression.isPackageDirectiveExpression(): Boolean {
     val parent = getParent()
-    return parent is JetPackageDirective || parent?.getParent() is JetPackageDirective
+    return parent is KtPackageDirective || parent?.getParent() is KtPackageDirective
 }
 
-public fun JetExpression.isFunctionLiteralOutsideParentheses(): Boolean {
+public fun KtExpression.isFunctionLiteralOutsideParentheses(): Boolean {
     val parent = getParent()
     return when (parent) {
-        is JetFunctionLiteralArgument -> true
-        is JetLabeledExpression -> parent.isFunctionLiteralOutsideParentheses()
+        is KtFunctionLiteralArgument -> true
+        is KtLabeledExpression -> parent.isFunctionLiteralOutsideParentheses()
         else -> false
     }
 }
 
-public fun JetExpression.getAssignmentByLHS(): JetBinaryExpression? {
-    val parent = getParent() as? JetBinaryExpression ?: return null
-    return if (JetPsiUtil.isAssignment(parent) && parent.getLeft() == this) parent else null
+public fun KtExpression.getAssignmentByLHS(): KtBinaryExpression? {
+    val parent = getParent() as? KtBinaryExpression ?: return null
+    return if (KtPsiUtil.isAssignment(parent) && parent.getLeft() == this) parent else null
 }
 
-public fun JetStringTemplateExpression.getContentRange(): TextRange {
+public fun KtStringTemplateExpression.getContentRange(): TextRange {
     val start = getNode().getFirstChildNode().getTextLength()
     val lastChild = getNode().getLastChildNode()
     val length = getTextLength()
-    return TextRange(start, if (lastChild.getElementType() == JetTokens.CLOSING_QUOTE) length - lastChild.getTextLength() else length)
+    return TextRange(start, if (lastChild.getElementType() == KtTokens.CLOSING_QUOTE) length - lastChild.getTextLength() else length)
 }
 
-public fun JetStringTemplateExpression.isSingleQuoted(): Boolean
+public fun KtStringTemplateExpression.isSingleQuoted(): Boolean
         = getNode().getFirstChildNode().getTextLength() == 1
 
-public fun JetNamedDeclaration.getValueParameters(): List<JetParameter> {
+public fun KtNamedDeclaration.getValueParameters(): List<KtParameter> {
     return getValueParameterList()?.getParameters() ?: Collections.emptyList()
 }
 
-public fun JetNamedDeclaration.getValueParameterList(): JetParameterList? {
+public fun KtNamedDeclaration.getValueParameterList(): KtParameterList? {
     return when (this) {
-        is JetCallableDeclaration -> getValueParameterList()
-        is JetClass -> getPrimaryConstructorParameterList()
+        is KtCallableDeclaration -> getValueParameterList()
+        is KtClass -> getPrimaryConstructorParameterList()
         else -> null
     }
 }
 
-public fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingContext: BindingContext): Name? {
-    val callExpression = getParent() as JetCallExpression
+public fun KtFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingContext: BindingContext): Name? {
+    val callExpression = getParent() as KtCallExpression
     val resolvedCall = callExpression.getResolvedCall(bindingContext)
     return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()
 }
 
-public fun JetExpression.asAssignment(): JetBinaryExpression? =
-        if (JetPsiUtil.isAssignment(this)) this as JetBinaryExpression else null
+public fun KtExpression.asAssignment(): KtBinaryExpression? =
+        if (KtPsiUtil.isAssignment(this)) this as KtBinaryExpression else null
 
-public fun JetDeclaration.visibilityModifier(): PsiElement? {
+public fun KtDeclaration.visibilityModifier(): PsiElement? {
     val modifierList = modifierList ?: return null
-    return JetTokens.VISIBILITY_MODIFIERS.types
+    return KtTokens.VISIBILITY_MODIFIERS.types
                    .asSequence()
-                   .map { modifierList.getModifier(it as JetModifierKeywordToken) }
+                   .map { modifierList.getModifier(it as KtModifierKeywordToken) }
                    .firstOrNull { it != null }
 }
 
-public fun JetDeclaration.visibilityModifierType(): JetModifierKeywordToken?
-        = visibilityModifier()?.node?.elementType as JetModifierKeywordToken?
+public fun KtDeclaration.visibilityModifierType(): KtModifierKeywordToken?
+        = visibilityModifier()?.node?.elementType as KtModifierKeywordToken?
 
-public fun JetStringTemplateExpression.isPlain() = entries.all { it is JetLiteralStringTemplateEntry }
+public fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }

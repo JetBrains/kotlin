@@ -21,20 +21,20 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRootImpl implements VariableDescriptor {
-    protected JetType outType;
+    protected KtType outType;
 
     public VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Name name,
-            @Nullable JetType outType,
+            @Nullable KtType outType,
             @NotNull SourceElement source
     ) {
         super(containingDeclaration, annotations, name, source);
@@ -44,11 +44,11 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @NotNull
     @Override
-    public JetType getType() {
+    public KtType getType() {
         return outType;
     }
 
-    public void setOutType(JetType outType) {
+    public void setOutType(KtType outType) {
         assert this.outType == null;
         this.outType = outType;
     }
@@ -99,7 +99,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @NotNull
     @Override
-    public JetType getReturnType() {
+    public KtType getReturnType() {
         return getType();
     }
 

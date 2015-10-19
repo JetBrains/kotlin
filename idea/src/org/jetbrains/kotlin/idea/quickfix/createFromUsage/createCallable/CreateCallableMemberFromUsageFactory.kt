@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelega
 import org.jetbrains.kotlin.idea.quickfix.LowPriorityQuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
-public abstract class CreateCallableMemberFromUsageFactory<E : JetElement>(
+public abstract class CreateCallableMemberFromUsageFactory<E : KtElement>(
         val extensionsSupported: Boolean = true
 ) : KotlinIntentionActionFactoryWithDelegate<E, List<CallableInfo>>() {
     private fun newCallableQuickFix(

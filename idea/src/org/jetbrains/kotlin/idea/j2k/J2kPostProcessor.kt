@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.*
 
 public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
-    override fun insertImport(file: JetFile, fqName: FqName) {
+    override fun insertImport(file: KtFile, fqName: FqName) {
         val descriptors = file.resolveImportReference(fqName)
         descriptors.firstOrNull()?.let { ImportInsertHelper.getInstance(file.project).importDescriptor(file, it) }
     }
@@ -47,7 +47,7 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         PROCESS
     }
 
-    override fun doAdditionalProcessing(file: JetFile, rangeMarker: RangeMarker?) {
+    override fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?) {
         var elementToActions = collectAvailableActions(file, rangeMarker)
 
         while (elementToActions.isNotEmpty()) {
@@ -87,14 +87,14 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
 
     private data class ActionData(val action: () -> Unit, val processing: J2kPostProcessing)
 
-    private fun collectAvailableActions(file: JetFile, rangeMarker: RangeMarker?): LinkedHashMap<JetElement, SmartList<ActionData>> {
+    private fun collectAvailableActions(file: KtFile, rangeMarker: RangeMarker?): LinkedHashMap<KtElement, SmartList<ActionData>> {
         val diagnostics = analyzeFileRange(file, rangeMarker)
 
-        val elementToActions = LinkedHashMap<JetElement, SmartList<ActionData>>()
+        val elementToActions = LinkedHashMap<KtElement, SmartList<ActionData>>()
 
         file.accept(object : PsiRecursiveElementVisitor(){
             override fun visitElement(element: PsiElement) {
-                if (element is JetElement) {
+                if (element is KtElement) {
                     val rangeResult = rangeFilter(element, rangeMarker)
                     if (rangeResult == RangeFilterResult.SKIP) return
 
@@ -115,11 +115,11 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         return elementToActions
     }
 
-    private fun analyzeFileRange(file: JetFile, rangeMarker: RangeMarker?): Diagnostics {
+    private fun analyzeFileRange(file: KtFile, rangeMarker: RangeMarker?): Diagnostics {
         val elements = if (rangeMarker == null)
             listOf(file)
         else
-            file.elementsInRange(rangeMarker.range!!).filterIsInstance<JetElement>()
+            file.elementsInRange(rangeMarker.range!!).filterIsInstance<KtElement>()
 
         return if (elements.isNotEmpty())
             file.getResolutionFacade().analyzeFullyAndGetResult(elements).bindingContext.diagnostics

@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.lexer.JetLexer
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import java.util.*
@@ -33,7 +33,7 @@ import java.util.regex.Pattern
 
 public object KotlinNameSuggester {
 
-    public fun suggestNamesByExpressionAndType(expression: JetExpression, bindingContext: BindingContext, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
+    public fun suggestNamesByExpressionAndType(expression: KtExpression, bindingContext: BindingContext, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
         val result = LinkedHashSet<String>()
 
         result.addNamesByExpression(expression, validator)
@@ -50,7 +50,7 @@ public object KotlinNameSuggester {
         return result
     }
 
-    public fun suggestNamesByType(type: JetType, validator: (String) -> Boolean, defaultName: String? = null): List<String> {
+    public fun suggestNamesByType(type: KtType, validator: (String) -> Boolean, defaultName: String? = null): List<String> {
         val result = ArrayList<String>()
 
         result.addNamesByType(type, validator)
@@ -62,7 +62,7 @@ public object KotlinNameSuggester {
         return result
     }
 
-    public fun suggestNamesByExpressionOnly(expression: JetExpression, validator: (String) -> Boolean, defaultName: String? = null): List<String> {
+    public fun suggestNamesByExpressionOnly(expression: KtExpression, validator: (String) -> Boolean, defaultName: String? = null): List<String> {
         val result = ArrayList<String>()
 
         result.addNamesByExpression(expression, validator)
@@ -74,7 +74,7 @@ public object KotlinNameSuggester {
         return result
     }
 
-    public fun suggestIterationVariableNames(collection: JetExpression, elementType: JetType, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
+    public fun suggestIterationVariableNames(collection: KtExpression, elementType: KtType, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
         val result = LinkedHashSet<String>()
 
         suggestNamesByExpressionOnly(collection, { true })
@@ -133,10 +133,10 @@ public object KotlinNameSuggester {
         }
     }
 
-    private fun MutableCollection<String>.addNamesByType(type: JetType, validator: (String) -> Boolean) {
+    private fun MutableCollection<String>.addNamesByType(type: KtType, validator: (String) -> Boolean) {
         var type = TypeUtils.makeNotNullable(type) // wipe out '?'
         val builtIns = type.builtIns
-        val typeChecker = JetTypeChecker.DEFAULT
+        val typeChecker = KotlinTypeChecker.DEFAULT
         if (ErrorUtils.containsErrorType(type)) return
 
         if (typeChecker.equalTypes(builtIns.getBooleanType(), type)) {
@@ -261,18 +261,18 @@ public object KotlinNameSuggester {
         return matcher.replaceAll("")
     }
 
-    private fun MutableCollection<String>.addNamesByExpression(expression: JetExpression?, validator: (String) -> Boolean) {
+    private fun MutableCollection<String>.addNamesByExpression(expression: KtExpression?, validator: (String) -> Boolean) {
         if (expression == null) return
 
-        val expression = JetPsiUtil.safeDeparenthesize(expression)
+        val expression = KtPsiUtil.safeDeparenthesize(expression)
         when (expression) {
-            is JetSimpleNameExpression -> addCamelNames(expression.getReferencedName(), validator)
+            is KtSimpleNameExpression -> addCamelNames(expression.getReferencedName(), validator)
 
-            is JetQualifiedExpression -> addNamesByExpression(expression.getSelectorExpression(), validator)
+            is KtQualifiedExpression -> addNamesByExpression(expression.getSelectorExpression(), validator)
 
-            is JetCallExpression -> addNamesByExpression(expression.getCalleeExpression(), validator)
+            is KtCallExpression -> addNamesByExpression(expression.getCalleeExpression(), validator)
 
-            is JetPostfixExpression -> addNamesByExpression(expression.getBaseExpression(), validator)
+            is KtPostfixExpression -> addNamesByExpression(expression.getBaseExpression(), validator)
         }
     }
 
@@ -289,9 +289,9 @@ public object KotlinNameSuggester {
     public fun isIdentifier(name: String?): Boolean {
         if (name == null || name.isEmpty()) return false
 
-        val lexer = JetLexer()
+        val lexer = KotlinLexer()
         lexer.start(name, 0, name.length())
-        if (lexer.getTokenType() !== JetTokens.IDENTIFIER) return false
+        if (lexer.getTokenType() !== KtTokens.IDENTIFIER) return false
         lexer.advance()
         return lexer.getTokenType() == null
     }

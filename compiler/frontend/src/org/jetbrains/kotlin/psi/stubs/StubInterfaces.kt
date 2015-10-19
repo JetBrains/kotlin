@@ -21,53 +21,53 @@ import com.intellij.psi.stubs.NamedStub
 import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.PsiFileStub
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.*
 
-public interface KotlinFileStub : PsiFileStub<JetFile> {
+public interface KotlinFileStub : PsiFileStub<KtFile> {
     public fun getPackageFqName(): FqName
     public fun isScript(): Boolean
     public fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub>
 }
 
-public interface KotlinPlaceHolderStub<T : JetElement> : StubElement<T>
+public interface KotlinPlaceHolderStub<T : KtElement> : StubElement<T>
 
 public interface KotlinStubWithFqName<T : PsiNamedElement> : NamedStub<T> {
     public fun getFqName(): FqName?
 }
 
-public interface KotlinClassOrObjectStub<T : JetClassOrObject> : KotlinStubWithFqName<T> {
+public interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinStubWithFqName<T> {
     public fun isLocal(): Boolean
     public fun getSuperNames(): List<String>
     public fun isTopLevel(): Boolean
 }
 
-public interface KotlinClassStub : KotlinClassOrObjectStub<JetClass> {
+public interface KotlinClassStub : KotlinClassOrObjectStub<KtClass> {
     public fun isInterface(): Boolean
     public fun isEnumEntry(): Boolean
 }
 
-public interface KotlinObjectStub : KotlinClassOrObjectStub<JetObjectDeclaration> {
+public interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {
     public fun isCompanion(): Boolean
     public fun isObjectLiteral(): Boolean
 }
 
-public interface KotlinAnnotationEntryStub : StubElement<JetAnnotationEntry> {
+public interface KotlinAnnotationEntryStub : StubElement<KtAnnotationEntry> {
     public fun getShortName(): String
     public fun hasValueArguments(): Boolean
 }
 
-public interface KotlinAnnotationUseSiteTargetStub : StubElement<JetAnnotationUseSiteTarget> {
+public interface KotlinAnnotationUseSiteTargetStub : StubElement<KtAnnotationUseSiteTarget> {
     public fun getUseSiteTarget(): String
 }
 
-public interface KotlinFunctionStub : KotlinCallableStubBase<JetNamedFunction> {
+public interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction> {
     public fun hasBlockBody(): Boolean
     public fun hasBody(): Boolean
     public fun hasTypeParameterListBeforeFunctionName(): Boolean
 }
 
-public interface KotlinImportDirectiveStub : StubElement<JetImportDirective> {
+public interface KotlinImportDirectiveStub : StubElement<KtImportDirective> {
     public fun isAbsoluteInRootPackage(): Boolean
     public fun isAllUnder(): Boolean
     public fun getImportedFqName(): FqName?
@@ -75,31 +75,31 @@ public interface KotlinImportDirectiveStub : StubElement<JetImportDirective> {
     public fun isValid(): Boolean
 }
 
-public interface KotlinModifierListStub : StubElement<JetModifierList> {
-    public fun hasModifier(modifierToken: JetModifierKeywordToken): Boolean
+public interface KotlinModifierListStub : StubElement<KtModifierList> {
+    public fun hasModifier(modifierToken: KtModifierKeywordToken): Boolean
 }
 
-public interface KotlinNameReferenceExpressionStub : StubElement<JetNameReferenceExpression> {
+public interface KotlinNameReferenceExpressionStub : StubElement<KtNameReferenceExpression> {
     public fun getReferencedName(): String
 }
 
-public interface KotlinEnumEntrySuperclassReferenceExpressionStub : StubElement<JetEnumEntrySuperclassReferenceExpression> {
+public interface KotlinEnumEntrySuperclassReferenceExpressionStub : StubElement<KtEnumEntrySuperclassReferenceExpression> {
     public fun getReferencedName(): String
 }
 
-public interface KotlinParameterStub : KotlinStubWithFqName<JetParameter> {
+public interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
     public fun isMutable(): Boolean
     public fun hasValOrVar(): Boolean
     public fun hasDefaultValue(): Boolean
 }
 
-public interface KotlinPropertyAccessorStub : StubElement<JetPropertyAccessor> {
+public interface KotlinPropertyAccessorStub : StubElement<KtPropertyAccessor> {
     public fun isGetter(): Boolean
     public fun hasBody(): Boolean
     public fun hasBlockBody(): Boolean
 }
 
-public interface KotlinPropertyStub : KotlinCallableStubBase<JetProperty> {
+public interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
     public fun isVar(): Boolean
     public fun hasDelegate(): Boolean
     public fun hasDelegateExpression(): Boolean
@@ -107,20 +107,20 @@ public interface KotlinPropertyStub : KotlinCallableStubBase<JetProperty> {
     public fun hasReturnTypeRef(): Boolean
 }
 
-public interface KotlinCallableStubBase<TDeclaration: JetCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
+public interface KotlinCallableStubBase<TDeclaration: KtCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
     public fun isTopLevel(): Boolean
     public fun isExtension(): Boolean
 }
 
-public interface KotlinTypeParameterStub : KotlinStubWithFqName<JetTypeParameter> {
+public interface KotlinTypeParameterStub : KotlinStubWithFqName<KtTypeParameter> {
     public fun isInVariance(): Boolean
     public fun isOutVariance(): Boolean
 }
 
-public interface KotlinTypeProjectionStub : StubElement<JetTypeProjection> {
-    public fun getProjectionKind(): JetProjectionKind
+public interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
+    public fun getProjectionKind(): KtProjectionKind
 }
 
-public interface KotlinUserTypeStub : StubElement<JetUserType> {
+public interface KotlinUserTypeStub : StubElement<KtUserType> {
     public fun isAbsoluteInRootPackage(): Boolean
 }

@@ -19,21 +19,21 @@ package org.jetbrains.kotlin.psi.addRemoveModifier
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens.*
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
-private fun createModifierList(text: String, owner: JetModifierListOwner): JetModifierList {
-    val newModifierList = JetPsiFactory(owner).createModifierList(text)
+private fun createModifierList(text: String, owner: KtModifierListOwner): KtModifierList {
+    val newModifierList = KtPsiFactory(owner).createModifierList(text)
     val anchor = owner.firstChild!!
             .siblings(forward = true)
             .dropWhile { it is PsiComment || it is PsiWhiteSpace }
             .first()
-    return owner.addBefore(newModifierList, anchor) as JetModifierList
+    return owner.addBefore(newModifierList, anchor) as KtModifierList
 }
 
-fun addModifier(owner: JetModifierListOwner, modifier: JetModifierKeywordToken) {
+fun addModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
     val modifierList = owner.modifierList
     if (modifierList == null) {
         createModifierList(modifier.value, owner)
@@ -43,20 +43,20 @@ fun addModifier(owner: JetModifierListOwner, modifier: JetModifierKeywordToken) 
     }
 }
 
-fun addAnnotationEntry(owner: JetModifierListOwner, annotationEntry: JetAnnotationEntry): JetAnnotationEntry {
+fun addAnnotationEntry(owner: KtModifierListOwner, annotationEntry: KtAnnotationEntry): KtAnnotationEntry {
     val modifierList = owner.modifierList
     return if (modifierList == null) {
         createModifierList(annotationEntry.text, owner).annotationEntries.first()
     }
     else {
-        modifierList.addBefore(annotationEntry, modifierList.firstChild) as JetAnnotationEntry
+        modifierList.addBefore(annotationEntry, modifierList.firstChild) as KtAnnotationEntry
     }
 }
 
-internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKeywordToken) {
+internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywordToken) {
     if (modifierList.hasModifier(modifier)) return
 
-    val newModifier = JetPsiFactory(modifierList).createModifier(modifier)
+    val newModifier = KtPsiFactory(modifierList).createModifier(modifier)
     val modifierToReplace = MODIFIERS_TO_REPLACE[modifier]
             ?.map { modifierList.getModifier(it) }
             ?.filterNotNull()
@@ -70,7 +70,7 @@ internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKey
 
         fun placeAfter(child: PsiElement): Boolean {
             if (child is PsiWhiteSpace) return false
-            if (child is JetAnnotation) return true // place modifiers after annotations
+            if (child is KtAnnotation) return true // place modifiers after annotations
             val elementType = child.getNode()!!.getElementType()
             val order = MODIFIERS_ORDER.indexOf(elementType)
             return newModifierOrder > order
@@ -90,7 +90,7 @@ internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKey
     }
 }
 
-fun removeModifier(owner: JetModifierListOwner, modifier: JetModifierKeywordToken) {
+fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
     owner.getModifierList()?.let {
         it.getModifier(modifier)?.delete()
         if (it.firstChild == null) {

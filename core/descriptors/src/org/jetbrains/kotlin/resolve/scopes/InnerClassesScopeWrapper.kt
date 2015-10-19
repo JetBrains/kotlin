@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
-public class InnerClassesScopeWrapper(val workerScope: JetScope) : JetScopeImpl() {
+public class InnerClassesScopeWrapper(val workerScope: KtScope) : KtScopeImpl() {
     override fun getContainingDeclaration(): DeclarationDescriptor {
         return workerScope.getContainingDeclaration()
     }

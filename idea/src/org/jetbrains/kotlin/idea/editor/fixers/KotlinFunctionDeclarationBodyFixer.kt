@@ -20,22 +20,22 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 
 public class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
-        if (psiElement !is JetNamedFunction) return
+        if (psiElement !is KtNamedFunction) return
         if (psiElement.getBodyExpression() != null|| psiElement.getEqualsToken() != null) return
 
-        val parentDeclaration = psiElement.getStrictParentOfType<JetDeclaration>()
-        if (parentDeclaration is JetClassOrObject) {
-            if (JetPsiUtil.isTrait(parentDeclaration) || psiElement.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+        val parentDeclaration = psiElement.getStrictParentOfType<KtDeclaration>()
+        if (parentDeclaration is KtClassOrObject) {
+            if (KtPsiUtil.isTrait(parentDeclaration) || psiElement.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                 return
             }
         }

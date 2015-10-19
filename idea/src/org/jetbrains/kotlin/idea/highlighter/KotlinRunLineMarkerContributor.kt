@@ -20,15 +20,15 @@ import com.intellij.execution.lineMarker.ExecutorAction
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.JetIcons
+import org.jetbrains.kotlin.idea.KtIcons
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
 
 
 public class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
     override fun getInfo(element: PsiElement?): RunLineMarkerContributor.Info? {
-        val function = element?.parent as? JetNamedFunction
+        val function = element?.parent as? KtNamedFunction
         if (function == null) return null
 
         if (function.nameIdentifier != element) return null
@@ -38,7 +38,7 @@ public class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
         }
 
         if (detector.isMain(function)) {
-            return RunLineMarkerContributor.Info(JetIcons.LAUNCH, null, ExecutorAction.getActions(0))
+            return RunLineMarkerContributor.Info(KtIcons.LAUNCH, null, ExecutorAction.getActions(0))
         }
 
         return null

@@ -36,12 +36,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 
 fun getFunctionForExtractedFragment(
-        codeFragment: JetCodeFragment,
+        codeFragment: KtCodeFragment,
         breakpointFile: PsiFile,
         breakpointLine: Int
 ): ExtractionResult? {
 
-    fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult, tmpFile: JetFile): String {
+    fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult, tmpFile: KtFile): String {
         if (KotlinInternalMode.enabled) {
             logger.error("Couldn't extract function for debugger:\n" +
                                  "FILE NAME: ${breakpointFile.getName()}\n" +
@@ -69,7 +69,7 @@ fun getFunctionForExtractedFragment(
     }
 
     fun generateFunction(): ExtractionResult? {
-        val originalFile = breakpointFile as JetFile
+        val originalFile = breakpointFile as KtFile
 
         val tmpFile = originalFile.createTempCopy { it }
         tmpFile.suppressDiagnosticsInDebugMode = true
@@ -109,11 +109,11 @@ fun getFunctionForExtractedFragment(
     return runReadAction { generateFunction() }
 }
 
-private fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
+private fun addImportsToFile(newImportList: KtImportList?, tmpFile: KtFile) {
     if (newImportList != null) {
         val tmpFileImportList = tmpFile.getImportList()
         val packageDirective = tmpFile.getPackageDirective()
-        val psiFactory = JetPsiFactory(tmpFile)
+        val psiFactory = KtPsiFactory(tmpFile)
         if (tmpFileImportList == null) {
             tmpFile.addAfter(psiFactory.createNewLine(), packageDirective)
             tmpFile.addAfter(newImportList, tmpFile.getPackageDirective())
@@ -135,7 +135,7 @@ private fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
     }
 }
 
-private fun JetFile.getElementInCopy(e: PsiElement): PsiElement? {
+private fun KtFile.getElementInCopy(e: PsiElement): PsiElement? {
     val offset = e.getTextRange()?.getStartOffset()
     if (offset == null) {
         return null
@@ -147,7 +147,7 @@ private fun JetFile.getElementInCopy(e: PsiElement): PsiElement? {
     return elementAt
 }
 
-private fun getExpressionToAddDebugExpressionBefore(tmpFile: JetFile, contextElement: PsiElement?, line: Int): PsiElement? {
+private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElement: PsiElement?, line: Int): PsiElement? {
     if (contextElement == null) {
         val lineStart = CodeInsightUtils.getStartLineOffset(tmpFile, line)
         if (lineStart == null) return null
@@ -159,11 +159,11 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: JetFile, contextEle
     }
 
     val containingFile = contextElement.getContainingFile()
-    if (containingFile is JetCodeFragment) {
+    if (containingFile is KtCodeFragment) {
         return getExpressionToAddDebugExpressionBefore(tmpFile, containingFile.getContext(), line)
     }
 
-    fun shouldStop(el: PsiElement?, p: PsiElement?) = p is JetBlockExpression || el is JetDeclaration || el is JetFile
+    fun shouldStop(el: PsiElement?, p: PsiElement?) = p is KtBlockExpression || el is KtDeclaration || el is KtFile
 
     var elementAt = tmpFile.getElementInCopy(contextElement)
 
@@ -186,24 +186,24 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: JetFile, contextEle
     return parent
 }
 
-private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment, contextElement: PsiElement): List<JetExpression> {
-    val psiFactory = JetPsiFactory(codeFragment)
+private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment, contextElement: PsiElement): List<KtExpression> {
+    val psiFactory = KtPsiFactory(codeFragment)
 
-    fun insertNewInitializer(classBody: JetClassBody): PsiElement? {
+    fun insertNewInitializer(classBody: KtClassBody): PsiElement? {
         val initializer = psiFactory.createAnonymousInitializer()
-        val newInitializer = (classBody.addAfter(initializer, classBody.getFirstChild()) as JetClassInitializer)
-        val block = newInitializer.getBody() as JetBlockExpression?
+        val newInitializer = (classBody.addAfter(initializer, classBody.getFirstChild()) as KtClassInitializer)
+        val block = newInitializer.getBody() as KtBlockExpression?
         return block?.getLastChild()
     }
 
     val elementBefore = when {
-        contextElement is JetFile -> {
+        contextElement is KtFile -> {
             val fakeFunction = psiFactory.createFunction("fun _debug_fun_() {}")
             contextElement.add(psiFactory.createNewLine())
-            val newFakeFun = contextElement.add(fakeFunction) as JetNamedFunction
+            val newFakeFun = contextElement.add(fakeFunction) as KtNamedFunction
             newFakeFun.getBodyExpression()!!.getLastChild()
         }
-        contextElement is JetProperty && !contextElement.isLocal() -> {
+        contextElement is KtProperty && !contextElement.isLocal() -> {
             val delegateExpressionOrInitializer = contextElement.getDelegateExpressionOrInitializer()
             if (delegateExpressionOrInitializer != null) {
                 wrapInRunFun(delegateExpressionOrInitializer)
@@ -214,40 +214,40 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
                     wrapInRunFun(getter.getBodyExpression()!!)
                 }
                 else {
-                    (getter.getBodyExpression() as JetBlockExpression).getStatements().first()
+                    (getter.getBodyExpression() as KtBlockExpression).getStatements().first()
                 }
             }
         }
-        contextElement is JetPrimaryConstructor -> {
+        contextElement is KtPrimaryConstructor -> {
             val classOrObject = contextElement.getContainingClassOrObject()
             insertNewInitializer(classOrObject.getOrCreateBody())
         }
-        contextElement is JetClassOrObject -> {
+        contextElement is KtClassOrObject -> {
             insertNewInitializer(contextElement.getBody()!!)
         }
-        contextElement is JetFunctionLiteral -> {
+        contextElement is KtFunctionLiteral -> {
             val block = contextElement.getBodyExpression()!!
             block.getStatements().firstOrNull() ?: block.getLastChild()
         }
-        contextElement is JetDeclarationWithBody && !contextElement.hasBody()-> {
+        contextElement is KtDeclarationWithBody && !contextElement.hasBody()-> {
             val block = psiFactory.createBlock("")
-            val newBlock = contextElement.add(block) as JetBlockExpression
+            val newBlock = contextElement.add(block) as KtBlockExpression
             newBlock.getRBrace()
         }
-        contextElement is JetDeclarationWithBody && !contextElement.hasBlockBody()-> {
+        contextElement is KtDeclarationWithBody && !contextElement.hasBlockBody()-> {
             wrapInRunFun(contextElement.getBodyExpression()!!)
         }
-        contextElement is JetDeclarationWithBody && contextElement.hasBlockBody()-> {
-            val block = contextElement.getBodyExpression() as JetBlockExpression
+        contextElement is KtDeclarationWithBody && contextElement.hasBlockBody()-> {
+            val block = contextElement.getBodyExpression() as KtBlockExpression
             val last = block.getStatements().lastOrNull()
-            if (last is JetReturnExpression)
+            if (last is KtReturnExpression)
                 last
             else
                 block.getRBrace()
         }
-        contextElement is JetWhenEntry -> {
+        contextElement is KtWhenEntry -> {
             val entryExpression = contextElement.getExpression()
-            if (entryExpression is JetBlockExpression) {
+            if (entryExpression is KtBlockExpression) {
                 entryExpression.getStatements().firstOrNull() ?: entryExpression.getLastChild()
             }
             else {
@@ -264,33 +264,33 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
 
     parent.addBefore(psiFactory.createNewLine(), elementBefore)
 
-    fun insertExpression(expr: JetElement?): List<JetExpression> {
+    fun insertExpression(expr: KtElement?): List<KtExpression> {
         when (expr) {
-            is JetBlockExpression -> return expr.getStatements().flatMap { insertExpression(it) }
-            is JetExpression -> {
+            is KtBlockExpression -> return expr.getStatements().flatMap { insertExpression(it) }
+            is KtExpression -> {
                 val newDebugExpression = parent.addBefore(expr, elementBefore)
                 if (newDebugExpression == null) {
                     logger.error("Couldn't insert debug expression ${expr.getText()} to context file before ${elementBefore.getText()}")
                     return emptyList()
                 }
                 parent.addBefore(psiFactory.createNewLine(), elementBefore)
-                return listOf(newDebugExpression as JetExpression)
+                return listOf(newDebugExpression as KtExpression)
             }
         }
         return emptyList()
     }
 
     val containingFile = codeFragment.getContext()?.getContainingFile()
-    if (containingFile is JetCodeFragment) {
-        insertExpression(containingFile.getContentElement() as? JetExpression)
+    if (containingFile is KtCodeFragment) {
+        insertExpression(containingFile.getContentElement() as? KtExpression)
     }
 
     val debugExpression = codeFragment.getContentElement() ?: return emptyList()
     return insertExpression(debugExpression)
 }
 
-private fun replaceByRunFunction(expression: JetExpression): JetCallExpression {
-    val callExpression = JetPsiFactory(expression).createExpression("run { \n${expression.getText()} \n}") as JetCallExpression
+private fun replaceByRunFunction(expression: KtExpression): KtCallExpression {
+    val callExpression = KtPsiFactory(expression).createExpression("run { \n${expression.getText()} \n}") as KtCallExpression
     val replaced = expression.replaced(callExpression)
     val typeArguments = InsertExplicitTypeArgumentsIntention.createTypeArguments(replaced, replaced.analyze())
     if (typeArguments?.getArguments()?.isNotEmpty() ?: false) {
@@ -300,7 +300,7 @@ private fun replaceByRunFunction(expression: JetExpression): JetCallExpression {
     return replaced
 }
 
-private fun wrapInRunFun(expression: JetExpression): PsiElement? {
+private fun wrapInRunFun(expression: KtExpression): PsiElement? {
     val replacedBody = replaceByRunFunction(expression)
 
     // Increment modification tracker to clear ResolveCache after changes in function body

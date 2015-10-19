@@ -20,8 +20,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.util.ArrayList;
@@ -31,13 +31,13 @@ public abstract class AbstractSmartSelectionTest extends LightCodeInsightTestCas
 
     public void doTestSmartSelection(@NotNull String path) throws Exception {
         configureByFile(path);
-        String expectedResultText = JetTestUtils.getLastCommentInFile((JetFile) getFile());
+        String expectedResultText = JetTestUtils.getLastCommentInFile((KtFile) getFile());
 
-        List<JetExpression> expressions = JetRefactoringUtil.getSmartSelectSuggestions(
+        List<KtExpression> expressions = JetRefactoringUtil.getSmartSelectSuggestions(
                 getFile(), getEditor().getCaretModel().getOffset());
 
         List<String> textualExpressions = new ArrayList<String>();
-        for (JetExpression expression : expressions) {
+        for (KtExpression expression : expressions) {
             textualExpressions.add(expression.getText());
         }
         assertEquals(expectedResultText, StringUtil.join(textualExpressions, "\n"));

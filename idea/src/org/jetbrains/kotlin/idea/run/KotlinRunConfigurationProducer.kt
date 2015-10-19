@@ -48,7 +48,7 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
         return true
     }
 
-    private fun getEntryPointContainer(location: Location<*>?): JetDeclarationContainer? {
+    private fun getEntryPointContainer(location: Location<*>?): KtDeclarationContainer? {
         if (location == null) return null
         if (DumbService.getInstance(location.getProject()).isDumb()) return null
 
@@ -77,9 +77,9 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
     }
 
     companion object {
-        public fun getEntryPointContainer(locationElement: PsiElement): JetDeclarationContainer? {
+        public fun getEntryPointContainer(locationElement: PsiElement): KtDeclarationContainer? {
             val psiFile = locationElement.getContainingFile()
-            if (!(psiFile is JetFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null
+            if (!(psiFile is KtFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null
 
             val resolutionFacade = psiFile.getResolutionFacade()
             val mainFunctionDetector = MainFunctionDetector { resolutionFacade.resolveToDescriptor(it) as FunctionDescriptor }
@@ -87,7 +87,7 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
             var currentElement = locationElement.declarationContainer(false)
             while (currentElement != null) {
                 var entryPointContainer = currentElement
-                if (entryPointContainer is JetClass) {
+                if (entryPointContainer is KtClass) {
                     entryPointContainer = entryPointContainer.getCompanionObjects().singleOrNull()
                 }
                 if (entryPointContainer != null && mainFunctionDetector.hasMain(entryPointContainer.getDeclarations())) return entryPointContainer
@@ -97,12 +97,12 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
             return null
         }
 
-        public fun getStartClassFqName(container: JetDeclarationContainer?): FqName? = when(container) {
+        public fun getStartClassFqName(container: KtDeclarationContainer?): FqName? = when(container) {
             null -> null
-            is JetFile -> container.javaFileFacadeFqName
-            is JetClassOrObject -> {
-                if (container is JetObjectDeclaration && container.isCompanion()) {
-                    val containerClass = container.getParentOfType<JetClass>(true)
+            is KtFile -> container.javaFileFacadeFqName
+            is KtClassOrObject -> {
+                if (container is KtObjectDeclaration && container.isCompanion()) {
+                    val containerClass = container.getParentOfType<KtClass>(true)
                     containerClass?.getFqName()
                 } else {
                     container.getFqName()
@@ -111,12 +111,12 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
             else -> throw IllegalArgumentException("Invalid entry-point container: " + (container as PsiElement).getText())
         }
 
-        private fun PsiElement.declarationContainer(strict: Boolean): JetDeclarationContainer? {
+        private fun PsiElement.declarationContainer(strict: Boolean): KtDeclarationContainer? {
             val element = if (strict)
-                PsiTreeUtil.getParentOfType(this, javaClass<JetClassOrObject>(), javaClass<JetFile>())
+                PsiTreeUtil.getParentOfType(this, javaClass<KtClassOrObject>(), javaClass<KtFile>())
             else
-                PsiTreeUtil.getNonStrictParentOfType(this, javaClass<JetClassOrObject>(), javaClass<JetFile>())
-            return element as JetDeclarationContainer?
+                PsiTreeUtil.getNonStrictParentOfType(this, javaClass<KtClassOrObject>(), javaClass<KtFile>())
+            return element as KtDeclarationContainer?
         }
 
     }

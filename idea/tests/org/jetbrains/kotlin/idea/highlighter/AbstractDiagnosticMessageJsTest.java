@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 
 import java.lang.reflect.Field;
 
@@ -42,7 +42,7 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
 
     @NotNull
     @Override
-    protected AnalysisResult analyze(@NotNull JetFile file) {
+    protected AnalysisResult analyze(@NotNull KtFile file) {
         return TopDownAnalyzerFacadeForJS.analyzeFiles(singletonList(file), getConfig());
     }
 

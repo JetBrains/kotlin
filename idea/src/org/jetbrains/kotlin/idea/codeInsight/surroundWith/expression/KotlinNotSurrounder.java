@@ -25,12 +25,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetParenthesizedExpression;
-import org.jetbrains.kotlin.psi.JetPrefixExpression;
-import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtParenthesizedExpression;
+import org.jetbrains.kotlin.psi.KtPrefixExpression;
+import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 public class KotlinNotSurrounder extends KotlinExpressionSurrounder {
     @Override
@@ -39,22 +39,22 @@ public class KotlinNotSurrounder extends KotlinExpressionSurrounder {
     }
 
     @Override
-    public boolean isApplicable(@NotNull JetExpression expression) {
-        JetType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
+    public boolean isApplicable(@NotNull KtExpression expression) {
+        KtType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         return type != null && KotlinBuiltIns.isBoolean(type);
     }
 
     @Nullable
     @Override
-    public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetPrefixExpression prefixExpr = (JetPrefixExpression) JetPsiFactoryKt.JetPsiFactory(expression).createExpression("!(a)");
-        JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) prefixExpr.getBaseExpression();
+    public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull KtExpression expression) {
+        KtPrefixExpression prefixExpr = (KtPrefixExpression) KtPsiFactoryKt.KtPsiFactory(expression).createExpression("!(a)");
+        KtParenthesizedExpression parenthesizedExpression = (KtParenthesizedExpression) prefixExpr.getBaseExpression();
         assert parenthesizedExpression != null : "JetParenthesizedExpression should exists for " + prefixExpr.getText() + " expression";
-        JetExpression expressionWithoutParentheses = parenthesizedExpression.getExpression();
+        KtExpression expressionWithoutParentheses = parenthesizedExpression.getExpression();
         assert expressionWithoutParentheses != null : "JetExpression should exists for " + parenthesizedExpression.getText() + " expression";
         expressionWithoutParentheses.replace(expression);
 
-        expression = (JetExpression) expression.replace(prefixExpr);
+        expression = (KtExpression) expression.replace(prefixExpr);
 
         CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(expression);
 

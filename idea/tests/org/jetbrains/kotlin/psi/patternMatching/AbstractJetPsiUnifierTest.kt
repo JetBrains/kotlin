@@ -18,35 +18,35 @@ package org.jetbrains.kotlin.psi.patternMatching
 
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import java.io.File
 import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetTypeReference
-import org.jetbrains.kotlin.psi.JetWhenCondition
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 public abstract class AbstractJetPsiUnifierTest: JetLightCodeInsightFixtureTestCase() {
     public fun doTest(filePath: String) {
-        fun findPattern(file: JetFile): JetElement {
+        fun findPattern(file: KtFile): KtElement {
             val selectionModel = myFixture.getEditor().getSelectionModel()
             val start = selectionModel.getSelectionStart()
             val end = selectionModel.getSelectionEnd()
             val selectionRange = TextRange(start, end)
             return file.findElementAt(start)?.parentsWithSelf?.last {
-                (it is JetExpression || it is JetTypeReference || it is JetWhenCondition)
+                (it is KtExpression || it is KtTypeReference || it is KtWhenCondition)
                         && selectionRange.contains(it.getTextRange() ?: TextRange.EMPTY_RANGE)
-            } as JetElement
+            } as KtElement
         }
 
         myFixture.configureByFile(filePath)
-        val file = myFixture.getFile() as JetFile
+        val file = myFixture.getFile() as KtFile
 
         DirectiveBasedActionUtils.checkForUnexpectedErrors(file)
 

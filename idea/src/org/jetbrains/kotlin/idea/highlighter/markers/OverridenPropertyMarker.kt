@@ -39,10 +39,10 @@ import javax.swing.JComponent
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.util.Function
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-fun getOverriddenPropertyTooltip(property: JetProperty): String? {
+fun getOverriddenPropertyTooltip(property: KtProperty): String? {
     val overriddenInClassesProcessor = PsiElementProcessor.CollectElementsWithLimit<PsiClass>(5)
 
     val consumer = AdapterProcessor<PsiMethod, PsiClass>(
@@ -76,7 +76,7 @@ fun getOverriddenPropertyTooltip(property: JetProperty): String? {
     return GutterIconTooltipHelper.composeText(collectedClasses.sortedWith(PsiClassListCellRenderer().comparator), start, pattern)
 }
 
-fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: JetProperty) {
+fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: KtProperty) {
     val project = property.getProject()
 
     if (DumbService.isDumb(project)) {
@@ -115,14 +115,14 @@ fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: JetProper
 }
 
 
-public fun isImplemented(declaration: JetNamedDeclaration): Boolean {
-    if (declaration.hasModifier(JetTokens.ABSTRACT_KEYWORD)) return true
+public fun isImplemented(declaration: KtNamedDeclaration): Boolean {
+    if (declaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return true
 
     var parent = declaration.getParent()
-    parent = if (parent is JetClassBody) parent.getParent() else parent
+    parent = if (parent is KtClassBody) parent.getParent() else parent
 
-    if (parent !is JetClass) return false
+    if (parent !is KtClass) return false
 
-    return parent.isInterface() && (declaration !is JetDeclarationWithBody || !declaration.hasBody()) && (declaration !is JetWithExpressionInitializer || !declaration.hasInitializer())
+    return parent.isInterface() && (declaration !is KtDeclarationWithBody || !declaration.hasBody()) && (declaration !is KtWithExpressionInitializer || !declaration.hasInitializer())
 }
 

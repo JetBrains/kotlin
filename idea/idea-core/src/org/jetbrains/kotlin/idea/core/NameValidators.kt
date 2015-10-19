@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.Collections
@@ -58,14 +58,14 @@ public class CollectingNameValidator @JvmOverloads constructor(
 }
 
 public class NewDeclarationNameValidator(
-        private val visibleDeclarationsContext: JetElement?,
+        private val visibleDeclarationsContext: KtElement?,
         private val checkDeclarationsIn: Sequence<PsiElement>,
         private val target: NewDeclarationNameValidator.Target
 ) : (String) -> Boolean {
 
     public constructor(container: PsiElement, anchor: PsiElement?, target: NewDeclarationNameValidator.Target)
         : this(
-            (anchor ?: container).parentsWithSelf.firstIsInstanceOrNull<JetElement>(),
+            (anchor ?: container).parentsWithSelf.firstIsInstanceOrNull<KtElement>(),
             anchor?.siblings() ?: container.allChildren,
             target)
 
@@ -84,11 +84,11 @@ public class NewDeclarationNameValidator(
         }
 
         return checkDeclarationsIn.none {
-            it.findDescendantOfType<JetNamedDeclaration> { it.isConflicting(identifier) } != null
+            it.findDescendantOfType<KtNamedDeclaration> { it.isConflicting(identifier) } != null
         }
     }
 
-    private fun JetScope.hasConflict(name: Name): Boolean {
+    private fun KtScope.hasConflict(name: Name): Boolean {
         val inDeclaration = getContainingDeclaration()
 
         fun DeclarationDescriptor.isVisible(): Boolean {
@@ -107,12 +107,12 @@ public class NewDeclarationNameValidator(
         }
     }
 
-    private fun JetNamedDeclaration.isConflicting(name: Name): Boolean {
+    private fun KtNamedDeclaration.isConflicting(name: Name): Boolean {
         if (getNameAsName() != name) return false
-        if (this is JetCallableDeclaration && getReceiverTypeReference() != null) return false
+        if (this is KtCallableDeclaration && getReceiverTypeReference() != null) return false
         return when(target) {
-            Target.VARIABLES -> this is JetVariableDeclaration
-            Target.FUNCTIONS_AND_CLASSES -> this is JetNamedFunction || this is JetClassOrObject
+            Target.VARIABLES -> this is KtVariableDeclaration
+            Target.FUNCTIONS_AND_CLASSES -> this is KtNamedFunction || this is KtClassOrObject
         }
     }
 }

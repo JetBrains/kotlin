@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Assert
 
 public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
@@ -32,7 +32,7 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
 
     public fun testConstructor() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        val declaration = (myFixture.getFile() as JetFile).getDeclarations()[0]
+        val declaration = (myFixture.getFile() as KtFile).getDeclarations()[0]
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
         val constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor()!!
         val doc = KDocFinder.findKDoc(constructorDescriptor)
@@ -41,7 +41,7 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
 
     public fun testOverridden() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        val declaration = (myFixture.getFile() as JetFile).getDeclarations().single { it.getName() == "Bar" }
+        val declaration = (myFixture.getFile() as KtFile).getDeclarations().single { it.getName() == "Bar" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
         val overriddenFunctionDescriptor = descriptor.defaultType.memberScope.getFunctions(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
         val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
@@ -50,7 +50,7 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
 
     public fun testOverriddenWithSubstitutedType() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        val declaration = (myFixture.getFile() as JetFile).getDeclarations().single { it.getName() == "Bar" }
+        val declaration = (myFixture.getFile() as KtFile).getDeclarations().single { it.getName() == "Bar" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
         val overriddenFunctionDescriptor = descriptor.defaultType.memberScope.getFunctions(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
         val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
@@ -59,7 +59,7 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
 
     public fun testProperty() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        val declaration = (myFixture.getFile() as JetFile).getDeclarations().single { it.getName() == "Foo" }
+        val declaration = (myFixture.getFile() as KtFile).getDeclarations().single { it.getName() == "Foo" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
         val propertyDescriptor = descriptor.defaultType.memberScope.getProperties(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
         val doc = KDocFinder.findKDoc(propertyDescriptor)

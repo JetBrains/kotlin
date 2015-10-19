@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetScript;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.LazyFileScope;
@@ -48,7 +48,7 @@ public class LazyTopDownAnalyzerForTopLevel {
     @NotNull
     public TopDownAnalysisContext analyzeFiles(
             @NotNull TopDownAnalysisMode topDownAnalysisMode,
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull List<? extends PackageFragmentProvider> additionalProviders
     ) {
         PackageFragmentProvider provider;
@@ -79,16 +79,16 @@ public class LazyTopDownAnalyzerForTopLevel {
     }
 
     private static void resolveImportsInAllFiles(TopDownAnalysisContext c, KotlinCodeAnalyzer resolveSession) {
-        for (JetFile file : c.getFiles()) {
+        for (KtFile file : c.getFiles()) {
             resolveAndCheckImports(file, resolveSession);
         }
 
-        for (JetScript script : c.getScripts().keySet()) {
+        for (KtScript script : c.getScripts().keySet()) {
             resolveAndCheckImports(script.getContainingJetFile(), resolveSession);
         }
     }
 
-    private static void resolveAndCheckImports(@NotNull JetFile file, @NotNull KotlinCodeAnalyzer resolveSession) {
+    private static void resolveAndCheckImports(@NotNull KtFile file, @NotNull KotlinCodeAnalyzer resolveSession) {
         LazyFileScope fileScope = resolveSession.getFileScopeProvider().getFileScope(file);
         fileScope.forceResolveAllImports();
     }

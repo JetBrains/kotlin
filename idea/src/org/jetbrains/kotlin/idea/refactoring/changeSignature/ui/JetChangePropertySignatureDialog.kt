@@ -28,12 +28,12 @@ import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.ui.FormBuilder
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.refactoring.validateElement
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetTypeCodeFragment
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtTypeCodeFragment
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import javax.swing.JCheckBox
 import javax.swing.JComboBox
@@ -74,11 +74,11 @@ public class JetChangePropertySignatureDialog(
         }
 
         val documentManager = PsiDocumentManager.getInstance(myProject)
-        val psiFactory = JetPsiFactory(myProject)
+        val psiFactory = KtPsiFactory(myProject)
 
         return with(FormBuilder.createFormBuilder()) {
             val baseDeclaration = methodDescriptor.baseDeclaration
-            if (!((baseDeclaration as? JetProperty)?.isLocal() ?: false)) {
+            if (!((baseDeclaration as? KtProperty)?.isLocal() ?: false)) {
                 visibilityCombo.setSelectedItem(methodDescriptor.getVisibility())
                 addLabeledComponent("&Visibility: ", visibilityCombo)
             }
@@ -87,10 +87,10 @@ public class JetChangePropertySignatureDialog(
 
             val returnTypeCodeFragment = psiFactory.createTypeCodeFragment(methodDescriptor.renderOriginalReturnType(),
                                                                            baseDeclaration)
-            returnTypeField = EditorTextField(documentManager.getDocument(returnTypeCodeFragment), myProject, JetFileType.INSTANCE)
+            returnTypeField = EditorTextField(documentManager.getDocument(returnTypeCodeFragment), myProject, KotlinFileType.INSTANCE)
             addLabeledComponent("&Type: ", returnTypeField)
 
-            if (baseDeclaration is JetProperty) {
+            if (baseDeclaration is KtProperty) {
                 addSeparator()
 
                 val receiverTypeCheckBox = JCheckBox("Extension property: ")
@@ -102,7 +102,7 @@ public class JetChangePropertySignatureDialog(
 
                 val receiverTypeCodeFragment = psiFactory.createTypeCodeFragment(methodDescriptor.renderOriginalReceiverType() ?: "",
                                                                                  methodDescriptor.baseDeclaration)
-                receiverTypeField = EditorTextField(documentManager.getDocument(receiverTypeCodeFragment), myProject, JetFileType.INSTANCE)
+                receiverTypeField = EditorTextField(documentManager.getDocument(receiverTypeCodeFragment), myProject, KotlinFileType.INSTANCE)
                 receiverTypeLabel = JLabel("Receiver type: ")
                 receiverTypeLabel.setDisplayedMnemonic('t')
                 addLabeledComponent(receiverTypeLabel, receiverTypeField)
@@ -111,7 +111,7 @@ public class JetChangePropertySignatureDialog(
                     val receiverDefaultValueCodeFragment = psiFactory.createExpressionCodeFragment("", methodDescriptor.baseDeclaration)
                     receiverDefaultValueField = EditorTextField(documentManager.getDocument(receiverDefaultValueCodeFragment),
                                                                 myProject,
-                                                                JetFileType.INSTANCE)
+                                                                KotlinFileType.INSTANCE)
                     receiverDefaultValueLabel = JLabel("Default receiver value: ")
                     receiverDefaultValueLabel!!.setDisplayedMnemonic('D')
                     addLabeledComponent(receiverDefaultValueLabel, receiverDefaultValueField!!)
@@ -124,13 +124,13 @@ public class JetChangePropertySignatureDialog(
         }
     }
 
-    private fun getDefaultReceiverValue(): JetExpression? {
+    private fun getDefaultReceiverValue(): KtExpression? {
         val receiverDefaultValue = receiverDefaultValueField?.getText() ?: ""
-        return if (receiverDefaultValue.isNotEmpty()) JetPsiFactory(myProject).createExpression(receiverDefaultValue) else null
+        return if (receiverDefaultValue.isNotEmpty()) KtPsiFactory(myProject).createExpression(receiverDefaultValue) else null
     }
 
     override fun canRun() {
-        val psiFactory = JetPsiFactory(myProject)
+        val psiFactory = KtPsiFactory(myProject)
 
         psiFactory.createSimpleName(nameField.getText()).validateElement("Invalid name")
         psiFactory.createType(returnTypeField.getText()).validateElement("Invalid return type")

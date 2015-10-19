@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class ReplaceCallWithUnaryOperatorIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with unary operator"), HighPriorityAction {
-    override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
+public class ReplaceCallWithUnaryOperatorIntention : JetSelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace call with unary operator"), HighPriorityAction {
+    override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         val operation = operation(element.calleeName) ?: return null
 
         val call = element.callExpression ?: return null
@@ -43,10 +43,10 @@ public class ReplaceCallWithUnaryOperatorIntention : JetSelfTargetingRangeIntent
         return call.getCalleeExpression()!!.getTextRange()
     }
 
-    override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
         val operation = operation(element.calleeName)!!
         val receiver = element.getReceiverExpression()
-        element.replace(JetPsiFactory(element).createExpressionByPattern("$0$1", operation, receiver))
+        element.replace(KtPsiFactory(element).createExpressionByPattern("$0$1", operation, receiver))
     }
 
     private fun operation(functionName: String?) : String? {

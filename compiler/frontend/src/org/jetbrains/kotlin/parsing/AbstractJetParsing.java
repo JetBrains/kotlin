@@ -22,31 +22,31 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.lexer.JetKeywordToken;
-import org.jetbrains.kotlin.lexer.JetToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtKeywordToken;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.utils.strings.StringsKt;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 /*package*/ abstract class AbstractJetParsing {
-    private static final Map<String, JetKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<String, JetKeywordToken>();
+    private static final Map<String, KtKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<String, KtKeywordToken>();
 
     static {
-        for (IElementType type : JetTokens.SOFT_KEYWORDS.getTypes()) {
-            JetKeywordToken keywordToken = (JetKeywordToken) type;
+        for (IElementType type : KtTokens.SOFT_KEYWORDS.getTypes()) {
+            KtKeywordToken keywordToken = (KtKeywordToken) type;
             assert keywordToken.isSoft();
             SOFT_KEYWORD_TEXTS.put(keywordToken.getValue(), keywordToken);
         }
     }
 
     static {
-        for (IElementType token : JetTokens.KEYWORDS.getTypes()) {
-            assert token instanceof JetKeywordToken : "Must be JetKeywordToken: " + token;
-            assert !((JetKeywordToken) token).isSoft() : "Must not be soft: " + token;
+        for (IElementType token : KtTokens.KEYWORDS.getTypes()) {
+            assert token instanceof KtKeywordToken : "Must be KtKeywordToken: " + token;
+            assert !((KtKeywordToken) token).isSoft() : "Must not be soft: " + token;
         }
     }
 
@@ -65,7 +65,7 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
         return myBuilder.rawLookup(-i);
     }
 
-    protected boolean expect(JetToken expectation, String message) {
+    protected boolean expect(KtToken expectation, String message) {
         return expect(expectation, message, null);
     }
 
@@ -77,13 +77,13 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
         myBuilder.error(message);
     }
 
-    protected boolean expect(JetToken expectation, String message, TokenSet recoverySet) {
+    protected boolean expect(KtToken expectation, String message, TokenSet recoverySet) {
         if (at(expectation)) {
             advance(); // expectation
             return true;
         }
 
-        if (expectation == JetTokens.IDENTIFIER && "`".equals(myBuilder.getTokenText())) {
+        if (expectation == KtTokens.IDENTIFIER && "`".equals(myBuilder.getTokenText())) {
             advance();
         }
 
@@ -92,7 +92,7 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
         return false;
     }
 
-    protected boolean expectNoAdvance(JetToken expectation, String message) {
+    protected boolean expectNoAdvance(KtToken expectation, String message) {
         if (at(expectation)) {
             advance(); // expectation
             return true;
@@ -171,15 +171,15 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
     protected boolean at(IElementType expectation) {
         if (_at(expectation)) return true;
         IElementType token = tt();
-        if (token == IDENTIFIER && expectation instanceof JetKeywordToken) {
-            JetKeywordToken expectedKeyword = (JetKeywordToken) expectation;
+        if (token == IDENTIFIER && expectation instanceof KtKeywordToken) {
+            KtKeywordToken expectedKeyword = (KtKeywordToken) expectation;
             if (expectedKeyword.isSoft() && expectedKeyword.getValue().equals(myBuilder.getTokenText())) {
                 myBuilder.remapCurrentToken(expectation);
                 return true;
             }
         }
-        if (expectation == IDENTIFIER && token instanceof JetKeywordToken) {
-            JetKeywordToken keywordToken = (JetKeywordToken) token;
+        if (expectation == IDENTIFIER && token instanceof KtKeywordToken) {
+            KtKeywordToken keywordToken = (KtKeywordToken) token;
             if (keywordToken.isSoft()) {
                 myBuilder.remapCurrentToken(IDENTIFIER);
                 return true;
@@ -217,7 +217,7 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
         if (_atSet(set)) return true;
         IElementType token = tt();
         if (token == IDENTIFIER) {
-            JetKeywordToken keywordToken = SOFT_KEYWORD_TEXTS.get(myBuilder.getTokenText());
+            KtKeywordToken keywordToken = SOFT_KEYWORD_TEXTS.get(myBuilder.getTokenText());
             if (keywordToken != null && set.contains(keywordToken)) {
                 myBuilder.remapCurrentToken(keywordToken);
                 return true;
@@ -225,8 +225,8 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
         }
         else {
             // We know at this point that <code>set</code> does not contain <code>token</code>
-            if (set.contains(IDENTIFIER) && token instanceof JetKeywordToken) {
-                if (((JetKeywordToken) token).isSoft()) {
+            if (set.contains(IDENTIFIER) && token instanceof KtKeywordToken) {
+                if (((KtKeywordToken) token).isSoft()) {
                     myBuilder.remapCurrentToken(IDENTIFIER);
                     return true;
                 }
@@ -239,7 +239,7 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
         return myBuilder.lookAhead(k);
     }
 
-    protected void consumeIf(JetToken token) {
+    protected void consumeIf(KtToken token) {
         if (at(token)) advance(); // token
     }
 

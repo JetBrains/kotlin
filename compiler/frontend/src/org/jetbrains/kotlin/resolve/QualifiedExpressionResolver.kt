@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -37,7 +37,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 
 
     public fun resolvePackageHeader(
-            packageDirective: JetPackageDirective,
+            packageDirective: KtPackageDirective,
             module: ModuleDescriptor,
             trace: BindingTrace
     ) {
@@ -49,7 +49,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
     }
 
     public fun resolveDescriptorForUserType(
-            userType: JetUserType,
+            userType: KtUserType,
             scope: LexicalScope,
             trace: BindingTrace
     ): ClassifierDescriptor? {
@@ -86,7 +86,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         return classifier
     }
 
-    private val JetUserType.startWithPackage: Boolean
+    private val KtUserType.startWithPackage: Boolean
         get() {
             var firstPart = this
             while (firstPart.qualifier != null) {
@@ -96,10 +96,10 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         }
 
 
-    private fun JetUserType.asQualifierPartList(): Pair<List<QualifierPart>, Boolean> {
+    private fun KtUserType.asQualifierPartList(): Pair<List<QualifierPart>, Boolean> {
         var hasError = false
         val result = SmartList<QualifierPart>()
-        var userType: JetUserType? = this
+        var userType: KtUserType? = this
         while (userType != null) {
             val referenceExpression = userType.referenceExpression
             if (referenceExpression != null) {
@@ -114,11 +114,11 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
     }
 
     public fun processImportReference(
-            importDirective: JetImportDirective,
+            importDirective: KtImportDirective,
             moduleDescriptor: ModuleDescriptor,
             trace: BindingTrace,
             packageFragmentForVisibilityCheck: PackageFragmentDescriptor?
-    ): JetScope? { // null if some error happened
+    ): KtScope? { // null if some error happened
         val importedReference = importDirective.importedReference ?: return null
         val path = importedReference.asQualifierPartList(trace)
         val lastPart = path.lastOrNull() ?: return null
@@ -135,10 +135,10 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 }
 
     private fun processSingleImport(
-            moduleDescriptor: ModuleDescriptor, trace: BindingTrace, importDirective: JetImportDirective,
+            moduleDescriptor: ModuleDescriptor, trace: BindingTrace, importDirective: KtImportDirective,
             path: List<QualifierPart>, lastPart: QualifierPart, packageFragmentForVisibilityCheck: PackageFragmentDescriptor?
     ): SingleImportScope? {
-        val aliasName = JetPsiUtil.getAliasName(importDirective)
+        val aliasName = KtPsiUtil.getAliasName(importDirective)
         if (aliasName == null) {
             // import kotlin.
             resolveToPackageOrClass(path, moduleDescriptor, trace, packageFragmentForVisibilityCheck, scopeForFirstPart = null, inImport = true)
@@ -232,21 +232,21 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         storeResult(trace, lastPart.expression, descriptors, shouldBeVisibleFrom = null, inImport = true, isQualifier = false)
     }
 
-    private fun JetExpression.asQualifierPartList(trace: BindingTrace): List<QualifierPart> {
+    private fun KtExpression.asQualifierPartList(trace: BindingTrace): List<QualifierPart> {
         val result = SmartList<QualifierPart>()
-        var expression: JetExpression? = this
+        var expression: KtExpression? = this
         loop@ while (expression != null) {
             when (expression) {
-                is JetSimpleNameExpression -> {
+                is KtSimpleNameExpression -> {
                     result add QualifierPart(expression.getReferencedNameAsName(), expression)
                     break@loop
                 }
-                is JetQualifiedExpression -> {
-                    (expression.selectorExpression as? JetSimpleNameExpression)?.let {
+                is KtQualifiedExpression -> {
+                    (expression.selectorExpression as? KtSimpleNameExpression)?.let {
                         result add QualifierPart(it.getReferencedNameAsName(), it)
                     }
                     expression = expression.receiverExpression
-                    if (expression is JetSafeQualifiedExpression) {
+                    if (expression is KtSafeQualifiedExpression) {
                         trace.report(Errors.SAFE_CALL_IN_QUALIFIER.on(expression.operationTokenNode.psi))
                     }
                 }
@@ -258,8 +258,8 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 
     private data class QualifierPart(
             val name: Name,
-            val expression: JetSimpleNameExpression,
-            val typeArguments: JetTypeArgumentList? = null
+            val expression: KtSimpleNameExpression,
+            val typeArguments: KtTypeArgumentList? = null
     ) {
         val location = KotlinLookupLocation(expression)
     }
@@ -355,7 +355,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 
     private fun storeResult(
             trace: BindingTrace,
-            referenceExpression: JetSimpleNameExpression,
+            referenceExpression: KtSimpleNameExpression,
             descriptors: Collection<DeclarationDescriptor>,
             shouldBeVisibleFrom: DeclarationDescriptor?,
             inImport: Boolean,
@@ -381,7 +381,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 
     private fun storeResult(
             trace: BindingTrace,
-            referenceExpression: JetSimpleNameExpression,
+            referenceExpression: KtSimpleNameExpression,
             descriptor: DeclarationDescriptor?,
             shouldBeVisibleFrom: DeclarationDescriptor?,
             inImport: Boolean,
@@ -407,7 +407,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         }
     }
 
-    private fun storageQualifier(trace: BindingTrace, referenceExpression: JetSimpleNameExpression, descriptor: DeclarationDescriptor) {
+    private fun storageQualifier(trace: BindingTrace, referenceExpression: KtSimpleNameExpression, descriptor: DeclarationDescriptor) {
         if (descriptor is PackageViewDescriptor || descriptor is ClassifierDescriptor) {
             val qualifier = QualifierReceiver(referenceExpression, descriptor as? PackageViewDescriptor, descriptor as? ClassifierDescriptor)
             trace.record(BindingContext.QUALIFIER, qualifier.expression, qualifier)

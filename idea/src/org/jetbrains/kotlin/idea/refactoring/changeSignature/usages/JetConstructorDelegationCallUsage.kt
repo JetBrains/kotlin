@@ -18,30 +18,30 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
-import org.jetbrains.kotlin.psi.JetConstructorDelegationCall
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetSecondaryConstructor
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 
 public class JetConstructorDelegationCallUsage(
-        call: JetConstructorDelegationCall,
+        call: KtConstructorDelegationCall,
         changeInfo: JetChangeInfo
-) : JetUsageInfo<JetConstructorDelegationCall>(call) {
+) : JetUsageInfo<KtConstructorDelegationCall>(call) {
     val delegate = JetFunctionCallUsage(call, changeInfo.methodDescriptor.originalPrimaryCallable)
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: JetConstructorDelegationCall, allUsages: Array<out UsageInfo>): Boolean {
+    override fun processUsage(changeInfo: JetChangeInfo, element: KtConstructorDelegationCall, allUsages: Array<out UsageInfo>): Boolean {
         val isThisCall = element.isCallToThis()
 
         var elementToWorkWith = element
         if (changeInfo.getNewParametersCount() > 0 && element.isImplicit()) {
-            val constructor = element.getParent() as JetSecondaryConstructor
+            val constructor = element.getParent() as KtSecondaryConstructor
             elementToWorkWith = constructor.replaceImplicitDelegationCallWithExplicit(isThisCall)
         }
 
         val result = delegate.processUsage(changeInfo, elementToWorkWith, allUsages)
 
         if (changeInfo.getNewParametersCount() == 0 && !isThisCall && !elementToWorkWith.isImplicit()) {
-            (elementToWorkWith.getParent() as? JetSecondaryConstructor)?.getColon()?.delete()
-            elementToWorkWith.replace(JetPsiFactory(element).createConstructorDelegationCall(""))
+            (elementToWorkWith.getParent() as? KtSecondaryConstructor)?.getColon()?.delete()
+            elementToWorkWith.replace(KtPsiFactory(element).createConstructorDelegationCall(""))
         }
 
         return result

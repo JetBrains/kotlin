@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.ArrayList
@@ -187,7 +187,7 @@ class CollectionStubMethodGenerator(
         return ourSuperCollectionClasses.filter { klass -> klass.readOnlyClass !in redundantClasses }
     }
 
-    private fun Collection<JetType>.classes(): Collection<ClassDescriptor> =
+    private fun Collection<KtType>.classes(): Collection<ClassDescriptor> =
             this.map { it.getConstructor().getDeclarationDescriptor() as ClassDescriptor }
 
     private fun findFakeOverridesForMethodsFromMutableCollection(
@@ -213,13 +213,13 @@ class CollectionStubMethodGenerator(
         return result
     }
 
-    private fun Collection<JetType>.findMostSpecificTypeForClass(klass: ClassDescriptor): JetType {
+    private fun Collection<KtType>.findMostSpecificTypeForClass(klass: ClassDescriptor): KtType {
         val types = this.filter { it.getConstructor().getDeclarationDescriptor() == klass }
         if (types.isEmpty()) error("No supertype of $klass in $this")
         if (types.size() == 1) return types.first()
         // Find the first type in the list such that it's a subtype of every other type in that list
         return types.first { type ->
-            types.all { other -> JetTypeChecker.DEFAULT.isSubtypeOf(type, other) }
+            types.all { other -> KotlinTypeChecker.DEFAULT.isSubtypeOf(type, other) }
         }
     }
 
@@ -239,8 +239,8 @@ class CollectionStubMethodGenerator(
         return this.getOverriddenDescriptors().firstOrNull { it.getContainingDeclaration() == classDescriptor }
     }
 
-    private fun newType(classDescriptor: ClassDescriptor, typeArguments: List<TypeProjection>): JetType {
-        return JetTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArguments)
+    private fun newType(classDescriptor: ClassDescriptor, typeArguments: List<TypeProjection>): KtType {
+        return KtTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArguments)
     }
 
     private fun FunctionDescriptor.signature(): JvmMethodSignature = typeMapper.mapSignature(this)

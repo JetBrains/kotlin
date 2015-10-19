@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.Map;
@@ -35,10 +35,10 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
     public <F extends CallableDescriptor> void check(
             @NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context
     ) {
-        Map<TypeParameterDescriptor, JetType> typeArguments = resolvedCall.getTypeArguments();
-        for (Map.Entry<TypeParameterDescriptor, JetType> entry : typeArguments.entrySet()) {
+        Map<TypeParameterDescriptor, KtType> typeArguments = resolvedCall.getTypeArguments();
+        for (Map.Entry<TypeParameterDescriptor, KtType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor parameter = entry.getKey();
-            JetType argument = entry.getValue();
+            KtType argument = entry.getValue();
             ClassifierDescriptor argumentDeclarationDescription = argument.getConstructor().getDeclarationDescriptor();
 
             if (parameter.isReified()) {
@@ -58,7 +58,7 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
 
     @NotNull
     private static PsiElement getCallElement(@NotNull BasicCallResolutionContext context) {
-        JetExpression callee = context.call.getCalleeExpression();
+        KtExpression callee = context.call.getCalleeExpression();
         return callee != null ? callee : context.call.getCallElement();
     }
 }

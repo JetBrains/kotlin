@@ -22,18 +22,18 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
-import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.KtWhenExpression
 
-public class IntroduceWhenSubjectInspection : IntentionBasedInspection<JetWhenExpression>(IntroduceWhenSubjectIntention())
+public class IntroduceWhenSubjectInspection : IntentionBasedInspection<KtWhenExpression>(IntroduceWhenSubjectIntention())
 
-public class IntroduceWhenSubjectIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Introduce argument to 'when'") {
-    override fun applicabilityRange(element: JetWhenExpression): TextRange? {
+public class IntroduceWhenSubjectIntention : JetSelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Introduce argument to 'when'") {
+    override fun applicabilityRange(element: KtWhenExpression): TextRange? {
         val subject = element.getSubjectToIntroduce() ?: return null
         setText("Introduce '${subject.getText()}' as argument to 'when'")
         return element.getWhenKeyword().getTextRange()
     }
 
-    override fun applyTo(element: JetWhenExpression, editor: Editor) {
+    override fun applyTo(element: KtWhenExpression, editor: Editor) {
         element.introduceSubject()
     }
 }

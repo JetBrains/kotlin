@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
 import java.util.Arrays
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public class ConditionalJumpInstruction(
-        element: JetElement,
+        element: KtElement,
         public val onTrue: Boolean,
         lexicalScope: LexicalScope,
         targetLabel: Label,

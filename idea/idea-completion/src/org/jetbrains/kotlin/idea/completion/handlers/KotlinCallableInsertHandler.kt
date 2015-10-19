@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.completion.isAfterDot
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler() {
@@ -39,7 +39,7 @@ abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler() {
 
         val file = context.getFile()
         val o = item.getObject()
-        if (file is JetFile && o is DeclarationLookupObject) {
+        if (file is KtFile && o is DeclarationLookupObject) {
             val descriptor = o.descriptor as? CallableDescriptor
             if (descriptor != null) {
                 // for completion after dot, import insertion may be required only for extensions

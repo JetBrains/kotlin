@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -42,14 +42,14 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
     val LONG_EQUALS_ANY = pattern("Long.equals")
 
     private object LONG_EQUALS_ANY_INTRINSIC : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val invokeEquals = JsAstUtils.equalsForObject(left, right)
             return if (expression.isNegated()) JsAstUtils.not(invokeEquals) else invokeEquals
         }
     }
 
     private object EqualsIntrinsic : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val isNegated = expression.isNegated()
             if (right == JsLiteral.NULL || left == JsLiteral.NULL) {
                 return TranslationUtils.nullCheck(if (right == JsLiteral.NULL) left else right, isNegated)
@@ -73,7 +73,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             return if (isNegated) JsAstUtils.negated(result) else result
         }
 
-        private fun canUseSimpleEquals(expression: JetBinaryExpression, context: TranslationContext): Boolean {
+        private fun canUseSimpleEquals(expression: KtBinaryExpression, context: TranslationContext): Boolean {
             val left = expression.getLeft()
             assert(left != null) { "No left-hand side: " + expression.getText() }
             val typeName = JsDescriptorUtils.getNameIfStandardType(left!!, context)
@@ -82,7 +82,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
     }
 
     object EnumEqualsIntrinsic : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsBinaryOperation {
+        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsBinaryOperation {
             val operator = if (expression.isNegated()) JsBinaryOperator.REF_NEQ else JsBinaryOperator.REF_EQ
             return JsBinaryOperation(operator, left, right)
         }
@@ -102,5 +102,5 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
                 else -> null
             }
 
-    private fun JetBinaryExpression.isNegated() = getOperationToken(this) == JetTokens.EXCLEQ
+    private fun KtBinaryExpression.isNegated() = getOperationToken(this) == KtTokens.EXCLEQ
 }

@@ -45,10 +45,10 @@ import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 // SCRIPT: script code generator
-public class ScriptCodegen extends MemberCodegen<JetScript> {
+public class ScriptCodegen extends MemberCodegen<KtScript> {
 
     public static ScriptCodegen createScriptCodegen(
-            @NotNull JetScript declaration,
+            @NotNull KtScript declaration,
             @NotNull GenerationState state,
             @NotNull CodegenContext parentContext
     ) {
@@ -72,12 +72,12 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
         return new ScriptCodegen(declaration, state, scriptContext, builder);
     }
 
-    private final JetScript scriptDeclaration;
+    private final KtScript scriptDeclaration;
     private final ScriptContext context;
     private final ScriptDescriptor scriptDescriptor;
 
     private ScriptCodegen(
-            @NotNull JetScript scriptDeclaration,
+            @NotNull KtScript scriptDeclaration,
             @NotNull GenerationState state,
             @NotNull ScriptContext context,
             @NotNull ClassBuilder builder
@@ -221,12 +221,12 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
     }
 
     private void genMembers() {
-        for (JetDeclaration declaration : scriptDeclaration.getDeclarations()) {
-            if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+        for (KtDeclaration declaration : scriptDeclaration.getDeclarations()) {
+            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction) {
                 genFunctionOrProperty(declaration);
             }
-            else if (declaration instanceof JetClassOrObject) {
-                genClassOrObject((JetClassOrObject) declaration);
+            else if (declaration instanceof KtClassOrObject) {
+                genClassOrObject((KtClassOrObject) declaration);
             }
         }
     }

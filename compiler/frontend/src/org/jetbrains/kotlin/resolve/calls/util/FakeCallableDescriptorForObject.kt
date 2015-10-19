@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
 import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.util.Collections
 
 public class FakeCallableDescriptorForObject(
@@ -44,7 +44,7 @@ public class FakeCallableDescriptorForObject(
 
     override fun getValueParameters(): List<ValueParameterDescriptor> = Collections.emptyList()
 
-    override fun getReturnType(): JetType? = getType()
+    override fun getReturnType(): KtType? = getType()
 
     override fun hasSynthesizedParameterNames() = false
 
@@ -52,7 +52,7 @@ public class FakeCallableDescriptorForObject(
 
     override fun getOverriddenDescriptors(): Set<CallableDescriptor> = Collections.emptySet()
 
-    override fun getType(): JetType = classDescriptor.classObjectType!!
+    override fun getType(): KtType = classDescriptor.classObjectType!!
 
     override fun isVar() = false
 

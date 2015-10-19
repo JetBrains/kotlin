@@ -28,16 +28,16 @@ import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.j2k.usageProcessing.ExternalCodeProcessor
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 
 public interface PostProcessor {
-    public fun insertImport(file: JetFile, fqName: FqName)
+    public fun insertImport(file: KtFile, fqName: FqName)
 
-    public fun doAdditionalProcessing(file: JetFile, rangeMarker: RangeMarker?)
+    public fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?)
 }
 
 public enum class ParseContext {
@@ -70,7 +70,7 @@ public class JavaToKotlinConverter(
         val texts = withProgressProcessor.processItems(0.5, results.withIndex()) { pair ->
             val (i, result) = pair
             try {
-                val kotlinFile = JetPsiFactory(project).createAnalyzableFile("dummy.kt", result!!.text, files[i])
+                val kotlinFile = KtPsiFactory(project).createAnalyzableFile("dummy.kt", result!!.text, files[i])
 
                 result.importsToAdd.forEach { postProcessor.insertImport(kotlinFile, it) }
 

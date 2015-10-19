@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 
 public interface PackageViewDescriptor : DeclarationDescriptor {
     override fun getContainingDeclaration(): PackageViewDescriptor?
 
     public val fqName: FqName
 
-    public val memberScope: JetScope
+    public val memberScope: KtScope
 
     public val module: ModuleDescriptor
 

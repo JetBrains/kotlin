@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.*
 
 public class KotlinPullUpDialog(
         project: Project,
-        private val classOrObject: JetClassOrObject,
+        private val classOrObject: KtClassOrObject,
         superClasses: List<PsiNamedElement>,
         memberInfoStorage: KotlinMemberInfoStorage
 ) : KotlinPullUpDialogBase(
@@ -41,7 +41,7 @@ public class KotlinPullUpDialog(
         init()
     }
 
-    private inner class MemberInfoModelImpl : AbstractMemberInfoModel<JetNamedDeclaration, KotlinMemberInfo>() {
+    private inner class MemberInfoModelImpl : AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>() {
         // Abstract members remain abstract
         override fun isFixedAbstract(memberInfo: KotlinMemberInfo?) = true
 
@@ -56,16 +56,16 @@ public class KotlinPullUpDialog(
         override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
             val superClass = superClass ?: return false
             if (superClass is PsiClass) return false
-            if (superClass !is JetClass) return false
+            if (superClass !is KtClass) return false
             if (!superClass.isInterface()) return true
 
             val member = memberInfo.member
-            return member is JetNamedFunction || (member is JetProperty && !member.mustBeAbstractInInterface())
+            return member is KtNamedFunction || (member is KtProperty && !member.mustBeAbstractInInterface())
         }
 
         override fun isAbstractWhenDisabled(memberInfo: KotlinMemberInfo): Boolean {
             val member = memberInfo.member
-            return (member is JetProperty && superClass !is PsiClass) || (member is JetNamedFunction && superClass is PsiClass)
+            return (member is KtProperty && superClass !is PsiClass) || (member is KtNamedFunction && superClass is PsiClass)
         }
 
         override fun isMemberEnabled(memberInfo: KotlinMemberInfo): Boolean {
@@ -81,7 +81,7 @@ public class KotlinPullUpDialog(
 
     protected val memberInfoStorage: KotlinMemberInfoStorage get() = myMemberInfoStorage
 
-    protected val sourceClass: JetClassOrObject get() = myClass as JetClassOrObject
+    protected val sourceClass: KtClassOrObject get() = myClass as KtClassOrObject
 
     override fun getDimensionServiceKey() = "#" + javaClass.name
 
@@ -105,10 +105,10 @@ public class KotlinPullUpDialog(
     }
 
     companion object {
-        fun createProcessor(sourceClass: JetClassOrObject,
+        fun createProcessor(sourceClass: KtClassOrObject,
                             targetClass: PsiNamedElement,
                             memberInfos: List<KotlinMemberInfo>): PullUpProcessor {
-            val targetPsiClass = targetClass as? PsiClass ?: (targetClass as JetClass).toLightClass()
+            val targetPsiClass = targetClass as? PsiClass ?: (targetClass as KtClass).toLightClass()
             return PullUpProcessor(sourceClass.toLightClass(),
                                    targetPsiClass,
                                    memberInfos.map { it.toJavaMemberInfo() }.filterNotNull().toTypedArray(),

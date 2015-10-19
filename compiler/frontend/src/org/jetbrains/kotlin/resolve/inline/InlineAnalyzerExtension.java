@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -39,7 +39,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
 
     @Override
     public void process(
-            @NotNull final FunctionDescriptor descriptor, @NotNull JetNamedFunction function, @NotNull final BindingTrace trace
+            @NotNull final FunctionDescriptor descriptor, @NotNull KtNamedFunction function, @NotNull final BindingTrace trace
     ) {
         assert InlineUtil.isInline(descriptor) : "This method should be invoked on inline function: " + descriptor;
 
@@ -47,21 +47,21 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         checkNotVirtual(descriptor, function, trace);
         checkHasInlinableAndNullability(descriptor, function, trace);
 
-        JetVisitorVoid visitor = new JetVisitorVoid() {
+        KtVisitorVoid visitor = new KtVisitorVoid() {
             @Override
-            public void visitJetElement(@NotNull JetElement element) {
+            public void visitJetElement(@NotNull KtElement element) {
                 super.visitJetElement(element);
                 element.acceptChildren(this);
             }
 
             @Override
-            public void visitClass(@NotNull JetClass klass) {
+            public void visitClass(@NotNull KtClass klass) {
                 trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(klass, klass, descriptor));
             }
 
             @Override
-            public void visitNamedFunction(@NotNull JetNamedFunction function) {
-                if (function.getParent().getParent() instanceof JetObjectDeclaration) {
+            public void visitNamedFunction(@NotNull KtNamedFunction function) {
+                if (function.getParent().getParent() instanceof KtObjectDeclaration) {
                     super.visitNamedFunction(function);
                 } else {
                     trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(function, function, descriptor));
@@ -74,13 +74,13 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
 
     private static void checkDefaults(
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull JetFunction function,
+            @NotNull KtFunction function,
             @NotNull BindingTrace trace
     ) {
-        List<JetParameter> jetParameters = function.getValueParameters();
+        List<KtParameter> jetParameters = function.getValueParameters();
         for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
             if (DescriptorUtilsKt.hasDefaultValue(parameter)) {
-                JetParameter jetParameter = jetParameters.get(parameter.getIndex());
+                KtParameter jetParameter = jetParameters.get(parameter.getIndex());
                 //report not supported default only on inlinable lambda and on parameter with inherited default (there is some problems to inline it)
                 if (checkInlinableParameter(parameter, jetParameter, functionDescriptor, null) || !parameter.declaresDefaultValue()) {
                     trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(jetParameter, jetParameter, functionDescriptor));
@@ -91,7 +91,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
 
     private static void checkNotVirtual(
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull JetFunction function,
+            @NotNull KtFunction function,
             @NotNull BindingTrace trace
     ) {
         if (Visibilities.isPrivate(functionDescriptor.getVisibility()) || functionDescriptor.getModality() == Modality.FINAL) {
@@ -108,7 +108,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
 
     private static void checkHasInlinableAndNullability(
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull JetFunction function,
+            @NotNull KtFunction function,
             @NotNull BindingTrace trace
     ) {
         boolean hasInlinable = false;
@@ -119,7 +119,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         }
         ReceiverParameterDescriptor receiverParameter = functionDescriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
-            JetTypeReference receiver = function.getReceiverTypeReference();
+            KtTypeReference receiver = function.getReceiverTypeReference();
             assert receiver != null : "Descriptor has a receiver but psi doesn't " + function.getText();
             hasInlinable |= checkInlinableParameter(receiverParameter, receiver, functionDescriptor, trace);
         }
@@ -127,8 +127,8 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         hasInlinable |= DescriptorUtils.containsReifiedTypeParameters(functionDescriptor);
 
         if (!hasInlinable) {
-            JetModifierList modifierList = function.getModifierList();
-            PsiElement inlineModifier = modifierList == null ? null : modifierList.getModifier(JetTokens.INLINE_KEYWORD);
+            KtModifierList modifierList = function.getModifierList();
+            PsiElement inlineModifier = modifierList == null ? null : modifierList.getModifier(KtTokens.INLINE_KEYWORD);
             PsiElement reportOn = inlineModifier == null ? function : inlineModifier;
             trace.report(Errors.NOTHING_TO_INLINE.on(reportOn, functionDescriptor));
         }
@@ -136,7 +136,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
 
     public static boolean checkInlinableParameter(
             @NotNull ParameterDescriptor parameter,
-            @NotNull JetElement expression,
+            @NotNull KtElement expression,
             @NotNull CallableDescriptor functionDescriptor,
             @Nullable BindingTrace trace
     ) {

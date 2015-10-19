@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 public abstract class OperationInstruction protected constructor(
-        element: JetElement,
+        element: KtElement,
         lexicalScope: LexicalScope,
         override val inputValues: List<PseudoValue>
 ) : InstructionWithNext(element, lexicalScope), InstructionWithValue {
@@ -48,20 +48,20 @@ public abstract class OperationInstruction protected constructor(
         return this
     }
 
-    protected fun setResult(factory: PseudoValueFactory?, valueElement: JetElement? = element): OperationInstruction {
+    protected fun setResult(factory: PseudoValueFactory?, valueElement: KtElement? = element): OperationInstruction {
         return setResult(factory?.newValue(valueElement, this))
     }
 }
 
 public class CallInstruction private constructor(
-        element: JetElement,
+        element: KtElement,
         lexicalScope: LexicalScope,
         val resolvedCall: ResolvedCall<*>,
         override val receiverValues: Map<PseudoValue, ReceiverValue>,
         public val arguments: Map<PseudoValue, ValueParameterDescriptor>
 ) : OperationInstruction(element, lexicalScope, (receiverValues.keySet() as Collection<PseudoValue>) + arguments.keySet()), InstructionWithReceivers {
     public constructor (
-            element: JetElement,
+            element: KtElement,
             lexicalScope: LexicalScope,
             resolvedCall: ResolvedCall<*>,
             receiverValues: Map<PseudoValue, ReceiverValue>,
@@ -92,14 +92,14 @@ public class CallInstruction private constructor(
 //      denote value transformation which can't be expressed by other instructions (such as call or read)
 //      pass more than one value to instruction which formally requires only one (e.g. jump)
 public class MagicInstruction(
-        element: JetElement,
+        element: KtElement,
         lexicalScope: LexicalScope,
         inputValues: List<PseudoValue>,
         val kind: MagicKind
 ) : OperationInstruction(element, lexicalScope, inputValues) {
     public constructor (
-            element: JetElement,
-            valueElement: JetElement?,
+            element: KtElement,
+            valueElement: KtElement?,
             lexicalScope: LexicalScope,
             inputValues: List<PseudoValue>,
             kind: MagicKind,
@@ -146,12 +146,12 @@ public enum class MagicKind(val sideEffectFree: Boolean = false) {
 
 // Merges values produced by alternative control-flow paths (such as 'if' branches)
 class MergeInstruction private constructor(
-        element: JetElement,
+        element: KtElement,
         lexicalScope: LexicalScope,
         inputValues: List<PseudoValue>
 ): OperationInstruction(element, lexicalScope, inputValues) {
     public constructor (
-            element: JetElement,
+            element: KtElement,
             lexicalScope: LexicalScope,
             inputValues: List<PseudoValue>,
             factory: PseudoValueFactory

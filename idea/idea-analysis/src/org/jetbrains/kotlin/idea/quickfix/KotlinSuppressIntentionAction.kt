@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.util.JetPsiPrecedences
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class KotlinSuppressIntentionAction(
-        private val suppressAt: JetExpression,
+        private val suppressAt: KtExpression,
         private val diagnosticFactory: DiagnosticFactory<*>,
         private val kind: AnnotationHostKind
 ) : SuppressIntentionAction() {
@@ -41,24 +41,24 @@ public class KotlinSuppressIntentionAction(
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
         val id = "\"${diagnosticFactory.getName()}\""
-        if (suppressAt is JetModifierListOwner) {
+        if (suppressAt is KtModifierListOwner) {
             suppressAtModifierListOwner(suppressAt, id)
         }
-        else if (suppressAt is JetAnnotatedExpression) {
+        else if (suppressAt is KtAnnotatedExpression) {
             suppressAtAnnotatedExpression(CaretBox(suppressAt, editor), id)
         }
-        else if (suppressAt is JetExpression) {
+        else if (suppressAt is KtExpression) {
             suppressAtExpression(CaretBox(suppressAt, editor), id)
         }
     }
 
-    private fun suppressAtModifierListOwner(suppressAt: JetModifierListOwner, id: String) {
+    private fun suppressAtModifierListOwner(suppressAt: KtModifierListOwner, id: String) {
         val modifierList = suppressAt.getModifierList()
-        val psiFactory = JetPsiFactory(suppressAt)
+        val psiFactory = KtPsiFactory(suppressAt)
         if (modifierList == null) {
             // create a modifier list from scratch
             val newModifierList = psiFactory.createModifierList(suppressAnnotationText(id))
-            val replaced = JetPsiUtil.replaceModifierList(suppressAt, newModifierList)
+            val replaced = KtPsiUtil.replaceModifierList(suppressAt, newModifierList)
             val whiteSpace = psiFactory.createWhiteSpace(kind)
             suppressAt.addAfter(whiteSpace, replaced)
         }
@@ -78,7 +78,7 @@ public class KotlinSuppressIntentionAction(
         }
     }
 
-    private fun suppressAtAnnotatedExpression(suppressAt: CaretBox<JetAnnotatedExpression>, id: String) {
+    private fun suppressAtAnnotatedExpression(suppressAt: CaretBox<KtAnnotatedExpression>, id: String) {
         val entry = findSuppressAnnotation(suppressAt.expression)
         if (entry != null) {
             // already annotated with @suppress
@@ -89,18 +89,18 @@ public class KotlinSuppressIntentionAction(
         }
     }
 
-    private fun suppressAtExpression(caretBox: CaretBox<JetExpression>, id: String) {
+    private fun suppressAtExpression(caretBox: CaretBox<KtExpression>, id: String) {
         val suppressAt = caretBox.expression
-        assert(suppressAt !is JetDeclaration) { "Declarations should have been checked for above" }
+        assert(suppressAt !is KtDeclaration) { "Declarations should have been checked for above" }
 
         val parentheses = JetPsiPrecedences.getPrecedence(suppressAt) > JetPsiPrecedences.PRECEDENCE_OF_PREFIX_EXPRESSION
         val placeholderText = "PLACEHOLDER_ID"
         val inner = if (parentheses) "($placeholderText)" else placeholderText
-        val annotatedExpression = JetPsiFactory(suppressAt).createExpression(suppressAnnotationText(id) + "\n" + inner)
+        val annotatedExpression = KtPsiFactory(suppressAt).createExpression(suppressAnnotationText(id) + "\n" + inner)
 
         val copy = suppressAt.copy()!!
 
-        val afterReplace = suppressAt.replace(annotatedExpression) as JetAnnotatedExpression
+        val afterReplace = suppressAt.replace(annotatedExpression) as KtAnnotatedExpression
         val toReplace = afterReplace.findElementAt(afterReplace.getTextLength() - 2)!!
         assert (toReplace.getText() == placeholderText)
         val result = toReplace.replace(copy)!!
@@ -108,10 +108,10 @@ public class KotlinSuppressIntentionAction(
         caretBox.positionCaretInCopy(result)
     }
 
-    private fun addArgumentToSuppressAnnotation(entry: JetAnnotationEntry, id: String) {
+    private fun addArgumentToSuppressAnnotation(entry: KtAnnotationEntry, id: String) {
         // add new arguments to an existing entry
         val args = entry.getValueArgumentList()
-        val psiFactory = JetPsiFactory(entry)
+        val psiFactory = KtPsiFactory(entry)
         val newArgList = psiFactory.createCallArguments("($id)")
         if (args == null) {
             // new argument list
@@ -128,7 +128,7 @@ public class KotlinSuppressIntentionAction(
 
     private fun suppressAnnotationText(id: String) = "@Suppress($id)"
 
-    private fun findSuppressAnnotation(annotated: JetAnnotated): JetAnnotationEntry? {
+    private fun findSuppressAnnotation(annotated: KtAnnotated): KtAnnotationEntry? {
         val context = annotated.analyze()
         for (entry in annotated.getAnnotationEntries()) {
             val annotationDescriptor = context.get(BindingContext.ANNOTATION, entry)
@@ -142,11 +142,11 @@ public class KotlinSuppressIntentionAction(
 
 public class AnnotationHostKind(val kind: String, val name: String, val newLineNeeded: Boolean)
 
-private fun JetPsiFactory.createWhiteSpace(kind: AnnotationHostKind): PsiElement {
+private fun KtPsiFactory.createWhiteSpace(kind: AnnotationHostKind): PsiElement {
     return if (kind.newLineNeeded) createNewLine() else createWhiteSpace()
 }
 
-private class CaretBox<out E: JetExpression>(
+private class CaretBox<out E: KtExpression>(
         val expression: E,
         private val editor: Editor?
 ) {

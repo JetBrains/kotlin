@@ -30,24 +30,24 @@ import java.util.Map;
 
 public interface BodiesResolveContext {
     @ReadOnly
-    Collection<JetFile> getFiles();
+    Collection<KtFile> getFiles();
 
     @Mutable
-    Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses();
+    Map<KtClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses();
     @Mutable
-    Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> getAnonymousInitializers();
+    Map<KtClassInitializer, ClassDescriptorWithResolutionScopes> getAnonymousInitializers();
     @Mutable
-    Map<JetSecondaryConstructor, ConstructorDescriptor> getSecondaryConstructors();
+    Map<KtSecondaryConstructor, ConstructorDescriptor> getSecondaryConstructors();
     @Mutable
-    Map<JetScript, ScriptDescriptor> getScripts();
+    Map<KtScript, ScriptDescriptor> getScripts();
 
     @Mutable
-    Map<JetProperty, PropertyDescriptor> getProperties();
+    Map<KtProperty, PropertyDescriptor> getProperties();
     @Mutable
-    Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions();
+    Map<KtNamedFunction, SimpleFunctionDescriptor> getFunctions();
 
     @Nullable
-    LexicalScope getDeclaringScope(@NotNull JetDeclaration declaration);
+    LexicalScope getDeclaringScope(@NotNull KtDeclaration declaration);
 
     @NotNull
     DataFlowInfo getOuterDataFlowInfo();

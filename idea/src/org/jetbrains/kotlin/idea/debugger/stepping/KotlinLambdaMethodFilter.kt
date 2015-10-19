@@ -25,12 +25,12 @@ import com.intellij.psi.PsiElementFactory
 import com.intellij.util.Range
 import com.sun.jdi.Location
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public class KotlinLambdaMethodFilter(
-        lambda: JetFunctionLiteralExpression,
+        lambda: KtFunctionLiteralExpression,
         private val myCallingExpressionLines: Range<Int>
 ): BreakpointStepMethodFilter {
     private val myFirstStatementPosition: SourcePosition?

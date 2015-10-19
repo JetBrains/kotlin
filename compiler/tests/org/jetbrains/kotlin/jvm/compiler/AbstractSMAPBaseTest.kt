@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
@@ -44,7 +44,7 @@ public interface AbstractSMAPBaseTest {
         }.filterNotNull()
     }
 
-    private fun extractSmapFromSource(file: JetFile): SMAPAndFile? {
+    private fun extractSmapFromSource(file: KtFile): SMAPAndFile? {
         val fileContent = file.getText()
         val smapPrefix = "//SMAP"
         if (InTextDirectivesUtils.isDirectiveDefined(fileContent, smapPrefix)) {
@@ -58,7 +58,7 @@ public interface AbstractSMAPBaseTest {
         return null;
     }
 
-    fun checkSMAP(inputFiles: List<JetFile>, outputFiles: Iterable<OutputFile>) {
+    fun checkSMAP(inputFiles: List<KtFile>, outputFiles: Iterable<OutputFile>) {
         if (!InlineCodegenUtil.GENERATE_SMAP) {
             return
         }

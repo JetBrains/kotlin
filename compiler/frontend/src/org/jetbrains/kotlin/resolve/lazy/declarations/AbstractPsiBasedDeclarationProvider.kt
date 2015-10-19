@@ -32,29 +32,29 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
 
     protected class Index {
         // This mutable state is only modified under inside the computable
-        val allDeclarations = ArrayList<JetDeclaration>()
-        val functions = ArrayListMultimap.create<Name, JetNamedFunction>()
-        val properties = ArrayListMultimap.create<Name, JetProperty>()
+        val allDeclarations = ArrayList<KtDeclaration>()
+        val functions = ArrayListMultimap.create<Name, KtNamedFunction>()
+        val properties = ArrayListMultimap.create<Name, KtProperty>()
         val classesAndObjects = ArrayListMultimap.create<Name, JetClassLikeInfo>() // order matters here
 
-        public fun putToIndex(declaration: JetDeclaration) {
-            if (declaration is JetClassInitializer || declaration is JetSecondaryConstructor) return
+        public fun putToIndex(declaration: KtDeclaration) {
+            if (declaration is KtClassInitializer || declaration is KtSecondaryConstructor) return
 
             allDeclarations.add(declaration)
-            if (declaration is JetNamedFunction) {
+            if (declaration is KtNamedFunction) {
                 functions.put(safeNameForLazyResolve(declaration), declaration)
             }
-            else if (declaration is JetProperty) {
+            else if (declaration is KtProperty) {
                 properties.put(safeNameForLazyResolve(declaration), declaration)
             }
-            else if (declaration is JetClassOrObject) {
+            else if (declaration is KtClassOrObject) {
                 classesAndObjects.put(safeNameForLazyResolve(declaration.getNameAsName()), JetClassInfoUtil.createClassLikeInfo(declaration))
             }
-            else if (declaration is JetScript) {
+            else if (declaration is KtScript) {
                 val scriptInfo = JetScriptInfo(declaration)
                 classesAndObjects.put(scriptInfo.fqName.shortName(), scriptInfo)
             }
-            else if (declaration is JetParameter || declaration is JetTypedef || declaration is JetMultiDeclaration) {
+            else if (declaration is KtParameter || declaration is KtTypedef || declaration is KtMultiDeclaration) {
                 // Do nothing, just put it into allDeclarations is enough
             }
             else {
@@ -71,13 +71,13 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
 
     protected abstract fun doCreateIndex(index: Index)
 
-    override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration>
+    override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration>
             = index().allDeclarations
 
-    override fun getFunctionDeclarations(name: Name): List<JetNamedFunction>
+    override fun getFunctionDeclarations(name: Name): List<KtNamedFunction>
             = index().functions[ResolveSessionUtils.safeNameForLazyResolve(name)].toList()
 
-    override fun getPropertyDeclarations(name: Name): List<JetProperty>
+    override fun getPropertyDeclarations(name: Name): List<KtProperty>
             = index().properties[ResolveSessionUtils.safeNameForLazyResolve(name)].toList()
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo>

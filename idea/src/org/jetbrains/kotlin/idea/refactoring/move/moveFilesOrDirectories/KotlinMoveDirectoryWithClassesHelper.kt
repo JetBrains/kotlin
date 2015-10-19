@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.refactoring.invokeOnceOnCommandFinish
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -66,7 +66,7 @@ public class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelp
             searchInNonJavaFiles: Boolean,
             project: Project) {
         filesToMove
-                .filterIsInstance<JetFile>()
+                .filterIsInstance<KtFile>()
                 .mapTo(result) { FileUsagesWrapper(it, fileHandler.findUsages(it, null, searchInComments, searchInNonJavaFiles), null) }
     }
 
@@ -82,7 +82,7 @@ public class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelp
             movedFiles: MutableList<PsiFile>,
             listener: RefactoringElementListener?
     ): Boolean {
-        if (file !is JetFile) return false
+        if (file !is KtFile) return false
 
         val moveDeclarationsProcessor = fileHandler.initMoveProcessor(file, moveDestination)
         val moveContextMap = getOrCreateMoveContextMap()

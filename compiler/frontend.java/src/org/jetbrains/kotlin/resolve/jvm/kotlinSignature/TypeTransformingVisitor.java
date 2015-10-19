@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.*;
@@ -42,16 +42,16 @@ import java.util.*;
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.TYPE_ARGUMENT;
 import static org.jetbrains.kotlin.types.Variance.INVARIANT;
 
-public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
+public class TypeTransformingVisitor extends KtVisitor<KtType, Void> {
     private static boolean strictMode = false;
 
-    private final JetType originalType;
+    private final KtType originalType;
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters;
 
     private final TypeUsage typeUsage;
 
     private TypeTransformingVisitor(
-            JetType originalType,
+            KtType originalType,
             Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters,
             TypeUsage typeUsage
     ) {
@@ -61,30 +61,30 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     @NotNull
-    public static JetType computeType(
-            @NotNull JetTypeElement alternativeTypeElement,
-            @NotNull JetType originalType,
+    public static KtType computeType(
+            @NotNull KtTypeElement alternativeTypeElement,
+            @NotNull KtType originalType,
             @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters,
             @NotNull TypeUsage typeUsage
     ) {
-        JetType computedType = alternativeTypeElement.accept(new TypeTransformingVisitor(originalType, originalToAltTypeParameters, typeUsage), null);
+        KtType computedType = alternativeTypeElement.accept(new TypeTransformingVisitor(originalType, originalToAltTypeParameters, typeUsage), null);
         assert (computedType != null);
         return computedType;
     }
 
     @Override
-    public JetType visitNullableType(@NotNull JetNullableType nullableType, Void aVoid) {
+    public KtType visitNullableType(@NotNull KtNullableType nullableType, Void aVoid) {
         if (!TypeUtils.isNullableType(originalType) && typeUsage != TYPE_ARGUMENT) {
             throw new AlternativeSignatureMismatchException("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
                  DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(originalType), nullableType.getText());
         }
-        JetTypeElement innerType = nullableType.getInnerType();
+        KtTypeElement innerType = nullableType.getInnerType();
         assert innerType != null : "Syntax error: " + nullableType.getText();
         return TypeUtils.makeNullable(computeType(innerType, originalType, originalToAltTypeParameters, typeUsage));
     }
 
     @Override
-    public JetType visitFunctionType(@NotNull JetFunctionType type, Void data) {
+    public KtType visitFunctionType(@NotNull KtFunctionType type, Void data) {
         KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
         return visitCommonType(type.getReceiverTypeReference() == null
                 ? builtIns.getFunction(type.getParameters().size())
@@ -92,8 +92,8 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     @Override
-    public JetType visitUserType(@NotNull JetUserType type, Void data) {
-        JetUserType qualifier = type.getQualifier();
+    public KtType visitUserType(@NotNull KtUserType type, Void data) {
+        KtUserType qualifier = type.getQualifier();
 
         //noinspection ConstantConditions
         String shortName = type.getReferenceExpression().getReferencedName();
@@ -102,12 +102,12 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         return visitCommonType(longName, type);
     }
 
-    private JetType visitCommonType(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeElement type) {
+    private KtType visitCommonType(@NotNull ClassDescriptor classDescriptor, @NotNull KtTypeElement type) {
         return visitCommonType(DescriptorUtils.getFqNameSafe(classDescriptor).asString(), type);
     }
 
     @NotNull
-    private JetType visitCommonType(@NotNull String qualifiedName, @NotNull JetTypeElement type) {
+    private KtType visitCommonType(@NotNull String qualifiedName, @NotNull KtTypeElement type) {
         if (originalType.isError()) {
             return originalType;
         }
@@ -148,7 +148,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             altArguments.add(getAltArgument(type, typeConstructor, i, arguments.get(i)));
         }
 
-        JetScope memberScope;
+        KtScope memberScope;
         if (typeConstructorClassifier instanceof TypeParameterDescriptor) {
             memberScope = ((TypeParameterDescriptor) typeConstructorClassifier).getUpperBoundsAsType().getMemberScope();
         }
@@ -159,35 +159,35 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             throw new AssertionError("Unexpected class of type constructor classifier "
                                      + (typeConstructorClassifier == null ? "null" : typeConstructorClassifier.getClass().getName()));
         }
-        return JetTypeImpl.create(originalType.getAnnotations(), typeConstructor, false, altArguments, memberScope);
+        return KtTypeImpl.create(originalType.getAnnotations(), typeConstructor, false, altArguments, memberScope);
     }
 
     @NotNull
     private TypeProjection getAltArgument(
-            @NotNull JetTypeElement type,
+            @NotNull KtTypeElement type,
             @NotNull TypeConstructor typeConstructor,
             int i,
             @NotNull TypeProjection originalArgument
     ) {
-        JetTypeReference typeReference = type.getTypeArgumentsAsTypes().get(i); // process both function type and user type
+        KtTypeReference typeReference = type.getTypeArgumentsAsTypes().get(i); // process both function type and user type
 
         if (typeReference == null) {
             // star projection
-            assert type instanceof JetUserType
-                   && ((JetUserType) type).getTypeArguments().get(i).getProjectionKind() == JetProjectionKind.STAR;
+            assert type instanceof KtUserType
+                   && ((KtUserType) type).getTypeArguments().get(i).getProjectionKind() == KtProjectionKind.STAR;
 
             return originalArgument;
         }
 
-        JetTypeElement argumentAlternativeTypeElement = typeReference.getTypeElement();
+        KtTypeElement argumentAlternativeTypeElement = typeReference.getTypeElement();
         assert argumentAlternativeTypeElement != null;
 
         TypeParameterDescriptor parameter = typeConstructor.getParameters().get(i);
-        JetType alternativeArgumentType = computeType(argumentAlternativeTypeElement, originalArgument.getType(), originalToAltTypeParameters, TYPE_ARGUMENT);
+        KtType alternativeArgumentType = computeType(argumentAlternativeTypeElement, originalArgument.getType(), originalToAltTypeParameters, TYPE_ARGUMENT);
         Variance projectionKind = originalArgument.getProjectionKind();
         Variance altProjectionKind;
-        if (type instanceof JetUserType) {
-            JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
+        if (type instanceof KtUserType) {
+            KtTypeProjection typeProjection = ((KtUserType) type).getTypeArguments().get(i);
             altProjectionKind = TypeResolver.resolveProjectionKind(typeProjection.getProjectionKind());
             if (altProjectionKind != projectionKind && projectionKind != Variance.INVARIANT && !JavaDescriptorResolverKt.getPLATFORM_TYPES()) {
                 throw new AlternativeSignatureMismatchException("Projection kind mismatch, actual: %s, in alternative signature: %s",
@@ -234,7 +234,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     @Override
-    public JetType visitSelfType(@NotNull JetSelfType type, Void data) {
+    public KtType visitSelfType(@NotNull KtSelfType type, Void data) {
         throw new UnsupportedOperationException("Self-types are not supported yet");
     }
 

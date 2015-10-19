@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
 import com.google.common.collect.Maps
 import com.google.common.collect.Lists
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public class NondeterministicJumpInstruction(
-        element: JetElement,
+        element: KtElement,
         targetLabels: List<Label>,
         lexicalScope: LexicalScope,
         public val inputValue: PseudoValue?

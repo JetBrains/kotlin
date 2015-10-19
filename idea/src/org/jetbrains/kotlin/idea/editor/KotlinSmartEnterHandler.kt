@@ -24,18 +24,18 @@ import com.intellij.util.text.CharArrayUtil
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetForExpression
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.JetNodeTypes
-import org.jetbrains.kotlin.psi.JetLoopExpression
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.psi.KtLoopExpression
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
@@ -68,12 +68,12 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
         while (atCaret != null) {
             when {
                 atCaret.isJetStatement() == true -> return atCaret
-                atCaret.getParent() is JetFunctionLiteral -> return atCaret
-                atCaret is JetDeclaration -> {
+                atCaret.getParent() is KtFunctionLiteral -> return atCaret
+                atCaret is KtDeclaration -> {
                     val declaration = atCaret
                     when {
-                        declaration is JetParameter && !declaration.isInLambdaExpression() -> {/* proceed to function declaration */}
-                        declaration.getParent() is JetForExpression -> {/* skip variable declaration in 'for' expression */}
+                        declaration is KtParameter && !declaration.isInLambdaExpression() -> {/* proceed to function declaration */}
+                        declaration.getParent() is KtForExpression -> {/* skip variable declaration in 'for' expression */}
                         else -> return atCaret
                     }
                 }
@@ -106,7 +106,7 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
             val settings = CodeStyleSettingsManager.getSettings(file.getProject())
             val old = settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE
             settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = false
-            val elt = file.findElementAt(caretOffset - 1)!!.getStrictParentOfType<JetBlockExpression>()
+            val elt = file.findElementAt(caretOffset - 1)!!.getStrictParentOfType<KtBlockExpression>()
             if (elt != null) {
                 reformat(elt)
             }
@@ -122,27 +122,27 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
     }
 
     private fun PsiElement.isJetStatement() = when {
-        getParent() is JetBlockExpression && getNode()?.getElementType() !in BRACES -> true
-        getParent()?.getNode()?.getElementType() in BRANCH_CONTAINERS && this !is JetBlockExpression -> true
+        getParent() is KtBlockExpression && getNode()?.getElementType() !in BRACES -> true
+        getParent()?.getNode()?.getElementType() in BRANCH_CONTAINERS && this !is KtBlockExpression -> true
         else -> false
     }
 
     class KotlinPlainEnterProcessor : SmartEnterProcessorWithFixers.FixEnterProcessor() {
-        private fun getControlStatementBlock(caret: Int, element: PsiElement): JetExpression? {
+        private fun getControlStatementBlock(caret: Int, element: PsiElement): KtExpression? {
             when (element) {
-                is JetDeclarationWithBody -> return element.getBodyExpression()
-                is JetIfExpression -> {
+                is KtDeclarationWithBody -> return element.getBodyExpression()
+                is KtIfExpression -> {
                     if (element.getThen().isWithCaret(caret)) return element.getThen()
                     if (element.getElse().isWithCaret(caret)) return element.getElse()
                 }
-                is JetLoopExpression -> return element.getBody()
+                is KtLoopExpression -> return element.getBody()
             }
 
             return null
         }
 
         override fun doEnter(atCaret: PsiElement, file: PsiFile?, editor: Editor, modified: Boolean): Boolean {
-            val block = getControlStatementBlock(editor.getCaretModel().getOffset(), atCaret) as? JetBlockExpression
+            val block = getControlStatementBlock(editor.getCaretModel().getOffset(), atCaret) as? KtBlockExpression
             if (block != null) {
                 val firstElement = block.getFirstChild()?.getNextSibling()
 
@@ -161,6 +161,6 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
     }
 }
 
-private val BRANCH_CONTAINERS = TokenSet.create(JetNodeTypes.THEN, JetNodeTypes.ELSE, JetNodeTypes.BODY)
-private val BRACES = TokenSet.create(JetTokens.RBRACE, JetTokens.LBRACE)
-private fun JetParameter.isInLambdaExpression() = this.getParent()?.getParent() is JetFunctionLiteral
+private val BRANCH_CONTAINERS = TokenSet.create(KtNodeTypes.THEN, KtNodeTypes.ELSE, KtNodeTypes.BODY)
+private val BRACES = TokenSet.create(KtTokens.RBRACE, KtTokens.LBRACE)
+private fun KtParameter.isInLambdaExpression() = this.getParent()?.getParent() is KtFunctionLiteral

@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.references.JetMultiReference
+import org.jetbrains.kotlin.idea.references.KtMultiReference
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
-public class KDocReference(element: KDocName): JetMultiReference<KDocName>(element) {
+public class KDocReference(element: KDocName): KtMultiReference<KDocName>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val declaration = getElement().getContainingDoc().getOwner()
         if (declaration == null) {
@@ -127,7 +127,7 @@ private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedNam
     return getParamDescriptors(fromDescriptor).filter { it.getName().asString() == name }
 }
 
-private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): JetScope {
+private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): KtScope {
     return descriptor.getContainingDeclaration().getPackage(descriptor.fqName).memberScope
 }
 
@@ -176,7 +176,7 @@ public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: De
 private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, resolutionFacade: ResolutionFacade): LexicalScope {
     val parent = descriptor.getContainingDeclaration()
     if (parent is PackageFragmentDescriptor) {
-        val containingFile = (descriptor.getSource() as? PsiSourceElement)?.psi?.getContainingFile() as? JetFile
+        val containingFile = (descriptor.getSource() as? PsiSourceElement)?.psi?.getContainingFile() as? KtFile
         if (containingFile != null) {
             return resolutionFacade.getFileTopLevelScope(containingFile)
         }

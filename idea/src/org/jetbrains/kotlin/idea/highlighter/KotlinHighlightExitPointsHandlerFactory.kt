@@ -27,7 +27,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Consumer
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -37,15 +37,15 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 public class KotlinHighlightExitPointsHandlerFactory: HighlightUsagesHandlerFactoryBase() {
     companion object {
-        private val RETURN_AND_THROW = TokenSet.create(JetTokens.RETURN_KEYWORD, JetTokens.THROW_KEYWORD)
+        private val RETURN_AND_THROW = TokenSet.create(KtTokens.RETURN_KEYWORD, KtTokens.THROW_KEYWORD)
     }
 
     override fun createHighlightUsagesHandler(editor: Editor, file: PsiFile, target: PsiElement): HighlightUsagesHandlerBase<*>? {
         if (target is LeafPsiElement && (target.getElementType() in RETURN_AND_THROW)) {
-            val returnOrThrow = PsiTreeUtil.getParentOfType<JetExpression>(
+            val returnOrThrow = PsiTreeUtil.getParentOfType<KtExpression>(
                     target,
-                    javaClass<JetReturnExpression>(),
-                    javaClass<JetThrowExpression>()
+                    javaClass<KtReturnExpression>(),
+                    javaClass<KtThrowExpression>()
             ) ?: return null
 
             return MyHandler(editor, file, returnOrThrow)
@@ -53,7 +53,7 @@ public class KotlinHighlightExitPointsHandlerFactory: HighlightUsagesHandlerFact
         return null
     }
 
-    private class MyHandler(editor: Editor, file: PsiFile, val target: JetExpression) : HighlightUsagesHandlerBase<PsiElement>(editor, file) {
+    private class MyHandler(editor: Editor, file: PsiFile, val target: KtExpression) : HighlightUsagesHandlerBase<PsiElement>(editor, file) {
         override fun getTargets() = listOf(target)
 
         override fun selectTargets(targets: MutableList<PsiElement>, selectionConsumer: Consumer<MutableList<PsiElement>>) {
@@ -62,22 +62,22 @@ public class KotlinHighlightExitPointsHandlerFactory: HighlightUsagesHandlerFact
 
         override fun computeUsages(targets: MutableList<PsiElement>?) {
             val relevantFunction = target.getRelevantFunction()
-            relevantFunction?.accept(object : JetVisitorVoid() {
-                override fun visitJetElement(element: JetElement) {
+            relevantFunction?.accept(object : KtVisitorVoid() {
+                override fun visitJetElement(element: KtElement) {
                     element.acceptChildren(this)
                 }
 
-                private fun visitReturnOrThrow(expression: JetExpression) {
+                private fun visitReturnOrThrow(expression: KtExpression) {
                     if (expression.getRelevantFunction() == relevantFunction) {
                         addOccurrence(expression)
                     }
                 }
 
-                override fun visitReturnExpression(expression: JetReturnExpression) {
+                override fun visitReturnExpression(expression: KtReturnExpression) {
                     visitReturnOrThrow(expression)
                 }
 
-                override fun visitThrowExpression(expression: JetThrowExpression) {
+                override fun visitThrowExpression(expression: KtThrowExpression) {
                     visitReturnOrThrow(expression)
                 }
             })
@@ -85,13 +85,13 @@ public class KotlinHighlightExitPointsHandlerFactory: HighlightUsagesHandlerFact
     }
 }
 
-private fun JetExpression.getRelevantFunction(): JetFunction? {
-    if (this is JetReturnExpression) {
-        (this.getTargetLabel()?.mainReference?.resolve() as? JetFunction)?.let { return it }
+private fun KtExpression.getRelevantFunction(): KtFunction? {
+    if (this is KtReturnExpression) {
+        (this.getTargetLabel()?.mainReference?.resolve() as? KtFunction)?.let { return it }
     }
     for (parent in parents) {
-        if (InlineUtil.canBeInlineArgument(parent) && !InlineUtil.isInlinedArgument(parent as JetFunction, parent.analyze(), false)) {
-            return parent as JetFunction
+        if (InlineUtil.canBeInlineArgument(parent) && !InlineUtil.isInlinedArgument(parent as KtFunction, parent.analyze(), false)) {
+            return parent as KtFunction
         }
     }
     return null

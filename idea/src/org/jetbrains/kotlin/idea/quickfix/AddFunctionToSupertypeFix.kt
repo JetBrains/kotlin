@@ -34,19 +34,19 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
 class AddFunctionToSupertypeFix private constructor(
-        element: JetNamedFunction,
+        element: KtNamedFunction,
         private val functions: List<AddFunctionToSupertypeFix.FunctionData>
-) : KotlinQuickFixAction<JetNamedFunction>(element), LowPriorityAction {
+) : KotlinQuickFixAction<KtNamedFunction>(element), LowPriorityAction {
 
     init {
         assert(functions.isNotEmpty())
@@ -55,7 +55,7 @@ class AddFunctionToSupertypeFix private constructor(
     private class FunctionData(
             val signaturePreview: String,
             val sourceCode: String,
-            val targetClass: JetClass
+            val targetClass: KtClass
     )
 
     override fun getText(): String {
@@ -68,7 +68,7 @@ class AddFunctionToSupertypeFix private constructor(
 
     override fun getFamilyName() = "Add function to supertype"
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         CommandProcessor.getInstance().runUndoTransparentAction(object : Runnable {
             override fun run() {
                 if (functions.size == 1 || editor == null || !editor.component.isShowing) {
@@ -85,8 +85,8 @@ class AddFunctionToSupertypeFix private constructor(
         project.executeWriteCommand("Add Function to Type") {
             val classBody = functionData.targetClass.getOrCreateBody()
 
-            val functionElement = JetPsiFactory(project).createFunction(functionData.sourceCode)
-            val insertedFunctionElement = classBody.addBefore(functionElement, classBody.rBrace) as JetNamedFunction
+            val functionElement = KtPsiFactory(project).createFunction(functionData.sourceCode)
+            val insertedFunctionElement = classBody.addBefore(functionElement, classBody.rBrace) as KtNamedFunction
 
             ShortenReferences.DEFAULT.process(insertedFunctionElement)
         }
@@ -113,7 +113,7 @@ class AddFunctionToSupertypeFix private constructor(
 
     companion object: JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val function = diagnostic.psiElement as? JetNamedFunction ?: return null
+            val function = diagnostic.psiElement as? KtNamedFunction ?: return null
 
             val descriptors = generateFunctionsToAdd(function)
             if (descriptors.isEmpty()) return null
@@ -139,14 +139,14 @@ class AddFunctionToSupertypeFix private constructor(
                 }
             }
 
-            val targetClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor) as? JetClass ?: return null
+            val targetClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classDescriptor) as? KtClass ?: return null
             return FunctionData(
                     IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(functionDescriptor),
                     sourceCode,
                     targetClass)
         }
 
-        private fun generateFunctionsToAdd(functionElement: JetNamedFunction): List<FunctionDescriptor> {
+        private fun generateFunctionsToAdd(functionElement: KtNamedFunction): List<FunctionDescriptor> {
             val functionDescriptor = functionElement.resolveToDescriptor() as FunctionDescriptor
 
             val containingClass = functionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
@@ -158,12 +158,12 @@ class AddFunctionToSupertypeFix private constructor(
         }
 
         private fun getSuperClasses(classDescriptor: ClassDescriptor): List<ClassDescriptor> {
-            val supertypes = classDescriptor.defaultType.supertypes().sortedWith(object : Comparator<JetType> {
-                override fun compare(o1: JetType, o2: JetType): Int {
+            val supertypes = classDescriptor.defaultType.supertypes().sortedWith(object : Comparator<KtType> {
+                override fun compare(o1: KtType, o2: KtType): Int {
                     return when {
                         o1 == o2 -> 0
-                        JetTypeChecker.DEFAULT.isSubtypeOf(o1, o2) -> -1
-                        JetTypeChecker.DEFAULT.isSubtypeOf(o2, o1) -> 1
+                        KotlinTypeChecker.DEFAULT.isSubtypeOf(o1, o2) -> -1
+                        KotlinTypeChecker.DEFAULT.isSubtypeOf(o2, o1) -> 1
                         else -> o1.toString().compareTo(o2.toString())
                     }
                 }

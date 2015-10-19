@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
@@ -71,7 +71,7 @@ public final class MutableClosure implements CalculatedClosure {
     }
 
     @Override
-    public JetType getCaptureReceiverType() {
+    public KtType getCaptureReceiverType() {
         if (captureReceiver) {
             ReceiverParameterDescriptor parameter = getEnclosingReceiverDescriptor();
             assert parameter != null : "Receiver parameter should exist in " + enclosingFunWithReceiverDescriptor;

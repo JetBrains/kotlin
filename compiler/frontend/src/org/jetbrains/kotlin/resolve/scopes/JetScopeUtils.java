@@ -39,7 +39,7 @@ public final class JetScopeUtils {
     private JetScopeUtils() {}
 
     @NotNull
-    public static List<ReceiverValue> getImplicitReceiversHierarchyValues(@NotNull JetScope scope) {
+    public static List<ReceiverValue> getImplicitReceiversHierarchyValues(@NotNull KtScope scope) {
         Collection<ReceiverParameterDescriptor> hierarchy = scope.getImplicitReceiversHierarchy();
 
         return Lists.newArrayList(
@@ -136,7 +136,7 @@ public final class JetScopeUtils {
 
     @TestOnly
     @NotNull
-    public static String printStructure(@Nullable JetScope scope) {
+    public static String printStructure(@Nullable KtScope scope) {
         StringBuilder out = new StringBuilder();
         Printer p = new Printer(out);
         if (scope == null) {

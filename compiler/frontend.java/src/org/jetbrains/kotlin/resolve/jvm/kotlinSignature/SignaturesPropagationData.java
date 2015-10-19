@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapperKt;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.*;
@@ -66,7 +66,7 @@ public class SignaturesPropagationData {
     private final List<TypeParameterDescriptor> modifiedTypeParameters;
     private final ValueParameters modifiedValueParameters;
 
-    private final JetType modifiedReturnType;
+    private final KtType modifiedReturnType;
     private final List<String> signatureErrors = Lists.newArrayList();
     private final List<FunctionDescriptor> superFunctions;
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> autoTypeParameterToModified;
@@ -74,8 +74,8 @@ public class SignaturesPropagationData {
 
     public SignaturesPropagationData(
             @NotNull ClassDescriptor containingClass,
-            @NotNull JetType autoReturnType, // type built by JavaTypeTransformer from Java signature and @NotNull annotations
-            @Nullable JetType receiverType,
+            @NotNull KtType autoReturnType, // type built by JavaTypeTransformer from Java signature and @NotNull annotations
+            @Nullable KtType receiverType,
             @NotNull List<ValueParameterDescriptor> autoValueParameters, // descriptors built by parameters resolver
             @NotNull List<TypeParameterDescriptor> autoTypeParameters, // descriptors built by signature resolver
             @NotNull JavaMethod method
@@ -97,8 +97,8 @@ public class SignaturesPropagationData {
     @NotNull
     private static JavaMethodDescriptor createAutoMethodDescriptor(
             @NotNull ClassDescriptor containingClass,
-            @NotNull JavaMethod method, JetType autoReturnType,
-            @Nullable JetType receiverType,
+            @NotNull JavaMethod method, KtType autoReturnType,
+            @Nullable KtType receiverType,
             @NotNull List<ValueParameterDescriptor> autoValueParameters,
             @NotNull List<TypeParameterDescriptor> autoTypeParameters
     ) {
@@ -125,7 +125,7 @@ public class SignaturesPropagationData {
         return modifiedTypeParameters;
     }
 
-    public JetType getModifiedReceiverType() {
+    public KtType getModifiedReceiverType() {
         return modifiedValueParameters.receiverType;
     }
 
@@ -137,7 +137,7 @@ public class SignaturesPropagationData {
         return modifiedValueParameters.hasStableParameterNames;
     }
 
-    public JetType getModifiedReturnType() {
+    public KtType getModifiedReturnType() {
         return modifiedReturnType;
     }
 
@@ -153,8 +153,8 @@ public class SignaturesPropagationData {
         signatureErrors.add(error);
     }
 
-    private JetType modifyReturnTypeAccordingToSuperMethods(
-            @NotNull JetType autoType // type built by JavaTypeTransformer
+    private KtType modifyReturnTypeAccordingToSuperMethods(
+            @NotNull KtType autoType // type built by JavaTypeTransformer
     ) {
         if (JavaDescriptorResolverKt.getPLATFORM_TYPES()) return autoType;
 
@@ -179,24 +179,24 @@ public class SignaturesPropagationData {
             int index = autoParameter.getIndex();
             TypeParameterDescriptorImpl modifiedTypeParameter = autoTypeParameterToModified.get(autoParameter);
 
-            List<Iterator<JetType>> upperBoundFromSuperFunctionsIterators = Lists.newArrayList();
+            List<Iterator<KtType>> upperBoundFromSuperFunctionsIterators = Lists.newArrayList();
             for (FunctionDescriptor superFunction : superFunctions) {
                 upperBoundFromSuperFunctionsIterators.add(superFunction.getTypeParameters().get(index).getUpperBounds().iterator());
             }
 
-            for (JetType autoUpperBound : autoParameter.getUpperBounds()) {
+            for (KtType autoUpperBound : autoParameter.getUpperBounds()) {
                 List<TypeAndVariance> upperBoundsFromSuperFunctions = Lists.newArrayList();
 
-                for (Iterator<JetType> iterator : upperBoundFromSuperFunctionsIterators) {
+                for (Iterator<KtType> iterator : upperBoundFromSuperFunctionsIterators) {
                     assert iterator.hasNext();
                     upperBoundsFromSuperFunctions.add(new TypeAndVariance(iterator.next(), INVARIANT));
                 }
 
-                JetType modifiedUpperBound = modifyTypeAccordingToSuperMethods(autoUpperBound, upperBoundsFromSuperFunctions, UPPER_BOUND);
+                KtType modifiedUpperBound = modifyTypeAccordingToSuperMethods(autoUpperBound, upperBoundsFromSuperFunctions, UPPER_BOUND);
                 modifiedTypeParameter.addUpperBound(modifiedUpperBound);
             }
 
-            for (Iterator<JetType> iterator : upperBoundFromSuperFunctionsIterators) {
+            for (Iterator<KtType> iterator : upperBoundFromSuperFunctionsIterators) {
                 assert !iterator.hasNext();
             }
 
@@ -208,14 +208,14 @@ public class SignaturesPropagationData {
     }
 
     private ValueParameters modifyValueParametersAccordingToSuperMethods(
-            @Nullable JetType receiverType,
+            @Nullable KtType receiverType,
             @NotNull List<ValueParameterDescriptor> parameters // descriptors built by parameters resolver
     ) {
         assert receiverType == null : "Parameters before propagation have receiver type," +
                                       " but propagation should be disabled for functions compiled from Kotlin in class: " +
                                       DescriptorUtils.getFqName(containingClass);
 
-        JetType resultReceiverType = null;
+        KtType resultReceiverType = null;
         List<ValueParameterDescriptor> resultParameters = new ArrayList<ValueParameterDescriptor>(parameters.size());
 
         boolean shouldBeExtension = checkIfShouldBeExtension();
@@ -239,9 +239,9 @@ public class SignaturesPropagationData {
 
             VarargCheckResult varargCheckResult = checkVarargInSuperFunctions(originalParam);
 
-            JetType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType,
-                                                                convertToTypeVarianceList(typesFromSuperMethods),
-                                                                MEMBER_SIGNATURE_CONTRAVARIANT);
+            KtType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType,
+                                                               convertToTypeVarianceList(typesFromSuperMethods),
+                                                               MEMBER_SIGNATURE_CONTRAVARIANT);
 
             if (shouldBeExtension && originalIndex == 0) {
                 resultReceiverType = altType;
@@ -304,7 +304,7 @@ public class SignaturesPropagationData {
         // TODO: Add propagation for other kotlin descriptors (KT-3621)
         Name name = method.getName();
         JvmMethodSignature autoSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(autoMethodDescriptor);
-        for (JetType supertype : containingClass.getTypeConstructor().getSupertypes()) {
+        for (KtType supertype : containingClass.getTypeConstructor().getSupertypes()) {
             Collection<FunctionDescriptor> superFunctionCandidates = supertype.getMemberScope().getFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS);
             for (FunctionDescriptor candidate : superFunctionCandidates) {
                 JvmMethodSignature candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
@@ -365,8 +365,8 @@ public class SignaturesPropagationData {
             }
         }
 
-        JetType originalVarargElementType = originalParam.getVarargElementType();
-        JetType originalType = originalParam.getType();
+        KtType originalVarargElementType = originalParam.getVarargElementType();
+        KtType originalType = originalParam.getType();
 
         if (someSupersVararg && someSupersNotVararg) {
             reportError("Incompatible super methods: some have vararg parameter, some have not");
@@ -389,8 +389,8 @@ public class SignaturesPropagationData {
     }
 
     @NotNull
-    private JetType modifyTypeAccordingToSuperMethods(
-            @NotNull JetType autoType,
+    private KtType modifyTypeAccordingToSuperMethods(
+            @NotNull KtType autoType,
             @NotNull List<TypeAndVariance> typesFromSuper,
             @NotNull TypeUsage howThisTypeIsUsed
     ) {
@@ -401,7 +401,7 @@ public class SignaturesPropagationData {
         boolean resultNullable = typeMustBeNullable(autoType, typesFromSuper, howThisTypeIsUsed);
         ClassifierDescriptor resultClassifier = modifyTypeClassifier(autoType, typesFromSuper);
         List<TypeProjection> resultArguments = getTypeArgsOfType(autoType, resultClassifier, typesFromSuper);
-        JetScope resultScope;
+        KtScope resultScope;
         if (resultClassifier instanceof ClassDescriptor) {
             resultScope = ((ClassDescriptor) resultClassifier).getMemberScope(resultArguments);
         }
@@ -409,11 +409,11 @@ public class SignaturesPropagationData {
             resultScope = autoType.getMemberScope();
         }
 
-        JetType type = JetTypeImpl.create(autoType.getAnnotations(),
-                                           resultClassifier.getTypeConstructor(),
-                                           resultNullable,
-                                           resultArguments,
-                                           resultScope);
+        KtType type = KtTypeImpl.create(autoType.getAnnotations(),
+                                        resultClassifier.getTypeConstructor(),
+                                        resultNullable,
+                                        resultArguments,
+                                        resultScope);
 
         PropagationHeuristics.checkArrayInReturnType(this, type, typesFromSuper);
         return type;
@@ -421,7 +421,7 @@ public class SignaturesPropagationData {
 
     @NotNull
     private List<TypeProjection> getTypeArgsOfType(
-            @NotNull JetType autoType,
+            @NotNull KtType autoType,
             @NotNull ClassifierDescriptor classifier,
             @NotNull List<TypeAndVariance> typesFromSuper
     ) {
@@ -444,11 +444,11 @@ public class SignaturesPropagationData {
         for (TypeParameterDescriptor parameter : classifier.getTypeConstructor().getParameters()) {
             TypeProjection argument = autoArguments.get(parameter.getIndex());
 
-            JetType argumentType = argument.getType();
+            KtType argumentType = argument.getType();
             List<TypeProjectionAndVariance> projectionsFromSuper = typeArgumentsFromSuper.get(parameter.getIndex());
             List<TypeAndVariance> argTypesFromSuper = getTypes(projectionsFromSuper);
 
-            JetType type = modifyTypeAccordingToSuperMethods(argumentType, argTypesFromSuper, TYPE_ARGUMENT);
+            KtType type = modifyTypeAccordingToSuperMethods(argumentType, argTypesFromSuper, TYPE_ARGUMENT);
             Variance projectionKind = calculateArgumentProjectionKindFromSuper(argument, projectionsFromSuper);
 
             resultArguments.add(new TypeProjectionImpl(projectionKind, type));
@@ -567,7 +567,7 @@ public class SignaturesPropagationData {
     }
 
     private boolean typeMustBeNullable(
-            @NotNull JetType autoType,
+            @NotNull KtType autoType,
             @NotNull List<TypeAndVariance> typesFromSuper,
             @NotNull TypeUsage howThisTypeIsUsed
     ) {
@@ -611,7 +611,7 @@ public class SignaturesPropagationData {
 
     @NotNull
     private ClassifierDescriptor modifyTypeClassifier(
-            @NotNull JetType autoType,
+            @NotNull KtType autoType,
             @NotNull List<TypeAndVariance> typesFromSuper
     ) {
         ClassifierDescriptor classifier = autoType.getConstructor().getDeclarationDescriptor();
@@ -666,15 +666,15 @@ public class SignaturesPropagationData {
         return fixed != null ? fixed : classifier;
     }
 
-    private static boolean isArrayType(@NotNull JetType type) {
+    private static boolean isArrayType(@NotNull KtType type) {
         return KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type);
     }
 
     private static class VarargCheckResult {
-        public final JetType parameterType;
+        public final KtType parameterType;
         public final boolean isVararg;
 
-        public VarargCheckResult(JetType parameterType, boolean isVararg) {
+        public VarargCheckResult(KtType parameterType, boolean isVararg) {
             this.parameterType = parameterType;
             this.isVararg = isVararg;
         }
@@ -695,10 +695,10 @@ public class SignaturesPropagationData {
     }
 
     static class TypeAndVariance {
-        public final JetType type;
+        public final KtType type;
         public final Variance varianceOfPosition;
 
-        public TypeAndVariance(JetType type, Variance varianceOfPosition) {
+        public TypeAndVariance(KtType type, Variance varianceOfPosition) {
             this.type = type;
             this.varianceOfPosition = varianceOfPosition;
         }
@@ -709,22 +709,22 @@ public class SignaturesPropagationData {
     }
 
     private static class TypeAndName {
-        public final JetType type;
+        public final KtType type;
         public final Name name;
 
-        public TypeAndName(JetType type, Name name) {
+        public TypeAndName(KtType type, Name name) {
             this.type = type;
             this.name = name;
         }
     }
 
     private static class ValueParameters {
-        private final JetType receiverType;
+        private final KtType receiverType;
         private final List<ValueParameterDescriptor> descriptors;
         private final boolean hasStableParameterNames;
 
         public ValueParameters(
-                @Nullable JetType receiverType,
+                @Nullable KtType receiverType,
                 @NotNull List<ValueParameterDescriptor> descriptors,
                 boolean hasStableParameterNames
         ) {

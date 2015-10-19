@@ -61,7 +61,7 @@ public class StringTemplateExpressionManipulatorTest : JetLightCodeInsightFixtur
     }
 
     private fun doTestContentChange(original: String, newContent: String, expected: String, range: TextRange? = null) {
-        val expression = JetPsiFactory(getProject()).createExpression(original) as JetStringTemplateExpression
+        val expression = KtPsiFactory(getProject()).createExpression(original) as KtStringTemplateExpression
         val manipulator = ElementManipulators.getNotNullManipulator(expression)
         val newExpression = if (range == null) manipulator.handleContentChange(expression, newContent) else manipulator.handleContentChange(expression, range, newContent)
         assertEquals(expected, newExpression.getText())

@@ -25,9 +25,8 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCacheImpl;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingContext> {
 
@@ -36,7 +35,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull JetType expectedType
+            @NotNull KtType expectedType
     ) {
         return newContext(trace, scope, dataFlowInfo, expectedType, CallChecker.DoNothing.INSTANCE$);
     }
@@ -46,7 +45,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull JetType expectedType,
+            @NotNull KtType expectedType,
             @NotNull CallChecker callChecker
     ) {
         return newContext(trace, scope, dataFlowInfo, expectedType,
@@ -71,7 +70,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull JetType expectedType,
+            @NotNull KtType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
@@ -87,7 +86,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull JetType expectedType,
+            @NotNull KtType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
@@ -106,7 +105,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull JetType expectedType,
+            @NotNull KtType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.*
 
 public class JetFindUsagesProvider : FindUsagesProvider {
     public override fun canFindUsagesFor(psiElement: PsiElement): Boolean =
-            psiElement is JetNamedDeclaration
+            psiElement is KtNamedDeclaration
 
     public override fun getWordsScanner() = null
 
@@ -32,14 +32,14 @@ public class JetFindUsagesProvider : FindUsagesProvider {
 
     public override fun getType(element: PsiElement): String {
         return when(element) {
-            is JetNamedFunction -> "function"
-            is JetClass -> "class"
-            is JetParameter -> "parameter"
-            is JetProperty -> if (element.isLocal()) "variable" else "property"
-            is JetMultiDeclarationEntry -> "variable"
-            is JetTypeParameter -> "type parameter"
-            is JetSecondaryConstructor -> "constructor"
-            is JetObjectDeclaration -> "object"
+            is KtNamedFunction -> "function"
+            is KtClass -> "class"
+            is KtParameter -> "parameter"
+            is KtProperty -> if (element.isLocal()) "variable" else "property"
+            is KtMultiDeclarationEntry -> "variable"
+            is KtTypeParameter -> "type parameter"
+            is KtSecondaryConstructor -> "constructor"
+            is KtObjectDeclaration -> "object"
             else -> ""
         }
     }

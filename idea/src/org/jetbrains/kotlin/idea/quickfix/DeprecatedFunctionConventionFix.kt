@@ -27,18 +27,18 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters3
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 
 class DeprecatedFunctionConventionFix(
-        element: JetNamedFunction,
+        element: KtNamedFunction,
         private val newName: String
-) : KotlinQuickFixAction<JetNamedFunction>(element), CleanupFix {
+) : KotlinQuickFixAction<KtNamedFunction>(element), CleanupFix {
     override fun getText(): String = "Rename to '$newName'"
     override fun getFamilyName(): String = text
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         FilteredRenameProcessor(project, element, newName, false, false).run()
     }
 
@@ -52,7 +52,7 @@ class DeprecatedFunctionConventionFix(
             if (functionDescriptor !is FunctionDescriptor || newName !is String) return null
 
             val element = DescriptorToSourceUtilsIde.getAnyDeclaration(diagnostic.psiFile.project, functionDescriptor)
-                    as? JetNamedFunction ?: return null
+                    as? KtNamedFunction ?: return null
             return DeprecatedFunctionConventionFix(element, newName)
         }
     }
@@ -66,7 +66,7 @@ class DeprecatedFunctionConventionFix(
     ) : RenameProcessor(project, element, newName, isSearchInComments, isSearchTextOccurrences) {
         override fun findUsages(): Array<out UsageInfo> {
             return super.findUsages().filter {
-                it.element !is JetOperationReferenceExpression
+                it.element !is KtOperationReferenceExpression
             }.toTypedArray()
         }
     }

@@ -36,26 +36,26 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
         val targetElement = element.unwrapped
 
         fun elementKind() = when (targetElement) {
-            is JetClass -> if (targetElement.isInterface()) "interface" else "class"
-            is JetObjectDeclaration -> "object"
-            is JetNamedFunction -> "function"
-            is JetSecondaryConstructor -> "constructor"
-            is JetProperty -> if (targetElement.isLocal()) "variable" else "property"
-            is JetTypeParameter -> "type parameter"
-            is JetParameter -> "parameter"
-            is JetMultiDeclarationEntry -> "variable"
+            is KtClass -> if (targetElement.isInterface()) "interface" else "class"
+            is KtObjectDeclaration -> "object"
+            is KtNamedFunction -> "function"
+            is KtSecondaryConstructor -> "constructor"
+            is KtProperty -> if (targetElement.isLocal()) "variable" else "property"
+            is KtTypeParameter -> "type parameter"
+            is KtParameter -> "parameter"
+            is KtMultiDeclarationEntry -> "variable"
             else -> null
         }
 
         fun targetDescriptor(): DeclarationDescriptor? {
-            val descriptor = (targetElement as JetDeclaration).descriptor ?: return null
+            val descriptor = (targetElement as KtDeclaration).descriptor ?: return null
             if (descriptor is ConstructorDescriptor) {
                 return descriptor.getContainingDeclaration()
             }
             return descriptor
         }
 
-        if (targetElement !is PsiNamedElement || targetElement !is JetElement) return null
+        if (targetElement !is PsiNamedElement || targetElement !is KtElement) return null
 
         val name = (targetElement as PsiNamedElement).getName()
 
@@ -66,7 +66,7 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
                 val kind = elementKind() ?: return null
                 val descriptor = targetDescriptor() ?: return null
                 val desc =
-                        if (location.includeParent() && targetElement !is JetTypeParameter && targetElement !is JetParameter) {
+                        if (location.includeParent() && targetElement !is KtTypeParameter && targetElement !is KtParameter) {
                             DescriptorUtils.getFqName(descriptor).asString()
                         }
                         else {

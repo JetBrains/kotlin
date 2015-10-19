@@ -22,13 +22,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetPropertyAccessor
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-public class ChangeVariableMutabilityFix(element: JetProperty, private val makeVar: Boolean) : KotlinQuickFixAction<JetProperty>(element) {
+public class ChangeVariableMutabilityFix(element: KtProperty, private val makeVar: Boolean) : KotlinQuickFixAction<KtProperty>(element) {
 
     override fun getText() = if (makeVar) "Make variable mutable" else "Make variable immutable"
 
@@ -38,8 +38,8 @@ public class ChangeVariableMutabilityFix(element: JetProperty, private val makeV
         return element.isVar() != makeVar
     }
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        val factory = JetPsiFactory(project)
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val factory = KtPsiFactory(project)
         val newKeyword = if (makeVar) factory.createVarKeyword() else factory.createValKeyword()
         element.getValOrVarKeyword().replace(newKeyword)
     }
@@ -47,8 +47,8 @@ public class ChangeVariableMutabilityFix(element: JetProperty, private val makeV
     companion object {
         public val VAL_WITH_SETTER_FACTORY: JetSingleIntentionActionFactory = object: JetSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                val accessor = diagnostic.getPsiElement() as JetPropertyAccessor
-                val property = accessor.getParent() as JetProperty
+                val accessor = diagnostic.getPsiElement() as KtPropertyAccessor
+                val property = accessor.getParent() as KtProperty
                 return ChangeVariableMutabilityFix(property, true)
             }
         }
@@ -56,14 +56,14 @@ public class ChangeVariableMutabilityFix(element: JetProperty, private val makeV
         public val VAL_REASSIGNMENT_FACTORY: JetSingleIntentionActionFactory = object: JetSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                 val propertyDescriptor = Errors.VAL_REASSIGNMENT.cast(diagnostic).getA()
-                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? JetProperty ?: return null
+                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? KtProperty ?: return null
                 return ChangeVariableMutabilityFix(declaration, true)
             }
         }
 
         public val VAR_OVERRIDDEN_BY_VAL_FACTORY: JetSingleIntentionActionFactory = object: JetSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                return ChangeVariableMutabilityFix(diagnostic.getPsiElement() as JetProperty, true)
+                return ChangeVariableMutabilityFix(diagnostic.getPsiElement() as KtProperty, true)
             }
         }
     }

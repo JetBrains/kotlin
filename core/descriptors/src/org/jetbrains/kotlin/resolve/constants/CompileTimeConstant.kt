@@ -26,9 +26,9 @@ public interface CompileTimeConstant<out T> {
 
     public val parameters: CompileTimeConstant.Parameters
 
-    public fun toConstantValue(expectedType: JetType): ConstantValue<T>
+    public fun toConstantValue(expectedType: KtType): ConstantValue<T>
 
-    public fun getValue(expectedType: JetType): T = toConstantValue(expectedType).value
+    public fun getValue(expectedType: KtType): T = toConstantValue(expectedType).value
 
     public val canBeUsedInAnnotations: Boolean get() = parameters.canBeUsedInAnnotation
 
@@ -53,9 +53,9 @@ public class TypedCompileTimeConstant<out T>(
     override val isError: Boolean
         get() = constantValue is ErrorValue
 
-    public val type: JetType = constantValue.type
+    public val type: KtType = constantValue.type
 
-    override fun toConstantValue(expectedType: JetType): ConstantValue<T> = constantValue
+    override fun toConstantValue(expectedType: KtType): ConstantValue<T> = constantValue
 }
 
 public class IntegerValueTypeConstant(
@@ -65,7 +65,7 @@ public class IntegerValueTypeConstant(
 ) : CompileTimeConstant<Number> {
     private val typeConstructor = IntegerValueTypeConstructor(value.toLong(), builtIns)
 
-    override fun toConstantValue(expectedType: JetType): ConstantValue<Number> {
+    override fun toConstantValue(expectedType: KtType): ConstantValue<Number> {
         val factory = ConstantValueFactory(builtIns)
         val type = getType(expectedType)
         return when {
@@ -84,12 +84,12 @@ public class IntegerValueTypeConstant(
         }
     }
 
-    val unknownIntegerType = JetTypeImpl.create(
+    val unknownIntegerType = KtTypeImpl.create(
             Annotations.EMPTY, typeConstructor, false, emptyList<TypeProjection>(),
             ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
     )
 
-    public fun getType(expectedType: JetType): JetType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)
+    public fun getType(expectedType: KtType): KtType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)
 
     override fun toString() = typeConstructor.toString()
 }

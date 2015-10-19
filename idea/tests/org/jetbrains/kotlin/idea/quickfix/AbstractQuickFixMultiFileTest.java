@@ -39,13 +39,13 @@ import kotlin.ArraysKt;
 import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.kotlin.idea.quickfix.utils.QuickfixTestUtilsKt;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
@@ -163,10 +163,10 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
         subFiles.remove(beforeFile);
 
         for (TestFile file : subFiles) {
-            configureByText(JetFileType.INSTANCE, file.content);
+            configureByText(KotlinFileType.INSTANCE, file.content);
         }
 
-        configureByText(JetFileType.INSTANCE, beforeFile.content);
+        configureByText(KotlinFileType.INSTANCE, beforeFile.content);
 
         CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
             @Override
@@ -179,8 +179,8 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
                     boolean actionShouldBeAvailable = pair.getSecond();
 
-                    if (psiFile instanceof JetFile) {
-                        DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((JetFile) psiFile);
+                    if (psiFile instanceof KtFile) {
+                        DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) psiFile);
                     }
 
                     doAction(text, actionShouldBeAvailable, getTestName(false));
@@ -269,8 +269,8 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
                         boolean actionShouldBeAvailable = pair.getSecond();
 
-                        if (psiFile instanceof JetFile) {
-                            DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((JetFile) psiFile);
+                        if (psiFile instanceof KtFile) {
+                            DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) psiFile);
                         }
 
                         doAction(text, actionShouldBeAvailable, beforeFileName);

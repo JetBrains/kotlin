@@ -21,18 +21,18 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.JetNodeType;
-import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.lexer.JetToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.KtNodeType;
+import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.parsing.JetParsing.NameParsingMode;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.JetNodeTypes.*;
-import static org.jetbrains.kotlin.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.KtNodeTypes.*;
+import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.DEFAULT;
 import static org.jetbrains.kotlin.parsing.JetParsing.DeclarationParsingMode.LOCAL;
 
@@ -41,12 +41,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT);
 
 
-    private static final ImmutableMap<String, JetToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
+    private static final ImmutableMap<String, KtToken> KEYWORD_TEXTS = tokenSetToMap(KEYWORDS);
 
-    private static ImmutableMap<String, JetToken> tokenSetToMap(TokenSet tokens) {
-        ImmutableMap.Builder<String, JetToken> builder = ImmutableMap.builder();
+    private static ImmutableMap<String, KtToken> tokenSetToMap(TokenSet tokens) {
+        ImmutableMap.Builder<String, KtToken> builder = ImmutableMap.builder();
         for (IElementType token : tokens.getTypes()) {
-            builder.put(token.toString(), (JetToken) token);
+            builder.put(token.toString(), (KtToken) token);
         }
         return builder.build();
     }
@@ -149,7 +149,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         AS(AS_KEYWORD, AS_SAFE) {
             @Override
-            public JetNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
+            public KtNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
                 parser.myJetParsing.parseTypeRef();
                 return BINARY_WITH_TYPE;
             }
@@ -162,12 +162,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         MULTIPLICATIVE(MUL, DIV, PERC),
         ADDITIVE(PLUS, MINUS),
-        RANGE(JetTokens.RANGE),
+        RANGE(KtTokens.RANGE),
         SIMPLE_NAME(IDENTIFIER),
-        ELVIS(JetTokens.ELVIS),
+        ELVIS(KtTokens.ELVIS),
         IN_OR_IS(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS) {
             @Override
-            public JetNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
+            public KtNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
                 if (operation == IS_KEYWORD || operation == NOT_IS) {
                     parser.myJetParsing.parseTypeRef();
                     return IS_EXPRESSION;
@@ -180,7 +180,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
         CONJUNCTION(ANDAND),
         DISJUNCTION(OROR),
-        //        ARROW(JetTokens.ARROW),
+        //        ARROW(KtTokens.ARROW),
         ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
         ;
 
@@ -210,7 +210,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
          * @param parser the parser object
          * @return node type of the result
          */
-        public JetNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
+        public KtNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
             parseHigherPrecedence(parser);
             return BINARY_EXPRESSION;
         }
@@ -312,7 +312,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             parseOperationReference();
 
-            JetNodeType resultType = precedence.parseRightHandSide(operation, this);
+            KtNodeType resultType = precedence.parseRightHandSide(operation, this);
             expression.done(resultType);
             expression = expression.precede();
         }
@@ -763,7 +763,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 thisExpression.done(THIS_EXPRESSION);
             }
             else {
-                JetToken keyword = KEYWORD_TEXTS.get(myBuilder.getTokenText());
+                KtToken keyword = KEYWORD_TEXTS.get(myBuilder.getTokenText());
                 if (keyword != null) {
                     myBuilder.remapCurrentToken(keyword);
                     errorAndAdvance("Keyword cannot be used as a reference");
@@ -1041,7 +1041,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (declType != null) {
             // we do not attach preceding comments (non-doc) to local variables because they are likely commenting a few statements below
             closeDeclarationWithCommentBinders(decl, declType,
-                                               declType != JetNodeTypes.PROPERTY && declType != JetNodeTypes.MULTI_VARIABLE_DECLARATION);
+                                               declType != KtNodeTypes.PROPERTY && declType != KtNodeTypes.MULTI_VARIABLE_DECLARATION);
             return true;
         }
         else {
@@ -1128,7 +1128,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     private boolean rollbackOrDrop(PsiBuilder.Marker rollbackMarker,
-            JetToken expected, String expectMessage,
+            KtToken expected, String expectMessage,
             IElementType validForDrop) {
         if (at(expected)) {
             advance(); // dropAt
@@ -1527,7 +1527,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * : "continue" getEntryPoint?
      * : "break" getEntryPoint?
      */
-    private void parseJump(JetNodeType type) {
+    private void parseJump(KtNodeType type) {
         assert _at(BREAK_KEYWORD) || _at(CONTINUE_KEYWORD);
 
         PsiBuilder.Marker marker = mark();
@@ -1770,7 +1770,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         literal.done(OBJECT_LITERAL);
     }
 
-    private void parseOneTokenExpression(JetNodeType type) {
+    private void parseOneTokenExpression(KtNodeType type) {
         PsiBuilder.Marker mark = mark();
         advance();
         mark.done(type);

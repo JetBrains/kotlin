@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
 
 public class UnconditionalJumpInstruction(
-        element: JetElement,
+        element: KtElement,
         targetLabel: Label,
         lexicalScope: LexicalScope
 ) : AbstractJumpInstruction(element, targetLabel, lexicalScope) {

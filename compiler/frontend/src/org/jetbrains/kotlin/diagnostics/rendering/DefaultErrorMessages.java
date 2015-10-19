@@ -25,15 +25,15 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
-import org.jetbrains.kotlin.psi.JetTypeConstraint;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
+import org.jetbrains.kotlin.psi.KtTypeConstraint;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.MultiRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.util.MappedExtensionProvider;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
@@ -387,10 +387,10 @@ public class DefaultErrorMessages {
 
         MAP.put(IMPLICIT_CAST_TO_UNIT_OR_ANY, "Type is cast to ''{0}''. Please specify ''{0}'' as expected type, if you mean such cast",
                 RENDER_TYPE);
-        MAP.put(EXPRESSION_EXPECTED, "{0} is not an expression, and only expressions are allowed here", new Renderer<JetExpression>() {
+        MAP.put(EXPRESSION_EXPECTED, "{0} is not an expression, and only expressions are allowed here", new Renderer<KtExpression>() {
             @NotNull
             @Override
-            public String render(@NotNull JetExpression expression) {
+            public String render(@NotNull KtExpression expression) {
                 String expressionType = expression.toString();
                 return expressionType.substring(0, 1) +
                        expressionType.substring(1).toLowerCase();
@@ -477,10 +477,10 @@ public class DefaultErrorMessages {
         MAP.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here");
         MAP.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE);
         MAP.put(NOT_NULL_ASSERTION_ON_FUNCTION_LITERAL, "Non-null assertion (!!) is called on function literal");
-        MAP.put(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER, "{0} does not refer to a type parameter of {1}", new Renderer<JetTypeConstraint>() {
+        MAP.put(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER, "{0} does not refer to a type parameter of {1}", new Renderer<KtTypeConstraint>() {
             @NotNull
             @Override
-            public String render(@NotNull JetTypeConstraint typeConstraint) {
+            public String render(@NotNull KtTypeConstraint typeConstraint) {
                 //noinspection ConstantConditions
                 return typeConstraint.getSubjectTypeParameterName().getReferencedName();
             }
@@ -525,10 +525,10 @@ public class DefaultErrorMessages {
 
         MAP.put(INCONSISTENT_TYPE_PARAMETER_VALUES, "Type parameter {0} of ''{1}'' has inconsistent values: {2}", NAME, NAME, RENDER_COLLECTION_OF_TYPES);
 
-        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", new Renderer<JetSimpleNameExpression>() {
+        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", new Renderer<KtSimpleNameExpression>() {
             @NotNull
             @Override
-            public String render(@NotNull JetSimpleNameExpression nameExpression) {
+            public String render(@NotNull KtSimpleNameExpression nameExpression) {
                 //noinspection ConstantConditions
                 return nameExpression.getReferencedName();
             }
@@ -565,10 +565,10 @@ public class DefaultErrorMessages {
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
                                    "The function '" + OperatorNameConventions.INVOKE.asString() + "()' is not found",
-                ELEMENT_TEXT, new Renderer<JetType>() {
+                ELEMENT_TEXT, new Renderer<KtType>() {
                     @NotNull
                     @Override
-                    public String render(@NotNull JetType type) {
+                    public String render(@NotNull KtType type) {
                         if (type.isError()) return "";
                         return " of type '" + RENDER_TYPE.render(type) + "'";
                     }

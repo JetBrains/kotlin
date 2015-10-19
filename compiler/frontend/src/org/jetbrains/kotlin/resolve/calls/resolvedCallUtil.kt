@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetSuperExpression
-import org.jetbrains.kotlin.psi.JetThisExpression
+import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtSuperExpression
+import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -58,8 +58,8 @@ private fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
         dispatchReceiverDescriptor = dispatchReceiverValue.getDeclarationDescriptor()
     }
     else if (dispatchReceiverValue is ExpressionReceiver && considerExplicitReceivers) {
-        val expression = JetPsiUtil.deparenthesize(dispatchReceiverValue.getExpression())
-        if (expression is JetThisExpression) {
+        val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.getExpression())
+        if (expression is KtThisExpression) {
             // this.foo() -- explicit receiver
             dispatchReceiverDescriptor = context.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference())
         }

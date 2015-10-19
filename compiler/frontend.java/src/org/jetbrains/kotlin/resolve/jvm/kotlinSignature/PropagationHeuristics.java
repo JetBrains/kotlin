@@ -21,16 +21,15 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.JetTypeImpl;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KtTypeImpl;
 import org.jetbrains.kotlin.types.TypeProjectionImpl;
 import org.jetbrains.kotlin.types.Variance;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,7 +41,7 @@ class PropagationHeuristics {
     // Checks for case when method returning Super[] is overridden with method returning Sub[]
     static void checkArrayInReturnType(
             @NotNull SignaturesPropagationData data,
-            @NotNull JetType type,
+            @NotNull KtType type,
             @NotNull List<SignaturesPropagationData.TypeAndVariance> typesFromSuper
     ) {
         List<SignaturesPropagationData.TypeAndVariance> arrayTypesFromSuper = ContainerUtil
@@ -56,19 +55,19 @@ class PropagationHeuristics {
             assert type.getArguments().size() == 1;
             if (type.getArguments().get(0).getProjectionKind() == Variance.INVARIANT) {
                 for (SignaturesPropagationData.TypeAndVariance typeAndVariance : arrayTypesFromSuper) {
-                    JetType arrayTypeFromSuper = typeAndVariance.type;
+                    KtType arrayTypeFromSuper = typeAndVariance.type;
                     assert arrayTypeFromSuper.getArguments().size() == 1;
-                    JetType elementTypeInSuper = arrayTypeFromSuper.getArguments().get(0).getType();
-                    JetType elementType = type.getArguments().get(0).getType();
+                    KtType elementTypeInSuper = arrayTypeFromSuper.getArguments().get(0).getType();
+                    KtType elementType = type.getArguments().get(0).getType();
 
-                    if (JetTypeChecker.DEFAULT.isSubtypeOf(elementType, elementTypeInSuper)
-                        && !JetTypeChecker.DEFAULT.equalTypes(elementType, elementTypeInSuper)) {
-                        JetTypeImpl betterTypeInSuper = JetTypeImpl.create(
+                    if (KotlinTypeChecker.DEFAULT.isSubtypeOf(elementType, elementTypeInSuper)
+                        && !KotlinTypeChecker.DEFAULT.equalTypes(elementType, elementTypeInSuper)) {
+                        KtTypeImpl betterTypeInSuper = KtTypeImpl.create(
                                 arrayTypeFromSuper.getAnnotations(),
                                 arrayTypeFromSuper.getConstructor(),
                                 arrayTypeFromSuper.isMarkedNullable(),
                                 Arrays.asList(new TypeProjectionImpl(Variance.OUT_VARIANCE, elementTypeInSuper)),
-                                JetScope.Empty.INSTANCE$);
+                                KtScope.Empty.INSTANCE$);
 
                         data.reportError("Return type is not a subtype of overridden method. " +
                                          "To fix it, add annotation with Kotlin signature to super method with type "

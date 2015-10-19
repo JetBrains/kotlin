@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.*;
 
-public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> {
+public class CodegenStatementVisitor extends KtVisitor<StackValue, StackValue> {
     private final ExpressionCodegen codegen;
 
     public CodegenStatementVisitor(ExpressionCodegen codegen) {
@@ -27,38 +27,38 @@ public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> 
     }
 
     @Override
-    public StackValue visitJetElement(@NotNull JetElement element, StackValue receiver) {
+    public StackValue visitJetElement(@NotNull KtElement element, StackValue receiver) {
         return element.accept(codegen, receiver);
     }
 
     @Override
-    public StackValue visitIfExpression(@NotNull JetIfExpression expression, StackValue receiver) {
+    public StackValue visitIfExpression(@NotNull KtIfExpression expression, StackValue receiver) {
         return codegen.generateIfExpression(expression, true);
     }
 
     @Override
-    public StackValue visitTryExpression(@NotNull JetTryExpression expression, StackValue data) {
+    public StackValue visitTryExpression(@NotNull KtTryExpression expression, StackValue data) {
         return codegen.generateTryExpression(expression, true);
     }
 
     @Override
-    public StackValue visitNamedFunction(@NotNull JetNamedFunction function, StackValue data) {
+    public StackValue visitNamedFunction(@NotNull KtNamedFunction function, StackValue data) {
         return codegen.visitNamedFunction(function, data, true);
     }
 
     @Override
-    public StackValue visitWhenExpression(@NotNull JetWhenExpression expression, StackValue data) {
+    public StackValue visitWhenExpression(@NotNull KtWhenExpression expression, StackValue data) {
         return codegen.generateWhenExpression(expression, true);
     }
 
     @Override
-    public StackValue visitBlockExpression(@NotNull JetBlockExpression expression, StackValue data) {
+    public StackValue visitBlockExpression(@NotNull KtBlockExpression expression, StackValue data) {
         return codegen.generateBlock(expression, true);
     }
 
     @Override
-    public StackValue visitLabeledExpression(@NotNull JetLabeledExpression expression, StackValue receiver) {
-        JetExpression baseExpression = expression.getBaseExpression();
+    public StackValue visitLabeledExpression(@NotNull KtLabeledExpression expression, StackValue receiver) {
+        KtExpression baseExpression = expression.getBaseExpression();
         assert baseExpression != null : "Label expression should have base one: " + expression.getText();
         return baseExpression.accept(this, receiver);
     }

@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlin.resolve.TraceEntryFilter
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.types.KtType
 
 public class LockBasedLazyResolveStorageManager(private val storageManager: StorageManager): StorageManager by storageManager, LazyResolveStorageManager {
     override fun <K, V : Any> createSoftlyRetainedMemoizedFunction(compute: Function1<K, V>) =
@@ -39,7 +39,7 @@ public class LockBasedLazyResolveStorageManager(private val storageManager: Stor
             LockProtectedTrace(storageManager, originalTrace)
 
     private class LockProtectedContext(private val storageManager: StorageManager, private val context: BindingContext) : BindingContext {
-        override fun getType(expression: JetExpression): JetType? = storageManager.compute { context.getType(expression) }
+        override fun getType(expression: KtExpression): KtType? = storageManager.compute { context.getType(expression) }
 
         override fun getDiagnostics(): Diagnostics = storageManager.compute { context.getDiagnostics() }
 
@@ -56,11 +56,11 @@ public class LockBasedLazyResolveStorageManager(private val storageManager: Stor
     }
 
     private class LockProtectedTrace(private val storageManager: StorageManager, private val trace: BindingTrace) : BindingTrace {
-        override fun recordType(expression: JetExpression, type: JetType?) {
+        override fun recordType(expression: KtExpression, type: KtType?) {
             storageManager.compute { trace.recordType(expression, type) }
         }
 
-        override fun getType(expression: JetExpression): JetType? = storageManager.compute { trace.getType(expression) }
+        override fun getType(expression: KtExpression): KtType? = storageManager.compute { trace.getType(expression) }
 
         private val context: BindingContext = LockProtectedContext(storageManager, trace.getBindingContext())
 

@@ -27,7 +27,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.refactoring.j2k
@@ -48,8 +48,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.Collections
 
 public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsagesProcessor {
-    override fun isMethodUsage(usage: UsageInfo): Boolean = (usage.getElement() as? JetElement)?.let {
-        it.getParentOfTypeAndBranch<JetCallElement>(true) { getCalleeExpression() } != null
+    override fun isMethodUsage(usage: UsageInfo): Boolean = (usage.getElement() as? KtElement)?.let {
+        it.getParentOfTypeAndBranch<KtCallElement>(true) { getCalleeExpression() } != null
     } ?: false
 
     override fun findConflicts(data: IntroduceParameterData, usages: Array<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
@@ -58,7 +58,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
 
     private fun createChangeInfo(data: IntroduceParameterData, method: PsiElement): JetChangeInfo? {
         val psiMethodDescriptor = when (method) {
-            is JetFunction -> method.resolveToDescriptor() as? FunctionDescriptor
+            is KtFunction -> method.resolveToDescriptor() as? FunctionDescriptor
             is PsiMethod -> method.getJavaMethodDescriptor()
             else -> null
         } ?: return null
@@ -77,7 +77,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
     }
 
     override fun processChangeMethodSignature(data: IntroduceParameterData, usage: UsageInfo, usages: Array<out UsageInfo>): Boolean {
-        val element = usage.getElement() as? JetFunction ?: return true
+        val element = usage.getElement() as? KtFunction ?: return true
 
         val changeInfo = createChangeInfo(data, element) ?: return true
         // Java method is already updated at this point
@@ -85,12 +85,12 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
         changeInfo.getNewParameters().last().currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(addedParameterType)
 
         val scope = element.getUseScope().let {
-            if (it is GlobalSearchScope) GlobalSearchScope.getScopeRestrictedByFileTypes(it, JetFileType.INSTANCE) else it
+            if (it is GlobalSearchScope) GlobalSearchScope.getScopeRestrictedByFileTypes(it, KotlinFileType.INSTANCE) else it
         }
         val kotlinFunctions = HierarchySearchRequest(element, scope)
                 .searchOverriders()
                 .map { it.unwrapped }
-                .filterIsInstance<JetFunction>()
+                .filterIsInstance<KtFunction>()
         return (kotlinFunctions + element).all {
             JetCallableDefinitionUsage(it, changeInfo.originalBaseFunctionDescriptor, null, null).processUsage(changeInfo, it, usages)
         }
@@ -99,11 +99,11 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
     override fun processChangeMethodUsage(data: IntroduceParameterData, usage: UsageInfo, usages: Array<out UsageInfo>): Boolean {
         val psiMethod = data.getMethodToReplaceIn()
         val changeInfo = createChangeInfo(data, psiMethod) ?: return true
-        val refElement = usage.getElement() as? JetReferenceExpression ?: return true
-        val callElement = refElement.getParentOfTypeAndBranch<JetCallElement>(true) { getCalleeExpression() } ?: return true
-        val delegateUsage = if (callElement is JetConstructorDelegationCall) {
+        val refElement = usage.getElement() as? KtReferenceExpression ?: return true
+        val callElement = refElement.getParentOfTypeAndBranch<KtCallElement>(true) { getCalleeExpression() } ?: return true
+        val delegateUsage = if (callElement is KtConstructorDelegationCall) {
             @Suppress("CAST_NEVER_SUCCEEDS")
-            (JetConstructorDelegationCallUsage(callElement, changeInfo) as JetUsageInfo<JetCallElement>)
+            (JetConstructorDelegationCallUsage(callElement, changeInfo) as JetUsageInfo<KtCallElement>)
         }
         else {
             JetFunctionCallUsage(callElement, changeInfo.methodDescriptor.originalPrimaryCallable)

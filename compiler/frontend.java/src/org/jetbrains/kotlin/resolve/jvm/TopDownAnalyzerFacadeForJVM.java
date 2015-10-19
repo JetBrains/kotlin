@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.modules.TargetIdKt;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode;
@@ -57,7 +57,7 @@ public enum TopDownAnalyzerFacadeForJVM {
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegrationNoIncremental(
             @NotNull ModuleContext moduleContext,
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull BindingTrace trace,
             @NotNull TopDownAnalysisMode topDownAnalysisMode,
             PackagePartProvider packagePartProvider
@@ -68,7 +68,7 @@ public enum TopDownAnalyzerFacadeForJVM {
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegrationWithCustomContext(
             @NotNull ModuleContext moduleContext,
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull BindingTrace trace,
             @Nullable List<Module> modules,
             @Nullable IncrementalCompilationComponents incrementalCompilationComponents,
@@ -82,7 +82,7 @@ public enum TopDownAnalyzerFacadeForJVM {
     @NotNull
     private static AnalysisResult analyzeFilesWithJavaIntegration(
             @NotNull ModuleContext moduleContext,
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull BindingTrace trace,
             @NotNull TopDownAnalysisMode topDownAnalysisMode,
             @Nullable List<Module> modules,
@@ -90,7 +90,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull PackagePartProvider packagePartProvider
     ) {
         Project project = moduleContext.getProject();
-        List<JetFile> allFiles = JvmAnalyzerFacade.getAllFilesToAnalyze(project, null, files);
+        List<KtFile> allFiles = JvmAnalyzerFacade.getAllFilesToAnalyze(project, null, files);
 
         FileBasedDeclarationProviderFactory providerFactory =
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles);

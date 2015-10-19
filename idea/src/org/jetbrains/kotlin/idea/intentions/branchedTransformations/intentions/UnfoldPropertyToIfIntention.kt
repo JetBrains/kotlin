@@ -22,19 +22,19 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
 import org.jetbrains.kotlin.idea.intentions.splitPropertyDeclaration
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldPropertyToIfIntention : JetSelfTargetingRangeIntention<JetProperty>(javaClass(), "Replace property initializer with 'if' expression"), LowPriorityAction {
-    override fun applicabilityRange(element: JetProperty): TextRange? {
+public class UnfoldPropertyToIfIntention : JetSelfTargetingRangeIntention<KtProperty>(javaClass(), "Replace property initializer with 'if' expression"), LowPriorityAction {
+    override fun applicabilityRange(element: KtProperty): TextRange? {
         if (!element.isLocal()) return null
-        val initializer = element.getInitializer() as? JetIfExpression ?: return null
+        val initializer = element.getInitializer() as? KtIfExpression ?: return null
         return TextRange(element.startOffset, initializer.getIfKeyword().endOffset)
     }
 
-    override fun applyTo(element: JetProperty, editor: Editor) {
+    override fun applyTo(element: KtProperty, editor: Editor) {
         val assignment = splitPropertyDeclaration(element)
         BranchedUnfoldingUtils.unfoldAssignmentToIf(assignment, editor)
     }

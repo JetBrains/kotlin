@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -48,7 +48,7 @@ public abstract class Config {
     @NotNull
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
     @NotNull
-    private final List<JetFile> sourceFilesFromLibraries = new SmartList<JetFile>();
+    private final List<KtFile> sourceFilesFromLibraries = new SmartList<KtFile>();
     @NotNull
     private final EcmaVersion target;
 
@@ -111,7 +111,7 @@ public abstract class Config {
 
     public abstract boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report);
 
-    protected abstract void init(@NotNull List<JetFile> sourceFilesInLibraries, @NotNull List<KotlinJavascriptMetadata> metadata);
+    protected abstract void init(@NotNull List<KtFile> sourceFilesInLibraries, @NotNull List<KotlinJavascriptMetadata> metadata);
 
     @NotNull
     public List<ModuleDescriptorImpl> getModuleDescriptors() {
@@ -130,7 +130,7 @@ public abstract class Config {
     }
 
     @NotNull
-    public List<JetFile> getSourceFilesFromLibraries() {
+    public List<KtFile> getSourceFilesFromLibraries() {
         init();
         return sourceFilesFromLibraries;
     }
@@ -169,8 +169,8 @@ public abstract class Config {
     }
 
     @NotNull
-    public static Collection<JetFile> withJsLibAdded(@NotNull Collection<JetFile> files, @NotNull Config config) {
-        Collection<JetFile> allFiles = Lists.newArrayList();
+    public static Collection<KtFile> withJsLibAdded(@NotNull Collection<KtFile> files, @NotNull Config config) {
+        Collection<KtFile> allFiles = Lists.newArrayList();
         allFiles.addAll(files);
         allFiles.addAll(config.getSourceFilesFromLibraries());
         return allFiles;

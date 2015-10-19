@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -43,7 +43,7 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
         File ktFile = new File("compiler/testData/recursiveProcessor/declarations.kt");
         File txtFile = new File("compiler/testData/recursiveProcessor/declarations.txt");
         String text = FileUtil.loadFile(ktFile, true);
-        JetFile jetFile = JetTestUtils.createFile("declarations.kt", text, getEnvironment().getProject());
+        KtFile jetFile = JetTestUtils.createFile("declarations.kt", text, getEnvironment().getProject());
         AnalysisResult result = JetTestUtils.analyzeFile(jetFile, getEnvironment());
         PackageViewDescriptor testPackage = result.getModuleDescriptor().getPackage(FqName.topLevel(Name.identifier("test")));
 

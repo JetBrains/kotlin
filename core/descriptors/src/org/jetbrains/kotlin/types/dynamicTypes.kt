@@ -31,7 +31,7 @@ class DynamicTypesAllowed: DynamicTypesSettings() {
 
 interface Dynamicity : TypeCapability
 
-fun JetType.isDynamic(): Boolean = this.getCapability(javaClass<Dynamicity>()) != null
+fun KtType.isDynamic(): Boolean = this.getCapability(javaClass<Dynamicity>()) != null
 
 fun createDynamicType(builtIns: KotlinBuiltIns) = object : DelegatingFlexibleType(
         builtIns.nothingType,
@@ -42,7 +42,7 @@ fun createDynamicType(builtIns: KotlinBuiltIns) = object : DelegatingFlexibleTyp
 public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
     override val id: String get() = "kotlin.DynamicType"
 
-    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T? {
+    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KtType, flexibility: Flexibility): T? {
         @Suppress("UNCHECKED_CAST")
         return if (capabilityClass in Impl.capabilityClasses) Impl(flexibility) as T else null
     }
@@ -57,13 +57,13 @@ public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
             )
         }
 
-        override val delegateType: JetType = flexibility.upperBound
+        override val delegateType: KtType = flexibility.upperBound
 
-        override fun getSpecificityRelationTo(otherType: JetType): Specificity.Relation {
+        override fun getSpecificityRelationTo(otherType: KtType): Specificity.Relation {
             return if (!otherType.isDynamic()) Specificity.Relation.LESS_SPECIFIC else Specificity.Relation.DONT_KNOW
         }
 
-        override fun makeNullableAsSpecified(nullable: Boolean): JetType {
+        override fun makeNullableAsSpecified(nullable: Boolean): KtType {
             // Nullability has no effect on dynamics
             return createDynamicType(delegateType.builtIns)
         }

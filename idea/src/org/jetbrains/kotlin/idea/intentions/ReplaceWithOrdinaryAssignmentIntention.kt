@@ -18,24 +18,24 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class ReplaceWithOrdinaryAssignmentIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Replace with ordinary assignment"), LowPriorityAction {
-    override fun isApplicableTo(element: JetBinaryExpression, caretOffset: Int): Boolean {
-        if (element.getOperationToken() !in JetTokens.AUGMENTED_ASSIGNMENTS) return false
-        if (element.getLeft() !is JetNameReferenceExpression) return false
+public class ReplaceWithOrdinaryAssignmentIntention : JetSelfTargetingIntention<KtBinaryExpression>(javaClass(), "Replace with ordinary assignment"), LowPriorityAction {
+    override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
+        if (element.getOperationToken() !in KtTokens.AUGMENTED_ASSIGNMENTS) return false
+        if (element.getLeft() !is KtNameReferenceExpression) return false
         if (element.getRight() == null) return false
         return element.getOperationReference().getTextRange().containsOffset(caretOffset)
     }
 
-    override fun applyTo(element: JetBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
         val left = element.getLeft()!!
         val right = element.getRight()!!
-        val factory = JetPsiFactory(element)
+        val factory = KtPsiFactory(element)
 
         val assignOpText = element.getOperationReference().getText()
         assert(assignOpText.endsWith("="))

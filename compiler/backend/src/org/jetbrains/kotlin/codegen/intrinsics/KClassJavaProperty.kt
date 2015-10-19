@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.psi.JetClassLiteralExpression
+import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -57,14 +57,14 @@ public class KClassJavaProperty : IntrinsicPropertyGetter() {
         }
     }
 
-    private fun isReifiedTypeParameter(type: JetType): Boolean {
+    private fun isReifiedTypeParameter(type: KtType): Boolean {
         val typeDescriptor = type.constructor.declarationDescriptor
         return typeDescriptor is TypeParameterDescriptor && typeDescriptor.isReified
     }
 
     private fun isWithClassLiteralArgument(resolvedCall: ResolvedCall<*>): Boolean {
         val extensionReceiver = resolvedCall.extensionReceiver
-        return extensionReceiver is ExpressionReceiver && extensionReceiver.expression is JetClassLiteralExpression
+        return extensionReceiver is ExpressionReceiver && extensionReceiver.expression is KtClassLiteralExpression
     }
 
     private fun coerceToJavaLangClass(iv: InstructionAdapter, returnType: Type) {

@@ -21,16 +21,16 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.SpecialNames;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 
 public abstract class AbstractStubBuilderTest extends LightCodeInsightFixtureTestCase {
     protected void doTest(@NotNull String sourcePath) {
-        JetFile file = (JetFile) myFixture.configureByFile(sourcePath);
-        JetFileStubBuilder jetStubBuilder = new JetFileStubBuilder();
+        KtFile file = (KtFile) myFixture.configureByFile(sourcePath);
+        KtFileStubBuilder jetStubBuilder = new KtFileStubBuilder();
         StubElement lighterTree = jetStubBuilder.buildStubTree(file);
         String stubTree = serializeStubToString(lighterTree);
         String expectedFile = sourcePath.replace(".kt", ".expected");

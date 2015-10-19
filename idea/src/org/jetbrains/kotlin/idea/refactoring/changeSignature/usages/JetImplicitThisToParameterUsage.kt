@@ -19,43 +19,43 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 
-public abstract class JetImplicitReceiverUsage(callElement: JetElement): JetUsageInfo<JetElement>(callElement) {
+public abstract class JetImplicitReceiverUsage(callElement: KtElement): JetUsageInfo<KtElement>(callElement) {
     protected abstract fun getNewReceiverText(): String
 
-    protected open fun processReplacedElement(element: JetElement) {
+    protected open fun processReplacedElement(element: KtElement) {
 
     }
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: JetElement, allUsages: Array<out UsageInfo>): Boolean {
-        val newQualifiedCall = JetPsiFactory(element.getProject()).createExpression(
+    override fun processUsage(changeInfo: JetChangeInfo, element: KtElement, allUsages: Array<out UsageInfo>): Boolean {
+        val newQualifiedCall = KtPsiFactory(element.getProject()).createExpression(
                 "${getNewReceiverText()}.${element.getText()}"
-        ) as JetQualifiedExpression
-        processReplacedElement(element.replace(newQualifiedCall) as JetElement)
+        ) as KtQualifiedExpression
+        processReplacedElement(element.replace(newQualifiedCall) as KtElement)
         return false
     }
 }
 
 public class JetImplicitThisToParameterUsage(
-        callElement: JetElement,
+        callElement: KtElement,
         val parameterInfo: JetParameterInfo,
         val containingCallable: JetCallableDefinitionUsage<*>
 ): JetImplicitReceiverUsage(callElement) {
     override fun getNewReceiverText(): String = parameterInfo.getInheritedName(containingCallable)
 
-    override fun processReplacedElement(element: JetElement) {
+    override fun processReplacedElement(element: KtElement) {
         element.addToShorteningWaitSet(Options(removeThisLabels = true))
     }
 }
 
 public class JetImplicitThisUsage(
-        callElement: JetElement,
+        callElement: KtElement,
         val targetDescriptor: DeclarationDescriptor
 ): JetImplicitReceiverUsage(callElement) {
     override fun getNewReceiverText(): String {
@@ -63,7 +63,7 @@ public class JetImplicitThisUsage(
         return if (name.isSpecial()) "this" else "this@${name.asString()}"
     }
 
-    override fun processReplacedElement(element: JetElement) {
+    override fun processReplacedElement(element: KtElement) {
         element.addToShorteningWaitSet(Options(removeThisLabels = true, removeThis = true))
     }
 }

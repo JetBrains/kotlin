@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 import java.util.regex.Pattern
@@ -136,7 +136,7 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
         return myFixture.configureByText("converterTestFile.java", text) as PsiJavaFile
     }
 
-    private fun createKotlinFile(text: String): JetFile {
-        return myFixture.configureByText("converterTestFile.kt", text) as JetFile
+    private fun createKotlinFile(text: String): KtFile {
+        return myFixture.configureByText("converterTestFile.kt", text) as KtFile
     }
 }

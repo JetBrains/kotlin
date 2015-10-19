@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetVisitor
-import org.jetbrains.kotlin.psi.JetVisitorVoid
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtVisitor
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.flatMapDescendantsOfTypeVisitor
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.HashMap
@@ -53,7 +53,7 @@ public abstract class JetWholeProjectModalAction<TData : Any>(val title: String)
         ProgressManager.getInstance().run(
             object : Task.Modal(project, title, true) {
                 override fun run(indicator: ProgressIndicator) {
-                    val filesToData = HashMap<JetFile, TData>()
+                    val filesToData = HashMap<KtFile, TData>()
                     runReadAction (fun() {
                         val files = PluginJetFilesProvider.allFilesInProject(project)
 
@@ -77,7 +77,7 @@ public abstract class JetWholeProjectModalAction<TData : Any>(val title: String)
                 }
             })
 
-    private fun applyAll(project: Project, filesToData: Map<JetFile, TData>) {
+    private fun applyAll(project: Project, filesToData: Map<KtFile, TData>) {
         UIUtil.invokeLaterIfNeeded {
             project.executeCommand(getText()) {
                 runWriteAction {
@@ -95,25 +95,25 @@ public abstract class JetWholeProjectModalAction<TData : Any>(val title: String)
     }
 
     // this method will be started under read action
-    protected abstract fun collectDataForFile(project: Project, file: JetFile): TData?
+    protected abstract fun collectDataForFile(project: Project, file: KtFile): TData?
 
     // this method will be started under write action
-    protected abstract fun applyChangesForFile(project: Project, file: JetFile, data: TData)
+    protected abstract fun applyChangesForFile(project: Project, file: KtFile, data: TData)
 }
 
 public abstract class JetWholeProjectModalByCollectionAction<TTask : Any>(modalTitle: String)
 : JetWholeProjectModalAction<Collection<TTask>>(modalTitle) {
-    override fun collectDataForFile(project: Project, file: JetFile): Collection<TTask>? {
+    override fun collectDataForFile(project: Project, file: KtFile): Collection<TTask>? {
         val accumulator = arrayListOf<TTask>()
         collectTasksForFile(project, file, accumulator)
         return if (!accumulator.isEmpty()) accumulator else null
     }
 
-    abstract fun collectTasksForFile(project: Project, file: JetFile, accumulator: MutableCollection<TTask>)
+    abstract fun collectTasksForFile(project: Project, file: KtFile, accumulator: MutableCollection<TTask>)
 }
 
 internal class JetWholeProjectForEachElementOfTypeFix<TTask : Any> private constructor(
-        private val collectingVisitorFactory: (MutableCollection<TTask>) -> JetVisitorVoid,
+        private val collectingVisitorFactory: (MutableCollection<TTask>) -> KtVisitorVoid,
         private val tasksProcessor: (Collection<TTask>) -> Unit,
         private val name: String,
         private val familyName: String = name
@@ -122,13 +122,13 @@ internal class JetWholeProjectForEachElementOfTypeFix<TTask : Any> private const
     override fun getFamilyName() = familyName
     override fun getText() = name
 
-    override fun collectTasksForFile(project: Project, file: JetFile, accumulator: MutableCollection<TTask>) {
+    override fun collectTasksForFile(project: Project, file: KtFile, accumulator: MutableCollection<TTask>) {
         file.accept(collectingVisitorFactory(accumulator))
     }
-    override fun applyChangesForFile(project: Project, file: JetFile, data: Collection<TTask>) = tasksProcessor(data)
+    override fun applyChangesForFile(project: Project, file: KtFile, data: Collection<TTask>) = tasksProcessor(data)
 
     companion object {
-        inline fun <reified TElement : JetElement> createByPredicate(
+        inline fun <reified TElement : KtElement> createByPredicate(
                 noinline predicate: (TElement) -> Boolean,
                 noinline taskProcessor: (TElement) -> Unit,
                 name: String
@@ -138,7 +138,7 @@ internal class JetWholeProjectForEachElementOfTypeFix<TTask : Any> private const
                 name = name
         )
 
-        inline fun <reified TElement : JetElement, TTask : Any> createByTaskFactory(
+        inline fun <reified TElement : KtElement, TTask : Any> createByTaskFactory(
                 noinline taskFactory: (TElement) -> TTask?,
                 noinline taskProcessor: (TTask) -> Unit,
                 name: String
@@ -148,7 +148,7 @@ internal class JetWholeProjectForEachElementOfTypeFix<TTask : Any> private const
                 name = name
         )
 
-        inline fun <reified TElement : JetElement, TTask : Any> createForMultiTaskOnElement(
+        inline fun <reified TElement : KtElement, TTask : Any> createForMultiTaskOnElement(
                 noinline tasksFactory: (TElement) -> Collection<TTask>,
                 noinline tasksProcessor: (Collection<TTask>) -> Unit,
                 name: String

@@ -23,7 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerImpl
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import kotlin.test.fail
 
@@ -56,7 +56,7 @@ public object AstAccessControl {
         val manager = (PsiManager.getInstance(project) as PsiManagerImpl)
         val filter = VirtualFileFilter {
             file ->
-            if (file!!.getFileType() != JetFileType.INSTANCE || file in allowedFiles) {
+            if (file!!.getFileType() != KotlinFileType.INSTANCE || file in allowedFiles) {
                 false
             }
             else {

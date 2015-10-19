@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -47,12 +47,12 @@ public class PropertyReferenceCodegen(
         state: GenerationState,
         parentCodegen: MemberCodegen<*>,
         context: ClassContext,
-        expression: JetElement,
+        expression: KtElement,
         classBuilder: ClassBuilder,
         private val classDescriptor: ClassDescriptor,
         private val target: VariableDescriptor,
         dispatchReceiver: ReceiverValue
-) : MemberCodegen<JetElement>(state, parentCodegen, context, expression, classBuilder) {
+) : MemberCodegen<KtElement>(state, parentCodegen, context, expression, classBuilder) {
     private val asmType = typeMapper.mapClass(classDescriptor)
 
     private val dispatchReceiverType =

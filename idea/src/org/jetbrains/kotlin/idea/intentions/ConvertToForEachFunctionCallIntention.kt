@@ -18,29 +18,29 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.core.CommentSaver
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetForExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.contentRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
-public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>(javaClass(), "Replace with a 'forEach' function call") {
-    override fun isApplicableTo(element: JetForExpression, caretOffset: Int): Boolean {
+public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<KtForExpression>(javaClass(), "Replace with a 'forEach' function call") {
+    override fun isApplicableTo(element: KtForExpression, caretOffset: Int): Boolean {
         val rParen = element.getRightParenthesis() ?: return false
         if (caretOffset > rParen.endOffset) return false // available only on the loop header, not in the body
         return element.getLoopRange() != null && element.getLoopParameter() != null && element.getBody() != null
     }
 
-    override fun applyTo(element: JetForExpression, editor: Editor) {
+    override fun applyTo(element: KtForExpression, editor: Editor) {
         val commentSaver = CommentSaver(element)
 
         val body = element.getBody()!!
         val loopParameter = element.getLoopParameter()!!
 
-        val functionBodyArgument: Any = if (body is JetBlockExpression) body.contentRange() else body
+        val functionBodyArgument: Any = if (body is KtBlockExpression) body.contentRange() else body
 
-        val foreachExpression = JetPsiFactory(element).createExpressionByPattern(
+        val foreachExpression = KtPsiFactory(element).createExpressionByPattern(
                 "$0.forEach{$1->$2}", element.getLoopRange()!!, loopParameter, functionBodyArgument)
         val result = element.replace(foreachExpression)
 

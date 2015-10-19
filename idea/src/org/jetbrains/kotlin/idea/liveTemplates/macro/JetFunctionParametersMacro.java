@@ -23,8 +23,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.psi.JetFunction;
-import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.psi.KtFunction;
+import org.jetbrains.kotlin.psi.KtParameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,9 +52,9 @@ public class JetFunctionParametersMacro extends Macro {
         if (file == null) return null;
         PsiElement place = file.findElementAt(offset);
         while (place != null){
-            if (place instanceof JetFunction) {
+            if (place instanceof KtFunction) {
                 List<Result> result = new ArrayList<Result>();
-                for (JetParameter param : ((JetFunction) place).getValueParameters()) {
+                for (KtParameter param : ((KtFunction) place).getValueParameters()) {
                     String name = param.getName();
                     assert name != null;
                     result.add(new TextResult(name));

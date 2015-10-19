@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.utils.DFS
 
 public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = getCompanionObjectDescriptor() ?: this
@@ -74,7 +74,7 @@ public val ClassDescriptor.classId: ClassId
 public val ClassDescriptor.hasClassObjectType: Boolean get() = classObjectType != null
 
 /** If a literal of this class can be used as a value, returns the type of this value */
-public val ClassDescriptor.classObjectType: JetType?
+public val ClassDescriptor.classObjectType: KtType?
     get() {
         val correspondingDescriptor = when (this.getKind()) {
             OBJECT -> this

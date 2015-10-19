@@ -25,9 +25,9 @@ import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.synthetic.JavaSyntheticPropertiesScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
@@ -49,7 +49,7 @@ public class KotlinPropertyAccessorsReferenceSearcher() : QueryExecutorBase<PsiR
 
     private fun propertyName(method: PsiMethod): String? {
         val unwrapped = method.namedUnwrappedElement
-        if (unwrapped is JetProperty) {
+        if (unwrapped is KtProperty) {
             return unwrapped.getName()
         }
 
@@ -61,7 +61,7 @@ public class KotlinPropertyAccessorsReferenceSearcher() : QueryExecutorBase<PsiR
 
     private fun restrictToKotlinSources(originalScope: SearchScope): SearchScope {
         return when (originalScope) {
-            is GlobalSearchScope -> GlobalSearchScope.getScopeRestrictedByFileTypes(originalScope, JetFileType.INSTANCE)
+            is GlobalSearchScope -> GlobalSearchScope.getScopeRestrictedByFileTypes(originalScope, KotlinFileType.INSTANCE)
             else -> originalScope
         }
     }

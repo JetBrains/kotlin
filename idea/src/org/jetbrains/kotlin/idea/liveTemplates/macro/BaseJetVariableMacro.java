@@ -45,28 +45,28 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 
 import java.util.*;
 
 public abstract class BaseJetVariableMacro extends Macro {
     @Nullable
-    private JetNamedDeclaration[] getVariables(Expression[] params, ExpressionContext context) {
+    private KtNamedDeclaration[] getVariables(Expression[] params, ExpressionContext context) {
         if (params.length != 0) return null;
 
         Project project = context.getProject();
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
         PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.getEditor().getDocument());
-        if (!(psiFile instanceof JetFile)) return null;
+        if (!(psiFile instanceof KtFile)) return null;
 
-        JetExpression contextExpression = findContextExpression(psiFile, context.getStartOffset());
+        KtExpression contextExpression = findContextExpression(psiFile, context.getStartOffset());
         if (contextExpression == null) return null;
 
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(contextExpression);
 
         BindingContext bindingContext = resolutionFacade.analyze(contextExpression, BodyResolveMode.FULL);
-        JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
+        KtScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
         if (scope == null) {
             return null;
         }
@@ -93,24 +93,24 @@ public abstract class BaseJetVariableMacro extends Macro {
         }
 
 
-        List<JetNamedDeclaration> declarations = new ArrayList<JetNamedDeclaration>();
+        List<KtNamedDeclaration> declarations = new ArrayList<KtNamedDeclaration>();
         for (DeclarationDescriptor declarationDescriptor : filteredDescriptors) {
             PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor);
             assert declaration == null || declaration instanceof PsiNamedElement;
 
-            if (declaration instanceof JetProperty || declaration instanceof JetParameter) {
-                declarations.add((JetNamedDeclaration) declaration);
+            if (declaration instanceof KtProperty || declaration instanceof KtParameter) {
+                declarations.add((KtNamedDeclaration) declaration);
             }
         }
 
-        return declarations.toArray(new JetNamedDeclaration[declarations.size()]);
+        return declarations.toArray(new KtNamedDeclaration[declarations.size()]);
     }
 
-    private static Collection<DeclarationDescriptor> getAllVariables(JetScope scope) {
+    private static Collection<DeclarationDescriptor> getAllVariables(KtScope scope) {
         Collection<DeclarationDescriptor> result = ContainerUtil.newArrayList();
-        result.addAll(scope.getDescriptors(DescriptorKindFilter.VARIABLES, JetScope.Companion.getALL_NAME_FILTER()));
+        result.addAll(scope.getDescriptors(DescriptorKindFilter.VARIABLES, KtScope.Companion.getALL_NAME_FILTER()));
         for (ReceiverParameterDescriptor implicitReceiver : scope.getImplicitReceiversHierarchy()) {
-            result.addAll(implicitReceiver.getType().getMemberScope().getDescriptors(DescriptorKindFilter.VARIABLES, JetScope.Companion.getALL_NAME_FILTER()));
+            result.addAll(implicitReceiver.getType().getMemberScope().getDescriptors(DescriptorKindFilter.VARIABLES, KtScope.Companion.getALL_NAME_FILTER()));
         }
         return result;
     }
@@ -122,11 +122,11 @@ public abstract class BaseJetVariableMacro extends Macro {
     );
 
     @Nullable
-    private static JetExpression findContextExpression(PsiFile psiFile, int startOffset) {
+    private static KtExpression findContextExpression(PsiFile psiFile, int startOffset) {
         PsiElement e = psiFile.findElementAt(startOffset);
         while (e != null) {
-            if (e instanceof JetExpression) {
-                return (JetExpression) e;
+            if (e instanceof KtExpression) {
+                return (KtExpression) e;
             }
             e = e.getParent();
         }
@@ -135,7 +135,7 @@ public abstract class BaseJetVariableMacro extends Macro {
 
     @Override
     public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
-        JetNamedDeclaration[] vars = getVariables(params, context);
+        KtNamedDeclaration[] vars = getVariables(params, context);
         if (vars == null || vars.length == 0) return null;
         return new JetPsiElementResult(vars[0]);
     }

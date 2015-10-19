@@ -21,7 +21,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 
 public fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInstance()!!.getPackage(this)
 
@@ -30,4 +30,4 @@ public fun PsiFile.getFqNameByDirectory(): FqName {
     return qualifiedNameByDirectory?.let { FqName(it) } ?: FqName.ROOT
 }
 
-public fun JetFile.packageMatchesDirectory(): Boolean = getPackageFqName() == getFqNameByDirectory()
+public fun KtFile.packageMatchesDirectory(): Boolean = getPackageFqName() == getFqNameByDirectory()

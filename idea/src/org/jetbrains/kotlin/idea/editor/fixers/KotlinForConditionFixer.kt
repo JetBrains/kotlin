@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.idea.editor.fixers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetForExpression
+import org.jetbrains.kotlin.psi.KtForExpression
 
-public class KotlinForConditionFixer: MissingConditionFixer<JetForExpression>() {
+public class KotlinForConditionFixer: MissingConditionFixer<KtForExpression>() {
     override val keyword = "for"
-    override fun getElement(element: PsiElement?) = element as? JetForExpression
-    override fun getCondition(element: JetForExpression) =
+    override fun getElement(element: PsiElement?) = element as? KtForExpression
+    override fun getCondition(element: KtForExpression) =
             element.getLoopRange() ?: element.getLoopParameter() ?: element.getMultiParameter()
-    override fun getLeftParenthesis(element: JetForExpression) = element.getLeftParenthesis()
-    override fun getRightParenthesis(element: JetForExpression) = element.getRightParenthesis()
-    override fun getBody(element: JetForExpression) = element.getBody()
+    override fun getLeftParenthesis(element: KtForExpression) = element.getLeftParenthesis()
+    override fun getRightParenthesis(element: KtForExpression) = element.getRightParenthesis()
+    override fun getBody(element: KtForExpression) = element.getBody()
 }

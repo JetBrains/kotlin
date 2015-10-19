@@ -32,15 +32,15 @@ import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class AddNameToArgumentIntention
-  : JetSelfTargetingIntention<JetValueArgument>(javaClass(), "Add name to argument"), LowPriorityAction {
+  : JetSelfTargetingIntention<KtValueArgument>(javaClass(), "Add name to argument"), LowPriorityAction {
 
-    override fun isApplicableTo(element: JetValueArgument, caretOffset: Int): Boolean {
+    override fun isApplicableTo(element: KtValueArgument, caretOffset: Int): Boolean {
         val expression = element.getArgumentExpression() ?: return false
         val name = detectNameToAdd(element) ?: return false
 
         setText("Add '$name =' to argument")
 
-        if (expression is JetFunctionLiteralExpression) {
+        if (expression is KtFunctionLiteralExpression) {
             val range = expression.getTextRange()
             return caretOffset == range.start || caretOffset == range.end
         }
@@ -49,22 +49,22 @@ public class AddNameToArgumentIntention
     }
 
     override fun allowCaretInsideElement(element: PsiElement)
-            = element !is JetValueArgumentList && element !is JetContainerNode
+            = element !is KtValueArgumentList && element !is KtContainerNode
 
-    override fun applyTo(element: JetValueArgument, editor: Editor) {
+    override fun applyTo(element: KtValueArgument, editor: Editor) {
         val name = detectNameToAdd(element)!!
-        val newArgument = JetPsiFactory(element).createArgument(element.getArgumentExpression()!!, name, element.getSpreadElement() != null)
+        val newArgument = KtPsiFactory(element).createArgument(element.getArgumentExpression()!!, name, element.getSpreadElement() != null)
         element.replace(newArgument)
     }
 
-    private fun detectNameToAdd(argument: JetValueArgument): Name? {
+    private fun detectNameToAdd(argument: KtValueArgument): Name? {
         if (argument.isNamed()) return null
-        if (argument is JetFunctionLiteralArgument) return null
+        if (argument is KtFunctionLiteralArgument) return null
 
-        val argumentList = argument.getParent() as? JetValueArgumentList ?: return null
+        val argumentList = argument.getParent() as? KtValueArgumentList ?: return null
         if (argument != argumentList.arguments.last { !it.isNamed() }) return null
 
-        val callExpr = argumentList.getParent() as? JetExpression ?: return null
+        val callExpr = argumentList.getParent() as? KtExpression ?: return null
         val resolvedCall = callExpr.getResolvedCall(callExpr.analyze(BodyResolveMode.PARTIAL)) ?: return null
         val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: return null
         if (argumentMatch.status != ArgumentMatchStatus.SUCCESS) return null

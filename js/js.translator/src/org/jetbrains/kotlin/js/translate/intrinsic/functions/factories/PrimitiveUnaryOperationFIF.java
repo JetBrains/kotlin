@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntri
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
-import org.jetbrains.kotlin.lexer.JetToken;
+import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -199,7 +199,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
             jsOperator = JsUnaryOperator.BIT_NOT;
         }
         else {
-            JetToken jetToken = OperatorConventions.UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED.get(name);
+            KtToken jetToken = OperatorConventions.UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED.get(name);
             jsOperator = OperatorTable.getUnaryOperator(jetToken);
         }
 

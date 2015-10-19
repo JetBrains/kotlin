@@ -20,24 +20,24 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class FoldIfToReturnIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with return") {
-    override fun applicabilityRange(element: JetIfExpression): TextRange? {
+public class FoldIfToReturnIntention : JetSelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with return") {
+    override fun applicabilityRange(element: KtIfExpression): TextRange? {
         if (BranchedFoldingUtils.getFoldableBranchedReturn(element.getThen()) == null) return null
         if (BranchedFoldingUtils.getFoldableBranchedReturn(element.getElse()) == null) return null
         return element.getIfKeyword().getTextRange()
     }
 
-    override fun applyTo(element: JetIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor) {
         val thenReturn = BranchedFoldingUtils.getFoldableBranchedReturn(element.getThen()!!)!!
         val elseReturn = BranchedFoldingUtils.getFoldableBranchedReturn(element.getElse()!!)!!
 
         thenReturn.replace(thenReturn.getReturnedExpression()!!)
         elseReturn.replace(elseReturn.getReturnedExpression()!!)
 
-        element.replace(JetPsiFactory(element).createExpressionByPattern("return $0", element))
+        element.replace(KtPsiFactory(element).createExpressionByPattern("return $0", element))
     }
 }

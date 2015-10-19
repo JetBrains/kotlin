@@ -22,17 +22,17 @@ import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 
 public object BranchedUnfoldingUtils {
-    public fun unfoldAssignmentToIf(assignment: JetBinaryExpression, editor: Editor) {
+    public fun unfoldAssignmentToIf(assignment: KtBinaryExpression, editor: Editor) {
         val op = assignment.getOperationReference().getText()
         val left = assignment.getLeft()!!
-        val ifExpression = assignment.getRight() as JetIfExpression
+        val ifExpression = assignment.getRight() as KtIfExpression
 
         val newIfExpression = ifExpression.copied()
 
         val thenExpr = newIfExpression.getThen()!!.lastBlockStatementOrThis()
         val elseExpr = newIfExpression.getElse()!!.lastBlockStatementOrThis()
 
-        val psiFactory = JetPsiFactory(assignment)
+        val psiFactory = KtPsiFactory(assignment)
         thenExpr.replace(psiFactory.createExpressionByPattern("$0 $1 $2", left, op, thenExpr))
         elseExpr.replace(psiFactory.createExpressionByPattern("$0 $1 $2", left, op, elseExpr))
 
@@ -41,16 +41,16 @@ public object BranchedUnfoldingUtils {
         editor.getCaretModel().moveToOffset(resultIf.getTextOffset())
     }
 
-    public fun unfoldAssignmentToWhen(assignment: JetBinaryExpression, editor: Editor) {
+    public fun unfoldAssignmentToWhen(assignment: KtBinaryExpression, editor: Editor) {
         val op = assignment.getOperationReference().getText()
         val left = assignment.getLeft()!!
-        val whenExpression = assignment.getRight() as JetWhenExpression
+        val whenExpression = assignment.getRight() as KtWhenExpression
 
         val newWhenExpression = whenExpression.copied()
 
         for (entry in newWhenExpression.getEntries()) {
             val expr = entry.getExpression()!!.lastBlockStatementOrThis()
-            expr.replace(JetPsiFactory(assignment).createExpressionByPattern("$0 $1 $2", left, op, expr))
+            expr.replace(KtPsiFactory(assignment).createExpressionByPattern("$0 $1 $2", left, op, expr))
         }
 
         val resultWhen = assignment.replace(newWhenExpression)

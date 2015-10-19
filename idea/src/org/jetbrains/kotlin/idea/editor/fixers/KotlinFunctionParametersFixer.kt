@@ -20,12 +20,12 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
 
 
 public class KotlinFunctionParametersFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
-        if (psiElement !is JetNamedFunction) return;
+        if (psiElement !is KtNamedFunction) return;
 
         val parameterList = psiElement.getValueParameterList()
         if (parameterList == null) {

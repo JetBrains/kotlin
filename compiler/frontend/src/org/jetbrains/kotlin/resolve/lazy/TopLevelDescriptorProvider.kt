@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetScript
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 
 public interface TopLevelDescriptorProvider {
     fun getPackageFragment(fqName: FqName): LazyPackageDescriptor?
 
-    fun getScriptDescriptor(script: JetScript): ScriptDescriptor
+    fun getScriptDescriptor(script: KtScript): ScriptDescriptor
 
     fun getTopLevelClassDescriptors(fqName: FqName, location: LookupLocation): Collection<ClassDescriptor>
 }
@@ -38,7 +38,7 @@ public object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
         shouldNotBeCalled()
     }
 
-    override fun getScriptDescriptor(script: JetScript): ScriptDescriptor {
+    override fun getScriptDescriptor(script: KtScript): ScriptDescriptor {
         shouldNotBeCalled()
     }
 

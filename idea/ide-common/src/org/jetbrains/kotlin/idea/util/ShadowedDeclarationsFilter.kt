@@ -40,14 +40,14 @@ import java.util.*
 public class ShadowedDeclarationsFilter private constructor(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
-        private val context: JetExpression,
+        private val context: KtExpression,
         private val explicitReceiverValue: ReceiverValue
 ) {
     companion object {
         fun create(
                 bindingContext: BindingContext,
                 resolutionFacade: ResolutionFacade,
-                context: JetExpression,
+                context: KtExpression,
                 callTypeAndReceiver: CallTypeAndReceiver<*, *>
         ): ShadowedDeclarationsFilter? {
             val receiverExpression = when (callTypeAndReceiver) {
@@ -67,7 +67,7 @@ public class ShadowedDeclarationsFilter private constructor(
         }
     }
 
-    private val psiFactory = JetPsiFactory(resolutionFacade.project)
+    private val psiFactory = KtPsiFactory(resolutionFacade.project)
     private val dummyExpressionFactory = DummyExpressionFactory(psiFactory)
 
     public fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>): Collection<TDescriptor> {
@@ -173,7 +173,7 @@ public class ShadowedDeclarationsFilter private constructor(
 
             override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
 
-            override fun getTypeArguments() = emptyList<JetTypeProjection>()
+            override fun getTypeArguments() = emptyList<KtTypeProjection>()
 
             override fun getTypeArgumentList() = null
 
@@ -209,10 +209,10 @@ public class ShadowedDeclarationsFilter private constructor(
         return if (filtered.isNotEmpty()) filtered else descriptors /* something went wrong, none of our declarations among resolve candidates, let's not filter anything */
     }
 
-    private class DummyExpressionFactory(val factory: JetPsiFactory) {
-        private val expressions = ArrayList<JetExpression>()
+    private class DummyExpressionFactory(val factory: KtPsiFactory) {
+        private val expressions = ArrayList<KtExpression>()
 
-        fun createDummyExpressions(count: Int): List<JetExpression> {
+        fun createDummyExpressions(count: Int): List<KtExpression> {
             while (expressions.size() < count) {
                 expressions.add(factory.createExpression("dummy"))
             }

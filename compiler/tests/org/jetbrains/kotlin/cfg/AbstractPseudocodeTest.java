@@ -51,19 +51,19 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
 
     protected void doTest(String fileName) throws Exception {
         File file = new File(fileName);
-        JetFile jetFile = JetTestUtils.loadJetFile(getProject(), file);
+        KtFile jetFile = JetTestUtils.loadJetFile(getProject(), file);
 
-        Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
+        Map<KtElement, Pseudocode> data = new LinkedHashMap<KtElement, Pseudocode>();
         AnalysisResult analysisResult = JetTestUtils.analyzeFile(jetFile, getEnvironment());
-        List<JetDeclaration> declarations = jetFile.getDeclarations();
+        List<KtDeclaration> declarations = jetFile.getDeclarations();
         BindingContext bindingContext = analysisResult.getBindingContext();
-        for (JetDeclaration declaration : declarations) {
+        for (KtDeclaration declaration : declarations) {
             addDeclaration(data, bindingContext, declaration);
 
-            if (declaration instanceof JetDeclarationContainer) {
-                for (JetDeclaration member : ((JetDeclarationContainer) declaration).getDeclarations()) {
+            if (declaration instanceof KtDeclarationContainer) {
+                for (KtDeclaration member : ((KtDeclarationContainer) declaration).getDeclarations()) {
                     // Properties and initializers are processed elsewhere
-                    if (member instanceof JetNamedFunction || member instanceof JetSecondaryConstructor) {
+                    if (member instanceof KtNamedFunction || member instanceof KtSecondaryConstructor) {
                         addDeclaration(data, bindingContext, member);
                     }
                 }
@@ -83,7 +83,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         }
     }
 
-    private static void addDeclaration(Map<JetElement, Pseudocode> data, BindingContext bindingContext, JetDeclaration declaration) {
+    private static void addDeclaration(Map<KtElement, Pseudocode> data, BindingContext bindingContext, KtDeclaration declaration) {
         Pseudocode pseudocode = PseudocodeUtil.generatePseudocode(declaration, bindingContext);
         data.put(declaration, pseudocode);
         for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
@@ -92,29 +92,29 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         }
     }
 
-    private void processCFData(File file, Map<JetElement, Pseudocode> data, BindingContext bindingContext) throws IOException {
+    private void processCFData(File file, Map<KtElement, Pseudocode> data, BindingContext bindingContext) throws IOException {
         Collection<Pseudocode> pseudocodes = data.values();
 
         StringBuilder instructionDump = new StringBuilder();
         int i = 0;
         for (Pseudocode pseudocode : pseudocodes) {
-            JetElement correspondingElement = pseudocode.getCorrespondingElement();
+            KtElement correspondingElement = pseudocode.getCorrespondingElement();
             String label;
-            assert (correspondingElement instanceof JetNamedDeclaration || correspondingElement instanceof JetPropertyAccessor) :
+            assert (correspondingElement instanceof KtNamedDeclaration || correspondingElement instanceof KtPropertyAccessor) :
                     "Unexpected element class is pseudocode: " + correspondingElement.getClass();
             boolean isAnonymousFunction =
-                    correspondingElement instanceof JetFunctionLiteral
-                    || (correspondingElement instanceof JetNamedFunction && correspondingElement.getName() == null);
+                    correspondingElement instanceof KtFunctionLiteral
+                    || (correspondingElement instanceof KtNamedFunction && correspondingElement.getName() == null);
             if (isAnonymousFunction) {
                 label = "anonymous_" + i++;
             }
-            else if (correspondingElement instanceof JetNamedDeclaration) {
-                JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) correspondingElement;
+            else if (correspondingElement instanceof KtNamedDeclaration) {
+                KtNamedDeclaration namedDeclaration = (KtNamedDeclaration) correspondingElement;
                 label = namedDeclaration.getName();
             }
             else {
-                String propertyName = ((JetProperty) correspondingElement.getParent()).getName();
-                label = (((JetPropertyAccessor) correspondingElement).isGetter() ? "get" : "set") + "_" + propertyName;
+                String propertyName = ((KtProperty) correspondingElement.getParent()).getName();
+                label = (((KtPropertyAccessor) correspondingElement).isGetter() ? "get" : "set") + "_" + propertyName;
             }
 
             instructionDump.append("== ").append(label).append(" ==\n");

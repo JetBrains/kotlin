@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.receiverType
@@ -33,7 +33,7 @@ public abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
         functionList: Collection<ProtoBuf.Function>,
         propertyList: Collection<ProtoBuf.Property>
-) : JetScopeImpl() {
+) : KtScopeImpl() {
 
     private data class ProtoKey(val name: Name, val isExtension: Boolean)
 

@@ -23,14 +23,13 @@ import com.google.dart.compiler.backend.js.ast.JsVars;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator;
-import org.jetbrains.kotlin.psi.JetMultiDeclaration;
-import org.jetbrains.kotlin.psi.JetMultiDeclarationEntry;
+import org.jetbrains.kotlin.psi.KtMultiDeclaration;
+import org.jetbrains.kotlin.psi.KtMultiDeclarationEntry;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -45,7 +44,7 @@ public class MultiDeclarationTranslator extends AbstractTranslator {
     // if multiObjectName was init, initializer must be null
     @NotNull
     public static JsVars translate(
-            @NotNull JetMultiDeclaration multiDeclaration,
+            @NotNull KtMultiDeclaration multiDeclaration,
             @NotNull JsName multiObjectName,
             @Nullable JsExpression initializer,
             @NotNull TranslationContext context
@@ -54,14 +53,14 @@ public class MultiDeclarationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private final JetMultiDeclaration multiDeclaration;
+    private final KtMultiDeclaration multiDeclaration;
     @NotNull
     private final JsName multiObjectName;
     @Nullable
     private final JsExpression initializer;
 
     private MultiDeclarationTranslator(
-            @NotNull JetMultiDeclaration multiDeclaration,
+            @NotNull KtMultiDeclaration multiDeclaration,
             @NotNull JsName multiObjectName,
             @Nullable JsExpression initializer,
             @NotNull TranslationContext context
@@ -79,7 +78,7 @@ public class MultiDeclarationTranslator extends AbstractTranslator {
         }
 
         JsNameRef multiObjNameRef = multiObjectName.makeRef();
-        for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+        for (KtMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
             ResolvedCall<FunctionDescriptor> entryInitCall =  context().bindingContext().get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
             assert entryInitCall != null : "Entry init call must be not null";
             JsExpression entryInitializer = CallTranslator.translate(context(), entryInitCall, multiObjNameRef);

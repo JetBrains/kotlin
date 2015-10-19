@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 class KotlinJavascriptAnnotationAndConstantLoader(
         module: ModuleDescriptor
@@ -82,7 +82,7 @@ class KotlinJavascriptAnnotationAndConstantLoader(
     override fun loadPropertyConstant(
             container: ProtoContainer,
             proto: ProtoBuf.Property,
-            expectedType: JetType
+            expectedType: KtType
     ): ConstantValue<*>? {
         if (!proto.hasExtension(JsProtoBuf.compileTimeValue)) return null
         val value = proto.getExtension(JsProtoBuf.compileTimeValue)

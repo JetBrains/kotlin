@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -35,78 +35,78 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-fun JetProperty.mustBeAbstractInInterface() =
+fun KtProperty.mustBeAbstractInInterface() =
         hasInitializer() || hasDelegate() || (!hasInitializer() && !hasDelegate() && accessors.isEmpty())
 
-fun JetNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean {
+fun KtNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean {
     return when (this) {
-        is JetProperty -> {
+        is KtProperty -> {
             if (targetClass.isInterface) return false
-            if (hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.ABSTRACT_KEYWORD)) return false
+            if (hasModifier(KtTokens.OPEN_KEYWORD) || hasModifier(KtTokens.ABSTRACT_KEYWORD)) return false
             if (accessors.isNotEmpty() || delegateExpression != null) return false
             true
         }
-        is JetNamedFunction -> true
+        is KtNamedFunction -> true
         else -> false
     }
 }
 
-fun addMemberToTarget(targetMember: JetNamedDeclaration, targetClass: JetClassOrObject): JetNamedDeclaration {
+fun addMemberToTarget(targetMember: KtNamedDeclaration, targetClass: KtClassOrObject): KtNamedDeclaration {
     val anchor = targetClass.declarations.filterIsInstance(targetMember.javaClass).lastOrNull()
     val movedMember = when {
-        anchor == null && targetMember is JetProperty -> targetClass.addDeclarationBefore(targetMember, null)
+        anchor == null && targetMember is KtProperty -> targetClass.addDeclarationBefore(targetMember, null)
         else -> targetClass.addDeclarationAfter(targetMember, anchor)
     }
-    return movedMember as JetNamedDeclaration
+    return movedMember as KtNamedDeclaration
 }
 
 fun doAddCallableMember(
-        memberCopy: JetCallableDeclaration,
-        clashingSuper: JetCallableDeclaration?,
-        targetClass: JetClass): JetCallableDeclaration {
-    if (clashingSuper != null && clashingSuper.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+        memberCopy: KtCallableDeclaration,
+        clashingSuper: KtCallableDeclaration?,
+        targetClass: KtClass): KtCallableDeclaration {
+    if (clashingSuper != null && clashingSuper.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
         return clashingSuper.replaced(memberCopy)
     }
-    return addMemberToTarget(memberCopy, targetClass) as JetCallableDeclaration
+    return addMemberToTarget(memberCopy, targetClass) as KtCallableDeclaration
 }
 
 // TODO: Formatting rules don't apply here for some reason
-fun JetNamedDeclaration.addModifierWithSpace(modifier: JetModifierKeywordToken) {
+fun KtNamedDeclaration.addModifierWithSpace(modifier: KtModifierKeywordToken) {
     addModifier(modifier)
-    addAfter(JetPsiFactory(this).createWhiteSpace(), modifierList)
+    addAfter(KtPsiFactory(this).createWhiteSpace(), modifierList)
 }
 
 // TODO: Formatting rules don't apply here for some reason
-fun JetNamedDeclaration.addAnnotationWithSpace(annotationEntry: JetAnnotationEntry): JetAnnotationEntry {
+fun KtNamedDeclaration.addAnnotationWithSpace(annotationEntry: KtAnnotationEntry): KtAnnotationEntry {
     val result = addAnnotationEntry(annotationEntry)
-    addAfter(JetPsiFactory(this).createWhiteSpace(), modifierList)
+    addAfter(KtPsiFactory(this).createWhiteSpace(), modifierList)
     return result
 }
 
-fun JetClass.makeAbstract() {
+fun KtClass.makeAbstract() {
     if (!isInterface()) {
-        addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
+        addModifierWithSpace(KtTokens.ABSTRACT_KEYWORD)
     }
 }
 
-fun JetClassOrObject.getDelegatorToSuperClassByDescriptor(
+fun KtClassOrObject.getDelegatorToSuperClassByDescriptor(
         descriptor: ClassDescriptor,
         context: BindingContext
-): JetDelegatorToSuperClass? {
+): KtDelegatorToSuperClass? {
     return getDelegationSpecifiers()
-            .filterIsInstance<JetDelegatorToSuperClass>()
+            .filterIsInstance<KtDelegatorToSuperClass>()
             .firstOrNull {
                 val referencedType = context[BindingContext.TYPE, it.typeReference]
                 referencedType?.constructor?.declarationDescriptor == descriptor
             }
 }
 
-fun makeAbstract(member: JetCallableDeclaration,
+fun makeAbstract(member: KtCallableDeclaration,
                  originalMemberDescriptor: CallableMemberDescriptor,
                  substitutor: TypeSubstitutor,
-                 targetClass: JetClass) {
+                 targetClass: KtClass) {
     if (!targetClass.isInterface()) {
-        member.addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
+        member.addModifierWithSpace(KtTokens.ABSTRACT_KEYWORD)
     }
 
     val builtIns = originalMemberDescriptor.builtIns
@@ -120,17 +120,17 @@ fun makeAbstract(member: JetCallableDeclaration,
                    ?: builtIns.nullableAnyType
         }
 
-        if (member is JetProperty || !type.isUnit()) {
+        if (member is KtProperty || !type.isUnit()) {
             member.setType(type, false)
         }
     }
 
     val deleteFrom = when (member) {
-        is JetProperty -> {
+        is KtProperty -> {
             member.equalsToken ?: member.delegate ?: member.accessors.firstOrNull()
         }
 
-        is JetNamedFunction -> {
+        is KtNamedFunction -> {
             member.equalsToken ?: member.bodyExpression
         }
 
@@ -143,8 +143,8 @@ fun makeAbstract(member: JetCallableDeclaration,
 }
 
 fun addDelegatorToSuperClass(
-        delegator: JetDelegatorToSuperClass,
-        targetClass: JetClassOrObject,
+        delegator: KtDelegatorToSuperClass,
+        targetClass: KtClassOrObject,
         targetClassDescriptor: ClassDescriptor,
         context: BindingContext,
         substitutor: TypeSubstitutor
@@ -158,6 +158,6 @@ fun addDelegatorToSuperClass(
     if (!(typeInTargetClass != null && !typeInTargetClass.isError)) return
 
     val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeInTargetClass)
-    val newSpecifier = JetPsiFactory(targetClass).createDelegatorToSuperClass(renderedType)
+    val newSpecifier = KtPsiFactory(targetClass).createDelegatorToSuperClass(renderedType)
     targetClass.addDelegationSpecifier(newSpecifier).addToShorteningWaitSet()
 }

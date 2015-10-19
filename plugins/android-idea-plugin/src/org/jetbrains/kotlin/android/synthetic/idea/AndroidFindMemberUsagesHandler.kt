@@ -32,13 +32,13 @@ import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 import org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import java.util.ArrayList
 
 class AndroidFindUsageHandlerDecorator : KotlinFindUsagesHandlerDecorator {
     override fun decorateHandler(element: PsiElement, forHighlightUsages: Boolean, delegate: FindUsagesHandler): FindUsagesHandler {
-        if (element !is JetNamedDeclaration) return delegate
+        if (element !is KtNamedDeclaration) return delegate
         if (!isAndroidSyntheticElement(element)) return delegate
 
         return AndroidFindMemberUsagesHandler(element, delegate)
@@ -46,14 +46,14 @@ class AndroidFindUsageHandlerDecorator : KotlinFindUsagesHandlerDecorator {
 }
 
 class AndroidFindMemberUsagesHandler(
-        private val declaration: JetNamedDeclaration,
+        private val declaration: KtNamedDeclaration,
         private val delegate: FindUsagesHandler? = null
 ) : FindUsagesHandler(declaration) {
 
     override fun getPrimaryElements(): Array<PsiElement> {
         assert(isAndroidSyntheticElement(declaration))
 
-        val property = declaration as JetProperty
+        val property = declaration as KtProperty
         val moduleInfo = declaration.getModuleInfo() as? ModuleSourceInfo ?: return super.getPrimaryElements()
         val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<SyntheticFileGenerator>())
 
@@ -71,7 +71,7 @@ class AndroidFindMemberUsagesHandler(
     override fun getSecondaryElements(): Array<PsiElement> {
         assert(isAndroidSyntheticElement(declaration))
 
-        val property = declaration as JetProperty
+        val property = declaration as KtProperty
         val moduleInfo = declaration.getModuleInfo() as? ModuleSourceInfo ?: return super.getPrimaryElements()
         val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<SyntheticFileGenerator>())
 

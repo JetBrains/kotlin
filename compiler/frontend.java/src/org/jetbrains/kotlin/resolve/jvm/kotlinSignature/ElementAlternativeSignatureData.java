@@ -23,11 +23,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.kotlin.psi.JetTypeElement;
-import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.psi.KtTypeElement;
+import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.List;
 import java.util.Map;
@@ -86,9 +86,9 @@ public abstract class ElementAlternativeSignatureData {
         }
     }
 
-    protected static JetType computeReturnType(
-            @NotNull JetType originalType,
-            @Nullable JetTypeReference altReturnTypeReference,
+    protected static KtType computeReturnType(
+            @NotNull KtType originalType,
+            @Nullable KtTypeReference altReturnTypeReference,
             @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters) {
         if (altReturnTypeReference == null) {
             if (KotlinBuiltIns.isUnit(originalType)) {
@@ -101,7 +101,7 @@ public abstract class ElementAlternativeSignatureData {
             }
         }
 
-        JetTypeElement typeElement = altReturnTypeReference.getTypeElement();
+        KtTypeElement typeElement = altReturnTypeReference.getTypeElement();
         assert (typeElement != null);
 
         return TypeTransformingVisitor.computeType(typeElement, originalType, originalToAltTypeParameters, MEMBER_SIGNATURE_COVARIANT);

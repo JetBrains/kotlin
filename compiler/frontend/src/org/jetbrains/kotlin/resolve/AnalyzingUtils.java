@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
 import org.jetbrains.kotlin.psi.debugText.DebugTextUtilKt;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import java.util.List;
 
 public class AnalyzingUtils {
 
-    public abstract static class PsiErrorElementVisitor extends JetTreeVisitorVoid {
+    public abstract static class PsiErrorElementVisitor extends KtTreeVisitorVoid {
         @Override
         public abstract void visitErrorElement(PsiErrorElement element);
     }
@@ -68,8 +68,8 @@ public class AnalyzingUtils {
 
     public static String formDebugNameForBindingTrace(@NotNull String debugName, @Nullable Object resolutionSubjectForMessage) {
         StringBuilder debugInfo = new StringBuilder(debugName);
-        if (resolutionSubjectForMessage instanceof JetElement) {
-            JetElement element = (JetElement) resolutionSubjectForMessage;
+        if (resolutionSubjectForMessage instanceof KtElement) {
+            KtElement element = (KtElement) resolutionSubjectForMessage;
             debugInfo.append(" ").append(DebugTextUtilKt.getDebugText(element));
             debugInfo.append(" in ").append(element.getContainingFile().getName());
         }

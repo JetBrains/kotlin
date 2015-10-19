@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 
-public fun LookupTracker.record(from: LookupLocation, inScope: JetScope, name: Name) {
+public fun LookupTracker.record(from: LookupLocation, inScope: KtScope, name: Name) {
     if (this == LookupTracker.DO_NOTHING || from is NoLookupLocation) return
 
     if (from !is KotlinLookupLocation) throw AssertionError("Unexpected location type: ${from.javaClass}")

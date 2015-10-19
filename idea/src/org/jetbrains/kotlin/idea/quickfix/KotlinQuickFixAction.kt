@@ -22,22 +22,22 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtFile
 
 abstract class KotlinQuickFixAction<T : PsiElement>(protected val element: T) : IntentionAction {
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return element.isValid && (file.manager.isInProject(file) || file is JetCodeFragment) && (file is JetFile)
+        return element.isValid && (file.manager.isInProject(file) || file is KtCodeFragment) && (file is KtFile)
     }
 
     override final fun invoke(project: Project, editor: Editor?, file: PsiFile) {
-        if (file is JetFile && FileModificationService.getInstance().prepareFileForWrite(element.containingFile)) {
+        if (file is KtFile && FileModificationService.getInstance().prepareFileForWrite(element.containingFile)) {
             invoke(project, editor, file)
         }
     }
 
-    protected abstract fun invoke(project: Project, editor: Editor?, file: JetFile)
+    protected abstract fun invoke(project: Project, editor: Editor?, file: KtFile)
 
     override fun startInWriteAction() = true
 }

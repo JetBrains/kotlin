@@ -20,20 +20,20 @@ import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTestCase {
 
     public void doTestExpressionSelection(@NotNull String path) throws Exception {
         configureByFile(path);
-        final String expectedExpression = JetTestUtils.getLastCommentInFile((JetFile) getFile());
+        final String expectedExpression = JetTestUtils.getLastCommentInFile((KtFile) getFile());
 
         try {
             JetRefactoringUtil.selectExpression(getEditor(), getFile(), new JetRefactoringUtil.SelectExpressionCallback() {
                 @Override
-                public void run(@Nullable JetExpression expression) {
+                public void run(@Nullable KtExpression expression) {
                     assertNotNull("Selected expression mustn't be null", expression);
                     assertEquals(expectedExpression, expression.getText());
                 }

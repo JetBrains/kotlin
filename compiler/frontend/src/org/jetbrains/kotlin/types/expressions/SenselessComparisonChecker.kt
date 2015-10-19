@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
@@ -28,16 +28,16 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 
 object SenselessComparisonChecker {
     @JvmStatic fun checkSenselessComparisonWithNull(
-            expression: JetBinaryExpression,
-            left: JetExpression,
-            right: JetExpression,
+            expression: KtBinaryExpression,
+            left: KtExpression,
+            right: KtExpression,
             context: ResolutionContext<*>,
-            getType: (JetExpression) -> JetType?,
+            getType: (KtExpression) -> KtType?,
             getNullability: (DataFlowValue) -> Nullability
     ) {
         val expr =
-                if (JetPsiUtil.isNullConstant(left)) right
-                else if (JetPsiUtil.isNullConstant(right)) left
+                if (KtPsiUtil.isNullConstant(left)) right
+                else if (KtPsiUtil.isNullConstant(right)) left
                 else return
 
         val type = getType(expr)
@@ -46,7 +46,7 @@ object SenselessComparisonChecker {
         val operationSign = expression.getOperationReference()
         val value = DataFlowValueFactory.createDataFlowValue(expr, type, context)
 
-        val equality = operationSign.getReferencedNameElementType() == JetTokens.EQEQ || operationSign.getReferencedNameElementType() == JetTokens.EQEQEQ
+        val equality = operationSign.getReferencedNameElementType() == KtTokens.EQEQ || operationSign.getReferencedNameElementType() == KtTokens.EQEQEQ
         val nullability = getNullability(value)
 
         val expressionIsAlways =

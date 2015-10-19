@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -159,14 +159,14 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     private fun processNewArray(insn: MethodInsnNode, parameter: Type) =
             processNextTypeInsn(insn, parameter, Opcodes.ANEWARRAY)
 
-    private fun processCheckcast(insn: MethodInsnNode, instructions: InsnList, jetType: JetType, asmType: Type, safe: Boolean) =
+    private fun processCheckcast(insn: MethodInsnNode, instructions: InsnList, jetType: KtType, asmType: Type, safe: Boolean) =
             rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { instanceofInsn: AbstractInsnNode ->
                 if (instanceofInsn !is TypeInsnNode) return false
                 TypeIntrinsics.checkcast(instanceofInsn, instructions, jetType, asmType, safe)
                 return true
             }
 
-    private fun processInstanceof(insn: MethodInsnNode, instructions: InsnList, jetType: JetType, asmType: Type) =
+    private fun processInstanceof(insn: MethodInsnNode, instructions: InsnList, jetType: KtType, asmType: Type) =
             rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { instanceofInsn: AbstractInsnNode ->
                 if (instanceofInsn !is TypeInsnNode) return false
                 TypeIntrinsics.instanceOf(instanceofInsn, instructions, jetType, asmType)
@@ -213,7 +213,7 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
 public class ReifiedTypeParameterMappings() {
     private val mappingsByName = hashMapOf<String, ReifiedTypeParameterMapping>()
 
-    public fun addParameterMappingToType(name: String, type: JetType, asmType: Type, signature: String) {
+    public fun addParameterMappingToType(name: String, type: KtType, asmType: Type, signature: String) {
         mappingsByName[name] =  ReifiedTypeParameterMapping(name, type, asmType, newName = null, signature = signature)
     }
 
@@ -227,7 +227,7 @@ public class ReifiedTypeParameterMappings() {
 }
 
 public class ReifiedTypeParameterMapping(
-        val name: String, val type: JetType?, val asmType: Type?, val newName: String?, val signature: String?
+        val name: String, val type: KtType?, val asmType: Type?, val newName: String?, val signature: String?
 )
 
 public class ReifiedTypeParametersUsages {

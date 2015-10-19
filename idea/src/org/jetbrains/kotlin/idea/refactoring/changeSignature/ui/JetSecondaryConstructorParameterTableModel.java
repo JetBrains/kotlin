@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 
@@ -27,7 +27,7 @@ public class JetSecondaryConstructorParameterTableModel extends JetCallableParam
         super(methodDescriptor,
               context,
               new NameColumn(context.getProject()),
-              new TypeColumn(context.getProject(), JetFileType.INSTANCE),
-              new DefaultValueColumn<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>>(context.getProject(), JetFileType.INSTANCE));
+              new TypeColumn(context.getProject(), KotlinFileType.INSTANCE),
+              new DefaultValueColumn<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>>(context.getProject(), KotlinFileType.INSTANCE));
     }
 }

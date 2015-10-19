@@ -22,11 +22,11 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : JetElement, D : Any>(
+abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : KtElement, D : Any>(
         private val actionPriority: IntentionActionPriority = IntentionActionPriority.NORMAL
 ) : KotlinIntentionActionFactoryWithDelegate<E, D>() {
 
@@ -51,7 +51,7 @@ abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : JetElement, D 
     }
 }
 
-abstract class KotlinIntentionActionFactoryWithDelegate<E : JetElement, D : Any> : JetIntentionActionsFactory() {
+abstract class KotlinIntentionActionFactoryWithDelegate<E : KtElement, D : Any> : JetIntentionActionsFactory() {
     protected abstract fun getElementOfInterest(diagnostic: Diagnostic): E?
 
     protected abstract fun createFixes(

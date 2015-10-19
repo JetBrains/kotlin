@@ -27,23 +27,23 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCaller
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.substitutions.getCallableSubstitutor
 
-fun JetNamedDeclaration.getDeclarationBody(): JetElement? {
+fun KtNamedDeclaration.getDeclarationBody(): KtElement? {
     return when {
-        this is JetClassOrObject -> getDelegationSpecifierList()
-        this is JetPrimaryConstructor -> getContainingClassOrObject().getDelegationSpecifierList()
-        this is JetSecondaryConstructor -> getDelegationCall()
-        this is JetNamedFunction -> getBodyExpression()
+        this is KtClassOrObject -> getDelegationSpecifierList()
+        this is KtPrimaryConstructor -> getContainingClassOrObject().getDelegationSpecifierList()
+        this is KtSecondaryConstructor -> getDelegationCall()
+        this is KtNamedFunction -> getBodyExpression()
         else -> null
     }
 }
 
 public fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
-    val elementToSearch = (this as? JetClass)?.getPrimaryConstructor() ?: this
+    val elementToSearch = (this as? KtClass)?.getPrimaryConstructor() ?: this
     return allUsages
             .asSequence()
             .filter {
@@ -56,10 +56,10 @@ public fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
             .any { it.getElement() == elementToSearch }
 }
 
-public fun JetElement.isInsideOfCallerBody(allUsages: Array<out UsageInfo>): Boolean {
+public fun KtElement.isInsideOfCallerBody(allUsages: Array<out UsageInfo>): Boolean {
     val container = parentsWithSelf.firstOrNull {
-        it is JetNamedFunction || it is JetConstructor<*> || it is JetClassOrObject
-    } as? JetNamedDeclaration ?: return false
+        it is KtNamedFunction || it is KtConstructor<*> || it is KtClassOrObject
+    } as? KtNamedDeclaration ?: return false
     val body = container.getDeclarationBody() ?: return false
     return body.getTextRange().contains(getTextRange()) && container.isCaller(allUsages)
 }
@@ -73,7 +73,7 @@ fun getCallableSubstitutor(
     return getCallableSubstitutor(currentBaseFunction, currentDerivedFunction)
 }
 
-fun JetType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, defaultText: String, inArgumentPosition: Boolean): String {
+fun KtType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, defaultText: String, inArgumentPosition: Boolean): String {
     val newType = substitutor?.substitute(this, Variance.INVARIANT) ?: return defaultText
     val renderer = if (inArgumentPosition) IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS else IdeDescriptorRenderers.SOURCE_CODE
     return renderer.renderType(newType)

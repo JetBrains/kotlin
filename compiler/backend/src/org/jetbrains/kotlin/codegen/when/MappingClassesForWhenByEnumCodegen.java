@@ -20,7 +20,7 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ClassBuilder;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -42,7 +42,7 @@ public class MappingClassesForWhenByEnumCodegen {
         this.state = state;
     }
 
-    public void generate(@NotNull List<WhenByEnumsMapping> mappings, @NotNull Type mappingsClass, @NotNull JetFile srcFile) {
+    public void generate(@NotNull List<WhenByEnumsMapping> mappings, @NotNull Type mappingsClass, @NotNull KtFile srcFile) {
         ClassBuilder cb = state.getFactory().newVisitor(JvmDeclarationOrigin.NO_ORIGIN, mappingsClass, srcFile);
         cb.defineClass(
                 srcFile,

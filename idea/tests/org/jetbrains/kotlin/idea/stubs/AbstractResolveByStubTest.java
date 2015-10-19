@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.test.*;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
 
@@ -56,7 +56,7 @@ public abstract class AbstractResolveByStubTest extends KotlinCodeInsightTestCas
     }
 
     private void performTest(@NotNull String path, boolean checkPrimaryConstructors, boolean checkPropertyAccessors) {
-        JetFile file = (JetFile) getFile();
+        KtFile file = (KtFile) getFile();
         ModuleDescriptor module = ResolutionUtils.findModuleDescriptor(file);
         PackageViewDescriptor packageViewDescriptor = module.getPackage(new FqName("test"));
         Assert.assertFalse(packageViewDescriptor.isEmpty());

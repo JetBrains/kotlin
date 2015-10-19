@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.HashSet;
@@ -40,8 +40,8 @@ public final class WhenChecker {
     private WhenChecker() {
     }
 
-    public static boolean mustHaveElse(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
-        JetType expectedType = trace.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression);
+    public static boolean mustHaveElse(@NotNull KtWhenExpression expression, @NotNull BindingTrace trace) {
+        KtType expectedType = trace.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression);
         boolean isUnit = expectedType != null && KotlinBuiltIns.isUnit(expectedType);
         // Some "statements" are actually expressions returned from lambdas, their expected types are non-null
         boolean isStatement = BindingContextUtilsKt.isUsedAsStatement(expression, trace.getBindingContext()) && expectedType == null;
@@ -49,12 +49,12 @@ public final class WhenChecker {
         return !isUnit && !isStatement && !isWhenExhaustive(expression, trace);
     }
 
-    public static boolean isWhenByEnum(@NotNull JetWhenExpression expression, @NotNull BindingContext context) {
+    public static boolean isWhenByEnum(@NotNull KtWhenExpression expression, @NotNull BindingContext context) {
         return getClassDescriptorOfTypeIfEnum(whenSubjectType(expression, context)) != null;
     }
 
     @Nullable
-    public static ClassDescriptor getClassDescriptorOfTypeIfEnum(@Nullable JetType type) {
+    public static ClassDescriptor getClassDescriptorOfTypeIfEnum(@Nullable KtType type) {
         if (type == null) return null;
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
         if (classDescriptor == null) return null;
@@ -64,19 +64,19 @@ public final class WhenChecker {
     }
 
     @Nullable
-    private static JetType whenSubjectType(@NotNull JetWhenExpression expression, @NotNull BindingContext context) {
-        JetExpression subjectExpression = expression.getSubjectExpression();
+    private static KtType whenSubjectType(@NotNull KtWhenExpression expression, @NotNull BindingContext context) {
+        KtExpression subjectExpression = expression.getSubjectExpression();
         return subjectExpression == null ? null : context.getType(subjectExpression);
     }
 
-    private static boolean isWhenOnBooleanExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
+    private static boolean isWhenOnBooleanExhaustive(@NotNull KtWhenExpression expression, @NotNull BindingTrace trace) {
         // It's assumed (and not checked) that expression is of the boolean type
         boolean containsFalse = false;
         boolean containsTrue = false;
-        for (JetWhenEntry whenEntry: expression.getEntries()) {
-            for (JetWhenCondition whenCondition : whenEntry.getConditions()) {
-                if (whenCondition instanceof JetWhenConditionWithExpression) {
-                    JetExpression whenExpression = ((JetWhenConditionWithExpression) whenCondition).getExpression();
+        for (KtWhenEntry whenEntry: expression.getEntries()) {
+            for (KtWhenCondition whenCondition : whenEntry.getConditions()) {
+                if (whenCondition instanceof KtWhenConditionWithExpression) {
+                    KtExpression whenExpression = ((KtWhenConditionWithExpression) whenCondition).getExpression();
                     if (CompileTimeConstantUtils.canBeReducedToBooleanConstant(whenExpression, trace, true)) containsTrue = true;
                     if (CompileTimeConstantUtils.canBeReducedToBooleanConstant(whenExpression, trace, false)) containsFalse = true;
                 }
@@ -86,7 +86,7 @@ public final class WhenChecker {
     }
 
     public static boolean isWhenOnEnumExhaustive(
-            @NotNull JetWhenExpression expression,
+            @NotNull KtWhenExpression expression,
             @NotNull BindingTrace trace,
             @NotNull ClassDescriptor enumClassDescriptor
     ) {
@@ -118,7 +118,7 @@ public final class WhenChecker {
     }
 
     private static boolean isWhenOnSealedClassExhaustive(
-            @NotNull JetWhenExpression expression,
+            @NotNull KtWhenExpression expression,
             @NotNull BindingTrace trace,
             @NotNull ClassDescriptor classDescriptor
     ) {
@@ -135,8 +135,8 @@ public final class WhenChecker {
      * @return true if type is nullable, and cannot be smart casted
      */
     private static boolean isNullableTypeWithoutPossibleSmartCast(
-            @Nullable JetExpression expression,
-            @NotNull JetType type,
+            @Nullable KtExpression expression,
+            @NotNull KtType type,
             @NotNull BindingContext context
     ) {
         if (expression == null) return false; // Normally should not happen
@@ -151,8 +151,8 @@ public final class WhenChecker {
         return true;
     }
 
-    public static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
-        JetType type = whenSubjectType(expression, trace.getBindingContext());
+    public static boolean isWhenExhaustive(@NotNull KtWhenExpression expression, @NotNull BindingTrace trace) {
+        KtType type = whenSubjectType(expression, trace.getBindingContext());
         if (type == null) return false;
         ClassDescriptor enumClassDescriptor = getClassDescriptorOfTypeIfEnum(type);
 
@@ -185,27 +185,27 @@ public final class WhenChecker {
     }
 
     private static boolean containsAllClassCases(
-            @NotNull JetWhenExpression whenExpression,
+            @NotNull KtWhenExpression whenExpression,
             @NotNull Set<ClassDescriptor> memberDescriptors,
             @NotNull BindingTrace trace
     ) {
         Set<ClassDescriptor> checkedDescriptors = new HashSet<ClassDescriptor>();
-        for (JetWhenEntry whenEntry : whenExpression.getEntries()) {
-            for (JetWhenCondition condition : whenEntry.getConditions()) {
+        for (KtWhenEntry whenEntry : whenExpression.getEntries()) {
+            for (KtWhenCondition condition : whenEntry.getConditions()) {
                 boolean negated = false;
                 ClassDescriptor checkedDescriptor = null;
-                if (condition instanceof JetWhenConditionIsPattern) {
-                    JetWhenConditionIsPattern conditionIsPattern = (JetWhenConditionIsPattern) condition;
-                    JetType checkedType = trace.get(BindingContext.TYPE, conditionIsPattern.getTypeReference());
+                if (condition instanceof KtWhenConditionIsPattern) {
+                    KtWhenConditionIsPattern conditionIsPattern = (KtWhenConditionIsPattern) condition;
+                    KtType checkedType = trace.get(BindingContext.TYPE, conditionIsPattern.getTypeReference());
                     if (checkedType != null) {
                         checkedDescriptor = TypeUtils.getClassDescriptor(checkedType);
                     }
                     negated = conditionIsPattern.isNegated();
                 }
-                else if (condition instanceof JetWhenConditionWithExpression) {
-                    JetWhenConditionWithExpression conditionWithExpression = (JetWhenConditionWithExpression) condition;
+                else if (condition instanceof KtWhenConditionWithExpression) {
+                    KtWhenConditionWithExpression conditionWithExpression = (KtWhenConditionWithExpression) condition;
                     if (conditionWithExpression.getExpression() != null) {
-                        JetSimpleNameExpression reference = getReference(conditionWithExpression.getExpression());
+                        KtSimpleNameExpression reference = getReference(conditionWithExpression.getExpression());
                         if (reference != null) {
                             DeclarationDescriptor target = trace.get(BindingContext.REFERENCE_TARGET, reference);
                             if (target instanceof ClassDescriptor) {
@@ -219,7 +219,7 @@ public final class WhenChecker {
                 // In additional, check without "is" is important only for objects
                 if (checkedDescriptor == null
                     || !memberDescriptors.contains(checkedDescriptor)
-                    || (condition instanceof JetWhenConditionWithExpression
+                    || (condition instanceof KtWhenConditionWithExpression
                         && !DescriptorUtils.isObject(checkedDescriptor)
                         && !DescriptorUtils.isEnumEntry(checkedDescriptor))) {
                     continue;
@@ -237,13 +237,13 @@ public final class WhenChecker {
         return checkedDescriptors.containsAll(memberDescriptors);
     }
 
-    public static boolean containsNullCase(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
-        for (JetWhenEntry entry : expression.getEntries()) {
-            for (JetWhenCondition condition : entry.getConditions()) {
-                if (condition instanceof JetWhenConditionWithExpression) {
-                    JetWhenConditionWithExpression conditionWithExpression = (JetWhenConditionWithExpression) condition;
+    public static boolean containsNullCase(@NotNull KtWhenExpression expression, @NotNull BindingTrace trace) {
+        for (KtWhenEntry entry : expression.getEntries()) {
+            for (KtWhenCondition condition : entry.getConditions()) {
+                if (condition instanceof KtWhenConditionWithExpression) {
+                    KtWhenConditionWithExpression conditionWithExpression = (KtWhenConditionWithExpression) condition;
                     if (conditionWithExpression.getExpression() != null) {
-                        JetType type = trace.getBindingContext().getType(conditionWithExpression.getExpression());
+                        KtType type = trace.getBindingContext().getType(conditionWithExpression.getExpression());
                         if (type != null && KotlinBuiltIns.isNothingOrNullableNothing(type)) {
                             return true;
                         }
@@ -255,15 +255,15 @@ public final class WhenChecker {
     }
 
     @Nullable
-    private static JetSimpleNameExpression getReference(@Nullable JetExpression expression) {
+    private static KtSimpleNameExpression getReference(@Nullable KtExpression expression) {
         if (expression == null) {
             return null;
         }
-        if (expression instanceof JetSimpleNameExpression) {
-            return (JetSimpleNameExpression) expression;
+        if (expression instanceof KtSimpleNameExpression) {
+            return (KtSimpleNameExpression) expression;
         }
-        if (expression instanceof JetQualifiedExpression) {
-            return getReference(((JetQualifiedExpression) expression).getSelectorExpression());
+        if (expression instanceof KtQualifiedExpression) {
+            return getReference(((KtQualifiedExpression) expression).getSelectorExpression());
         }
         return null;
     }

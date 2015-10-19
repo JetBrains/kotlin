@@ -20,16 +20,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 
 public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl implements LazyEntity {
-    private final JetScope memberScope;
+    private final KtScope memberScope;
     private final PackageMemberDeclarationProvider declarationProvider;
 
     public LazyPackageDescriptor(
@@ -43,14 +43,14 @@ public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl impleme
 
         this.memberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
 
-        for (JetFile file : declarationProvider.getPackageFiles()) {
+        for (KtFile file : declarationProvider.getPackageFiles()) {
             resolveSession.getTrace().record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, this);
         }
     }
 
     @NotNull
     @Override
-    public JetScope getMemberScope() {
+    public KtScope getMemberScope() {
         return memberScope;
     }
 

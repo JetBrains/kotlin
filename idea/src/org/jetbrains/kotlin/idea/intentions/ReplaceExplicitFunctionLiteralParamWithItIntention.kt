@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -55,16 +55,16 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
         ParamRenamingProcessor(editor, functionLiteral, cursorInParameterList).run()
     }
 
-    private fun targetFunctionLiteral(element: PsiElement, caretOffset: Int): JetFunctionLiteral? {
-        val expression = element.getParentOfType<JetNameReferenceExpression>(true)
+    private fun targetFunctionLiteral(element: PsiElement, caretOffset: Int): KtFunctionLiteral? {
+        val expression = element.getParentOfType<KtNameReferenceExpression>(true)
         if (expression != null) {
             val target = expression.mainReference.resolveToDescriptors(expression.analyze(BodyResolveMode.PARTIAL))
                                  .singleOrNull() as? ParameterDescriptor ?: return null
             val functionDescriptor = target.getContainingDeclaration() as? AnonymousFunctionDescriptor ?: return null
-            return DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? JetFunctionLiteral
+            return DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? KtFunctionLiteral
         }
 
-        val functionLiteral = element.getParentOfType<JetFunctionLiteral>(true) ?: return null
+        val functionLiteral = element.getParentOfType<KtFunctionLiteral>(true) ?: return null
         val arrow = functionLiteral.getArrow() ?: return null
         if (caretOffset > arrow.endOffset) return null
         return functionLiteral
@@ -72,7 +72,7 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
 
     private class ParamRenamingProcessor(
             val editor: Editor,
-            val functionLiteral: JetFunctionLiteral,
+            val functionLiteral: KtFunctionLiteral,
             val cursorWasInParameterList: Boolean
     ) : RenameProcessor(editor.getProject(),
                         functionLiteral.getValueParameters().single(),

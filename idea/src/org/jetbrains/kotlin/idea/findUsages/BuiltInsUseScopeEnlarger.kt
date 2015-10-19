@@ -22,11 +22,11 @@ import com.intellij.psi.search.ProjectScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.UseScopeEnlarger
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 
 public class BuiltInsUseScopeEnlarger : UseScopeEnlarger() {
     override fun getAdditionalUseScope(element: PsiElement): SearchScope? {
-        if (element is JetElement && BuiltInsReferenceResolver.isFromBuiltIns(element)) {
+        if (element is KtElement && BuiltInsReferenceResolver.isFromBuiltIns(element)) {
             return ProjectScope.getAllScope(element.getProject())
         }
         return null

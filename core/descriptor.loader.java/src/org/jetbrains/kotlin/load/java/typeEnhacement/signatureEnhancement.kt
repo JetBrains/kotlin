@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.load.java.typeEnhacement
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 public fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {
     return platformSignatures.map {
@@ -51,17 +51,17 @@ public fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
 }
 
 private class SignatureParts(
-    val fromOverride: JetType,
-    val fromOverridden: Collection<JetType>,
-    val isCovariant: Boolean
+        val fromOverride: KtType,
+        val fromOverridden: Collection<KtType>,
+        val isCovariant: Boolean
 ) {
-    fun enhance(): JetType {
+    fun enhance(): KtType {
         val qualifiers = fromOverride.computeIndexedQualifiersForOverride(this.fromOverridden, isCovariant)
         return fromOverride.enhance(qualifiers)
     }
 }
 
-private fun <D : CallableMemberDescriptor> D.parts(isCovariant: Boolean, collector: (D) -> JetType): SignatureParts {
+private fun <D : CallableMemberDescriptor> D.parts(isCovariant: Boolean, collector: (D) -> KtType): SignatureParts {
     return SignatureParts(
             collector(this),
             this.getOverriddenDescriptors().map {

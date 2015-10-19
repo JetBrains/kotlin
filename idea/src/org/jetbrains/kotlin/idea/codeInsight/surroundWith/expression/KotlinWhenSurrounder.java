@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
     @Override
@@ -38,25 +38,25 @@ public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
     }
 
     @Override
-    public boolean isApplicable(@NotNull JetExpression expression) {
+    public boolean isApplicable(@NotNull KtExpression expression) {
         return true;
     }
 
     @Nullable
     @Override
-    public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetWhenExpression whenExpression = (JetWhenExpression) JetPsiFactoryKt
-                .JetPsiFactory(expression).createExpression(getCodeTemplate(expression));
-        JetExpression subjectExpression = whenExpression.getSubjectExpression();
+    public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull KtExpression expression) {
+        KtWhenExpression whenExpression = (KtWhenExpression) KtPsiFactoryKt
+                .KtPsiFactory(expression).createExpression(getCodeTemplate(expression));
+        KtExpression subjectExpression = whenExpression.getSubjectExpression();
         assert subjectExpression != null : "JetExpression should exists for " + whenExpression.getText() + " expression";
         subjectExpression.replace(expression);
 
-        expression = (JetExpression) expression.replace(whenExpression);
+        expression = (KtExpression) expression.replace(whenExpression);
 
         CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(expression);
 
-        JetWhenEntry whenEntry = ((JetWhenExpression) expression).getEntries().get(0);
-        JetWhenCondition whenEntryCondition = whenEntry.getConditions()[0];
+        KtWhenEntry whenEntry = ((KtWhenExpression) expression).getEntries().get(0);
+        KtWhenCondition whenEntryCondition = whenEntry.getConditions()[0];
         assert whenEntryCondition != null : "JetExpression for first entry should exists: " + expression.getText();
         TextRange whenRange = whenEntryCondition.getTextRange();
         editor.getDocument().deleteString(whenRange.getStartOffset(), whenRange.getEndOffset());
@@ -64,8 +64,8 @@ public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
         return new TextRange(offset, offset);
     }
 
-    private String getCodeTemplate(JetExpression expression) {
-        JetType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
+    private String getCodeTemplate(KtExpression expression) {
+        KtType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         if (type != null) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.ENUM_CLASS) {

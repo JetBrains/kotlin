@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -160,7 +160,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
 
         List<String> javacOptions = new ArrayList<String>(0);
-        for (JetFile jetFile : myFiles.getPsiFiles()) {
+        for (KtFile jetFile : myFiles.getPsiFiles()) {
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(jetFile.getText(), "// JAVAC_OPTIONS:"));
         }
 
@@ -179,7 +179,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     protected void blackBox() {
         // If there are many files, the first 'box(): String' function will be executed.
         GeneratedClassLoader generatedClassLoader = generateAndCreateClassLoader();
-        for (JetFile firstFile : myFiles.getPsiFiles()) {
+        for (KtFile firstFile : myFiles.getPsiFiles()) {
             String className = JvmFileClassUtil.getFileClassInfoNoResolve(firstFile).getFacadeClassFqName().asString();
             Class<?> aClass = getGeneratedClass(generatedClassLoader, className);
             try {

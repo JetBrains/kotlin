@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.j2k.ast
 
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.j2k.CodeBuilder
-import org.jetbrains.kotlin.lexer.JetKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 
 fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
@@ -58,7 +58,7 @@ class Identifier(
     companion object {
         val Empty = Identifier("")
 
-        private val KEYWORDS = JetTokens.KEYWORDS.getTypes().map { (it as JetKeywordToken).getValue() }.toSet()
+        private val KEYWORDS = KtTokens.KEYWORDS.getTypes().map { (it as KtKeywordToken).getValue() }.toSet()
 
         fun toKotlin(name: String): String = Identifier(name).toKotlin()
     }

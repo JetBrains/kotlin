@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.psi.JetPrefixExpression
+import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 public class Not : IntrinsicMethod() {
@@ -33,7 +33,7 @@ public class Not : IntrinsicMethod() {
                 ): StackValue {
                     val element = resolvedCall.getCall().getCallElement()
                     val stackValue =
-                            if (element is JetPrefixExpression) {
+                            if (element is KtPrefixExpression) {
                                 codegen.gen(element.getBaseExpression())
                             }
                             else {

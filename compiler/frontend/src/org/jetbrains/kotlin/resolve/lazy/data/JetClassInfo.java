@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.resolve.lazy.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassKind;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.psi.JetEnumEntry;
-import org.jetbrains.kotlin.psi.JetTypeParameterList;
+import org.jetbrains.kotlin.psi.KtClass;
+import org.jetbrains.kotlin.psi.KtEnumEntry;
+import org.jetbrains.kotlin.psi.KtTypeParameterList;
 
-public class JetClassInfo extends JetClassOrObjectInfo<JetClass> {
+public class JetClassInfo extends JetClassOrObjectInfo<KtClass> {
     private final ClassKind kind;
 
-    protected JetClassInfo(@NotNull JetClass classOrObject) {
+    protected JetClassInfo(@NotNull KtClass classOrObject) {
         super(classOrObject);
-        if (element instanceof JetEnumEntry) {
+        if (element instanceof KtEnumEntry) {
             this.kind = ClassKind.ENUM_ENTRY;
         }
         else if (element.isInterface()) {
@@ -44,7 +44,7 @@ public class JetClassInfo extends JetClassOrObjectInfo<JetClass> {
 
     @Nullable
     @Override
-    public JetTypeParameterList getTypeParameterList() {
+    public KtTypeParameterList getTypeParameterList() {
         return element.getTypeParameterList();
     }
 

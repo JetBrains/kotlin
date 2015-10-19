@@ -22,8 +22,8 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -35,9 +35,9 @@ public class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocToken
 
     override fun toString(): String = getNode().getElementType().toString()
 
-    override fun getTokenType(): IElementType = JetTokens.DOC_COMMENT
+    override fun getTokenType(): IElementType = KtTokens.DOC_COMMENT
 
-    override fun getOwner(): JetDeclaration? = getParentOfType<JetDeclaration>(true)
+    override fun getOwner(): KtDeclaration? = getParentOfType<KtDeclaration>(true)
 
     override fun getDefaultSection(): KDocSection = getChildOfType<KDocSection>()!!
 

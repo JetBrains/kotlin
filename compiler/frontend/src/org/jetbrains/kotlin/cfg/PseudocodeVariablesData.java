@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarat
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetProperty;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.util.Collection;
@@ -98,7 +98,7 @@ public class PseudocodeVariablesData {
         Set<VariableDescriptor> declaredVariables = Sets.newHashSet();
         for (Instruction instruction : pseudocode.getInstructions()) {
             if (instruction instanceof VariableDeclarationInstruction) {
-                JetDeclaration variableDeclarationElement = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();
+                KtDeclaration variableDeclarationElement = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement);
                 if (descriptor != null) {
                     assert descriptor instanceof VariableDescriptor;
@@ -211,7 +211,7 @@ public class PseudocodeVariablesData {
             VariableControlFlowState enterInitState = enterInstructionData.get(variable);
             VariableControlFlowState initializationAtThisElement =
                     VariableControlFlowState
-                            .create(((WriteValueInstruction) instruction).getElement() instanceof JetProperty, enterInitState);
+                            .create(((WriteValueInstruction) instruction).getElement() instanceof KtProperty, enterInitState);
             exitInstructionData.put(variable, initializationAtThisElement);
         }
         else { // instruction instanceof VariableDeclarationInstruction

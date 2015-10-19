@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
 
@@ -33,11 +33,11 @@ public data class ApproximationBounds<T>(
 
 private class TypeArgument(
         val typeParameter: TypeParameterDescriptor,
-        val inProjection: JetType,
-        val outProjection: JetType
+        val inProjection: KtType,
+        val outProjection: KtType
 ) {
     val isConsistent: Boolean
-        get() = JetTypeChecker.DEFAULT.isSubtypeOf(inProjection, outProjection)
+        get() = KotlinTypeChecker.DEFAULT.isSubtypeOf(inProjection, outProjection)
 }
 
 private fun TypeArgument.toTypeProjection(): TypeProjection {
@@ -85,12 +85,12 @@ private fun substituteCapturedTypes(typeProjection: TypeProjection): TypeProject
     return typeSubstitutor.substituteWithoutApproximation(typeProjection)
 }
 
-public fun approximateCapturedTypes(type: JetType): ApproximationBounds<JetType> {
+public fun approximateCapturedTypes(type: KtType): ApproximationBounds<KtType> {
     val typeConstructor = type.getConstructor()
     if (type.isCaptured()) {
         val typeProjection = (typeConstructor as CapturedTypeConstructor).typeProjection
         // todo: preserve flexibility as well
-        fun JetType.makeNullableIfNeeded() = TypeUtils.makeNullableIfNeeded(this, type.isMarkedNullable())
+        fun KtType.makeNullableIfNeeded() = TypeUtils.makeNullableIfNeeded(this, type.isMarkedNullable())
         val bound = typeProjection.getType().makeNullableIfNeeded()
 
         return when (typeProjection.getProjectionKind()) {
@@ -115,9 +115,9 @@ public fun approximateCapturedTypes(type: JetType): ApproximationBounds<JetType>
             type.replaceTypeArguments(upperBoundArguments))
 }
 
-private fun JetType.replaceTypeArguments(newTypeArguments: List<TypeArgument>): JetType {
+private fun KtType.replaceTypeArguments(newTypeArguments: List<TypeArgument>): KtType {
     assert(getArguments().size() == newTypeArguments.size()) { "Incorrect type arguments $newTypeArguments" }
-    return JetTypeImpl.create(
+    return KtTypeImpl.create(
             getAnnotations(), getConstructor(), isMarkedNullable(), newTypeArguments.map { it.toTypeProjection() }, getMemberScope()
     )
 }

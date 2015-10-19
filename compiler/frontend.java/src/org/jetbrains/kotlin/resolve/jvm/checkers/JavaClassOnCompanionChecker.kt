@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.types.JetTypeImpl
+import org.jetbrains.kotlin.types.KtTypeImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 
 public class JavaClassOnCompanionChecker : CallChecker {
@@ -42,7 +42,7 @@ public class JavaClassOnCompanionChecker : CallChecker {
         if (companionObject.isCompanionObject) {
             val containingClass = companionObject.containingDeclaration as ClassDescriptor
             val javaLangClass = actualType.constructor.declarationDescriptor as? ClassDescriptor ?: return
-            val expectedType = JetTypeImpl.create(
+            val expectedType = KtTypeImpl.create(
                     Annotations.EMPTY, javaLangClass, actualType.isMarkedNullable,
                     listOf(TypeProjectionImpl(containingClass.defaultType))
             )

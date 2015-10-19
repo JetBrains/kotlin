@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
@@ -82,7 +82,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
 
         PackageFragmentDescriptor deserialized = createBuiltInsPackageFragment();
 
-        List<JetFile> files = JetTestUtils.loadToJetFiles(getEnvironment(), ContainerUtil.concat(
+        List<KtFile> files = JetTestUtils.loadToJetFiles(getEnvironment(), ContainerUtil.concat(
                 allFilesUnder("core/builtins/native"),
                 allFilesUnder("core/builtins/src")
         ));

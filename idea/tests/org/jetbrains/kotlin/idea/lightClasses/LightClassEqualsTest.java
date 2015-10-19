@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration;
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
 
 public class LightClassEqualsTest extends JetLightCodeInsightFixtureTestCase {
     @NotNull
@@ -55,7 +55,7 @@ public class LightClassEqualsTest extends JetLightCodeInsightFixtureTestCase {
         doTestEquals(((KotlinLightClass) theClass).getOrigin());
     }
 
-    private static void doTestEquals(@Nullable JetClassOrObject origin) {
+    private static void doTestEquals(@Nullable KtClassOrObject origin) {
         assertNotNull(origin);
 
         PsiClass lightClass1 = LightClassUtil.INSTANCE$.getPsiClass(origin);

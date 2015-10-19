@@ -22,9 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.psi.KtClass;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
@@ -39,12 +39,12 @@ import java.util.List;
  *       changed here with the platform backends adopted.
  */
 public abstract class DataClassMethodGenerator {
-    private final JetClassOrObject declaration;
+    private final KtClassOrObject declaration;
     private final BindingContext bindingContext;
     private final ClassDescriptor classDescriptor;
     private final KotlinBuiltIns builtIns;
 
-    public DataClassMethodGenerator(JetClassOrObject declaration, BindingContext bindingContext) {
+    public DataClassMethodGenerator(KtClassOrObject declaration, BindingContext bindingContext) {
         this.declaration = declaration;
         this.bindingContext = bindingContext;
         this.classDescriptor = BindingContextUtils.getNotNull(bindingContext, BindingContext.CLASS, declaration);
@@ -66,7 +66,7 @@ public abstract class DataClassMethodGenerator {
 
     protected abstract void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter);
 
-    protected abstract void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<JetParameter> constructorParameters);
+    protected abstract void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<KtParameter> constructorParameters);
 
     protected abstract void generateToStringMethod(@NotNull FunctionDescriptor function, @NotNull List<PropertyDescriptor> properties);
 
@@ -93,7 +93,7 @@ public abstract class DataClassMethodGenerator {
         }
     }
 
-    private void generateCopyFunctionForDataClasses(List<JetParameter> constructorParameters) {
+    private void generateCopyFunctionForDataClasses(List<KtParameter> constructorParameters) {
         FunctionDescriptor copyFunction = bindingContext.get(BindingContext.DATA_CLASS_COPY_FUNCTION, classDescriptor);
         if (copyFunction != null) {
             generateCopyFunction(copyFunction, constructorParameters);
@@ -123,7 +123,7 @@ public abstract class DataClassMethodGenerator {
 
     private List<PropertyDescriptor> getDataProperties() {
         List<PropertyDescriptor> result = Lists.newArrayList();
-        for (JetParameter parameter : getPrimaryConstructorParameters()) {
+        for (KtParameter parameter : getPrimaryConstructorParameters()) {
             if (parameter.hasValOrVar()) {
                 result.add(bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter));
             }
@@ -132,8 +132,8 @@ public abstract class DataClassMethodGenerator {
     }
 
     @NotNull
-    private List<JetParameter> getPrimaryConstructorParameters() {
-        if (declaration instanceof JetClass) {
+    private List<KtParameter> getPrimaryConstructorParameters() {
+        if (declaration instanceof KtClass) {
             return declaration.getPrimaryConstructorParameters();
         }
         return Collections.emptyList();

@@ -27,22 +27,22 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetSecondaryConstructor
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 
 
-public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecondaryConstructor) : KotlinQuickFixAction<JetSecondaryConstructor>(element) {
+public class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryConstructor) : KotlinQuickFixAction<KtSecondaryConstructor>(element) {
     override fun getText() = JetBundle.message("insert.delegation.call", keywordToUse)
     override fun getFamilyName() = "Insert explicit delegation call"
 
     private val keywordToUse = if (isThis) "this" else "super"
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val newDelegationCall = element.replaceImplicitDelegationCallWithExplicit(isThis)
 
         val resolvedCall = newDelegationCall.getResolvedCall(newDelegationCall.analyze())
@@ -61,7 +61,7 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
     }
 
     object InsertThisDelegationCallFactory : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType<JetSecondaryConstructor> {
+        override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType<KtSecondaryConstructor> {
             secondaryConstructor ->
             if (secondaryConstructor.getContainingClassOrObject().getConstructorsCount() <= 1 ||
                 !secondaryConstructor.hasImplicitDelegationCall()) return null
@@ -69,14 +69,14 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
             return InsertDelegationCallQuickfix(isThis = true, element = secondaryConstructor)
         }
 
-        private fun JetClassOrObject.getConstructorsCount() = (descriptor as ClassDescriptor).getConstructors().size()
+        private fun KtClassOrObject.getConstructorsCount() = (descriptor as ClassDescriptor).getConstructors().size()
     }
 
     object InsertSuperDelegationCallFactory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val secondaryConstructor = diagnostic.getPsiElement().getNonStrictParentOfType<JetSecondaryConstructor>() ?: return null
+            val secondaryConstructor = diagnostic.getPsiElement().getNonStrictParentOfType<KtSecondaryConstructor>() ?: return null
             if (!secondaryConstructor.hasImplicitDelegationCall()) return null
-            val klass = secondaryConstructor.getContainingClassOrObject() as? JetClass ?: return null
+            val klass = secondaryConstructor.getContainingClassOrObject() as? KtClass ?: return null
             if (klass.hasPrimaryConstructor()) return null
 
             return InsertDelegationCallQuickfix(isThis = false, element = secondaryConstructor)

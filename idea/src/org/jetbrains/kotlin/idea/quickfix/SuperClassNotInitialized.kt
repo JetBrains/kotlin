@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.IndexedParametersSubstitution
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -49,8 +49,8 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
     private val DISPLAY_MAX_PARAMS = 5
 
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
-        val delegator = diagnostic.getPsiElement() as JetDelegatorToSuperClass
-        val classOrObjectDeclaration = delegator.getParent().getParent() as? JetClassOrObject ?: return emptyList()
+        val delegator = diagnostic.getPsiElement() as KtDelegatorToSuperClass
+        val classOrObjectDeclaration = delegator.getParent().getParent() as? KtClassOrObject ?: return emptyList()
 
         val typeRef = delegator.getTypeReference() ?: return emptyList()
         val type = typeRef.analyze()[BindingContext.TYPE, typeRef] ?: return emptyList()
@@ -65,7 +65,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
 
         fixes.add(AddParenthesisFix(delegator, putCaretIntoParenthesis = constructors.singleOrNull()?.getValueParameters()?.isNotEmpty() ?: true))
 
-        if (classOrObjectDeclaration is JetClass) {
+        if (classOrObjectDeclaration is KtClass) {
             val superType = classDescriptor.getTypeConstructor().getSupertypes().firstOrNull { it.getConstructor().getDeclarationDescriptor() == superClass }
             if (superType != null) {
                 val substitutor = IndexedParametersSubstitution(superClass.typeConstructor, superType.arguments).buildSubstitutor()
@@ -75,7 +75,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
                         .map { it.substitute(substitutor) as ConstructorDescriptor }
 
                 if (substitutedConstructors.isNotEmpty()) {
-                    val parameterTypes: List<List<JetType>> = substitutedConstructors.map {
+                    val parameterTypes: List<List<KtType>> = substitutedConstructors.map {
                         it.getValueParameters().map { it.getType() }
                     }
 
@@ -103,16 +103,16 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
     }
 
     private class AddParenthesisFix(
-            element: JetDelegatorToSuperClass,
+            element: KtDelegatorToSuperClass,
             val putCaretIntoParenthesis: Boolean
-    ) : KotlinQuickFixAction<JetDelegatorToSuperClass>(element), HighPriorityAction {
+    ) : KotlinQuickFixAction<KtDelegatorToSuperClass>(element), HighPriorityAction {
 
         override fun getFamilyName() = "Change to constructor invocation" //TODO?
 
         override fun getText() = getFamilyName()
 
-        override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-            val newSpecifier = element.replaced(JetPsiFactory(project).createDelegatorToSuperCall(element.getText() + "()"))
+        override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val newSpecifier = element.replaced(KtPsiFactory(project).createDelegatorToSuperCall(element.getText() + "()"))
 
             if (putCaretIntoParenthesis) {
                 if (editor != null) {
@@ -127,17 +127,17 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
     }
 
     private class AddParametersFix(
-            element: JetDelegatorToSuperClass,
-            private val classDeclaration: JetClass,
-            private val parametersToAdd: Collection<JetParameter>,
+            element: KtDelegatorToSuperClass,
+            private val classDeclaration: KtClass,
+            private val parametersToAdd: Collection<KtParameter>,
             private val argumentText: String,
             private val text: String
-    ) : KotlinQuickFixAction<JetDelegatorToSuperClass>(element) {
+    ) : KotlinQuickFixAction<KtDelegatorToSuperClass>(element) {
 
         companion object {
             fun create(
-                    element: JetDelegatorToSuperClass,
-                    classDeclaration: JetClass,
+                    element: KtDelegatorToSuperClass,
+                    classDeclaration: KtClass,
                     superConstructor: ConstructorDescriptor,
                     text: String
             ): AddParametersFix? {
@@ -148,7 +148,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
 
                 val argumentText = StringBuilder()
                 val oldParameters = classDeclaration.getPrimaryConstructorParameters()
-                val parametersToAdd = ArrayList<JetParameter>()
+                val parametersToAdd = ArrayList<KtParameter>()
                 for (parameter in superParameters) {
                     val nameRendered = parameter.name.render()
                     val varargElementType = parameter.varargElementType
@@ -169,7 +169,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
                         "vararg " + nameRendered + ":" + IdeDescriptorRenderers.SOURCE_CODE.renderType(varargElementType)
                     else
                         nameRendered + ":" + IdeDescriptorRenderers.SOURCE_CODE.renderType(parameter.type)
-                    parametersToAdd.add(JetPsiFactory(element).createParameter(parameterText))
+                    parametersToAdd.add(KtPsiFactory(element).createParameter(parameterText))
                 }
 
                 return AddParametersFix(element, classDeclaration, parametersToAdd, argumentText.toString(), text)
@@ -180,10 +180,10 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
 
         override fun getText() = text
 
-        override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-            val factory = JetPsiFactory(project)
+        override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val factory = KtPsiFactory(project)
 
-            val typeRefsToShorten = ArrayList<JetTypeReference>()
+            val typeRefsToShorten = ArrayList<KtTypeReference>()
             val parameterList = classDeclaration.createPrimaryConstructorParameterListIfAbsent()
 
             for (parameter in parametersToAdd) {

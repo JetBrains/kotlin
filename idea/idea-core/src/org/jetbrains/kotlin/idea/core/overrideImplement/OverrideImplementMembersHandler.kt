@@ -28,13 +28,13 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.quickfix.insertMembersAfter
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
 
-    public fun collectMembersToGenerate(classOrObject: JetClassOrObject): Collection<OverrideMemberChooserObject> {
+    public fun collectMembersToGenerate(classOrObject: KtClassOrObject): Collection<OverrideMemberChooserObject> {
         val descriptor = classOrObject.resolveToDescriptor() as? ClassDescriptor ?: return emptySet()
         return collectMembersToGenerate(descriptor, classOrObject.project)
     }
@@ -52,9 +52,9 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
     protected abstract fun getChooserTitle(): String
 
     override fun isValidFor(editor: Editor, file: PsiFile): Boolean {
-        if (file !is JetFile) return false
+        if (file !is KtFile) return false
         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
-        val classOrObject = elementAtCaret?.getNonStrictParentOfType<JetClassOrObject>()
+        val classOrObject = elementAtCaret?.getNonStrictParentOfType<KtClassOrObject>()
         return classOrObject != null
     }
 
@@ -62,7 +62,7 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
 
     public fun invoke(project: Project, editor: Editor, file: PsiFile, implementAll: Boolean) {
         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
-        val classOrObject = elementAtCaret?.getNonStrictParentOfType<JetClassOrObject>()!!
+        val classOrObject = elementAtCaret?.getNonStrictParentOfType<KtClassOrObject>()!!
 
         val members = collectMembersToGenerate(classOrObject)
         if (members.isEmpty() && !implementAll) {
@@ -91,7 +91,7 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
     override fun startInWriteAction(): Boolean = false
 
     companion object {
-        public fun generateMembers(editor: Editor, classOrObject: JetClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
+        public fun generateMembers(editor: Editor, classOrObject: KtClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
             val project = classOrObject.project
             insertMembersAfter(editor, classOrObject, selectedElements.map { it.generateMember(project) })
         }

@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
 
@@ -33,7 +33,7 @@ public class KotlinFunctionStubImpl(
         private val hasBlockBody: Boolean,
         private val hasBody: Boolean,
         private val hasTypeParameterListBeforeFunctionName: Boolean
-) : KotlinStubBaseImpl<JetNamedFunction>(parent, JetStubElementTypes.FUNCTION), KotlinFunctionStub {
+) : KotlinStubBaseImpl<KtNamedFunction>(parent, KtStubElementTypes.FUNCTION), KotlinFunctionStub {
     init {
         if (isTopLevel && fqName == null) {
             throw IllegalArgumentException("fqName shouldn't be null for top level functions")

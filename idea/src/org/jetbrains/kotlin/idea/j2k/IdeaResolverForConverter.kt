@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.idea.j2k
 
 import org.jetbrains.kotlin.j2k.ResolverForConverter
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 
 public object IdeaResolverForConverter : ResolverForConverter {
-    override fun resolveToDescriptor(declaration: JetDeclaration) = declaration.resolveToDescriptor()
+    override fun resolveToDescriptor(declaration: KtDeclaration) = declaration.resolveToDescriptor()
 }

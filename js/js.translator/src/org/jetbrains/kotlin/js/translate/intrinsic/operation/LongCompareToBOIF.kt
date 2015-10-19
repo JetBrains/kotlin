@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.invokeMethod
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.longFromInt
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
-import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.identity as ID
 
@@ -45,21 +45,21 @@ public object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
     val LONG_COMPARE_TO_LONG_PATTERN = pattern("Long.compareTo(Long)")
 
     private object FLOATING_POINT_COMPARE_TO_LONG : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             return JsBinaryOperation(operator, left, invokeMethod(right, Namer.LONG_TO_NUMBER))
         }
     }
 
     private object LONG_COMPARE_TO_FLOATING_POINT : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             return JsBinaryOperation(operator, invokeMethod(left, Namer.LONG_TO_NUMBER), right)
         }
     }
 
     private class CompareToBinaryIntrinsic(val toLeft: (JsExpression) -> JsExpression, val toRight: (JsExpression) -> JsExpression) : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             val compareInvocation = compareForObject(toLeft(left), toRight(right))
             return JsBinaryOperation(operator, compareInvocation, JsNumberLiteral.ZERO)

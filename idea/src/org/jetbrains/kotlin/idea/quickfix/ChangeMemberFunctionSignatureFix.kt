@@ -33,15 +33,15 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetParameterList
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtParameterList
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.findMemberWithMaxVisibility
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
@@ -50,9 +50,9 @@ import java.util.*
  * Fix that changes member function's signature to match one of super functions' signatures.
  */
 class ChangeMemberFunctionSignatureFix private constructor(
-        element: JetNamedFunction,
+        element: KtNamedFunction,
         private val signatures: List<ChangeMemberFunctionSignatureFix.Signature>
-) : KotlinQuickFixAction<JetNamedFunction>(element) {
+) : KotlinQuickFixAction<KtNamedFunction>(element) {
 
     init {
         assert(signatures.isNotEmpty())
@@ -80,7 +80,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val function = diagnostic.psiElement as? JetNamedFunction ?: return null
+            val function = diagnostic.psiElement as? KtNamedFunction ?: return null
             val signatures = computePossibleSignatures(function)
             if (signatures.isEmpty()) return null
             return ChangeMemberFunctionSignatureFix(function, signatures)
@@ -89,7 +89,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
         /**
          * Computes all the signatures a 'functionElement' could be changed to in order to remove NOTHING_TO_OVERRIDE error.
          */
-        private fun computePossibleSignatures(functionElement: JetNamedFunction): List<Signature> {
+        private fun computePossibleSignatures(functionElement: KtNamedFunction): List<Signature> {
             if (functionElement.valueParameterList == null) {
                 // we won't be able to modify its signature
                 return emptyList()
@@ -194,7 +194,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
     override fun getFamilyName() = "Change function signature"
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         CommandProcessor.getInstance().runUndoTransparentAction {
             MyAction(project, editor, element, signatures).execute()
         }
@@ -218,7 +218,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
         object MatchTypes : ParameterChooser {
             override fun choose(parameter: ValueParameterDescriptor, superParameter: ValueParameterDescriptor): ValueParameterDescriptor? {
                 // TODO: support for generic functions
-                if (JetTypeChecker.DEFAULT.equalTypes(parameter.type, superParameter.type)) {
+                if (KotlinTypeChecker.DEFAULT.equalTypes(parameter.type, superParameter.type)) {
                     return superParameter.copy(parameter.containingDeclaration, parameter.name)
                 }
                 else {
@@ -232,7 +232,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
     private class MyAction(
             private val project: Project,
             private val editor: Editor?,
-            private val function: JetNamedFunction,
+            private val function: KtNamedFunction,
             private val signatures: List<Signature>
     ) {
         fun execute() {
@@ -270,14 +270,14 @@ class ChangeMemberFunctionSignatureFix private constructor(
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
             project.executeWriteCommand("Change Function Signature") {
-                val patternFunction = JetPsiFactory(project).createFunction(signature.sourceCode)
+                val patternFunction = KtPsiFactory(project).createFunction(signature.sourceCode)
 
                 val newTypeRef = function.setTypeReference(patternFunction.typeReference)
                 if (newTypeRef != null) {
                     ShortenReferences.DEFAULT.process(newTypeRef)
                 }
 
-                val newParameterList = function.valueParameterList!!.replace(patternFunction.valueParameterList!!) as JetParameterList
+                val newParameterList = function.valueParameterList!!.replace(patternFunction.valueParameterList!!) as KtParameterList
                 ShortenReferences.DEFAULT.process(newParameterList)
             }
         }

@@ -25,20 +25,20 @@ import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.JetIcons
+import org.jetbrains.kotlin.idea.KtIcons
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetCallElement
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetValueArgument
+import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class AddNameToArgumentFix(argument: JetValueArgument) : KotlinQuickFixAction<JetValueArgument>(argument) {
+public class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtValueArgument>(argument) {
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
@@ -46,7 +46,7 @@ public class AddNameToArgumentFix(argument: JetValueArgument) : KotlinQuickFixAc
         return calculatePossibleArgumentNames().isNotEmpty()
     }
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val possibleNames = calculatePossibleArgumentNames()
         assert(possibleNames.isNotEmpty()) { "isAvailable() should be checked before invoke()" }
         if (possibleNames.size() == 1 || editor == null || !editor.component.isShowing) {
@@ -67,7 +67,7 @@ public class AddNameToArgumentFix(argument: JetValueArgument) : KotlinQuickFixAc
     override fun getFamilyName() = "Add name to argument"
 
     private fun calculatePossibleArgumentNames(): List<Name> {
-        val callElement = element.getParentOfType<JetCallElement>(true) ?: return emptyList()
+        val callElement = element.getParentOfType<KtCallElement>(true) ?: return emptyList()
 
         val context = element.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = callElement.getResolvedCall(context) ?: return emptyList()
@@ -86,15 +86,15 @@ public class AddNameToArgumentFix(argument: JetValueArgument) : KotlinQuickFixAc
                 .map { it.name }
     }
 
-    private fun addName(project: Project, argument: JetValueArgument, name: Name) {
+    private fun addName(project: Project, argument: KtValueArgument, name: Name) {
         project.executeWriteCommand("Add name to argument") {
             argument.replace(createArgumentWithName(name))
         }
     }
 
-    private fun createArgumentWithName(name: Name): JetValueArgument {
+    private fun createArgumentWithName(name: Name): KtValueArgument {
         val argumentExpression = element.getArgumentExpression()!!
-        val newArgument = JetPsiFactory(element).createArgument(argumentExpression, name, element.getSpreadElement() != null)
+        val newArgument = KtPsiFactory(element).createArgument(argumentExpression, name, element.getSpreadElement() != null)
         return newArgument
     }
 
@@ -109,7 +109,7 @@ public class AddNameToArgumentFix(argument: JetValueArgument) : KotlinQuickFixAc
                 return PopupStep.FINAL_CHOICE
             }
 
-            override fun getIconFor(name: Name) = JetIcons.PARAMETER
+            override fun getIconFor(name: Name) = KtIcons.PARAMETER
 
             override fun getTextFor(name: Name) = createArgumentWithName(name).text
         }
@@ -117,7 +117,7 @@ public class AddNameToArgumentFix(argument: JetValueArgument) : KotlinQuickFixAc
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val argument = diagnostic.psiElement.getParentOfType<JetValueArgument>(false) ?: return null
+            val argument = diagnostic.psiElement.getParentOfType<KtValueArgument>(false) ?: return null
             return AddNameToArgumentFix(argument)
         }
 

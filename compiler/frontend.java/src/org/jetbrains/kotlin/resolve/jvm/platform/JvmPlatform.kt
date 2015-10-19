@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import java.util.*
 
 public object JvmPlatform : TargetPlatform("JVM") {
@@ -50,8 +50,8 @@ private val DEFAULT_IMPORTS_FOR_JVM = ArrayList<ImportPath>().apply {
     add(ImportPath("kotlin.jvm.*"))
     add(ImportPath("kotlin.io.*"))
 
-    fun addAllClassifiersFromScope(scope: JetScope) {
-        for (descriptor in scope.getDescriptors(DescriptorKindFilter.CLASSIFIERS, JetScope.ALL_NAME_FILTER)) {
+    fun addAllClassifiersFromScope(scope: KtScope) {
+        for (descriptor in scope.getDescriptors(DescriptorKindFilter.CLASSIFIERS, KtScope.ALL_NAME_FILTER)) {
             add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
         }
     }

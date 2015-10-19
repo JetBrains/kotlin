@@ -38,13 +38,13 @@ import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtProperty
 
 public class AndroidRenameProcessor : RenamePsiElementProcessor() {
 
     override fun canProcessElement(element: PsiElement): Boolean {
         // Either renaming synthetic property, or value in layout xml, or R class field
-        return (element.namedUnwrappedElement is JetProperty &&
+        return (element.namedUnwrappedElement is KtProperty &&
                 isAndroidSyntheticElement(element.namedUnwrappedElement)) || element is XmlAttributeValue ||
                isRClassField(element)
     }
@@ -72,8 +72,8 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             allRenames: MutableMap<PsiElement, String>,
             scope: SearchScope
     ) {
-        if (element != null && element.namedUnwrappedElement is JetProperty) {
-            renameSyntheticProperty(element.namedUnwrappedElement as JetProperty, newName, allRenames)
+        if (element != null && element.namedUnwrappedElement is KtProperty) {
+            renameSyntheticProperty(element.namedUnwrappedElement as KtProperty, newName, allRenames)
         }
         else if (element is XmlAttributeValue) {
             renameAttributeValue(element, newName, allRenames)
@@ -84,7 +84,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
     }
 
     private fun renameSyntheticProperty(
-            jetProperty: JetProperty,
+            jetProperty: KtProperty,
             newName: String,
             allRenames: MutableMap<PsiElement, String>
     ) {
@@ -132,7 +132,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             oldPropName: String,
             processor: SyntheticFileGenerator
     ) {
-        val props = processor.getSyntheticFiles()?.flatMap { it.findChildrenByClass(javaClass<JetProperty>()).toList() }
+        val props = processor.getSyntheticFiles()?.flatMap { it.findChildrenByClass(javaClass<KtProperty>()).toList() }
         val matchedProps = props?.filter { it.getName() == oldPropName } ?: listOf()
         for (prop in matchedProps) {
             allRenames[prop] = newPropName

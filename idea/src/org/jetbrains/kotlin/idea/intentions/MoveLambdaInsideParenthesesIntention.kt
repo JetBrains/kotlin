@@ -21,16 +21,16 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.core.moveInsideParentheses
-import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
+import org.jetbrains.kotlin.psi.KtFunctionLiteralArgument
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
 
-public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<JetFunctionLiteralArgument>(javaClass(), "Move lambda argument into parentheses"), LowPriorityAction {
-    override fun isApplicableTo(element: JetFunctionLiteralArgument, caretOffset: Int): Boolean {
+public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<KtFunctionLiteralArgument>(javaClass(), "Move lambda argument into parentheses"), LowPriorityAction {
+    override fun isApplicableTo(element: KtFunctionLiteralArgument, caretOffset: Int): Boolean {
         val body = element.getFunctionLiteral().getBodyExpression() ?: return true
         return !body.getTextRange().containsInside(caretOffset)
     }
 
-    override fun applyTo(element: JetFunctionLiteralArgument, editor: Editor) {
+    override fun applyTo(element: KtFunctionLiteralArgument, editor: Editor) {
         element.moveInsideParentheses(element.analyze())
     }
 }

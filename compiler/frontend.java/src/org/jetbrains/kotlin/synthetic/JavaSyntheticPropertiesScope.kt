@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -47,7 +47,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     val setMethod: FunctionDescriptor?
 
     companion object {
-        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: JetScope): SyntheticJavaPropertyDescriptor? {
+        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: KtScope): SyntheticJavaPropertyDescriptor? {
             val name = getterOrSetter.getName()
             if (name.isSpecial()) return null
             val identifier = name.getIdentifier()
@@ -69,7 +69,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     }
 }
 
-class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImpl() {
+class JavaSyntheticPropertiesScope(storageManager: StorageManager) : KtScopeImpl() {
     private val syntheticPropertyInClass = storageManager.createMemoizedFunctionWithNullableValues<Pair<ClassDescriptor, Name>, PropertyDescriptor> { pair ->
         syntheticPropertyInClassNotCached(pair.first, pair.second)
     }
@@ -130,7 +130,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
         return null
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         //TODO: use location parameter!
 
         var result: SmartList<PropertyDescriptor>? = null
@@ -162,7 +162,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
         return result
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>): Collection<PropertyDescriptor> {
         val result = ArrayList<PropertyDescriptor>()
         val processedTypes = HashSet<TypeConstructor>()
         receiverTypes.forEach { result.collectSyntheticProperties(it.constructor, processedTypes) }
@@ -253,7 +253,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
             private set
 
         companion object {
-            fun create(ownerClass: ClassDescriptor, getMethod: FunctionDescriptor, setMethod: FunctionDescriptor?, name: Name, type: JetType): MyPropertyDescriptor {
+            fun create(ownerClass: ClassDescriptor, getMethod: FunctionDescriptor, setMethod: FunctionDescriptor?, name: Name, type: KtType): MyPropertyDescriptor {
                 val visibility = syntheticExtensionVisibility(getMethod)
                 val descriptor = MyPropertyDescriptor(DescriptorUtils.getContainingModule(ownerClass),
                                                       null,

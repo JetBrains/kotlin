@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelPropertyFqnNameIndex;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -89,10 +89,10 @@ public class JetSourceNavigationHelper {
 
     @NotNull
     private static GlobalSearchScope createLibraryOrSourcesScope(
-            @NotNull JetNamedDeclaration declaration,
+            @NotNull KtNamedDeclaration declaration,
             @NotNull NavigationKind navigationKind
     ) {
-        JetFile containingFile = declaration.getContainingJetFile();
+        KtFile containingFile = declaration.getContainingJetFile();
         VirtualFile libraryFile = containingFile.getVirtualFile();
         if (libraryFile == null) return GlobalSearchScope.EMPTY_SCOPE;
 
@@ -107,20 +107,20 @@ public class JetSourceNavigationHelper {
                : JetSourceFilterScope.kotlinLibraryClassFiles(GlobalSearchScope.allScope(project), project);
     }
 
-    private static List<JetFile> getContainingFiles(@NotNull Iterable<JetNamedDeclaration> declarations) {
-        Set<JetFile> result = Sets.newHashSet();
-        for (JetNamedDeclaration declaration : declarations) {
+    private static List<KtFile> getContainingFiles(@NotNull Iterable<KtNamedDeclaration> declarations) {
+        Set<KtFile> result = Sets.newHashSet();
+        for (KtNamedDeclaration declaration : declarations) {
             PsiFile containingFile = declaration.getContainingFile();
-            if (containingFile instanceof JetFile) {
-                result.add((JetFile) containingFile);
+            if (containingFile instanceof KtFile) {
+                result.add((KtFile) containingFile);
             }
         }
         return Lists.newArrayList(result);
     }
 
-    private static boolean haveRenamesInImports(@NotNull List<JetFile> files) {
-        for (JetFile file : files) {
-            for (JetImportDirective importDirective : file.getImportDirectives()) {
+    private static boolean haveRenamesInImports(@NotNull List<KtFile> files) {
+        for (KtFile file : files) {
+            for (KtImportDirective importDirective : file.getImportDirectives()) {
                 if (importDirective.getAliasName() != null) {
                     return true;
                 }
@@ -130,18 +130,18 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static JetNamedDeclaration findSpecialProperty(@NotNull Name memberName, @NotNull JetClass containingClass) {
+    private static KtNamedDeclaration findSpecialProperty(@NotNull Name memberName, @NotNull KtClass containingClass) {
         // property constructor parameters
-        List<JetParameter> constructorParameters = containingClass.getPrimaryConstructorParameters();
-        for (JetParameter constructorParameter : constructorParameters) {
+        List<KtParameter> constructorParameters = containingClass.getPrimaryConstructorParameters();
+        for (KtParameter constructorParameter : constructorParameters) {
             if (memberName.equals(constructorParameter.getNameAsName()) && constructorParameter.hasValOrVar()) {
                 return constructorParameter;
             }
         }
 
         // enum entries
-        if (containingClass.hasModifier(JetTokens.ENUM_KEYWORD)) {
-            for (JetEnumEntry enumEntry : ContainerUtil.findAll(containingClass.getDeclarations(), JetEnumEntry.class)) {
+        if (containingClass.hasModifier(KtTokens.ENUM_KEYWORD)) {
+            for (KtEnumEntry enumEntry : ContainerUtil.findAll(containingClass.getDeclarations(), KtEnumEntry.class)) {
                 if (memberName.equals(enumEntry.getNameAsName())) {
                     return enumEntry;
                 }
@@ -151,14 +151,14 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static JetNamedDeclaration convertPropertyOrFunction(
-            @NotNull JetNamedDeclaration declaration,
+    private static KtNamedDeclaration convertPropertyOrFunction(
+            @NotNull KtNamedDeclaration declaration,
             @NotNull NavigationKind navigationKind
     ) {
-        if (declaration instanceof JetPrimaryConstructor) {
-            JetClassOrObject sourceClassOrObject =
-                    convertNamedClassOrObject(((JetPrimaryConstructor) declaration).getContainingClassOrObject(), navigationKind);
-            JetPrimaryConstructor primaryConstructor = sourceClassOrObject != null ? sourceClassOrObject.getPrimaryConstructor() : null;
+        if (declaration instanceof KtPrimaryConstructor) {
+            KtClassOrObject sourceClassOrObject =
+                    convertNamedClassOrObject(((KtPrimaryConstructor) declaration).getContainingClassOrObject(), navigationKind);
+            KtPrimaryConstructor primaryConstructor = sourceClassOrObject != null ? sourceClassOrObject.getPrimaryConstructor() : null;
             return primaryConstructor != null ? primaryConstructor : sourceClassOrObject;
         }
 
@@ -171,23 +171,23 @@ public class JetSourceNavigationHelper {
 
         PsiElement decompiledContainer = declaration.getParent();
 
-        Collection<JetNamedDeclaration> candidates;
-        if (decompiledContainer instanceof JetFile) {
+        Collection<KtNamedDeclaration> candidates;
+        if (decompiledContainer instanceof KtFile) {
             candidates = getInitialTopLevelCandidates(declaration, navigationKind);
         }
-        else if (decompiledContainer instanceof JetClassBody) {
-            JetClassOrObject decompiledClassOrObject = (JetClassOrObject) decompiledContainer.getParent();
-            JetClassOrObject sourceClassOrObject = convertNamedClassOrObject(decompiledClassOrObject, navigationKind);
+        else if (decompiledContainer instanceof KtClassBody) {
+            KtClassOrObject decompiledClassOrObject = (KtClassOrObject) decompiledContainer.getParent();
+            KtClassOrObject sourceClassOrObject = convertNamedClassOrObject(decompiledClassOrObject, navigationKind);
 
             //noinspection unchecked
             candidates = sourceClassOrObject == null
-                         ? Collections.<JetNamedDeclaration>emptyList()
+                         ? Collections.<KtNamedDeclaration>emptyList()
                          : getInitialMemberCandidates(sourceClassOrObject, memberName,
-                                                      (Class<JetNamedDeclaration>) declaration.getClass());
+                                                      (Class<KtNamedDeclaration>) declaration.getClass());
 
             if (candidates.isEmpty()) {
-                if (declaration instanceof JetProperty && sourceClassOrObject instanceof JetClass) {
-                    return findSpecialProperty(memberName, (JetClass) sourceClassOrObject);
+                if (declaration instanceof KtProperty && sourceClassOrObject instanceof KtClass) {
+                    return findSpecialProperty(memberName, (KtClass) sourceClassOrObject);
                 }
             }
         }
@@ -220,12 +220,12 @@ public class JetSourceNavigationHelper {
 
         KotlinCodeAnalyzer analyzer = createAnalyzer(candidates, declaration.getProject());
 
-        for (JetNamedDeclaration candidate : candidates) {
+        for (KtNamedDeclaration candidate : candidates) {
             //noinspection unchecked
             CallableDescriptor candidateDescriptor = (CallableDescriptor) analyzer.resolveToDescriptor(candidate);
             if (receiversMatch(declaration, candidateDescriptor)
                     && valueParametersTypesMatch(declaration, candidateDescriptor)
-                    && typeParametersMatch((JetTypeParameterListOwner) declaration, candidateDescriptor.getTypeParameters())) {
+                    && typeParametersMatch((KtTypeParameterListOwner) declaration, candidateDescriptor.getTypeParameters())) {
                 return candidate;
             }
         }
@@ -235,7 +235,7 @@ public class JetSourceNavigationHelper {
 
     @NotNull
     private static KotlinCodeAnalyzer createAnalyzer(
-            @NotNull Collection<JetNamedDeclaration> candidates,
+            @NotNull Collection<KtNamedDeclaration> candidates,
             @NotNull Project project
     ) {
 
@@ -268,8 +268,8 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static JetClassOrObject convertNamedClassOrObject(
-            @NotNull JetClassOrObject classOrObject,
+    private static KtClassOrObject convertNamedClassOrObject(
+            @NotNull KtClassOrObject classOrObject,
             @NotNull NavigationKind navigationKind
     ) {
         FqName classFqName = classOrObject.getFqName();
@@ -279,7 +279,7 @@ public class JetSourceNavigationHelper {
         if (librarySourcesScope == GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
             return null;
         }
-        Collection<JetClassOrObject> classes = JetFullClassNameIndex.getInstance()
+        Collection<KtClassOrObject> classes = JetFullClassNameIndex.getInstance()
                 .get(classFqName.asString(), classOrObject.getProject(), librarySourcesScope);
         if (classes.isEmpty()) {
             return null;
@@ -288,8 +288,8 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    private static Collection<JetNamedDeclaration> getInitialTopLevelCandidates(
-            @NotNull JetNamedDeclaration declaration,
+    private static Collection<KtNamedDeclaration> getInitialTopLevelCandidates(
+            @NotNull KtNamedDeclaration declaration,
             @NotNull NavigationKind navigationKind
     ) {
         FqName memberFqName = declaration.getFqName();
@@ -300,59 +300,59 @@ public class JetSourceNavigationHelper {
             return Collections.emptyList();
         }
         //noinspection unchecked
-        StringStubIndexExtension<JetNamedDeclaration> index =
-                (StringStubIndexExtension<JetNamedDeclaration>) getIndexForTopLevelPropertyOrFunction(declaration);
+        StringStubIndexExtension<KtNamedDeclaration> index =
+                (StringStubIndexExtension<KtNamedDeclaration>) getIndexForTopLevelPropertyOrFunction(declaration);
         return index.get(memberFqName.asString(), declaration.getProject(), librarySourcesScope);
     }
 
-    private static StringStubIndexExtension<? extends JetNamedDeclaration> getIndexForTopLevelPropertyOrFunction(
-            @NotNull JetNamedDeclaration decompiledDeclaration
+    private static StringStubIndexExtension<? extends KtNamedDeclaration> getIndexForTopLevelPropertyOrFunction(
+            @NotNull KtNamedDeclaration decompiledDeclaration
     ) {
-        if (decompiledDeclaration instanceof JetNamedFunction) {
+        if (decompiledDeclaration instanceof KtNamedFunction) {
             return JetTopLevelFunctionFqnNameIndex.getInstance();
         }
-        if (decompiledDeclaration instanceof JetProperty) {
+        if (decompiledDeclaration instanceof KtProperty) {
             return JetTopLevelPropertyFqnNameIndex.getInstance();
         }
         throw new IllegalArgumentException("Neither function nor declaration: " + decompiledDeclaration.getClass().getName());
     }
 
     @NotNull
-    private static List<JetNamedDeclaration> getInitialMemberCandidates(
-            @NotNull JetClassOrObject sourceClassOrObject,
+    private static List<KtNamedDeclaration> getInitialMemberCandidates(
+            @NotNull KtClassOrObject sourceClassOrObject,
             @NotNull final Name name,
-            @NotNull Class<JetNamedDeclaration> declarationClass
+            @NotNull Class<KtNamedDeclaration> declarationClass
     ) {
-        List<JetNamedDeclaration> allByClass = ContainerUtil.findAll(sourceClassOrObject.getDeclarations(), declarationClass);
-        return ContainerUtil.filter(allByClass, new Condition<JetNamedDeclaration>() {
+        List<KtNamedDeclaration> allByClass = ContainerUtil.findAll(sourceClassOrObject.getDeclarations(), declarationClass);
+        return ContainerUtil.filter(allByClass, new Condition<KtNamedDeclaration>() {
             @Override
-            public boolean value(JetNamedDeclaration declaration) {
+            public boolean value(KtNamedDeclaration declaration) {
                 return name.equals(declaration.getNameAsSafeName());
             }
         });
     }
 
     @NotNull
-    private static List<JetNamedDeclaration> filterByReceiverPresenceAndParametersCount(
-            final @NotNull JetNamedDeclaration decompiledDeclaration,
-            @NotNull Collection<JetNamedDeclaration> candidates
+    private static List<KtNamedDeclaration> filterByReceiverPresenceAndParametersCount(
+            final @NotNull KtNamedDeclaration decompiledDeclaration,
+            @NotNull Collection<KtNamedDeclaration> candidates
     ) {
-        return ContainerUtil.filter(candidates, new Condition<JetNamedDeclaration>() {
+        return ContainerUtil.filter(candidates, new Condition<KtNamedDeclaration>() {
             @Override
-            public boolean value(JetNamedDeclaration candidate) {
+            public boolean value(KtNamedDeclaration candidate) {
                 return sameReceiverPresenceAndParametersCount(candidate, decompiledDeclaration);
             }
         });
     }
 
     @NotNull
-    private static List<JetNamedDeclaration> filterByReceiverAndParameterTypes(
-            final @NotNull JetNamedDeclaration decompiledDeclaration,
-            @NotNull Collection<JetNamedDeclaration> candidates
+    private static List<KtNamedDeclaration> filterByReceiverAndParameterTypes(
+            final @NotNull KtNamedDeclaration decompiledDeclaration,
+            @NotNull Collection<KtNamedDeclaration> candidates
     ) {
-        return ContainerUtil.filter(candidates, new Condition<JetNamedDeclaration>() {
+        return ContainerUtil.filter(candidates, new Condition<KtNamedDeclaration>() {
             @Override
-            public boolean value(JetNamedDeclaration candidate) {
+            public boolean value(KtNamedDeclaration candidate) {
                 return receiverAndParametersShortTypesMatch(candidate, decompiledDeclaration);
             }
         });
@@ -364,7 +364,7 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    public static PsiClass getOriginalPsiClassOrCreateLightClass(@NotNull JetClassOrObject classOrObject) {
+    public static PsiClass getOriginalPsiClassOrCreateLightClass(@NotNull KtClassOrObject classOrObject) {
         if (LightClassUtil.INSTANCE$.belongsToKotlinBuiltIns(classOrObject.getContainingJetFile())) {
             FqName fqName = classOrObject.getFqName();
             if (fqName != null) {
@@ -381,7 +381,7 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    public static PsiClass getOriginalClass(@NotNull JetClassOrObject classOrObject) {
+    public static PsiClass getOriginalClass(@NotNull KtClassOrObject classOrObject) {
         // Copied from JavaPsiImplementationHelperImpl:getOriginalClass()
         String internalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject, NoResolveFileClassesProvider.INSTANCE$);
         if (internalName == null) {
@@ -389,7 +389,7 @@ public class JetSourceNavigationHelper {
         }
         String fqName = JvmClassName.byInternalName(internalName).getFqNameForClassNameWithoutDollars().asString();
 
-        JetFile file = classOrObject.getContainingJetFile();
+        KtFile file = classOrObject.getContainingJetFile();
 
         VirtualFile vFile = file.getVirtualFile();
         Project project = file.getProject();
@@ -427,18 +427,18 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    public static JetDeclaration getNavigationElement(@NotNull JetDeclaration declaration) {
+    public static KtDeclaration getNavigationElement(@NotNull KtDeclaration declaration) {
         return navigateToDeclaration(declaration, NavigationKind.CLASS_FILES_TO_SOURCES);
     }
 
     @NotNull
-    public static JetDeclaration getOriginalElement(@NotNull JetDeclaration declaration) {
+    public static KtDeclaration getOriginalElement(@NotNull KtDeclaration declaration) {
         return navigateToDeclaration(declaration, NavigationKind.SOURCES_TO_CLASS_FILES);
     }
 
     @NotNull
-    public static JetDeclaration navigateToDeclaration(
-            @NotNull JetDeclaration from,
+    public static KtDeclaration navigateToDeclaration(
+            @NotNull KtDeclaration from,
             @NotNull NavigationKind navigationKind) {
         if (DumbService.isDumb(from.getProject())) return from;
 
@@ -449,15 +449,15 @@ public class JetSourceNavigationHelper {
             case SOURCES_TO_CLASS_FILES:
                 if (from.getContainingJetFile().isCompiled()) return from;
                 if (!ProjectRootsUtil.isInContent(from, false, true, false)) return from;
-                if (JetPsiUtil.isLocal(from)) return from;
+                if (KtPsiUtil.isLocal(from)) return from;
                 break;
         }
 
-        JetDeclaration result = from.accept(new SourceAndDecompiledConversionVisitor(navigationKind), null);
+        KtDeclaration result = from.accept(new SourceAndDecompiledConversionVisitor(navigationKind), null);
         return result != null ? result : from;
     }
 
-    private static class SourceAndDecompiledConversionVisitor extends JetVisitor<JetDeclaration, Void> {
+    private static class SourceAndDecompiledConversionVisitor extends KtVisitor<KtDeclaration, Void> {
         private final NavigationKind navigationKind;
 
         public SourceAndDecompiledConversionVisitor(@NotNull NavigationKind navigationKind) {
@@ -465,45 +465,45 @@ public class JetSourceNavigationHelper {
         }
 
         @Override
-        public JetDeclaration visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
+        public KtDeclaration visitNamedFunction(@NotNull KtNamedFunction function, Void data) {
             return convertPropertyOrFunction(function, navigationKind);
         }
 
         @Override
-        public JetDeclaration visitProperty(@NotNull JetProperty property, Void data) {
+        public KtDeclaration visitProperty(@NotNull KtProperty property, Void data) {
             return convertPropertyOrFunction(property, navigationKind);
         }
 
         @Override
-        public JetDeclaration visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, Void data) {
+        public KtDeclaration visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, Void data) {
             return convertNamedClassOrObject(declaration, navigationKind);
         }
 
         @Override
-        public JetDeclaration visitClass(@NotNull JetClass klass, Void data) {
+        public KtDeclaration visitClass(@NotNull KtClass klass, Void data) {
             return convertNamedClassOrObject(klass, navigationKind);
         }
 
         @Override
-        public JetDeclaration visitParameter(@NotNull JetParameter parameter, Void data) {
-            JetCallableDeclaration callableDeclaration = (JetCallableDeclaration) parameter.getParent().getParent();
-            List<JetParameter> parameters = callableDeclaration.getValueParameters();
+        public KtDeclaration visitParameter(@NotNull KtParameter parameter, Void data) {
+            KtCallableDeclaration callableDeclaration = (KtCallableDeclaration) parameter.getParent().getParent();
+            List<KtParameter> parameters = callableDeclaration.getValueParameters();
             int index = parameters.indexOf(parameter);
 
-            JetCallableDeclaration sourceCallable = (JetCallableDeclaration) callableDeclaration.accept(this, null);
+            KtCallableDeclaration sourceCallable = (KtCallableDeclaration) callableDeclaration.accept(this, null);
             if (sourceCallable == null) return null;
-            List<JetParameter> sourceParameters = sourceCallable.getValueParameters();
+            List<KtParameter> sourceParameters = sourceCallable.getValueParameters();
             if (sourceParameters.size() != parameters.size()) return null;
             return sourceParameters.get(index);
         }
 
         @Override
-        public JetDeclaration visitPrimaryConstructor(@NotNull JetPrimaryConstructor constructor, Void data) {
+        public KtDeclaration visitPrimaryConstructor(@NotNull KtPrimaryConstructor constructor, Void data) {
             return convertPropertyOrFunction(constructor, navigationKind);
         }
 
         @Override
-        public JetDeclaration visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, Void data) {
+        public KtDeclaration visitSecondaryConstructor(@NotNull KtSecondaryConstructor constructor, Void data) {
             return convertPropertyOrFunction(constructor, navigationKind);
         }
     }

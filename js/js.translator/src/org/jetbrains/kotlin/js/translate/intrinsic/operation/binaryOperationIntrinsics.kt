@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
@@ -28,18 +28,18 @@ import com.google.common.collect.ImmutableSet
 
 public interface BinaryOperationIntrinsic {
 
-    fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression
+    fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression
 
     fun exists(): Boolean
 }
 
 public class BinaryOperationIntrinsics {
 
-    private val intrinsicCache = THashMap<Pair<JetToken, FunctionDescriptor>, BinaryOperationIntrinsic>()
+    private val intrinsicCache = THashMap<Pair<KtToken, FunctionDescriptor>, BinaryOperationIntrinsic>()
 
     private val factories = listOf(LongCompareToBOIF, EqualsBOIF, CompareToBOIF)
 
-    public fun getIntrinsic(expression: JetBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic {
+    public fun getIntrinsic(expression: KtBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic {
         val token = getOperationToken(expression)
         val descriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression)
         if (descriptor == null || descriptor !is FunctionDescriptor) {
@@ -49,16 +49,16 @@ public class BinaryOperationIntrinsics {
         return lookUpCache(token, descriptor) ?: computeAndCacheIntrinsic(token, descriptor)
     }
 
-    private fun lookUpCache(token: JetToken, descriptor: FunctionDescriptor): BinaryOperationIntrinsic? =
+    private fun lookUpCache(token: KtToken, descriptor: FunctionDescriptor): BinaryOperationIntrinsic? =
             intrinsicCache.get(Pair(token, descriptor))
 
-    private fun computeAndCacheIntrinsic(token: JetToken, descriptor: FunctionDescriptor): BinaryOperationIntrinsic {
+    private fun computeAndCacheIntrinsic(token: KtToken, descriptor: FunctionDescriptor): BinaryOperationIntrinsic {
         val result = computeIntrinsic(token, descriptor)
         intrinsicCache.put(Pair(token, descriptor), result)
         return result
     }
 
-    private fun computeIntrinsic(token: JetToken, descriptor: FunctionDescriptor): BinaryOperationIntrinsic {
+    private fun computeIntrinsic(token: KtToken, descriptor: FunctionDescriptor): BinaryOperationIntrinsic {
         for (factory in factories) {
             if (factory.getSupportTokens().contains(token)) {
                 val intrinsic = factory.getIntrinsic(descriptor)
@@ -73,14 +73,14 @@ public class BinaryOperationIntrinsics {
 
 interface BinaryOperationIntrinsicFactory {
 
-    public fun getSupportTokens(): ImmutableSet<out JetToken>
+    public fun getSupportTokens(): ImmutableSet<out KtToken>
 
     public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic?
 }
 
 abstract class AbstractBinaryOperationIntrinsic : BinaryOperationIntrinsic {
 
-    public override abstract fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression
+    public override abstract fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression
 
     public override fun exists(): Boolean = true
 }
@@ -88,6 +88,6 @@ abstract class AbstractBinaryOperationIntrinsic : BinaryOperationIntrinsic {
 object NO_INTRINSIC : AbstractBinaryOperationIntrinsic() {
     override fun exists(): Boolean = false
 
-    override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression =
+    override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression =
             throw UnsupportedOperationException("BinaryOperationIntrinsic#NO_INTRINSIC_#apply")
 }

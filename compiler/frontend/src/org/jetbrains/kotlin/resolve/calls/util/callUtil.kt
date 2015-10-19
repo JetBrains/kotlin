@@ -20,7 +20,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -68,7 +68,7 @@ public fun <D : CallableDescriptor> ResolvedCall<D>.getParameterForArgument(valu
 
 public fun <C: ResolutionContext<C>> Call.hasUnresolvedArguments(context: ResolutionContext<C>): Boolean {
     val arguments = getValueArguments().map { it.getArgumentExpression() }
-    return arguments.any (fun (argument: JetExpression?): Boolean {
+    return arguments.any (fun (argument: KtExpression?): Boolean {
         if (argument == null || ArgumentTypeResolver.isFunctionLiteralArgument(argument, context)) return false
 
         val resolvedCall = argument.getResolvedCall(context.trace.getBindingContext()) as MutableResolvedCall<*>?
@@ -81,36 +81,36 @@ public fun <C: ResolutionContext<C>> Call.hasUnresolvedArguments(context: Resolu
 
 public fun Call.getValueArgumentsInParentheses(): List<ValueArgument> = getValueArguments().filterArgsInParentheses()
 
-public fun JetCallElement.getValueArgumentsInParentheses(): List<ValueArgument> = getValueArguments().filterArgsInParentheses()
+public fun KtCallElement.getValueArgumentsInParentheses(): List<ValueArgument> = getValueArguments().filterArgsInParentheses()
 
-public fun Call.getValueArgumentListOrElement(): JetElement = getValueArgumentList() ?: getCalleeExpression() ?: getCallElement()
+public fun Call.getValueArgumentListOrElement(): KtElement = getValueArgumentList() ?: getCalleeExpression() ?: getCallElement()
 
 @Suppress("UNCHECKED_CAST")
-private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is JetFunctionLiteralArgument } as List<ValueArgument>
+private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is KtFunctionLiteralArgument } as List<ValueArgument>
 
-public fun Call.getValueArgumentForExpression(expression: JetExpression): ValueArgument? {
-    fun JetElement.deparenthesizeStructurally(): JetElement? {
-        val deparenthesized = if (this is JetExpression) JetPsiUtil.deparenthesizeOnce(this) else this
+public fun Call.getValueArgumentForExpression(expression: KtExpression): ValueArgument? {
+    fun KtElement.deparenthesizeStructurally(): KtElement? {
+        val deparenthesized = if (this is KtExpression) KtPsiUtil.deparenthesizeOnce(this) else this
         return when {
             deparenthesized != this -> deparenthesized
-            this is JetFunctionLiteralExpression -> this.getFunctionLiteral()
-            this is JetFunctionLiteral -> this.getBodyExpression()
+            this is KtFunctionLiteralExpression -> this.getFunctionLiteral()
+            this is KtFunctionLiteral -> this.getBodyExpression()
             else -> null
         }
     }
-    fun JetElement.isParenthesizedExpression() = sequence(this) { it.deparenthesizeStructurally() }.any { it == expression }
+    fun KtElement.isParenthesizedExpression() = sequence(this) { it.deparenthesizeStructurally() }.any { it == expression }
     return getValueArguments().firstOrNull { it?.getArgumentExpression()?.isParenthesizedExpression() ?: false }
 }
 
 // Get call / resolved call from binding context
 
-public fun JetElement?.getCalleeExpressionIfAny(): JetExpression? {
-    val element = if (this is JetExpression) JetPsiUtil.deparenthesize(this) else this
+public fun KtElement?.getCalleeExpressionIfAny(): KtExpression? {
+    val element = if (this is KtExpression) KtPsiUtil.deparenthesize(this) else this
     return when (element) {
-        is JetSimpleNameExpression -> element
-        is JetCallElement -> element.getCalleeExpression()
-        is JetQualifiedExpression -> element.getSelectorExpression().getCalleeExpressionIfAny()
-        is JetOperationExpression -> element.getOperationReference()
+        is KtSimpleNameExpression -> element
+        is KtCallElement -> element.getCalleeExpression()
+        is KtQualifiedExpression -> element.getSelectorExpression().getCalleeExpressionIfAny()
+        is KtOperationExpression -> element.getOperationReference()
         else -> null
     }
 }
@@ -122,14 +122,14 @@ public fun JetElement?.getCalleeExpressionIfAny(): JetExpression? {
  *  Note: special construction like <code>a!!, a ?: b, if (c) a else b</code> are resolved as calls,
  *  so there is a corresponding call for them.
  */
-public fun JetElement.getCall(context: BindingContext): Call? {
-    val element = if (this is JetExpression) JetPsiUtil.deparenthesize(this) else this
+public fun KtElement.getCall(context: BindingContext): Call? {
+    val element = if (this is KtExpression) KtPsiUtil.deparenthesize(this) else this
     if (element == null) return null
 
     val parent = element.getParent()
-    val reference: JetExpression? = when {
-        parent is JetInstanceExpressionWithLabel -> parent
-        parent is JetUserType -> parent.getParent()?.getParent() as? JetConstructorCalleeExpression
+    val reference: KtExpression? = when {
+        parent is KtInstanceExpressionWithLabel -> parent
+        parent is KtUserType -> parent.getParent()?.getParent() as? KtConstructorCalleeExpression
         else -> element.getCalleeExpressionIfAny()
     }
     if (reference != null) {
@@ -138,10 +138,10 @@ public fun JetElement.getCall(context: BindingContext): Call? {
     return context[CALL, element]
 }
 
-public fun JetElement.getParentCall(context: BindingContext, strict: Boolean = true): Call? {
-    val callExpressionTypes = arrayOf<Class<out JetElement>?>(
-            javaClass<JetSimpleNameExpression>(), javaClass<JetCallElement>(), javaClass<JetBinaryExpression>(),
-            javaClass<JetUnaryExpression>(), javaClass<JetArrayAccessExpression>())
+public fun KtElement.getParentCall(context: BindingContext, strict: Boolean = true): Call? {
+    val callExpressionTypes = arrayOf<Class<out KtElement>?>(
+            javaClass<KtSimpleNameExpression>(), javaClass<KtCallElement>(), javaClass<KtBinaryExpression>(),
+            javaClass<KtUnaryExpression>(), javaClass<KtArrayAccessExpression>())
 
     val parent = if (strict) {
         PsiTreeUtil.getParentOfType(this, *callExpressionTypes)
@@ -155,19 +155,19 @@ public fun Call?.getResolvedCall(context: BindingContext): ResolvedCall<out Call
     return context[RESOLVED_CALL, this]
 }
 
-public fun JetElement?.getResolvedCall(context: BindingContext): ResolvedCall<out CallableDescriptor>? {
+public fun KtElement?.getResolvedCall(context: BindingContext): ResolvedCall<out CallableDescriptor>? {
     return this?.getCall(context)?.getResolvedCall(context)
 }
 
-public fun JetElement?.getParentResolvedCall(context: BindingContext, strict: Boolean = true): ResolvedCall<out CallableDescriptor>? {
+public fun KtElement?.getParentResolvedCall(context: BindingContext, strict: Boolean = true): ResolvedCall<out CallableDescriptor>? {
     return this?.getParentCall(context, strict)?.getResolvedCall(context)
 }
 
-public fun JetElement.getCallWithAssert(context: BindingContext): Call {
+public fun KtElement.getCallWithAssert(context: BindingContext): Call {
     return getCall(context).sure { "No call for ${this.getTextWithLocation()}" }
 }
 
-public fun JetElement.getResolvedCallWithAssert(context: BindingContext): ResolvedCall<out CallableDescriptor> {
+public fun KtElement.getResolvedCallWithAssert(context: BindingContext): ResolvedCall<out CallableDescriptor> {
     return getResolvedCall(context).sure { "No resolved call for ${this.getTextWithLocation()}" }
 }
 
@@ -175,7 +175,7 @@ public fun Call.getResolvedCallWithAssert(context: BindingContext): ResolvedCall
     return getResolvedCall(context).sure { "No resolved call for ${this.getCallElement().getTextWithLocation()}" }
 }
 
-public fun JetExpression.getFunctionResolvedCallWithAssert(context: BindingContext): ResolvedCall<out FunctionDescriptor> {
+public fun KtExpression.getFunctionResolvedCallWithAssert(context: BindingContext): ResolvedCall<out FunctionDescriptor> {
     val resolvedCall = getResolvedCallWithAssert(context)
     assert(resolvedCall.getResultingDescriptor() is FunctionDescriptor) {
         "ResolvedCall for this expression must be ResolvedCall<? extends FunctionDescriptor>: ${this.getTextWithLocation()}"
@@ -194,4 +194,4 @@ public fun Call.isSafeCall(): Boolean {
     return isExplicitSafeCall()
 }
 
-public fun Call.isExplicitSafeCall(): Boolean = getCallOperationNode()?.getElementType() == JetTokens.SAFE_ACCESS
+public fun Call.isExplicitSafeCall(): Boolean = getCallOperationNode()?.getElementType() == KtTokens.SAFE_ACCESS

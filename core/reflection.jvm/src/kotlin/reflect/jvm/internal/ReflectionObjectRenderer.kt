@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import kotlin.reflect.KParameter
 
 internal object ReflectionObjectRenderer {
@@ -94,7 +94,7 @@ internal object ReflectionObjectRenderer {
         }.toString()
     }
 
-    fun renderType(type: JetType): String {
+    fun renderType(type: KtType): String {
         return renderer.renderType(type)
     }
 }

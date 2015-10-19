@@ -44,10 +44,10 @@ public open class DialogWithEditor(
 
     private fun createEditor(): Editor {
         val editorFactory = EditorFactory.getInstance()!!
-        val virtualFile = LightVirtualFile("dummy.kt", JetFileType.INSTANCE, initialText)
+        val virtualFile = LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, initialText)
         val document = FileDocumentManager.getInstance().getDocument(virtualFile)!!
 
-        val editor = editorFactory.createEditor(document, project, JetFileType.INSTANCE, false)
+        val editor = editorFactory.createEditor(document, project, KotlinFileType.INSTANCE, false)
         val settings = editor.getSettings()
         settings.setVirtualSpace(false)
         settings.setLineMarkerAreaShown(false)

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.*
 
-public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true): JetType {
+public fun approximateFlexibleTypes(jetType: KtType, outermost: Boolean = true): KtType {
     if (jetType.isDynamic()) return jetType
     if (jetType.isFlexible()) {
         val flexible = jetType.flexibility()
@@ -60,7 +60,7 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
 
         return approximation
     }
-    return JetTypeImpl.create(
+    return KtTypeImpl.create(
             jetType.getAnnotations(),
             jetType.getConstructor(),
             jetType.isMarkedNullable(),
@@ -69,15 +69,15 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
     )
 }
 
-public fun JetType.isAnnotatedReadOnly(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_READONLY_ANNOTATION)
-public fun JetType.isAnnotatedNotNull(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NOT_NULL_ANNOTATION)
-public fun JetType.isAnnotatedNullable(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NULLABLE_ANNOTATION)
+public fun KtType.isAnnotatedReadOnly(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_READONLY_ANNOTATION)
+public fun KtType.isAnnotatedNotNull(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NOT_NULL_ANNOTATION)
+public fun KtType.isAnnotatedNullable(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NULLABLE_ANNOTATION)
 
-private fun JetType.hasAnnotationMaybeExternal(fqName: FqName) = with (getAnnotations()) {
+private fun KtType.hasAnnotationMaybeExternal(fqName: FqName) = with (getAnnotations()) {
     findAnnotation(fqName) ?: findExternalAnnotation(fqName)
 } != null
 
-fun JetType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Boolean): Boolean {
+fun KtType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Boolean): Boolean {
     if (canBeReferencedViaImport()) return true
 
     val descriptor = getConstructor().getDeclarationDescriptor()
@@ -87,13 +87,13 @@ fun JetType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Boole
     return scope != null && scope.getClassifier(descriptor.name, NoLookupLocation.FROM_IDE) == descriptor
 }
 
-public fun JetType.approximateWithResolvableType(scope: LexicalScope?, checkTypeParameters: Boolean): JetType {
+public fun KtType.approximateWithResolvableType(scope: LexicalScope?, checkTypeParameters: Boolean): KtType {
     if (isError() || isResolvableInScope(scope, checkTypeParameters)) return this
     return supertypes().firstOrNull { it.isResolvableInScope(scope, checkTypeParameters) }
            ?: builtIns.anyType
 }
 
-public fun JetType.anonymousObjectSuperTypeOrNull(): JetType? {
+public fun KtType.anonymousObjectSuperTypeOrNull(): KtType? {
     val classDescriptor = constructor.declarationDescriptor
     if (classDescriptor != null && DescriptorUtils.isAnonymousObject(classDescriptor)) {
         return immediateSupertypes().firstOrNull() ?: classDescriptor.builtIns.anyType

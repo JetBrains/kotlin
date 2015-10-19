@@ -96,7 +96,7 @@ private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bo
 
     val position = CompoundConstraintPosition(bound.position, substitution.position)
 
-    fun addNewBound(newConstrainingType: JetType, newBoundKind: BoundKind) {
+    fun addNewBound(newConstrainingType: KtType, newBoundKind: BoundKind) {
         // We don't generate new recursive constraints
         val nestedTypeVariables = newConstrainingType.getNestedTypeVariables(original = false)
         if (nestedTypeVariables.contains(bound.typeVariable)) return
@@ -117,7 +117,7 @@ private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bo
     // todo
     // if we allow non-trivial type projections, we bump into errors like
     // "Empty intersection for types [MutableCollection<in ('Int'..'Int?')>, MutableCollection<out Any?>, MutableCollection<in Int>]"
-    fun JetType.containsConstrainingTypeWithoutProjection() = this.getNestedArguments().any {
+    fun KtType.containsConstrainingTypeWithoutProjection() = this.getNestedArguments().any {
         it.getType().getConstructor() == substitution.constrainingType.getConstructor() && it.getProjectionKind() == Variance.INVARIANT
     }
     if (approximationBounds.upper.containsConstrainingTypeWithoutProjection() && bound.kind != LOWER_BOUND) {

@@ -32,14 +32,14 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
 import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
-public class ChangeVisibilityModifierFix extends KotlinQuickFixAction<JetDeclaration> {
-    public ChangeVisibilityModifierFix(@NotNull JetDeclaration element) {
+public class ChangeVisibilityModifierFix extends KotlinQuickFixAction<KtDeclaration> {
+    public ChangeVisibilityModifierFix(@NotNull KtDeclaration element) {
         super(element);
     }
 
@@ -57,22 +57,22 @@ public class ChangeVisibilityModifierFix extends KotlinQuickFixAction<JetDeclara
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        if (!(file instanceof JetFile)) return false;
-        return super.isAvailable(project, editor, file) && (findVisibilityChangeTo((JetFile)file) != null);
+        if (!(file instanceof KtFile)) return false;
+        return super.isAvailable(project, editor, file) && (findVisibilityChangeTo((KtFile)file) != null);
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetModifierKeywordToken modifier = findVisibilityChangeTo(file);
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        KtModifierKeywordToken modifier = findVisibilityChangeTo(file);
         assert modifier != null;
         PsiModificationUtilsKt.setVisibility(getElement(), modifier);
     }
 
     @Nullable
-    private JetModifierKeywordToken findVisibilityChangeTo(JetFile file) {
+    private KtModifierKeywordToken findVisibilityChangeTo(KtFile file) {
         BindingContext bindingContext = ResolutionUtils.analyze(getElement());
         DeclarationDescriptor descriptor;
-        if (getElement() instanceof JetParameter) {
+        if (getElement() instanceof KtParameter) {
             descriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, getElement());
         }
         else {
@@ -110,10 +110,10 @@ public class ChangeVisibilityModifierFix extends KotlinQuickFixAction<JetDeclara
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<JetDeclaration> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<KtDeclaration> createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
-                if (!(element instanceof JetDeclaration)) return null;
-                return new ChangeVisibilityModifierFix((JetDeclaration)element);
+                if (!(element instanceof KtDeclaration)) return null;
+                return new ChangeVisibilityModifierFix((KtDeclaration)element);
             }
         };
     }

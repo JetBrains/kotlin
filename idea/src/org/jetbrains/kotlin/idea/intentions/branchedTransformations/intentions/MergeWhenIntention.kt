@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 
-public class MergeWhenIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Merge with next 'when'", "Merge 'when' expressions") {
-    override fun applicabilityRange(element: JetWhenExpression): TextRange? {
-        val next = PsiTreeUtil.skipSiblingsForward(element, javaClass<PsiWhiteSpace>()) as? JetWhenExpression ?: return null
+public class MergeWhenIntention : JetSelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Merge with next 'when'", "Merge 'when' expressions") {
+    override fun applicabilityRange(element: KtWhenExpression): TextRange? {
+        val next = PsiTreeUtil.skipSiblingsForward(element, javaClass<PsiWhiteSpace>()) as? KtWhenExpression ?: return null
 
         val subject1 = element.getSubjectExpression()
         val subject2 = next.getSubjectExpression()
@@ -48,28 +48,28 @@ public class MergeWhenIntention : JetSelfTargetingRangeIntention<JetWhenExpressi
         return element.getWhenKeyword().getTextRange()
     }
 
-    private fun conditionsMatch(e1: JetWhenEntry, e2: JetWhenEntry): Boolean =
+    private fun conditionsMatch(e1: KtWhenEntry, e2: KtWhenEntry): Boolean =
             e1.getConditions().toList().toRange().matches(e2.getConditions().toList().toRange())
 
-    private fun checkBodies(e1: JetWhenEntry, e2: JetWhenEntry): Boolean {
+    private fun checkBodies(e1: KtWhenEntry, e2: KtWhenEntry): Boolean {
         val names1 = e1.declarationNames()
         val names2 = e2.declarationNames()
         if (names1.any { it in names2 }) return false
 
         return when (e1.getExpression()?.lastBlockStatementOrThis()) {
-            is JetReturnExpression, is JetThrowExpression, is JetBreakExpression, is JetContinueExpression -> false
+            is KtReturnExpression, is KtThrowExpression, is KtBreakExpression, is KtContinueExpression -> false
             else -> true
         }
     }
 
-    private fun JetWhenEntry.declarationNames(): Set<String> =
+    private fun KtWhenEntry.declarationNames(): Set<String> =
             getExpression()?.blockExpressionsOrSingle()
-                    ?.filter { it is JetNamedDeclaration }
+                    ?.filter { it is KtNamedDeclaration }
                     ?.map { it.getName() }
                     ?.filterNotNull()?.toSet() ?: emptySet()
 
-    override fun applyTo(element: JetWhenExpression, editor: Editor) {
-        val nextWhen = PsiTreeUtil.skipSiblingsForward(element, javaClass<PsiWhiteSpace>()) as JetWhenExpression
+    override fun applyTo(element: KtWhenExpression, editor: Editor) {
+        val nextWhen = PsiTreeUtil.skipSiblingsForward(element, javaClass<PsiWhiteSpace>()) as KtWhenExpression
         for ((entry1, entry2) in element.getEntries().zip(nextWhen.getEntries())) {
             entry1.getExpression().mergeWith(entry2.getExpression())
         }
@@ -77,14 +77,14 @@ public class MergeWhenIntention : JetSelfTargetingRangeIntention<JetWhenExpressi
         element.getParent().deleteChildRange(element.getNextSibling(), nextWhen)
     }
 
-    private fun JetExpression?.mergeWith(that: JetExpression?): JetExpression? = when {
+    private fun KtExpression?.mergeWith(that: KtExpression?): KtExpression? = when {
         this == null -> that
 
         that == null -> this
 
         else -> {
-            val psiFactory = JetPsiFactory(this)
-            val block = if (this is JetBlockExpression)
+            val psiFactory = KtPsiFactory(this)
+            val block = if (this is KtBlockExpression)
                 this
             else
                 replaced(psiFactory.createSingleStatementBlock(this))

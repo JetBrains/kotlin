@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
 public interface AnalysisCompletedHandlerExtension {
@@ -34,5 +34,5 @@ public interface AnalysisCompletedHandlerExtension {
             project: Project,
             module: ModuleDescriptor,
             bindingContext: BindingContext,
-            files: Collection<JetFile>): AnalysisResult?
+            files: Collection<KtFile>): AnalysisResult?
 }

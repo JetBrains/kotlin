@@ -21,14 +21,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl implements PropertyGetterDescriptor {
-    private JetType returnType;
+    private KtType returnType;
 
     @NotNull
     private final PropertyGetterDescriptor original;
@@ -51,7 +51,7 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
         this.original = original != null ? original : this;
     }
     
-    public void initialize(JetType returnType) {
+    public void initialize(KtType returnType) {
         this.returnType = returnType == null ? getCorrespondingProperty().getType() : returnType;
     }
 
@@ -69,7 +69,7 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
     }
 
     @Override
-    public JetType getReturnType() {
+    public KtType getReturnType() {
         return returnType;
     }
 

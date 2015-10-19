@@ -28,34 +28,34 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<JetProperty>(javaClass(), "Introduce backing property") {
-    override fun isApplicableTo(element: JetProperty, caretOffset: Int): Boolean {
+class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<KtProperty>(javaClass(), "Introduce backing property") {
+    override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         if (!canIntroduceBackingProperty(element)) return false
         return element.nameIdentifier?.textRange?.containsOffset(caretOffset) == true
     }
 
-    override fun applyTo(element: JetProperty, editor: Editor) {
+    override fun applyTo(element: KtProperty, editor: Editor) {
         introduceBackingProperty(element)
     }
 
     companion object {
-        fun canIntroduceBackingProperty(property: JetProperty): Boolean {
+        fun canIntroduceBackingProperty(property: KtProperty): Boolean {
             val name = property.name ?: return false
 
             val bindingContext = property.getResolutionFacade().analyzeFullyAndGetResult(listOf(property)).bindingContext
             val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property) as? PropertyDescriptor ?: return false
             if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == false) return false
 
-            val containingClass = property.getStrictParentOfType<JetClassOrObject>() ?: return false
-            return containingClass.declarations.none { it is JetProperty && it.name == "_" + name }
+            val containingClass = property.getStrictParentOfType<KtClassOrObject>() ?: return false
+            return containingClass.declarations.none { it is KtProperty && it.name == "_" + name }
         }
 
-        fun introduceBackingProperty(property: JetProperty) {
+        fun introduceBackingProperty(property: KtProperty) {
             createBackingProperty(property)
 
             if (property.typeReference == null) {
@@ -86,25 +86,25 @@ class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<JetProperty
             replaceBackingFieldReferences(property)
         }
 
-        private fun createGetter(element: JetProperty) {
+        private fun createGetter(element: KtProperty) {
             val body = "get() = _${element.name}"
-            val newGetter = JetPsiFactory(element).createProperty("val x $body").getter!!
+            val newGetter = KtPsiFactory(element).createProperty("val x $body").getter!!
             element.addAccessor(newGetter)
         }
 
-        private fun createSetter(element: JetProperty) {
+        private fun createSetter(element: KtProperty) {
             val body = "set(value) { _${element.name} = value }"
-            val newSetter = JetPsiFactory(element).createProperty("val x $body").setter!!
+            val newSetter = KtPsiFactory(element).createProperty("val x $body").setter!!
             element.addAccessor(newSetter)
         }
 
-        private fun JetProperty.addAccessor(newAccessor: JetPropertyAccessor) {
-            val semicolon = getNode().findChildByType(JetTokens.SEMICOLON)
+        private fun KtProperty.addAccessor(newAccessor: KtPropertyAccessor) {
+            val semicolon = getNode().findChildByType(KtTokens.SEMICOLON)
             addBefore(newAccessor, semicolon?.psi)
         }
 
-        private fun createBackingProperty(property: JetProperty) {
-            val backingProperty = JetPsiFactory(property).buildDeclaration {
+        private fun createBackingProperty(property: KtProperty) {
+            val backingProperty = KtPsiFactory(property).buildDeclaration {
                 appendFixedText("private ")
                 appendFixedText(property.valOrVarKeyword.text)
                 appendFixedText(" _${property.name}")
@@ -121,47 +121,47 @@ class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<JetProperty
             property.parent.addBefore(backingProperty, property)
         }
 
-        private fun replaceFieldReferences(element: JetElement, propertyName: String) {
-            element.acceptChildren(object : JetTreeVisitorVoid() {
-                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+        private fun replaceFieldReferences(element: KtElement, propertyName: String) {
+            element.acceptChildren(object : KtTreeVisitorVoid() {
+                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                     val bindingContext = expression.analyze()
                     val target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
                     if (target is SyntheticFieldDescriptor) {
-                        expression.replace(JetPsiFactory(element).createSimpleName("_$propertyName"))
+                        expression.replace(KtPsiFactory(element).createSimpleName("_$propertyName"))
                     }
                 }
 
-                override fun visitPropertyAccessor(accessor: JetPropertyAccessor) {
+                override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
                     // don't go into accessors of properties in local classes because 'field' will mean something different in them
                 }
             })
         }
 
         // TODO: drop this when we get rid of backing field syntax
-        private fun replaceBackingFieldReferences(prop: JetProperty) {
-            val containingClass = prop.getStrictParentOfType<JetClassOrObject>()!!
+        private fun replaceBackingFieldReferences(prop: KtProperty) {
+            val containingClass = prop.getStrictParentOfType<KtClassOrObject>()!!
             ReferencesSearch.search(prop, LocalSearchScope(containingClass)).forEach {
-                val element = it.element as? JetNameReferenceExpression
-                if (element != null && element.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-                    element.replace(JetPsiFactory(element).createSimpleName("_${prop.name}"))
+                val element = it.element as? KtNameReferenceExpression
+                if (element != null && element.getReferencedNameElementType() == KtTokens.FIELD_IDENTIFIER) {
+                    element.replace(KtPsiFactory(element).createSimpleName("_${prop.name}"))
                 }
             }
         }
     }
 }
 
-class IntroduceBackingPropertyFix(prop: JetProperty): KotlinQuickFixAction<JetProperty>(prop) {
+class IntroduceBackingPropertyFix(prop: KtProperty): KotlinQuickFixAction<KtProperty>(prop) {
     override fun getText(): String = "Introduce backing property"
     override fun getFamilyName(): String  = getText()
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         IntroduceBackingPropertyIntention.introduceBackingProperty(element)
     }
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val resolveResult = diagnostic.psiElement.reference?.resolve()
-            if (resolveResult is JetProperty &&
+            if (resolveResult is KtProperty &&
                 IntroduceBackingPropertyIntention.canIntroduceBackingProperty(resolveResult)) {
                 return IntroduceBackingPropertyFix(resolveResult)
             }

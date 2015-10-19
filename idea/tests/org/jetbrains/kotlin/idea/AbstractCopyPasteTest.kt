@@ -20,7 +20,7 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 public abstract class AbstractCopyPasteTest : JetLightCodeInsightFixtureTestCase() {
@@ -50,12 +50,12 @@ public abstract class AbstractCopyPasteTest : JetLightCodeInsightFixtureTestCase
         }
     }
 
-    protected  fun configureTargetFile(fileName: String): JetFile {
+    protected  fun configureTargetFile(fileName: String): KtFile {
         if (File(getTestDataPath() + File.separator + fileName).exists()) {
-            return myFixture.configureByFile(fileName) as JetFile
+            return myFixture.configureByFile(fileName) as KtFile
         }
         else {
-            return myFixture.configureByText(fileName, DEFAULT_TO_FILE_TEXT) as JetFile
+            return myFixture.configureByText(fileName, DEFAULT_TO_FILE_TEXT) as KtFile
         }
     }
 }

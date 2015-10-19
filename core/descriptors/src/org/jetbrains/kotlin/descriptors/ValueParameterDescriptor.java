@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collection;
 
@@ -42,7 +42,7 @@ public interface ValueParameterDescriptor extends VariableDescriptor, ParameterD
     boolean declaresDefaultValue();
 
     @Nullable
-    JetType getVarargElementType();
+    KtType getVarargElementType();
 
     @NotNull
     @Override

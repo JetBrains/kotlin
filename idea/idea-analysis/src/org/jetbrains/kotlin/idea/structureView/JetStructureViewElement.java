@@ -49,7 +49,7 @@ public class JetStructureViewElement implements StructureViewTreeElement, Querya
         this.element = element;
         this.isInherited = isInherited;
 
-        if (!(element instanceof JetElement)) {
+        if (!(element instanceof KtElement)) {
             // Avoid storing descriptor in fields
             presentation = new KotlinStructureElementPresentation(isInherited(), element, descriptor);
         }
@@ -60,7 +60,7 @@ public class JetStructureViewElement implements StructureViewTreeElement, Querya
         this.isInherited = isInherited;
     }
 
-    public JetStructureViewElement(@NotNull JetFile fileElement) {
+    public JetStructureViewElement(@NotNull KtFile fileElement) {
         element = fileElement;
         isInherited = false;
     }
@@ -103,10 +103,10 @@ public class JetStructureViewElement implements StructureViewTreeElement, Querya
     @NotNull
     @Override
     public TreeElement[] getChildren() {
-        List<JetDeclaration> childrenDeclarations = getChildrenDeclarations();
-        return ArrayUtil.toObjectArray(ContainerUtil.map(childrenDeclarations, new Function<JetDeclaration, TreeElement>() {
+        List<KtDeclaration> childrenDeclarations = getChildrenDeclarations();
+        return ArrayUtil.toObjectArray(ContainerUtil.map(childrenDeclarations, new Function<KtDeclaration, TreeElement>() {
             @Override
-            public TreeElement fun(JetDeclaration declaration) {
+            public TreeElement fun(KtDeclaration declaration) {
                 return new JetStructureViewElement(declaration, false);
             }
         }), TreeElement.class);
@@ -125,12 +125,12 @@ public class JetStructureViewElement implements StructureViewTreeElement, Querya
 
     @Nullable
     private DeclarationDescriptor getDescriptor() {
-        if (!(element.isValid() && element instanceof JetDeclaration)) {
+        if (!(element.isValid() && element instanceof KtDeclaration)) {
             return null;
         }
 
-        final JetDeclaration declaration = (JetDeclaration) element;
-        if (declaration instanceof JetClassInitializer) {
+        final KtDeclaration declaration = (KtDeclaration) element;
+        if (declaration instanceof KtClassInitializer) {
             return null;
         }
 
@@ -147,24 +147,24 @@ public class JetStructureViewElement implements StructureViewTreeElement, Querya
     }
 
     @NotNull
-    private List<JetDeclaration> getChildrenDeclarations() {
-        if (element instanceof JetFile) {
-            JetFile jetFile = (JetFile) element;
+    private List<KtDeclaration> getChildrenDeclarations() {
+        if (element instanceof KtFile) {
+            KtFile jetFile = (KtFile) element;
             return jetFile.getDeclarations();
         }
-        else if (element instanceof JetClass) {
-            JetClass jetClass = (JetClass) element;
-            List<JetDeclaration> declarations = new ArrayList<JetDeclaration>();
-            for (JetParameter parameter : jetClass.getPrimaryConstructorParameters()) {
+        else if (element instanceof KtClass) {
+            KtClass ktClass = (KtClass) element;
+            List<KtDeclaration> declarations = new ArrayList<KtDeclaration>();
+            for (KtParameter parameter : ktClass.getPrimaryConstructorParameters()) {
                 if (parameter.hasValOrVar()) {
                     declarations.add(parameter);
                 }
             }
-            declarations.addAll(jetClass.getDeclarations());
+            declarations.addAll(ktClass.getDeclarations());
             return declarations;
         }
-        else if (element instanceof JetClassOrObject) {
-            return ((JetClassOrObject) element).getDeclarations();
+        else if (element instanceof KtClassOrObject) {
+            return ((KtClassOrObject) element).getDeclarations();
         }
 
         return Collections.emptyList();

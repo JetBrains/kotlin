@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
-import org.jetbrains.kotlin.psi.JetAnnotationUseSiteTarget
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
 import org.jetbrains.kotlin.resolve.AnnotationResolver
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -53,12 +53,12 @@ class LazyAnnotationsContextImpl(
 
 public class LazyAnnotations(
         val c: LazyAnnotationsContext,
-        val annotationEntries: List<JetAnnotationEntry>
+        val annotationEntries: List<KtAnnotationEntry>
 ) : Annotations, LazyEntity {
     override fun isEmpty() = annotationEntries.isEmpty()
 
     private val annotation = c.storageManager.createMemoizedFunction {
-        entry: JetAnnotationEntry ->
+        entry: KtAnnotationEntry ->
 
         val descriptor = LazyAnnotationDescriptor(c, entry)
         val target = entry.getUseSiteTarget()?.getAnnotationUseSiteTarget()
@@ -112,7 +112,7 @@ public class LazyAnnotations(
 
 public class LazyAnnotationDescriptor(
         val c: LazyAnnotationsContext,
-        val annotationEntry: JetAnnotationEntry
+        val annotationEntry: KtAnnotationEntry
 ) : AnnotationDescriptor, LazyEntity {
 
     init {

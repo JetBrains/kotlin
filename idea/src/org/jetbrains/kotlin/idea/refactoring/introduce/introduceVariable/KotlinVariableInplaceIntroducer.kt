@@ -33,25 +33,25 @@ import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.awt.BorderLayout
 
 public class KotlinVariableInplaceIntroducer(
-        val addedVariable: JetProperty,
-        val originalExpression: JetExpression?,
-        val occurrencesToReplace: Array<JetExpression>,
+        val addedVariable: KtProperty,
+        val originalExpression: KtExpression?,
+        val occurrencesToReplace: Array<KtExpression>,
         suggestedNames: Collection<String>,
         val isVar: Boolean,
         val doNotChangeVar: Boolean,
-        val expressionType: JetType?,
+        val expressionType: KtType?,
         val noTypeInference: Boolean,
         project: Project,
         editor: Editor
-): AbstractKotlinInplaceIntroducer<JetProperty>(
+): AbstractKotlinInplaceIntroducer<KtProperty>(
         addedVariable,
         originalExpression,
         occurrencesToReplace,
@@ -71,7 +71,7 @@ public class KotlinVariableInplaceIntroducer(
                     myProject.executeWriteCommand(getCommandName(), getCommandName()) {
                         PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument())
 
-                        val psiFactory = JetPsiFactory(myProject)
+                        val psiFactory = KtPsiFactory(myProject)
                         val keyword = if (varCheckBox.isSelected()) psiFactory.createVarKeyword() else psiFactory.createValKeyword()
                         addedVariable.getValOrVarKeyword().replace(keyword)
                     }
@@ -87,7 +87,7 @@ public class KotlinVariableInplaceIntroducer(
                     runWriteCommandAndRestart {
                         if (expressionTypeCheckBox.isSelected()) {
                             val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(expressionType)
-                            addedVariable.setTypeReference(JetPsiFactory(myProject).createType(renderedType))
+                            addedVariable.setTypeReference(KtPsiFactory(myProject).createType(renderedType))
                         }
                         else {
                             addedVariable.setTypeReference(null)
@@ -101,7 +101,7 @@ public class KotlinVariableInplaceIntroducer(
 
     override fun getVariable() = addedVariable
 
-    override fun suggestNames(replaceAll: Boolean, variable: JetProperty?) = suggestedNames
+    override fun suggestNames(replaceAll: Boolean, variable: KtProperty?) = suggestedNames
 
     override fun createFieldToStartTemplateOn(replaceAll: Boolean, names: Array<out String>) = addedVariable
 
@@ -130,11 +130,11 @@ public class KotlinVariableInplaceIntroducer(
         return result
     }
 
-    override fun updateTitle(variable: JetProperty?, value: String?) {
+    override fun updateTitle(variable: KtProperty?, value: String?) {
         // No preview to update
     }
 
-    override fun deleteTemplateField(psiField: JetProperty?) {
+    override fun deleteTemplateField(psiField: KtProperty?) {
         // Do not delete introduced variable as it was created outside of in-place refactoring
     }
 
@@ -149,7 +149,7 @@ public class KotlinVariableInplaceIntroducer(
     override fun performIntroduce() {
         val newName = getInputName() ?: return
         addedVariable.setName(newName)
-        val replacement = JetPsiFactory(myProject).createExpression(newName)
+        val replacement = KtPsiFactory(myProject).createExpression(newName)
         getOccurrences().forEach {
             if (it.isValid()) {
                 it.replace(replacement)

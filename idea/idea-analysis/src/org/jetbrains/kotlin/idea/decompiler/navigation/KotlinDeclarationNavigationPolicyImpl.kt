@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtDeclaration
 import com.intellij.openapi.project.DumbService
 
 public class KotlinDeclarationNavigationPolicyImpl : KotlinDeclarationNavigationPolicy {
-    override fun getOriginalElement(declaration: JetDeclaration) =
+    override fun getOriginalElement(declaration: KtDeclaration) =
             JetSourceNavigationHelper.getOriginalElement(declaration)
-    override fun getNavigationElement(declaration: JetDeclaration) =
+    override fun getNavigationElement(declaration: KtDeclaration) =
             JetSourceNavigationHelper.getNavigationElement(declaration)
 }

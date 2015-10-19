@@ -21,14 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.psi.JetBinaryExpression;
+import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
-    public static JsExpression doTranslate(@NotNull JetBinaryExpression expression,
+    public static JsExpression doTranslate(@NotNull KtBinaryExpression expression,
             @NotNull TranslationContext context) {
         return (new OverloadedAssignmentTranslator(expression, context)).translate();
     }
@@ -36,7 +36,7 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
     @NotNull
     private final ResolvedCall<? extends FunctionDescriptor> resolvedCall;
 
-    private OverloadedAssignmentTranslator(@NotNull JetBinaryExpression expression,
+    private OverloadedAssignmentTranslator(@NotNull KtBinaryExpression expression,
             @NotNull TranslationContext context) {
         super(expression, context);
         resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(expression, context.bindingContext());

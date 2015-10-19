@@ -30,23 +30,23 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
-public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFactory<JetValueArgument>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetValueArgument? {
-        val argument = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetValueArgument>()) ?: return null
+public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFactory<KtValueArgument>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtValueArgument? {
+        val argument = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtValueArgument>()) ?: return null
         return if (argument.isNamed()) argument else null
     }
 
-    override fun extractFixData(element: JetValueArgument, diagnostic: Diagnostic): CreateParameterData<JetValueArgument>? {
-        val result = (diagnostic.psiFile as? JetFile)?.analyzeFullyAndGetResult() ?: return null
+    override fun extractFixData(element: KtValueArgument, diagnostic: Diagnostic): CreateParameterData<KtValueArgument>? {
+        val result = (diagnostic.psiFile as? KtFile)?.analyzeFullyAndGetResult() ?: return null
         val context = result.bindingContext
 
         val name = element.getArgumentName()?.text ?: return null
         val argumentExpression = element.getArgumentExpression()
 
-        val callElement = element.getStrictParentOfType<JetCallElement>() ?: return null
+        val callElement = element.getStrictParentOfType<KtCallElement>() ?: return null
         val functionDescriptor = callElement.getResolvedCall(context)?.resultingDescriptor as? FunctionDescriptor ?: return null
         val callable = DescriptorToSourceUtilsIde.getAnyDeclaration(callElement.project, functionDescriptor) ?: return null
-        if (!((callable is JetFunction || callable is JetClass) && callable.canRefactor())) return null
+        if (!((callable is KtFunction || callable is KtClass) && callable.canRefactor())) return null
 
         val anyType = functionDescriptor.builtIns.anyType
         val paramType = argumentExpression?.guessTypes(context, result.moduleDescriptor)?.let {

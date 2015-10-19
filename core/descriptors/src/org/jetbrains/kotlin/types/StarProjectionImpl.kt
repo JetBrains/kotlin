@@ -27,14 +27,14 @@ class StarProjectionImpl(
     override fun getProjectionKind() = Variance.OUT_VARIANCE
 
     // No synchronization here: there's no problem in accidentally computing this twice
-    private val _type: JetType by lazy(LazyThreadSafetyMode.NONE) {
+    private val _type: KtType by lazy(LazyThreadSafetyMode.NONE) {
         typeParameter.starProjectionType()
     }
 
     override fun getType() = _type
 }
 
-public fun TypeParameterDescriptor.starProjectionType(): JetType {
+public fun TypeParameterDescriptor.starProjectionType(): KtType {
     val classDescriptor = this.getContainingDeclaration() as ClassDescriptor
     val typeParameters = classDescriptor.getTypeConstructor().getParameters().map { it.getTypeConstructor() }
     return TypeSubstitutor.create(
@@ -49,7 +49,7 @@ public fun TypeParameterDescriptor.starProjectionType(): JetType {
 }
 
 class TypeBasedStarProjectionImpl(
-        private val _type: JetType
+        private val _type: KtType
 ) : TypeProjectionBase() {
     override fun isStarProjection() = true
 

@@ -30,7 +30,7 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 
 public class DeprecatedSymbolUsageInWholeProjectFix(
-        element: JetSimpleNameExpression,
+        element: KtSimpleNameExpression,
         replaceWith: ReplaceWith,
         private val text: String
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith) {
@@ -69,7 +69,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                         val usages = runReadAction {
                             val searchScope = JetSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
                             ReferencesSearch.search(psiElement, searchScope)
-                                    .filterIsInstance<JetSimpleNameReference>()
+                                    .filterIsInstance<KtSimpleNameReference>()
                                     .map { ref -> ref.expression }
                         }
                         replaceUsages(project, usages, replacementStrategy)
@@ -77,28 +77,28 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                 })
     }
 
-    private fun targetPsiElement(): JetDeclaration? {
+    private fun targetPsiElement(): KtDeclaration? {
         val referenceTarget = element.mainReference.resolve()
         return when (referenceTarget) {
-            is JetNamedFunction -> referenceTarget
-            is JetProperty -> referenceTarget
-            is JetConstructor<*> -> referenceTarget.getContainingClassOrObject() //TODO: constructor can be deprecated itself
+            is KtNamedFunction -> referenceTarget
+            is KtProperty -> referenceTarget
+            is KtConstructor<*> -> referenceTarget.getContainingClassOrObject() //TODO: constructor can be deprecated itself
             else -> null
         }
     }
 
-    private fun replaceUsages(project: Project, usages: Collection<JetSimpleNameExpression>, replacementStrategy: UsageReplacementStrategy) {
+    private fun replaceUsages(project: Project, usages: Collection<KtSimpleNameExpression>, replacementStrategy: UsageReplacementStrategy) {
         UIUtil.invokeLaterIfNeeded {
             project.executeWriteCommand(text) {
                 // we should delete imports later to not affect other usages
-                val importsToDelete = arrayListOf<JetImportDirective>()
+                val importsToDelete = arrayListOf<KtImportDirective>()
 
                 for (usage in usages) {
                     try {
                         if (!usage.isValid) continue // TODO: nested calls
 
                         //TODO: keep the import if we don't know how to replace some of the usages
-                        val importDirective = usage.getStrictParentOfType<JetImportDirective>()
+                        val importDirective = usage.getStrictParentOfType<KtImportDirective>()
                         if (importDirective != null) {
                             if (!importDirective.isAllUnder && importDirective.targetDescriptors().size() == 1) {
                                 importsToDelete.add(importDirective)

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 
@@ -140,7 +140,7 @@ public class TranslationContext {
     }
 
     @NotNull
-    public TranslationContext innerContextWithAliasesForExpressions(@NotNull Map<JetExpression, JsExpression> aliases) {
+    public TranslationContext innerContextWithAliasesForExpressions(@NotNull Map<KtExpression, JsExpression> aliases) {
         return this.innerWithAliasingContext(aliasingContext.withExpressionsAliased(aliases));
     }
 

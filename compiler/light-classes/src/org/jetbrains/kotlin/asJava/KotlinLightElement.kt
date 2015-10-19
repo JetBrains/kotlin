@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.asJava
 
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 
-public interface KotlinLightElement<T : JetDeclaration, D : PsiElement> : PsiNamedElement {
+public interface KotlinLightElement<T : KtDeclaration, D : PsiElement> : PsiNamedElement {
     public fun getOrigin(): T?
 
     public fun getDelegate(): D

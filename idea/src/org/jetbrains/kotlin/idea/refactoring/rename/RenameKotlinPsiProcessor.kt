@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
-    override fun canProcessElement(element: PsiElement): Boolean = element is JetNamedDeclaration
+    override fun canProcessElement(element: PsiElement): Boolean = element is KtNamedDeclaration
 
     override fun findCollisions(
             element: PsiElement?,

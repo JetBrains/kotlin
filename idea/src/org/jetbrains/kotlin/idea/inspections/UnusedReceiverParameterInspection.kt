@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
@@ -40,20 +40,20 @@ import kotlin.properties.Delegates
 
 public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : JetVisitorVoid() {
-            private fun check(callableDeclaration: JetCallableDeclaration) {
+        return object : KtVisitorVoid() {
+            private fun check(callableDeclaration: KtCallableDeclaration) {
                 val receiverTypeReference = callableDeclaration.getReceiverTypeReference()
                 if (receiverTypeReference == null || receiverTypeReference.textRange.isEmpty) return
-                if (callableDeclaration.isOverridable() || callableDeclaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
+                if (callableDeclaration.isOverridable() || callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
 
-                if (callableDeclaration is JetProperty && callableDeclaration.getAccessors().isEmpty()) return
-                if (callableDeclaration is JetNamedFunction && !callableDeclaration.hasBody()) return
+                if (callableDeclaration is KtProperty && callableDeclaration.getAccessors().isEmpty()) return
+                if (callableDeclaration is KtNamedFunction && !callableDeclaration.hasBody()) return
 
                 val callable = callableDeclaration.descriptor
 
                 var used = false
-                callableDeclaration.acceptChildren(object : JetVisitorVoid() {
-                    override fun visitJetElement(element: JetElement) {
+                callableDeclaration.acceptChildren(object : KtVisitorVoid() {
+                    override fun visitJetElement(element: KtElement) {
                         if (used) return
                         element.acceptChildren(this)
 
@@ -80,17 +80,17 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 }
             }
 
-            override fun visitNamedFunction(function: JetNamedFunction) {
+            override fun visitNamedFunction(function: KtNamedFunction) {
                 check(function)
             }
 
-            override fun visitProperty(property: JetProperty) {
+            override fun visitProperty(property: KtProperty) {
                 check(property)
             }
         }
     }
 
-    private class MyQuickFix(val declaration: JetCallableDeclaration): LocalQuickFix {
+    private class MyQuickFix(val declaration: KtCallableDeclaration): LocalQuickFix {
         override fun getName(): String {
             return JetBundle.message("unused.receiver.parameter.remove")
         }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.ArrayDeque
 import java.util.ArrayList
@@ -35,7 +35,7 @@ public enum class TypeNullability {
     FLEXIBLE
 }
 
-public fun JetType.nullability(): TypeNullability {
+public fun KtType.nullability(): TypeNullability {
     return when {
         isNullabilityFlexible() -> TypeNullability.FLEXIBLE
         TypeUtils.isNullableType(this) -> TypeNullability.NULLABLE
@@ -43,22 +43,22 @@ public fun JetType.nullability(): TypeNullability {
     }
 }
 
-val JetType.builtIns: KotlinBuiltIns
+val KtType.builtIns: KotlinBuiltIns
     get() = constructor.builtIns
 
-fun JetType.makeNullable() = TypeUtils.makeNullable(this)
-fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
+fun KtType.makeNullable() = TypeUtils.makeNullable(this)
+fun KtType.makeNotNullable() = TypeUtils.makeNotNullable(this)
 
-fun JetType.immediateSupertypes(): Collection<JetType> = TypeUtils.getImmediateSupertypes(this)
-fun JetType.supertypes(): Collection<JetType> = TypeUtils.getAllSupertypes(this)
+fun KtType.immediateSupertypes(): Collection<KtType> = TypeUtils.getImmediateSupertypes(this)
+fun KtType.supertypes(): Collection<KtType> = TypeUtils.getAllSupertypes(this)
 
-fun JetType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
-fun JetType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
-fun JetType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
-fun JetType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
-fun JetType.isBooleanOrNullableBoolean(): Boolean = KotlinBuiltIns.isBooleanOrNullableBoolean(this)
+fun KtType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
+fun KtType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
+fun KtType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
+fun KtType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
+fun KtType.isBooleanOrNullableBoolean(): Boolean = KotlinBuiltIns.isBooleanOrNullableBoolean(this)
 
-private fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
+private fun KtType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()
     if (declarationDescriptor is TypeParameterDescriptor) return listOf(declarationDescriptor)
 
@@ -85,24 +85,24 @@ fun DeclarationDescriptor.getCapturedTypeParameters(): Collection<TypeParameterD
     return result
 }
 
-public fun JetType.getContainedAndCapturedTypeParameterConstructors(): Collection<TypeConstructor> {
+public fun KtType.getContainedAndCapturedTypeParameterConstructors(): Collection<TypeConstructor> {
     // todo type arguments (instead of type parameters) of the type of outer class must be considered; KT-6325
     val capturedTypeParameters = getConstructor().getDeclarationDescriptor()?.getCapturedTypeParameters() ?: emptyList()
     val typeParameters = getContainedTypeParameters() + capturedTypeParameters
     return typeParameters.map { it.getTypeConstructor() }.toReadOnlyList()
 }
 
-public fun JetType.isSubtypeOf(superType: JetType): Boolean = JetTypeChecker.DEFAULT.isSubtypeOf(this, superType)
+public fun KtType.isSubtypeOf(superType: KtType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
 
-public fun JetType.cannotBeReified(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic()
+public fun KtType.cannotBeReified(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic()
 
-fun TypeProjection.substitute(doSubstitute: (JetType) -> JetType): TypeProjection {
+fun TypeProjection.substitute(doSubstitute: (KtType) -> KtType): TypeProjection {
     return if (isStarProjection())
         this
     else TypeProjectionImpl(getProjectionKind(), doSubstitute(getType()))
 }
 
-fun JetType.replaceAnnotations(newAnnotations: Annotations): JetType {
+fun KtType.replaceAnnotations(newAnnotations: Annotations): KtType {
     if (newAnnotations.isEmpty()) return this
     return object : DelegatingType() {
         override fun getDelegate() = this@replaceAnnotations
@@ -111,13 +111,13 @@ fun JetType.replaceAnnotations(newAnnotations: Annotations): JetType {
     }
 }
 
-public fun JetTypeChecker.equalTypesOrNulls(type1: JetType?, type2: JetType?): Boolean {
+public fun KotlinTypeChecker.equalTypesOrNulls(type1: KtType?, type2: KtType?): Boolean {
     if (type1 === type2) return true
     if (type1 == null || type2 == null) return false
     return equalTypes(type1, type2)
 }
 
-fun JetType.getNestedArguments(): List<TypeProjection> {
+fun KtType.getNestedArguments(): List<TypeProjection> {
     val result = ArrayList<TypeProjection>()
 
     val stack = ArrayDeque<TypeProjection>()
@@ -134,11 +134,11 @@ fun JetType.getNestedArguments(): List<TypeProjection> {
     return result
 }
 
-fun JetType.containsError() = ErrorUtils.containsErrorType(this)
+fun KtType.containsError() = ErrorUtils.containsErrorType(this)
 
-public fun List<JetType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }
+public fun List<KtType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }
 
-public fun JetType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
+public fun KtType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
 
-public fun createProjection(type: JetType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
+public fun createProjection(type: KtType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
         TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)

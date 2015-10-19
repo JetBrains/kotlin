@@ -76,7 +76,7 @@ interface OverrideMemberChooserObject : ClassMember {
     }
 }
 
-fun OverrideMemberChooserObject.generateMember(project: Project, asConstructorParameter: Boolean = false): JetCallableDeclaration {
+fun OverrideMemberChooserObject.generateMember(project: Project, asConstructorParameter: Boolean = false): KtCallableDeclaration {
     val descriptor = immediateSuper
     if (asConstructorParameter) {
         assert(descriptor is PropertyDescriptor) { "asConstructorParameter is valid only for PropertyDescriptor" }
@@ -100,7 +100,7 @@ private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
     typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
 }
 
-private fun generateProperty(project: Project, descriptor: PropertyDescriptor, bodyType: OverrideMemberChooserObject.BodyType): JetProperty {
+private fun generateProperty(project: Project, descriptor: PropertyDescriptor, bodyType: OverrideMemberChooserObject.BodyType): KtProperty {
     val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
                                         descriptor.kind, /* copyOverrides = */ true) as PropertyDescriptor
     newDescriptor.addOverriddenDescriptor(descriptor)
@@ -113,17 +113,17 @@ private fun generateProperty(project: Project, descriptor: PropertyDescriptor, b
             append("\nset(value) {}")
         }
     }
-    return JetPsiFactory(project).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body)
+    return KtPsiFactory(project).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body)
 }
 
-private fun generateConstructorParameter(project: Project, descriptor: PropertyDescriptor): JetParameter {
+private fun generateConstructorParameter(project: Project, descriptor: PropertyDescriptor): KtParameter {
     val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
                                         descriptor.kind, /* copyOverrides = */ true) as PropertyDescriptor
     newDescriptor.addOverriddenDescriptor(descriptor)
-    return JetPsiFactory(project).createParameter(OVERRIDE_RENDERER.render(newDescriptor))
+    return KtPsiFactory(project).createParameter(OVERRIDE_RENDERER.render(newDescriptor))
 }
 
-private fun generateFunction(project: Project, descriptor: FunctionDescriptor, bodyType: OverrideMemberChooserObject.BodyType): JetNamedFunction {
+private fun generateFunction(project: Project, descriptor: FunctionDescriptor, bodyType: OverrideMemberChooserObject.BodyType): KtNamedFunction {
     val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
                                         descriptor.kind, /* copyOverrides = */ true)
     newDescriptor.addOverriddenDescriptor(descriptor)
@@ -135,7 +135,7 @@ private fun generateFunction(project: Project, descriptor: FunctionDescriptor, b
 
     val body = "{" + (if (returnsNotUnit && bodyType != OverrideMemberChooserObject.BodyType.EMPTY) "return " else "") + delegation + "}"
 
-    return JetPsiFactory(project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body)
+    return KtPsiFactory(project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body)
 }
 
 public fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, bodyType: OverrideMemberChooserObject.BodyType): String {

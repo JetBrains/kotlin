@@ -51,21 +51,21 @@ public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
 
     override fun isInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
         when (element) {
-            is JetProperty -> {
+            is KtProperty -> {
                 if (element.isLocal()) return true
             }
-            is JetMultiDeclarationEntry -> return true
-            is JetFunction -> {
+            is KtMultiDeclarationEntry -> return true
+            is KtFunction -> {
                 if (element.isLocal() && element.nameIdentifier != null) return true
             }
-            is JetParameter -> {
+            is KtParameter -> {
                 val parent = element.getParent()
-                if (parent is JetForExpression) {
+                if (parent is KtForExpression) {
                     return true
                 }
-                if (parent is JetParameterList) {
+                if (parent is KtParameterList) {
                     val grandparent = parent.getParent()
-                    return grandparent is JetCatchClause || grandparent is JetFunctionLiteral
+                    return grandparent is KtCatchClause || grandparent is KtFunctionLiteral
                 }
             }
         }
@@ -80,6 +80,6 @@ public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
 }
 
 class KotlinVetoRenameCondition: Condition<PsiElement> {
-    override fun value(t: PsiElement?): Boolean = t is JetElement && t is PsiNameIdentifierOwner && t.nameIdentifier == null
+    override fun value(t: PsiElement?): Boolean = t is KtElement && t is PsiNameIdentifierOwner && t.nameIdentifier == null
 }
 

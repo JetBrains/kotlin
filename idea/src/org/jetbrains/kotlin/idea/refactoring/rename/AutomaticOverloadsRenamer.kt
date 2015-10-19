@@ -28,12 +28,12 @@ import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
-import org.jetbrains.kotlin.psi.JetClassBody
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtClassBody
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
 
-public class AutomaticOverloadsRenamer(function: JetNamedFunction, newName: String) : AutomaticRenamer() {
+public class AutomaticOverloadsRenamer(function: KtNamedFunction, newName: String) : AutomaticRenamer() {
     init {
         myElements.addAll(function.getOverloads().filter { it != function })
         suggestAllNames(function.getName(), newName)
@@ -45,10 +45,10 @@ public class AutomaticOverloadsRenamer(function: JetNamedFunction, newName: Stri
     override fun isSelectedByDefault(): Boolean = true
 }
 
-private fun JetNamedFunction.getOverloads(): Collection<JetNamedFunction> {
+private fun KtNamedFunction.getOverloads(): Collection<KtNamedFunction> {
     val parent = getParent()
     when (parent) {
-        is JetFile -> {
+        is KtFile -> {
             val module = ModuleUtilCore.findModuleForPsiElement(this)
             if (module != null) {
                 val searchScope = GlobalSearchScope.moduleScope(module)
@@ -58,8 +58,8 @@ private fun JetNamedFunction.getOverloads(): Collection<JetNamedFunction> {
                 }
             }
         }
-        is JetClassBody -> {
-            return parent.getDeclarations().filterIsInstance<JetNamedFunction>().filter { it.getName() == this.getName() }
+        is KtClassBody -> {
+            return parent.getDeclarations().filterIsInstance<KtNamedFunction>().filter { it.getName() == this.getName() }
         }
     }
     return emptyList()
@@ -67,13 +67,13 @@ private fun JetNamedFunction.getOverloads(): Collection<JetNamedFunction> {
 
 public class AutomaticOverloadsRenamerFactory : AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement): Boolean {
-        return element is JetNamedFunction && element.getName() != null
-               && (element.getParent() is JetFile || element.getParent() is JetClassBody)
+        return element is KtNamedFunction && element.getName() != null
+               && (element.getParent() is KtFile || element.getParent() is KtClassBody)
     }
 
     override fun getOptionName() = RefactoringBundle.message("rename.overloads")
     override fun isEnabled() = JavaRefactoringSettings.getInstance().isRenameOverloads()
     override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameOverloads(enabled)
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>)
-            = AutomaticOverloadsRenamer(element as JetNamedFunction, newName)
+            = AutomaticOverloadsRenamer(element as KtNamedFunction, newName)
 }

@@ -16,6 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
-public class SmartCastResult(public val resultType: JetType, public val isCorrect: Boolean)
+public class SmartCastResult(public val resultType: KtType, public val isCorrect: Boolean)

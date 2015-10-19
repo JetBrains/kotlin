@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetConstructorDelegationCall
-import org.jetbrains.kotlin.psi.JetInstanceExpressionWithLabel
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
+import org.jetbrains.kotlin.psi.KtInstanceExpressionWithLabel
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -42,7 +42,7 @@ public class ConstructorHeaderCallChecker(constructor: ConstructorDescriptor) : 
         }
         else {
             val callElement = resolvedCall.getCall().getCallElement()
-            if (callElement is JetInstanceExpressionWithLabel) {
+            if (callElement is KtInstanceExpressionWithLabel) {
                 val descriptor = context.trace.get(BindingContext.REFERENCE_TARGET, callElement.getInstanceReference())
                 if (containingClass == descriptor) {
                     reportError(context, resolvedCall)

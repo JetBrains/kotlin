@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 
-public abstract class CalleeReferenceVisitorBase extends JetTreeVisitorVoid {
+public abstract class CalleeReferenceVisitorBase extends KtTreeVisitorVoid {
     private final BindingContext bindingContext;
     private final boolean deepTraversal;
 
@@ -36,17 +36,17 @@ public abstract class CalleeReferenceVisitorBase extends JetTreeVisitorVoid {
         this.deepTraversal = deepTraversal;
     }
 
-    protected abstract void processDeclaration(JetSimpleNameExpression reference, PsiElement declaration);
+    protected abstract void processDeclaration(KtSimpleNameExpression reference, PsiElement declaration);
 
     @Override
-    public void visitJetElement(@NotNull JetElement element) {
-        if (deepTraversal || !(element instanceof JetClassOrObject || element instanceof JetNamedFunction)) {
+    public void visitJetElement(@NotNull KtElement element) {
+        if (deepTraversal || !(element instanceof KtClassOrObject || element instanceof KtNamedFunction)) {
             super.visitJetElement(element);
         }
     }
 
     @Override
-    public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
+    public void visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression) {
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (descriptor == null) return;
 
@@ -59,18 +59,18 @@ public abstract class CalleeReferenceVisitorBase extends JetTreeVisitorVoid {
     }
 
     // Accept callees of JetCallElement which refer to Kotlin function, Kotlin class or Java method
-    private static boolean isCallable(DeclarationDescriptor descriptor, PsiElement declaration, JetSimpleNameExpression reference) {
-        JetCallElement callElement = PsiTreeUtil.getParentOfType(reference, JetCallElement.class);
+    private static boolean isCallable(DeclarationDescriptor descriptor, PsiElement declaration, KtSimpleNameExpression reference) {
+        KtCallElement callElement = PsiTreeUtil.getParentOfType(reference, KtCallElement.class);
         if (callElement == null || !PsiTreeUtil.isAncestor(callElement.getCalleeExpression(), reference, false)) return false;
 
         return descriptor instanceof FunctionDescriptor
-                 && (declaration instanceof JetClassOrObject
-                     || declaration instanceof JetNamedFunction
+                 && (declaration instanceof KtClassOrObject
+                     || declaration instanceof KtNamedFunction
                      || declaration instanceof PsiMethod);
     }
 
     // Accept only properties (not local variables or references to Java fields)
     private static boolean isProperty(DeclarationDescriptor descriptor, PsiElement declaration) {
-        return descriptor instanceof PropertyDescriptor && declaration instanceof JetProperty;
+        return descriptor instanceof PropertyDescriptor && declaration instanceof KtProperty;
     }
 }

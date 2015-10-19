@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.k2jsrun;
 
 import com.intellij.execution.configurations.*;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.kotlin.idea.JetIcons;
+import org.jetbrains.kotlin.idea.KtIcons;
 
 public final class K2JSRunConfigurationType extends ConfigurationTypeBase {
     public static K2JSRunConfigurationType getInstance() {
@@ -26,7 +26,7 @@ public final class K2JSRunConfigurationType extends ConfigurationTypeBase {
     }
 
     public K2JSRunConfigurationType() {
-        super("K2JSConfigurationType", "Kotlin (JavaScript - experimental)", "Kotlin to JavaScript configuration", JetIcons.LAUNCH);
+        super("K2JSConfigurationType", "Kotlin (JavaScript - experimental)", "Kotlin to JavaScript configuration", KtIcons.LAUNCH);
         addFactory(new K2JSConfigurationFactory());
     }
 

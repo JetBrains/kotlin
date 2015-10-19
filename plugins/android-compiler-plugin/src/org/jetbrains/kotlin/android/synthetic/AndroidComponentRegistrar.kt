@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
@@ -77,7 +77,7 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
 }
 
 public class CliAndroidDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {
-    override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
+    override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<KtFile> {
         val parser = ServiceManager.getService(project, SyntheticFileGenerator::class.java) as? CliSyntheticFileGenerator
         return parser?.getSyntheticFiles() ?: listOf()
     }

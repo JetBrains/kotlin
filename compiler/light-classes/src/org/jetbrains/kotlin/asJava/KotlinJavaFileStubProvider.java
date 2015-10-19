@@ -52,10 +52,10 @@ import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetPsiUtil;
-import org.jetbrains.kotlin.psi.JetScript;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtPsiUtil;
+import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
@@ -82,13 +82,13 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                 new StubGenerationStrategy<KotlinFacadeLightClassData>() {
                     @NotNull
                     @Override
-                    public LightClassConstructionContext getContext(@NotNull Collection<JetFile> files) {
+                    public LightClassConstructionContext getContext(@NotNull Collection<KtFile> files) {
                         return LightClassGenerationSupport.getInstance(project).getContextForPackage(files);
                     }
 
                     @NotNull
                     @Override
-                    public Collection<JetFile> getFiles() {
+                    public Collection<KtFile> getFiles() {
                         // Don't memoize this, it can be called again after an out-of-code-block modification occurs,
                         // and the set of files changes
                         return LightClassGenerationSupport.getInstance(project).findFilesForPackage(packageFqName, searchScope);
@@ -115,24 +115,24 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                         return new GenerationState.GenerateClassFilter() {
 
                             @Override
-                            public boolean shouldGeneratePackagePart(JetFile jetFile) {
+                            public boolean shouldGeneratePackagePart(KtFile jetFile) {
                                 return true;
                             }
 
                             @Override
-                            public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
+                            public boolean shouldAnnotateClass(KtClassOrObject classOrObject) {
                                 return shouldGenerateClass(classOrObject);
                             }
 
                             @Override
-                            public boolean shouldGenerateClass(JetClassOrObject classOrObject) {
+                            public boolean shouldGenerateClass(KtClassOrObject classOrObject) {
                                 // Top-level classes and such should not be generated for performance reasons.
                                 // Local classes in top-level functions must still be generated
-                                return JetPsiUtil.isLocal(classOrObject);
+                                return KtPsiUtil.isLocal(classOrObject);
                             }
 
                             @Override
-                            public boolean shouldGenerateScript(JetScript script) {
+                            public boolean shouldGenerateScript(KtScript script) {
                                 // Scripts yield top-level classes, and should not be generated
                                 return false;
                             }
@@ -140,7 +140,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     }
 
                     @Override
-                    public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
+                    public void generate(@NotNull GenerationState state, @NotNull Collection<KtFile> files) {
                         KotlinCodegenFacade.doGenerateFiles(files, state, CompilationErrorHandler.THROW_EXCEPTION);
                     }
 
@@ -164,7 +164,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                 new StubGenerationStrategy<KotlinFacadeLightClassData>() {
                     @NotNull
                     @Override
-                    public Collection<JetFile> getFiles() {
+                    public Collection<KtFile> getFiles() {
                         return LightClassGenerationSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope);
                     }
 
@@ -176,7 +176,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
                     @NotNull
                     @Override
-                    public LightClassConstructionContext getContext(@NotNull Collection<JetFile> files) {
+                    public LightClassConstructionContext getContext(@NotNull Collection<KtFile> files) {
                         return LightClassGenerationSupport.getInstance(project).getContextForFacade(files);
                     }
 
@@ -194,31 +194,31 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     public GenerationState.GenerateClassFilter getGenerateClassFilter() {
                         return new GenerationState.GenerateClassFilter() {
                             @Override
-                            public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
+                            public boolean shouldAnnotateClass(KtClassOrObject classOrObject) {
                                 return shouldGenerateClass(classOrObject);
                             }
 
                             @Override
-                            public boolean shouldGenerateClass(JetClassOrObject classOrObject) {
-                                return JetPsiUtil.isLocal(classOrObject);
+                            public boolean shouldGenerateClass(KtClassOrObject classOrObject) {
+                                return KtPsiUtil.isLocal(classOrObject);
                             }
 
                             @Override
-                            public boolean shouldGeneratePackagePart(JetFile jetFile) {
+                            public boolean shouldGeneratePackagePart(KtFile jetFile) {
                                 return true;
                             }
 
                             @Override
-                            public boolean shouldGenerateScript(JetScript script) {
+                            public boolean shouldGenerateScript(KtScript script) {
                                 return false;
                             }
                         };
                     }
 
                     @Override
-                    public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
+                    public void generate(@NotNull GenerationState state, @NotNull Collection<KtFile> files) {
                         if (!files.isEmpty()) {
-                            JetFile representativeFile = files.iterator().next();
+                            KtFile representativeFile = files.iterator().next();
                             JvmFileClassInfo fileClassInfo = NoResolveFileClassesProvider.INSTANCE$.getFileClassInfo(representativeFile);
                             if (!fileClassInfo.getWithJvmMultifileClass()) {
                                 PackageCodegen codegen = state.getFactory().forPackage(representativeFile.getPackageFqName(), files);
@@ -241,18 +241,18 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
     }
 
     @NotNull
-    public static KotlinJavaFileStubProvider<OutermostKotlinClassLightClassData> createForDeclaredClass(@NotNull final JetClassOrObject classOrObject) {
+    public static KotlinJavaFileStubProvider<OutermostKotlinClassLightClassData> createForDeclaredClass(@NotNull final KtClassOrObject classOrObject) {
         return new KotlinJavaFileStubProvider<OutermostKotlinClassLightClassData>(
                 classOrObject.getProject(),
                 classOrObject.isLocal(),
                 new StubGenerationStrategy<OutermostKotlinClassLightClassData>() {
-                    private JetFile getFile() {
+                    private KtFile getFile() {
                         return classOrObject.getContainingJetFile();
                     }
 
                     @NotNull
                     @Override
-                    public LightClassConstructionContext getContext(@NotNull Collection<JetFile> files) {
+                    public LightClassConstructionContext getContext(@NotNull Collection<KtFile> files) {
                         return LightClassGenerationSupport.getInstance(classOrObject.getProject()).getContextForClassOrObject(classOrObject);
                     }
 
@@ -267,18 +267,18 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                         if (classDescriptor == null) {
                             return new OutermostKotlinClassLightClassData(
                                     javaFileStub, extraDiagnostics, FqName.ROOT, classOrObject,
-                                    Collections.<JetClassOrObject, InnerKotlinClassLightClassData>emptyMap()
+                                    Collections.<KtClassOrObject, InnerKotlinClassLightClassData>emptyMap()
                             );
                         }
 
                         FqName fqName = predictClassFqName(bindingContext, classDescriptor);
                         Collection<ClassDescriptor> allInnerClasses = CodegenBinding.getAllInnerClasses(bindingContext, classDescriptor);
 
-                        Map<JetClassOrObject, InnerKotlinClassLightClassData> innerClassesMap = ContainerUtil.newHashMap();
+                        Map<KtClassOrObject, InnerKotlinClassLightClassData> innerClassesMap = ContainerUtil.newHashMap();
                         for (ClassDescriptor innerClassDescriptor : allInnerClasses) {
                             PsiElement declaration = descriptorToDeclaration(innerClassDescriptor);
-                            if (!(declaration instanceof JetClassOrObject)) continue;
-                            JetClassOrObject innerClass = (JetClassOrObject) declaration;
+                            if (!(declaration instanceof KtClassOrObject)) continue;
+                            KtClassOrObject innerClass = (KtClassOrObject) declaration;
 
                             InnerKotlinClassLightClassData innerLightClassData = new InnerKotlinClassLightClassData(
                                     predictClassFqName(bindingContext, innerClassDescriptor),
@@ -306,7 +306,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
                     @NotNull
                     @Override
-                    public Collection<JetFile> getFiles() {
+                    public Collection<KtFile> getFiles() {
                         return Collections.singletonList(getFile());
                     }
 
@@ -321,17 +321,17 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                         return new GenerationState.GenerateClassFilter() {
 
                             @Override
-                            public boolean shouldGeneratePackagePart(JetFile jetFile) {
+                            public boolean shouldGeneratePackagePart(KtFile jetFile) {
                                 return true;
                             }
 
                             @Override
-                            public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
+                            public boolean shouldAnnotateClass(KtClassOrObject classOrObject) {
                                 return shouldGenerateClass(classOrObject);
                             }
 
                             @Override
-                            public boolean shouldGenerateClass(JetClassOrObject generatedClassOrObject) {
+                            public boolean shouldGenerateClass(KtClassOrObject generatedClassOrObject) {
                                 // Trivial: generate and analyze class we are interested in.
                                 if (generatedClassOrObject == classOrObject) return true;
 
@@ -364,7 +364,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                             }
 
                             @Override
-                            public boolean shouldGenerateScript(JetScript script) {
+                            public boolean shouldGenerateScript(KtScript script) {
                                 // We generate all enclosing classes
                                 return PsiTreeUtil.isAncestor(script, classOrObject, false);
                             }
@@ -372,9 +372,9 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     }
 
                     @Override
-                    public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
+                    public void generate(@NotNull GenerationState state, @NotNull Collection<KtFile> files) {
                         PackageCodegen packageCodegen = state.getFactory().forPackage(getPackageFqName(), files);
-                        JetFile file = classOrObject.getContainingJetFile();
+                        KtFile file = classOrObject.getContainingJetFile();
                         Type packagePartType = FileClasses.getFileClassType(state.getFileClassesProvider(), file);
                         PackageContext context = state.getRootContext().intoPackagePart(packageCodegen.getPackageFragment(), packagePartType, file);
                         packageCodegen.generateClassOrObject(classOrObject, context);
@@ -409,7 +409,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
     @Override
     public Result<T> compute() {
         FqName packageFqName = stubGenerationStrategy.getPackageFqName();
-        Collection<JetFile> files = stubGenerationStrategy.getFiles();
+        Collection<KtFile> files = stubGenerationStrategy.getFiles();
 
         checkForBuiltIns(packageFqName, files);
 
@@ -465,7 +465,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
     private static ClsFileImpl createFakeClsFile(
             @NotNull Project project,
             @NotNull final FqName packageFqName,
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull final Function0<? extends PsiClassHolderFileStub> fileStubProvider
     ) {
         PsiManager manager = PsiManager.getInstance(project);
@@ -490,7 +490,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
     }
 
     @NotNull
-    private PsiJavaFileStub createJavaFileStub(@NotNull FqName packageFqName, @NotNull Collection<JetFile> files) {
+    private PsiJavaFileStub createJavaFileStub(@NotNull FqName packageFqName, @NotNull Collection<KtFile> files) {
         final PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(packageFqName.asString(), true);
         javaFileStub.setPsiFactory(new ClsWrapperStubPsiFactory());
 
@@ -506,15 +506,15 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
     }
 
     @NotNull
-    private static VirtualFile getRepresentativeVirtualFile(@NotNull Collection<JetFile> files) {
-        JetFile firstFile = files.iterator().next();
+    private static VirtualFile getRepresentativeVirtualFile(@NotNull Collection<KtFile> files) {
+        KtFile firstFile = files.iterator().next();
         VirtualFile virtualFile = firstFile.getVirtualFile();
         assert virtualFile != null : "No virtual file for " + firstFile;
         return virtualFile;
     }
 
-    private static void checkForBuiltIns(@NotNull FqName fqName, @NotNull Collection<JetFile> files) {
-        for (JetFile file : files) {
+    private static void checkForBuiltIns(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
+        for (KtFile file : files) {
             if (LightClassUtil.INSTANCE$.belongsToKotlinBuiltIns(file)) {
                 // We may not fail later due to some luck, but generating JetLightClasses for built-ins is a bad idea anyways
                 // If it fails later, there will be an exception logged
@@ -533,13 +533,13 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
     }
 
     private interface StubGenerationStrategy<T extends WithFileStubAndExtraDiagnostics> {
-        @NotNull Collection<JetFile> getFiles();
+        @NotNull Collection<KtFile> getFiles();
         @NotNull FqName getPackageFqName();
 
-        @NotNull LightClassConstructionContext getContext(@NotNull Collection<JetFile> files);
+        @NotNull LightClassConstructionContext getContext(@NotNull Collection<KtFile> files);
         @NotNull T createLightClassData(PsiJavaFileStub javaFileStub, BindingContext bindingContext, Diagnostics extraDiagnostics);
 
         GenerationState.GenerateClassFilter getGenerateClassFilter();
-        void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files);
+        void generate(@NotNull GenerationState state, @NotNull Collection<KtFile> files);
     }
 }

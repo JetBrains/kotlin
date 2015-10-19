@@ -123,8 +123,8 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
         }
 
         String packageName = null;
-        if (targetElement instanceof JetElement) {
-            packageName = JetPsiUtil.getPackageName((JetElement) targetElement);
+        if (targetElement instanceof KtElement) {
+            packageName = KtPsiUtil.getPackageName((KtElement) targetElement);
         }
         else {
             PsiClass enclosingClass = PsiTreeUtil.getParentOfType(targetElement, PsiClass.class, false);
@@ -160,27 +160,27 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
         String elementText;
         String containerText = null;
 
-        if (element instanceof JetFile) {
-            elementText = ((JetFile) element).getName();
+        if (element instanceof KtFile) {
+            elementText = ((KtFile) element).getName();
         }
-        else if (element instanceof JetNamedDeclaration) {
-            BindingContext bindingContext = ResolutionUtils.analyze((JetElement) element, BodyResolveMode.FULL);
+        else if (element instanceof KtNamedDeclaration) {
+            BindingContext bindingContext = ResolutionUtils.analyze((KtElement) element, BodyResolveMode.FULL);
 
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             if (descriptor == null) return null;
 
-            if (element instanceof JetClassOrObject) {
-                if (element instanceof JetObjectDeclaration && ((JetObjectDeclaration) element).isCompanion()) {
+            if (element instanceof KtClassOrObject) {
+                if (element instanceof KtObjectDeclaration && ((KtObjectDeclaration) element).isCompanion()) {
                     descriptor = descriptor.getContainingDeclaration();
                     if (!(descriptor instanceof ClassDescriptor)) return null;
 
                     elementText = renderClassOrObject((ClassDescriptor) descriptor);
                 }
-                else if (element instanceof JetEnumEntry) {
-                    elementText = ((JetEnumEntry) element).getName();
+                else if (element instanceof KtEnumEntry) {
+                    elementText = ((KtEnumEntry) element).getName();
                 }
                 else {
-                    if (((JetClassOrObject) element).getName() != null) {
+                    if (((KtClassOrObject) element).getName() != null) {
                         elementText = renderClassOrObject((ClassDescriptor) descriptor);
                     }
                     else {
@@ -188,11 +188,11 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
                     }
                 }
             }
-            else if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
+            else if (element instanceof KtNamedFunction || element instanceof KtSecondaryConstructor) {
                 elementText = renderNamedFunction((FunctionDescriptor) descriptor);
             }
-            else if (element instanceof JetProperty) {
-                elementText = ((JetProperty) element).getName();
+            else if (element instanceof KtProperty) {
+                elementText = ((KtProperty) element).getName();
             }
             else return null;
 

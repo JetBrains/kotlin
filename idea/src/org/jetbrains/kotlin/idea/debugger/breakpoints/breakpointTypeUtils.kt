@@ -25,7 +25,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xdebugger.XDebuggerUtil
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass: Class<*>): Boolean {
     val psiFile = PsiManager.getInstance(project).findFile(file)
 
-    if (psiFile == null || psiFile.virtualFile.fileType != JetFileType.INSTANCE) {
+    if (psiFile == null || psiFile.virtualFile.fileType != KotlinFileType.INSTANCE) {
         return false
     }
 
@@ -56,8 +56,8 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
             parent = element.parent
         }
 
-        if (element is JetProperty || element is JetParameter) {
-            val bindingContext = (element as JetElement).analyze()
+        if (element is KtProperty || element is KtParameter) {
+            val bindingContext = (element as KtElement).analyze()
             var descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
             if (descriptor is ValueParameterDescriptor) {
                 descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor)

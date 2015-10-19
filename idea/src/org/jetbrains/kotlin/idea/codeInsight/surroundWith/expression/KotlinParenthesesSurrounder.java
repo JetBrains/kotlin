@@ -23,9 +23,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetParenthesizedExpression;
-import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtParenthesizedExpression;
+import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 
 public class KotlinParenthesesSurrounder extends KotlinExpressionSurrounder {
     @Override
@@ -34,20 +34,20 @@ public class KotlinParenthesesSurrounder extends KotlinExpressionSurrounder {
     }
 
     @Override
-    public boolean isApplicable(@NotNull JetExpression expression) {
+    public boolean isApplicable(@NotNull KtExpression expression) {
         return true;
     }
 
     @Nullable
     @Override
-    public TextRange surroundExpression( @NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) JetPsiFactoryKt
-                .JetPsiFactory(expression).createExpression("(a)");
-        JetExpression expressionWithoutParentheses = parenthesizedExpression.getExpression();
+    public TextRange surroundExpression( @NotNull Project project, @NotNull Editor editor, @NotNull KtExpression expression) {
+        KtParenthesizedExpression parenthesizedExpression = (KtParenthesizedExpression) KtPsiFactoryKt
+                .KtPsiFactory(expression).createExpression("(a)");
+        KtExpression expressionWithoutParentheses = parenthesizedExpression.getExpression();
         assert expressionWithoutParentheses != null : "JetExpression should exists for " + parenthesizedExpression.getText() + " expression";
         expressionWithoutParentheses.replace(expression);
 
-        expression = (JetExpression) expression.replace(parenthesizedExpression);
+        expression = (KtExpression) expression.replace(parenthesizedExpression);
 
         CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(expression);
 

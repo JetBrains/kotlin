@@ -20,11 +20,11 @@ import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
-import org.jetbrains.kotlin.psi.JetElementImpl
+import org.jetbrains.kotlin.psi.KtElementImpl
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-public class KDocLink(node: ASTNode) : JetElementImpl(node) {
+public class KDocLink(node: ASTNode) : KtElementImpl(node) {
     public fun getLinkText(): String = getLinkTextRange().substring(getText())
 
     public fun getLinkTextRange(): TextRange {

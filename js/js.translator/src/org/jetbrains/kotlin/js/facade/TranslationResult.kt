@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.js.config.Config
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
@@ -43,7 +43,7 @@ public abstract class TranslationResult protected constructor(public val diagnos
 
     public class Success(
             private val config: Config,
-            private val files: List<JetFile>,
+            private val files: List<KtFile>,
             public val program: JsProgram,
             diagnostics: Diagnostics,
             private val moduleDescriptor: ModuleDescriptor

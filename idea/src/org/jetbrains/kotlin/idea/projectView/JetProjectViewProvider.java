@@ -27,10 +27,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.idea.JetIconProvider;
-import org.jetbrains.kotlin.psi.JetClassBody;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtClassBody;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,11 +50,11 @@ public class JetProjectViewProvider implements SelectableTreeStructureProvider, 
         for (AbstractTreeNode child : children) {
             Object childValue = child.getValue();
 
-            if (childValue instanceof JetFile) {
-                JetFile file = (JetFile) childValue;
-                List<JetDeclaration> declarations = file.getDeclarations();
+            if (childValue instanceof KtFile) {
+                KtFile file = (KtFile) childValue;
+                List<KtDeclaration> declarations = file.getDeclarations();
 
-                JetClassOrObject mainClass = JetIconProvider.getMainClass(file);
+                KtClassOrObject mainClass = JetIconProvider.getMainClass(file);
                 if (mainClass != null && declarations.size() == 1) {
                     result.add(new JetClassOrObjectTreeNode(file.getProject(), mainClass, settings));
                 }
@@ -79,7 +79,7 @@ public class JetProjectViewProvider implements SelectableTreeStructureProvider, 
     @Override
     public PsiElement getTopLevelElement(PsiElement element) {
         PsiFile file = element.getContainingFile();
-        if (file == null || !(file instanceof JetFile)) return null;
+        if (file == null || !(file instanceof KtFile)) return null;
 
         VirtualFile virtualFile = file.getVirtualFile();
         if (!fileInRoots(virtualFile)) return file;
@@ -90,10 +90,10 @@ public class JetProjectViewProvider implements SelectableTreeStructureProvider, 
             current = current.getParent();
         }
 
-        if (current instanceof JetFile) {
-            List<JetDeclaration> declarations = ((JetFile) current).getDeclarations();
+        if (current instanceof KtFile) {
+            List<KtDeclaration> declarations = ((KtFile) current).getDeclarations();
             String nameWithoutExtension = virtualFile != null ? virtualFile.getNameWithoutExtension() : file.getName();
-            if (declarations.size() == 1 && declarations.get(0) instanceof JetClassOrObject &&
+            if (declarations.size() == 1 && declarations.get(0) instanceof KtClassOrObject &&
                 nameWithoutExtension.equals(declarations.get(0).getName())) {
                 current = declarations.get(0);
             }
@@ -103,15 +103,15 @@ public class JetProjectViewProvider implements SelectableTreeStructureProvider, 
     }
 
     private static boolean isSelectable(PsiElement element) {
-        if (element instanceof JetFile) return true;
-        if (element instanceof JetDeclaration) {
+        if (element instanceof KtFile) return true;
+        if (element instanceof KtDeclaration) {
             PsiElement parent = element.getParent();
-            if (parent instanceof JetFile) {
+            if (parent instanceof KtFile) {
                 return true;
             }
-            else if (parent instanceof JetClassBody) {
+            else if (parent instanceof KtClassBody) {
                 parent = parent.getParent();
-                if (parent instanceof JetClassOrObject) {
+                if (parent instanceof KtClassOrObject) {
                     return isSelectable(parent);
                 }
                 else return false;

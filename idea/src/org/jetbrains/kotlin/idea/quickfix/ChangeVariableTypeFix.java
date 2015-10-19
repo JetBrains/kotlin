@@ -40,19 +40,19 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ChangeVariableTypeFix extends KotlinQuickFixAction<JetVariableDeclaration> {
+public class ChangeVariableTypeFix extends KotlinQuickFixAction<KtVariableDeclaration> {
     private final static Logger LOG = Logger.getInstance(ChangeVariableTypeFix.class);
 
-    private final JetType type;
+    private final KtType type;
 
-    public ChangeVariableTypeFix(@NotNull JetVariableDeclaration element, @NotNull JetType type) {
+    public ChangeVariableTypeFix(@NotNull KtVariableDeclaration element, @NotNull KtType type) {
         super(element);
         this.type = type;
     }
@@ -79,28 +79,28 @@ public class ChangeVariableTypeFix extends KotlinQuickFixAction<JetVariableDecla
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(file);
 
         PsiElement nameIdentifier = getElement().getNameIdentifier();
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";
 
-        JetTypeReference replacingTypeReference = psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
-        ArrayList<JetTypeReference> toShorten = new ArrayList<JetTypeReference>();
+        KtTypeReference replacingTypeReference = psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+        ArrayList<KtTypeReference> toShorten = new ArrayList<KtTypeReference>();
         toShorten.add(getElement().setTypeReference(replacingTypeReference));
 
-        if (getElement() instanceof JetProperty) {
-            JetPropertyAccessor getter = ((JetProperty) getElement()).getGetter();
-            JetTypeReference getterReturnTypeRef = getter == null ? null : getter.getReturnTypeReference();
+        if (getElement() instanceof KtProperty) {
+            KtPropertyAccessor getter = ((KtProperty) getElement()).getGetter();
+            KtTypeReference getterReturnTypeRef = getter == null ? null : getter.getReturnTypeReference();
             if (getterReturnTypeRef != null) {
-                toShorten.add((JetTypeReference) getterReturnTypeRef.replace(replacingTypeReference));
+                toShorten.add((KtTypeReference) getterReturnTypeRef.replace(replacingTypeReference));
             }
 
-            JetPropertyAccessor setter = ((JetProperty) getElement()).getSetter();
-            JetParameter setterParameter = setter == null ? null : setter.getParameter();
-            JetTypeReference setterParameterTypeRef = setterParameter == null ? null : setterParameter.getTypeReference();
+            KtPropertyAccessor setter = ((KtProperty) getElement()).getSetter();
+            KtParameter setterParameter = setter == null ? null : setter.getParameter();
+            KtTypeReference setterParameterTypeRef = setterParameter == null ? null : setterParameter.getTypeReference();
             if (setterParameterTypeRef != null) {
-                toShorten.add((JetTypeReference) setterParameterTypeRef.replace(replacingTypeReference));
+                toShorten.add((KtTypeReference) setterParameterTypeRef.replace(replacingTypeReference));
             }
         }
 
@@ -113,14 +113,15 @@ public class ChangeVariableTypeFix extends KotlinQuickFixAction<JetVariableDecla
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                JetMultiDeclarationEntry entry = ChangeFunctionReturnTypeFix.getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
+                KtMultiDeclarationEntry
+                        entry = ChangeFunctionReturnTypeFix.getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
                 BindingContext context = ResolutionUtils.analyze(entry);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
-                JetFunction componentFunction = (JetFunction) DescriptorToSourceUtils
+                KtFunction componentFunction = (KtFunction) DescriptorToSourceUtils
                         .descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
                 if (componentFunction == null) return null;
-                JetType expectedType = resolvedCall.getCandidateDescriptor().getReturnType();
+                KtType expectedType = resolvedCall.getCandidateDescriptor().getReturnType();
                 return expectedType == null ? null : new ChangeVariableTypeFix(entry, expectedType);
             }
         };
@@ -134,30 +135,31 @@ public class ChangeVariableTypeFix extends KotlinQuickFixAction<JetVariableDecla
             protected List<IntentionAction> doCreateActions(@NotNull Diagnostic diagnostic) {
                 List<IntentionAction> actions = new LinkedList<IntentionAction>();
 
-                if (diagnostic.getPsiElement() instanceof JetProperty) {
-                    JetProperty property = (JetProperty) diagnostic.getPsiElement();
+                if (diagnostic.getPsiElement() instanceof KtProperty) {
+                    KtProperty property = (KtProperty) diagnostic.getPsiElement();
                     DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(property);
                     if (!(descriptor instanceof PropertyDescriptor)) return actions;
                     PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-                    JetType lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(propertyDescriptor);
+                    KtType
+                            lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(propertyDescriptor);
 
-                    JetType propertyType = propertyDescriptor.getReturnType();
+                    KtType propertyType = propertyDescriptor.getReturnType();
                     assert propertyType != null : "Property type cannot be null if it mismatch something";
 
                     List<PropertyDescriptor> overriddenMismatchingProperties = new LinkedList<PropertyDescriptor>();
                     boolean canChangeOverriddenPropertyType = true;
                     for (PropertyDescriptor overriddenProperty: propertyDescriptor.getOverriddenDescriptors()) {
-                        JetType overriddenPropertyType = overriddenProperty.getReturnType();
+                        KtType overriddenPropertyType = overriddenProperty.getReturnType();
                         if (overriddenPropertyType != null) {
-                            if (!JetTypeChecker.DEFAULT.isSubtypeOf(propertyType, overriddenPropertyType)) {
+                            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(propertyType, overriddenPropertyType)) {
                                 overriddenMismatchingProperties.add(overriddenProperty);
                             }
-                            else if (overriddenProperty.isVar() && !JetTypeChecker.DEFAULT.equalTypes(overriddenPropertyType, propertyType)) {
+                            else if (overriddenProperty.isVar() && !KotlinTypeChecker.DEFAULT.equalTypes(overriddenPropertyType, propertyType)) {
                                 canChangeOverriddenPropertyType = false;
                             }
                             if (overriddenProperty.isVar() && lowerBoundOfOverriddenPropertiesTypes != null &&
-                                !JetTypeChecker.DEFAULT.equalTypes(lowerBoundOfOverriddenPropertiesTypes, overriddenPropertyType)) {
+                                !KotlinTypeChecker.DEFAULT.equalTypes(lowerBoundOfOverriddenPropertiesTypes, overriddenPropertyType)) {
                                 lowerBoundOfOverriddenPropertiesTypes = null;
                             }
                         }
@@ -170,8 +172,8 @@ public class ChangeVariableTypeFix extends KotlinQuickFixAction<JetVariableDecla
                     if (overriddenMismatchingProperties.size() == 1 && canChangeOverriddenPropertyType) {
                         PsiElement overriddenProperty = DescriptorToSourceUtils
                                 .descriptorToDeclaration(overriddenMismatchingProperties.get(0));
-                        if (overriddenProperty instanceof JetProperty) {
-                            actions.add(new ChangeVariableTypeFix((JetProperty) overriddenProperty, propertyType));
+                        if (overriddenProperty instanceof KtProperty) {
+                            actions.add(new ChangeVariableTypeFix((KtProperty) overriddenProperty, propertyType));
                         }
                     }
                 }

@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.idea.completion.Tail
 import org.jetbrains.kotlin.idea.util.getVariableFromImplicitReceivers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
 class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
@@ -43,7 +43,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
 
     public fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
-                               context: JetExpression) {
+                               context: KtExpression) {
         val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return
 
         val added = HashSet<String>()
@@ -96,12 +96,12 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
                 .assignSmartCompletionPriority(SmartCompletionItemPriority.MULTIPLE_ARGUMENTS_ITEM)
     }
 
-    private fun variableInScope(parameter: ValueParameterDescriptor, scope: JetScope): VariableDescriptor? {
+    private fun variableInScope(parameter: ValueParameterDescriptor, scope: KtScope): VariableDescriptor? {
         val name = parameter.getName()
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
         val variable = scope.getLocalVariable(name) ?: scope.getProperties(name, NoLookupLocation.FROM_IDE).singleOrNull() ?:
                        scope.getVariableFromImplicitReceivers(name) ?: return null
-        return if (smartCastCalculator.types(variable).any { JetTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
+        return if (smartCastCalculator.types(variable).any { KotlinTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
             variable
         else
             null

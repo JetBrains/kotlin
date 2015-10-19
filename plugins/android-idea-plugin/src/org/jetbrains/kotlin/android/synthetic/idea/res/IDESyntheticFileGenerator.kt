@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
 import org.jetbrains.kotlin.android.synthetic.res.AndroidResource
 import org.jetbrains.kotlin.android.synthetic.res.AndroidWidget
 import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 
 class IDESyntheticFileGenerator(val module: Module) : SyntheticFileGenerator(module.project) {
 
-    private val cachedJetFiles: CachedValue<List<JetFile>> by lazy {
+    private val cachedJetFiles: CachedValue<List<KtFile>> by lazy {
         cachedValue {
             val supportV4 = supportV4Available()
             Result.create(generateSyntheticJetFiles(generateSyntheticFiles(true, supportV4)), psiTreeChangePreprocessor)
@@ -45,7 +45,7 @@ class IDESyntheticFileGenerator(val module: Module) : SyntheticFileGenerator(mod
         module.project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
     }
 
-    public override fun getSyntheticFiles(): List<JetFile> {
+    public override fun getSyntheticFiles(): List<KtFile> {
         if (!checkIfClassExist(AndroidConst.VIEW_FQNAME)) return listOf()
         return cachedJetFiles.value
     }

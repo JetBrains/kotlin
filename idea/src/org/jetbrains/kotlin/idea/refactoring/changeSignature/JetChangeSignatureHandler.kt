@@ -58,14 +58,14 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
 
         val element = findTargetMember(file, editor) ?: CommonDataKeys.PSI_ELEMENT.getData(dataContext) ?: return
         val elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset()) ?: return
-        if (element !is JetElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.getText()}")
+        if (element !is KtElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.getText()}")
 
         invokeChangeSignature(element, elementAtCaret, project, editor)
     }
 
     override fun invoke(project: Project, elements: Array<PsiElement>, dataContext: DataContext?) {
         val element = elements.singleOrNull()?.unwrapped ?: return
-        if (element !is JetElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.getText()}")
+        if (element !is KtElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.getText()}")
 
         val editor = dataContext?.let { CommonDataKeys.EDITOR.getData(it) }
         invokeChangeSignature(element, element, project, editor)
@@ -78,41 +78,41 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
         public fun findTargetForRefactoring(element: PsiElement): PsiElement? {
             val elementParent = element.getParent()
 
-            if ((elementParent is JetNamedFunction || elementParent is JetClass || elementParent is JetProperty)
-                && (elementParent as JetNamedDeclaration).getNameIdentifier() === element) return elementParent
+            if ((elementParent is KtNamedFunction || elementParent is KtClass || elementParent is KtProperty)
+                && (elementParent as KtNamedDeclaration).getNameIdentifier() === element) return elementParent
 
-            if (elementParent is JetParameter) {
-                val primaryConstructor = PsiTreeUtil.getParentOfType(elementParent, javaClass<JetPrimaryConstructor>())
+            if (elementParent is KtParameter) {
+                val primaryConstructor = PsiTreeUtil.getParentOfType(elementParent, javaClass<KtPrimaryConstructor>())
                 if (elementParent.hasValOrVar()
                     && (elementParent.getNameIdentifier() === element || elementParent.getValOrVarKeyword() === element)
                     && primaryConstructor != null
                     && primaryConstructor.getValueParameterList() === elementParent.getParent()) return elementParent
             }
 
-            if (elementParent is JetSecondaryConstructor && elementParent.getConstructorKeyword() === element) return elementParent
+            if (elementParent is KtSecondaryConstructor && elementParent.getConstructorKeyword() === element) return elementParent
 
-            element.getStrictParentOfType<JetParameterList>()?.let { parameterList ->
-                return PsiTreeUtil.getParentOfType(parameterList, javaClass<JetFunction>(), javaClass<JetProperty>(), javaClass<JetClass>())
+            element.getStrictParentOfType<KtParameterList>()?.let { parameterList ->
+                return PsiTreeUtil.getParentOfType(parameterList, javaClass<KtFunction>(), javaClass<KtProperty>(), javaClass<KtClass>())
             }
 
-            element.getStrictParentOfType<JetTypeParameterList>()?.let { typeParameterList ->
-                return PsiTreeUtil.getParentOfType(typeParameterList, javaClass<JetFunction>(), javaClass<JetProperty>(), javaClass<JetClass>())
+            element.getStrictParentOfType<KtTypeParameterList>()?.let { typeParameterList ->
+                return PsiTreeUtil.getParentOfType(typeParameterList, javaClass<KtFunction>(), javaClass<KtProperty>(), javaClass<KtClass>())
             }
 
-            val call: JetCallElement? = PsiTreeUtil.getParentOfType(element,
-                                                                   javaClass<JetCallExpression>(),
-                                                                   javaClass<JetDelegatorToSuperCall>(),
-                                                                   javaClass<JetConstructorDelegationCall>())
+            val call: KtCallElement? = PsiTreeUtil.getParentOfType(element,
+                                                                   javaClass<KtCallExpression>(),
+                                                                   javaClass<KtDelegatorToSuperCall>(),
+                                                                   javaClass<KtConstructorDelegationCall>())
             val calleeExpr = call?.let {
                 val callee = it.getCalleeExpression()
-                (callee as? JetConstructorCalleeExpression)?.getConstructorReferenceExpression() ?: callee
-            } ?: element.getStrictParentOfType<JetSimpleNameExpression>()
+                (callee as? KtConstructorCalleeExpression)?.getConstructorReferenceExpression() ?: callee
+            } ?: element.getStrictParentOfType<KtSimpleNameExpression>()
 
-            if (calleeExpr is JetSimpleNameExpression || calleeExpr is JetConstructorDelegationReferenceExpression) {
-                val jetElement = element.getStrictParentOfType<JetElement>() ?: return null
+            if (calleeExpr is KtSimpleNameExpression || calleeExpr is KtConstructorDelegationReferenceExpression) {
+                val jetElement = element.getStrictParentOfType<KtElement>() ?: return null
 
                 val bindingContext = jetElement.analyze(BodyResolveMode.FULL)
-                val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, calleeExpr as JetReferenceExpression]
+                val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, calleeExpr as KtReferenceExpression]
 
                 if (descriptor is ClassDescriptor || descriptor is CallableDescriptor) return calleeExpr
             }
@@ -120,7 +120,7 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
             return null
         }
 
-        public fun invokeChangeSignature(element: JetElement, context: PsiElement, project: Project, editor: Editor?) {
+        public fun invokeChangeSignature(element: KtElement, context: PsiElement, project: Project, editor: Editor?) {
             val bindingContext = element.analyze(BodyResolveMode.FULL)
 
             val callableDescriptor = findDescriptor(element, project, editor, bindingContext) ?: return
@@ -154,7 +154,7 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
 
         private fun getDescriptor(bindingContext: BindingContext, element: PsiElement): DeclarationDescriptor? {
             val descriptor = when (element) {
-                is JetReferenceExpression -> bindingContext[BindingContext.REFERENCE_TARGET, element]
+                is KtReferenceExpression -> bindingContext[BindingContext.REFERENCE_TARGET, element]
                 else -> bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element]
             }
             return if (descriptor is ClassDescriptor) descriptor.getUnsubstitutedPrimaryConstructor() else descriptor

@@ -23,26 +23,26 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetTypeParameterList
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-class MigrateTypeParameterListFix(typeParameterList: JetTypeParameterList)
-    : KotlinQuickFixAction<JetTypeParameterList>(typeParameterList), CleanupFix {
+class MigrateTypeParameterListFix(typeParameterList: KtTypeParameterList)
+    : KotlinQuickFixAction<KtTypeParameterList>(typeParameterList), CleanupFix {
 
     override fun getFamilyName(): String = "Migrate type parameter list syntax"
     override fun getText(): String  = familyName
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        val function = element.getStrictParentOfType<JetNamedFunction>() ?: return
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val function = element.getStrictParentOfType<KtNamedFunction>() ?: return
         function.addBefore(element, function.receiverTypeReference ?: function.nameIdentifier)
         element.delete()
     }
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val typeParameterList = diagnostic.psiElement as? JetTypeParameterList ?: return null
+            val typeParameterList = diagnostic.psiElement as? KtTypeParameterList ?: return null
             return MigrateTypeParameterListFix(typeParameterList)
         }
     }

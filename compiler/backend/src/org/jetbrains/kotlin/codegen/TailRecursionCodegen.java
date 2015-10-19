@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
@@ -104,9 +104,9 @@ public class TailRecursionCodegen {
             if (arg instanceof ExpressionValueArgument) {
                 ExpressionValueArgument ev = (ExpressionValueArgument) arg;
                 ValueArgument argument = ev.getValueArgument();
-                JetExpression argumentExpression = argument == null ? null : argument.getArgumentExpression();
+                KtExpression argumentExpression = argument == null ? null : argument.getArgumentExpression();
 
-                if (argumentExpression instanceof JetSimpleNameExpression) {
+                if (argumentExpression instanceof KtSimpleNameExpression) {
                     ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(argumentExpression, state.getBindingContext());
                     if (resolvedCall != null && resolvedCall.getResultingDescriptor().equals(parameterDescriptor.getOriginal())) {
                         // do nothing: we shouldn't store argument to itself again

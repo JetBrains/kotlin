@@ -60,7 +60,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -80,7 +80,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
@@ -89,8 +89,8 @@ import org.jetbrains.kotlin.utils.DFS.Neighbors
 import org.jetbrains.kotlin.utils.DFS.VisitedWithSet
 import java.util.*
 
-internal val KotlinBuiltIns.defaultReturnType: JetType get() = unitType
-internal val KotlinBuiltIns.defaultParameterType: JetType get() = nullableAnyType
+internal val KotlinBuiltIns.defaultReturnType: KtType get() = unitType
+internal val KotlinBuiltIns.defaultParameterType: KtType get() = nullableAnyType
 
 private fun DeclarationDescriptor.renderForMessage(): String =
         IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(this)
@@ -99,17 +99,17 @@ private val TYPE_RENDERER = DescriptorRenderer.FQ_NAMES_IN_TYPES.withOptions {
     typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
 }
 
-private fun JetType.renderForMessage(): String = TYPE_RENDERER.renderType(this)
+private fun KtType.renderForMessage(): String = TYPE_RENDERER.renderType(this)
 
-private fun JetDeclaration.renderForMessage(bindingContext: BindingContext): String? =
+private fun KtDeclaration.renderForMessage(bindingContext: BindingContext): String? =
     bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]?.renderForMessage()
 
-internal fun JetType.isDefault(): Boolean = KotlinBuiltIns.isUnit(this)
+internal fun KtType.isDefault(): Boolean = KotlinBuiltIns.isUnit(this)
 
-private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingContext): Map<VariableDescriptor, List<JetExpression>> {
-    val result = HashMap<VariableDescriptor, MutableList<JetExpression>>()
+private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingContext): Map<VariableDescriptor, List<KtExpression>> {
+    val result = HashMap<VariableDescriptor, MutableList<KtExpression>>()
     for (instruction in filterIsInstance<WriteValueInstruction>()) {
-        val expression = instruction.element as? JetExpression
+        val expression = instruction.element as? KtExpression
         val descriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
         if (expression != null && descriptor != null) {
             result.getOrPut(descriptor) { ArrayList() }.add(expression)
@@ -149,25 +149,25 @@ private fun List<Instruction>.getResultTypeAndExpressions(
         targetScope: LexicalScope?,
         options: ExtractionOptions,
         module: ModuleDescriptor
-): Pair<JetType, List<JetExpression>> {
-    fun instructionToExpression(instruction: Instruction, unwrapReturn: Boolean): JetExpression? {
+): Pair<KtType, List<KtExpression>> {
+    fun instructionToExpression(instruction: Instruction, unwrapReturn: Boolean): KtExpression? {
         return when (instruction) {
             is ReturnValueInstruction ->
-                (if (unwrapReturn) null else instruction.returnExpressionIfAny) ?: instruction.returnedValue.element as? JetExpression
+                (if (unwrapReturn) null else instruction.returnExpressionIfAny) ?: instruction.returnedValue.element as? KtExpression
             is InstructionWithValue ->
-                instruction.outputValue?.element as? JetExpression
+                instruction.outputValue?.element as? KtExpression
             else -> null
         }
     }
 
-    fun instructionToType(instruction: Instruction): JetType? {
+    fun instructionToType(instruction: Instruction): KtType? {
         val expression = instructionToExpression(instruction, true)
 
         if (expression == null) return null
         if (options.inferUnitTypeForUnusedValues && expression.isUsedAsStatement(bindingContext)) return null
 
         return bindingContext.getType(expression)
-               ?: (expression as? JetReferenceExpression)?.let {
+               ?: (expression as? KtReferenceExpression)?.let {
                    (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.getReturnType()
                }
     }
@@ -214,7 +214,7 @@ private fun getCommonNonTrivialSuccessorIfAny(instructions: List<Instruction>): 
     return singleSuccessorCheckingVisitor.target ?: instructions.firstOrNull()?.owner?.getSinkInstruction()
 }
 
-private fun JetType.isMeaningful(): Boolean {
+private fun KtType.isMeaningful(): Boolean {
     return !KotlinBuiltIns.isUnit(this) && !KotlinBuiltIns.isNothing(this)
 }
 
@@ -222,13 +222,13 @@ private fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(
         pseudocode: Pseudocode,
         localInstructions: List<Instruction>,
         bindingContext: BindingContext
-): List<JetNamedDeclaration> {
-    val declarations = HashSet<JetNamedDeclaration>()
+): List<KtNamedDeclaration> {
+    val declarations = HashSet<KtNamedDeclaration>()
     pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
         if (instruction !in localInstructions) {
             instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext)?.let { descriptor ->
                 val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
-                if (declaration is JetNamedDeclaration && declaration.isInsideOf(originalElements)) {
+                if (declaration is KtNamedDeclaration && declaration.isInsideOf(originalElements)) {
                     declarations.add(declaration)
                 }
             }
@@ -242,7 +242,7 @@ private fun ExtractionData.analyzeControlFlow(
         pseudocode: Pseudocode,
         module: ModuleDescriptor,
         bindingContext: BindingContext,
-        modifiedVarDescriptors: Map<VariableDescriptor, List<JetExpression>>,
+        modifiedVarDescriptors: Map<VariableDescriptor, List<KtExpression>>,
         options: ExtractionOptions,
         targetScope: LexicalScope?,
         parameters: Set<Parameter>
@@ -258,7 +258,7 @@ private fun ExtractionData.analyzeControlFlow(
                 when {
                     it !is ReturnValueInstruction && it !is ReturnNoValueInstruction && it.owner != pseudocode ->
                         null
-                    e != null && e !is JetBreakExpression && e !is JetContinueExpression ->
+                    e != null && e !is KtBreakExpression && e !is KtContinueExpression ->
                         it.previousInstructions.firstOrNull()
                     else ->
                         it
@@ -278,12 +278,12 @@ private fun ExtractionData.analyzeControlFlow(
 
             is AbstractJumpInstruction -> {
                 val element = insn.element
-                if ((element is JetReturnExpression && insn.owner == pseudocode)
-                        || element is JetBreakExpression
-                        || element is JetContinueExpression) {
+                if ((element is KtReturnExpression && insn.owner == pseudocode)
+                        || element is KtBreakExpression
+                        || element is KtContinueExpression) {
                     jumpExits.add(insn)
                 }
-                else if (element !is JetThrowExpression) {
+                else if (element !is KtThrowExpression) {
                     defaultExits.add(insn)
                 }
             }
@@ -295,7 +295,7 @@ private fun ExtractionData.analyzeControlFlow(
     }
 
     val nonLocallyUsedDeclarations = getLocalDeclarationsWithNonLocalUsages(pseudocode, localInstructions, bindingContext)
-    val (declarationsToCopy, declarationsToReport) = nonLocallyUsedDeclarations.partition { it is JetProperty && it.isLocal() }
+    val (declarationsToCopy, declarationsToReport) = nonLocallyUsedDeclarations.partition { it is KtProperty && it.isLocal() }
 
     val (typeOfDefaultFlow, defaultResultExpressions) = defaultExits.getResultTypeAndExpressions(bindingContext, targetScope, options, module)
     val (returnValueType, valuedReturnExpressions) = valuedReturnExits.getResultTypeAndExpressions(bindingContext, targetScope, options, module)
@@ -341,7 +341,7 @@ private fun ExtractionData.analyzeControlFlow(
             if (modifiedValueCount != 0) return outputAndExitsError
             if (valuedReturnExits.size() != 1) return multipleExitsError
 
-            val element = valuedReturnExits.first().element as JetExpression
+            val element = valuedReturnExits.first().element as KtExpression
             return controlFlow.copy(outputValues = Collections.singletonList(Jump(listOf(element), element, true, module.builtIns))) to null
         }
 
@@ -351,7 +351,7 @@ private fun ExtractionData.analyzeControlFlow(
 
     outDeclarations.mapTo(outputValues) {
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? CallableDescriptor
-        Initializer(it as JetProperty, descriptor?.getReturnType() ?: module.builtIns.defaultParameterType)
+        Initializer(it as KtProperty, descriptor?.getReturnType() ?: module.builtIns.defaultParameterType)
     }
     outParameters.mapTo(outputValues) { ParameterUpdate(it, modifiedVarDescriptors[it.originalDescriptor]!!) }
 
@@ -381,7 +381,7 @@ private fun ExtractionData.analyzeControlFlow(
 
         val singleExit = getCommonNonTrivialSuccessorIfAny(defaultExits) == jumpTarget
         val conditional = !singleExit && defaultExits.isNotEmpty()
-        val elements = jumpExits.map { it.element as JetExpression }
+        val elements = jumpExits.map { it.element as KtExpression }
         val elementToInsertAfterCall = if (singleExit) null else elements.first()
         return controlFlow.copy(outputValues = Collections.singletonList(Jump(elements, elementToInsertAfterCall, conditional, module.builtIns))) to null
     }
@@ -389,7 +389,7 @@ private fun ExtractionData.analyzeControlFlow(
     return controlFlow to null
 }
 
-fun ExtractionData.createTemporaryDeclaration(functionText: String): JetNamedDeclaration {
+fun ExtractionData.createTemporaryDeclaration(functionText: String): KtNamedDeclaration {
     val textRange = targetSibling.getTextRange()!!
 
     val insertText: String
@@ -409,36 +409,36 @@ fun ExtractionData.createTemporaryDeclaration(functionText: String): JetNamedDec
     val tmpFile = originalFile.createTempCopy { text ->
         StringBuilder(text).insert(insertPosition, insertText).toString()
     }
-    return tmpFile.findElementAt(lookupPosition)?.getNonStrictParentOfType<JetNamedDeclaration>()!!
+    return tmpFile.findElementAt(lookupPosition)?.getNonStrictParentOfType<KtNamedDeclaration>()!!
 }
 
-private fun ExtractionData.createTemporaryCodeBlock(): JetBlockExpression =
-        (createTemporaryDeclaration("fun() {\n$codeFragmentText\n}\n") as JetNamedFunction).getBodyExpression() as JetBlockExpression
+private fun ExtractionData.createTemporaryCodeBlock(): KtBlockExpression =
+        (createTemporaryDeclaration("fun() {\n$codeFragmentText\n}\n") as KtNamedFunction).getBodyExpression() as KtBlockExpression
 
-private fun JetType.collectReferencedTypes(processTypeArguments: Boolean): List<JetType> {
+private fun KtType.collectReferencedTypes(processTypeArguments: Boolean): List<KtType> {
     if (!processTypeArguments) return Collections.singletonList(this)
     return DFS.dfsFromNode(
             this,
-            object: Neighbors<JetType> {
-                override fun getNeighbors(current: JetType): Iterable<JetType> = current.getArguments().map { it.getType() }
+            object: Neighbors<KtType> {
+                override fun getNeighbors(current: KtType): Iterable<KtType> = current.getArguments().map { it.getType() }
             },
             VisitedWithSet(),
-            object: CollectingNodeHandler<JetType, JetType, ArrayList<JetType>>(ArrayList()) {
-                override fun afterChildren(current: JetType) {
+            object: CollectingNodeHandler<KtType, KtType, ArrayList<KtType>>(ArrayList()) {
+                override fun afterChildren(current: KtType) {
                     result.add(current)
                 }
             }
     )!!
 }
 
-fun JetTypeParameter.collectRelevantConstraints(): List<JetTypeConstraint> {
-    val typeConstraints = getNonStrictParentOfType<JetTypeParameterListOwner>()?.getTypeConstraints()
+fun KtTypeParameter.collectRelevantConstraints(): List<KtTypeConstraint> {
+    val typeConstraints = getNonStrictParentOfType<KtTypeParameterListOwner>()?.getTypeConstraints()
     if (typeConstraints == null) return Collections.emptyList()
     return typeConstraints.filter { it.getSubjectTypeParameterName()?.mainReference?.resolve() == this}
 }
 
-fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<JetType> {
-    val typeRefs = ArrayList<JetTypeReference>()
+fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<KtType> {
+    val typeRefs = ArrayList<KtTypeReference>()
     originalDeclaration.getExtendsBound()?.let { typeRefs.add(it) }
     originalConstraints
             .map { it.getBoundTypeReference() }
@@ -449,20 +449,20 @@ fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<J
             .filterNotNull()
 }
 
-private fun JetType.isExtractable(targetScope: LexicalScope?): Boolean {
+private fun KtType.isExtractable(targetScope: LexicalScope?): Boolean {
     return collectReferencedTypes(true).fold(true) { extractable, typeToCheck ->
         val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         val typeParameter = parameterTypeDescriptor?.let {
             DescriptorToSourceUtils.descriptorToDeclaration(it)
-        } as? JetTypeParameter
+        } as? KtTypeParameter
 
         extractable && (typeParameter != null || typeToCheck.isResolvableInScope(targetScope, false))
     }
 }
 
-private fun JetType.processTypeIfExtractable(
+private fun KtType.processTypeIfExtractable(
         typeParameters: MutableSet<TypeParameter>,
-        nonDenotableTypes: MutableSet<JetType>,
+        nonDenotableTypes: MutableSet<KtType>,
         options: ExtractionOptions,
         targetScope: LexicalScope?,
         processTypeArguments: Boolean = true
@@ -471,7 +471,7 @@ private fun JetType.processTypeIfExtractable(
         val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         val typeParameter = parameterTypeDescriptor?.let {
             DescriptorToSourceUtils.descriptorToDeclaration(it)
-        } as? JetTypeParameter
+        } as? KtTypeParameter
 
         when {
             typeToCheck.isResolvableInScope(targetScope, true) ->
@@ -501,17 +501,17 @@ private class MutableParameter(
         override val originalDescriptor: DeclarationDescriptor,
         override val receiverCandidate: Boolean,
         private val targetScope: LexicalScope?,
-        private val originalType: JetType,
-        private val possibleTypes: Set<JetType>
+        private val originalType: KtType,
+        private val possibleTypes: Set<KtType>
 ): Parameter {
     // All modifications happen in the same thread
     private var writable: Boolean = true
-    private val defaultTypes = LinkedHashSet<JetType>()
+    private val defaultTypes = LinkedHashSet<KtType>()
     private val typePredicates = HashSet<TypePredicate>()
 
     var refCount: Int = 0
 
-    fun addDefaultType(jetType: JetType) {
+    fun addDefaultType(jetType: KtType) {
         assert(writable) { "Can't add type to non-writable parameter $currentName" }
 
         if (jetType in possibleTypes) {
@@ -529,22 +529,22 @@ private class MutableParameter(
 
     override var mirrorVarName: String? = null
 
-    private val defaultType: JetType by lazy {
+    private val defaultType: KtType by lazy {
         writable = false
         if (defaultTypes.isNotEmpty()) {
-            TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, defaultTypes)!!
+            TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, defaultTypes)!!
         }
         else originalType
     }
 
-    private val parameterTypeCandidates: List<JetType> by lazy {
+    private val parameterTypeCandidates: List<KtType> by lazy {
         writable = false
 
         val typePredicate = and(typePredicates)
 
         val typeSet = if (defaultType.isFlexible()) {
             val bounds = defaultType.getCapability(javaClass<Flexibility>())!!
-            LinkedHashSet<JetType>().apply {
+            LinkedHashSet<KtType>().apply {
                 if (typePredicate(bounds.upperBound)) add(bounds.upperBound)
                 if (typePredicate(bounds.lowerBound)) add(bounds.lowerBound)
             }
@@ -564,7 +564,7 @@ private class MutableParameter(
         typeSet.toList()
     }
 
-    override fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<JetType> {
+    override fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<KtType> {
             return if (!allowSpecialClassNames) {
                 parameterTypeCandidates.filter { it.isExtractable(targetScope) }
             } else {
@@ -572,29 +572,29 @@ private class MutableParameter(
             }
     }
 
-    override fun getParameterType(allowSpecialClassNames: Boolean): JetType {
+    override fun getParameterType(allowSpecialClassNames: Boolean): KtType {
         return getParameterTypeCandidates(allowSpecialClassNames).firstOrNull() ?: defaultType
     }
 
-    override fun copy(name: String, parameterType: JetType): Parameter = DelegatingParameter(this, name, parameterType)
+    override fun copy(name: String, parameterType: KtType): Parameter = DelegatingParameter(this, name, parameterType)
 }
 
 private class DelegatingParameter(
         val original: Parameter,
         override val name: String,
-        val parameterType: JetType
+        val parameterType: KtType
 ): Parameter by original {
-    override fun copy(name: String, parameterType: JetType): Parameter = DelegatingParameter(original, name, parameterType)
+    override fun copy(name: String, parameterType: KtType): Parameter = DelegatingParameter(original, name, parameterType)
     override fun getParameterType(allowSpecialClassNames: Boolean) = parameterType
 }
 
 private class ParametersInfo {
     var errorMessage: ErrorMessage? = null
     val replacementMap: MutableMap<Int, Replacement> = HashMap()
-    val originalRefToParameter: MutableMap<JetSimpleNameExpression, MutableParameter> = HashMap()
+    val originalRefToParameter: MutableMap<KtSimpleNameExpression, MutableParameter> = HashMap()
     val parameters: MutableSet<MutableParameter> = HashSet()
     val typeParameters: MutableSet<TypeParameter> = HashSet()
-    val nonDenotableTypes: MutableSet<JetType> = HashSet()
+    val nonDenotableTypes: MutableSet<KtType> = HashSet()
 }
 
 private fun ExtractionData.inferParametersInfo(
@@ -611,11 +611,11 @@ private fun ExtractionData.inferParametersInfo(
     fun suggestParameterType(
             extractFunctionRef: Boolean,
             originalDescriptor: DeclarationDescriptor,
-            parameterExpression: JetExpression?,
+            parameterExpression: KtExpression?,
             receiverToExtract: ReceiverValue,
             resolvedCall: ResolvedCall<*>?,
             useSmartCastsIfPossible: Boolean
-    ): JetType {
+    ): KtType {
         val builtIns = originalDescriptor.builtIns
         return when {
                    extractFunctionRef -> {
@@ -628,7 +628,7 @@ private fun ExtractionData.inferParametersInfo(
                    parameterExpression != null ->
                        (if (useSmartCastsIfPossible) bindingContext[BindingContext.SMARTCAST, parameterExpression] else null)
                        ?: bindingContext.getType(parameterExpression)
-                       ?: (parameterExpression as? JetReferenceExpression)?.let {
+                       ?: (parameterExpression as? KtReferenceExpression)?.let {
                            (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.getReturnType()
                        }
                        ?: if (receiverToExtract.exists()) receiverToExtract.getType() else null
@@ -651,8 +651,8 @@ private fun ExtractionData.inferParametersInfo(
         val (originalRef, originalDeclaration, originalDescriptor, resolvedCall) = refInfo.resolveResult
         val ref = refInfo.refExpr
 
-        val selector = (ref.getParent() as? JetCallExpression) ?: ref
-        val superExpr = (selector.getParent() as? JetQualifiedExpression)?.getReceiverExpression() as? JetSuperExpression
+        val selector = (ref.getParent() as? KtCallExpression) ?: ref
+        val superExpr = (selector.getParent() as? KtQualifiedExpression)?.getReceiverExpression() as? KtSuperExpression
         if (superExpr != null) {
             info.errorMessage = ErrorMessage.SUPER_CALL
             return info
@@ -667,7 +667,7 @@ private fun ExtractionData.inferParametersInfo(
 
         val thisDescriptor = (receiverToExtract as? ThisReceiver)?.getDeclarationDescriptor()
         val hasThisReceiver = thisDescriptor != null
-        val thisExpr = ref.getParent() as? JetThisExpression
+        val thisExpr = ref.getParent() as? KtThisExpression
 
         if (hasThisReceiver
             && DescriptorToSourceUtilsIde.getAllDeclarations(project, thisDescriptor!!).all { it.isInsideOf(originalElements) }) {
@@ -680,7 +680,7 @@ private fun ExtractionData.inferParametersInfo(
                     when(it.getKind()) {
                         ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it as ClassifierDescriptor
                         ClassKind.ENUM_ENTRY -> it.getContainingDeclaration() as? ClassDescriptor
-                        else -> if (ref.getNonStrictParentOfType<JetTypeReference>() != null) it as ClassifierDescriptor else null
+                        else -> if (ref.getNonStrictParentOfType<KtTypeReference>() != null) it as ClassifierDescriptor else null
                     }
 
                 is TypeParameterDescriptor -> it as ClassifierDescriptor
@@ -703,14 +703,14 @@ private fun ExtractionData.inferParametersInfo(
         else {
             val extractThis = (hasThisReceiver && refInfo.smartCast == null) || thisExpr != null
             val extractOrdinaryParameter =
-                    originalDeclaration is JetMultiDeclarationEntry ||
-                            originalDeclaration is JetProperty ||
-                            originalDeclaration is JetParameter
+                    originalDeclaration is KtMultiDeclarationEntry ||
+                            originalDeclaration is KtProperty ||
+                            originalDeclaration is KtParameter
 
             val extractFunctionRef =
                     options.captureLocalFunctions
                     && originalRef.getReferencedName() == originalDescriptor.getName().asString() // to forbid calls by convention
-                    && originalDeclaration is JetNamedFunction && originalDeclaration.isLocal()
+                    && originalDeclaration is KtNamedFunction && originalDeclaration.isLocal()
                     && (targetScope == null || originalDescriptor !in targetScope.asJetScope().getFunctions(originalDescriptor.name, NoLookupLocation.FROM_IDE))
 
             val descriptorToExtract = (if (extractThis) thisDescriptor else null) ?: originalDescriptor
@@ -721,10 +721,10 @@ private fun ExtractionData.inferParametersInfo(
                     receiverToExtract is ExpressionReceiver -> {
                         val receiverExpression = receiverToExtract.getExpression()
                         // If p.q has a smart-cast, then extract entire qualified expression
-                        if (refInfo.smartCast != null) receiverExpression.getParent() as JetExpression else receiverExpression
+                        if (refInfo.smartCast != null) receiverExpression.getParent() as KtExpression else receiverExpression
                     }
                     receiverToExtract.exists() && refInfo.smartCast == null -> null
-                    else -> (originalRef.getParent() as? JetThisExpression) ?: originalRef
+                    else -> (originalRef.getParent() as? KtThisExpression) ?: originalRef
                 }
 
                 val parameterType = suggestParameterType(extractFunctionRef, originalDescriptor, parameterExpression, receiverToExtract, resolvedCall, true)
@@ -737,10 +737,10 @@ private fun ExtractionData.inferParametersInfo(
                             }
                             else {
                                 val argumentExpr = (thisExpr ?: ref).getQualifiedExpressionForSelectorOrThis()
-                                if (argumentExpr is JetOperationReferenceExpression) {
+                                if (argumentExpr is KtOperationReferenceExpression) {
                                     val nameElement = argumentExpr.getReferencedNameElement()
                                     val nameElementType = nameElement.node.elementType
-                                    (nameElementType as? JetToken)?.let {
+                                    (nameElementType as? KtToken)?.let {
                                         OperatorConventions.getNameForOperationSymbol(it)?.asString()
                                     } ?: nameElement.getText()
                                 }
@@ -748,7 +748,7 @@ private fun ExtractionData.inferParametersInfo(
                                      ?: throw AssertionError("reference shouldn't be empty: code fragment = $codeFragmentText")
                             }
                     if (extractFunctionRef) {
-                        val receiverTypeText = (originalDeclaration as JetCallableDeclaration).getReceiverTypeReference()?.getText() ?: ""
+                        val receiverTypeText = (originalDeclaration as KtCallableDeclaration).getReceiverTypeReference()?.getText() ?: ""
                         argumentText = "$receiverTypeText::$argumentText"
                     }
 
@@ -790,7 +790,7 @@ private fun ExtractionData.inferParametersInfo(
     }
 
     val varNameValidator = NewDeclarationNameValidator(
-            commonParent.getNonStrictParentOfType<JetExpression>()!!,
+            commonParent.getNonStrictParentOfType<KtExpression>()!!,
             originalElements.firstOrNull(),
             NewDeclarationNameValidator.Target.VARIABLES
     )
@@ -809,7 +809,7 @@ private fun ExtractionData.inferParametersInfo(
         }
     }
 
-    for (typeToCheck in info.typeParameters.flatMapTo(HashSet<JetType>()) { it.collectReferencedTypes(bindingContext) }) {
+    for (typeToCheck in info.typeParameters.flatMapTo(HashSet<KtType>()) { it.collectReferencedTypes(bindingContext) }) {
         typeToCheck.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options, targetScope)
     }
 
@@ -818,18 +818,18 @@ private fun ExtractionData.inferParametersInfo(
 }
 
 private fun ExtractionData.checkDeclarationsMovingOutOfScope(
-        enclosingDeclaration: JetDeclaration,
+        enclosingDeclaration: KtDeclaration,
         controlFlow: ControlFlow,
         bindingContext: BindingContext
 ): ErrorMessage? {
-    val declarationsOutOfScope = HashSet<JetNamedDeclaration>()
+    val declarationsOutOfScope = HashSet<KtNamedDeclaration>()
     controlFlow.jumpOutputValue?.elementToInsertAfterCall?.accept(
-            object : JetTreeVisitorVoid() {
-                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+            object : KtTreeVisitorVoid() {
+                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                     val target = expression.mainReference.resolve()
-                    if (target is JetNamedDeclaration
+                    if (target is KtNamedDeclaration
                         && target.isInsideOf(originalElements)
-                        && target.getStrictParentOfType<JetDeclaration>() == enclosingDeclaration) {
+                        && target.getStrictParentOfType<KtDeclaration>() == enclosingDeclaration) {
                         declarationsOutOfScope.add(target)
                     }
                 }
@@ -856,7 +856,7 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
 
 fun ExtractionData.isVisibilityApplicable(): Boolean {
     return when (targetSibling.getParent()) {
-        is JetClassBody, is JetFile -> true
+        is KtClassBody, is KtFile -> true
         else -> false
     }
 }
@@ -864,8 +864,8 @@ fun ExtractionData.isVisibilityApplicable(): Boolean {
 fun ExtractionData.getDefaultVisibility(): String {
     if (!isVisibilityApplicable()) return ""
 
-    val parent = targetSibling.getStrictParentOfType<JetDeclaration>()
-    if (parent is JetClass && parent.isInterface()) return ""
+    val parent = targetSibling.getStrictParentOfType<KtDeclaration>()
+    if (parent is KtClass && parent.isInterface()) return ""
 
     return "private"
 }
@@ -917,12 +917,12 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         )
     }
 
-    val enclosingDeclaration = commonParent.getStrictParentOfType<JetDeclaration>()!!
+    val enclosingDeclaration = commonParent.getStrictParentOfType<KtDeclaration>()!!
     checkDeclarationsMovingOutOfScope(enclosingDeclaration, controlFlow, bindingContext)?.let { messages.add(it) }
 
     controlFlow.jumpOutputValue?.elementToInsertAfterCall?.accept(
-            object : JetTreeVisitorVoid() {
-                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+            object : KtTreeVisitorVoid() {
+                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                     paramsInfo.originalRefToParameter[expression]?.let { it.refCount-- }
                 }
             }
@@ -951,13 +951,13 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     )
 }
 
-private fun ExtractionData.suggestFunctionNames(returnType: JetType): List<String> {
+private fun ExtractionData.suggestFunctionNames(returnType: KtType): List<String> {
     val functionNames = LinkedHashSet<String>()
 
     val validator =
             NewDeclarationNameValidator(
                     targetSibling.getParent(),
-                    if (targetSibling is JetClassInitializer) targetSibling.getParent() else targetSibling,
+                    if (targetSibling is KtClassInitializer) targetSibling.getParent() else targetSibling,
                     if (options.extractAsProperty) NewDeclarationNameValidator.Target.VARIABLES else NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES
             )
     if (!returnType.isDefault()) {
@@ -965,7 +965,7 @@ private fun ExtractionData.suggestFunctionNames(returnType: JetType): List<Strin
     }
 
     getExpressions().singleOrNull()?.let { expr ->
-        val property = expr.getStrictParentOfType<JetProperty>()
+        val property = expr.getStrictParentOfType<KtProperty>()
         if (property?.getInitializer() == expr) {
             property?.getName()?.let { functionNames.add(KotlinNameSuggester.suggestNameByName("get" + it.capitalize(), validator)) }
         }
@@ -974,17 +974,17 @@ private fun ExtractionData.suggestFunctionNames(returnType: JetType): List<Strin
     return functionNames.toList()
 }
 
-internal fun JetNamedDeclaration.getGeneratedBody() =
+internal fun KtNamedDeclaration.getGeneratedBody() =
         when (this) {
-            is JetNamedFunction -> getBodyExpression()
+            is KtNamedFunction -> getBodyExpression()
             else -> {
-                val property = this as JetProperty
+                val property = this as KtProperty
 
                 property.getGetter()?.getBodyExpression()?.let { return it }
                 property.getInitializer()?.let { return it }
                 // We assume lazy property here with delegate expression 'by Delegates.lazy { body }'
                 property.getDelegateExpression()?.let {
-                    val call = it.getCalleeExpressionIfAny()?.getParent() as? JetCallExpression
+                    val call = it.getCalleeExpressionIfAny()?.getParent() as? KtCallExpression
                     call?.getFunctionLiteralArguments()?.singleOrNull()?.getFunctionLiteral()?.getBodyExpression()
                 }
             }
@@ -1003,8 +1003,8 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
             ExtractionGeneratorOptions(inTempFile = true, allowExpressionBody = false)
     ).generateDeclaration()
 
-    val valueParameterList = (result.declaration as? JetNamedFunction)?.getValueParameterList()
-    val typeParameterList = (result.declaration as? JetNamedFunction)?.getTypeParameterList()
+    val valueParameterList = (result.declaration as? KtNamedFunction)?.getValueParameterList()
+    val typeParameterList = (result.declaration as? KtNamedFunction)?.getTypeParameterList()
     val body = result.declaration.getGeneratedBody()
     val bindingContext = body.analyzeFully()
 
@@ -1013,18 +1013,18 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
             if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue
 
             val currentRefExpr = result.nameByOffset[originalOffset]?.let {
-                (it as? JetThisExpression)?.instanceReference ?: it as? JetSimpleNameExpression
+                (it as? KtThisExpression)?.instanceReference ?: it as? KtSimpleNameExpression
             } ?: continue
 
-            if (currentRefExpr.getParent() is JetThisExpression) continue
+            if (currentRefExpr.getParent() is KtThisExpression) continue
 
             val diagnostics = bindingContext.getDiagnostics().forElement(currentRefExpr)
 
             val currentDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, currentRefExpr]
             val currentTarget =
                     currentDescriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(extractionData.project, it) } as? PsiNamedElement
-            if (currentTarget is JetParameter && currentTarget.getParent() == valueParameterList) continue
-            if (currentTarget is JetTypeParameter && currentTarget.getParent() == typeParameterList) continue
+            if (currentTarget is KtParameter && currentTarget.getParent() == valueParameterList) continue
+            if (currentTarget is KtTypeParameter && currentTarget.getParent() == typeParameterList) continue
             if (currentDescriptor is LocalVariableDescriptor
                 && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
 
@@ -1052,8 +1052,8 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
     }
 
     result.declaration.accept(
-            object : JetTreeVisitorVoid() {
-                override fun visitUserType(userType: JetUserType) {
+            object : KtTreeVisitorVoid() {
+                override fun visitUserType(userType: KtUserType) {
                     val refExpr = userType.getReferenceExpression() ?: return
                     val declaration = refExpr.mainReference.resolve() as? PsiNamedElement ?: return
                     val diagnostics = bindingContext.getDiagnostics().forElement(refExpr)
@@ -1062,7 +1062,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
                     }
                 }
 
-                override fun visitJetElement(element: JetElement) {
+                override fun visitJetElement(element: KtElement) {
                     if (element == body) {
                         validateBody()
                         return

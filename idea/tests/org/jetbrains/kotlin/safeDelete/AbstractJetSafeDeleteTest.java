@@ -51,23 +51,23 @@ public abstract class AbstractJetSafeDeleteTest extends JetLightCodeInsightFixtu
     }
 
     public void doClassTest(@NotNull String path) throws Exception {
-        doTest(path, JetClass.class, false);
+        doTest(path, KtClass.class, false);
     }
 
     public void doClassTestWithJava(@NotNull String path) throws Exception {
-        doTest(path, JetClass.class, true);
+        doTest(path, KtClass.class, true);
     }
 
     public void doObjectTest(@NotNull String path) throws Exception {
-        doTest(path, JetObjectDeclaration.class, false);
+        doTest(path, KtObjectDeclaration.class, false);
     }
 
     public void doFunctionTest(@NotNull String path) throws Exception {
-        doTest(path, JetFunction.class, false);
+        doTest(path, KtFunction.class, false);
     }
 
     public void doFunctionTestWithJava(@NotNull String path) throws Exception {
-        doTest(path, JetFunction.class, true);
+        doTest(path, KtFunction.class, true);
     }
 
     public void doJavaMethodTest(@NotNull String path) throws Exception {
@@ -75,11 +75,11 @@ public abstract class AbstractJetSafeDeleteTest extends JetLightCodeInsightFixtu
     }
 
     public void doPropertyTest(@NotNull String path) throws Exception {
-        doTest(path, JetProperty.class, false);
+        doTest(path, KtProperty.class, false);
     }
 
     public void doPropertyTestWithJava(@NotNull String path) throws Exception {
-        doTest(path, JetProperty.class, true);
+        doTest(path, KtProperty.class, true);
     }
 
     public void doJavaPropertyTest(@NotNull String path) throws Exception {
@@ -87,19 +87,19 @@ public abstract class AbstractJetSafeDeleteTest extends JetLightCodeInsightFixtu
     }
 
     public void doTypeParameterTest(@NotNull String path) throws Exception {
-        doTest(path, JetTypeParameter.class, false);
+        doTest(path, KtTypeParameter.class, false);
     }
 
     public void doTypeParameterTestWithJava(@NotNull String path) throws Exception {
-        doTest(path, JetTypeParameter.class, true);
+        doTest(path, KtTypeParameter.class, true);
     }
 
     public void doValueParameterTest(@NotNull String path) throws Exception {
-        doTest(path, JetParameter.class, false);
+        doTest(path, KtParameter.class, false);
     }
 
     public void doValueParameterTestWithJava(@NotNull String path) throws Exception {
-        doTest(path, JetParameter.class, true);
+        doTest(path, KtParameter.class, true);
     }
 
     private <T extends PsiElement> void doTest(

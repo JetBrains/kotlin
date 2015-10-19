@@ -39,13 +39,13 @@ import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 /**
  * Automatically adds import directive to the file for resolving reference.
@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 public class KotlinAddImportAction(
         private val project: Project,
         private val editor: Editor,
-        private val element: JetSimpleNameExpression,
+        private val element: KtSimpleNameExpression,
         candidates: Collection<DeclarationDescriptor>
 ) : QuestionAction {
 
@@ -156,7 +156,7 @@ public class KotlinAddImportAction(
             val descriptor = selectedVariant.descriptorToImport
             // for class or package we use ShortenReferences because we not necessary insert an import but may want to insert partly qualified name
             if (descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) {
-                element.mainReference.bindToFqName(descriptor.importableFqName!!, JetSimpleNameReference.ShorteningMode.FORCED_SHORTENING)
+                element.mainReference.bindToFqName(descriptor.importableFqName!!, KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING)
             }
             else {
                 ImportInsertHelper.getInstance(project).importDescriptor(file, descriptor)
@@ -164,7 +164,7 @@ public class KotlinAddImportAction(
         }
     }
 
-    private class Prioritizer(private val file: JetFile) {
+    private class Prioritizer(private val file: KtFile) {
         private val classifier = ImportableFqNameClassifier(file)
         private val proximityComparator = PsiProximityComparator(file)
 

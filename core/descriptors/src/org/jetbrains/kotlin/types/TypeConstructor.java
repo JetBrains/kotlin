@@ -34,7 +34,7 @@ public interface TypeConstructor extends Annotated {
 
     @NotNull
     @ReadOnly
-    Collection<JetType> getSupertypes();
+    Collection<KtType> getSupertypes();
 
     /**
      * Cannot have subtypes.

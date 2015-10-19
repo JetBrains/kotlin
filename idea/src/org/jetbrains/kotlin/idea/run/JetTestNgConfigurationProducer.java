@@ -64,26 +64,26 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
             return false;
         }
 
-        if (!(leaf.getContainingFile() instanceof JetFile)) {
+        if (!(leaf.getContainingFile() instanceof KtFile)) {
             return false;
         }
 
-        JetFile jetFile = (JetFile) leaf.getContainingFile();
+        KtFile jetFile = (KtFile) leaf.getContainingFile();
 
         if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
             return false;
         }
 
-        JetNamedDeclaration declarationToRun = getDeclarationToRun(leaf);
+        KtNamedDeclaration declarationToRun = getDeclarationToRun(leaf);
 
-        if (declarationToRun instanceof JetNamedFunction) {
-            JetNamedFunction function = (JetNamedFunction) declarationToRun;
+        if (declarationToRun instanceof KtNamedFunction) {
+            KtNamedFunction function = (KtNamedFunction) declarationToRun;
 
             @SuppressWarnings("unchecked")
-            JetElement owner = PsiTreeUtil.getParentOfType(function, JetFunction.class, JetClass.class);
+            KtElement owner = PsiTreeUtil.getParentOfType(function, KtFunction.class, KtClass.class);
 
-            if (owner instanceof JetClass) {
-                PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass((JetClass) owner);
+            if (owner instanceof KtClass) {
+                PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass((KtClass) owner);
                 if (delegate != null) {
                     for (PsiMethod method : delegate.getMethods()) {
                         if (method.getNavigationElement() == function) {
@@ -97,8 +97,8 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
             }
         }
 
-        if (declarationToRun instanceof JetClass) {
-            PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass((JetClassOrObject) declarationToRun);
+        if (declarationToRun instanceof KtClass) {
+            PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass((KtClassOrObject) declarationToRun);
             if (!isTestNGClass(delegate)) {
                 return false;
             }
@@ -111,7 +111,7 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
 
     @Override
     public void onFirstRun(ConfigurationFromContext configuration, ConfigurationContext context, Runnable startRunnable) {
-        JetNamedDeclaration declarationToRun = getDeclarationToRun(configuration.getSourceElement());
+        KtNamedDeclaration declarationToRun = getDeclarationToRun(configuration.getSourceElement());
         final PsiNamedElement lightElement = CollectionsKt.firstOrNull(LightClassUtilsKt.toLightElements(declarationToRun));
 
         // Copied from TestNGInClassConfigurationProducer.onFirstRun()
@@ -166,15 +166,15 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
     }
 
     @Nullable
-    private static JetNamedDeclaration getDeclarationToRun(@NotNull PsiElement leaf) {
-        if (!(leaf.getContainingFile() instanceof JetFile)) return null;
-        JetFile jetFile = (JetFile) leaf.getContainingFile();
+    private static KtNamedDeclaration getDeclarationToRun(@NotNull PsiElement leaf) {
+        if (!(leaf.getContainingFile() instanceof KtFile)) return null;
+        KtFile jetFile = (KtFile) leaf.getContainingFile();
 
-        JetNamedFunction function = PsiTreeUtil.getParentOfType(leaf, JetNamedFunction.class, false);
+        KtNamedFunction function = PsiTreeUtil.getParentOfType(leaf, KtNamedFunction.class, false);
         if (function != null) return function;
 
-        JetClass jetClass = PsiTreeUtil.getParentOfType(leaf, JetClass.class, false);
-        if (jetClass != null) return jetClass;
+        KtClass ktClass = PsiTreeUtil.getParentOfType(leaf, KtClass.class, false);
+        if (ktClass != null) return ktClass;
 
         return getClassDeclarationInFile(jetFile);
     }
@@ -204,12 +204,12 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
     }
 
     @Nullable
-    static JetClass getClassDeclarationInFile(JetFile jetFile) {
-        JetClass tempSingleDeclaration = null;
+    static KtClass getClassDeclarationInFile(KtFile jetFile) {
+        KtClass tempSingleDeclaration = null;
 
-        for (JetDeclaration jetDeclaration : jetFile.getDeclarations()) {
-            if (jetDeclaration instanceof JetClass) {
-                JetClass declaration = (JetClass) jetDeclaration;
+        for (KtDeclaration ktDeclaration : jetFile.getDeclarations()) {
+            if (ktDeclaration instanceof KtClass) {
+                KtClass declaration = (KtClass) ktDeclaration;
 
                 if (tempSingleDeclaration == null) {
                     tempSingleDeclaration = declaration;

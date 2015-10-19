@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
-public class IfNullToElvisInspection : IntentionBasedInspection<JetIfExpression>(IfNullToElvisIntention())
+public class IfNullToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfNullToElvisIntention())
 
-public class IfNullToElvisIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' with elvis operator"){
-    override fun applicabilityRange(element: JetIfExpression): TextRange? {
+public class IfNullToElvisIntention : JetSelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' with elvis operator"){
+    override fun applicabilityRange(element: KtIfExpression): TextRange? {
         val data = calcData(element) ?: return null
 
         val type = data.ifNullExpression.analyze().getType(data.ifNullExpression) ?: return null
@@ -47,14 +47,14 @@ public class IfNullToElvisIntention : JetSelfTargetingRangeIntention<JetIfExpres
         return TextRange(element.startOffset, rParen.endOffset)
     }
 
-    override fun applyTo(element: JetIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor) {
         val newElvis = applyTo(element)
         editor.getCaretModel().moveToOffset(newElvis.getRight()!!.getTextOffset())
     }
 
-    public fun applyTo(element: JetIfExpression): JetBinaryExpression {
+    public fun applyTo(element: KtIfExpression): KtBinaryExpression {
         val (initializer, declaration, ifNullExpr) = calcData(element)!!
-        val factory = JetPsiFactory(element)
+        val factory = KtPsiFactory(element)
 
         val explicitTypeToAdd = if (declaration.isVar() && declaration.getTypeReference() == null)
             initializer.analyze().getType(initializer)
@@ -69,7 +69,7 @@ public class IfNullToElvisIntention : JetSelfTargetingRangeIntention<JetIfExpres
             declaration.add(comment)
         }
 
-        val elvis = factory.createExpressionByPattern("$0 ?: $1", initializer, ifNullExpr) as JetBinaryExpression
+        val elvis = factory.createExpressionByPattern("$0 ?: $1", initializer, ifNullExpr) as KtBinaryExpression
         val newElvis = initializer.replaced(elvis)
         element.delete()
 
@@ -81,27 +81,27 @@ public class IfNullToElvisIntention : JetSelfTargetingRangeIntention<JetIfExpres
     }
 
     private data class Data(
-            val initializer: JetExpression,
-            val declaration: JetVariableDeclaration,
-            val ifNullExpression: JetExpression
+            val initializer: KtExpression,
+            val declaration: KtVariableDeclaration,
+            val ifNullExpression: KtExpression
     )
 
-    private fun calcData(ifExpression: JetIfExpression): Data? {
+    private fun calcData(ifExpression: KtIfExpression): Data? {
         if (ifExpression.getElse() != null) return null
 
-        val binaryExpression = ifExpression.getCondition() as? JetBinaryExpression ?: return null
-        if (binaryExpression.getOperationToken() != JetTokens.EQEQ) return null
-        val value = binaryExpression.expressionComparedToNull() as? JetNameReferenceExpression ?: return null
+        val binaryExpression = ifExpression.getCondition() as? KtBinaryExpression ?: return null
+        if (binaryExpression.getOperationToken() != KtTokens.EQEQ) return null
+        val value = binaryExpression.expressionComparedToNull() as? KtNameReferenceExpression ?: return null
 
-        if (ifExpression.getParent() !is JetBlockExpression) return null
+        if (ifExpression.getParent() !is KtBlockExpression) return null
         val prevStatement = ifExpression.siblings(forward = false, withItself = false)
-                                    .firstIsInstanceOrNull<JetExpression>() ?: return null
-        if (prevStatement !is JetVariableDeclaration) return null
+                                    .firstIsInstanceOrNull<KtExpression>() ?: return null
+        if (prevStatement !is KtVariableDeclaration) return null
         if (prevStatement.getNameAsName() != value.getReferencedNameAsName()) return null
         val initializer = prevStatement.getInitializer() ?: return null
         val then = ifExpression.getThen() ?: return null
 
-        if (then is JetBlockExpression) {
+        if (then is KtBlockExpression) {
             val statement = then.getStatements().singleOrNull() ?: return null
             return Data(initializer, prevStatement, statement)
         }

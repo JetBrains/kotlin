@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 
@@ -42,7 +42,7 @@ public final class TopDownAnalyzerFacadeForJS {
 
     @NotNull
     public static JsAnalysisResult analyzeFiles(
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull Config config
     ) {
         BindingTrace trace = new BindingTraceContext();
@@ -65,12 +65,12 @@ public final class TopDownAnalyzerFacadeForJS {
 
     @NotNull
     public static JsAnalysisResult analyzeFilesWithGivenTrace(
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull BindingTrace trace,
             @NotNull ModuleContext moduleContext,
             @NotNull Config config
     ) {
-        Collection<JetFile> allFiles = Config.withJsLibAdded(files, config);
+        Collection<KtFile> allFiles = Config.withJsLibAdded(files, config);
 
         LazyTopDownAnalyzerForTopLevel analyzerForJs = InjectionKt.createTopDownAnalyzerForJs(
                 moduleContext, trace,
@@ -80,9 +80,9 @@ public final class TopDownAnalyzerFacadeForJS {
         return JsAnalysisResult.success(trace, moduleContext.getModule());
     }
 
-    public static void checkForErrors(@NotNull Collection<JetFile> allFiles, @NotNull BindingContext bindingContext) {
+    public static void checkForErrors(@NotNull Collection<KtFile> allFiles, @NotNull BindingContext bindingContext) {
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
-        for (JetFile file : allFiles) {
+        for (KtFile file : allFiles) {
             AnalyzingUtils.checkForSyntacticErrors(file);
         }
     }

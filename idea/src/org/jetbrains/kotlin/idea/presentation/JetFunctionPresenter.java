@@ -27,21 +27,21 @@ import org.jetbrains.kotlin.psi.*;
 
 import java.util.Collection;
 
-public class JetFunctionPresenter implements ItemPresentationProvider<JetFunction> {
+public class JetFunctionPresenter implements ItemPresentationProvider<KtFunction> {
     @Override
-    public ItemPresentation getPresentation(@NotNull final JetFunction function) {
-        if (function instanceof JetFunctionLiteral) return null;
+    public ItemPresentation getPresentation(@NotNull final KtFunction function) {
+        if (function instanceof KtFunctionLiteral) return null;
 
         return new JetDefaultNamedDeclarationPresentation(function) {
             @Override
             public String getPresentableText() {
                 StringBuilder presentation = new StringBuilder(function.getName() != null ? function.getName() : "");
 
-                Collection<String> paramsStrings = Collections2.transform(function.getValueParameters(), new Function<JetParameter, String>() {
+                Collection<String> paramsStrings = Collections2.transform(function.getValueParameters(), new Function<KtParameter, String>() {
                     @Override
-                    public String apply(JetParameter parameter) {
+                    public String apply(KtParameter parameter) {
                         if (parameter != null) {
-                            JetTypeReference reference = parameter.getTypeReference();
+                            KtTypeReference reference = parameter.getTypeReference();
                             if (reference != null) {
                                 String text = reference.getText();
                                 if (text != null) {
@@ -60,14 +60,14 @@ public class JetFunctionPresenter implements ItemPresentationProvider<JetFunctio
 
             @Override
             public String getLocationString() {
-                if (function instanceof JetConstructor) {
-                    FqName name = ((JetConstructor) function).getContainingClassOrObject().getFqName();
+                if (function instanceof KtConstructor) {
+                    FqName name = ((KtConstructor) function).getContainingClassOrObject().getFqName();
                     return name != null ? String.format("(in %s)", name) : "";
                 }
 
                 FqName name = function.getFqName();
                 if (name != null) {
-                    JetTypeReference receiverTypeRef = function.getReceiverTypeReference();
+                    KtTypeReference receiverTypeRef = function.getReceiverTypeReference();
                     String extensionLocation = receiverTypeRef != null ? "for " + receiverTypeRef.getText() + " " : "";
                     return String.format("(%sin %s)", extensionLocation, name.parent());
                 }

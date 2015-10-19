@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
-public abstract class AbstractLazyType(storageManager: StorageManager) : AbstractJetType(), LazyType {
+public abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKtType(), LazyType {
 
     private val typeConstructor = storageManager.createLazyValue { computeTypeConstructor() }
     override fun getConstructor(): TypeConstructor = typeConstructor()
@@ -41,7 +41,7 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
     private val memberScope = storageManager.createLazyValue { computeMemberScope() }
     override fun getMemberScope() = memberScope()
 
-    protected open fun computeMemberScope(): JetScope {
+    protected open fun computeMemberScope(): KtScope {
         val descriptor = constructor.getDeclarationDescriptor()
         return when (descriptor) {
             is TypeParameterDescriptor -> descriptor.getDefaultType().getMemberScope()
@@ -63,6 +63,6 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
         if (!arguments.isComputed()) {
             return "" + getConstructor() + "<arguments are not computed>"
         }
-        return super<AbstractJetType>.toString()
+        return super<AbstractKtType>.toString()
     }
 }

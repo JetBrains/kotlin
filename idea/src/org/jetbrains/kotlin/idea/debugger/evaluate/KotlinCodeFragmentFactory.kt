@@ -44,7 +44,7 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.j2kText
@@ -61,7 +61,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
@@ -77,7 +77,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             LOG.warn("CodeFragment with null context created:\noriginalContext = ${context?.getElementTextWithContext()}")
         }
         val codeFragment = if (item.kind == CodeFragmentKind.EXPRESSION) {
-            JetExpressionCodeFragment(
+            KtExpressionCodeFragment(
                     project,
                     "fragment.kt",
                     item.text,
@@ -86,7 +86,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             )
         }
         else {
-            JetBlockCodeFragment(
+            KtBlockCodeFragment(
                     project,
                     "fragment.kt",
                     item.text,
@@ -95,8 +95,8 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             )
         }
 
-        codeFragment.putCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR, {
-            expression: JetExpression ->
+        codeFragment.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR, {
+            expression: KtExpression ->
 
             val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
             val debuggerSession = debuggerContext.debuggerSession
@@ -106,9 +106,9 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             else {
                 val semaphore = Semaphore()
                 semaphore.down()
-                val nameRef = AtomicReference<JetType>()
+                val nameRef = AtomicReference<KtType>()
                 val worker = object : KotlinRuntimeTypeEvaluator(null, expression, debuggerContext, ProgressManager.getInstance().progressIndicator) {
-                    override fun typeCalculationFinished(type: JetType?) {
+                    override fun typeCalculationFinished(type: KtType?) {
                         nameRef.set(type)
                         semaphore.up()
                     }
@@ -128,7 +128,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         if (contextElement != null) {
             val lambdas = getInlinedLambdasInside(contextElement)
             if (lambdas.isNotEmpty()) {
-                codeFragment.putCopyableUserData(JetCodeFragment.ADDITIONAL_CONTEXT_FOR_LAMBDA, lamdba@ {
+                codeFragment.putCopyableUserData(KtCodeFragment.ADDITIONAL_CONTEXT_FOR_LAMBDA, lamdba@ {
                     val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
 
                     val semaphore = Semaphore()
@@ -204,10 +204,10 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             // PsiCodeBlock -> DummyHolder -> originalElement
             return isContextAccepted(contextElement.context?.context)
         }
-        return contextElement?.language == JetFileType.INSTANCE.language
+        return contextElement?.language == KotlinFileType.INSTANCE.language
     }
 
-    override fun getFileType() = JetFileType.INSTANCE
+    override fun getFileType() = KotlinFileType.INSTANCE
 
     override fun getEvaluatorBuilder() = KotlinEvaluationBuilder
 
@@ -216,7 +216,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         public val DEBUG_LABEL_SUFFIX: String = "_DebugLabel"
         @TestOnly val DEBUG_FRAME_FOR_TESTS: Key<StackFrameProxyImpl> = Key.create("DEBUG_FRAME_FOR_TESTS")
 
-        fun getContextElement(elementAt: PsiElement?): JetElement? {
+        fun getContextElement(elementAt: PsiElement?): KtElement? {
             if (elementAt == null) return null
 
             if (elementAt is PsiCodeBlock) {
@@ -228,11 +228,11 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             }
 
             val containingFile = elementAt.containingFile
-            if (containingFile !is JetFile) return null
+            if (containingFile !is KtFile) return null
 
-            var result = PsiTreeUtil.findElementOfClassAtOffset(containingFile, elementAt.textOffset, javaClass<JetExpression>(), false)
+            var result = PsiTreeUtil.findElementOfClassAtOffset(containingFile, elementAt.textOffset, javaClass<KtExpression>(), false)
             if (result.check()) {
-                return CodeInsightUtils.getTopmostElementAtOffset(result!!, result.textOffset, JetExpression::class.java)
+                return CodeInsightUtils.getTopmostElementAtOffset(result!!, result.textOffset, KtExpression::class.java)
             }
 
             result = KotlinEditorTextProvider.findExpressionInner(elementAt, true)
@@ -243,16 +243,16 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             return containingFile
         }
 
-        private fun JetElement?.check(): Boolean = this != null && this.check { KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(it) } != null
+        private fun KtElement?.check(): Boolean = this != null && this.check { KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(it) } != null
 
-        private fun getInlinedLambdasInside(contextElement: JetElement): List<JetFunction> {
+        private fun getInlinedLambdasInside(contextElement: KtElement): List<KtFunction> {
             val start = contextElement.startOffset
             val end = contextElement.endOffset
 
             val bindingContext = contextElement.analyze(BodyResolveMode.PARTIAL)
-            return CodeInsightUtils.findElementsOfClassInRange(contextElement.getContainingJetFile(), start, end, javaClass<JetFunctionLiteral>(), javaClass<JetNamedFunction>())
-                    .filterIsInstance<JetFunction>()
-                    .filter { JetPsiUtil.getParentCallIfPresent(it as JetExpression) != null && InlineUtil.isInlinedArgument(it, bindingContext, false) }
+            return CodeInsightUtils.findElementsOfClassInRange(contextElement.getContainingJetFile(), start, end, javaClass<KtFunctionLiteral>(), javaClass<KtNamedFunction>())
+                    .filterIsInstance<KtFunction>()
+                    .filter { KtPsiUtil.getParentCallIfPresent(it as KtExpression) != null && InlineUtil.isInlinedArgument(it, bindingContext, false) }
         }
 
         //internal for tests
@@ -312,7 +312,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         }
     }
 
-    private fun wrapContextIfNeeded(project: Project, originalContext: JetElement?): JetElement? {
+    private fun wrapContextIfNeeded(project: Project, originalContext: KtElement?): KtElement? {
         val session = XDebuggerManager.getInstance(project).currentSession as? XDebugSessionImpl
                                             ?: return originalContext
 
@@ -331,11 +331,11 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             labels: Map<String, Value>,
             originalContext: PsiElement?,
             project: Project
-    ): JetElement? {
-        val codeFragment = JetPsiFactory(project).createBlockCodeFragment(newFragmentText, originalContext)
+    ): KtElement? {
+        val codeFragment = KtPsiFactory(project).createBlockCodeFragment(newFragmentText, originalContext)
 
-        codeFragment.accept(object : JetTreeVisitorVoid() {
-            override fun visitProperty(property: JetProperty) {
+        codeFragment.accept(object : KtTreeVisitorVoid() {
+            override fun visitProperty(property: KtProperty) {
                 val reference = labels.get(property.name)
                 if (reference != null) {
                     property.putUserData(LABEL_VARIABLE_VALUE_KEY, reference)

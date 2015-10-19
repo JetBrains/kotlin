@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypesIfNecessary
@@ -51,7 +51,7 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
 
         fun analyzeTestFile(testType: String) = run {
             val test = declarationsText.replace("#TestType#", testType)
-            val testFile = JetPsiFactory(getProject()).createFile(test)
+            val testFile = KtPsiFactory(getProject()).createFile(test)
             val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(testFile).bindingContext
             val functions = bindingContext.getSliceContents(BindingContext.FUNCTION)
             val functionFoo = functions.values().firstOrNull { it.getName().asString() == "foo" } ?:

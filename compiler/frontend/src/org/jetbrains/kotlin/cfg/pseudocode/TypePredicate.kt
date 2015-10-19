@@ -19,39 +19,39 @@ package org.jetbrains.kotlin.cfg.pseudocode
 import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-public interface TypePredicate: (JetType) -> Boolean {
-    override fun invoke(typeToCheck: JetType): Boolean
+public interface TypePredicate: (KtType) -> Boolean {
+    override fun invoke(typeToCheck: KtType): Boolean
 }
 
-public data class SingleType(val targetType: JetType): TypePredicate {
-    override fun invoke(typeToCheck: JetType): Boolean = JetTypeChecker.DEFAULT.equalTypes(typeToCheck, targetType)
+public data class SingleType(val targetType: KtType): TypePredicate {
+    override fun invoke(typeToCheck: KtType): Boolean = KotlinTypeChecker.DEFAULT.equalTypes(typeToCheck, targetType)
     override fun toString(): String = targetType.render()
 }
 
-public data class AllSubtypes(val upperBound: JetType): TypePredicate {
-    override fun invoke(typeToCheck: JetType): Boolean = JetTypeChecker.DEFAULT.isSubtypeOf(typeToCheck, upperBound)
+public data class AllSubtypes(val upperBound: KtType): TypePredicate {
+    override fun invoke(typeToCheck: KtType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(typeToCheck, upperBound)
 
     override fun toString(): String = "{<: ${upperBound.render()}}"
 }
 
 public data class ForAllTypes(val typeSets: List<TypePredicate>): TypePredicate {
-    override fun invoke(typeToCheck: JetType): Boolean = typeSets.all { it(typeToCheck) }
+    override fun invoke(typeToCheck: KtType): Boolean = typeSets.all { it(typeToCheck) }
 
     override fun toString(): String = "AND{${typeSets.joinToString(", ")}}"
 }
 
 public data class ForSomeType(val typeSets: List<TypePredicate>): TypePredicate {
-    override fun invoke(typeToCheck: JetType): Boolean = typeSets.any { it(typeToCheck) }
+    override fun invoke(typeToCheck: KtType): Boolean = typeSets.any { it(typeToCheck) }
 
     override fun toString(): String = "OR{${typeSets.joinToString(", ")}}"
 }
 
 public object AllTypes : TypePredicate {
-    override fun invoke(typeToCheck: JetType): Boolean = true
+    override fun invoke(typeToCheck: KtType): Boolean = true
 
     override fun toString(): String = "*"
 }
@@ -71,16 +71,16 @@ public fun or(predicates: Collection<TypePredicate>): TypePredicate? =
             else -> ForSomeType(predicates.toList())
         }
 
-fun JetType.getSubtypesPredicate(): TypePredicate {
+fun KtType.getSubtypesPredicate(): TypePredicate {
     return when {
         KotlinBuiltIns.isAnyOrNullableAny(this) && isMarkedNullable() -> AllTypes
-        TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, this) -> AllSubtypes(this)
+        TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, this) -> AllSubtypes(this)
         else -> SingleType(this)
     }
 }
 
 
-private fun JetType.render(): String = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
+private fun KtType.render(): String = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
 
 public fun <T> TypePredicate.expectedTypeFor(keys: Iterable<T>): Map<T, TypePredicate> =
         keys.fold(SmartFMap.emptyMap<T, TypePredicate>()) { map, key -> map.plus(key, this) }

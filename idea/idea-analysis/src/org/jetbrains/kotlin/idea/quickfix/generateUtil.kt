@@ -44,9 +44,9 @@ public fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement) {
 private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, element: PsiElement): Boolean {
     // Inspired by GenerateMembersUtils.positionCaret()
 
-    if (element is JetDeclarationWithBody && element.hasBody()) {
+    if (element is KtDeclarationWithBody && element.hasBody()) {
         val expression = element.getBodyExpression()
-        if (expression is JetBlockExpression) {
+        if (expression is KtBlockExpression) {
             val lBrace = expression.getLBrace()
             val rBrace = expression.getRBrace()
 
@@ -68,7 +68,7 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
         }
     }
 
-    if (element is JetWithExpressionInitializer && element.hasInitializer()) {
+    if (element is KtWithExpressionInitializer && element.hasInitializer()) {
         val expression = element.getInitializer()
         if (expression == null) throw AssertionError()
 
@@ -85,7 +85,7 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
         return true
     }
 
-    if (element is JetProperty) {
+    if (element is KtProperty) {
         for (accessor in element.getAccessors()) {
             if (moveCaretIntoGeneratedElementDocumentUnblocked(editor, accessor)) {
                 return true
@@ -101,7 +101,7 @@ public fun Editor.moveCaret(offset: Int, scrollType: ScrollType = ScrollType.REL
     getScrollingModel().scrollToCaret(scrollType)
 }
 
-private fun findInsertAfterAnchor(editor: Editor?, body: JetClassBody): PsiElement? {
+private fun findInsertAfterAnchor(editor: Editor?, body: KtClassBody): PsiElement? {
     val afterAnchor = body.lBrace ?: return null
 
     val offset = editor?.caretModel?.offset ?: body.startOffset
@@ -129,7 +129,7 @@ private fun removeAfterOffset(offset: Int, whiteSpace: PsiWhiteSpace): PsiElemen
             beforeWhiteSpaceText += "\n"
         }
 
-        val factory = JetPsiFactory(whiteSpace.project)
+        val factory = KtPsiFactory(whiteSpace.project)
 
         val insertAfter = whiteSpace.prevSibling
         whiteSpace.delete()
@@ -143,9 +143,9 @@ private fun removeAfterOffset(offset: Int, whiteSpace: PsiWhiteSpace): PsiElemen
     return whiteSpace
 }
 
-public fun <T : JetDeclaration> insertMembersAfter(
+public fun <T : KtDeclaration> insertMembersAfter(
         editor: Editor?,
-        classOrObject: JetClassOrObject,
+        classOrObject: KtClassOrObject,
         members: Collection<T>,
         anchor: PsiElement? = null
 ): List<T> {
@@ -170,6 +170,6 @@ public fun <T : JetDeclaration> insertMembersAfter(
     }
 }
 
-public fun <T : JetDeclaration> insertMember(editor: Editor, classOrObject: JetClassOrObject, declaration: T): T {
+public fun <T : KtDeclaration> insertMember(editor: Editor, classOrObject: KtClassOrObject, declaration: T): T {
     return insertMembersAfter(editor, classOrObject, listOf(declaration)).single()
 }

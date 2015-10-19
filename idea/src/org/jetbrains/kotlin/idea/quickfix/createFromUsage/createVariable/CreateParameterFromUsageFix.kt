@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 
-public class CreateParameterFromUsageFix<E : JetElement>(
+public class CreateParameterFromUsageFix<E : KtElement>(
         val functionDescriptor: FunctionDescriptor,
         val parameterInfo: JetParameterInfo,
         val defaultValueContext: E
@@ -37,7 +37,7 @@ public class CreateParameterFromUsageFix<E : JetElement>(
 
     override fun startInWriteAction() = false
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val config = object : JetChangeSignatureConfiguration {
             override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
                 return originalDescriptor.modify { it.addParameter(parameterInfo) }

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import com.google.common.collect.Lists
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 
 public class LocalFunctionDeclarationInstruction(
-        element: JetElement,
+        element: KtElement,
         public val body: Pseudocode,
         lexicalScope: LexicalScope
 ) : InstructionWithNext(element, lexicalScope) {

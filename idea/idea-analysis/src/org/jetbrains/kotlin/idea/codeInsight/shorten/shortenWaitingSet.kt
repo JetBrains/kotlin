@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.codeInsight.shorten
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.SmartPsiElementPointer
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.UserDataProperty
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import java.util.*
 
-class ShorteningRequest(val pointer: SmartPsiElementPointer<JetElement>, val options: Options)
+class ShorteningRequest(val pointer: SmartPsiElementPointer<KtElement>, val options: Options)
 
 private var Project.elementsToShorten: MutableSet<ShorteningRequest>?
         by UserDataProperty(Key.create("ELEMENTS_TO_SHORTEN_KEY"))
@@ -62,7 +62,7 @@ private fun Project.getOrCreateElementsToShorten(): MutableSet<ShorteningRequest
     return elements
 }
 
-public fun JetElement.addToShorteningWaitSet(options: Options = Options.DEFAULT) {
+public fun KtElement.addToShorteningWaitSet(options: Options = Options.DEFAULT) {
     assert(ApplicationManager.getApplication()!!.isWriteAccessAllowed()) { "Write access needed" }
     val project = getProject()
     val elementPointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)

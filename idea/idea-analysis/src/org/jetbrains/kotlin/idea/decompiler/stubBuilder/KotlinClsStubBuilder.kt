@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
@@ -50,7 +50,7 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
         return doBuildFileStub(file)
     }
 
-    fun doBuildFileStub(file: VirtualFile): PsiFileStub<JetFile>? {
+    fun doBuildFileStub(file: VirtualFile): PsiFileStub<KtFile>? {
         val kotlinBinaryClass = KotlinBinaryClassCache.getKotlinBinaryClass(file)!!
         val header = kotlinBinaryClass.getClassHeader()
         val classId = kotlinBinaryClass.getClassId()

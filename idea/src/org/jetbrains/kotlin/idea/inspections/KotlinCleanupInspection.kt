@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.ReplaceObsoleteLabelSyntaxFix
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -45,7 +45,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
     override fun getDisplayName(): String = "Usage of redundant or deprecated syntax or deprecated symbols"
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
-        if (isOnTheFly || file !is JetFile || !ProjectRootsUtil.isInProjectSource(file)) {
+        if (isOnTheFly || file !is KtFile || !ProjectRootsUtil.isInProjectSource(file)) {
             return null
         }
 
@@ -101,7 +101,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {
-        val annotationEntry = getPsiElement().getNonStrictParentOfType<JetAnnotationEntry>() ?: return false
+        val annotationEntry = getPsiElement().getNonStrictParentOfType<KtAnnotationEntry>() ?: return false
         return ReplaceObsoleteLabelSyntaxFix.looksLikeObsoleteLabel(annotationEntry)
     }
 
@@ -109,7 +109,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
         return JetPsiChecker.createQuickfixes(this).filterIsInstance<CleanupFix>()
     }
 
-    private class Wrapper(val intention: IntentionAction, file: JetFile) : IntentionWrapper(intention, file) {
+    private class Wrapper(val intention: IntentionAction, file: KtFile) : IntentionWrapper(intention, file) {
         override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
             if (intention.isAvailable(project, editor, file)) { // we should check isAvailable here because some elements may get invalidated (or other conditions may change)
                 super.invoke(project, editor, file)
@@ -117,11 +117,11 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
         }
     }
 
-    private fun Diagnostic.toProblemDescriptor(fixes: Collection<CleanupFix>, file: JetFile, manager: InspectionManager): ProblemDescriptor {
+    private fun Diagnostic.toProblemDescriptor(fixes: Collection<CleanupFix>, file: KtFile, manager: InspectionManager): ProblemDescriptor {
         return createProblemDescriptor(psiElement, DefaultErrorMessages.render(this), fixes, file, manager)
     }
 
-    private fun createProblemDescriptor(element: PsiElement, message: String, fixes: Collection<CleanupFix>, file: JetFile, manager: InspectionManager): ProblemDescriptor {
+    private fun createProblemDescriptor(element: PsiElement, message: String, fixes: Collection<CleanupFix>, file: KtFile, manager: InspectionManager): ProblemDescriptor {
         return manager.createProblemDescriptor(element,
                                                message,
                                                false,
@@ -129,11 +129,11 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
                                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
     }
 
-    private class RemoveImportFix(import: JetImportDirective) : KotlinQuickFixAction<JetImportDirective>(import), CleanupFix {
+    private class RemoveImportFix(import: KtImportDirective) : KotlinQuickFixAction<KtImportDirective>(import), CleanupFix {
         override fun getFamilyName() = "Remove deprecated symbol import"
         override fun getText() = familyName
 
-        override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+        override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             element.delete()
         }
     }

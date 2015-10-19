@@ -19,22 +19,22 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 
-public object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageFactory<JetBinaryExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetBinaryExpression? {
-        return diagnostic.psiElement.parent as? JetBinaryExpression
+public object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageFactory<KtBinaryExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtBinaryExpression? {
+        return diagnostic.psiElement.parent as? KtBinaryExpression
     }
 
-    override fun createCallableInfo(element: JetBinaryExpression, diagnostic: Diagnostic): CallableInfo? {
-        val token = element.operationToken as JetToken
+    override fun createCallableInfo(element: KtBinaryExpression, diagnostic: Diagnostic): CallableInfo? {
+        val token = element.operationToken as KtToken
         val operationName = when (token) {
-                                JetTokens.IDENTIFIER -> element.operationReference.getReferencedName()
+                                KtTokens.IDENTIFIER -> element.operationReference.getReferencedName()
                                 else -> OperatorConventions.getNameForOperationSymbol(token, false, true)?.asString()
                             } ?: return null
         val inOperation = token in OperatorConventions.IN_OPERATIONS
@@ -55,6 +55,6 @@ public object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageF
         }
         val parameters = Collections.singletonList(ParameterInfo(TypeInfo(argumentExpr, Variance.IN_VARIANCE)))
         return FunctionInfo(operationName, receiverType, returnType, parameterInfos = parameters,
-                            isOperator = token != JetTokens.IDENTIFIER)
+                            isOperator = token != KtTokens.IDENTIFIER)
     }
 }

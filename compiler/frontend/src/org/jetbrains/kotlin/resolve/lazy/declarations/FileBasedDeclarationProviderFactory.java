@@ -25,7 +25,7 @@ import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -36,14 +36,14 @@ import java.util.Set;
 public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProviderFactory  {
 
     private static class Index {
-        private final Multimap<FqName, JetFile> filesByPackage = HashMultimap.create();
+        private final Multimap<FqName, KtFile> filesByPackage = HashMultimap.create();
         private final Set<FqName> declaredPackages = Sets.newHashSet();
     }
 
     private final StorageManager storageManager;
     private final NotNullLazyValue<Index> index;
 
-    public FileBasedDeclarationProviderFactory(@NotNull StorageManager storageManager, @NotNull final Collection<JetFile> files) {
+    public FileBasedDeclarationProviderFactory(@NotNull StorageManager storageManager, @NotNull final Collection<KtFile> files) {
         super(storageManager);
         this.storageManager = storageManager;
         this.index = storageManager.createLazyValue(new Function0<Index>() {
@@ -55,9 +55,9 @@ public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProv
     }
 
     @NotNull
-    private static Index computeFilesByPackage(@NotNull Collection<JetFile> files) {
+    private static Index computeFilesByPackage(@NotNull Collection<KtFile> files) {
         Index index = new Index();
-        for (JetFile file : files) {
+        for (KtFile file : files) {
             FqName packageFqName = file.getPackageFqName();
             addMeAndParentPackages(index, packageFqName);
             index.filesByPackage.put(packageFqName, file);

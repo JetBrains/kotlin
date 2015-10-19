@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 
 class PseudoValueImpl(
         override val debugName: String,
-        override val element: JetElement?,
+        override val element: KtElement?,
         override val createdAt: InstructionWithValue?
 ) : PseudoValue {
     override fun toString(): String = debugName
@@ -30,7 +30,7 @@ class PseudoValueImpl(
 open class PseudoValueFactoryImpl: PseudoValueFactory {
     private var lastIndex: Int = 0
 
-    override fun newValue(element: JetElement?, instruction: InstructionWithValue?): PseudoValue {
+    override fun newValue(element: KtElement?, instruction: InstructionWithValue?): PseudoValue {
         return PseudoValueImpl((instruction?.let { "" } ?: "!") + "<v${lastIndex++}>", element, instruction)
     }
 }

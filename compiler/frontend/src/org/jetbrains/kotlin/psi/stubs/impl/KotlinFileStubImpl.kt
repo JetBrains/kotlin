@@ -24,24 +24,24 @@ import com.intellij.psi.tree.IStubFileElementType
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 // SCRIPT: PsiJetFileStubImpl knows about scripting
 public open class KotlinFileStubImpl(
-        jetFile: JetFile?,
+        jetFile: KtFile?,
         private val packageName: StringRef,
         private val isScript: Boolean
-) : PsiFileStubImpl<JetFile>(jetFile), KotlinFileStub, PsiClassHolderFileStub<JetFile> {
+) : PsiFileStubImpl<KtFile>(jetFile), KotlinFileStub, PsiClassHolderFileStub<KtFile> {
 
-    public constructor(jetFile: JetFile?, packageName: String, isScript: Boolean)
+    public constructor(jetFile: KtFile?, packageName: String, isScript: Boolean)
         : this(jetFile, StringRef.fromString(packageName)!!, isScript)
 
     override fun getPackageFqName(): FqName = FqName(StringRef.toString(packageName)!!)
     override fun isScript(): Boolean = isScript
-    override fun getType(): IStubFileElementType<KotlinFileStub> = JetStubElementTypes.FILE
+    override fun getType(): IStubFileElementType<KotlinFileStub> = KtStubElementTypes.FILE
 
     override fun toString(): String = "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]"
 
@@ -50,7 +50,7 @@ public open class KotlinFileStubImpl(
     }
 
     override fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub> {
-        val importList = childrenStubs.firstOrNull { it.stubType == JetStubElementTypes.IMPORT_LIST } ?: return emptyList()
+        val importList = childrenStubs.firstOrNull { it.stubType == KtStubElementTypes.IMPORT_LIST } ?: return emptyList()
         return importList.childrenStubs.filterIsInstance<KotlinImportDirectiveStub>().filter { it.getAliasName() == alias }
     }
 }

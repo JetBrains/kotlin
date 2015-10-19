@@ -19,31 +19,31 @@ package org.jetbrains.kotlin.idea.refactoring.move
 import com.intellij.refactoring.move.moveInner.MoveInnerClassUsagesHandler
 import com.intellij.usageView.UsageInfo
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import java.util.ArrayList
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.references.mainReference
 
 public class MoveJavaInnerClassKotlinUsagesHandler: MoveInnerClassUsagesHandler {
     override fun correctInnerClassUsage(usage: UsageInfo, outerClass: PsiClass) {
-        val innerCall = usage.getElement()?.getParent() as? JetCallExpression ?: return
+        val innerCall = usage.getElement()?.getParent() as? KtCallExpression ?: return
 
-        val receiver = (innerCall.getParent() as? JetQualifiedExpression)?.getReceiverExpression()
+        val receiver = (innerCall.getParent() as? KtQualifiedExpression)?.getReceiverExpression()
         val outerClassRef = when (receiver) {
-            is JetCallExpression -> receiver.getCalleeExpression()
-            is JetQualifiedExpression -> receiver.getQualifiedElementSelector()
+            is KtCallExpression -> receiver.getCalleeExpression()
+            is KtQualifiedExpression -> receiver.getQualifiedElementSelector()
             else -> null
-        } as? JetSimpleNameExpression
+        } as? KtSimpleNameExpression
         if (outerClassRef?.mainReference?.resolve() != outerClass) return
 
-        val outerCall = outerClassRef!!.getParent() as? JetCallExpression ?: return
+        val outerCall = outerClassRef!!.getParent() as? KtCallExpression ?: return
 
-        val psiFactory = JetPsiFactory(usage.getProject())
+        val psiFactory = KtPsiFactory(usage.getProject())
 
         val argumentList = innerCall.getValueArgumentList()
         if (argumentList != null) {

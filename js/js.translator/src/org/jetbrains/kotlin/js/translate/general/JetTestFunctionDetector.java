@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.descriptors.Modality;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtClass;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collection;
 import java.util.List;
@@ -48,7 +48,7 @@ public class JetTestFunctionDetector {
         Annotations annotations = functionDescriptor.getAnnotations();
         for (AnnotationDescriptor annotation : annotations) {
             // TODO ideally we should find the fully qualified name here...
-            JetType type = annotation.getType();
+            KtType type = annotation.getType();
             String name = type.toString();
             if (name.equals("Test")) {
                 return true;
@@ -67,10 +67,10 @@ public class JetTestFunctionDetector {
     @NotNull
     public static List<FunctionDescriptor> getTestFunctionDescriptors(
             @NotNull BindingContext bindingContext,
-            @NotNull Collection<JetFile> files
+            @NotNull Collection<KtFile> files
     ) {
         List<FunctionDescriptor> answer = Lists.newArrayList();
-        for (JetFile file : files) {
+        for (KtFile file : files) {
             answer.addAll(getTestFunctions(bindingContext, file.getDeclarations()));
         }
         return answer;
@@ -79,14 +79,14 @@ public class JetTestFunctionDetector {
     @NotNull
     private static List<FunctionDescriptor> getTestFunctions(
             @NotNull BindingContext bindingContext,
-            @NotNull List<JetDeclaration> declarations
+            @NotNull List<KtDeclaration> declarations
     ) {
         List<FunctionDescriptor> answer = Lists.newArrayList();
-        for (JetDeclaration declaration : declarations) {
-            JetScope scope = null;
+        for (KtDeclaration declaration : declarations) {
+            KtScope scope = null;
 
-            if (declaration instanceof JetClass) {
-                JetClass klass = (JetClass) declaration;
+            if (declaration instanceof KtClass) {
+                KtClass klass = (KtClass) declaration;
                 ClassDescriptor classDescriptor = BindingUtils.getClassDescriptor(bindingContext, klass);
 
                 if (classDescriptor.getModality() != Modality.ABSTRACT) {

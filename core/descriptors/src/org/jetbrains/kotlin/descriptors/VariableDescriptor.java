@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 public interface VariableDescriptor extends CallableDescriptor {
     @NotNull
-    JetType getType();
+    KtType getType();
 
     @Override
     @NotNull

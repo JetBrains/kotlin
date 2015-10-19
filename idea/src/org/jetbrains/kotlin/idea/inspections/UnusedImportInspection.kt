@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.*
 
@@ -54,7 +54,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
     override fun runForWholeFile() = true
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
-        if (file !is JetFile) return null
+        if (file !is KtFile) return null
         if (!file.manager.isInProject(file)) return null
         if (file.importDirectives.isEmpty()) return null
 
@@ -125,7 +125,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         return problems.toTypedArray()
     }
 
-    private fun scheduleOptimizeImportsOnTheFly(file: JetFile, descriptorsToImport: Set<DeclarationDescriptor>) {
+    private fun scheduleOptimizeImportsOnTheFly(file: KtFile, descriptorsToImport: Set<DeclarationDescriptor>) {
         if (!CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) return
         val optimizedImports = KotlinImportOptimizer.prepareOptimizedImports(file, descriptorsToImport) ?: return // return if already optimized
 
@@ -160,7 +160,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         }
     }
 
-    private fun timeToOptimizeImportsOnTheFly(file: JetFile, editor: Editor, project: Project): Boolean {
+    private fun timeToOptimizeImportsOnTheFly(file: KtFile, editor: Editor, project: Project): Boolean {
         if (project.isDisposed || !file.isValid || editor.isDisposed || !file.isWritable) return false
 
         // do not optimize imports on the fly during undo/redo
@@ -191,7 +191,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         return DaemonListeners.canChangeFileSilently(file)
     }
 
-    private fun optimizeImportsOnTheFly(file: JetFile, optimizedImports: List<ImportPath>, editor: Editor, project: Project) {
+    private fun optimizeImportsOnTheFly(file: KtFile, optimizedImports: List<ImportPath>, editor: Editor, project: Project) {
         PsiDocumentManager.getInstance(file.project).commitAllDocuments()
         DocumentUtil.writeInRunUndoTransparentAction {
             KotlinImportOptimizer.replaceImports(file, optimizedImports)
@@ -199,7 +199,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         }
     }
 
-    private class OptimizeImportsQuickFix(private val file: JetFile): LocalQuickFix {
+    private class OptimizeImportsQuickFix(private val file: KtFile): LocalQuickFix {
         override fun getName() = "Optimize imports"
 
         override fun getFamilyName() = name
@@ -209,7 +209,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         }
     }
 
-    private class EnableOptimizeImportsOnTheFlyFix(private val file: JetFile) : LocalQuickFix, LowPriorityAction {
+    private class EnableOptimizeImportsOnTheFlyFix(private val file: KtFile) : LocalQuickFix, LowPriorityAction {
         override fun getName() = QuickFixBundle.message("enable.optimize.imports.on.the.fly")
 
         override fun getFamilyName() = name

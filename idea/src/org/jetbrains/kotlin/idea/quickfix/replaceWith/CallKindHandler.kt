@@ -21,26 +21,26 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
 internal interface CallKindHandler {
-    val elementToReplace: JetElement
+    val elementToReplace: KtElement
 
     fun precheckReplacementPattern(pattern: ReplaceWithAnnotationAnalyzer.ReplacementExpression): Boolean
 
-    fun wrapGeneratedExpression(expression: JetExpression): JetElement
+    fun wrapGeneratedExpression(expression: KtExpression): KtElement
 
-    fun unwrapResult(result: JetElement): JetElement
+    fun unwrapResult(result: KtElement): KtElement
 }
 
-internal class CallExpressionHandler(callElement: JetExpression) : CallKindHandler {
+internal class CallExpressionHandler(callElement: KtExpression) : CallKindHandler {
     override val elementToReplace = callElement.getQualifiedExpressionForSelectorOrThis()
 
     override fun precheckReplacementPattern(pattern: ReplaceWithAnnotationAnalyzer.ReplacementExpression) = true
 
-    override fun wrapGeneratedExpression(expression: JetExpression) = expression
+    override fun wrapGeneratedExpression(expression: KtExpression) = expression
 
-    override fun unwrapResult(result: JetElement) = result
+    override fun unwrapResult(result: KtElement) = result
 }
 
-internal class AnnotationEntryHandler(annotationEntry: JetAnnotationEntry) : CallKindHandler {
+internal class AnnotationEntryHandler(annotationEntry: KtAnnotationEntry) : CallKindHandler {
     override val elementToReplace = annotationEntry
 
     override fun precheckReplacementPattern(pattern: ReplaceWithAnnotationAnalyzer.ReplacementExpression): Boolean {
@@ -50,13 +50,13 @@ internal class AnnotationEntryHandler(annotationEntry: JetAnnotationEntry) : Cal
 
     //TODO: how to prohibit wrapping replacement expression into anything?
 
-    override fun wrapGeneratedExpression(expression: JetExpression): JetAnnotationEntry {
-        return createByPattern("@Dummy($0)", expression) { JetPsiFactory(expression).createAnnotationEntry(it) }
+    override fun wrapGeneratedExpression(expression: KtExpression): KtAnnotationEntry {
+        return createByPattern("@Dummy($0)", expression) { KtPsiFactory(expression).createAnnotationEntry(it) }
     }
 
-    override fun unwrapResult(result: JetElement): JetAnnotationEntry {
-        result as JetAnnotationEntry
+    override fun unwrapResult(result: KtElement): KtAnnotationEntry {
+        result as KtAnnotationEntry
         val text = result.valueArguments.single().getArgumentExpression()!!.text
-        return result.replaced(JetPsiFactory(result).createAnnotationEntry("@" + text))
+        return result.replaced(KtPsiFactory(result).createAnnotationEntry("@" + text))
     }
 }

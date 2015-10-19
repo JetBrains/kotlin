@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
@@ -42,7 +42,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
             constructorDescriptor: ConstructorDescriptor,
             classBuilder: ClassBuilder,
             contextKind: OwnerKind,
-            classOrObject: JetClassOrObject
+            classOrObject: KtClassOrObject
     ) {
         if (generateOverloadsIfNeeded(classOrObject, constructorDescriptor, constructorDescriptor, contextKind, classBuilder)) {
             return
@@ -70,7 +70,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
      * @return true if the overloads annotation was found on the element, false otherwise
      */
     fun generateOverloadsIfNeeded(
-            methodElement: JetElement?,
+            methodElement: KtElement?,
             functionDescriptor: FunctionDescriptor,
             delegateFunctionDescriptor: FunctionDescriptor,
             contextKind: OwnerKind,
@@ -109,7 +109,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
             functionDescriptor: FunctionDescriptor,
             delegateFunctionDescriptor: FunctionDescriptor,
             classBuilder: ClassBuilder,
-            methodElement: JetElement?,
+            methodElement: KtElement?,
             contextKind: OwnerKind,
             substituteCount: Int
     ) {
@@ -208,7 +208,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
         return functionDescriptor.getValueParameters().filter { !it.declaresDefaultValue() || --remainingCount >= 0 }
     }
 
-    private fun isEmptyConstructorNeeded(constructorDescriptor: ConstructorDescriptor, classOrObject: JetClassOrObject): Boolean {
+    private fun isEmptyConstructorNeeded(constructorDescriptor: ConstructorDescriptor, classOrObject: KtClassOrObject): Boolean {
         val classDescriptor = constructorDescriptor.getContainingDeclaration()
         if (classDescriptor.getKind() != ClassKind.CLASS) return false
 
@@ -220,12 +220,12 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
             return false
 
         if (constructorDescriptor.getValueParameters().isEmpty()) return false
-        if (classOrObject is JetClass && hasSecondaryConstructorsWithNoParameters(classOrObject)) return false
+        if (classOrObject is KtClass && hasSecondaryConstructorsWithNoParameters(classOrObject)) return false
 
         return constructorDescriptor.getValueParameters().all { it.declaresDefaultValue() }
     }
 
-    private fun hasSecondaryConstructorsWithNoParameters(klass: JetClass) =
+    private fun hasSecondaryConstructorsWithNoParameters(klass: KtClass) =
         klass.getSecondaryConstructors().any { it.getValueParameters().isEmpty() }
 
 }

@@ -18,23 +18,23 @@ package org.jetbrains.kotlin.psi.stubs.impl;
 
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetProjectionKind;
-import org.jetbrains.kotlin.psi.JetTypeProjection;
+import org.jetbrains.kotlin.psi.KtProjectionKind;
+import org.jetbrains.kotlin.psi.KtTypeProjection;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class KotlinTypeProjectionStubImpl extends KotlinStubBaseImpl<JetTypeProjection> implements KotlinTypeProjectionStub {
+public class KotlinTypeProjectionStubImpl extends KotlinStubBaseImpl<KtTypeProjection> implements KotlinTypeProjectionStub {
 
     private final int projectionKindOrdinal;
 
     public KotlinTypeProjectionStubImpl(StubElement parent, int projectionKindOrdinal) {
-        super(parent, JetStubElementTypes.TYPE_PROJECTION);
+        super(parent, KtStubElementTypes.TYPE_PROJECTION);
         this.projectionKindOrdinal = projectionKindOrdinal;
     }
 
     @NotNull
     @Override
-    public JetProjectionKind getProjectionKind() {
-        return JetProjectionKind.values()[projectionKindOrdinal];
+    public KtProjectionKind getProjectionKind() {
+        return KtProjectionKind.values()[projectionKindOrdinal];
     }
 }

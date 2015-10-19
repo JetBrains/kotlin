@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -137,12 +137,12 @@ public class CallResolver {
 
     @NotNull
     public OverloadResolutionResults<VariableDescriptor> resolveSimpleProperty(@NotNull BasicCallResolutionContext context) {
-        JetExpression calleeExpression = context.call.getCalleeExpression();
-        assert calleeExpression instanceof JetSimpleNameExpression;
-        JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) calleeExpression;
+        KtExpression calleeExpression = context.call.getCalleeExpression();
+        assert calleeExpression instanceof KtSimpleNameExpression;
+        KtSimpleNameExpression nameExpression = (KtSimpleNameExpression) calleeExpression;
         Name referencedName = nameExpression.getReferencedNameAsName();
         CallableDescriptorCollectors<VariableDescriptor> callableDescriptorCollectors;
-        if (nameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+        if (nameExpression.getReferencedNameElementType() == KtTokens.FIELD_IDENTIFIER) {
             referencedName = Name.identifier(referencedName.asString().substring(1));
             callableDescriptorCollectors = CallableDescriptorCollectors.PROPERTIES;
         }
@@ -156,7 +156,7 @@ public class CallResolver {
 
     @NotNull
     public OverloadResolutionResults<CallableDescriptor> resolveCallForMember(
-            @NotNull JetSimpleNameExpression nameExpression,
+            @NotNull KtSimpleNameExpression nameExpression,
             @NotNull BasicCallResolutionContext context
     ) {
         return computeTasksAndResolveCall(
@@ -168,7 +168,7 @@ public class CallResolver {
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(
             @NotNull ExpressionTypingContext context,
             @NotNull Call call,
-            @NotNull JetReferenceExpression functionReference,
+            @NotNull KtReferenceExpression functionReference,
             @NotNull Name name
     ) {
         BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
@@ -191,7 +191,7 @@ public class CallResolver {
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResults<F> computeTasksAndResolveCall(
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
-            @NotNull JetReferenceExpression referenceExpression,
+            @NotNull KtReferenceExpression referenceExpression,
             @NotNull CallableDescriptorCollectors<D> collectors,
             @NotNull CallTransformer<D, F> callTransformer
     ) {
@@ -219,7 +219,7 @@ public class CallResolver {
     @NotNull
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResults<F> computeTasksFromCandidatesAndResolvedCall(
             @NotNull BasicCallResolutionContext context,
-            @NotNull JetReferenceExpression referenceExpression,
+            @NotNull KtReferenceExpression referenceExpression,
             @NotNull Collection<ResolutionCandidate<D>> candidates,
             @NotNull CallTransformer<D, F> callTransformer
     ) {
@@ -248,7 +248,7 @@ public class CallResolver {
     public OverloadResolutionResults<FunctionDescriptor> resolveBinaryCall(
             ExpressionTypingContext context,
             ExpressionReceiver receiver,
-            JetBinaryExpression binaryExpression,
+            KtBinaryExpression binaryExpression,
             Name name
     ) {
         return resolveCallWithGivenName(
@@ -264,7 +264,7 @@ public class CallResolver {
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull Call call,
-            @NotNull JetType expectedType,
+            @NotNull KtType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             boolean isAnnotationContext
     ) {
@@ -283,27 +283,27 @@ public class CallResolver {
         Call.CallType callType = context.call.getCallType();
         if (callType == Call.CallType.ARRAY_GET_METHOD || callType == Call.CallType.ARRAY_SET_METHOD) {
             Name name = Name.identifier(callType == Call.CallType.ARRAY_GET_METHOD ? "get" : "set");
-            JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) context.call.getCallElement();
+            KtArrayAccessExpression arrayAccessExpression = (KtArrayAccessExpression) context.call.getCallElement();
             return computeTasksAndResolveCall(
                     context, name, arrayAccessExpression,
                     CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
         }
 
-        JetExpression calleeExpression = context.call.getCalleeExpression();
-        if (calleeExpression instanceof JetSimpleNameExpression) {
-            JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
+        KtExpression calleeExpression = context.call.getCalleeExpression();
+        if (calleeExpression instanceof KtSimpleNameExpression) {
+            KtSimpleNameExpression expression = (KtSimpleNameExpression) calleeExpression;
             return computeTasksAndResolveCall(
                     context, expression.getReferencedNameAsName(), expression,
                     CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
         }
-        else if (calleeExpression instanceof JetConstructorCalleeExpression) {
-            return resolveCallForConstructor(context, (JetConstructorCalleeExpression) calleeExpression);
+        else if (calleeExpression instanceof KtConstructorCalleeExpression) {
+            return resolveCallForConstructor(context, (KtConstructorCalleeExpression) calleeExpression);
         }
-        else if (calleeExpression instanceof JetConstructorDelegationReferenceExpression) {
-            JetConstructorDelegationCall delegationCall = (JetConstructorDelegationCall) context.call.getCallElement();
+        else if (calleeExpression instanceof KtConstructorDelegationReferenceExpression) {
+            KtConstructorDelegationCall delegationCall = (KtConstructorDelegationCall) context.call.getCallElement();
             DeclarationDescriptor container = context.scope.getOwnerDescriptor();
             assert container instanceof ConstructorDescriptor : "Trying to resolve JetConstructorDelegationCall not in constructor. scope.ownerDescriptor = " + container;
-            return resolveConstructorDelegationCall(context, delegationCall, (JetConstructorDelegationReferenceExpression) calleeExpression,
+            return resolveConstructorDelegationCall(context, delegationCall, (KtConstructorDelegationReferenceExpression) calleeExpression,
                                                     (ConstructorDescriptor) container);
         }
         else if (calleeExpression == null) {
@@ -311,16 +311,16 @@ public class CallResolver {
         }
 
         // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
-        JetType expectedType = NO_EXPECTED_TYPE;
-        if (calleeExpression instanceof JetFunctionLiteralExpression) {
-            int parameterNumber = ((JetFunctionLiteralExpression) calleeExpression).getValueParameters().size();
-            List<JetType> parameterTypes = new ArrayList<JetType>(parameterNumber);
+        KtType expectedType = NO_EXPECTED_TYPE;
+        if (calleeExpression instanceof KtFunctionLiteralExpression) {
+            int parameterNumber = ((KtFunctionLiteralExpression) calleeExpression).getValueParameters().size();
+            List<KtType> parameterTypes = new ArrayList<KtType>(parameterNumber);
             for (int i = 0; i < parameterNumber; i++) {
                 parameterTypes.add(NO_EXPECTED_TYPE);
             }
             expectedType = builtIns.getFunctionType(Annotations.Companion.getEMPTY(), null, parameterTypes, context.expectedType);
         }
-        JetType calleeType = expressionTypingServices.safeGetType(
+        KtType calleeType = expressionTypingServices.safeGetType(
                 context.scope, calleeExpression, expectedType, context.dataFlowInfo, context.trace);
         ExpressionReceiver expressionReceiver = new ExpressionReceiver(calleeExpression, calleeType);
 
@@ -331,19 +331,19 @@ public class CallResolver {
 
     private OverloadResolutionResults<FunctionDescriptor> resolveCallForConstructor(
             @NotNull BasicCallResolutionContext context,
-            @NotNull JetConstructorCalleeExpression expression
+            @NotNull KtConstructorCalleeExpression expression
     ) {
         assert !context.call.getExplicitReceiver().exists() :
                 "Constructor can't be invoked with explicit receiver: " + context.call.getCallElement().getText();
 
         context.trace.record(BindingContext.LEXICAL_SCOPE, context.call.getCallElement(), context.scope);
 
-        JetReferenceExpression functionReference = expression.getConstructorReferenceExpression();
-        JetTypeReference typeReference = expression.getTypeReference();
+        KtReferenceExpression functionReference = expression.getConstructorReferenceExpression();
+        KtTypeReference typeReference = expression.getTypeReference();
         if (functionReference == null || typeReference == null) {
             return checkArgumentTypesAndFail(context); // No type there
         }
-        JetType constructedType = typeResolver.resolveType(context.scope, typeReference, context.trace, true);
+        KtType constructedType = typeResolver.resolveType(context.scope, typeReference, context.trace, true);
         if (constructedType.isError()) {
             return checkArgumentTypesAndFail(context);
         }
@@ -369,7 +369,7 @@ public class CallResolver {
     public OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
             @NotNull BindingTrace trace, @NotNull LexicalScope scope, @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ConstructorDescriptor constructorDescriptor,
-            @NotNull JetConstructorDelegationCall call, @NotNull CallChecker callChecker
+            @NotNull KtConstructorDelegationCall call, @NotNull CallChecker callChecker
     ) {
         // Method returns `null` when there is nothing to resolve in trivial cases like `null` call expression or
         // when super call should be conventional enum constructor and super call should be empty
@@ -398,8 +398,8 @@ public class CallResolver {
     @NotNull
     private OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
             @NotNull BasicCallResolutionContext context,
-            @NotNull JetConstructorDelegationCall call,
-            @NotNull JetConstructorDelegationReferenceExpression calleeExpression,
+            @NotNull KtConstructorDelegationCall call,
+            @NotNull KtConstructorDelegationReferenceExpression calleeExpression,
             @NotNull ConstructorDescriptor calleeConstructor
     ) {
         context.trace.record(BindingContext.LEXICAL_SCOPE, call, context.scope);
@@ -420,7 +420,7 @@ public class CallResolver {
             if (DescriptorUtils.canHaveDeclaredConstructors(currentClassDescriptor)) {
                 // Diagnostic is meaningless when reporting on interfaces and object
                 context.trace.report(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.on(
-                        (JetConstructorDelegationCall) calleeExpression.getParent()
+                        (KtConstructorDelegationCall) calleeExpression.getParent()
                 ));
             }
             if (call.isImplicit()) return OverloadResolutionResultsImpl.nameNotFound();
@@ -436,9 +436,9 @@ public class CallResolver {
                                                     ((ClassDescriptor) delegateClassDescriptor.getContainingDeclaration()).
                                                             getThisAsReceiverParameter().getValue();
 
-        JetType expectedType = isThisCall ?
-                               calleeConstructor.getContainingDeclaration().getDefaultType() :
-                               DescriptorUtils.getSuperClassType(currentClassDescriptor);
+        KtType expectedType = isThisCall ?
+                              calleeConstructor.getContainingDeclaration().getDefaultType() :
+                              DescriptorUtils.getSuperClassType(currentClassDescriptor);
 
         TypeSubstitutor knownTypeParametersSubstitutor = TypeSubstitutor.create(expectedType);
         for (CallableDescriptor descriptor : constructors) {
@@ -559,13 +559,13 @@ public class CallResolver {
             argumentTypeResolver.analyzeArgumentsAndRecordTypes(context);
         }
 
-        List<JetTypeProjection> typeArguments = context.call.getTypeArguments();
-        for (JetTypeProjection projection : typeArguments) {
-            if (projection.getProjectionKind() != JetProjectionKind.NONE) {
+        List<KtTypeProjection> typeArguments = context.call.getTypeArguments();
+        for (KtTypeProjection projection : typeArguments) {
+            if (projection.getProjectionKind() != KtProjectionKind.NONE) {
                 context.trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
                 ModifierCheckerCore.INSTANCE.check(projection, context.trace, null);
             }
-            JetType type = argumentTypeResolver.resolveTypeRefWithDefault(
+            KtType type = argumentTypeResolver.resolveTypeRefWithDefault(
                     projection.getTypeReference(), context.scope, context.trace,
                     null);
             if (type != null) {

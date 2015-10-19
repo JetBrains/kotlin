@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.types.Flexibility
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeCapability
 
 public interface CustomFlexibleRendering : TypeCapability {
-    public fun renderInflexible(type: JetType, renderer: DescriptorRenderer): String?
+    public fun renderInflexible(type: KtType, renderer: DescriptorRenderer): String?
     public fun renderBounds(flexibility: Flexibility, renderer: DescriptorRenderer): Pair<String, String>?
 }

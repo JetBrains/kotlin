@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.TargetPlatformKt;
@@ -62,7 +62,7 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
     @Override
     protected void analyzeModuleContents(
             @NotNull ModuleContext moduleContext,
-            @NotNull List<JetFile> jetFiles,
+            @NotNull List<KtFile> jetFiles,
             @NotNull BindingTrace moduleTrace
     ) {
         TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, moduleContext, config);

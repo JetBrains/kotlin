@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
@@ -33,7 +33,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     private final boolean declaresDefaultValue;
     private final boolean isCrossinline;
     private final boolean isNoinline;
-    private final JetType varargElementType;
+    private final KtType varargElementType;
     private final int index;
     private final ValueParameterDescriptor original;
 
@@ -43,11 +43,11 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             int index,
             @NotNull Annotations annotations,
             @NotNull Name name,
-            @NotNull JetType outType,
+            @NotNull KtType outType,
             boolean declaresDefaultValue,
             boolean isCrossinline,
             boolean isNoinline,
-            @Nullable JetType varargElementType,
+            @Nullable KtType varargElementType,
             @NotNull SourceElement source
     ) {
         super(containingDeclaration, annotations, name, outType, source);
@@ -87,7 +87,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     @Nullable
     @Override
-    public JetType getVarargElementType() {
+    public KtType getVarargElementType() {
         return varargElementType;
     }
 

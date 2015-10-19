@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetImportDirective;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtImportDirective;
 
 import java.util.Collection;
 
@@ -34,10 +34,10 @@ public class PlatformTypesMappedToKotlinChecker {
     public static void checkPlatformTypesMappedToKotlin(
             @NotNull ModuleDescriptor module,
             @NotNull BindingTrace trace,
-            @NotNull JetImportDirective importDirective,
+            @NotNull KtImportDirective importDirective,
             @NotNull Collection<? extends DeclarationDescriptor> descriptors
     ) {
-        JetExpression importedReference = importDirective.getImportedReference();
+        KtExpression importedReference = importDirective.getImportedReference();
         if (importedReference != null) {
             for (DeclarationDescriptor descriptor : descriptors) {
                 reportPlatformClassMappedToKotlin(module, trace, importedReference, descriptor);
@@ -48,7 +48,7 @@ public class PlatformTypesMappedToKotlinChecker {
     public static void reportPlatformClassMappedToKotlin(
             @NotNull ModuleDescriptor module,
             @NotNull BindingTrace trace,
-            @NotNull JetElement element,
+            @NotNull KtElement element,
             @NotNull DeclarationDescriptor descriptor
     ) {
         if (!(descriptor instanceof ClassDescriptor)) return;

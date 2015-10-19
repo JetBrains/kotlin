@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
-import org.jetbrains.kotlin.psi.JetThrowExpression
+import org.jetbrains.kotlin.psi.KtThrowExpression
 import org.jetbrains.kotlin.cfg.Label
 import java.util.Collections
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
 public class ThrowExceptionInstruction(
-        expression: JetThrowExpression,
+        expression: KtThrowExpression,
         lexicalScope: LexicalScope,
         errorLabel: Label,
         public val thrownValue: PseudoValue
@@ -45,6 +45,6 @@ public class ThrowExceptionInstruction(
     }
 
     override fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction {
-        return ThrowExceptionInstruction((element as JetThrowExpression), lexicalScope, newLabel, thrownValue)
+        return ThrowExceptionInstruction((element as KtThrowExpression), lexicalScope, newLabel, thrownValue)
     }
 }

@@ -20,30 +20,30 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 public fun PsiElement.canDeleteElement(): Boolean {
-    if (this is JetObjectDeclaration && isObjectLiteral()) return false
+    if (this is KtObjectDeclaration && isObjectLiteral()) return false
 
-    if (this is JetParameter) {
-        val parameterList = getParent() as? JetParameterList ?: return false
-        val declaration = parameterList.getParent() as? JetDeclaration ?: return false
-        return declaration !is JetPropertyAccessor
+    if (this is KtParameter) {
+        val parameterList = getParent() as? KtParameterList ?: return false
+        val declaration = parameterList.getParent() as? KtDeclaration ?: return false
+        return declaration !is KtPropertyAccessor
     }
 
-    return this is JetClassOrObject
-        || this is JetSecondaryConstructor
-        || this is JetNamedFunction
+    return this is KtClassOrObject
+        || this is KtSecondaryConstructor
+        || this is KtNamedFunction
         || this is PsiMethod
-        || this is JetProperty
-        || this is JetTypeParameter
+        || this is KtProperty
+        || this is KtTypeParameter
 }
 
 fun PsiElement.removeOverrideModifier() {
     when (this) {
-        is JetNamedFunction, is JetProperty -> {
-            (this as JetModifierListOwner).getModifierList()?.getModifier(JetTokens.OVERRIDE_KEYWORD)?.delete()
+        is KtNamedFunction, is KtProperty -> {
+            (this as KtModifierListOwner).getModifierList()?.getModifier(KtTokens.OVERRIDE_KEYWORD)?.delete()
         }
         is PsiMethod -> {
             getModifierList().getAnnotations().firstOrNull {

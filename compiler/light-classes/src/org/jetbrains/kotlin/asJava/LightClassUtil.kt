@@ -56,7 +56,7 @@ public object LightClassUtil {
 
      * Used to skip JetLightClass creation for built-ins, because built-in classes have no Java counterparts
      */
-    public fun belongsToKotlinBuiltIns(file: JetFile): Boolean {
+    public fun belongsToKotlinBuiltIns(file: KtFile): Boolean {
         val virtualFile = file.virtualFile
         if (virtualFile != null) {
             val parent = virtualFile.parent
@@ -125,22 +125,22 @@ public object LightClassUtil {
         return null
     }/*package*/
 
-    public fun getPsiClass(classOrObject: JetClassOrObject?): PsiClass? {
+    public fun getPsiClass(classOrObject: KtClassOrObject?): PsiClass? {
         if (classOrObject == null) return null
         return LightClassGenerationSupport.getInstance(classOrObject.project).getPsiClass(classOrObject)
     }
 
-    public fun getLightClassAccessorMethod(accessor: JetPropertyAccessor): PsiMethod? =
+    public fun getLightClassAccessorMethod(accessor: KtPropertyAccessor): PsiMethod? =
             getLightClassAccessorMethods(accessor).firstOrNull()
 
-    public fun getLightClassAccessorMethods(accessor: JetPropertyAccessor): List<PsiMethod> {
-        val property = accessor.getNonStrictParentOfType<JetProperty>() ?: return emptyList()
+    public fun getLightClassAccessorMethods(accessor: KtPropertyAccessor): List<PsiMethod> {
+        val property = accessor.getNonStrictParentOfType<KtProperty>() ?: return emptyList()
         val wrappers = getPsiMethodWrappers(property, true)
         return wrappers.filter { wrapper -> (accessor.isGetter && !JvmAbi.isSetterName(wrapper.name)) ||
                                             (accessor.isSetter && JvmAbi.isSetterName(wrapper.name)) }
     }
 
-    public fun getLightFieldForCompanionObject(companionObject: JetClassOrObject): PsiField? {
+    public fun getLightFieldForCompanionObject(companionObject: KtClassOrObject): PsiField? {
         val outerPsiClass = getWrappingClass(companionObject, true)
         if (outerPsiClass != null) {
             for (fieldOfParent in outerPsiClass.fields) {
@@ -152,7 +152,7 @@ public object LightClassUtil {
         return null
     }
 
-    public fun getLightClassPropertyMethods(property: JetProperty): PropertyAccessorsPsiMethods {
+    public fun getLightClassPropertyMethods(property: KtProperty): PropertyAccessorsPsiMethods {
         val getter = property.getter
         val setter = property.setter
 
@@ -162,13 +162,13 @@ public object LightClassUtil {
         return extractPropertyAccessors(property, getterWrapper, setterWrapper)
     }
 
-    private fun getLightClassBackingField(declaration: JetDeclaration): PsiField? {
+    private fun getLightClassBackingField(declaration: KtDeclaration): PsiField? {
         var psiClass: PsiClass = getWrappingClass(declaration, true) ?: return null
 
         if (psiClass is KotlinLightClass) {
             val origin = psiClass.getOrigin()
-            if (origin is JetObjectDeclaration && origin.isCompanion()) {
-                val containingClass = PsiTreeUtil.getParentOfType(origin, JetClass::class.java)
+            if (origin is KtObjectDeclaration && origin.isCompanion()) {
+                val containingClass = PsiTreeUtil.getParentOfType(origin, KtClass::class.java)
                 if (containingClass != null) {
                     val containingLightClass = getPsiClass(containingClass)
                     if (containingLightClass != null) {
@@ -186,23 +186,23 @@ public object LightClassUtil {
         return null
     }
 
-    public fun getLightClassPropertyMethods(parameter: JetParameter): PropertyAccessorsPsiMethods {
+    public fun getLightClassPropertyMethods(parameter: KtParameter): PropertyAccessorsPsiMethods {
         return extractPropertyAccessors(parameter, null, null)
     }
 
-    public fun getLightClassMethod(function: JetFunction): PsiMethod? {
+    public fun getLightClassMethod(function: KtFunction): PsiMethod? {
         return getPsiMethodWrapper(function)
     }
 
-    public fun getLightClassMethods(function: JetFunction): List<PsiMethod> {
+    public fun getLightClassMethods(function: KtFunction): List<PsiMethod> {
         return getPsiMethodWrappers(function, true)
     }
 
-    private fun getPsiMethodWrapper(declaration: JetDeclaration): PsiMethod? {
+    private fun getPsiMethodWrapper(declaration: KtDeclaration): PsiMethod? {
         return getPsiMethodWrappers(declaration, false).firstOrNull()
     }
 
-    private fun getPsiMethodWrappers(declaration: JetDeclaration, collectAll: Boolean): List<PsiMethod> {
+    private fun getPsiMethodWrappers(declaration: KtDeclaration, collectAll: Boolean): List<PsiMethod> {
         val psiClasses = getWrappingClasses(declaration, collectAll)
 
         val methods = SmartList<PsiMethod>()
@@ -227,9 +227,9 @@ public object LightClassUtil {
         return methods
     }
 
-    private fun getWrappingClasses(declaration: JetDeclaration, collectAll: Boolean): Collection<PsiClass> {
+    private fun getWrappingClasses(declaration: KtDeclaration, collectAll: Boolean): Collection<PsiClass> {
         val wrappingClass = getWrappingClass(declaration, true)
-        val oldPackagePartWrappingClass = if (declaration.parent is JetFile && collectAll)
+        val oldPackagePartWrappingClass = if (declaration.parent is KtFile && collectAll)
             getWrappingClass(declaration, false)
         else
             null
@@ -237,23 +237,23 @@ public object LightClassUtil {
         return setOf(wrappingClass, oldPackagePartWrappingClass).filterNotNull()
     }
 
-    private fun getWrappingClass(declaration: JetDeclaration, useNewPackageParts: Boolean): PsiClass? {
+    private fun getWrappingClass(declaration: KtDeclaration, useNewPackageParts: Boolean): PsiClass? {
         var declaration = declaration
-        if (declaration is JetParameter) {
-            val constructorClass = JetPsiUtil.getClassIfParameterIsProperty(declaration)
+        if (declaration is KtParameter) {
+            val constructorClass = KtPsiUtil.getClassIfParameterIsProperty(declaration)
             if (constructorClass != null) {
                 return getPsiClass(constructorClass)
             }
         }
 
-        if (declaration is JetPropertyAccessor) {
+        if (declaration is KtPropertyAccessor) {
             val propertyParent = declaration.parent
-            assert(propertyParent is JetProperty) { "JetProperty is expected to be parent of accessor" }
+            assert(propertyParent is KtProperty) { "JetProperty is expected to be parent of accessor" }
 
-            declaration = propertyParent as JetProperty
+            declaration = propertyParent as KtProperty
         }
 
-        if (declaration is JetConstructor<*>) {
+        if (declaration is KtConstructor<*>) {
             return getPsiClass(declaration.getContainingClassOrObject())
         }
 
@@ -265,7 +265,7 @@ public object LightClassUtil {
 
         val parent = declaration.parent
 
-        if (parent is JetFile) {
+        if (parent is KtFile) {
             // top-level declaration
             val fqName = if (useNewPackageParts)
                 parent.javaFileFacadeFqName
@@ -275,27 +275,27 @@ public object LightClassUtil {
             val project = declaration.project
             return JavaElementFinder.getInstance(project).findClass(fqName.asString(), GlobalSearchScope.allScope(project))
         }
-        else if (parent is JetClassBody) {
-            assert(parent.parent is JetClassOrObject)
-            return getPsiClass(parent.parent as JetClassOrObject)
+        else if (parent is KtClassBody) {
+            assert(parent.parent is KtClassOrObject)
+            return getPsiClass(parent.parent as KtClassOrObject)
         }
 
         return null
     }
 
-    public fun canGenerateLightClass(declaration: JetDeclaration): Boolean {
+    public fun canGenerateLightClass(declaration: KtDeclaration): Boolean {
         //noinspection unchecked
-        return PsiTreeUtil.getParentOfType(declaration, JetFunction::class.java, JetProperty::class.java) == null
+        return PsiTreeUtil.getParentOfType(declaration, KtFunction::class.java, KtProperty::class.java) == null
     }
 
     private fun extractPropertyAccessors(
-            jetDeclaration: JetDeclaration,
+            ktDeclaration: KtDeclaration,
             specialGetter: PsiMethod?, specialSetter: PsiMethod?): PropertyAccessorsPsiMethods {
         var getterWrapper = specialGetter
         var setterWrapper = specialSetter
         val additionalAccessors = arrayListOf<PsiMethod>()
 
-        val wrappers = getPsiMethodWrappers(jetDeclaration, true).filter {
+        val wrappers = getPsiMethodWrappers(ktDeclaration, true).filter {
             JvmAbi.isGetterName(it.name) || JvmAbi.isSetterName(it.name)
         }
 
@@ -318,15 +318,15 @@ public object LightClassUtil {
             }
         }
 
-        val backingField = getLightClassBackingField(jetDeclaration)
+        val backingField = getLightClassBackingField(ktDeclaration)
         return PropertyAccessorsPsiMethods(getterWrapper, setterWrapper, backingField, additionalAccessors)
     }
 
     public fun buildLightTypeParameterList(
             owner: PsiTypeParameterListOwner,
-            declaration: JetDeclaration): PsiTypeParameterList {
+            declaration: KtDeclaration): PsiTypeParameterList {
         val builder = KotlinLightTypeParameterListBuilder(owner.manager)
-        if (declaration is JetTypeParameterListOwner) {
+        if (declaration is KtTypeParameterListOwner) {
             val parameters = declaration.typeParameters
             for (i in parameters.indices) {
                 val jetTypeParameter = parameters.get(i)

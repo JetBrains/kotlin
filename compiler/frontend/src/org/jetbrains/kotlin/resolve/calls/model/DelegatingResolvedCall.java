@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.List;
 import java.util.Map;
@@ -100,7 +100,7 @@ public abstract class DelegatingResolvedCall<D extends CallableDescriptor> imple
 
     @NotNull
     @Override
-    public Map<TypeParameterDescriptor, JetType> getTypeArguments() {
+    public Map<TypeParameterDescriptor, KtType> getTypeArguments() {
         return resolvedCall.getTypeArguments();
     }
 

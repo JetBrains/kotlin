@@ -22,24 +22,24 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 
 final class JetLtGtTypingUtils {
-    private static final TokenSet INVALID_INSIDE_REFERENCE = TokenSet.create(JetTokens.SEMICOLON, JetTokens.LBRACE, JetTokens.RBRACE);
+    private static final TokenSet INVALID_INSIDE_REFERENCE = TokenSet.create(KtTokens.SEMICOLON, KtTokens.LBRACE, KtTokens.RBRACE);
 
     private JetLtGtTypingUtils() {
     }
 
     static void handleJetAutoCloseLT(Editor editor) {
-        JavaTypedHandler.handleAfterJavaLT(editor, JetTokens.LT, JetTokens.GT, INVALID_INSIDE_REFERENCE);
+        JavaTypedHandler.handleAfterJavaLT(editor, KtTokens.LT, KtTokens.GT, INVALID_INSIDE_REFERENCE);
     }
 
     static boolean handleJetGTInsert(Editor editor) {
-        return JavaTypedHandler.handleJavaGT(editor, JetTokens.LT, JetTokens.GT, INVALID_INSIDE_REFERENCE);
+        return JavaTypedHandler.handleJavaGT(editor, KtTokens.LT, KtTokens.GT, INVALID_INSIDE_REFERENCE);
     }
 
     static void handleJetLTDeletion(Editor editor, int offset) {
-        JavaBackspaceHandler.handleLTDeletion(editor, offset, JetTokens.LT, JetTokens.GT, INVALID_INSIDE_REFERENCE);
+        JavaBackspaceHandler.handleLTDeletion(editor, offset, KtTokens.LT, KtTokens.GT, INVALID_INSIDE_REFERENCE);
     }
 
     static boolean shouldAutoCloseAngleBracket(int offset, Editor editor) {
@@ -56,7 +56,7 @@ final class JetLtGtTypingUtils {
             iterator.retreat();
         }
 
-        return JavaTypedHandler.isClassLikeIdentifier(offset, editor, iterator, JetTokens.IDENTIFIER);
+        return JavaTypedHandler.isClassLikeIdentifier(offset, editor, iterator, KtTokens.IDENTIFIER);
     }
 
     private static boolean isAfterFunKeyword(int offset, Editor editor) {
@@ -69,10 +69,10 @@ final class JetLtGtTypingUtils {
             iterator.retreat();
         }
 
-        if (iterator.getTokenType() == JetTokens.WHITE_SPACE && iterator.getStart() > 0) {
+        if (iterator.getTokenType() == KtTokens.WHITE_SPACE && iterator.getStart() > 0) {
             iterator.retreat();
         }
 
-        return iterator.getTokenType() == JetTokens.FUN_KEYWORD;
+        return iterator.getTokenType() == KtTokens.FUN_KEYWORD;
     }
 }

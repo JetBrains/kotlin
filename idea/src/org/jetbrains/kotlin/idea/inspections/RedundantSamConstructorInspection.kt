@@ -49,8 +49,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : JetVisitorVoid() {
-            private fun createQuickFix(expression: JetCallExpression): LocalQuickFix {
+        return object : KtVisitorVoid() {
+            private fun createQuickFix(expression: KtCallExpression): LocalQuickFix {
                 return object : LocalQuickFix {
                     override fun getName() = "Remove redundant SAM-constructor"
                     override fun getFamilyName() = name
@@ -60,7 +60,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
                 }
             }
 
-            private fun createQuickFix(expressions: List<JetCallExpression>): LocalQuickFix {
+            private fun createQuickFix(expressions: List<KtCallExpression>): LocalQuickFix {
                 return object : LocalQuickFix {
                     override fun getName() = "Remove redundant SAM-constructors"
                     override fun getFamilyName() = name
@@ -72,7 +72,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
                 }
             }
 
-            override fun visitCallExpression(expression: JetCallExpression) {
+            override fun visitCallExpression(expression: KtCallExpression) {
                 if (expression.valueArguments.isEmpty()) return
 
                 val samConstructorCalls = samConstructorCallsToBeConverted(expression)
@@ -104,13 +104,13 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
     }
 
     companion  object {
-        public fun replaceSamConstructorCall(callExpression: JetCallExpression): JetExpression {
+        public fun replaceSamConstructorCall(callExpression: KtCallExpression): KtExpression {
             val functionalArgument = callExpression.samConstructorValueArgument()?.getArgumentExpression()
                                      ?: throw AssertionError("SAM-constructor should have a FunctionLiteralExpression as single argument: ${callExpression.getElementTextWithContext()}")
-            return callExpression.replace(functionalArgument) as JetExpression
+            return callExpression.replace(functionalArgument) as KtExpression
         }
 
-        private fun canBeReplaced(parentCall: JetCallExpression, callExpressions: List<JetCallExpression>): Boolean {
+        private fun canBeReplaced(parentCall: KtCallExpression, callExpressions: List<KtCallExpression>): Boolean {
             val context = parentCall.analyze(BodyResolveMode.PARTIAL)
 
             val calleeExpression = parentCall.calleeExpression ?: return false
@@ -133,15 +133,15 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             return samAdapterOriginalDescriptor.original == originalCall.resultingDescriptor.original
         }
 
-        private class CallWithNewArguments(original: Call, val callExpressions: List<JetCallExpression>): DelegatingCall(original) {
+        private class CallWithNewArguments(original: Call, val callExpressions: List<KtCallExpression>): DelegatingCall(original) {
             private val newArguments: List<ValueArgument>
 
             init {
-                val factory = JetPsiFactory(callElement)
+                val factory = KtPsiFactory(callElement)
                 newArguments = original.valueArguments.map { argument ->
                     argument.getArgumentExpression()
                             ?.check { callExpressions.contains(it) }
-                            ?.let { factory.createArgument(replaceSamConstructorCall(it.copy() as JetCallExpression), argument.getArgumentName()?.asName) }
+                            ?.let { factory.createArgument(replaceSamConstructorCall(it.copy() as KtCallExpression), argument.getArgumentName()?.asName) }
                     ?: argument
                 }
             }
@@ -149,7 +149,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             override fun getValueArguments() = newArguments
         }
 
-        public fun samConstructorCallsToBeConverted(functionCall: JetCallExpression): List<JetCallExpression> {
+        public fun samConstructorCallsToBeConverted(functionCall: KtCallExpression): List<KtCallExpression> {
             if (functionCall.valueArguments.all { !canBeSamConstructorCall(it) }) {
                 return emptyList()
             }
@@ -159,7 +159,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             if (!functionResolvedCall.isReallySuccess()) return emptyList()
 
             val samConstructorCalls = functionCall.valueArguments.map {
-                (it.getArgumentExpression() as? JetCallExpression)
+                (it.getArgumentExpression() as? KtCallExpression)
                         ?.check { it.getResolvedCall(bindingContext)?.resultingDescriptor?.original is SamConstructorDescriptor }
             }.filterNotNull()
 
@@ -194,15 +194,15 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             return emptyList()
         }
 
-        private fun canBeSamConstructorCall(argument: JetValueArgument): Boolean {
+        private fun canBeSamConstructorCall(argument: KtValueArgument): Boolean {
             val argumentExpression = argument.getArgumentExpression()
-            if (argumentExpression !is JetCallExpression) return false
+            if (argumentExpression !is KtCallExpression) return false
 
             return argumentExpression.samConstructorValueArgument() != null
         }
 
-        private fun JetCallExpression.samConstructorValueArgument(): JetValueArgument? {
-            return valueArguments.singleOrNull()?.check { it.getArgumentExpression() is JetFunctionLiteralExpression }
+        private fun KtCallExpression.samConstructorValueArgument(): KtValueArgument? {
+            return valueArguments.singleOrNull()?.check { it.getArgumentExpression() is KtFunctionLiteralExpression }
         }
 
         private fun isSamAdapterSuitableForCall(

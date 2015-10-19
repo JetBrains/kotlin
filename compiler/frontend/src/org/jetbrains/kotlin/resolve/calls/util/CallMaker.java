@@ -34,15 +34,15 @@ public class CallMaker {
 
     private static class ExpressionValueArgument implements ValueArgument {
 
-        private final JetExpression expression;
+        private final KtExpression expression;
 
-        private final JetElement reportErrorsOn;
+        private final KtElement reportErrorsOn;
 
         private final boolean isExternal;
 
         private ExpressionValueArgument(
-                @Nullable JetExpression expression,
-                @NotNull JetElement reportErrorsOn,
+                @Nullable KtExpression expression,
+                @NotNull KtElement reportErrorsOn,
                 boolean isExternal
         ) {
             this.expression = expression;
@@ -56,7 +56,7 @@ public class CallMaker {
         }
 
         @Override
-        public JetExpression getArgumentExpression() {
+        public KtExpression getArgumentExpression() {
             return expression;
         }
 
@@ -72,7 +72,7 @@ public class CallMaker {
 
         @NotNull
         @Override
-        public JetElement asElement() {
+        public KtElement asElement() {
             return reportErrorsOn;
         }
 
@@ -101,19 +101,19 @@ public class CallMaker {
 
     private static class CallImpl implements Call {
 
-        private final JetElement callElement;
+        private final KtElement callElement;
         private final ReceiverValue explicitReceiver;
         private final ASTNode callOperationNode;
-        private final JetExpression calleeExpression;
+        private final KtExpression calleeExpression;
         private final List<? extends ValueArgument> valueArguments;
         private final Call.CallType callType;
 
-        protected CallImpl(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, @Nullable JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
+        protected CallImpl(@NotNull KtElement callElement, @NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, @Nullable KtExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
             this(callElement, explicitReceiver, callOperationNode, calleeExpression, valueArguments, CallType.DEFAULT);
         }
 
-        protected CallImpl(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode,
-                @Nullable JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments, @NotNull CallType callType) {
+        protected CallImpl(@NotNull KtElement callElement, @NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode,
+                @Nullable KtExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments, @NotNull CallType callType) {
             this.callElement = callElement;
             this.explicitReceiver = explicitReceiver;
             this.callOperationNode = callOperationNode;
@@ -140,7 +140,7 @@ public class CallMaker {
         }
 
         @Override
-        public JetExpression getCalleeExpression() {
+        public KtExpression getCalleeExpression() {
             return calleeExpression;
         }
 
@@ -152,12 +152,12 @@ public class CallMaker {
 
         @NotNull
         @Override
-        public JetElement getCallElement() {
+        public KtElement getCallElement() {
             return callElement;
         }
 
         @Override
-        public JetValueArgumentList getValueArgumentList() {
+        public KtValueArgumentList getValueArgumentList() {
             return null;
         }
 
@@ -168,12 +168,12 @@ public class CallMaker {
         }
         @NotNull
         @Override
-        public List<JetTypeProjection> getTypeArguments() {
+        public List<KtTypeProjection> getTypeArguments() {
             return Collections.emptyList();
         }
 
         @Override
-        public JetTypeArgumentList getTypeArgumentList() {
+        public KtTypeArgumentList getTypeArgumentList() {
             return null;
         }
 
@@ -190,80 +190,81 @@ public class CallMaker {
     }
 
     @NotNull
-    public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver,
-                                               @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression,
-                                               @NotNull List<JetExpression> argumentExpressions) {
+    public static Call makeCallWithExpressions(@NotNull KtElement callElement, @NotNull ReceiverValue explicitReceiver,
+                                               @Nullable ASTNode callOperationNode, @NotNull KtExpression calleeExpression,
+                                               @NotNull List<KtExpression> argumentExpressions) {
         return makeCallWithExpressions(callElement, explicitReceiver, callOperationNode, calleeExpression, argumentExpressions, CallType.DEFAULT);
     }
 
     @NotNull
-    public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver,
-                                               @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression,
-                                               @NotNull List<JetExpression> argumentExpressions, @NotNull CallType callType) {
+    public static Call makeCallWithExpressions(@NotNull KtElement callElement, @NotNull ReceiverValue explicitReceiver,
+                                               @Nullable ASTNode callOperationNode, @NotNull KtExpression calleeExpression,
+                                               @NotNull List<KtExpression> argumentExpressions, @NotNull CallType callType) {
         List<ValueArgument> arguments = new ArrayList<ValueArgument>(argumentExpressions.size());
-        for (JetExpression argumentExpression : argumentExpressions) {
+        for (KtExpression argumentExpression : argumentExpressions) {
             arguments.add(makeValueArgument(argumentExpression, calleeExpression));
         }
         return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
     }
 
     @NotNull
-    public static Call makeCall(JetElement callElement, ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, JetExpression calleeExpression, List<? extends ValueArgument> arguments) {
+    public static Call makeCall(KtElement callElement, ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, KtExpression calleeExpression, List<? extends ValueArgument> arguments) {
         return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, CallType.DEFAULT);
     }
 
     @NotNull
-    public static Call makeCall(JetElement callElement, ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode,
-            JetExpression calleeExpression, List<? extends ValueArgument> arguments, CallType callType) {
+    public static Call makeCall(
+            KtElement callElement, ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode,
+            KtExpression calleeExpression, List<? extends ValueArgument> arguments, CallType callType) {
         return new CallImpl(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
     }
 
     @NotNull
-    public static Call makeCall(@NotNull ReceiverValue leftAsReceiver, JetBinaryExpression expression) {
+    public static Call makeCall(@NotNull ReceiverValue leftAsReceiver, KtBinaryExpression expression) {
         return makeCallWithExpressions(expression, leftAsReceiver, null, expression.getOperationReference(), Collections.singletonList(expression.getRight()));
     }
 
     @NotNull
-    public static Call makeCall(@NotNull ReceiverValue baseAsReceiver, JetUnaryExpression expression) {
+    public static Call makeCall(@NotNull ReceiverValue baseAsReceiver, KtUnaryExpression expression) {
         return makeCall(expression, baseAsReceiver, null, expression.getOperationReference(), Collections.<ValueArgument>emptyList());
     }
 
     @NotNull
-    public static Call makeArraySetCall(@NotNull ReceiverValue arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression,
-            @NotNull JetExpression rightHandSide, @NotNull CallType callType) {
-        List<JetExpression> arguments = Lists.newArrayList(arrayAccessExpression.getIndexExpressions());
+    public static Call makeArraySetCall(@NotNull ReceiverValue arrayAsReceiver, @NotNull KtArrayAccessExpression arrayAccessExpression,
+            @NotNull KtExpression rightHandSide, @NotNull CallType callType) {
+        List<KtExpression> arguments = Lists.newArrayList(arrayAccessExpression.getIndexExpressions());
         arguments.add(rightHandSide);
         return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arguments, callType);
     }
 
     @NotNull
-    public static Call makeArrayGetCall(@NotNull ReceiverValue arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression,
+    public static Call makeArrayGetCall(@NotNull ReceiverValue arrayAsReceiver, @NotNull KtArrayAccessExpression arrayAccessExpression,
             @NotNull CallType callType) {
         return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arrayAccessExpression.getIndexExpressions(), callType);
     }
 
     @NotNull
-    public static ValueArgument makeValueArgument(@NotNull JetExpression expression) {
+    public static ValueArgument makeValueArgument(@NotNull KtExpression expression) {
         return makeValueArgument(expression, expression);
     }
 
     @NotNull
-    public static ValueArgument makeValueArgument(@Nullable JetExpression expression, @NotNull JetElement reportErrorsOn) {
+    public static ValueArgument makeValueArgument(@Nullable KtExpression expression, @NotNull KtElement reportErrorsOn) {
         return new ExpressionValueArgument(expression, reportErrorsOn, false);
     }
 
     @NotNull
-    public static ValueArgument makeExternalValueArgument(@NotNull JetExpression expression) {
+    public static ValueArgument makeExternalValueArgument(@NotNull KtExpression expression) {
         return new ExpressionValueArgument(expression, expression, true);
     }
 
     @NotNull
-    public static Call makePropertyCall(@NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
-        return makeCallWithExpressions(nameExpression, explicitReceiver, callOperationNode, nameExpression, Collections.<JetExpression>emptyList());
+    public static Call makePropertyCall(@NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull KtSimpleNameExpression nameExpression) {
+        return makeCallWithExpressions(nameExpression, explicitReceiver, callOperationNode, nameExpression, Collections.<KtExpression>emptyList());
     }
 
     @NotNull
-    public static Call makeCall(@NotNull final ReceiverValue explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final JetCallElement callElement) {
+    public static Call makeCall(@NotNull final ReceiverValue explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final KtCallElement callElement) {
         return new Call() {
             @Override
             public ASTNode getCallOperationNode() {
@@ -284,13 +285,13 @@ public class CallMaker {
 
             @Override
             @Nullable
-            public JetExpression getCalleeExpression() {
+            public KtExpression getCalleeExpression() {
                 return callElement.getCalleeExpression();
             }
 
             @Override
             @Nullable
-            public JetValueArgumentList getValueArgumentList() {
+            public KtValueArgumentList getValueArgumentList() {
                 return callElement.getValueArgumentList();
             }
 
@@ -308,19 +309,19 @@ public class CallMaker {
 
             @Override
             @NotNull
-            public List<JetTypeProjection> getTypeArguments() {
+            public List<KtTypeProjection> getTypeArguments() {
                 return callElement.getTypeArguments();
             }
 
             @Override
             @Nullable
-            public JetTypeArgumentList getTypeArgumentList() {
+            public KtTypeArgumentList getTypeArgumentList() {
                 return callElement.getTypeArgumentList();
             }
 
             @NotNull
             @Override
-            public JetElement getCallElement() {
+            public KtElement getCallElement() {
                 return callElement;
             }
 
@@ -338,7 +339,7 @@ public class CallMaker {
     }
 
     @NotNull
-    public static Call makeCall(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver) {
+    public static Call makeCall(@NotNull KtElement callElement, @NotNull ReceiverValue explicitReceiver) {
         return new CallImpl(callElement, explicitReceiver, null, null, Collections.<ValueArgument>emptyList());
     }
 }

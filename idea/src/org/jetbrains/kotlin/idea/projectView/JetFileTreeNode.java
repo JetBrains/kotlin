@@ -20,9 +20,9 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,23 +30,23 @@ import java.util.Collections;
 import java.util.List;
 
 public class JetFileTreeNode extends PsiFileNode {
-    public JetFileTreeNode(Project project, JetFile value, ViewSettings viewSettings) {
+    public JetFileTreeNode(Project project, KtFile value, ViewSettings viewSettings) {
         super(project, value, viewSettings);
     }
 
     @Override
     public Collection<AbstractTreeNode> getChildrenImpl() {
-        JetFile file = (JetFile) getValue();
+        KtFile file = (KtFile) getValue();
 
         if (file == null) return Collections.emptyList();
         ArrayList<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
 
         if (getSettings().isShowMembers()) {
-            List<JetDeclaration> declarations = file.getDeclarations();
+            List<KtDeclaration> declarations = file.getDeclarations();
 
-            for (JetDeclaration declaration : declarations) {
-                if (declaration instanceof JetClassOrObject) {
-                    result.add(new JetClassOrObjectTreeNode(file.getProject(), (JetClassOrObject) declaration, getSettings()));
+            for (KtDeclaration declaration : declarations) {
+                if (declaration instanceof KtClassOrObject) {
+                    result.add(new JetClassOrObjectTreeNode(file.getProject(), (KtClassOrObject) declaration, getSettings()));
                 }
                 else if (getSettings().isShowMembers()) {
                     result.add(new JetDeclarationTreeNode(getProject(), declaration, getSettings()));

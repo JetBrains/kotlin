@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.*;
 
-public class MoveWhenElseBranchFix extends KotlinQuickFixAction<JetWhenExpression> {
-    public MoveWhenElseBranchFix(@NotNull JetWhenExpression element) {
+public class MoveWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression> {
+    public MoveWhenElseBranchFix(@NotNull KtWhenExpression element) {
         super(element);
     }
 
@@ -51,14 +51,14 @@ public class MoveWhenElseBranchFix extends KotlinQuickFixAction<JetWhenExpressio
         if (!super.isAvailable(project, editor, file)) {
             return false;
         }
-        return JetPsiUtil.checkWhenExpressionHasSingleElse(getElement());
+        return KtPsiUtil.checkWhenExpressionHasSingleElse(getElement());
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetWhenEntry elseEntry = null;
-        JetWhenEntry lastEntry = null;
-        for (JetWhenEntry entry : getElement().getEntries()) {
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        KtWhenEntry elseEntry = null;
+        KtWhenEntry lastEntry = null;
+        for (KtWhenEntry entry : getElement().getEntries()) {
             if (entry.isElse()) {
                 elseEntry = entry;
             }
@@ -68,9 +68,9 @@ public class MoveWhenElseBranchFix extends KotlinQuickFixAction<JetWhenExpressio
         int cursorOffset = editor.getCaretModel().getOffset() - elseEntry.getTextOffset();
 
         PsiElement insertedBranch = getElement().addAfter(elseEntry, lastEntry);
-        getElement().addAfter(JetPsiFactoryKt.JetPsiFactory(file).createNewLine(), lastEntry);
+        getElement().addAfter(KtPsiFactoryKt.KtPsiFactory(file).createNewLine(), lastEntry);
         getElement().deleteChildRange(elseEntry, elseEntry);
-        JetWhenEntry insertedWhenEntry = (JetWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
+        KtWhenEntry insertedWhenEntry = (KtWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
 
         editor.getCaretModel().moveToOffset(insertedWhenEntry.getTextOffset() + cursorOffset);
     }
@@ -81,7 +81,7 @@ public class MoveWhenElseBranchFix extends KotlinQuickFixAction<JetWhenExpressio
             @Override
             public KotlinQuickFixAction createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
-                JetWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, JetWhenExpression.class, false);
+                KtWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, KtWhenExpression.class, false);
                 if (whenExpression == null) return null;
                 return new MoveWhenElseBranchFix(whenExpression);
             }

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.psi.KtParameter;
 
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 
@@ -31,7 +31,7 @@ public interface DefaultParameterValueLoader {
                 ValueParameterDescriptor descriptor,
                 ExpressionCodegen codegen
         ) {
-            JetParameter jetParameter = (JetParameter) descriptorToDeclaration(descriptor);
+            KtParameter jetParameter = (KtParameter) descriptorToDeclaration(descriptor);
             assert jetParameter != null;
             return codegen.gen(jetParameter.getDefaultValue());
         }

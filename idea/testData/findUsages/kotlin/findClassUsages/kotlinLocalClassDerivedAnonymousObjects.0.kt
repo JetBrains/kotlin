@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetClass
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.KtClass
 // OPTIONS: derivedClasses
 fun foo() {
     open class <caret>A

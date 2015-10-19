@@ -23,7 +23,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
-import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
@@ -65,15 +65,15 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
         UsefulTestCase.assertSameLines(expectedCode, actualCode)
     }
 
-    private fun collectInterestingReferences(): Collection<JetReference> {
+    private fun collectInterestingReferences(): Collection<KtReference> {
         val psiFile = getFile()
-        val referenceContainersToReferences = LinkedHashMap<PsiElement, JetReference>()
+        val referenceContainersToReferences = LinkedHashMap<PsiElement, KtReference>()
         for (offset in 0..psiFile.getTextLength() - 1) {
             val ref = psiFile.findReferenceAt(offset)
             val refs = when (ref) {
-                is JetReference -> listOf(ref)
-                is PsiMultiReference -> ref.getReferences().filterIsInstance<JetReference>()
-                else -> emptyList<JetReference>()
+                is KtReference -> listOf(ref)
+                is PsiMultiReference -> ref.getReferences().filterIsInstance<KtReference>()
+                else -> emptyList<KtReference>()
             }
 
             refs.forEach { referenceContainersToReferences.addReference(it) }
@@ -81,7 +81,7 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
         return referenceContainersToReferences.values()
     }
 
-    private fun MutableMap<PsiElement, JetReference>.addReference(ref: JetReference) {
+    private fun MutableMap<PsiElement, KtReference>.addReference(ref: KtReference) {
         if (containsKey(ref.getElement())) return
         val target = ref.resolve() ?: return
 

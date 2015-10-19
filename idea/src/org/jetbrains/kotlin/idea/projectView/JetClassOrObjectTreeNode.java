@@ -24,17 +24,17 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.idea.JetIconProvider;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetPsiUtil;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtPsiUtil;
 
 import java.util.Collection;
 
 import static org.jetbrains.kotlin.idea.projectView.JetProjectViewUtil.canRepresentPsiElement;
 import static org.jetbrains.kotlin.idea.projectView.JetProjectViewUtil.getClassOrObjectChildren;
 
-public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObject> {
-    protected JetClassOrObjectTreeNode(Project project, JetClassOrObject jetClassOrObject, ViewSettings viewSettings) {
-        super(project, jetClassOrObject, viewSettings);
+public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<KtClassOrObject> {
+    protected JetClassOrObjectTreeNode(Project project, KtClassOrObject ktClassOrObject, ViewSettings viewSettings) {
+        super(project, ktClassOrObject, viewSettings);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObj
 
     @Override
     protected void updateImpl(PresentationData data) {
-        JetClassOrObject classOrObject = getValue();
+        KtClassOrObject classOrObject = getValue();
         if (classOrObject != null) {
             data.setPresentableText(classOrObject.getName());
 
@@ -76,7 +76,7 @@ public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObj
 
     @Override
     protected boolean isDeprecated() {
-        return JetPsiUtil.isDeprecated(getValue());
+        return KtPsiUtil.isDeprecated(getValue());
     }
 
     @Override

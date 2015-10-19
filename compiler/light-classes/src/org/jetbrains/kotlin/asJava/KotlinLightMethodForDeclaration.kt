@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.*
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import kotlin.properties.Delegates
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValue
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import com.intellij.psi.search.SearchScope
 import com.intellij.lang.Language
 import com.intellij.psi.scope.PsiScopeProcessor
@@ -35,7 +35,7 @@ import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 open public class KotlinLightMethodForDeclaration(
         manager: PsiManager,
         private val delegate: PsiMethod,
-        private val origin: JetDeclaration,
+        private val origin: KtDeclaration,
         containingClass: PsiClass
 ): LightMethod(manager, delegate, containingClass), KotlinLightMethod {
 
@@ -55,7 +55,7 @@ open public class KotlinLightMethodForDeclaration(
     private val typeParamsList: CachedValue<PsiTypeParameterList> by lazy {
         val cacheManager = CachedValuesManager.getManager(delegate.getProject())
         cacheManager.createCachedValue<PsiTypeParameterList>({
-            val list = if (origin is JetClassOrObject) {
+            val list = if (origin is KtClassOrObject) {
                 KotlinLightTypeParameterListBuilder(getManager())
             }
             else {
@@ -70,7 +70,7 @@ open public class KotlinLightMethodForDeclaration(
 
     override fun getDelegate(): PsiMethod = delegate
 
-    override fun getOrigin(): JetDeclaration = origin
+    override fun getOrigin(): KtDeclaration = origin
 
     override fun getParent(): PsiElement? = getContainingClass()
 
@@ -108,7 +108,7 @@ open public class KotlinLightMethodForDeclaration(
     }
 
     override fun copy(): PsiElement {
-        return KotlinLightMethodForDeclaration(getManager()!!, delegate, origin.copy() as JetDeclaration, getContainingClass()!!)
+        return KotlinLightMethodForDeclaration(getManager()!!, delegate, origin.copy() as KtDeclaration, getContainingClass()!!)
     }
 
     override fun getUseScope(): SearchScope = origin.getUseScope()

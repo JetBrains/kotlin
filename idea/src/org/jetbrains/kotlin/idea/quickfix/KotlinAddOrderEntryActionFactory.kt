@@ -24,19 +24,19 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceBase
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public object KotlinAddOrderEntryActionFactory : JetIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
-        val simpleExpression = diagnostic.psiElement as? JetSimpleNameExpression ?: return emptyList()
+        val simpleExpression = diagnostic.psiElement as? KtSimpleNameExpression ?: return emptyList()
         val refElement = simpleExpression.getQualifiedElement()
 
-        val reference = object: PsiReferenceBase<JetElement>(refElement) {
+        val reference = object: PsiReferenceBase<KtElement>(refElement) {
             override fun resolve() = null
 
             override fun getVariants() = PsiReference.EMPTY_ARRAY

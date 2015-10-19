@@ -42,13 +42,13 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWi
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toInvocationWith
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
-import org.jetbrains.kotlin.psi.JetSecondaryConstructor
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances
 import org.jetbrains.kotlin.utils.identity
@@ -58,7 +58,7 @@ import java.util.*
  * Generates a definition of a single class.
  */
 public class ClassTranslator private constructor(
-        private val classDeclaration: JetClassOrObject,
+        private val classDeclaration: KtClassOrObject,
         context: TranslationContext
 ) : AbstractTranslator(context) {
 
@@ -190,7 +190,7 @@ public class ClassTranslator private constructor(
         for (type in supertypes) {
             supertypeConstructors.add(type.getConstructor())
         }
-        val sortedAllSuperTypes = topologicallySortSuperclassesAndRecordAllInstances(descriptor.getDefaultType(), HashMap<TypeConstructor, Set<JetType>>(), HashSet<TypeConstructor>())
+        val sortedAllSuperTypes = topologicallySortSuperclassesAndRecordAllInstances(descriptor.getDefaultType(), HashMap<TypeConstructor, Set<KtType>>(), HashSet<TypeConstructor>())
         val supertypesRefs = ArrayList<JsExpression>()
         for (typeConstructor in sortedAllSuperTypes) {
             if (supertypeConstructors.contains(typeConstructor)) {
@@ -269,7 +269,7 @@ public class ClassTranslator private constructor(
     }
 
     companion object {
-        public fun translate(classDeclaration: JetClass, context: TranslationContext): List<JsPropertyInitializer> {
+        public fun translate(classDeclaration: KtClass, context: TranslationContext): List<JsPropertyInitializer> {
             val result = arrayListOf<JsPropertyInitializer>()
 
             val classDescriptor = getClassDescriptor(context.bindingContext(), classDeclaration)
@@ -286,16 +286,16 @@ public class ClassTranslator private constructor(
         }
 
         @JvmStatic
-        public fun generateClassCreation(classDeclaration: JetClassOrObject, context: TranslationContext): JsInvocation {
+        public fun generateClassCreation(classDeclaration: KtClassOrObject, context: TranslationContext): JsInvocation {
             return ClassTranslator(classDeclaration, context).translate()
         }
 
         @JvmStatic
-        public fun generateObjectLiteral(objectDeclaration: JetObjectDeclaration, context: TranslationContext): JsExpression {
+        public fun generateObjectLiteral(objectDeclaration: KtObjectDeclaration, context: TranslationContext): JsExpression {
             return ClassTranslator(objectDeclaration, context).translateObjectLiteralExpression()
         }
 
-        private fun generateSecondaryConstructor(constructor: JetSecondaryConstructor, context: TranslationContext): JsPropertyInitializer {
+        private fun generateSecondaryConstructor(constructor: KtSecondaryConstructor, context: TranslationContext): JsPropertyInitializer {
             val constructorDescriptor = BindingUtils.getDescriptorForElement(context.bindingContext(), constructor) as ConstructorDescriptor
             val classDescriptor = constructorDescriptor.getContainingDeclaration()
 

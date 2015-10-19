@@ -20,14 +20,14 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
-public class MigrateBackingFieldSyntaxFix(expr: JetNameReferenceExpression)
-    : KotlinQuickFixAction<JetNameReferenceExpression>(expr), CleanupFix {
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        val replacement = JetPsiFactory(project).createExpression("field")
+public class MigrateBackingFieldSyntaxFix(expr: KtNameReferenceExpression)
+    : KotlinQuickFixAction<KtNameReferenceExpression>(expr), CleanupFix {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val replacement = KtPsiFactory(project).createExpression("field")
         element.replace(replacement)
     }
 
@@ -36,16 +36,16 @@ public class MigrateBackingFieldSyntaxFix(expr: JetNameReferenceExpression)
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val element = diagnostic.psiElement as? JetNameReferenceExpression ?: return null
+            val element = diagnostic.psiElement as? KtNameReferenceExpression ?: return null
             return MigrateBackingFieldSyntaxFix(element)
         }
     }
 }
 
-public class MigrateBackingFieldUsageFix(expr: JetNameReferenceExpression)
-    : KotlinQuickFixAction<JetNameReferenceExpression>(expr) {
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        val replacement = JetPsiFactory(project).createExpression(element.text.substring(1))
+public class MigrateBackingFieldUsageFix(expr: KtNameReferenceExpression)
+    : KotlinQuickFixAction<KtNameReferenceExpression>(expr) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val replacement = KtPsiFactory(project).createExpression(element.text.substring(1))
         element.replace(replacement)
     }
 
@@ -54,7 +54,7 @@ public class MigrateBackingFieldUsageFix(expr: JetNameReferenceExpression)
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val element = diagnostic.psiElement as? JetNameReferenceExpression ?: return null
+            val element = diagnostic.psiElement as? KtNameReferenceExpression ?: return null
             if (element.text.length() > 1) {
                 return MigrateBackingFieldUsageFix(element)
             }

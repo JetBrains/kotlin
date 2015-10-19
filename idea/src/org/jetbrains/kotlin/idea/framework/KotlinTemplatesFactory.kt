@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.framework
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.platform.ProjectTemplatesFactory
 import com.intellij.platform.templates.BuilderBasedTemplate
-import org.jetbrains.kotlin.idea.JetIcons
+import org.jetbrains.kotlin.idea.KtIcons
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
@@ -29,7 +29,7 @@ public class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     }
 
     override fun getGroups() = arrayOf(KOTLIN_GROUP_NAME)
-    override fun getGroupIcon(group: String) = JetIcons.SMALL_LOGO
+    override fun getGroupIcon(group: String) = KtIcons.SMALL_LOGO
 
     override fun createTemplates(group: String?, context: WizardContext?) =
             arrayOf(

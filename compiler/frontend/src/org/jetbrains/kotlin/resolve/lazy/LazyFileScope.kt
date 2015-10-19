@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.FileScope
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.utils.Printer
 
 class LazyFileScope(
-        scopeChain: List<JetScope>,
+        scopeChain: List<KtScope>,
         private val aliasImportResolver: LazyImportResolver,
         private val allUnderImportResolver: LazyImportResolver,
         containingDeclaration: PackageFragmentDescriptor,
@@ -51,7 +51,7 @@ class LazyFileScope(
         allUnderImportResolver.forceResolveAllContents()
     }
 
-    public fun forceResolveImport(importDirective: JetImportDirective) {
+    public fun forceResolveImport(importDirective: KtImportDirective) {
         if (importDirective.isAllUnder()) {
             allUnderImportResolver.forceResolveImportDirective(importDirective)
         }

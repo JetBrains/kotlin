@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 
@@ -33,15 +33,15 @@ import java.util.*;
 import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 
 public final class PackageDeclarationTranslator extends AbstractTranslator {
-    private final Iterable<JetFile> files;
+    private final Iterable<KtFile> files;
     private final Map<PackageFragmentDescriptor, PackageTranslator> packageFragmentToTranslator =
             new LinkedHashMap<PackageFragmentDescriptor, PackageTranslator>();
 
-    public static List<JsStatement> translateFiles(@NotNull Collection<JetFile> files, @NotNull TranslationContext context) {
+    public static List<JsStatement> translateFiles(@NotNull Collection<KtFile> files, @NotNull TranslationContext context) {
         return new PackageDeclarationTranslator(files, context).translate();
     }
 
-    private PackageDeclarationTranslator(@NotNull Iterable<JetFile> files, @NotNull TranslationContext context) {
+    private PackageDeclarationTranslator(@NotNull Iterable<KtFile> files, @NotNull TranslationContext context) {
         super(context);
 
         this.files = files;
@@ -52,7 +52,7 @@ public final class PackageDeclarationTranslator extends AbstractTranslator {
         // predictable order
         Map<FqName, DefineInvocation> packageFqNameToDefineInvocation = new THashMap<FqName, DefineInvocation>();
 
-        for (JetFile file : files) {
+        for (KtFile file : files) {
             PackageFragmentDescriptor packageFragment =
                     BindingContextUtils.getNotNull(context().bindingContext(), BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
 

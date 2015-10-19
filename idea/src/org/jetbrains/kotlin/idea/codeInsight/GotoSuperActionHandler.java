@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collection;
 import java.util.List;
@@ -53,12 +53,12 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
 
         PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
         if (element == null) return;
-        @SuppressWarnings("unchecked") JetDeclaration declaration =
+        @SuppressWarnings("unchecked") KtDeclaration declaration =
                 PsiTreeUtil.getParentOfType(element,
-                                            JetNamedFunction.class,
-                                            JetClass.class,
-                                            JetProperty.class,
-                                            JetObjectDeclaration.class);
+                                            KtNamedFunction.class,
+                                            KtClass.class,
+                                            KtProperty.class,
+                                            KtObjectDeclaration.class);
         if (declaration == null) return;
 
         DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(declaration);
@@ -103,10 +103,10 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
     private static List<PsiElement> findSuperDeclarations(DeclarationDescriptor descriptor) {
         Collection<? extends DeclarationDescriptor> superDescriptors;
         if (descriptor instanceof ClassDescriptor) {
-            Collection<JetType> supertypes = ((ClassDescriptor) descriptor).getTypeConstructor().getSupertypes();
-            List<ClassDescriptor> superclasses = ContainerUtil.mapNotNull(supertypes, new Function<JetType, ClassDescriptor>() {
+            Collection<KtType> supertypes = ((ClassDescriptor) descriptor).getTypeConstructor().getSupertypes();
+            List<ClassDescriptor> superclasses = ContainerUtil.mapNotNull(supertypes, new Function<KtType, ClassDescriptor>() {
                 @Override
-                public ClassDescriptor fun(JetType type) {
+                public ClassDescriptor fun(KtType type) {
                     ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
                     if (descriptor instanceof ClassDescriptor) {
                         return (ClassDescriptor) descriptor;

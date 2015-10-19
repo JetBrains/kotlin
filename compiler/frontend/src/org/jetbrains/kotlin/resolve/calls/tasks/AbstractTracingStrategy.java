@@ -21,8 +21,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.lexer.JetToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
@@ -50,10 +50,10 @@ import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Co
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 
 public abstract class AbstractTracingStrategy implements TracingStrategy {
-    protected final JetExpression reference;
+    protected final KtExpression reference;
     protected final Call call;
 
-    protected AbstractTracingStrategy(@NotNull JetExpression reference, @NotNull Call call) {
+    protected AbstractTracingStrategy(@NotNull KtExpression reference, @NotNull Call call) {
         this.reference = reference;
         this.call = call;
     }
@@ -69,7 +69,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
     @Override
     public void noValueForParameter(@NotNull BindingTrace trace, @NotNull ValueParameterDescriptor valueParameter) {
-        JetElement reportOn = CallUtilKt.getValueArgumentListOrElement(call);
+        KtElement reportOn = CallUtilKt.getValueArgumentListOrElement(call);
         trace.report(NO_VALUE_FOR_PARAMETER.on(reportOn, valueParameter));
     }
 
@@ -96,7 +96,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
     @Override
     public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount) {
-        JetTypeArgumentList typeArgumentList = call.getTypeArgumentList();
+        KtTypeArgumentList typeArgumentList = call.getTypeArgumentList();
         if (typeArgumentList != null) {
             trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(typeArgumentList, expectedTypeArgumentCount));
         }
@@ -144,7 +144,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             if (DescriptorUtils.getFqName(importableDescriptor).isSafe()) {
                 FqName fqName = getFqNameFromTopLevelClass(importableDescriptor);
                 String qualifiedName;
-                if (reference.getParent() instanceof JetCallableReferenceExpression) {
+                if (reference.getParent() instanceof KtCallableReferenceExpression) {
                     qualifiedName = fqName.parent() + "::" + classDescriptor.getName();
                 }
                 else {
@@ -158,23 +158,23 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke) {
+    public void unsafeCall(@NotNull BindingTrace trace, @NotNull KtType type, boolean isCallForImplicitInvoke) {
         ASTNode callOperationNode = call.getCallOperationNode();
         if (callOperationNode != null && !isCallForImplicitInvoke) {
             trace.report(UNSAFE_CALL.on(callOperationNode.getPsi(), type));
         }
         else {
             PsiElement callElement = call.getCallElement();
-            if (callElement instanceof JetBinaryExpression) {
-                JetBinaryExpression binaryExpression = (JetBinaryExpression)callElement;
-                JetSimpleNameExpression operationReference = binaryExpression.getOperationReference();
+            if (callElement instanceof KtBinaryExpression) {
+                KtBinaryExpression binaryExpression = (KtBinaryExpression)callElement;
+                KtSimpleNameExpression operationReference = binaryExpression.getOperationReference();
 
-                Name operationString = operationReference.getReferencedNameElementType() == JetTokens.IDENTIFIER ?
+                Name operationString = operationReference.getReferencedNameElementType() == KtTokens.IDENTIFIER ?
                                        Name.identifier(operationReference.getText()) :
-                                       OperatorConventions.getNameForOperationSymbol((JetToken) operationReference.getReferencedNameElementType());
+                                       OperatorConventions.getNameForOperationSymbol((KtToken) operationReference.getReferencedNameElementType());
 
-                JetExpression left = binaryExpression.getLeft();
-                JetExpression right = binaryExpression.getRight();
+                KtExpression left = binaryExpression.getLeft();
+                KtExpression right = binaryExpression.getRight();
                 if (left != null && right != null) {
                     trace.report(UNSAFE_INFIX_CALL.on(reference, left.getText(), operationString.asString(), right.getText()));
                 }
@@ -186,11 +186,11 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {
+    public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull KtType type) {
         ASTNode callOperationNode = call.getCallOperationNode();
         assert callOperationNode != null;
         ReceiverValue explicitReceiver = call.getExplicitReceiver();
-        if (explicitReceiver instanceof ExpressionReceiver && ((ExpressionReceiver)explicitReceiver).getExpression() instanceof JetSuperExpression) {
+        if (explicitReceiver instanceof ExpressionReceiver && ((ExpressionReceiver)explicitReceiver).getExpression() instanceof KtSuperExpression) {
             trace.report(UNEXPECTED_SAFE_CALL.on(callOperationNode.getPsi()));
         }
         else {
@@ -215,12 +215,12 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             return;
         }
         if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) {
-            JetType declaredReturnType = data.descriptor.getReturnType();
+            KtType declaredReturnType = data.descriptor.getReturnType();
             if (declaredReturnType == null) return;
 
             ConstraintSystem systemWithoutExpectedTypeConstraint =
                     ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(EXPECTED_TYPE_POSITION);
-            JetType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
+            KtType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
                     declaredReturnType, Variance.OUT_VARIANCE);
             assert substitutedReturnType != null; //todo
 

@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetClass
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.KtClass
 // OPTIONS: derivedInterfaces
 interface <caret>X {
 

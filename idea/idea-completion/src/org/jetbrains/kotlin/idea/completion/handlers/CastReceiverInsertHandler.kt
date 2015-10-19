@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.psi.*
 
 object CastReceiverInsertHandler {
     fun postHandleInsert(context: InsertionContext, item: LookupElement) {
-        val expression = PsiTreeUtil.findElementOfClassAtOffset(context.getFile(), context.getStartOffset(), javaClass<JetSimpleNameExpression>(), false)
-        val qualifiedExpression = PsiTreeUtil.getParentOfType(expression, javaClass<JetQualifiedExpression>(), true)
+        val expression = PsiTreeUtil.findElementOfClassAtOffset(context.getFile(), context.getStartOffset(), javaClass<KtSimpleNameExpression>(), false)
+        val qualifiedExpression = PsiTreeUtil.getParentOfType(expression, javaClass<KtQualifiedExpression>(), true)
         if (qualifiedExpression != null) {
             val receiver = qualifiedExpression.getReceiverExpression()
 
@@ -39,17 +39,17 @@ object CastReceiverInsertHandler {
             val thisObj = if (descriptor.getExtensionReceiverParameter() != null) descriptor.getExtensionReceiverParameter() else descriptor.getDispatchReceiverParameter()
             val fqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(thisObj!!.getType().getConstructor().getDeclarationDescriptor()!!)
 
-            val parentCast = JetPsiFactory(project).createExpression("(expr as $fqName)") as JetParenthesizedExpression
-            val cast = parentCast.getExpression() as JetBinaryExpressionWithTypeRHS
+            val parentCast = KtPsiFactory(project).createExpression("(expr as $fqName)") as KtParenthesizedExpression
+            val cast = parentCast.getExpression() as KtBinaryExpressionWithTypeRHS
             cast.getLeft().replace(receiver)
 
             val psiDocumentManager = PsiDocumentManager.getInstance(project)
             psiDocumentManager.commitAllDocuments()
             psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.getDocument())
 
-            val expr = receiver.replace(parentCast) as JetParenthesizedExpression
+            val expr = receiver.replace(parentCast) as KtParenthesizedExpression
 
-            ShortenReferences.DEFAULT.process((expr.getExpression() as JetBinaryExpressionWithTypeRHS).getRight()!!)
+            ShortenReferences.DEFAULT.process((expr.getExpression() as KtBinaryExpressionWithTypeRHS).getRight()!!)
         }
     }
 }

@@ -30,40 +30,40 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
-    fun getDiagnosticsForPackage(file: JetFile): Diagnostics? {
+    fun getDiagnosticsForPackage(file: KtFile): Diagnostics? {
         val project = file.getProject()
         val cache = KotlinLightClassForFacade.PackageFacadeStubCache.getInstance(project)
         return cache[file.getPackageFqName(), moduleScope].getValue()?.extraDiagnostics
     }
 
-    fun getDiagnosticsForClass(jetClassOrObject: JetClassOrObject): Diagnostics {
-        return KotlinLightClassForExplicitDeclaration.getLightClassData(jetClassOrObject).extraDiagnostics
+    fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {
+        return KotlinLightClassForExplicitDeclaration.getLightClassData(ktClassOrObject).extraDiagnostics
     }
 
     fun doGetDiagnostics(): Diagnostics? {
         var parent = element.getParent()
-        if (element is JetPropertyAccessor) {
+        if (element is KtPropertyAccessor) {
             parent = parent?.getParent()
         }
-        if (element is JetParameter && element.hasValOrVar()) {
+        if (element is KtParameter && element.hasValOrVar()) {
             // property declared in constructor
-            val parentClass = (parent?.getParent()?.getParent() as? JetClass)
+            val parentClass = (parent?.getParent()?.getParent() as? KtClass)
             if (parentClass != null) {
                 return getDiagnosticsForClass(parentClass)
             }
         }
-        if (element is JetClassOrObject) {
+        if (element is KtClassOrObject) {
             return getDiagnosticsForClass(element)
         }
 
         when (parent) {
-            is JetFile -> {
+            is KtFile -> {
                 return getDiagnosticsForPackage(parent)
             }
-            is JetClassBody -> {
+            is KtClassBody -> {
                 val parentsParent = parent.getParent()
 
-                if (parentsParent is JetClassOrObject) {
+                if (parentsParent is KtClassOrObject) {
                     return getDiagnosticsForClass(parentsParent)
                 }
             }
@@ -83,7 +83,7 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
         val higherPriority = setOf<DiagnosticFactory<*>>(
                 CONFLICTING_OVERLOADS, REDECLARATION, NOTHING_TO_OVERRIDE, MANY_IMPL_MEMBER_NOT_IMPLEMENTED)
         return otherDiagnostics.forElement(psiElement).any { it.getFactory() in higherPriority }
-                || psiElement is JetPropertyAccessor && alreadyReported(psiElement.getParent()!!)
+                || psiElement is KtPropertyAccessor && alreadyReported(psiElement.getParent()!!)
     }
 
     override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {

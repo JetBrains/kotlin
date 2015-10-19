@@ -54,25 +54,25 @@ public class LazyTopDownAnalyzer(
 
         val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider)
 
-        val topLevelFqNames = HashMultimap.create<FqName, JetElement>()
+        val topLevelFqNames = HashMultimap.create<FqName, KtElement>()
 
-        val properties = ArrayList<JetProperty>()
-        val functions = ArrayList<JetNamedFunction>()
+        val properties = ArrayList<KtProperty>()
+        val functions = ArrayList<KtNamedFunction>()
 
         // fill in the context
         for (declaration in declarations) {
-            declaration.accept(object : JetVisitorVoid() {
-                private fun registerDeclarations(declarations: List<JetDeclaration>) {
+            declaration.accept(object : KtVisitorVoid() {
+                private fun registerDeclarations(declarations: List<KtDeclaration>) {
                     for (jetDeclaration in declarations) {
                         jetDeclaration.accept(this)
                     }
                 }
 
-                override fun visitDeclaration(dcl: JetDeclaration) {
+                override fun visitDeclaration(dcl: KtDeclaration) {
                     throw IllegalArgumentException("Unsupported declaration: " + dcl + " " + dcl.getText())
                 }
 
-                override fun visitJetFile(file: JetFile) {
+                override fun visitJetFile(file: KtFile) {
                     if (file.isScript()) {
                         val script = file.getScript() ?: throw AssertionError("getScript() is null for file: $file")
 
@@ -94,17 +94,17 @@ public class LazyTopDownAnalyzer(
                     }
                 }
 
-                override fun visitPackageDirective(directive: JetPackageDirective) {
+                override fun visitPackageDirective(directive: KtPackageDirective) {
                     directive.packageNames.forEach { identifierChecker.checkIdentifier(it.getIdentifier(), trace) }
                     qualifiedExpressionResolver.resolvePackageHeader(directive, moduleDescriptor, trace)
                 }
 
-                override fun visitImportDirective(importDirective: JetImportDirective) {
+                override fun visitImportDirective(importDirective: KtImportDirective) {
                     val fileScope = fileScopeProvider.getFileScope(importDirective.getContainingJetFile())
                     fileScope.forceResolveImport(importDirective)
                 }
 
-                override fun visitClassOrObject(classOrObject: JetClassOrObject) {
+                override fun visitClassOrObject(classOrObject: KtClassOrObject) {
                     val location = if (classOrObject.isTopLevel()) KotlinLookupLocation(classOrObject) else NoLookupLocation.WHEN_RESOLVE_DECLARATION
                     val descriptor = lazyDeclarationResolver.getClassDescriptor(classOrObject, location) as ClassDescriptorWithResolutionScopes
 
@@ -115,16 +115,16 @@ public class LazyTopDownAnalyzer(
                     checkClassOrObjectDeclarations(classOrObject, descriptor)
                 }
 
-                private fun checkClassOrObjectDeclarations(classOrObject: JetClassOrObject, classDescriptor: ClassDescriptor) {
+                private fun checkClassOrObjectDeclarations(classOrObject: KtClassOrObject, classDescriptor: ClassDescriptor) {
                     var companionObjectAlreadyFound = false
                     for (jetDeclaration in classOrObject.getDeclarations()) {
-                        if (jetDeclaration is JetObjectDeclaration && jetDeclaration.isCompanion()) {
+                        if (jetDeclaration is KtObjectDeclaration && jetDeclaration.isCompanion()) {
                             if (companionObjectAlreadyFound) {
                                 trace.report(MANY_COMPANION_OBJECTS.on(jetDeclaration))
                             }
                             companionObjectAlreadyFound = true
                         }
-                        else if (jetDeclaration is JetSecondaryConstructor) {
+                        else if (jetDeclaration is KtSecondaryConstructor) {
                             if (DescriptorUtils.isSingletonOrAnonymousObject(classDescriptor)) {
                                 trace.report(CONSTRUCTOR_IN_OBJECT.on(jetDeclaration))
                             }
@@ -135,12 +135,12 @@ public class LazyTopDownAnalyzer(
                     }
                 }
 
-                override fun visitClass(klass: JetClass) {
+                override fun visitClass(klass: KtClass) {
                     visitClassOrObject(klass)
                     registerPrimaryConstructorParameters(klass)
                 }
 
-                private fun registerPrimaryConstructorParameters(klass: JetClass) {
+                private fun registerPrimaryConstructorParameters(klass: KtClass) {
                     for (jetParameter in klass.getPrimaryConstructorParameters()) {
                         if (jetParameter.hasValOrVar()) {
                             c.getPrimaryConstructorParameterProperties().put(jetParameter, lazyDeclarationResolver.resolveToDescriptor(jetParameter) as PropertyDescriptor)
@@ -148,36 +148,36 @@ public class LazyTopDownAnalyzer(
                     }
                 }
 
-                override fun visitSecondaryConstructor(constructor: JetSecondaryConstructor) {
+                override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
                     c.getSecondaryConstructors().put(constructor, lazyDeclarationResolver.resolveToDescriptor(constructor) as ConstructorDescriptor)
                 }
 
-                override fun visitEnumEntry(enumEntry: JetEnumEntry) {
+                override fun visitEnumEntry(enumEntry: KtEnumEntry) {
                     visitClassOrObject(enumEntry)
                 }
 
-                override fun visitObjectDeclaration(declaration: JetObjectDeclaration) {
+                override fun visitObjectDeclaration(declaration: KtObjectDeclaration) {
                     visitClassOrObject(declaration)
                 }
 
-                override fun visitAnonymousInitializer(initializer: JetClassInitializer) {
-                    val classOrObject = PsiTreeUtil.getParentOfType<JetClassOrObject>(initializer, javaClass<JetClassOrObject>())!!
+                override fun visitAnonymousInitializer(initializer: KtClassInitializer) {
+                    val classOrObject = PsiTreeUtil.getParentOfType<KtClassOrObject>(initializer, javaClass<KtClassOrObject>())!!
                     c.getAnonymousInitializers().put(initializer, lazyDeclarationResolver.resolveToDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes)
                 }
 
-                override fun visitTypedef(typedef: JetTypedef) {
+                override fun visitTypedef(typedef: KtTypedef) {
                     trace.report(UNSUPPORTED.on(typedef, "Typedefs are not supported"))
                 }
 
-                override fun visitMultiDeclaration(multiDeclaration: JetMultiDeclaration) {
+                override fun visitMultiDeclaration(multiDeclaration: KtMultiDeclaration) {
                     // Ignore: multi-declarations are only allowed locally
                 }
 
-                override fun visitNamedFunction(function: JetNamedFunction) {
+                override fun visitNamedFunction(function: KtNamedFunction) {
                     functions.add(function)
                 }
 
-                override fun visitProperty(property: JetProperty) {
+                override fun visitProperty(property: KtProperty) {
                     properties.add(property)
                 }
             })
@@ -211,7 +211,7 @@ public class LazyTopDownAnalyzer(
         }
     }
 
-    private fun createPropertyDescriptors(c: TopDownAnalysisContext, topLevelFqNames: Multimap<FqName, JetElement>, properties: List<JetProperty>) {
+    private fun createPropertyDescriptors(c: TopDownAnalysisContext, topLevelFqNames: Multimap<FqName, KtElement>, properties: List<KtProperty>) {
         for (property in properties) {
             val descriptor = lazyDeclarationResolver.resolveToDescriptor(property) as PropertyDescriptor
 
@@ -221,7 +221,7 @@ public class LazyTopDownAnalyzer(
         }
     }
 
-    private fun createFunctionDescriptors(c: TopDownAnalysisContext, functions: List<JetNamedFunction>) {
+    private fun createFunctionDescriptors(c: TopDownAnalysisContext, functions: List<KtNamedFunction>) {
         for (function in functions) {
             val simpleFunctionDescriptor = lazyDeclarationResolver.resolveToDescriptor(function) as SimpleFunctionDescriptor
             c.getFunctions().put(function, simpleFunctionDescriptor)
@@ -232,7 +232,7 @@ public class LazyTopDownAnalyzer(
         }
     }
 
-    private fun registerTopLevelFqName(topLevelFqNames: Multimap<FqName, JetElement>, declaration: JetNamedDeclaration, descriptor: DeclarationDescriptor) {
+    private fun registerTopLevelFqName(topLevelFqNames: Multimap<FqName, KtElement>, declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor) {
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             val fqName = declaration.getFqName()
             if (fqName != null) {

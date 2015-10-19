@@ -21,15 +21,15 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with binary operator"), HighPriorityAction {
-    override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
+public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace call with binary operator"), HighPriorityAction {
+    override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         val operation = operation(element.calleeName) ?: return null
 
         val resolvedCall = element.toResolvedCall() ?: return null
@@ -44,12 +44,12 @@ public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeInten
         return element.callExpression!!.getCalleeExpression()!!.getTextRange()
     }
 
-    override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
         val operation = operation(element.calleeName)!!
         val argument = element.callExpression!!.getValueArguments().single().getArgumentExpression()!!
         val receiver = element.getReceiverExpression()
 
-        element.replace(JetPsiFactory(element).createExpressionByPattern("$0 $operation $1", receiver, argument))
+        element.replace(KtPsiFactory(element).createExpressionByPattern("$0 $operation $1", receiver, argument))
     }
 
     private fun operation(functionName: String?): String? {

@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getClassDescriptorIfAny
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.types.substitutions.getTypeSubstitution
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.LinkedHashMap
 
-class KotlinPullUpData(val sourceClass: JetClassOrObject,
+class KotlinPullUpData(val sourceClass: KtClassOrObject,
                        val targetClass: PsiNamedElement,
-                       val membersToMove: Collection<JetNamedDeclaration>) {
+                       val membersToMove: Collection<KtNamedDeclaration>) {
     val resolutionFacade = sourceClass.getResolutionFacade()
 
     val sourceClassContext = resolutionFacade.analyzeFullyAndGetResult(listOf(sourceClass)).bindingContext

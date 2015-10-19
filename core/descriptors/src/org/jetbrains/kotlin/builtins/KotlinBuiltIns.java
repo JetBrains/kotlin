@@ -32,11 +32,11 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.io.InputStream;
 import java.util.*;
@@ -61,9 +61,9 @@ public abstract class KotlinBuiltIns {
     private final BuiltinsPackageFragment builtinsPackageFragment;
     private final BuiltinsPackageFragment annotationPackageFragment;
 
-    private final Map<PrimitiveType, JetType> primitiveTypeToArrayJetType;
-    private final Map<JetType, JetType> primitiveJetTypeToJetArrayType;
-    private final Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
+    private final Map<PrimitiveType, KtType> primitiveTypeToArrayJetType;
+    private final Map<KtType, KtType> primitiveJetTypeToJetArrayType;
+    private final Map<KtType, KtType> jetArrayTypeToPrimitiveJetType;
 
     public static final FqNames FQ_NAMES = new FqNames();
 
@@ -91,9 +91,9 @@ public abstract class KotlinBuiltIns {
         builtinsPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
         annotationPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(ANNOTATION_PACKAGE_FQ_NAME));
 
-        primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-        primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
-        jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
+        primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, KtType>(PrimitiveType.class);
+        primitiveJetTypeToJetArrayType = new HashMap<KtType, KtType>();
+        jetArrayTypeToPrimitiveJetType = new HashMap<KtType, KtType>();
         for (PrimitiveType primitive : PrimitiveType.values()) {
             makePrimitive(primitive);
         }
@@ -105,8 +105,8 @@ public abstract class KotlinBuiltIns {
     }
 
     private void makePrimitive(@NotNull PrimitiveType primitiveType) {
-        JetType type = getBuiltInTypeByClassName(primitiveType.getTypeName().asString());
-        JetType arrayType = getBuiltInTypeByClassName(primitiveType.getArrayTypeName().asString());
+        KtType type = getBuiltInTypeByClassName(primitiveType.getTypeName().asString());
+        KtType arrayType = getBuiltInTypeByClassName(primitiveType.getArrayTypeName().asString());
 
         primitiveTypeToArrayJetType.put(primitiveType, arrayType);
         primitiveJetTypeToJetArrayType.put(type, arrayType);
@@ -202,12 +202,12 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public JetScope getBuiltInsPackageScope() {
+    public KtScope getBuiltInsPackageScope() {
         return builtinsPackageFragment.getMemberScope();
     }
 
     @NotNull
-    public JetScope getAnnotationPackageScope() {
+    public KtScope getAnnotationPackageScope() {
         return annotationPackageFragment.getMemberScope();
     }
 
@@ -540,100 +540,100 @@ public abstract class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    private JetType getBuiltInTypeByClassName(@NotNull String classSimpleName) {
+    private KtType getBuiltInTypeByClassName(@NotNull String classSimpleName) {
         return getBuiltInClassByName(classSimpleName).getDefaultType();
     }
 
     // Special
 
     @NotNull
-    public JetType getNothingType() {
+    public KtType getNothingType() {
         return getNothing().getDefaultType();
     }
 
     @NotNull
-    public JetType getNullableNothingType() {
+    public KtType getNullableNothingType() {
         return TypeUtils.makeNullable(getNothingType());
     }
 
     @NotNull
-    public JetType getAnyType() {
+    public KtType getAnyType() {
         return getAny().getDefaultType();
     }
 
     @NotNull
-    public JetType getNullableAnyType() {
+    public KtType getNullableAnyType() {
         return TypeUtils.makeNullable(getAnyType());
     }
 
     // Primitive
 
     @NotNull
-    public JetType getPrimitiveJetType(@NotNull PrimitiveType type) {
+    public KtType getPrimitiveJetType(@NotNull PrimitiveType type) {
         return getPrimitiveClassDescriptor(type).getDefaultType();
     }
 
     @NotNull
-    public JetType getByteType() {
+    public KtType getByteType() {
         return getPrimitiveJetType(BYTE);
     }
 
     @NotNull
-    public JetType getShortType() {
+    public KtType getShortType() {
         return getPrimitiveJetType(SHORT);
     }
 
     @NotNull
-    public JetType getIntType() {
+    public KtType getIntType() {
         return getPrimitiveJetType(INT);
     }
 
     @NotNull
-    public JetType getLongType() {
+    public KtType getLongType() {
         return getPrimitiveJetType(LONG);
     }
 
     @NotNull
-    public JetType getFloatType() {
+    public KtType getFloatType() {
         return getPrimitiveJetType(FLOAT);
     }
 
     @NotNull
-    public JetType getDoubleType() {
+    public KtType getDoubleType() {
         return getPrimitiveJetType(DOUBLE);
     }
 
     @NotNull
-    public JetType getCharType() {
+    public KtType getCharType() {
         return getPrimitiveJetType(CHAR);
     }
 
     @NotNull
-    public JetType getBooleanType() {
+    public KtType getBooleanType() {
         return getPrimitiveJetType(BOOLEAN);
     }
 
     // Recognized
 
     @NotNull
-    public JetType getUnitType() {
+    public KtType getUnitType() {
         return getUnit().getDefaultType();
     }
 
     @NotNull
-    public JetType getStringType() {
+    public KtType getStringType() {
         return getString().getDefaultType();
     }
 
     @NotNull
-    public JetType getArrayElementType(@NotNull JetType arrayType) {
+    public KtType getArrayElementType(@NotNull KtType arrayType) {
         if (isArray(arrayType)) {
             if (arrayType.getArguments().size() != 1) {
                 throw new IllegalStateException();
             }
             return arrayType.getArguments().get(0).getType();
         }
-        JetType primitiveType = jetArrayTypeToPrimitiveJetType.get(TypeUtils.makeNotNullable(arrayType));
+        KtType primitiveType = jetArrayTypeToPrimitiveJetType.get(TypeUtils.makeNotNullable(arrayType));
         if (primitiveType == null) {
             throw new IllegalStateException("not array: " + arrayType);
         }
@@ -641,7 +641,7 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public JetType getPrimitiveArrayJetType(@NotNull PrimitiveType primitiveType) {
+    public KtType getPrimitiveArrayJetType(@NotNull PrimitiveType primitiveType) {
         return primitiveTypeToArrayJetType.get(primitiveType);
     }
 
@@ -649,7 +649,7 @@ public abstract class KotlinBuiltIns {
      * @return {@code null} if not primitive
      */
     @Nullable
-    public JetType getPrimitiveArrayJetTypeByPrimitiveJetType(@NotNull JetType jetType) {
+    public KtType getPrimitiveArrayJetTypeByPrimitiveJetType(@NotNull KtType jetType) {
         return primitiveJetTypeToJetArrayType.get(jetType);
     }
 
@@ -668,9 +668,9 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {
+    public KtType getArrayType(@NotNull Variance projectionType, @NotNull KtType argument) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
-        return JetTypeImpl.create(
+        return KtTypeImpl.create(
                 Annotations.Companion.getEMPTY(),
                 getArray(),
                 false,
@@ -679,10 +679,10 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public JetType getEnumType(@NotNull JetType argument) {
+    public KtType getEnumType(@NotNull KtType argument) {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
-        return JetTypeImpl.create(
+        return KtTypeImpl.create(
                 Annotations.Companion.getEMPTY(),
                 getEnum(),
                 false,
@@ -691,7 +691,7 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public JetType getAnnotationType() {
+    public KtType getAnnotationType() {
         return getAnnotation().getDefaultType();
     }
 
@@ -701,16 +701,16 @@ public abstract class KotlinBuiltIns {
                                             Collections.<ValueParameterDescriptor, ConstantValue<?>>emptyMap(), SourceElement.NO_SOURCE);
     }
 
-    private static boolean isTypeAnnotatedWithExtension(@NotNull JetType type) {
+    private static boolean isTypeAnnotatedWithExtension(@NotNull KtType type) {
         return type.getAnnotations().findAnnotation(FQ_NAMES.extension) != null;
     }
 
     @NotNull
-    public JetType getFunctionType(
+    public KtType getFunctionType(
             @NotNull Annotations annotations,
-            @Nullable JetType receiverType,
-            @NotNull List<JetType> parameterTypes,
-            @NotNull JetType returnType
+            @Nullable KtType receiverType,
+            @NotNull List<KtType> parameterTypes,
+            @NotNull KtType returnType
     ) {
         List<TypeProjection> arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType);
         int size = parameterTypes.size();
@@ -718,7 +718,7 @@ public abstract class KotlinBuiltIns {
 
         Annotations typeAnnotations = receiverType == null ? annotations : addExtensionAnnotation(annotations);
 
-        return JetTypeImpl.create(typeAnnotations, classDescriptor, false, arguments);
+        return KtTypeImpl.create(typeAnnotations, classDescriptor, false, arguments);
     }
 
     @NotNull
@@ -731,22 +731,22 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public static List<TypeProjection> getFunctionTypeArgumentProjections(
-            @Nullable JetType receiverType,
-            @NotNull List<JetType> parameterTypes,
-            @NotNull JetType returnType
+            @Nullable KtType receiverType,
+            @NotNull List<KtType> parameterTypes,
+            @NotNull KtType returnType
     ) {
         List<TypeProjection> arguments = new ArrayList<TypeProjection>(parameterTypes.size() + (receiverType != null ? 1 : 0) + 1);
         if (receiverType != null) {
             arguments.add(defaultProjection(receiverType));
         }
-        for (JetType parameterType : parameterTypes) {
+        for (KtType parameterType : parameterTypes) {
             arguments.add(defaultProjection(parameterType));
         }
         arguments.add(defaultProjection(returnType));
         return arguments;
     }
 
-    private static TypeProjection defaultProjection(JetType returnType) {
+    private static TypeProjection defaultProjection(KtType returnType) {
         return new TypeProjectionImpl(Variance.INVARIANT, returnType);
     }
 
@@ -756,16 +756,16 @@ public abstract class KotlinBuiltIns {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static boolean isArray(@NotNull JetType type) {
+    public static boolean isArray(@NotNull KtType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES.array);
     }
 
-    public static boolean isPrimitiveArray(@NotNull JetType type) {
+    public static boolean isPrimitiveArray(@NotNull KtType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return descriptor != null && getPrimitiveTypeByArrayClassFqName(getFqName(descriptor)) != null;
     }
 
-    public static boolean isPrimitiveType(@NotNull JetType type) {
+    public static boolean isPrimitiveType(@NotNull KtType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return !type.isMarkedNullable() && descriptor instanceof ClassDescriptor && isPrimitiveClass((ClassDescriptor) descriptor);
     }
@@ -776,40 +776,40 @@ public abstract class KotlinBuiltIns {
 
     // Functions
 
-    public static boolean isFunctionOrExtensionFunctionType(@NotNull JetType type) {
+    public static boolean isFunctionOrExtensionFunctionType(@NotNull KtType type) {
         return isFunctionType(type) || isExtensionFunctionType(type);
     }
 
-    public static boolean isFunctionType(@NotNull JetType type) {
+    public static boolean isFunctionType(@NotNull KtType type) {
         if (isExactFunctionType(type)) return true;
 
-        for (JetType superType : type.getConstructor().getSupertypes()) {
+        for (KtType superType : type.getConstructor().getSupertypes()) {
             if (isFunctionType(superType)) return true;
         }
 
         return false;
     }
 
-    public static boolean isExtensionFunctionType(@NotNull JetType type) {
+    public static boolean isExtensionFunctionType(@NotNull KtType type) {
         if (isExactExtensionFunctionType(type)) return true;
 
-        for (JetType superType : type.getConstructor().getSupertypes()) {
+        for (KtType superType : type.getConstructor().getSupertypes()) {
             if (isExtensionFunctionType(superType)) return true;
         }
 
         return false;
     }
 
-    public static boolean isExactFunctionOrExtensionFunctionType(@NotNull JetType type) {
+    public static boolean isExactFunctionOrExtensionFunctionType(@NotNull KtType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return descriptor != null && isNumberedFunctionClassFqName(getFqName(descriptor));
     }
 
-    public static boolean isExactFunctionType(@NotNull JetType type) {
+    public static boolean isExactFunctionType(@NotNull KtType type) {
         return isExactFunctionOrExtensionFunctionType(type) && !isTypeAnnotatedWithExtension(type);
     }
 
-    public static boolean isExactExtensionFunctionType(@NotNull JetType type) {
+    public static boolean isExactExtensionFunctionType(@NotNull KtType type) {
         return isExactFunctionOrExtensionFunctionType(type) && isTypeAnnotatedWithExtension(type);
     }
 
@@ -828,7 +828,7 @@ public abstract class KotlinBuiltIns {
     }
 
     @Nullable
-    public static JetType getReceiverType(@NotNull JetType type) {
+    public static KtType getReceiverType(@NotNull KtType type) {
         assert isFunctionOrExtensionFunctionType(type) : type;
         if (isExtensionFunctionType(type)) {
             // TODO: this is incorrect when a class extends from an extension function and swaps type arguments
@@ -838,7 +838,7 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public static List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull JetType type) {
+    public static List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull KtType type) {
         assert isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> parameterTypes = getParameterTypeProjectionsFromFunctionType(type);
         List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(parameterTypes.size());
@@ -858,14 +858,14 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public static JetType getReturnTypeFromFunctionType(@NotNull JetType type) {
+    public static KtType getReturnTypeFromFunctionType(@NotNull KtType type) {
         assert isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         return arguments.get(arguments.size() - 1).getType();
     }
 
     @NotNull
-    public static List<TypeProjection> getParameterTypeProjectionsFromFunctionType(@NotNull JetType type) {
+    public static List<TypeProjection> getParameterTypeProjectionsFromFunctionType(@NotNull KtType type) {
         assert isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         int first = isExtensionFunctionType(type) ? 1 : 0;
@@ -879,14 +879,14 @@ public abstract class KotlinBuiltIns {
 
     // Recognized & special
 
-    private static boolean isConstructedFromGivenClass(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
+    private static boolean isConstructedFromGivenClass(@NotNull KtType type, @NotNull FqNameUnsafe fqName) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return descriptor != null &&
                /* quick check to avoid creation of full FqName instance */ descriptor.getName().equals(fqName.shortName()) &&
                fqName.equals(getFqName(descriptor));
     }
 
-    private static boolean isNotNullConstructedFromGivenClass(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
+    private static boolean isNotNullConstructedFromGivenClass(@NotNull KtType type, @NotNull FqNameUnsafe fqName) {
         return !type.isMarkedNullable() && isConstructedFromGivenClass(type, fqName);
     }
 
@@ -899,16 +899,16 @@ public abstract class KotlinBuiltIns {
         return isAny(getFqName(descriptor));
     }
 
-    public static boolean isAny(@NotNull JetType type) {
+    public static boolean isAny(@NotNull KtType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.any);
     }
 
-    public static boolean isBoolean(@NotNull JetType type) {
+    public static boolean isBoolean(@NotNull KtType type) {
 
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._boolean);
     }
 
-    public static boolean isBooleanOrNullableBoolean(@NotNull JetType type) {
+    public static boolean isBooleanOrNullableBoolean(@NotNull KtType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES._boolean);
     }
 
@@ -916,35 +916,35 @@ public abstract class KotlinBuiltIns {
         return FQ_NAMES._boolean.equals(getFqName(classDescriptor));
     }
 
-    public static boolean isChar(@NotNull JetType type) {
+    public static boolean isChar(@NotNull KtType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._char);
     }
 
-    public static boolean isInt(@NotNull JetType type) {
+    public static boolean isInt(@NotNull KtType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._int);
     }
 
-    public static boolean isByte(@NotNull JetType type) {
+    public static boolean isByte(@NotNull KtType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._byte);
     }
 
-    public static boolean isLong(@NotNull JetType type) {
+    public static boolean isLong(@NotNull KtType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._long);
     }
 
-    public static boolean isShort(@NotNull JetType type) {
+    public static boolean isShort(@NotNull KtType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._short);
     }
 
-    public static boolean isFloat(@NotNull JetType type) {
+    public static boolean isFloat(@NotNull KtType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._float);
     }
 
-    public static boolean isDouble(@NotNull JetType type) {
+    public static boolean isDouble(@NotNull KtType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._double);
     }
 
-    private static boolean isConstructedFromGivenClassAndNotNullable(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
+    private static boolean isConstructedFromGivenClassAndNotNullable(@NotNull KtType type, @NotNull FqNameUnsafe fqName) {
         return isConstructedFromGivenClass(type, fqName) && !type.isMarkedNullable();
     }
 
@@ -952,57 +952,57 @@ public abstract class KotlinBuiltIns {
         return FQ_NAMES.any.equals(fqName);
     }
 
-    public static boolean isNothing(@NotNull JetType type) {
+    public static boolean isNothing(@NotNull KtType type) {
         return isNothingOrNullableNothing(type)
                && !type.isMarkedNullable();
     }
 
-    public static boolean isNullableNothing(@NotNull JetType type) {
+    public static boolean isNullableNothing(@NotNull KtType type) {
         return isNothingOrNullableNothing(type)
                && type.isMarkedNullable();
     }
 
-    public static boolean isNothingOrNullableNothing(@NotNull JetType type) {
+    public static boolean isNothingOrNullableNothing(@NotNull KtType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES.nothing);
     }
 
-    public static boolean isAnyOrNullableAny(@NotNull JetType type) {
+    public static boolean isAnyOrNullableAny(@NotNull KtType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES.any);
     }
 
-    public static boolean isNullableAny(@NotNull JetType type) {
+    public static boolean isNullableAny(@NotNull KtType type) {
         return isAnyOrNullableAny(type) && type.isMarkedNullable();
     }
 
-    public static boolean isDefaultBound(@NotNull JetType type) {
+    public static boolean isDefaultBound(@NotNull KtType type) {
         return isNullableAny(type);
     }
 
-    public static boolean isUnit(@NotNull JetType type) {
+    public static boolean isUnit(@NotNull KtType type) {
         return isNotNullConstructedFromGivenClass(type, FQ_NAMES.unit);
     }
 
-    public boolean isBooleanOrSubtype(@NotNull JetType type) {
-        return JetTypeChecker.DEFAULT.isSubtypeOf(type, getBooleanType());
+    public boolean isBooleanOrSubtype(@NotNull KtType type) {
+        return KotlinTypeChecker.DEFAULT.isSubtypeOf(type, getBooleanType());
     }
 
-    public static boolean isString(@Nullable JetType type) {
+    public static boolean isString(@Nullable KtType type) {
         return type != null && isNotNullConstructedFromGivenClass(type, FQ_NAMES.string);
     }
 
-    public static boolean isCollectionOrNullableCollection(@NotNull JetType type) {
+    public static boolean isCollectionOrNullableCollection(@NotNull KtType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES._collection);
     }
 
-    public static boolean isListOrNullableList(@NotNull JetType type) {
+    public static boolean isListOrNullableList(@NotNull KtType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES._list);
     }
 
-    public static boolean isSetOrNullableSet(@NotNull JetType type) {
+    public static boolean isSetOrNullableSet(@NotNull KtType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES._set);
     }
 
-    public static boolean isIterableOrNullableIterable(@NotNull JetType type) {
+    public static boolean isIterableOrNullableIterable(@NotNull KtType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES._iterable);
     }
 
@@ -1045,7 +1045,7 @@ public abstract class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    public JetType getDefaultBound() {
+    public KtType getDefaultBound() {
         return getNullableAnyType();
     }
 

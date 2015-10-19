@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
@@ -69,7 +69,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         private final ModuleDescriptorImpl root = JetTestUtils.createEmptyModule("<test_root>");
         private DescriptorResolver descriptorResolver;
         private FunctionDescriptorResolver functionDescriptorResolver;
-        private JetScope scope;
+        private KtScope scope;
 
         public void setUp() throws Exception {
             ContainerForTests containerForTests = InjectionKt.createContainerForTests(getProject(), root);
@@ -83,12 +83,12 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             descriptorResolver = null;
         }
 
-        private JetScope createScope(JetScope libraryScope) {
-            JetFile file = JetPsiFactoryKt
-                    .JetPsiFactory(getProject()).createFile("abstract class C { abstract fun foo(); abstract val a: Int }");
-            List<JetDeclaration> declarations = file.getDeclarations();
-            JetDeclaration aClass = declarations.get(0);
-            assert aClass instanceof JetClass;
+        private KtScope createScope(KtScope libraryScope) {
+            KtFile file = KtPsiFactoryKt
+                    .KtPsiFactory(getProject()).createFile("abstract class C { abstract fun foo(); abstract val a: Int }");
+            List<KtDeclaration> declarations = file.getDeclarations();
+            KtDeclaration aClass = declarations.get(0);
+            assert aClass instanceof KtClass;
             AnalysisResult bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(file);
             DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
             WritableScopeImpl scope = new WritableScopeImpl(
@@ -99,7 +99,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             return scope;
         }
 
-        private ClassDescriptorWithResolutionScopes createClassDescriptor(ClassKind kind, JetClass aClass) {
+        private ClassDescriptorWithResolutionScopes createClassDescriptor(ClassKind kind, KtClass aClass) {
             ModuleContext moduleContext = ContextKt.ModuleContext(root, getProject());
             ResolveSession resolveSession = createLazyResolveSession(
                     moduleContext,
@@ -113,7 +113,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private void testClassModality(String classDeclaration, ClassKind kind, Modality expectedModality) {
-            JetClass aClass = JetPsiFactoryKt.JetPsiFactory(getProject()).createClass(classDeclaration);
+            KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(classDeclaration);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
             assertEquals(expectedModality, classDescriptor.getModality());
@@ -121,11 +121,11 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
 
         private void testFunctionModality(String classWithFunction, ClassKind kind, Modality expectedFunctionModality) {
-            JetClass aClass = JetPsiFactoryKt.JetPsiFactory(getProject()).createClass(classWithFunction);
+            KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(classWithFunction);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
-            List<JetDeclaration> declarations = aClass.getDeclarations();
-            JetNamedFunction function = (JetNamedFunction) declarations.get(0);
+            List<KtDeclaration> declarations = aClass.getDeclarations();
+            KtNamedFunction function = (KtNamedFunction) declarations.get(0);
             SimpleFunctionDescriptor functionDescriptor =
                     functionDescriptorResolver.resolveFunctionDescriptor(classDescriptor, ScopeUtilsKt.asLexicalScope(scope), function,
                                                                          JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
@@ -134,11 +134,11 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private void testPropertyModality(String classWithProperty, ClassKind kind, Modality expectedPropertyModality) {
-            JetClass aClass = JetPsiFactoryKt.JetPsiFactory(getProject()).createClass(classWithProperty);
+            KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(classWithProperty);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
-            List<JetDeclaration> declarations = aClass.getDeclarations();
-            JetProperty property = (JetProperty) declarations.get(0);
+            List<KtDeclaration> declarations = aClass.getDeclarations();
+            KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
                     classDescriptor, ScopeUtilsKt.asLexicalScope(scope), property, JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
 
@@ -147,11 +147,11 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
 
         private void testPropertyAccessorModality(String classWithPropertyWithAccessor, ClassKind kind, Modality expectedPropertyAccessorModality, boolean isGetter) {
-            JetClass aClass = JetPsiFactoryKt.JetPsiFactory(getProject()).createClass(classWithPropertyWithAccessor);
+            KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(classWithPropertyWithAccessor);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
-            List<JetDeclaration> declarations = aClass.getDeclarations();
-            JetProperty property = (JetProperty) declarations.get(0);
+            List<KtDeclaration> declarations = aClass.getDeclarations();
+            KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
                     classDescriptor, ScopeUtilsKt.asLexicalScope(scope), property, JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
             PropertyAccessorDescriptor propertyAccessor = isGetter

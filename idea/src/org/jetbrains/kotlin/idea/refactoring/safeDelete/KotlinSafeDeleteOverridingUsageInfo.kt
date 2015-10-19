@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.safeDelete
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteCustomUsageInfo
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteUsageInfo
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.KtPsiUtil
 
 public class KotlinSafeDeleteOverridingUsageInfo(
         overridingElement: PsiElement, superElement: PsiElement
@@ -27,6 +27,6 @@ public class KotlinSafeDeleteOverridingUsageInfo(
     public val overridingElement: PsiElement get() = getElement()!!
 
     public override fun performRefactoring(): Unit {
-        JetPsiUtil.ascendIfPropertyAccessor(getElement())?.delete()
+        KtPsiUtil.ascendIfPropertyAccessor(getElement())?.delete()
     }
 }

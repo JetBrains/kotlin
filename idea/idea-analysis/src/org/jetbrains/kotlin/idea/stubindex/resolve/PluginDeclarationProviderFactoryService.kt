@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.stubindex.resolve
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.storage.StorageManager
@@ -29,7 +29,7 @@ public class PluginDeclarationProviderFactoryService : DeclarationProviderFactor
     override fun create(
             project: Project,
             storageManager: StorageManager,
-            syntheticFiles: Collection<JetFile>,
+            syntheticFiles: Collection<KtFile>,
             filesScope: GlobalSearchScope
     ): DeclarationProviderFactory =
         PluginDeclarationProviderFactory(project, JetSourceFilterScope.kotlinSources(filesScope, project), storageManager, syntheticFiles)

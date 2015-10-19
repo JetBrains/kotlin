@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -70,11 +70,11 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
     companion object {
         private val javaInspection = UnusedDeclarationInspection()
 
-        public fun isEntryPoint(declaration: JetNamedDeclaration): Boolean {
+        public fun isEntryPoint(declaration: KtNamedDeclaration): Boolean {
             val lightElement: PsiElement? = when (declaration) {
-                is JetClassOrObject -> declaration.toLightClass()
-                is JetNamedFunction, is JetSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as JetFunction)
-                is JetProperty -> {
+                is KtClassOrObject -> declaration.toLightClass()
+                is KtNamedFunction, is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as KtFunction)
+                is KtProperty -> {
                     // can't rely on light element, check annotation ourselves
                     val descriptor = declaration.descriptor ?: return false
                     val entryPointsManager = EntryPointsManager.getInstance(declaration.getProject()) as EntryPointsManagerBase
@@ -88,17 +88,17 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             return lightElement != null && javaInspection.isEntryPoint(lightElement)
         }
 
-        private fun JetProperty.isSerializationImplicitlyUsedField(): Boolean {
-            val ownerObject = getNonStrictParentOfType<JetClassOrObject>()
-            if (ownerObject is JetObjectDeclaration && ownerObject.isCompanion()) {
-                val lightClass = ownerObject.getNonStrictParentOfType<JetClass>()?.toLightClass() ?: return false
+        private fun KtProperty.isSerializationImplicitlyUsedField(): Boolean {
+            val ownerObject = getNonStrictParentOfType<KtClassOrObject>()
+            if (ownerObject is KtObjectDeclaration && ownerObject.isCompanion()) {
+                val lightClass = ownerObject.getNonStrictParentOfType<KtClass>()?.toLightClass() ?: return false
                 return lightClass.getFields().any { it.getName() == getName() && HighlightUtil.isSerializationImplicitlyUsedField(it) }
             }
             return false
         }
 
-        private fun JetObjectDeclaration.hasSerializationImplicitlyUsedField(): Boolean {
-            return getDeclarations().any { it is JetProperty && it.isSerializationImplicitlyUsedField() }
+        private fun KtObjectDeclaration.hasSerializationImplicitlyUsedField(): Boolean {
+            return getDeclarations().any { it is KtProperty && it.isSerializationImplicitlyUsedField() }
         }
 
         // variation of IDEA's AnnotationUtil.checkAnnotatedUsingPatterns()
@@ -128,8 +128,8 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
     override fun runForWholeFile() = true
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : JetVisitorVoid() {
-            private fun createQuickFix(declaration: JetNamedDeclaration): LocalQuickFix {
+        return object : KtVisitorVoid() {
+            private fun createQuickFix(declaration: KtNamedDeclaration): LocalQuickFix {
                 return object : LocalQuickFix {
                     override fun getName() = QuickFixBundle.message("safe.delete.text", declaration.getName())
 
@@ -142,41 +142,41 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 }
             }
 
-            override fun visitNamedDeclaration(declaration: JetNamedDeclaration) {
+            override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
                 val messageKey = when (declaration) {
-                    is JetClass -> "unused.class"
-                    is JetObjectDeclaration -> "unused.object"
-                    is JetNamedFunction -> "unused.function"
-                    is JetProperty, is JetParameter -> "unused.property"
-                    is JetTypeParameter -> "unused.type.parameter"
+                    is KtClass -> "unused.class"
+                    is KtObjectDeclaration -> "unused.object"
+                    is KtNamedFunction -> "unused.function"
+                    is KtProperty, is KtParameter -> "unused.property"
+                    is KtTypeParameter -> "unused.type.parameter"
                     else -> return
                 }
 
                 if (!ProjectRootsUtil.isInProjectSource(declaration)) return
 
                 // Simple PSI-based checks
-                val isCompanionObject = declaration is JetObjectDeclaration && declaration.isCompanion()
+                val isCompanionObject = declaration is KtObjectDeclaration && declaration.isCompanion()
                 if (declaration.getName() == null) return
-                if (declaration is JetEnumEntry) return
-                if (declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
-                if (declaration is JetProperty && declaration.isLocal()) return
-                if (declaration is JetParameter && (declaration.getParent()?.getParent() !is JetPrimaryConstructor || !declaration.hasValOrVar())) return
-                if (declaration is JetNamedFunction && isConventionalName(declaration)) return
+                if (declaration is KtEnumEntry) return
+                if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+                if (declaration is KtProperty && declaration.isLocal()) return
+                if (declaration is KtParameter && (declaration.getParent()?.getParent() !is KtPrimaryConstructor || !declaration.hasValOrVar())) return
+                if (declaration is KtNamedFunction && isConventionalName(declaration)) return
 
                 // More expensive, resolve-based checks
                 if (declaration.resolveToDescriptorIfAny() == null) return
                 if (isEntryPoint(declaration)) return
-                if (declaration is JetProperty && declaration.isSerializationImplicitlyUsedField()) return
-                if (isCompanionObject && (declaration as JetObjectDeclaration).hasSerializationImplicitlyUsedField()) return
+                if (declaration is KtProperty && declaration.isSerializationImplicitlyUsedField()) return
+                if (isCompanionObject && (declaration as KtObjectDeclaration).hasSerializationImplicitlyUsedField()) return
                 // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
-                if (declaration is JetParameter && declaration.dataClassComponentFunction() != null) return
+                if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return
 
                 // Main checks: finding reference usages && text usages
                 if (hasNonTrivialUsages(declaration)) return
-                if (declaration is JetClassOrObject && classOrObjectHasTextUsages(declaration)) return
+                if (declaration is KtClassOrObject && classOrObjectHasTextUsages(declaration)) return
 
                 val (inspectionTarget, textRange) = if (isCompanionObject && declaration.getNameIdentifier() == null) {
-                    val objectKeyword = (declaration as JetObjectDeclaration).getObjectKeyword()
+                    val objectKeyword = (declaration as KtObjectDeclaration).getObjectKeyword()
                     Pair(declaration, TextRange(0, objectKeyword.getStartOffsetInParent() + objectKeyword.getTextLength()))
                 } else {
                     Pair(declaration.getNameIdentifier()!!, null)
@@ -196,7 +196,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         }
     }
 
-    private fun classOrObjectHasTextUsages(classOrObject: JetClassOrObject): Boolean {
+    private fun classOrObjectHasTextUsages(classOrObject: KtClassOrObject): Boolean {
         var hasTextUsages = false
 
         // Finding text usages
@@ -212,12 +212,12 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         return hasTextUsages
     }
 
-    private fun isConventionalName(namedDeclaration: JetNamedDeclaration): Boolean {
+    private fun isConventionalName(namedDeclaration: KtNamedDeclaration): Boolean {
         val name = namedDeclaration.getNameAsName()
         return name!!.getOperationSymbolsToSearch().isNotEmpty() || name == OperatorNameConventions.INVOKE
     }
 
-    private fun hasNonTrivialUsages(declaration: JetNamedDeclaration): Boolean {
+    private fun hasNonTrivialUsages(declaration: KtNamedDeclaration): Boolean {
         val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.getProject())
 
         val useScope = declaration.getUseScope()
@@ -234,7 +234,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             }
 
             if (zeroOccurrences) {
-                if (declaration is JetObjectDeclaration && declaration.isCompanion()) {
+                if (declaration is KtObjectDeclaration && declaration.isCompanion()) {
                     // go on: companion object can be used only in containing class
                 }
                 else {
@@ -243,23 +243,23 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             }
         }
 
-        return (declaration is JetObjectDeclaration && declaration.isCompanion() &&
+        return (declaration is KtObjectDeclaration && declaration.isCompanion() &&
                 declaration.getBody()?.declarations?.isNotEmpty() == true) ||
                hasReferences(declaration, useScope) ||
                hasOverrides(declaration, useScope)
 
     }
 
-    private fun hasReferences(declaration: JetNamedDeclaration, useScope: SearchScope): Boolean {
+    private fun hasReferences(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
         return !ReferencesSearch.search(declaration, useScope).forEach(Processor {
             assert(it != null, { "Found reference is null, was looking for: " + declaration.getElementTextWithContext() })
             declaration.isAncestor(it.getElement()) ||
-            it.element.parent is JetValueArgumentName ||
-            it.element.getParentOfType<JetImportDirective>(false) != null
+            it.element.parent is KtValueArgumentName ||
+            it.element.getParentOfType<KtImportDirective>(false) != null
         })
     }
 
-    private fun hasOverrides(declaration: JetNamedDeclaration, useScope: SearchScope): Boolean {
+    private fun hasOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
         return DefinitionsScopedSearch.search(declaration, useScope).findFirst() != null
     }
 

@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import java.util.*
@@ -136,7 +136,7 @@ public class CallCompleter(
     }
 
     private fun <D : CallableDescriptor> MutableResolvedCall<D>.completeConstraintSystem(
-            expectedType: JetType,
+            expectedType: KtType,
             trace: BindingTrace
     ) {
         fun updateSystemIfSuccessful(update: (ConstraintSystemImpl) -> Boolean) {
@@ -237,10 +237,10 @@ public class CallCompleter(
         if (valueArgument.isExternal()) return
 
         val expression = valueArgument.getArgumentExpression() ?: return
-        val deparenthesized = JetPsiUtil.getLastElementDeparenthesized(expression, context.statementFilter) ?: return
+        val deparenthesized = KtPsiUtil.getLastElementDeparenthesized(expression, context.statementFilter) ?: return
 
         val recordedType = expression.let { context.trace.getType(it) }
-        var updatedType: JetType? = recordedType
+        var updatedType: KtType? = recordedType
 
         val results = completeCallForArgument(deparenthesized, context)
         if (results != null && results.isSingleResult()) {
@@ -273,7 +273,7 @@ public class CallCompleter(
     }
 
     private fun completeCallForArgument(
-            expression: JetExpression,
+            expression: KtExpression,
             context: BasicCallResolutionContext
     ): OverloadResolutionResultsImpl<*>? {
         val cachedData = getResolutionResultsCachedData(expression, context) ?: return null
@@ -288,24 +288,24 @@ public class CallCompleter(
     }
 
     private fun updateRecordedTypeForArgument(
-            updatedType: JetType?,
-            recordedType: JetType?,
-            argumentExpression: JetExpression,
+            updatedType: KtType?,
+            recordedType: KtType?,
+            argumentExpression: KtExpression,
             trace: BindingTrace
-    ): JetType? {
+    ): KtType? {
         //workaround for KT-8218
         if ((!ErrorUtils.containsErrorType(recordedType) && recordedType == updatedType) || updatedType == null) return updatedType
 
-        fun deparenthesizeOrGetSelector(expression: JetExpression?): JetExpression? {
-            val deparenthesized = JetPsiUtil.deparenthesizeOnce(expression)
+        fun deparenthesizeOrGetSelector(expression: KtExpression?): KtExpression? {
+            val deparenthesized = KtPsiUtil.deparenthesizeOnce(expression)
             if (deparenthesized != expression) return deparenthesized
 
-            if (expression is JetQualifiedExpression) return expression.getSelectorExpression()
+            if (expression is KtQualifiedExpression) return expression.getSelectorExpression()
             return null
         }
 
-        val expressions = ArrayList<JetExpression>()
-        var expression: JetExpression? = argumentExpression
+        val expressions = ArrayList<KtExpression>()
+        var expression: KtExpression? = argumentExpression
         while (expression != null) {
             expressions.add(expression)
             expression = deparenthesizeOrGetSelector(expression)
@@ -313,7 +313,7 @@ public class CallCompleter(
 
         var shouldBeMadeNullable: Boolean = false
         expressions.asReversed().forEach { expression ->
-            if (!(expression is JetParenthesizedExpression || expression is JetLabeledExpression || expression is JetAnnotatedExpression)) {
+            if (!(expression is KtParenthesizedExpression || expression is KtLabeledExpression || expression is KtAnnotatedExpression)) {
                 shouldBeMadeNullable = hasNecessarySafeCall(expression, trace)
             }
             BindingContextUtils.updateRecordedType(updatedType, expression, trace, shouldBeMadeNullable)
@@ -321,12 +321,12 @@ public class CallCompleter(
         return trace.getType(argumentExpression)
     }
 
-    private fun hasNecessarySafeCall(expression: JetExpression, trace: BindingTrace): Boolean {
+    private fun hasNecessarySafeCall(expression: KtExpression, trace: BindingTrace): Boolean {
         // We are interested in type of the last call:
         // 'a.b?.foo()' is safe call, but 'a?.b.foo()' is not.
         // Since receiver is 'a.b' and selector is 'foo()',
         // we can only check if an expression is safe call.
-        if (expression !is JetSafeQualifiedExpression) return false
+        if (expression !is KtSafeQualifiedExpression) return false
 
         //If a receiver type is not null, then this safe expression is useless, and we don't need to make the result type nullable.
         val expressionType = trace.getType(expression.getReceiverExpression())

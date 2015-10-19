@@ -23,14 +23,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 
 public class Location {
     @Nullable
     final Editor editor;
 
     @Nullable
-    final JetFile jetFile;
+    final KtFile jetFile;
 
     final long modificationStamp;
 
@@ -51,7 +51,7 @@ public class Location {
             }
             else {
                 PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
-                jetFile = psiFile instanceof JetFile ? (JetFile) psiFile : null;
+                jetFile = psiFile instanceof KtFile ? (KtFile) psiFile : null;
             }
         }
         else {
@@ -67,7 +67,7 @@ public class Location {
     }
 
     @Nullable
-    public JetFile getJetFile() {
+    public KtFile getJetFile() {
         return jetFile;
     }
 

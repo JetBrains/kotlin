@@ -56,9 +56,9 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import java.util.*
 
 public class KotlinFindClassUsagesHandler(
-        jetClass: JetClassOrObject,
+        ktClass: KtClassOrObject,
         factory: KotlinFindUsagesHandlerFactory
-) : KotlinFindUsagesHandler<JetClassOrObject>(jetClass, factory) {
+) : KotlinFindUsagesHandler<KtClassOrObject>(ktClass, factory) {
     public override fun getFindUsagesDialog(
             isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean
     ): AbstractFindUsagesDialog {
@@ -92,7 +92,7 @@ public class KotlinFindClassUsagesHandler(
             )
         }
 
-        val classOrObject = element as JetClassOrObject
+        val classOrObject = element as KtClassOrObject
         val referenceProcessor = KotlinFindUsagesHandler.createReferenceProcessor(processor)
 
         if (kotlinOptions.isUsages || kotlinOptions.searchConstructorUsages) {
@@ -103,7 +103,7 @@ public class KotlinFindClassUsagesHandler(
             if (!processMemberReferences(classOrObject, kotlinOptions, referenceProcessor)) return false
         }
 
-        if (kotlinOptions.isUsages && classOrObject is JetObjectDeclaration && classOrObject.isCompanion()) {
+        if (kotlinOptions.isUsages && classOrObject is KtObjectDeclaration && classOrObject.isCompanion()) {
             if (!processCompanionObjectInternalReferences(classOrObject, referenceProcessor)) {
                 return false
             }
@@ -128,7 +128,7 @@ public class KotlinFindClassUsagesHandler(
         return true
     }
 
-    private fun processClassReferences(classOrObject: JetClassOrObject,
+    private fun processClassReferences(classOrObject: KtClassOrObject,
                                        options: KotlinClassFindUsagesOptions,
                                        processor: Processor<PsiReference>): Boolean {
         val searchParameters = KotlinReferencesSearchParameters(classOrObject,
@@ -149,14 +149,14 @@ public class KotlinFindClassUsagesHandler(
         return usagesQuery.forEach(processor)
     }
 
-    private fun processCompanionObjectInternalReferences(companionObject: JetObjectDeclaration,
+    private fun processCompanionObjectInternalReferences(companionObject: KtObjectDeclaration,
                                                          processor: Processor<PsiReference>): Boolean {
         var stop: Boolean = false
         runReadAction {
-            val klass = companionObject.getStrictParentOfType<JetClass>() ?: return@runReadAction
+            val klass = companionObject.getStrictParentOfType<KtClass>() ?: return@runReadAction
             val companionObjectDescriptor = companionObject.descriptor
-            klass.acceptChildren(object : JetVisitorVoid() {
-                override fun visitJetElement(element: JetElement) {
+            klass.acceptChildren(object : KtVisitorVoid() {
+                override fun visitJetElement(element: KtElement) {
                     if (element == companionObject) return // skip companion object itself
                     if (stop) return
                     element.acceptChildren(this)
@@ -177,12 +177,12 @@ public class KotlinFindClassUsagesHandler(
         return !stop
     }
 
-    private fun processMemberReferences(classOrObject: JetClassOrObject,
+    private fun processMemberReferences(classOrObject: KtClassOrObject,
                                         options: KotlinClassFindUsagesOptions,
                                         processor: Processor<PsiReference>): Boolean {
         for (decl in classOrObject.effectiveDeclarations()) {
-            if ((decl is JetNamedFunction && options.isMethodsUsages) ||
-                ((decl is JetProperty || decl is JetParameter) && options.isFieldsUsages)) {
+            if ((decl is KtNamedFunction && options.isMethodsUsages) ||
+                ((decl is KtProperty || decl is KtParameter) && options.isFieldsUsages)) {
                 if (!ReferencesSearch.search(decl, options.searchScope).forEach(processor)) return false
             }
         }
@@ -192,7 +192,7 @@ public class KotlinFindClassUsagesHandler(
     protected override fun getStringsToSearch(element: PsiElement): Collection<String> {
         val psiClass = when (element) {
                            is PsiClass -> element
-                           is JetClassOrObject -> LightClassUtil.getPsiClass(getElement())
+                           is KtClassOrObject -> LightClassUtil.getPsiClass(getElement())
                            else -> null
                        } ?: return Collections.emptyList()
 

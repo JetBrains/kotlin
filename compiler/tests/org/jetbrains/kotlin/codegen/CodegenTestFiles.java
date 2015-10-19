@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.checkers.CheckerTestUtil;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.parsing.JetScriptDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.test.JetTestUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.Variance;
 
 import java.io.IOException;
@@ -44,14 +44,14 @@ import java.util.regex.Pattern;
 public class CodegenTestFiles {
 
     @NotNull
-    private final List<JetFile> psiFiles;
+    private final List<KtFile> psiFiles;
     @NotNull
     private final List<Pair<String, String>> expectedValues;
     @NotNull
     private final List<Object> scriptParameterValues;
 
     private CodegenTestFiles(
-            @NotNull List<JetFile> psiFiles,
+            @NotNull List<KtFile> psiFiles,
             @NotNull List<Pair<String, String>> expectedValues,
             @NotNull List<Object> scriptParameterValues
     ) {
@@ -61,7 +61,7 @@ public class CodegenTestFiles {
     }
 
     @NotNull
-    public JetFile getPsiFile() {
+    public KtFile getPsiFile() {
         assert psiFiles.size() == 1;
         return psiFiles.get(0);
     }
@@ -77,7 +77,7 @@ public class CodegenTestFiles {
     }
 
     @NotNull
-    public List<JetFile> getPsiFiles() {
+    public List<KtFile> getPsiFiles() {
         return psiFiles;
     }
 
@@ -86,13 +86,13 @@ public class CodegenTestFiles {
     }
 
     public static CodegenTestFiles create(Project project, String[] names, String testDataPath) {
-        ArrayList<JetFile> files = new ArrayList<JetFile>();
+        ArrayList<KtFile> files = new ArrayList<KtFile>();
         for (String name : names) {
             try {
                 String content = JetTestUtils.doLoadFile(testDataPath + "/codegen/", name);
                 int i = name.lastIndexOf('/');
                 //name = name.substring(i+1);
-                JetFile file = JetTestUtils.createFile(name, content, project);
+                KtFile file = JetTestUtils.createFile(name, content, project);
                 files.add(file);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -104,7 +104,7 @@ public class CodegenTestFiles {
     @NotNull
     public static CodegenTestFiles create(@NotNull String fileName, @NotNull String contentWithDiagnosticMarkup, @NotNull Project project) {
         String content = CheckerTestUtil.parseDiagnosedRanges(contentWithDiagnosticMarkup, new ArrayList<CheckerTestUtil.DiagnosedRange>());
-        JetFile file = JetTestUtils.createFile(fileName, content, project);
+        KtFile file = JetTestUtils.createFile(fileName, content, project);
         List<PsiErrorElement> ranges = AnalyzingUtils.getSyntaxErrorRanges(file);
         assert ranges.isEmpty() : "Syntax errors found in " + file + ": " + ranges;
 
@@ -131,7 +131,7 @@ public class CodegenTestFiles {
                 String valueString = scriptParametersMatcher.group(3);
                 Object value;
 
-                JetType jetType;
+                KtType jetType;
                 KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
                 if (type.equals("kotlin.String")) {
                     value = valueString;

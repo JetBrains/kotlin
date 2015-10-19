@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.resolve.typeBinding.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JetTestUtils.*
 
 abstract class AbstractJetTypeBindingTest : JetLiteFixture() {
@@ -38,7 +38,7 @@ abstract class AbstractJetTypeBindingTest : JetLiteFixture() {
 
         val analyzeResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(getProject(), listOf(testKtFile), environment)
 
-        val testDeclaration = testKtFile.getDeclarations().last()!! as JetCallableDeclaration
+        val testDeclaration = testKtFile.getDeclarations().last()!! as KtCallableDeclaration
 
         val typeBinding = testDeclaration.createTypeBindingForReturnType(analyzeResult.bindingContext)
 
@@ -55,7 +55,7 @@ abstract class AbstractJetTypeBindingTest : JetLiteFixture() {
         )
     }
 
-    private fun removeLastComment(file: JetFile): String {
+    private fun removeLastComment(file: KtFile): String {
         val fileText = file.getText()
         val lastIndex = fileText.indexOf("/*")
         return if (lastIndex > 0) {
@@ -65,7 +65,7 @@ abstract class AbstractJetTypeBindingTest : JetLiteFixture() {
     }
 
     private class MyPrinter(out: StringBuilder) : Printer(out) {
-        private fun JetType.render() = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
+        private fun KtType.render() = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
         private fun TypeParameterDescriptor?.render() = if (this == null) "null" else DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(this)
 
         fun print(argument: TypeArgumentBinding<*>?): MyPrinter {

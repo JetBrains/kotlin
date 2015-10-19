@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.AndroidModuleInfo
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtProperty
 
 public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.project) {
 
     override val androidModuleInfo: AndroidModuleInfo? by lazy { module.androidFacet?.toAndroidModuleInfo() }
 
-    override fun propertyToXmlAttributes(property: JetProperty): List<PsiElement> {
+    override fun propertyToXmlAttributes(property: KtProperty): List<PsiElement> {
         val fqPath = property.getFqName()?.pathSegments() ?: return listOf()
         if (fqPath.size() <= AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH) return listOf()
 

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil.DiagnosedRange;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -144,7 +144,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
 
         public void test(@NotNull PsiFile psiFile) {
             BindingContext bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(
-                    (JetFile) psiFile)
+                    (KtFile) psiFile)
                     .getBindingContext();
 
             String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile, false, null)).toString();

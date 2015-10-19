@@ -27,18 +27,18 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaClass
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class KotlinPullUpHelperFactory : PullUpHelperFactory {
     private fun PullUpData.toKotlinPullUpData(): KotlinPullUpData? {
-        val sourceClass = sourceClass.unwrapped as? JetClassOrObject ?: return null
+        val sourceClass = sourceClass.unwrapped as? KtClassOrObject ?: return null
         val targetClass = targetClass.unwrapped as? PsiNamedElement ?: return null
         val membersToMove = membersToMove
-                .map { it.namedUnwrappedElement as? JetNamedDeclaration }
+                .map { it.namedUnwrappedElement as? KtNamedDeclaration }
                 .filterNotNull()
                 .sortedBy { it.startOffset }
         return KotlinPullUpData(sourceClass, targetClass, membersToMove)
@@ -67,7 +67,7 @@ public class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
     }
 
     private fun createDummyTargetClass(data: PullUpData): PsiClass? {
-        val targetClass = data.targetClass.unwrapped as? JetClass ?: return null
+        val targetClass = data.targetClass.unwrapped as? KtClass ?: return null
 
         val project = targetClass.project
         val targetPackage = targetClass.getContainingJetFile().packageFqName.asString()
@@ -79,13 +79,13 @@ public class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
         val elementFactory = PsiElementFactory.SERVICE.getInstance(project)
 
         val dummyTargetClass = createJavaClass(targetClass, null, forcePlainClass = true)
-        val outerClasses = targetClass.parents.filterIsInstance<JetClassOrObject>().toList().asReversed()
+        val outerClasses = targetClass.parents.filterIsInstance<KtClassOrObject>().toList().asReversed()
 
         if (outerClasses.isEmpty()) return dummyFile.add(dummyTargetClass) as PsiClass
 
         val outerPsiClasses = outerClasses.map {
             val psiClass = elementFactory.createClass(it.name!!)
-            if (!(it is JetClass && it.isInner())) {
+            if (!(it is KtClass && it.isInner())) {
                 psiClass.modifierList!!.setModifierProperty(PsiModifier.STATIC, true)
             }
             psiClass

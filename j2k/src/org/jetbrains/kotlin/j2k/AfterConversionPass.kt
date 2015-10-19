@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 
 public class AfterConversionPass(val project: Project, val postProcessor: PostProcessor) {
-    public fun run(kotlinFile: JetFile, range: TextRange?) {
+    public fun run(kotlinFile: KtFile, range: TextRange?) {
         val rangeMarker = if (range != null) {
             val document = kotlinFile.viewProvider.document!!
             val marker = document.createRangeMarker(range.startOffset, range.endOffset)

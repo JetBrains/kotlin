@@ -21,11 +21,11 @@ import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetDelegationSpecifier;
-import org.jetbrains.kotlin.psi.JetDelegatorByExpressionSpecifier;
-import org.jetbrains.kotlin.psi.JetTypeReference;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtDelegationSpecifier;
+import org.jetbrains.kotlin.psi.KtDelegatorByExpressionSpecifier;
+import org.jetbrains.kotlin.psi.KtTypeReference;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
 
     @NotNull
     public static <T extends CallableMemberDescriptor> Collection<T> generateDelegatedMembers(
-            @NotNull JetClassOrObject classOrObject,
+            @NotNull KtClassOrObject classOrObject,
             @NotNull ClassDescriptor ownerDescriptor,
             @NotNull Collection<? extends CallableDescriptor> existingMembers,
             @NotNull BindingTrace trace,
@@ -52,7 +52,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
                 .generateDelegatedMembers();
     }
 
-    @NotNull private final JetClassOrObject classOrObject;
+    @NotNull private final KtClassOrObject classOrObject;
     @NotNull private final ClassDescriptor ownerDescriptor;
     @NotNull private final Collection<? extends CallableDescriptor> existingMembers;
     @NotNull private final BindingTrace trace;
@@ -60,7 +60,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     @NotNull private final TypeResolver typeResolver;
 
     private DelegationResolver(
-            @NotNull JetClassOrObject classOrObject,
+            @NotNull KtClassOrObject classOrObject,
             @NotNull ClassDescriptor ownerDescriptor,
             @NotNull Collection<? extends CallableDescriptor> existingMembers,
             @NotNull BindingTrace trace,
@@ -79,16 +79,16 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     @NotNull
     private Collection<T> generateDelegatedMembers() {
         Collection<T> delegatedMembers = new HashSet<T>();
-        for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
-            if (!(delegationSpecifier instanceof JetDelegatorByExpressionSpecifier)) {
+        for (KtDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
+            if (!(delegationSpecifier instanceof KtDelegatorByExpressionSpecifier)) {
                 continue;
             }
-            JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
-            JetTypeReference typeReference = specifier.getTypeReference();
+            KtDelegatorByExpressionSpecifier specifier = (KtDelegatorByExpressionSpecifier) delegationSpecifier;
+            KtTypeReference typeReference = specifier.getTypeReference();
             if (typeReference == null) {
                 continue;
             }
-            JetType delegatedTraitType = typeResolver.resolve(typeReference);
+            KtType delegatedTraitType = typeResolver.resolve(typeReference);
             if (delegatedTraitType == null || delegatedTraitType.isError()) {
                 continue;
             }
@@ -101,7 +101,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     @NotNull
     private Collection<T> generateDelegatesForTrait(
             @NotNull Collection<T> existingDelegates,
-            @NotNull JetType delegatedTraitType
+            @NotNull KtType delegatedTraitType
     ) {
         Collection<T> result = new HashSet<T>();
         Collection<T> candidates = generateDelegationCandidates(delegatedTraitType);
@@ -120,7 +120,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     }
 
     @NotNull
-    private Collection<T> generateDelegationCandidates(@NotNull JetType delegatedTraitType) {
+    private Collection<T> generateDelegationCandidates(@NotNull KtType delegatedTraitType) {
         Collection<T> descriptorsToDelegate = overridableMembersNotFromSuperClassOfTrait(delegatedTraitType);
         Collection<T> result = new ArrayList<T>(descriptorsToDelegate.size());
         for (T memberDescriptor : descriptorsToDelegate) {
@@ -156,7 +156,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     }
 
     @NotNull
-    private Collection<T> overridableMembersNotFromSuperClassOfTrait(@NotNull JetType trait) {
+    private Collection<T> overridableMembersNotFromSuperClassOfTrait(@NotNull KtType trait) {
         final Collection<T> membersToSkip = getMembersFromClassSupertypeOfTrait(trait);
         return Collections2.filter(
                 memberExtractor.getMembersByType(trait),
@@ -182,9 +182,9 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     }
 
     @NotNull
-    private Collection<T> getMembersFromClassSupertypeOfTrait(@NotNull JetType traitType) {
-        JetType classSupertype = null;
-        for (JetType supertype : TypeUtils.getAllSupertypes(traitType)) {
+    private Collection<T> getMembersFromClassSupertypeOfTrait(@NotNull KtType traitType) {
+        KtType classSupertype = null;
+        for (KtType supertype : TypeUtils.getAllSupertypes(traitType)) {
             if (isNotTrait(supertype.getConstructor().getDeclarationDescriptor())) {
                 classSupertype = supertype;
                 break;
@@ -203,11 +203,11 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
 
     public interface MemberExtractor<T extends CallableMemberDescriptor> {
         @NotNull
-        Collection<T> getMembersByType(@NotNull JetType type);
+        Collection<T> getMembersByType(@NotNull KtType type);
     }
 
     public interface TypeResolver {
         @Nullable
-        JetType resolve(@NotNull JetTypeReference reference);
+        KtType resolve(@NotNull KtTypeReference reference);
     }
 }

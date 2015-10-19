@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.psi.*
 
 public object AnnotationUseSiteTargetChecker {
 
-    public fun check(annotated: JetAnnotated, descriptor: DeclarationDescriptor, trace: BindingTrace) {
+    public fun check(annotated: KtAnnotated, descriptor: DeclarationDescriptor, trace: BindingTrace) {
         trace.checkDeclaration(annotated, descriptor)
 
-        if (annotated is JetFunction) {
+        if (annotated is KtFunction) {
             for (parameter in annotated.valueParameters) {
                 val parameterDescriptor = trace.bindingContext[BindingContext.VALUE_PARAMETER, parameter] ?: continue
                 trace.checkDeclaration(parameter, parameterDescriptor)
@@ -57,7 +57,7 @@ public object AnnotationUseSiteTargetChecker {
         }
     }
 
-    private fun BindingTrace.checkDeclaration(annotated: JetAnnotated, descriptor: DeclarationDescriptor) {
+    private fun BindingTrace.checkDeclaration(annotated: KtAnnotated, descriptor: DeclarationDescriptor) {
         for (annotation in annotated.annotationEntries) {
             val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
 
@@ -67,7 +67,7 @@ public object AnnotationUseSiteTargetChecker {
                 AnnotationUseSiteTarget.PROPERTY_GETTER -> checkIfProperty(annotated, annotation)
                 AnnotationUseSiteTarget.PROPERTY_SETTER -> checkIfMutableProperty(annotated, annotation)
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> {
-                    if (annotated !is JetParameter) {
+                    if (annotated !is KtParameter) {
                         report(INAPPLICABLE_PARAM_TARGET.on(annotation))
                     }
                     else {
@@ -88,35 +88,35 @@ public object AnnotationUseSiteTargetChecker {
     }
 
     private fun BindingTrace.checkFieldTargetApplicability(
-            annotated: JetAnnotated,
-            annotation: JetAnnotationEntry,
+            annotated: KtAnnotated,
+            annotation: KtAnnotationEntry,
             descriptor: DeclarationDescriptor
     ) {
         if (!checkIfProperty(annotated, annotation)) return
 
-        if (annotated is JetProperty && descriptor is PropertyDescriptor) {
+        if (annotated is KtProperty && descriptor is PropertyDescriptor) {
             if (!annotated.hasDelegate() && !(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) ?: false)) {
                 report(INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD.on(annotation))
             }
         }
     }
 
-    private fun BindingTrace.checkIfMutableProperty(annotated: JetAnnotated, annotation: JetAnnotationEntry) {
+    private fun BindingTrace.checkIfMutableProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry) {
         if (!checkIfProperty(annotated, annotation)) return
 
-        val isMutable = if (annotated is JetProperty)
+        val isMutable = if (annotated is KtProperty)
             annotated.isVar
-        else if (annotated is JetParameter)
+        else if (annotated is KtParameter)
             annotated.isMutable
         else false
 
         if (!isMutable) report(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE.on(annotation))
     }
 
-    private fun BindingTrace.checkIfProperty(annotated: JetAnnotated, annotation: JetAnnotationEntry): Boolean {
-        val isProperty = if (annotated is JetProperty)
+    private fun BindingTrace.checkIfProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry): Boolean {
+        val isProperty = if (annotated is KtProperty)
             !annotated.isLocal
-        else if (annotated is JetParameter)
+        else if (annotated is KtParameter)
             annotated.hasValOrVar()
         else false
 

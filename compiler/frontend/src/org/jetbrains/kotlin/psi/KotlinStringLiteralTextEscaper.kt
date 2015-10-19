@@ -22,7 +22,7 @@ import gnu.trove.TIntArrayList
 import org.jetbrains.kotlin.psi.psiUtil.getContentRange
 import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
 
-public class KotlinStringLiteralTextEscaper(host: JetStringTemplateExpression): LiteralTextEscaper<JetStringTemplateExpression>(host) {
+public class KotlinStringLiteralTextEscaper(host: KtStringTemplateExpression): LiteralTextEscaper<KtStringTemplateExpression>(host) {
     private var sourceOffsets: IntArray? = null
 
     override fun decode(rangeInsideHost: TextRange, outChars: StringBuilder): Boolean {
@@ -38,14 +38,14 @@ public class KotlinStringLiteralTextEscaper(host: JetStringTemplateExpression): 
                 continue
             }
             when (child) {
-                is JetLiteralStringTemplateEntry -> {
+                is KtLiteralStringTemplateEntry -> {
                     val textRange = rangeInsideHost.intersection(childRange)!!.shiftRight(-childRange.getStartOffset())
                     outChars.append(child.getText(), textRange.getStartOffset(), textRange.getEndOffset())
                     repeat(textRange.length) {
                         sourceOffsetsList.add(sourceOffset++)
                     }
                 }
-                is JetEscapeStringTemplateEntry -> {
+                is KtEscapeStringTemplateEntry -> {
                     if (!rangeInsideHost.contains(childRange)) {
                         //don't allow injection if its range starts or ends inside escaped sequence
                         return false

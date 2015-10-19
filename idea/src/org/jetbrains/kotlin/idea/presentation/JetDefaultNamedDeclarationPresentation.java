@@ -22,21 +22,21 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Iconable;
 import org.jetbrains.kotlin.idea.JetIconProvider;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetNamedDeclaration;
-import org.jetbrains.kotlin.psi.JetPsiUtil;
+import org.jetbrains.kotlin.psi.KtNamedDeclaration;
+import org.jetbrains.kotlin.psi.KtPsiUtil;
 
 import javax.swing.*;
 
 public class JetDefaultNamedDeclarationPresentation implements ColoredItemPresentation {
-    private final JetNamedDeclaration declaration;
+    private final KtNamedDeclaration declaration;
 
-    JetDefaultNamedDeclarationPresentation(JetNamedDeclaration declaration) {
+    JetDefaultNamedDeclarationPresentation(KtNamedDeclaration declaration) {
         this.declaration = declaration;
     }
 
     @Override
     public TextAttributesKey getTextAttributesKey() {
-        if (JetPsiUtil.isDeprecated(declaration)) {
+        if (KtPsiUtil.isDeprecated(declaration)) {
             return CodeInsightColors.DEPRECATED_ATTRIBUTES;
         }
         return null;

@@ -23,9 +23,9 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
-import org.jetbrains.kotlin.psi.JetBlockExpression;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtBlockExpression;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtExpression;
 
 import java.util.List;
 
@@ -43,15 +43,15 @@ public abstract class KotlinUnwrapRemoveBase extends AbstractUnwrapper<KotlinUnw
 
     @Override
     public String getDescription(PsiElement e) {
-        assert e instanceof JetElement;
-        return JetBundle.message(key, JetRefactoringUtil.getExpressionShortText((JetElement) e));
+        assert e instanceof KtElement;
+        return JetBundle.message(key, JetRefactoringUtil.getExpressionShortText((KtElement) e));
     }
 
-    protected boolean canExtractExpression(@NotNull JetExpression expression, @NotNull JetElement parent) {
-        if (expression instanceof JetBlockExpression) {
-            JetBlockExpression block = (JetBlockExpression) expression;
+    protected boolean canExtractExpression(@NotNull KtExpression expression, @NotNull KtElement parent) {
+        if (expression instanceof KtBlockExpression) {
+            KtBlockExpression block = (KtBlockExpression) expression;
 
-            return block.getStatements().size() <= 1 || parent instanceof JetBlockExpression;
+            return block.getStatements().size() <= 1 || parent instanceof KtBlockExpression;
         }
         return true;
     }
@@ -62,23 +62,23 @@ public abstract class KotlinUnwrapRemoveBase extends AbstractUnwrapper<KotlinUnw
             return element instanceof PsiWhiteSpace;
         }
 
-        public void extractFromBlock(@NotNull JetBlockExpression block, @NotNull JetElement from) throws IncorrectOperationException {
-            List<JetExpression> expressions = block.getStatements();
+        public void extractFromBlock(@NotNull KtBlockExpression block, @NotNull KtElement from) throws IncorrectOperationException {
+            List<KtExpression> expressions = block.getStatements();
             if (!expressions.isEmpty()) {
                 extract(expressions.get(0), expressions.get(expressions.size() - 1), from);
             }
         }
 
-        public void extractFromExpression(@NotNull JetExpression expression, @NotNull JetElement from) throws IncorrectOperationException {
-            if (expression instanceof JetBlockExpression) {
-                extractFromBlock((JetBlockExpression) expression, from);
+        public void extractFromExpression(@NotNull KtExpression expression, @NotNull KtElement from) throws IncorrectOperationException {
+            if (expression instanceof KtBlockExpression) {
+                extractFromBlock((KtBlockExpression) expression, from);
             }
             else {
                 extract(expression, expression, from);
             }
         }
 
-        public void replace(@NotNull JetElement originalElement, @NotNull JetElement newElement) {
+        public void replace(@NotNull KtElement originalElement, @NotNull KtElement newElement) {
             if (myIsEffective) {
                 originalElement.replace(newElement);
             }

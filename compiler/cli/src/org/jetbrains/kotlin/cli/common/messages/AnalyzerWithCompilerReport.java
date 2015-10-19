@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter;
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter.AbiVersionErrorData;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -195,8 +195,8 @@ public final class AnalyzerWithCompilerReport {
         return reportDiagnostics(diagnostics, new DefaultDiagnosticReporter(messageCollector), false);
     }
 
-    private void reportSyntaxErrors(@NotNull Collection<JetFile> files) {
-        for (JetFile file : files) {
+    private void reportSyntaxErrors(@NotNull Collection<KtFile> files) {
+        for (KtFile file : files) {
             reportSyntaxErrors(file, messageCollector);
         }
     }
@@ -262,7 +262,7 @@ public final class AnalyzerWithCompilerReport {
         return messageCollector.anyReported(CompilerMessageSeverity.ERROR);
     }
 
-    public void analyzeAndReport(@NotNull Collection<JetFile> files, @NotNull Function0<AnalysisResult> analyzer) {
+    public void analyzeAndReport(@NotNull Collection<KtFile> files, @NotNull Function0<AnalysisResult> analyzer) {
         analysisResult = analyzer.invoke();
         reportSyntaxErrors(files);
         List<AbiVersionErrorData> abiVersionErrors = getAbiVersionErrors();

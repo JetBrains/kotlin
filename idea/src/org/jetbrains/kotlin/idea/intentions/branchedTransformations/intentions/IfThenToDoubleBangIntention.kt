@@ -21,15 +21,15 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class IfThenToDoubleBangIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with '!!' expression") {
-    override fun applicabilityRange(element: JetIfExpression): TextRange? {
-        val condition = element.getCondition() as? JetBinaryExpression ?: return null
+public class IfThenToDoubleBangIntention : JetSelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with '!!' expression") {
+    override fun applicabilityRange(element: KtIfExpression): TextRange? {
+        val condition = element.getCondition() as? KtBinaryExpression ?: return null
         val thenClause = element.getThen() ?: return null
         val elseClause = element.getElse()
 
@@ -37,17 +37,17 @@ public class IfThenToDoubleBangIntention : JetSelfTargetingRangeIntention<JetIfE
 
         val token = condition.getOperationToken()
 
-        val throwExpression: JetThrowExpression
-        val matchingClause: JetExpression?
+        val throwExpression: KtThrowExpression
+        val matchingClause: KtExpression?
         when (token) {
-            JetTokens.EQEQ -> {
-                throwExpression = thenClause.unwrapBlockOrParenthesis() as? JetThrowExpression ?: return null
+            KtTokens.EQEQ -> {
+                throwExpression = thenClause.unwrapBlockOrParenthesis() as? KtThrowExpression ?: return null
                 matchingClause = elseClause
             }
 
-            JetTokens.EXCLEQ -> {
+            KtTokens.EXCLEQ -> {
                 matchingClause = thenClause
-                throwExpression = elseClause?.unwrapBlockOrParenthesis() as? JetThrowExpression ?: return null
+                throwExpression = elseClause?.unwrapBlockOrParenthesis() as? KtThrowExpression ?: return null
             }
 
             else -> throw IllegalStateException()
@@ -66,10 +66,10 @@ public class IfThenToDoubleBangIntention : JetSelfTargetingRangeIntention<JetIfE
         return TextRange(element.startOffset, rParen.endOffset)
     }
 
-    override fun applyTo(element: JetIfExpression, editor: Editor) {
-        val condition = element.getCondition() as JetBinaryExpression
+    override fun applyTo(element: KtIfExpression, editor: Editor) {
+        val condition = element.getCondition() as KtBinaryExpression
         val expression = condition.expressionComparedToNull()!!
-        val result = element.replace(JetPsiFactory(element).createExpressionByPattern("$0!!", expression)) as JetPostfixExpression
+        val result = element.replace(KtPsiFactory(element).createExpressionByPattern("$0!!", expression)) as KtPostfixExpression
 
         result.inlineBaseExpressionIfApplicableWithPrompt(editor)
     }

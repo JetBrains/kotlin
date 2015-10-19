@@ -43,23 +43,23 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetEnumEntry
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
-class KotlinCreateTestIntention : JetSelfTargetingRangeIntention<JetClassOrObject>(
-        JetClassOrObject::class.java,
+class KotlinCreateTestIntention : JetSelfTargetingRangeIntention<KtClassOrObject>(
+        KtClassOrObject::class.java,
         CodeInsightBundle.message("intention.create.test")
 ) {
-    override fun applicabilityRange(element: JetClassOrObject): TextRange? {
+    override fun applicabilityRange(element: KtClassOrObject): TextRange? {
         if (element.isLocal()) return null
-        if (element is JetEnumEntry) return null
-        if (element is JetClass && (element.isAnnotation() || element.isInterface())) return null
+        if (element is KtEnumEntry) return null
+        if (element is KtClass && (element.isAnnotation() || element.isInterface())) return null
         if (ModuleUtilCore.findModuleForPsiElement(element) == null) return null
         if (element.resolveToDescriptorIfAny() == null) return null
 
@@ -69,7 +69,7 @@ class KotlinCreateTestIntention : JetSelfTargetingRangeIntention<JetClassOrObjec
         )
     }
 
-    override fun applyTo(element: JetClassOrObject, editor: Editor) {
+    override fun applyTo(element: KtClassOrObject, editor: Editor) {
         object : CreateTestAction() {
             // Based on the com.intellij.testIntegration.createTest.JavaTestGenerator.createTestClass()
             private fun findTestClass(targetDirectory: PsiDirectory, className: String): PsiClass? {
@@ -148,7 +148,7 @@ class KotlinCreateTestIntention : JetSelfTargetingRangeIntention<JetClassOrObjec
                             runWriteAction {
                                 val existingMethodNames = existingClass
                                         .declarations
-                                        .filterIsInstance<JetNamedFunction>()
+                                        .filterIsInstance<KtNamedFunction>()
                                         .mapTo(HashSet()) { it.name }
                                 generatedClass
                                         .methods

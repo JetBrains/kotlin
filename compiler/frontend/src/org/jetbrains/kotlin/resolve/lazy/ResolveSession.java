@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotations;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.storage.*;
 
 import javax.inject.Inject;
@@ -62,12 +62,12 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private final MemoizedFunctionToNullable<FqName, LazyPackageDescriptor> packages;
     private final PackageFragmentProvider packageFragmentProvider;
 
-    private final MemoizedFunctionToNotNull<JetScript, LazyScriptDescriptor> scriptDescriptors;
+    private final MemoizedFunctionToNotNull<KtScript, LazyScriptDescriptor> scriptDescriptors;
 
-    private final MemoizedFunctionToNotNull<JetFile, LazyAnnotations> fileAnnotations;
-    private final MemoizedFunctionToNotNull<JetFile, LazyAnnotations> danglingAnnotations;
+    private final MemoizedFunctionToNotNull<KtFile, LazyAnnotations> fileAnnotations;
+    private final MemoizedFunctionToNotNull<KtFile, LazyAnnotations> danglingAnnotations;
 
-    private JetImportsFactory jetImportFactory;
+    private KtImportsFactory jetImportFactory;
     private AnnotationResolver annotationResolve;
     private DescriptorResolver descriptorResolver;
     private FunctionDescriptorResolver functionDescriptorResolver;
@@ -80,7 +80,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private LocalDescriptorResolver localDescriptorResolver;
 
     @Inject
-    public void setJetImportFactory(JetImportsFactory jetImportFactory) {
+    public void setJetImportFactory(KtImportsFactory jetImportFactory) {
         this.jetImportFactory = jetImportFactory;
     }
 
@@ -178,9 +178,9 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         };
 
         this.scriptDescriptors = storageManager.createMemoizedFunction(
-                new Function1<JetScript, LazyScriptDescriptor>() {
+                new Function1<KtScript, LazyScriptDescriptor>() {
                     @Override
-                    public LazyScriptDescriptor invoke(JetScript script) {
+                    public LazyScriptDescriptor invoke(KtScript script) {
                         return new LazyScriptDescriptor(
                                 ResolveSession.this,
                                 scriptBodyResolver,
@@ -191,22 +191,22 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                 }
         );
 
-        fileAnnotations = storageManager.createMemoizedFunction(new Function1<JetFile, LazyAnnotations>() {
+        fileAnnotations = storageManager.createMemoizedFunction(new Function1<KtFile, LazyAnnotations>() {
             @Override
-            public LazyAnnotations invoke(JetFile file) {
+            public LazyAnnotations invoke(KtFile file) {
                 return createAnnotations(file, file.getAnnotationEntries());
             }
         });
 
-        danglingAnnotations = storageManager.createMemoizedFunction(new Function1<JetFile, LazyAnnotations>() {
+        danglingAnnotations = storageManager.createMemoizedFunction(new Function1<KtFile, LazyAnnotations>() {
             @Override
-            public LazyAnnotations invoke(JetFile file) {
+            public LazyAnnotations invoke(KtFile file) {
                 return createAnnotations(file, file.getDanglingAnnotations());
             }
         });
     }
 
-    private LazyAnnotations createAnnotations(JetFile file, List<JetAnnotationEntry> annotationEntries) {
+    private LazyAnnotations createAnnotations(KtFile file, List<KtAnnotationEntry> annotationEntries) {
         LazyFileScope scope = fileScopeProvider.getFileScope(file);
         LazyAnnotationsContextImpl lazyAnnotationContext =
                 new LazyAnnotationsContextImpl(annotationResolve, storageManager, trace, scope);
@@ -268,7 +268,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                         if (classLikeInfo instanceof JetScriptInfo) {
                             return getClassDescriptorForScript(((JetScriptInfo) classLikeInfo).getScript());
                         }
-                        JetClassOrObject classOrObject = classLikeInfo.getCorrespondingClassOrObject();
+                        KtClassOrObject classOrObject = classLikeInfo.getCorrespondingClassOrObject();
                         if (classOrObject == null) return null;
                         return getClassDescriptor(classOrObject, location);
                     }
@@ -278,13 +278,13 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     @Override
     @NotNull
-    public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject, @NotNull LookupLocation location) {
+    public ClassDescriptor getClassDescriptor(@NotNull KtClassOrObject classOrObject, @NotNull LookupLocation location) {
         return lazyDeclarationResolver.getClassDescriptor(classOrObject, location);
     }
 
     @NotNull
-    public ClassDescriptor getClassDescriptorForScript(@NotNull JetScript script) {
-        JetScope memberScope = lazyDeclarationResolver.getMemberScopeDeclaredIn(script, NoLookupLocation.FOR_SCRIPT);
+    public ClassDescriptor getClassDescriptorForScript(@NotNull KtScript script) {
+        KtScope memberScope = lazyDeclarationResolver.getMemberScopeDeclaredIn(script, NoLookupLocation.FOR_SCRIPT);
         FqName fqName = ScriptNameUtil.classNameForScript(script);
         ClassifierDescriptor classifier = memberScope.getClassifier(fqName.shortName(), NoLookupLocation.FOR_SCRIPT);
         assert classifier != null : "No descriptor for " + fqName + " in file " + script.getContainingFile();
@@ -293,7 +293,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     @Override
     @NotNull
-    public ScriptDescriptor getScriptDescriptor(@NotNull JetScript script) {
+    public ScriptDescriptor getScriptDescriptor(@NotNull KtScript script) {
         return scriptDescriptors.invoke(script);
     }
 
@@ -317,20 +317,20 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     @Override
     @NotNull
-    public DeclarationDescriptor resolveToDescriptor(@NotNull JetDeclaration declaration) {
-        if (!JetPsiUtil.isLocal(declaration)) {
+    public DeclarationDescriptor resolveToDescriptor(@NotNull KtDeclaration declaration) {
+        if (!KtPsiUtil.isLocal(declaration)) {
             return lazyDeclarationResolver.resolveToDescriptor(declaration);
         }
         return localDescriptorResolver.resolveLocalDeclaration(declaration);
     }
 
     @NotNull
-    public Annotations getFileAnnotations(@NotNull JetFile file) {
+    public Annotations getFileAnnotations(@NotNull KtFile file) {
         return fileAnnotations.invoke(file);
     }
 
     @NotNull
-    public Annotations getDanglingAnnotations(@NotNull JetFile file) {
+    public Annotations getDanglingAnnotations(@NotNull KtFile file) {
         return danglingAnnotations.invoke(file);
     }
 
@@ -348,7 +348,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
             @NotNull LazyPackageDescriptor current
     ) {
         result.add(current);
-        for (FqName subPackage : packageFragmentProvider.getSubPackagesOf(current.getFqName(), JetScope.Companion.getALL_NAME_FILTER())) {
+        for (FqName subPackage : packageFragmentProvider.getSubPackagesOf(current.getFqName(), KtScope.Companion.getALL_NAME_FILTER())) {
             LazyPackageDescriptor fragment = getPackageFragment(subPackage);
             assert fragment != null : "Couldn't find fragment for " + subPackage;
             collectAllPackages(result, fragment);
@@ -364,7 +364,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     }
 
     @NotNull
-    public JetImportsFactory getJetImportsFactory() {
+    public KtImportsFactory getJetImportsFactory() {
         return jetImportFactory;
     }
 

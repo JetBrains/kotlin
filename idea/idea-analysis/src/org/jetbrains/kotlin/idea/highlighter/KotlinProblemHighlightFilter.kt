@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.codeInsight.daemon.ProblemHighlightFilter
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.ide.projectView.impl.ProjectRootsUtil
 
 class KotlinProblemHighlightFilter : ProblemHighlightFilter() {
 
     override fun shouldHighlight(psiFile: PsiFile): Boolean {
-        return psiFile.getFileType() != JetFileType.INSTANCE || !ProjectRootsUtil.isOutsideSourceRoot(psiFile)
+        return psiFile.getFileType() != KotlinFileType.INSTANCE || !ProjectRootsUtil.isOutsideSourceRoot(psiFile)
     }
 
 }

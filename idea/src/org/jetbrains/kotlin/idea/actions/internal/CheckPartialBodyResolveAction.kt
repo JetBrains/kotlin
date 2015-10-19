@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
 import javax.swing.SwingUtilities
@@ -62,7 +62,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
                 project)
     }
 
-    private fun checkResolve(files: Collection<JetFile>, project: Project) {
+    private fun checkResolve(files: Collection<KtFile>, project: Project) {
         //TODO: drop resolve caches if any
         val progressIndicator = ProgressManager.getInstance().getProgressIndicator()
         for ((i, file) in files.withIndex()) {
@@ -104,21 +104,21 @@ public class CheckPartialBodyResolveAction : AnAction() {
         }
     }
 
-    private fun dumpResolve(file: JetFile, resolver: (JetElement, ResolutionFacade) -> BindingContext): String {
+    private fun dumpResolve(file: KtFile, resolver: (KtElement, ResolutionFacade) -> BindingContext): String {
         val builder = StringBuilder()
         val resolutionFacade = file.getResolutionFacade()
         val document = FileDocumentManager.getInstance().getDocument(file.getVirtualFile())!!
-        file.acceptChildren(object : JetVisitorVoid(){
-            override fun visitJetElement(element: JetElement) {
+        file.acceptChildren(object : KtVisitorVoid(){
+            override fun visitJetElement(element: KtElement) {
                 ProgressManager.checkCanceled()
                 element.acceptChildren(this)
             }
 
-            override fun visitExpression(expression: JetExpression) {
+            override fun visitExpression(expression: KtExpression) {
                 super.visitExpression(expression)
 
                 // do not try to resolve to declaration as it crashes on some declaration (namely JetClassInitializer)
-                if (expression is JetDeclaration) return
+                if (expression is KtDeclaration) return
 
                 if (!isValueNeeded(expression)) return
 
@@ -127,10 +127,10 @@ public class CheckPartialBodyResolveAction : AnAction() {
                 val offset = expression.getTextOffset()
                 val line = document.getLineNumber(offset)
                 val column = offset - document.getLineStartOffset(line)
-                val exprName = if (expression is JetNameReferenceExpression) expression.getReferencedName() else expression.javaClass.getSimpleName()
+                val exprName = if (expression is KtNameReferenceExpression) expression.getReferencedName() else expression.javaClass.getSimpleName()
                 builder.append("$exprName at (${line + 1}:${column + 1})")
 
-                if (expression is JetReferenceExpression) {
+                if (expression is KtReferenceExpression) {
                     val target = bindingContext[BindingContext.REFERENCE_TARGET, expression]
                     builder.append(" resolves to ${target?.presentation()}")
                 }
@@ -147,7 +147,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
     }
 
     private fun DeclarationDescriptor.presentation() = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
-    private fun JetType.presentation() = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(this)
+    private fun KtType.presentation() = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(this)
 
     override fun update(e: AnActionEvent) {
         if (!KotlinInternalMode.enabled) {
@@ -158,17 +158,17 @@ public class CheckPartialBodyResolveAction : AnAction() {
         e.getPresentation().setEnabled(selectedKotlinFiles(e).any())
     }
 
-    private fun selectedKotlinFiles(e: AnActionEvent): Sequence<JetFile> {
+    private fun selectedKotlinFiles(e: AnActionEvent): Sequence<KtFile> {
         val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return sequenceOf()
         val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return sequenceOf()
         return allKotlinFiles(virtualFiles, project)
     }
 
-    private fun allKotlinFiles(filesOrDirs: Array<VirtualFile>, project: Project): Sequence<JetFile> {
+    private fun allKotlinFiles(filesOrDirs: Array<VirtualFile>, project: Project): Sequence<KtFile> {
         val manager = PsiManager.getInstance(project)
         return allFiles(filesOrDirs)
                 .asSequence()
-                .map { manager.findFile(it) as? JetFile }
+                .map { manager.findFile(it) as? KtFile }
                 .filterNotNull()
     }
 
@@ -186,17 +186,17 @@ public class CheckPartialBodyResolveAction : AnAction() {
     }
 
     //TODO: currently copied from PartialBodyResolveFilter - not good
-    private fun isValueNeeded(expression: JetExpression): Boolean {
+    private fun isValueNeeded(expression: KtExpression): Boolean {
         val parent = expression.getParent()
         return when (parent) {
-            is JetBlockExpression -> expression == parent.lastStatement() && isValueNeeded(parent)
+            is KtBlockExpression -> expression == parent.lastStatement() && isValueNeeded(parent)
 
-            is JetContainerNode -> { //TODO - not quite correct
-                val pparent = parent.getParent() as? JetExpression
+            is KtContainerNode -> { //TODO - not quite correct
+                val pparent = parent.getParent() as? KtExpression
                 pparent != null && isValueNeeded(pparent)
             }
 
-            is JetDeclarationWithBody -> {
+            is KtDeclarationWithBody -> {
                 if (expression == parent.getBodyExpression())
                     !parent.hasBlockBody() && !parent.hasDeclaredReturnType()
                 else
@@ -207,6 +207,6 @@ public class CheckPartialBodyResolveAction : AnAction() {
         }
     }
 
-    private fun JetBlockExpression.lastStatement(): JetExpression?
-            = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<JetExpression>()
+    private fun KtBlockExpression.lastStatement(): KtExpression?
+            = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<KtExpression>()
 }

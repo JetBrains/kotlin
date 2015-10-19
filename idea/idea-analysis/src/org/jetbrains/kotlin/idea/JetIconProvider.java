@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 
 import javax.swing.*;
@@ -42,16 +42,16 @@ public class JetIconProvider extends IconProvider implements DumbAware {
     public static JetIconProvider INSTANCE = new JetIconProvider();
 
     @Nullable
-    public static JetClassOrObject getMainClass(@NotNull JetFile file) {
-        List<JetDeclaration> classes = ContainerUtil.filter(file.getDeclarations(), new Condition<JetDeclaration>() {
+    public static KtClassOrObject getMainClass(@NotNull KtFile file) {
+        List<KtDeclaration> classes = ContainerUtil.filter(file.getDeclarations(), new Condition<KtDeclaration>() {
             @Override
-            public boolean value(JetDeclaration jetDeclaration) {
-                return jetDeclaration instanceof JetClassOrObject;
+            public boolean value(KtDeclaration jetDeclaration) {
+                return jetDeclaration instanceof KtClassOrObject;
             }
         });
         if (classes.size() == 1) {
             if (StringUtil.getPackageName(file.getName()).equals(classes.get(0).getName())) {
-                return (JetClassOrObject) classes.get(0);
+                return (KtClassOrObject) classes.get(0);
             }
         }
         return null;
@@ -59,15 +59,15 @@ public class JetIconProvider extends IconProvider implements DumbAware {
 
     @Override
     public Icon getIcon(@NotNull PsiElement psiElement, int flags) {
-        if (psiElement instanceof JetFile) {
-            JetFile file = (JetFile) psiElement;
-            JetClassOrObject mainClass = getMainClass(file);
-            return mainClass != null && file.getDeclarations().size() == 1 ? getIcon(mainClass, flags) : JetIcons.FILE;
+        if (psiElement instanceof KtFile) {
+            KtFile file = (KtFile) psiElement;
+            KtClassOrObject mainClass = getMainClass(file);
+            return mainClass != null && file.getDeclarations().size() == 1 ? getIcon(mainClass, flags) : KtIcons.FILE;
         }
 
         Icon result = getBaseIcon(psiElement);
-        if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0 && psiElement instanceof JetModifierListOwner) {
-            JetModifierList list = ((JetModifierListOwner) psiElement).getModifierList();
+        if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0 && psiElement instanceof KtModifierListOwner) {
+            KtModifierList list = ((KtModifierListOwner) psiElement).getModifierList();
             result = createRowIcon(result, getVisibilityIcon(list));
         }
         return result;
@@ -80,15 +80,15 @@ public class JetIconProvider extends IconProvider implements DumbAware {
         return rowIcon;
     }
 
-    public static Icon getVisibilityIcon(@Nullable JetModifierList list) {
+    public static Icon getVisibilityIcon(@Nullable KtModifierList list) {
         if (list != null) {
-            if (list.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+            if (list.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
                 return PlatformIcons.PRIVATE_ICON;
             }
-            if (list.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
+            if (list.hasModifier(KtTokens.PROTECTED_KEYWORD)) {
                 return PlatformIcons.PROTECTED_ICON;
             }
-            if (list.hasModifier(JetTokens.INTERNAL_KEYWORD)) {
+            if (list.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
                 return PlatformIcons.PACKAGE_LOCAL_ICON;
             }
         }
@@ -97,22 +97,22 @@ public class JetIconProvider extends IconProvider implements DumbAware {
     }
 
     public static Icon getBaseIcon(PsiElement psiElement) {
-        if (psiElement instanceof JetPackageDirective) {
+        if (psiElement instanceof KtPackageDirective) {
             return PlatformIcons.PACKAGE_ICON;
         }
 
         if (psiElement instanceof KotlinLightClassForFacade) {
-            return JetIcons.FILE;
+            return KtIcons.FILE;
         }
 
         if (psiElement instanceof KotlinLightClassForDecompiledDeclaration) {
-            JetClassOrObject origin = ((KotlinLightClassForDecompiledDeclaration) psiElement).getOrigin();
+            KtClassOrObject origin = ((KotlinLightClassForDecompiledDeclaration) psiElement).getOrigin();
             if (origin != null) {
                 psiElement = origin;
             }
             else {
                 //TODO (light classes for decompiled files): correct presentation
-                return JetIcons.CLASS;
+                return KtIcons.CLASS;
             }
         }
 
@@ -120,13 +120,13 @@ public class JetIconProvider extends IconProvider implements DumbAware {
             psiElement = psiElement.getNavigationElement();
         }
 
-        if (psiElement instanceof JetNamedFunction) {
-            if (((JetFunction) psiElement).getReceiverTypeReference() != null) {
-                return JetIcons.EXTENSION_FUNCTION;
+        if (psiElement instanceof KtNamedFunction) {
+            if (((KtFunction) psiElement).getReceiverTypeReference() != null) {
+                return KtIcons.EXTENSION_FUNCTION;
             }
 
-            if (PsiTreeUtil.getParentOfType(psiElement, JetNamedDeclaration.class) instanceof JetClass) {
-                if (JetPsiUtil.isAbstract((JetFunction) psiElement)) {
+            if (PsiTreeUtil.getParentOfType(psiElement, KtNamedDeclaration.class) instanceof KtClass) {
+                if (KtPsiUtil.isAbstract((KtFunction) psiElement)) {
                     return PlatformIcons.ABSTRACT_METHOD_ICON;
                 }
                 else {
@@ -134,41 +134,41 @@ public class JetIconProvider extends IconProvider implements DumbAware {
                 }
             }
             else {
-                return JetIcons.FUNCTION;
+                return KtIcons.FUNCTION;
             }
         }
 
-        if (psiElement instanceof JetFunctionLiteral) return JetIcons.LAMBDA;
+        if (psiElement instanceof KtFunctionLiteral) return KtIcons.LAMBDA;
 
-        if (psiElement instanceof JetClass) {
-            JetClass jetClass = (JetClass) psiElement;
-            if (jetClass.isInterface()) {
-                return JetIcons.TRAIT;
+        if (psiElement instanceof KtClass) {
+            KtClass ktClass = (KtClass) psiElement;
+            if (ktClass.isInterface()) {
+                return KtIcons.TRAIT;
             }
 
-            Icon icon = jetClass.isEnum() ? JetIcons.ENUM : JetIcons.CLASS;
-            if (jetClass instanceof JetEnumEntry) {
-                JetEnumEntry enumEntry = (JetEnumEntry) jetClass;
+            Icon icon = ktClass.isEnum() ? KtIcons.ENUM : KtIcons.CLASS;
+            if (ktClass instanceof KtEnumEntry) {
+                KtEnumEntry enumEntry = (KtEnumEntry) ktClass;
                 if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                    icon = JetIcons.ENUM;
+                    icon = KtIcons.ENUM;
                 }
             }
             return icon;
         }
-        if (psiElement instanceof JetObjectDeclaration) {
-            return JetIcons.OBJECT;
+        if (psiElement instanceof KtObjectDeclaration) {
+            return KtIcons.OBJECT;
         }
-        if (psiElement instanceof JetParameter) {
-            JetParameter parameter = (JetParameter) psiElement;
-            if (JetPsiUtil.getClassIfParameterIsProperty(parameter) != null) {
-                return parameter.isMutable() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
+        if (psiElement instanceof KtParameter) {
+            KtParameter parameter = (KtParameter) psiElement;
+            if (KtPsiUtil.getClassIfParameterIsProperty(parameter) != null) {
+                return parameter.isMutable() ? KtIcons.FIELD_VAR : KtIcons.FIELD_VAL;
             }
 
-            return JetIcons.PARAMETER;
+            return KtIcons.PARAMETER;
         }
-        if (psiElement instanceof JetProperty) {
-            JetProperty property = (JetProperty) psiElement;
-            return property.isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
+        if (psiElement instanceof KtProperty) {
+            KtProperty property = (KtProperty) psiElement;
+            return property.isVar() ? KtIcons.FIELD_VAR : KtIcons.FIELD_VAL;
         }
 
         return null;

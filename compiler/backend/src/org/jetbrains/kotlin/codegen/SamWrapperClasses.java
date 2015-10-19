@@ -22,7 +22,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.Map;
@@ -30,14 +30,14 @@ import java.util.Map;
 public class SamWrapperClasses {
     private final GenerationState state;
 
-    private final Map<Pair<SamType, JetFile>, Type> samInterfaceToWrapperClass = Maps.newHashMap();
+    private final Map<Pair<SamType, KtFile>, Type> samInterfaceToWrapperClass = Maps.newHashMap();
 
     public SamWrapperClasses(@NotNull GenerationState state) {
         this.state = state;
     }
 
     @NotNull
-    public Type getSamWrapperClass(@NotNull final SamType samType, @NotNull final JetFile file, @NotNull final MemberCodegen<?> parentCodegen) {
+    public Type getSamWrapperClass(@NotNull final SamType samType, @NotNull final KtFile file, @NotNull final MemberCodegen<?> parentCodegen) {
         return ContainerUtil.getOrCreate(samInterfaceToWrapperClass, Pair.create(samType, file),
                                          new Factory<Type>() {
                                              @Override

@@ -20,26 +20,26 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtBlockExpression
 
 public class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
-        if (element !is JetIfExpression) return
+        if (element !is KtIfExpression) return
 
         val document = editor.getDocument()
         val elseBranch = element.getElse()
         val elseKeyword = element.getElseKeyword()
 
         if (elseKeyword != null) {
-            if (elseBranch == null || elseBranch !is JetBlockExpression && elseBranch.startLine(editor.getDocument()) > elseKeyword.startLine(editor.getDocument())) {
+            if (elseBranch == null || elseBranch !is KtBlockExpression && elseBranch.startLine(editor.getDocument()) > elseKeyword.startLine(editor.getDocument())) {
                 document.insertString(elseKeyword.range.end, "{}")
                 return
             }
         }
 
         val thenBranch = element.getThen()
-        if (thenBranch is JetBlockExpression) return
+        if (thenBranch is KtBlockExpression) return
 
         val rParen = element.getRightParenthesis()
         if (rParen == null) return

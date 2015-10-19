@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import java.awt.event.MouseEvent
@@ -52,21 +52,21 @@ public class KotlinLineMarkerProvider : LineMarkerProvider {
         val first = elements.first()
         if (DumbService.getInstance(first.getProject()).isDumb() || !ProjectRootsUtil.isInProjectOrLibSource(first)) return
 
-        val functions = HashSet<JetNamedFunction>()
-        val properties = HashSet<JetProperty>()
+        val functions = HashSet<KtNamedFunction>()
+        val properties = HashSet<KtProperty>()
 
         for (element in elements) {
             ProgressManager.checkCanceled()
 
             when (element) {
-                is JetClass -> {
+                is KtClass -> {
                     collectInheritedClassMarker(element, result)
                 }
-                is JetNamedFunction -> {
+                is KtNamedFunction -> {
                     functions.add(element)
                     collectSuperDeclarationMarkers(element, result)
                 }
-                is JetProperty -> {
+                is KtProperty -> {
                     properties.add(element)
                     collectSuperDeclarationMarkers(element, result)
                 }
@@ -100,10 +100,10 @@ private val OVERRIDDEN_FUNCTION = MarkerType(
         })
 
 private val OVERRIDDEN_PROPERTY = MarkerType(
-        { it?.let { getOverriddenPropertyTooltip(it.getParent() as JetProperty) } },
+        { it?.let { getOverriddenPropertyTooltip(it.getParent() as KtProperty) } },
         object : LineMarkerNavigator() {
             override fun browse(e: MouseEvent?, element: PsiElement?) {
-                element?.let { navigateToPropertyOverriddenDeclarations(e, it.getParent() as JetProperty) }
+                element?.let { navigateToPropertyOverriddenDeclarations(e, it.getParent() as KtProperty) }
             }
         })
 
@@ -111,10 +111,10 @@ private fun isImplementsAndNotOverrides(descriptor: CallableMemberDescriptor, ov
     return descriptor.getModality() != Modality.ABSTRACT && overriddenMembers.all { it.getModality() == Modality.ABSTRACT }
 }
 
-private fun collectSuperDeclarationMarkers(declaration: JetDeclaration, result: MutableCollection<LineMarkerInfo<*>>) {
-    assert(declaration is JetNamedFunction || declaration is JetProperty)
+private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: MutableCollection<LineMarkerInfo<*>>) {
+    assert(declaration is KtNamedFunction || declaration is KtProperty)
 
-    if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
+    if (!declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
 
     val resolveWithParents = resolveDeclarationWithParents(declaration)
     if (resolveWithParents.overriddenDescriptors.isEmpty()) return
@@ -135,9 +135,9 @@ private fun collectSuperDeclarationMarkers(declaration: JetDeclaration, result: 
     result.add(marker)
 }
 
-private fun collectInheritedClassMarker(element: JetClass, result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectInheritedClassMarker(element: KtClass, result: MutableCollection<LineMarkerInfo<*>>) {
     val isTrait = element.isInterface()
-    if (!(isTrait || element.hasModifier(JetTokens.OPEN_KEYWORD) || element.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
+    if (!(isTrait || element.hasModifier(KtTokens.OPEN_KEYWORD) || element.hasModifier(KtTokens.ABSTRACT_KEYWORD))) {
         return
     }
 
@@ -157,8 +157,8 @@ private fun collectInheritedClassMarker(element: JetClass, result: MutableCollec
     ))
 }
 
-private fun collectOverriddenPropertyAccessors(properties: Collection<JetProperty>, result: MutableCollection<LineMarkerInfo<*>>) {
-    val mappingToJava = HashMap<PsiMethod, JetProperty>()
+private fun collectOverriddenPropertyAccessors(properties: Collection<KtProperty>, result: MutableCollection<LineMarkerInfo<*>>) {
+    val mappingToJava = HashMap<PsiMethod, KtProperty>()
     for (property in properties) {
         if (property.isOverridable()) {
             val accessorsPsiMethods = LightClassUtil.getLightClassPropertyMethods(property)
@@ -187,8 +187,8 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<JetPropert
     }
 }
 
-private fun collectOverriddenFunctions(functions: Collection<JetNamedFunction>, result: MutableCollection<LineMarkerInfo<*>>) {
-    val mappingToJava = HashMap<PsiMethod, JetNamedFunction>()
+private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, result: MutableCollection<LineMarkerInfo<*>>) {
+    val mappingToJava = HashMap<PsiMethod, KtNamedFunction>()
     for (function in functions) {
         if (function.isOverridable()) {
             val method = LightClassUtil.getLightClassMethod(function)

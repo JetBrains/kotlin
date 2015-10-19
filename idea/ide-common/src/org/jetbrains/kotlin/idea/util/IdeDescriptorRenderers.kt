@@ -20,16 +20,16 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 public object IdeDescriptorRenderers {
-    public val APPROXIMATE_FLEXIBLE_TYPES: (JetType) -> JetType = { approximateFlexibleTypes(it, true) }
+    public val APPROXIMATE_FLEXIBLE_TYPES: (KtType) -> KtType = { approximateFlexibleTypes(it, true) }
 
-    public val APPROXIMATE_FLEXIBLE_TYPES_IN_ARGUMENTS: (JetType) -> JetType = { approximateFlexibleTypes(it, false) }
+    public val APPROXIMATE_FLEXIBLE_TYPES_IN_ARGUMENTS: (KtType) -> KtType = { approximateFlexibleTypes(it, false) }
 
-    private fun unwrapAnonymousType(type: JetType): JetType {
+    private fun unwrapAnonymousType(type: KtType): KtType {
         if (type.isDynamic()) return type
 
         val classifier = type.constructor.declarationDescriptor

@@ -25,8 +25,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 abstract class KotlinGenerateActionBase() : CodeInsightAction(), CodeInsightActionHandler {
@@ -46,17 +46,17 @@ abstract class KotlinGenerateActionBase() : CodeInsightAction(), CodeInsightActi
     }
 
     override fun isValidForFile(project: Project, editor: Editor, file: PsiFile): Boolean {
-        if (file !is JetFile || file.isCompiled) return false
+        if (file !is KtFile || file.isCompiled) return false
 
         val targetClass = getTargetClass(editor, file) ?: return false
         return targetClass.canRefactor() && isValidForClass(targetClass)
     }
 
-    protected open fun getTargetClass(editor: Editor, file: PsiFile): JetClassOrObject? {
-        return file.findElementAt(editor.caretModel.offset)?.getNonStrictParentOfType<JetClassOrObject>()
+    protected open fun getTargetClass(editor: Editor, file: PsiFile): KtClassOrObject? {
+        return file.findElementAt(editor.caretModel.offset)?.getNonStrictParentOfType<KtClassOrObject>()
     }
 
-    protected abstract fun isValidForClass(targetClass: JetClassOrObject): Boolean
+    protected abstract fun isValidForClass(targetClass: KtClassOrObject): Boolean
 
     override fun startInWriteAction() = false
 

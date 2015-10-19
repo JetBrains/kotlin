@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
@@ -77,14 +77,14 @@ public fun getExpectedTypePredicate(
     val pseudocode = value.createdAt?.owner ?: return AllTypes
     val typePredicates = LinkedHashSet<TypePredicate?>()
 
-    fun addSubtypesOf(jetType: JetType?) = typePredicates.add(jetType?.getSubtypesPredicate())
+    fun addSubtypesOf(jetType: KtType?) = typePredicates.add(jetType?.getSubtypesPredicate())
 
     fun addByExplicitReceiver(resolvedCall: ResolvedCall<*>?) {
         val receiverValue = (resolvedCall ?: return).getExplicitReceiverValue()
         if (receiverValue.exists()) typePredicates.add(getReceiverTypePredicate(resolvedCall, receiverValue))
     }
 
-    fun getTypePredicateForUnresolvedCallArgument(to: JetElement, inputValueIndex: Int): TypePredicate? {
+    fun getTypePredicateForUnresolvedCallArgument(to: KtElement, inputValueIndex: Int): TypePredicate? {
         if (inputValueIndex < 0) return null
         val call = to.getCall(bindingContext) ?: return null
         val callee = call.getCalleeExpression() ?: return null
@@ -147,7 +147,7 @@ public fun getExpectedTypePredicate(
                 is ReturnValueInstruction -> {
                     val returnElement = it.element
                     val functionDescriptor = when(returnElement) {
-                        is JetReturnExpression -> returnElement.getTargetFunctionDescriptor(bindingContext)
+                        is KtReturnExpression -> returnElement.getTargetFunctionDescriptor(bindingContext)
                         else -> bindingContext[DECLARATION_TO_DESCRIPTOR, pseudocode.getCorrespondingElement()]
                     }
                     addSubtypesOf((functionDescriptor as? CallableDescriptor)?.getReturnType())
@@ -204,22 +204,22 @@ public fun getExpectedTypePredicate(
                         addSubtypesOf(builtIns.getBooleanType())
 
                     LOOP_RANGE_ITERATION ->
-                        addByExplicitReceiver(bindingContext[LOOP_RANGE_ITERATOR_RESOLVED_CALL, value.element as? JetExpression])
+                        addByExplicitReceiver(bindingContext[LOOP_RANGE_ITERATOR_RESOLVED_CALL, value.element as? KtExpression])
 
                     VALUE_CONSUMER -> {
                         val element = it.element
                         when {
-                            element.getStrictParentOfType<JetWhileExpression>()?.getCondition() == element ->
+                            element.getStrictParentOfType<KtWhileExpression>()?.getCondition() == element ->
                                 addSubtypesOf(builtIns.getBooleanType())
 
-                            element is JetProperty -> {
+                            element is KtProperty -> {
                                 val propertyDescriptor = bindingContext[DECLARATION_TO_DESCRIPTOR, element] as? PropertyDescriptor
                                 propertyDescriptor?.getAccessors()?.map {
                                     addByExplicitReceiver(bindingContext[DELEGATED_PROPERTY_RESOLVED_CALL, it])
                                 }
                             }
 
-                            element is JetDelegatorByExpressionSpecifier ->
+                            element is KtDelegatorByExpressionSpecifier ->
                                 addSubtypesOf(bindingContext[TYPE, element.getTypeReference()])
                         }
                     }
@@ -260,7 +260,7 @@ fun Instruction.calcSideEffectFree(): Boolean {
                 }
 
                 else -> when (element) {
-                    is JetConstantExpression, is JetFunctionLiteralExpression, is JetStringTemplateExpression -> true
+                    is KtConstantExpression, is KtFunctionLiteralExpression, is KtStringTemplateExpression -> true
                     else -> false
                 }
             }
@@ -272,7 +272,7 @@ fun Instruction.calcSideEffectFree(): Boolean {
     }
 }
 
-fun Pseudocode.getElementValuesRecursively(element: JetElement): List<PseudoValue> {
+fun Pseudocode.getElementValuesRecursively(element: KtElement): List<PseudoValue> {
     val results = ArrayList<PseudoValue>()
 
     fun Pseudocode.collectValues() {
@@ -286,14 +286,14 @@ fun Pseudocode.getElementValuesRecursively(element: JetElement): List<PseudoValu
     return results
 }
 
-public fun JetElement.getContainingPseudocode(context: BindingContext): Pseudocode? {
+public fun KtElement.getContainingPseudocode(context: BindingContext): Pseudocode? {
     val pseudocodeDeclaration =
-            PsiTreeUtil.getParentOfType(this, javaClass<JetDeclarationWithBody>(), javaClass<JetClassOrObject>())
-            ?: getNonStrictParentOfType<JetProperty>()
+            PsiTreeUtil.getParentOfType(this, javaClass<KtDeclarationWithBody>(), javaClass<KtClassOrObject>())
+            ?: getNonStrictParentOfType<KtProperty>()
             ?: return null
 
-    val enclosingPseudocodeDeclaration = (pseudocodeDeclaration as? JetFunctionLiteral)?.let {
-        it.parents.firstOrNull { it is JetDeclaration && it !is JetFunctionLiteral } as? JetDeclaration
+    val enclosingPseudocodeDeclaration = (pseudocodeDeclaration as? KtFunctionLiteral)?.let {
+        it.parents.firstOrNull { it is KtDeclaration && it !is KtFunctionLiteral } as? KtDeclaration
     } ?: pseudocodeDeclaration
 
     val enclosingPseudocode = PseudocodeUtil.generatePseudocode(enclosingPseudocodeDeclaration, context)
@@ -301,7 +301,7 @@ public fun JetElement.getContainingPseudocode(context: BindingContext): Pseudoco
            ?: throw AssertionError("Can't find nested pseudocode for element: ${pseudocodeDeclaration.getElementTextWithContext()}")
 }
 
-public fun Pseudocode.getPseudocodeByElement(element: JetElement): Pseudocode? {
+public fun Pseudocode.getPseudocodeByElement(element: KtElement): Pseudocode? {
     if (getCorrespondingElement() == element) return this
 
     getLocalDeclarations().forEach { decl -> decl.body.getPseudocodeByElement(element)?.let { return it } }

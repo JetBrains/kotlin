@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.util.HashMap
 
-public class SubstitutingScope(private val workerScope: JetScope, private val substitutor: TypeSubstitutor) : JetScope {
+public class SubstitutingScope(private val workerScope: KtScope, private val substitutor: TypeSubstitutor) : KtScope {
 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor?>? = null
 
@@ -71,16 +71,16 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
 
     override fun getFunctions(name: Name, location: LookupLocation) = substitute(workerScope.getFunctions(name, location))
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
             = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes, name, location))
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
             = substitute(workerScope.getSyntheticExtensionFunctions(receiverTypes, name, location))
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>): Collection<PropertyDescriptor>
             = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes))
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor>
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>): Collection<FunctionDescriptor>
             = substitute(workerScope.getSyntheticExtensionFunctions(receiverTypes))
 
     override fun getPackage(name: Name) = workerScope.getPackage(name)

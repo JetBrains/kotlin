@@ -33,11 +33,11 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier;
 import org.jetbrains.kotlin.types.DeferredType;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.expressions.CaptureKind;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
@@ -77,7 +77,7 @@ public interface BindingContext {
 
         @Nullable
         @Override
-        public JetType getType(@NotNull JetExpression expression) {
+        public KtType getType(@NotNull KtExpression expression) {
             return null;
         }
 
@@ -87,71 +87,71 @@ public interface BindingContext {
         }
     };
 
-    WritableSlice<JetAnnotationEntry, AnnotationDescriptor> ANNOTATION = Slices.createSimpleSlice();
+    WritableSlice<KtAnnotationEntry, AnnotationDescriptor> ANNOTATION = Slices.createSimpleSlice();
 
-    WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
 
-    WritableSlice<JetTypeReference, JetType> TYPE = Slices.createSimpleSlice();
-    WritableSlice<JetExpression, JetTypeInfo> EXPRESSION_TYPE_INFO = new BasicWritableSlice<JetExpression, JetTypeInfo>(DO_NOTHING);
-    WritableSlice<JetExpression, JetType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
-    WritableSlice<JetFunction, JetType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<JetFunction, JetType>(DO_NOTHING);
-    WritableSlice<JetExpression, DataFlowInfo> DATAFLOW_INFO_AFTER_CONDITION = Slices.createSimpleSlice();
+    WritableSlice<KtTypeReference, KtType> TYPE = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, JetTypeInfo> EXPRESSION_TYPE_INFO = new BasicWritableSlice<KtExpression, JetTypeInfo>(DO_NOTHING);
+    WritableSlice<KtExpression, KtType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<KtExpression, KtType>(DO_NOTHING);
+    WritableSlice<KtFunction, KtType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<KtFunction, KtType>(DO_NOTHING);
+    WritableSlice<KtExpression, DataFlowInfo> DATAFLOW_INFO_AFTER_CONDITION = Slices.createSimpleSlice();
 
     /**
      * A qualifier corresponds to a receiver expression (if any). For 'A.B' qualifier is recorded for 'A'.
      */
-    WritableSlice<JetExpression, Qualifier> QUALIFIER = new BasicWritableSlice<JetExpression, Qualifier>(DO_NOTHING);
+    WritableSlice<KtExpression, Qualifier> QUALIFIER = new BasicWritableSlice<KtExpression, Qualifier>(DO_NOTHING);
 
-    WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET =
-            new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
+    WritableSlice<KtReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET =
+            new BasicWritableSlice<KtReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
     // if 'A' really means 'A.Companion' then this slice stores class descriptor for A, REFERENCE_TARGET stores descriptor Companion in this case
-    WritableSlice<JetReferenceExpression, ClassDescriptor> SHORT_REFERENCE_TO_COMPANION_OBJECT =
-            new BasicWritableSlice<JetReferenceExpression, ClassDescriptor>(DO_NOTHING);
+    WritableSlice<KtReferenceExpression, ClassDescriptor> SHORT_REFERENCE_TO_COMPANION_OBJECT =
+            new BasicWritableSlice<KtReferenceExpression, ClassDescriptor>(DO_NOTHING);
 
     WritableSlice<Call, ResolvedCall<?>> RESOLVED_CALL = new BasicWritableSlice<Call, ResolvedCall<?>>(DO_NOTHING);
     WritableSlice<ResolvedCall<?>, TailRecursionKind> TAIL_RECURSION_CALL = Slices.createSimpleSlice();
-    WritableSlice<JetElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<JetElement, ConstraintSystemCompleter>(DO_NOTHING);
-    WritableSlice<JetElement, Call> CALL = new BasicWritableSlice<JetElement, Call>(DO_NOTHING);
+    WritableSlice<KtElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<KtElement, ConstraintSystemCompleter>(DO_NOTHING);
+    WritableSlice<KtElement, Call> CALL = new BasicWritableSlice<KtElement, Call>(DO_NOTHING);
 
-    WritableSlice<JetExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET =
-            new BasicWritableSlice<JetExpression, Collection<? extends DeclarationDescriptor>>(DO_NOTHING);
+    WritableSlice<KtExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET =
+            new BasicWritableSlice<KtExpression, Collection<? extends DeclarationDescriptor>>(DO_NOTHING);
 
-    WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_ITERATOR_RESOLVED_CALL = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_ITERATOR_RESOLVED_CALL = Slices.createSimpleSlice();
 
-    WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_HAS_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
-    WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_HAS_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> LOOP_RANGE_NEXT_RESOLVED_CALL = Slices.createSimpleSlice();
 
     WritableSlice<PropertyAccessorDescriptor, ResolvedCall<FunctionDescriptor>> DELEGATED_PROPERTY_RESOLVED_CALL = Slices.createSimpleSlice();
     WritableSlice<PropertyAccessorDescriptor, Call> DELEGATED_PROPERTY_CALL = Slices.createSimpleSlice();
 
     WritableSlice<PropertyDescriptor, ResolvedCall<FunctionDescriptor>> DELEGATED_PROPERTY_PD_RESOLVED_CALL = Slices.createSimpleSlice();
 
-    WritableSlice<JetMultiDeclarationEntry, ResolvedCall<FunctionDescriptor>> COMPONENT_RESOLVED_CALL = Slices.createSimpleSlice();
+    WritableSlice<KtMultiDeclarationEntry, ResolvedCall<FunctionDescriptor>> COMPONENT_RESOLVED_CALL = Slices.createSimpleSlice();
 
-    WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_GET = Slices.createSimpleSlice();
-    WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_SET = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_GET = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_SET = Slices.createSimpleSlice();
 
-    WritableSlice<JetExpression, JetType> SMARTCAST = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, KtType> SMARTCAST = Slices.createSimpleSlice();
 
-    WritableSlice<JetWhenExpression, Boolean> EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
+    WritableSlice<KtWhenExpression, Boolean> EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
 
-    @Deprecated WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice();
-    WritableSlice<JetElement, LexicalScope> LEXICAL_SCOPE = Slices.createSimpleSlice();
+    @Deprecated WritableSlice<KtExpression, KtScope> RESOLUTION_SCOPE = Slices.createSimpleSlice();
+    WritableSlice<KtElement, LexicalScope> LEXICAL_SCOPE = Slices.createSimpleSlice();
 
-    WritableSlice<ScriptDescriptor, JetScope> SCRIPT_SCOPE = Slices.createSimpleSlice();
+    WritableSlice<ScriptDescriptor, KtScope> SCRIPT_SCOPE = Slices.createSimpleSlice();
 
-    WritableSlice<JetExpression, Boolean> VARIABLE_REASSIGNMENT = Slices.createSimpleSetSlice();
+    WritableSlice<KtExpression, Boolean> VARIABLE_REASSIGNMENT = Slices.createSimpleSetSlice();
     WritableSlice<ValueParameterDescriptor, Boolean> AUTO_CREATED_IT = Slices.createSimpleSetSlice();
 
     /**
      * Has type of current expression has been already resolved
      */
-    WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice();
-    WritableSlice<JetElement, Boolean> USED_AS_EXPRESSION = Slices.createSimpleSetSlice();
-    WritableSlice<JetElement, Boolean> UNREACHABLE_CODE = Slices.createSimpleSetSlice();
+    WritableSlice<KtExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice();
+    WritableSlice<KtElement, Boolean> USED_AS_EXPRESSION = Slices.createSimpleSetSlice();
+    WritableSlice<KtElement, Boolean> UNREACHABLE_CODE = Slices.createSimpleSetSlice();
 
     WritableSlice<VariableDescriptor, CaptureKind> CAPTURED_IN_CLOSURE = new BasicWritableSlice<VariableDescriptor, CaptureKind>(DO_NOTHING);
-    WritableSlice<JetDeclaration, PreliminaryDeclarationVisitor> PRELIMINARY_VISITOR = new BasicWritableSlice<JetDeclaration, PreliminaryDeclarationVisitor>(DO_NOTHING);
+    WritableSlice<KtDeclaration, PreliminaryDeclarationVisitor> PRELIMINARY_VISITOR = new BasicWritableSlice<KtDeclaration, PreliminaryDeclarationVisitor>(DO_NOTHING);
 
     WritableSlice<CallableMemberDescriptor, Boolean> NEED_SYNTHETIC_ACCESSOR = new BasicWritableSlice<CallableMemberDescriptor, Boolean>(DO_NOTHING);
 
@@ -170,8 +170,8 @@ public interface BindingContext {
             }
             backingFieldRequired = valueNotFound ? false : backingFieldRequired;
             PsiElement declarationPsiElement = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
-            if (declarationPsiElement instanceof JetParameter) {
-                JetParameter jetParameter = (JetParameter) declarationPsiElement;
+            if (declarationPsiElement instanceof KtParameter) {
+                KtParameter jetParameter = (KtParameter) declarationPsiElement;
                 return jetParameter.hasValOrVar() ||
                        backingFieldRequired; // this part is unused because we do not allow access to constructor parameters in member bodies
             }
@@ -189,9 +189,9 @@ public interface BindingContext {
     };
     WritableSlice<PropertyDescriptor, Boolean> IS_UNINITIALIZED = Slices.createSimpleSetSlice();
 
-    WritableSlice<JetFunctionLiteralExpression, Boolean> BLOCK = new Slices.SetSlice<JetFunctionLiteralExpression>(DO_NOTHING) {
+    WritableSlice<KtFunctionLiteralExpression, Boolean> BLOCK = new Slices.SetSlice<KtFunctionLiteralExpression>(DO_NOTHING) {
         @Override
-        public Boolean computeValue(SlicedMap map, JetFunctionLiteralExpression expression, Boolean isBlock, boolean valueNotFound) {
+        public Boolean computeValue(SlicedMap map, KtFunctionLiteralExpression expression, Boolean isBlock, boolean valueNotFound) {
             isBlock = valueNotFound ? false : isBlock;
             return isBlock && !expression.getFunctionLiteral().hasParameterSpecification();
         }
@@ -199,7 +199,7 @@ public interface BindingContext {
 
     WritableSlice<PsiElement, ClassDescriptor> CLASS = Slices.createSimpleSlice();
     WritableSlice<PsiElement, ScriptDescriptor> SCRIPT = Slices.createSimpleSlice();
-    WritableSlice<JetTypeParameter, TypeParameterDescriptor> TYPE_PARAMETER = Slices.createSimpleSlice();
+    WritableSlice<KtTypeParameter, TypeParameterDescriptor> TYPE_PARAMETER = Slices.createSimpleSlice();
     /**
      * @see BindingContextUtils#recordFunctionDeclarationToDescriptor(BindingTrace, PsiElement, SimpleFunctionDescriptor)}
      */
@@ -208,8 +208,8 @@ public interface BindingContext {
     WritableSlice<ConstructorDescriptor, ResolvedCall<ConstructorDescriptor>> CONSTRUCTOR_RESOLVED_DELEGATION_CALL =
             Slices.createSimpleSlice();
     WritableSlice<PsiElement, VariableDescriptor> VARIABLE = Slices.createSimpleSlice();
-    WritableSlice<JetParameter, VariableDescriptor> VALUE_PARAMETER = Slices.createSimpleSlice();
-    WritableSlice<JetPropertyAccessor, PropertyAccessorDescriptor> PROPERTY_ACCESSOR = Slices.createSimpleSlice();
+    WritableSlice<KtParameter, VariableDescriptor> VALUE_PARAMETER = Slices.createSimpleSlice();
+    WritableSlice<KtPropertyAccessor, PropertyAccessorDescriptor> PROPERTY_ACCESSOR = Slices.createSimpleSlice();
     WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER = Slices.createSimpleSlice();
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
@@ -223,8 +223,8 @@ public interface BindingContext {
                     .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS)
                     .build();
 
-    WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.createSimpleSlice();
-    WritableSlice<JetReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET = Slices.createSimpleSlice();
+    WritableSlice<KtReferenceExpression, PsiElement> LABEL_TARGET = Slices.createSimpleSlice();
+    WritableSlice<KtReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET = Slices.createSimpleSlice();
     WritableSlice<ValueParameterDescriptor, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY = Slices.createSimpleSlice();
 
     WritableSlice<ValueParameterDescriptor, FunctionDescriptor> DATA_CLASS_COMPONENT_FUNCTION = Slices.createSimpleSlice();
@@ -232,8 +232,8 @@ public interface BindingContext {
 
     WritableSlice<FqNameUnsafe, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR =
             new BasicWritableSlice<FqNameUnsafe, ClassDescriptor>(DO_NOTHING, true);
-    WritableSlice<JetFile, PackageFragmentDescriptor> FILE_TO_PACKAGE_FRAGMENT = Slices.createSimpleSlice();
-    WritableSlice<FqName, Collection<JetFile>> PACKAGE_TO_FILES = Slices.createSimpleSlice();
+    WritableSlice<KtFile, PackageFragmentDescriptor> FILE_TO_PACKAGE_FRAGMENT = Slices.createSimpleSlice();
+    WritableSlice<FqName, Collection<KtFile>> PACKAGE_TO_FILES = Slices.createSimpleSlice();
 
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer
@@ -256,7 +256,7 @@ public interface BindingContext {
     <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice);
 
     @Nullable
-    JetType getType(@NotNull JetExpression expression);
+    KtType getType(@NotNull KtExpression expression);
 
     void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics);
 }

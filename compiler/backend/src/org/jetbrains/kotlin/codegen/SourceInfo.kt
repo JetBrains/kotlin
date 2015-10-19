@@ -17,21 +17,21 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
 
 data public class SourceInfo(val source: String, val pathOrCleanFQN: String, val linesInFile: Int) {
 
     companion object {
-        fun createInfo(element: JetElement?, internalClassName: String): SourceInfo {
+        fun createInfo(element: KtElement?, internalClassName: String): SourceInfo {
             assert(element != null) { "Couldn't create source mapper for null element " + internalClassName }
             val lineNumbers = CodegenUtil.getLineNumberForElement(element!!.getContainingFile(), true)
             assert(lineNumbers != null) { "Couldn't extract line count in " + element.getContainingFile() }
 
             //TODO hack condition for package parts cleaning
-            val isTopLevel = element is JetFile || (element is JetNamedFunction && element.getParent() is JetFile)
+            val isTopLevel = element is KtFile || (element is KtNamedFunction && element.getParent() is KtFile)
             val cleanedClassFqName = if (!isTopLevel) internalClassName else internalClassName.substringBefore('$')
 
             return SourceInfo(element.getContainingJetFile().getName(), cleanedClassFqName, lineNumbers!!)

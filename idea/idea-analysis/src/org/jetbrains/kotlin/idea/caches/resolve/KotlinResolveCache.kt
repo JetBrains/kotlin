@@ -40,10 +40,10 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import java.util.*
 
-internal class PerFileAnalysisCache(val file: JetFile, val componentProvider: ComponentProvider) {
+internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: ComponentProvider) {
     private val cache = HashMap<PsiElement, AnalysisResult>()
 
-    private fun lookUp(analyzableElement: JetElement): AnalysisResult? {
+    private fun lookUp(analyzableElement: KtElement): AnalysisResult? {
         // Looking for parent elements that are already analyzed
         // Also removing all elements whose parents are already analyzed, to guarantee consistency
         val descendantsOfCurrent = arrayListOf<PsiElement>()
@@ -66,7 +66,7 @@ internal class PerFileAnalysisCache(val file: JetFile, val componentProvider: Co
         return result
     }
 
-    fun getAnalysisResults(element: JetElement): AnalysisResult {
+    fun getAnalysisResults(element: KtElement): AnalysisResult {
         assert (element.getContainingJetFile() == file) { "Wrong file. Expected $file, but was ${element.getContainingJetFile()}" }
 
         val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element)
@@ -84,7 +84,7 @@ internal class PerFileAnalysisCache(val file: JetFile, val componentProvider: Co
         }
     }
 
-    private fun analyze(analyzableElement: JetElement): AnalysisResult {
+    private fun analyze(analyzableElement: KtElement): AnalysisResult {
         val project = analyzableElement.getProject()
         if (DumbService.isDumb(project)) {
             return AnalysisResult.EMPTY
@@ -110,45 +110,45 @@ internal class PerFileAnalysisCache(val file: JetFile, val componentProvider: Co
 
 private object KotlinResolveDataProvider {
     private val topmostElementTypes = arrayOf<Class<out PsiElement?>?>(
-            javaClass<JetNamedFunction>(),
-            javaClass<JetClassInitializer>(),
-            javaClass<JetProperty>(),
-            javaClass<JetImportDirective>(),
-            javaClass<JetPackageDirective>(),
-            javaClass<JetCodeFragment>(),
+            javaClass<KtNamedFunction>(),
+            javaClass<KtClassInitializer>(),
+            javaClass<KtProperty>(),
+            javaClass<KtImportDirective>(),
+            javaClass<KtPackageDirective>(),
+            javaClass<KtCodeFragment>(),
             // TODO: Non-analyzable so far, add more granular analysis
-            javaClass<JetAnnotationEntry>(),
-            javaClass<JetTypeConstraint>(),
-            javaClass<JetDelegationSpecifierList>(),
-            javaClass<JetTypeParameter>(),
-            javaClass<JetParameter>()
+            javaClass<KtAnnotationEntry>(),
+            javaClass<KtTypeConstraint>(),
+            javaClass<KtDelegationSpecifierList>(),
+            javaClass<KtTypeParameter>(),
+            javaClass<KtParameter>()
     )
 
-    fun findAnalyzableParent(element: JetElement): JetElement {
-        if (element is JetFile) return element
+    fun findAnalyzableParent(element: KtElement): KtElement {
+        if (element is KtFile) return element
 
-        val topmostElement = JetPsiUtil.getTopmostParentOfTypes(element, *topmostElementTypes) as JetElement?
+        val topmostElement = KtPsiUtil.getTopmostParentOfTypes(element, *topmostElementTypes) as KtElement?
         // parameters and supertype lists are not analyzable by themselves, but if we don't count them as topmost, we'll stop inside, say,
         // object expressions inside arguments of super constructors of classes (note that classes themselves are not topmost elements)
         val analyzableElement = when (topmostElement) {
-            is JetAnnotationEntry,
-            is JetTypeConstraint,
-            is JetDelegationSpecifierList,
-            is JetTypeParameter,
-            is JetParameter -> PsiTreeUtil.getParentOfType(topmostElement, javaClass<JetClassOrObject>(), javaClass<JetCallableDeclaration>())
+            is KtAnnotationEntry,
+            is KtTypeConstraint,
+            is KtDelegationSpecifierList,
+            is KtTypeParameter,
+            is KtParameter -> PsiTreeUtil.getParentOfType(topmostElement, javaClass<KtClassOrObject>(), javaClass<KtCallableDeclaration>())
             else -> topmostElement
         }
         return analyzableElement
                     // if none of the above worked, take the outermost declaration
-                    ?: PsiTreeUtil.getTopmostParentOfType(element, javaClass<JetDeclaration>())
+                    ?: PsiTreeUtil.getTopmostParentOfType(element, javaClass<KtDeclaration>())
                     // if even that didn't work, take the whole file
                     ?: element.getContainingJetFile()
     }
 
-    fun analyze(project: Project, componentProvider: ComponentProvider, analyzableElement: JetElement): AnalysisResult {
+    fun analyze(project: Project, componentProvider: ComponentProvider, analyzableElement: KtElement): AnalysisResult {
         try {
             val module = componentProvider.get<ModuleDescriptor>()
-            if (analyzableElement is JetCodeFragment) {
+            if (analyzableElement is KtCodeFragment) {
                 return AnalysisResult.success(analyzeExpressionCodeFragment(componentProvider, analyzableElement), module)
             }
 
@@ -195,7 +195,7 @@ private object KotlinResolveDataProvider {
         }
     }
 
-    private fun analyzeExpressionCodeFragment(componentProvider: ComponentProvider, codeFragment: JetCodeFragment): BindingContext {
+    private fun analyzeExpressionCodeFragment(componentProvider: ComponentProvider, codeFragment: KtCodeFragment): BindingContext {
         val trace = BindingTraceContext()
         componentProvider.get<CodeFragmentAnalyzer>().analyzeCodeFragment(
                 codeFragment,

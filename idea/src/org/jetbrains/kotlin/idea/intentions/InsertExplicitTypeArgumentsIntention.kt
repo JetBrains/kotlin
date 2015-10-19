@@ -22,29 +22,29 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetTypeArgumentList
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtTypeArgumentList
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.ErrorUtils
 
-public class InsertExplicitTypeArgumentsIntention : JetSelfTargetingRangeIntention<JetCallExpression>(javaClass(), "Add explicit type arguments"), LowPriorityAction {
-    override fun applicabilityRange(element: JetCallExpression): TextRange? {
+public class InsertExplicitTypeArgumentsIntention : JetSelfTargetingRangeIntention<KtCallExpression>(javaClass(), "Add explicit type arguments"), LowPriorityAction {
+    override fun applicabilityRange(element: KtCallExpression): TextRange? {
         return if (isApplicableTo(element, element.analyze())) element.getCalleeExpression()!!.getTextRange() else null
     }
 
-    override fun applyTo(element: JetCallExpression, editor: Editor) {
+    override fun applyTo(element: KtCallExpression, editor: Editor) {
         val argumentList = createTypeArguments(element, element.analyze())!!
 
         val callee = element.getCalleeExpression()!!
-        val newArgumentList = element.addAfter(argumentList, callee) as JetTypeArgumentList
+        val newArgumentList = element.addAfter(argumentList, callee) as KtTypeArgumentList
 
         ShortenReferences.DEFAULT.process(newArgumentList)
     }
 
     companion object {
-        public fun isApplicableTo(element: JetCallExpression, bindingContext: BindingContext): Boolean {
+        public fun isApplicableTo(element: KtCallExpression, bindingContext: BindingContext): Boolean {
             if (!element.getTypeArguments().isEmpty()) return false
             if (element.getCalleeExpression() == null) return false
 
@@ -53,7 +53,7 @@ public class InsertExplicitTypeArgumentsIntention : JetSelfTargetingRangeIntenti
             return typeArgs.isNotEmpty() && typeArgs.values().none { ErrorUtils.containsErrorType(it) }
         }
 
-        public fun createTypeArguments(element: JetCallExpression, bindingContext: BindingContext): JetTypeArgumentList? {
+        public fun createTypeArguments(element: KtCallExpression, bindingContext: BindingContext): KtTypeArgumentList? {
             val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
 
             val args = resolvedCall.getTypeArguments()
@@ -61,7 +61,7 @@ public class InsertExplicitTypeArgumentsIntention : JetSelfTargetingRangeIntenti
 
             val text = types.map { IdeDescriptorRenderers.SOURCE_CODE.renderType(args[it]!!) }.joinToString(", ", "<", ">")
 
-            return JetPsiFactory(element).createTypeArguments(text)
+            return KtPsiFactory(element).createTypeArguments(text)
         }
     }
 }

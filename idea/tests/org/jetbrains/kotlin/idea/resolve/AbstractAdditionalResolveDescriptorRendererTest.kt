@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
-import org.jetbrains.kotlin.psi.JetClassInitializer
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.KtClassInitializer
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 public abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescriptorRendererTest() {
-    override fun getDescriptor(declaration: JetDeclaration, container: ComponentProvider): DeclarationDescriptor {
-        if (declaration is JetClassInitializer || JetPsiUtil.isLocal(declaration)) {
+    override fun getDescriptor(declaration: KtDeclaration, container: ComponentProvider): DeclarationDescriptor {
+        if (declaration is KtClassInitializer || KtPsiUtil.isLocal(declaration)) {
             return container.get<ResolveElementCache>()
                     .resolveToElement(declaration, BodyResolveMode.FULL)
                     .get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)!!

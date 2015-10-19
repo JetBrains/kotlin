@@ -37,7 +37,7 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo {
 
     if (this is KotlinLightElement<*, *>) return this.getModuleInfoForLightElement()
 
-    val containingJetFile = (this as? JetElement)?.getContainingFile() as? JetFile
+    val containingJetFile = (this as? KtElement)?.getContainingFile() as? KtFile
     val context = containingJetFile?.analysisContext
     if (context != null) return context.getModuleInfo()
 
@@ -48,10 +48,10 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo {
         )
     }
 
-    val explicitModuleInfo = containingJetFile?.moduleInfo ?: (containingJetFile?.originalFile as? JetFile)?.moduleInfo
+    val explicitModuleInfo = containingJetFile?.moduleInfo ?: (containingJetFile?.originalFile as? KtFile)?.moduleInfo
     if (explicitModuleInfo is IdeaModuleInfo) return explicitModuleInfo
 
-    if (containingJetFile is JetCodeFragment) {
+    if (containingJetFile is KtCodeFragment) {
         return containingJetFile.getContext()?.getModuleInfo()
                ?: logAndReturnDefault("Analyzing code fragment of type ${containingJetFile.javaClass} with no context element\nText:\n${containingJetFile.getText()}")
     }
@@ -66,7 +66,7 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo {
     return getModuleInfoByVirtualFile(
             project,
             virtualFile,
-            isDecompiledFile = (containingFile as? JetFile)?.isCompiled() ?: false
+            isDecompiledFile = (containingFile as? KtFile)?.isCompiled() ?: false
     )
 }
 

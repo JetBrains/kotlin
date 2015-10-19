@@ -34,15 +34,15 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtClass;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
@@ -113,15 +113,15 @@ public class TestlibTest extends UsefulTestCase {
 
         typeMapper = generationState.getTypeMapper();
 
-        for (JetFile jetFile : myEnvironment.getSourceFiles()) {
-            for (JetDeclaration declaration : jetFile.getDeclarations()) {
-                if (!(declaration instanceof JetClass)) continue;
+        for (KtFile jetFile : myEnvironment.getSourceFiles()) {
+            for (KtDeclaration declaration : jetFile.getDeclarations()) {
+                if (!(declaration instanceof KtClass)) continue;
 
                 ClassDescriptor descriptor = (ClassDescriptor) BindingContextUtils.getNotNull(generationState.getBindingContext(),
                                                                                               BindingContext.DECLARATION_TO_DESCRIPTOR,
                                                                                               declaration);
 
-                for (JetType superType : getAllSupertypes(descriptor.getDefaultType())) {
+                for (KtType superType : getAllSupertypes(descriptor.getDefaultType())) {
                     if (!"junit/framework/Test".equals(typeMapper.mapType(superType).getInternalName())) continue;
 
                     String name = typeMapper.mapClass(descriptor).getInternalName();

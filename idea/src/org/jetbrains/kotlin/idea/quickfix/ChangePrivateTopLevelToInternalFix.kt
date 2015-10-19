@@ -24,18 +24,18 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetModifierListOwner
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-public class ChangePrivateTopLevelToInternalFix(element: JetModifierListOwner, private val elementName: String) : KotlinQuickFixAction<JetModifierListOwner>(element), CleanupFix {
+public class ChangePrivateTopLevelToInternalFix(element: KtModifierListOwner, private val elementName: String) : KotlinQuickFixAction<KtModifierListOwner>(element), CleanupFix {
     override fun getText() = "Make $elementName internal"
     override fun getFamilyName() = "Make top-level declaration internal"
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        element.addModifier(JetTokens.INTERNAL_KEYWORD)
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        element.addModifier(KtTokens.INTERNAL_KEYWORD)
     }
 
     companion object : JetSingleIntentionActionFactory() {
@@ -47,7 +47,7 @@ public class ChangePrivateTopLevelToInternalFix(element: JetModifierListOwner, p
                 descriptor !is DeclarationDescriptorWithVisibility ||
                 descriptor.visibility != Visibilities.PRIVATE) return null
 
-            val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? JetModifierListOwner ?: return null
+            val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtModifierListOwner ?: return null
             return ChangePrivateTopLevelToInternalFix(declaration, descriptor.name.asString())
         }
     }

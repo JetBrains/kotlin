@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfoStorage
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedClassNameForRendering
 import org.jetbrains.kotlin.idea.refactoring.pullUp.PULL_MEMBERS_UP
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isInheritable
 
@@ -52,7 +52,7 @@ public class KotlinPushDownHandler : AbstractPullPushMembersHandler(
         fun adjustMembers(members: List<KotlinMemberInfo>): List<KotlinMemberInfo>
     }
 
-    private fun reportFinalClassOrObject(project: Project, editor: Editor?, classOrObject: JetClassOrObject) {
+    private fun reportFinalClassOrObject(project: Project, editor: Editor?, classOrObject: KtClassOrObject) {
         val message = RefactoringBundle.getCannotRefactorMessage(
                 "${RefactoringUIUtil.getDescription(classOrObject, false)} is final".capitalize()
         )
@@ -61,15 +61,15 @@ public class KotlinPushDownHandler : AbstractPullPushMembersHandler(
 
     override fun invoke(project: Project,
                         editor: Editor?,
-                        classOrObject: JetClassOrObject?,
-                        member: JetNamedDeclaration?,
+                        classOrObject: KtClassOrObject?,
+                        member: KtNamedDeclaration?,
                         dataContext: DataContext?) {
         if (classOrObject == null) {
             reportWrongContext(project, editor)
             return
         }
 
-        if (!(classOrObject is JetClass && classOrObject.isInheritable())) {
+        if (!(classOrObject is KtClass && classOrObject.isInheritable())) {
             reportFinalClassOrObject(project, editor, classOrObject)
             return
         }

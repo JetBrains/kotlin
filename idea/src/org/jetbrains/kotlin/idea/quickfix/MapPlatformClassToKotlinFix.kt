@@ -44,10 +44,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 class MapPlatformClassToKotlinFix(
-        element: JetReferenceExpression,
+        element: KtReferenceExpression,
         private val platformClass: ClassDescriptor,
         private val possibleClasses: Collection<ClassDescriptor>
-) : KotlinQuickFixAction<JetReferenceExpression>(element) {
+) : KotlinQuickFixAction<KtReferenceExpression>(element) {
 
     override fun getText(): String {
         val platformClassQualifiedName = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(platformClass.defaultType)
@@ -60,11 +60,11 @@ class MapPlatformClassToKotlinFix(
 
     override fun getFamilyName() = "Change to Kotlin class"
 
-    public override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val bindingContext = file.analyzeFully()
 
-        val imports = ArrayList<JetImportDirective>()
-        val usages = ArrayList<JetUserType>()
+        val imports = ArrayList<KtImportDirective>()
+        val usages = ArrayList<KtUserType>()
 
         for (diagnostic in bindingContext.diagnostics) {
             if (diagnostic.factory !== Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN) continue
@@ -72,12 +72,12 @@ class MapPlatformClassToKotlinFix(
             val refExpr = getImportOrUsageFromDiagnostic(diagnostic) ?: continue
             if (resolveToClass(refExpr, bindingContext) != platformClass) continue
 
-            val import = refExpr.getStrictParentOfType<JetImportDirective>()
+            val import = refExpr.getStrictParentOfType<KtImportDirective>()
             if (import != null) {
                 imports.add(import)
             }
             else {
-                usages.add(refExpr.getStrictParentOfType<JetUserType>() ?: continue)
+                usages.add(refExpr.getStrictParentOfType<KtUserType>() ?: continue)
             }
         }
 
@@ -99,18 +99,18 @@ class MapPlatformClassToKotlinFix(
         }
     }
 
-    private fun replaceUsagesWithFirstClass(project: Project, usages: List<JetUserType>): List<PsiElement> {
+    private fun replaceUsagesWithFirstClass(project: Project, usages: List<KtUserType>): List<PsiElement> {
         val replacementClass = possibleClasses.first()
         val replacementClassName = replacementClass.name.asString()
         val replacedElements = ArrayList<PsiElement>()
         for (usage in usages) {
             val typeArguments = usage.typeArgumentList
             val typeArgumentsString = if (typeArguments == null) "" else typeArguments.text
-            val replacementType = JetPsiFactory(project).createType(replacementClassName + typeArgumentsString)
+            val replacementType = KtPsiFactory(project).createType(replacementClassName + typeArgumentsString)
             val replacementTypeElement = replacementType.typeElement!!
             val replacedElement = usage.replace(replacementTypeElement)
             val replacedExpression = replacedElement.firstChild
-            assert(replacedExpression is JetSimpleNameExpression) // assumption: the Kotlin class requires no imports
+            assert(replacedExpression is KtSimpleNameExpression) // assumption: the Kotlin class requires no imports
             replacedElements.add(replacedExpression)
         }
         return replacedElements
@@ -148,15 +148,15 @@ class MapPlatformClassToKotlinFix(
         })
     }
 
-    companion object : KotlinSingleIntentionActionFactoryWithDelegate<JetReferenceExpression, Data>() {
-        data class Data(val element: JetReferenceExpression,
+    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtReferenceExpression, Data>() {
+        data class Data(val element: KtReferenceExpression,
                         val platformClass: ClassDescriptor,
                         val possibleClasses: Collection<ClassDescriptor>)
 
-        override fun getElementOfInterest(diagnostic: Diagnostic): JetReferenceExpression?
+        override fun getElementOfInterest(diagnostic: Diagnostic): KtReferenceExpression?
                 = getImportOrUsageFromDiagnostic(diagnostic)
 
-        override fun extractFixData(element: JetReferenceExpression, diagnostic: Diagnostic): Data? {
+        override fun extractFixData(element: KtReferenceExpression, diagnostic: Diagnostic): Data? {
             val context = element.analyze(BodyResolveMode.PARTIAL)
             val platformClass = resolveToClass(element, context) ?: return null
             val possibleClasses = Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN.cast(diagnostic).a
@@ -167,17 +167,17 @@ class MapPlatformClassToKotlinFix(
             return MapPlatformClassToKotlinFix(data.element, data.platformClass, data.possibleClasses)
         }
 
-        private fun resolveToClass(referenceExpression: JetReferenceExpression, context: BindingContext): ClassDescriptor? {
+        private fun resolveToClass(referenceExpression: KtReferenceExpression, context: BindingContext): ClassDescriptor? {
             return referenceExpression.mainReference.resolveToDescriptors(context).firstIsInstanceOrNull<ClassDescriptor>()
         }
 
-        private fun getImportOrUsageFromDiagnostic(diagnostic: Diagnostic): JetReferenceExpression? {
-            val import = diagnostic.psiElement.getNonStrictParentOfType<JetImportDirective>()
+        private fun getImportOrUsageFromDiagnostic(diagnostic: Diagnostic): KtReferenceExpression? {
+            val import = diagnostic.psiElement.getNonStrictParentOfType<KtImportDirective>()
             return if (import != null) {
-                import.importedReference?.getQualifiedElementSelector() as? JetReferenceExpression
+                import.importedReference?.getQualifiedElementSelector() as? KtReferenceExpression
             }
             else {
-                (diagnostic.psiElement.getNonStrictParentOfType<JetUserType>() ?: return null).referenceExpression
+                (diagnostic.psiElement.getNonStrictParentOfType<KtUserType>() ?: return null).referenceExpression
             }
         }
     }

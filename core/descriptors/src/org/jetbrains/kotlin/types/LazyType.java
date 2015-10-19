@@ -16,5 +16,5 @@
 
 package org.jetbrains.kotlin.types;
 
-public interface LazyType extends JetType {
+public interface LazyType extends KtType {
 }

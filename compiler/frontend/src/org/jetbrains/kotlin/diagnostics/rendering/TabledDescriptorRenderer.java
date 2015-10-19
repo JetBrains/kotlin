@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TextR
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Iterator;
 import java.util.List;
@@ -50,11 +50,11 @@ public class TabledDescriptorRenderer {
         }
 
         public static class FunctionArgumentsRow implements TableRow {
-            public final JetType receiverType;
-            public final List<JetType> argumentTypes;
+            public final KtType receiverType;
+            public final List<KtType> argumentTypes;
             public final Predicate<ConstraintPosition> isErrorPosition;
 
-            public FunctionArgumentsRow(JetType receiverType, List<JetType> argumentTypes, Predicate<ConstraintPosition> isErrorPosition) {
+            public FunctionArgumentsRow(KtType receiverType, List<KtType> argumentTypes, Predicate<ConstraintPosition> isErrorPosition) {
                 this.receiverType = receiverType;
                 this.argumentTypes = argumentTypes;
                 this.isErrorPosition = isErrorPosition;
@@ -68,13 +68,13 @@ public class TabledDescriptorRenderer {
             return this;
         }
 
-        public TableRenderer functionArgumentTypeList(@Nullable JetType receiverType, @NotNull List<JetType> argumentTypes) {
+        public TableRenderer functionArgumentTypeList(@Nullable KtType receiverType, @NotNull List<KtType> argumentTypes) {
 
             return functionArgumentTypeList(receiverType, argumentTypes, Predicates.<ConstraintPosition>alwaysFalse());
         }
 
-        public TableRenderer functionArgumentTypeList(@Nullable JetType receiverType,
-                @NotNull List<JetType> argumentTypes,
+        public TableRenderer functionArgumentTypeList(@Nullable KtType receiverType,
+                @NotNull List<KtType> argumentTypes,
                 @NotNull Predicate<ConstraintPosition> isErrorPosition) {
             rows.add(new FunctionArgumentsRow(receiverType, argumentTypes, isErrorPosition));
             return this;
@@ -156,7 +156,7 @@ public class TabledDescriptorRenderer {
     }
 
     @NotNull
-    public Renderer<JetType> getTypeRenderer() {
+    public Renderer<KtType> getTypeRenderer() {
         return Renderers.RENDER_TYPE;
     }
 
@@ -183,7 +183,7 @@ public class TabledDescriptorRenderer {
         }
     }
 
-    private void renderFunctionArguments(@Nullable JetType receiverType, @NotNull List<JetType> argumentTypes, StringBuilder result) {
+    private void renderFunctionArguments(@Nullable KtType receiverType, @NotNull List<KtType> argumentTypes, StringBuilder result) {
         boolean hasReceiver = receiverType != null;
         if (hasReceiver) {
             result.append("receiver: ");
@@ -196,8 +196,8 @@ public class TabledDescriptorRenderer {
         }
 
         result.append("(");
-        for (Iterator<JetType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
-            JetType argumentType = iterator.next();
+        for (Iterator<KtType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
+            KtType argumentType = iterator.next();
             String renderedArgument = getTypeRenderer().render(argumentType);
 
             result.append(renderedArgument);

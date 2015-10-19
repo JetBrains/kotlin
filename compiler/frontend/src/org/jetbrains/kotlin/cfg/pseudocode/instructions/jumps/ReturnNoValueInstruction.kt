@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
 public class ReturnNoValueInstruction(
-        element: JetElement,
+        element: KtElement,
         lexicalScope: LexicalScope,
         targetLabel: Label
 ) : AbstractJumpInstruction(element, targetLabel, lexicalScope) {

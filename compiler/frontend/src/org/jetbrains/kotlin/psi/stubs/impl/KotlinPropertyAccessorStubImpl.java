@@ -17,17 +17,17 @@
 package org.jetbrains.kotlin.psi.stubs.impl;
 
 import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.kotlin.psi.JetPropertyAccessor;
+import org.jetbrains.kotlin.psi.KtPropertyAccessor;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class KotlinPropertyAccessorStubImpl extends KotlinStubBaseImpl<JetPropertyAccessor> implements KotlinPropertyAccessorStub {
+public class KotlinPropertyAccessorStubImpl extends KotlinStubBaseImpl<KtPropertyAccessor> implements KotlinPropertyAccessorStub {
     private final boolean isGetter;
     private final boolean hasBody;
     private final boolean hasBlockBody;
 
     public KotlinPropertyAccessorStubImpl(StubElement parent, boolean isGetter, boolean hasBody, boolean hasBlockBody) {
-        super(parent, JetStubElementTypes.PROPERTY_ACCESSOR);
+        super(parent, KtStubElementTypes.PROPERTY_ACCESSOR);
         this.isGetter = isGetter;
         this.hasBody = hasBody;
         this.hasBlockBody = hasBlockBody;

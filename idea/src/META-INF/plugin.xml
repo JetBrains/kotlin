@@ -309,8 +309,8 @@
     <lang.foldingBuilder language="kotlin" implementationClass="org.jetbrains.kotlin.idea.KotlinFoldingBuilder"/>
     <lang.formatter language="kotlin" implementationClass="org.jetbrains.kotlin.idea.formatter.JetFormattingModelBuilder"/>
     <lang.findUsagesProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.findUsages.JetFindUsagesProvider"/>
-    <lang.elementManipulator forClass="org.jetbrains.kotlin.psi.JetStringTemplateExpression"
-                             implementationClass="org.jetbrains.kotlin.psi.psiUtil.JetStringTemplateExpressionManipulator"/>
+    <lang.elementManipulator forClass="org.jetbrains.kotlin.psi.KtStringTemplateExpression"
+                             implementationClass="org.jetbrains.kotlin.psi.psiUtil.KtStringTemplateExpressionManipulator"/>
     <fileStructureGroupRuleProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinDeclarationGroupRuleProvider"/>
     <importFilteringRule implementation="org.jetbrains.kotlin.idea.findUsages.JetImportFilteringRule"/>
     <lang.refactoringSupport language="kotlin" implementationClass="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider"/>
@@ -384,7 +384,7 @@
 
     <weigher key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinLookupElementProximityWeigher" id="kotlin.proximity" order="after proximity"/>
 
-    <psi.referenceContributor language="kotlin" implementation="org.jetbrains.kotlin.idea.references.JetReferenceContributor"/>
+    <psi.referenceContributor language="kotlin" implementation="org.jetbrains.kotlin.idea.references.KotlinReferenceContributor"/>
 
     <renamePsiElementProcessor id="KotlinClass"
                                implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinClassProcessor"
@@ -465,15 +465,15 @@
 
     <iconProvider implementation="org.jetbrains.kotlin.idea.JetIconProvider"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetFunctionPresenter"
-                              forClass="org.jetbrains.kotlin.psi.JetFunction"/>
+                              forClass="org.jetbrains.kotlin.psi.KtFunction"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetClassPresenter"
-                              forClass="org.jetbrains.kotlin.psi.JetClass"/>
+                              forClass="org.jetbrains.kotlin.psi.KtClass"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetObjectPresenter"
-                              forClass="org.jetbrains.kotlin.psi.JetObjectDeclaration"/>
+                              forClass="org.jetbrains.kotlin.psi.KtObjectDeclaration"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetPropertyPresenter"
-                              forClass="org.jetbrains.kotlin.psi.JetProperty"/>
+                              forClass="org.jetbrains.kotlin.psi.KtProperty"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetParameterPresenter"
-                              forClass="org.jetbrains.kotlin.psi.JetParameter"/>
+                              forClass="org.jetbrains.kotlin.psi.KtParameter"/>
     <gotoTargetRendererProvider id="JetGotoTargetRenderProvider" implementation="org.jetbrains.kotlin.idea.JetGotoTargetRenderProvider"
                                 order="first"/>
     <elementDescriptionProvider implementation="org.jetbrains.kotlin.idea.findUsages.JetElementDescriptionProvider" order="first"/>
@@ -533,7 +533,7 @@
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.JavaElementFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.kotlin.idea.caches.JetShortNamesCache"/>
 
-    <stubElementTypeHolder class="org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes"/>
+    <stubElementTypeHolder class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetExactPackagesIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetTopLevelClassByPackageIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionByPackageIndex"/>

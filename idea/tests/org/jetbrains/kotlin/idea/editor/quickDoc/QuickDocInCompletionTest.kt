@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.idea.editor.quickDoc
 
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.KtClass
 import org.junit.Assert
 
 public class QuickDocInCompletionTest(): LightPlatformCodeInsightFixtureTestCase() {
@@ -33,6 +33,6 @@ public class QuickDocInCompletionTest(): LightPlatformCodeInsightFixtureTestCase
         val lookupObject = lookupElements.first().getObject()
         val element = KotlinQuickDocumentationProvider().getDocumentationElementForLookupItem(
                 myFixture.getPsiManager(), lookupObject, null)
-        Assert.assertTrue(element is JetClass)
+        Assert.assertTrue(element is KtClass)
     }
 }

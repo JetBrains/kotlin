@@ -40,7 +40,7 @@ public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeC
             boolean isFinal,
             @NotNull String debugName,
             @NotNull List<? extends TypeParameterDescriptor> parameters,
-            @NotNull Collection<JetType> supertypes
+            @NotNull Collection<KtType> supertypes
     ) {
         return new TypeConstructorImpl(classDescriptor, annotations, isFinal, debugName, parameters, supertypes) {
             @Override
@@ -63,7 +63,7 @@ public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeC
             boolean isFinal,
             @NotNull String debugName,
             @NotNull List<? extends TypeParameterDescriptor> parameters,
-            @NotNull Collection<JetType> supertypes
+            @NotNull Collection<KtType> supertypes
     ) {
         return new TypeConstructorImpl(typeParameterDescriptor, annotations, isFinal, debugName, parameters, supertypes) {
             @Override
@@ -79,7 +79,7 @@ public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeC
     }
 
     private final List<TypeParameterDescriptor> parameters;
-    private final Collection<JetType> supertypes;
+    private final Collection<KtType> supertypes;
     private final String debugName;
     private final boolean isFinal;
 
@@ -91,7 +91,7 @@ public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeC
             boolean isFinal,
             @NotNull String debugName,
             @NotNull List<? extends TypeParameterDescriptor> parameters,
-            @NotNull Collection<JetType> supertypes) {
+            @NotNull Collection<KtType> supertypes) {
         super(annotations);
         this.classifierDescriptor = classifierDescriptor;
         this.isFinal = isFinal;
@@ -108,7 +108,7 @@ public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeC
 
     @Override
     @NotNull
-    public Collection<JetType> getSupertypes() {
+    public Collection<KtType> getSupertypes() {
         return supertypes;
     }
 

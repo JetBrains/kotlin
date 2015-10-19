@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.TagsTestDataUtil
 import org.jetbrains.kotlin.utils.rethrow
@@ -122,7 +122,7 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
 
     private fun doOverrideImplement(handler: OverrideImplementMembersHandler, memberToOverride: String?) {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)
-        val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, javaClass<JetClassOrObject>())
+        val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, javaClass<KtClassOrObject>())
                             ?: error("Caret should be inside class or object")
 
         val chooserObjects = handler.collectMembersToGenerate(classOrObject)
@@ -157,7 +157,7 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
 
     private fun doMultiOverrideImplement(handler: OverrideImplementMembersHandler) {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)
-        val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, javaClass<JetClassOrObject>())
+        val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, javaClass<KtClassOrObject>())
                             ?: error("Caret should be inside class or object")
 
         val chooserObjects = handler.collectMembersToGenerate(classOrObject).sortedBy { it.descriptor.name.asString() + " in " + it.immediateSuper.containingDeclaration.name.asString() }
@@ -177,7 +177,7 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
     }
 
     private fun performGenerateCommand(
-            classOrObject: JetClassOrObject,
+            classOrObject: KtClassOrObject,
             selectedElements: List<OverrideMemberChooserObject>) {
         try {
             myFixture.project.executeWriteCommand("") {
@@ -194,7 +194,7 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
         val expectedFile = File(myFixture.testDataPath, fileName)
         try {
             Assert.assertTrue(expectedFile.exists())
-            val file = myFixture.file as JetFile
+            val file = myFixture.file as KtFile
             val document = myFixture.getDocument(file)
             myFixture.project.executeWriteCommand("") {
                 document.replaceString(0, document.textLength, file.dumpTextWithErrors())

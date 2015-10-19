@@ -25,9 +25,9 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 
 public class KotlinCompletionCharFilter() : CharFilter() {
@@ -41,7 +41,7 @@ public class KotlinCompletionCharFilter() : CharFilter() {
     }
 
     override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
-        if (lookup.getPsiFile() !is JetFile) return null
+        if (lookup.getPsiFile() !is KtFile) return null
         if (!lookup.isCompletion()) return null
         // it does not work in tests, so we use other way
 //        val isAutopopup = CompletionService.getCompletionService().getCurrentCompletion().isAutopopupCompletion()
@@ -97,11 +97,11 @@ public class KotlinCompletionCharFilter() : CharFilter() {
 
     private fun isInFunctionLiteralStart(position: PsiElement): Boolean {
         var prev = position.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }
-        if (prev?.getNode()?.getElementType() == JetTokens.LPAR) {
+        if (prev?.getNode()?.getElementType() == KtTokens.LPAR) {
             prev = prev?.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }
         }
-        if (prev?.getNode()?.getElementType() != JetTokens.LBRACE) return false
-        val functionLiteral = prev!!.getParent() as? JetFunctionLiteral ?: return false
+        if (prev?.getNode()?.getElementType() != KtTokens.LBRACE) return false
+        val functionLiteral = prev!!.getParent() as? KtFunctionLiteral ?: return false
         return functionLiteral.getLBrace() == prev
     }
 }

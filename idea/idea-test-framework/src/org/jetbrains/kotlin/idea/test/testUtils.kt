@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.decompiler.JetClassFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
 public enum class ModuleKind {
@@ -75,7 +75,7 @@ public fun Module.configureAs(kind: ModuleKind) {
     }
 }
 
-public fun JetFile.dumpTextWithErrors(): String {
+public fun KtFile.dumpTextWithErrors(): String {
     val diagnostics = analyzeFullyAndGetResult().bindingContext.getDiagnostics()
     val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
     if (errors.isEmpty()) return getText()

@@ -28,5 +28,5 @@ public abstract class AbstractIntroduceAction : BasePlatformRefactoringAction() 
     override fun isAvailableInEditorOnly(): Boolean = true
 
     protected override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean =
-            elements.all { it is JetElement }
+            elements.all { it is KtElement }
 }

@@ -22,21 +22,21 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.util.Range
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.JetIcons
+import org.jetbrains.kotlin.idea.KtIcons
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import javax.swing.Icon
 
 public class KotlinLambdaSmartStepTarget(
         label: String,
-        highlightElement: JetFunctionLiteralExpression,
+        highlightElement: KtFunctionLiteralExpression,
         lines: Range<Int>
 ): SmartStepTarget(label, highlightElement, true, lines) {
-    override fun getIcon() = JetIcons.LAMBDA
+    override fun getIcon() = KtIcons.LAMBDA
 
-    fun getLambda() = getHighlightElement() as JetFunctionLiteralExpression
+    fun getLambda() = getHighlightElement() as KtFunctionLiteralExpression
 
     companion object {
         fun calcLabel(descriptor: DeclarationDescriptor, paramName: Name): String {

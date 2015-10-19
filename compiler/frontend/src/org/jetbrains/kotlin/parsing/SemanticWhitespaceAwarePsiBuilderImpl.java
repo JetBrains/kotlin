@@ -25,9 +25,9 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 
-import static org.jetbrains.kotlin.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
     private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ELVIS, EXCLEXCL);
@@ -77,9 +77,9 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
         for (int i = 1; i <= getCurrentOffset(); i++) {
             IElementType previousToken = rawLookup(-i);
 
-            if (previousToken == JetTokens.BLOCK_COMMENT
-                    || previousToken == JetTokens.DOC_COMMENT
-                    || previousToken == JetTokens.EOL_COMMENT
+            if (previousToken == KtTokens.BLOCK_COMMENT
+                    || previousToken == KtTokens.DOC_COMMENT
+                    || previousToken == KtTokens.EOL_COMMENT
                     || previousToken == SHEBANG_COMMENT) {
                 continue;
             }

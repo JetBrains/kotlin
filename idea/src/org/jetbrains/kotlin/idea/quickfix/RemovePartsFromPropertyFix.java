@@ -28,21 +28,21 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
-public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<JetProperty> {
+public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty> {
     private final boolean removeInitializer;
     private final boolean removeGetter;
     private final boolean removeSetter;
 
-    private RemovePartsFromPropertyFix(@NotNull JetProperty element, boolean removeInitializer, boolean removeGetter, boolean removeSetter) {
+    private RemovePartsFromPropertyFix(@NotNull KtProperty element, boolean removeInitializer, boolean removeGetter, boolean removeSetter) {
         super(element);
         this.removeInitializer = removeInitializer;
         this.removeGetter = removeGetter;
         this.removeSetter = removeSetter;
     }
 
-    private RemovePartsFromPropertyFix(@NotNull JetProperty element) {
+    private RemovePartsFromPropertyFix(@NotNull KtProperty element) {
         this(element, element.hasInitializer(),
              element.getGetter() != null && element.getGetter().getBodyExpression() != null,
              element.getSetter() != null && element.getSetter().getBodyExpression() != null);
@@ -85,24 +85,24 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<JetProperty
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        JetType type = QuickFixUtil.getDeclarationReturnType(getElement());
+        KtType type = QuickFixUtil.getDeclarationReturnType(getElement());
         return super.isAvailable(project, editor, file) && type != null && !type.isError();
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetType type = QuickFixUtil.getDeclarationReturnType(getElement());
-        JetProperty newElement = (JetProperty) getElement().copy();
-        JetPropertyAccessor getter = newElement.getGetter();
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        KtType type = QuickFixUtil.getDeclarationReturnType(getElement());
+        KtProperty newElement = (KtProperty) getElement().copy();
+        KtPropertyAccessor getter = newElement.getGetter();
         if (removeGetter && getter != null) {
             newElement.deleteChildInternal(getter.getNode());
         }
-        JetPropertyAccessor setter = newElement.getSetter();
+        KtPropertyAccessor setter = newElement.getSetter();
         if (removeSetter && setter != null) {
             newElement.deleteChildInternal(setter.getNode());
         }
-        JetExpression initializer = newElement.getInitializer();
-        JetType typeToAdd = null;
+        KtExpression initializer = newElement.getInitializer();
+        KtType typeToAdd = null;
         if (removeInitializer && initializer != null) {
             PsiElement nameIdentifier = newElement.getNameIdentifier();
             assert nameIdentifier != null;
@@ -114,7 +114,7 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<JetProperty
                 typeToAdd = type;
             }
         }
-        newElement = (JetProperty) getElement().replace(newElement);
+        newElement = (KtProperty) getElement().replace(newElement);
         if (typeToAdd != null) {
             SpecifyTypeExplicitlyIntention.Companion.addTypeAnnotation(editor, newElement, typeToAdd);
         }
@@ -123,10 +123,10 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<JetProperty
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<JetProperty> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<KtProperty> createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
-                assert element instanceof JetElement;
-                JetProperty property = PsiTreeUtil.getParentOfType(element, JetProperty.class);
+                assert element instanceof KtElement;
+                KtProperty property = PsiTreeUtil.getParentOfType(element, KtProperty.class);
                 if (property == null) return null;
                 return new RemovePartsFromPropertyFix(property);
             }

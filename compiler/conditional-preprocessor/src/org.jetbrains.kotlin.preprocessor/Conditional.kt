@@ -51,13 +51,13 @@ interface Conditional {
     }
 }
 
-fun JetAnnotated.parseConditionalAnnotations(): List<Conditional> =
+fun KtAnnotated.parseConditionalAnnotations(): List<Conditional> =
         annotationEntries.map {
             val parser = Conditional.ANNOTATIONS.get(it.typeReferenceName)
             parser?.parse?.invoke(it.valueArguments.splitToPositionalAndNamed())
         }.filterNotNull()
 
 
-val JetAnnotationEntry.typeReferenceName: String? get() =
-        (typeReference?.typeElement as? JetUserType)?.referencedName
+val KtAnnotationEntry.typeReferenceName: String? get() =
+        (typeReference?.typeElement as? KtUserType)?.referencedName
 

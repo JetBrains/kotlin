@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
@@ -46,7 +46,7 @@ protected constructor(
         protected val declarationProvider: DP,
         protected val thisDescriptor: D,
         protected val trace: BindingTrace
-) : JetScopeImpl() {
+) : KtScopeImpl() {
 
     protected val storageManager: StorageManager = c.storageManager
     private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> = storageManager.createMemoizedFunction { resolveClassDescriptor(it) }
@@ -94,7 +94,7 @@ protected constructor(
         return result.toReadOnlyList()
     }
 
-    protected abstract fun getScopeForMemberDeclarationResolution(declaration: JetDeclaration): LexicalScope
+    protected abstract fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration): LexicalScope
 
     protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>)
 
@@ -133,37 +133,37 @@ protected constructor(
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
         val result = LinkedHashSet<DeclarationDescriptor>(declarations.size())
         for (declaration in declarations) {
-            if (declaration is JetClassOrObject) {
+            if (declaration is KtClassOrObject) {
                 val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
                     result.addAll(classDescriptors(name))
                 }
             }
-            else if (declaration is JetFunction) {
+            else if (declaration is KtFunction) {
                 val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
                     result.addAll(getFunctions(name, location))
                 }
             }
-            else if (declaration is JetProperty) {
+            else if (declaration is KtProperty) {
                 val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
                     result.addAll(getProperties(name, location))
                 }
             }
-            else if (declaration is JetParameter) {
+            else if (declaration is KtParameter) {
                 val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
                     result.addAll(getProperties(name, location))
                 }
             }
-            else if (declaration is JetScript) {
+            else if (declaration is KtScript) {
                 val name = ScriptNameUtil.classNameForScript(declaration).shortName()
                 if (nameFilter(name)) {
                     result.addAll(classDescriptors(name))
                 }
             }
-            else if (declaration is JetTypedef || declaration is JetMultiDeclaration) {
+            else if (declaration is KtTypedef || declaration is KtMultiDeclaration) {
                 // Do nothing for typedefs as they are not supported.
                 // MultiDeclarations are not supported on global level too.
             }

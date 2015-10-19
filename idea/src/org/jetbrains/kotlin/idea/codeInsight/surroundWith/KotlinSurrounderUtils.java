@@ -22,7 +22,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.psi.JetBlockExpression;
+import org.jetbrains.kotlin.psi.KtBlockExpression;
 
 public class KotlinSurrounderUtils {
     public static String SURROUND_WITH = JetBundle.message("surround.with");
@@ -32,7 +32,7 @@ public class KotlinSurrounderUtils {
     }
 
     public static void addStatementsInBlock(
-            @NotNull JetBlockExpression block,
+            @NotNull KtBlockExpression block,
             @NotNull PsiElement[] statements
     ) {
         PsiElement lBrace = block.getFirstChild();

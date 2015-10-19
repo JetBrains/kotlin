@@ -32,7 +32,7 @@ public class DisjointKeysUnionTypeSubstitution private constructor(
         }
     }
 
-    override fun get(key: JetType) = first[key] ?: second[key]
+    override fun get(key: KtType) = first[key] ?: second[key]
 
     override fun isEmpty() = false
 

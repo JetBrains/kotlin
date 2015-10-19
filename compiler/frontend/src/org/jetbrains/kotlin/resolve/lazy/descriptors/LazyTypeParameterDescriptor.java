@@ -19,33 +19,33 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Set;
 
 public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor implements LazyEntity {
     private final LazyClassContext c;
 
-    private final JetTypeParameter jetTypeParameter;
+    private final KtTypeParameter jetTypeParameter;
 
     public LazyTypeParameterDescriptor(
             @NotNull LazyClassContext c,
             @NotNull LazyClassDescriptor containingDeclaration,
-            @NotNull JetTypeParameter jetTypeParameter,
+            @NotNull KtTypeParameter jetTypeParameter,
             int index) {
         super(
                 c.getStorageManager(),
                 containingDeclaration,
                 jetTypeParameter.getNameAsSafeName(),
                 jetTypeParameter.getVariance(),
-                jetTypeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
+                jetTypeParameter.hasModifier(KtTokens.REIFIED_KEYWORD),
                 index,
                 KotlinSourceElementKt.toSourceElement(jetTypeParameter)
         );
@@ -57,14 +57,14 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
     @NotNull
     @Override
-    protected Set<JetType> resolveUpperBounds() {
-        Set<JetType> upperBounds = Sets.newLinkedHashSet();
+    protected Set<KtType> resolveUpperBounds() {
+        Set<KtType> upperBounds = Sets.newLinkedHashSet();
 
-        JetTypeParameter jetTypeParameter = this.jetTypeParameter;
+        KtTypeParameter jetTypeParameter = this.jetTypeParameter;
 
-        JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
+        KtTypeReference extendsBound = jetTypeParameter.getExtendsBound();
         if (extendsBound != null) {
-            JetType boundType = c.getDescriptorResolver().resolveTypeParameterExtendsBound(
+            KtType boundType = c.getDescriptorResolver().resolveTypeParameterExtendsBound(
                     this, extendsBound, getContainingDeclaration().getScopeForClassHeaderResolution(), c.getTrace());
             upperBounds.add(boundType);
         }
@@ -78,19 +78,19 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         return upperBounds;
     }
 
-    private void resolveUpperBoundsFromWhereClause(Set<JetType> upperBounds) {
-        JetClassOrObject classOrObject = JetStubbedPsiUtil.getPsiOrStubParent(jetTypeParameter, JetClassOrObject.class, true);
-        if (classOrObject instanceof JetClass) {
-            JetClass jetClass = (JetClass) classOrObject;
-            for (JetTypeConstraint jetTypeConstraint : jetClass.getTypeConstraints()) {
-                JetSimpleNameExpression constrainedParameterName = jetTypeConstraint.getSubjectTypeParameterName();
+    private void resolveUpperBoundsFromWhereClause(Set<KtType> upperBounds) {
+        KtClassOrObject classOrObject = KtStubbedPsiUtil.getPsiOrStubParent(jetTypeParameter, KtClassOrObject.class, true);
+        if (classOrObject instanceof KtClass) {
+            KtClass ktClass = (KtClass) classOrObject;
+            for (KtTypeConstraint jetTypeConstraint : ktClass.getTypeConstraints()) {
+                KtSimpleNameExpression constrainedParameterName = jetTypeConstraint.getSubjectTypeParameterName();
                 if (constrainedParameterName != null) {
                     if (getName().equals(constrainedParameterName.getReferencedNameAsName())) {
                         c.getTrace().record(BindingContext.REFERENCE_TARGET, constrainedParameterName, this);
 
-                        JetTypeReference boundTypeReference = jetTypeConstraint.getBoundTypeReference();
+                        KtTypeReference boundTypeReference = jetTypeConstraint.getBoundTypeReference();
                         if (boundTypeReference != null) {
-                            JetType boundType = resolveBoundType(boundTypeReference);
+                            KtType boundType = resolveBoundType(boundTypeReference);
                             upperBounds.add(boundType);
                         }
                     }
@@ -100,7 +100,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
     }
 
-    private JetType resolveBoundType(@NotNull JetTypeReference boundTypeReference) {
+    private KtType resolveBoundType(@NotNull KtTypeReference boundTypeReference) {
         return c.getTypeResolver()
                     .resolveType(getContainingDeclaration().getScopeForClassHeaderResolution(), boundTypeReference,
                                  c.getTrace(), false);

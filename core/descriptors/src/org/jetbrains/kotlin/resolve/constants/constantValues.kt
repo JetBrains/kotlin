@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.utils.sure
 
 public abstract class ConstantValue<out T>(public open val value: T) {
-    public abstract val type: JetType
+    public abstract val type: KtType
 
     public abstract fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R
 
@@ -37,7 +37,7 @@ public abstract class IntegerValueConstant<T> protected constructor(value: T) : 
 
 public class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<AnnotationDescriptor>(value) {
 
-    override val type: JetType
+    override val type: KtType
         get() = value.getType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitAnnotationValue(this, data)
@@ -46,7 +46,7 @@ public class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<Annota
 
 public class ArrayValue(
         value: List<ConstantValue<*>>,
-        override val type: JetType,
+        override val type: KtType,
         private val builtIns: KotlinBuiltIns
 ) : ConstantValue<List<ConstantValue<*>>>(value) {
 
@@ -56,7 +56,7 @@ public class ArrayValue(
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitArrayValue(this, data)
 
-    public val elementType: JetType
+    public val elementType: KtType
         get() = builtIns.getArrayElementType(type)
 
     override fun equals(other: Any?): Boolean {
@@ -140,7 +140,7 @@ public class EnumValue(
         value: ClassDescriptor
 ) : ConstantValue<ClassDescriptor>(value) {
 
-    override val type: JetType
+    override val type: KtType
         get() = value.classObjectType.sure { "Enum entry must have a class object type: " + value }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitEnumValue(this, data)
@@ -211,9 +211,9 @@ public class IntValue(
     override fun hashCode() = value
 }
 
-public class KClassValue(override val type: JetType) :
-        ConstantValue<JetType>(type) {
-    override val value: JetType
+public class KClassValue(override val type: KtType) :
+        ConstantValue<KtType>(type) {
+    override val value: KtType
         get() = type.getArguments().single().getType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitKClassValue(this, data)

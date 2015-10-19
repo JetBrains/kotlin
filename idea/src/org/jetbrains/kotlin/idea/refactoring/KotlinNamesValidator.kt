@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.idea.refactoring
 import com.intellij.lang.refactoring.NamesValidator
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.lexer.JetKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 
 public class KotlinNamesValidator : NamesValidator {
-    private val KEYWORD_SET = JetTokens.KEYWORDS.getTypes().filterIsInstance<JetKeywordToken>().map { it.getValue() }.toSet()
+    private val KEYWORD_SET = KtTokens.KEYWORDS.getTypes().filterIsInstance<KtKeywordToken>().map { it.getValue() }.toSet()
 
     override fun isKeyword(name: String, project: Project?): Boolean = name in KEYWORD_SET
     override fun isIdentifier(name: String, project: Project?): Boolean = KotlinNameSuggester.isIdentifier(name)

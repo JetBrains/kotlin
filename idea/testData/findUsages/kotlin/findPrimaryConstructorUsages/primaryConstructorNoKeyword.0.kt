@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetPrimaryConstructor
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.KtPrimaryConstructor
 // OPTIONS: usages
 open class A <caret>(n: Int) {
     constructor(): this(1)

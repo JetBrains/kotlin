@@ -20,17 +20,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.parsing.JetScriptDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetPackageDirective;
-import org.jetbrains.kotlin.psi.JetScript;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtPackageDirective;
+import org.jetbrains.kotlin.psi.KtScript;
 
 public class ScriptNameUtil {
     private ScriptNameUtil() {
     }
 
     @NotNull
-    public static FqName classNameForScript(JetScript script) {
-        JetFile file = script.getContainingJetFile();
+    public static FqName classNameForScript(KtScript script) {
+        KtFile file = script.getContainingJetFile();
         JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
 
         String name = file.getName();
@@ -46,7 +46,7 @@ public class ScriptNameUtil {
         }
         name = Character.toUpperCase(name.charAt(0)) + (name.length() == 0 ? "" : name.substring(1));
         name = name.replace('.', '_');
-        JetPackageDirective directive = file.getPackageDirective();
+        KtPackageDirective directive = file.getPackageDirective();
         if(directive != null && directive.getQualifiedName().length() > 0) {
             name = directive.getQualifiedName() + "." + name;
         }

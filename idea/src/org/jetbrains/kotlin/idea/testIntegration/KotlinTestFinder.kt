@@ -30,7 +30,7 @@ import com.intellij.util.containers.HashSet
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 import java.util.regex.Pattern
@@ -41,7 +41,7 @@ class KotlinTestFinder : JavaTestFinder() {
     override fun findSourceElement(from: PsiElement): PsiClass? {
         super.findSourceElement(from)?.let { return it }
 
-        val classOrObject = from.parentsWithSelf.filterIsInstance<JetClassOrObject>().firstOrNull { !it.isLocal() } ?: return null
+        val classOrObject = from.parentsWithSelf.filterIsInstance<KtClassOrObject>().firstOrNull { !it.isLocal() } ?: return null
         if (classOrObject.resolveToDescriptorIfAny() == null) return null
         return classOrObject.toLightClass()
     }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import com.intellij.psi.PsiElement
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.ModuleKind
 import org.jetbrains.kotlin.idea.test.closeAndDeleteProject
@@ -62,7 +62,7 @@ public class NavigateToStdlibSourceTest : KotlinCodeInsightTestCase() {
             mainModuleKind: ModuleKind,
             additionalModuleKind: ModuleKind? = null
     ): PsiElement {
-        configureByText(JetFileType.INSTANCE, text)
+        configureByText(KotlinFileType.INSTANCE, text)
         getModule().configureAs(mainModuleKind)
 
         if (additionalModuleKind != null) {

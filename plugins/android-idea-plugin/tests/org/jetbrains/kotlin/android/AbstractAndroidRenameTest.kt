@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.android
 
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtProperty
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.refactoring.rename.RenameProcessor
@@ -41,7 +41,7 @@ public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
                 completionEditor, TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtilBase.ELEMENT_NAME_ACCEPTED)
 
         assert(element != null)
-        assertTrue(element is JetProperty)
+        assertTrue(element is KtProperty)
 
         RenameProcessor(f.getProject(), element, NEW_NAME, false, true).run()
 
@@ -53,7 +53,7 @@ public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
         val attributeElement = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
         RenameProcessor(f.getProject(), attributeElement, "@+id/$OLD_NAME", false, true).run()
 
-        assertEquals(OLD_NAME, (f.getElementAtCaret() as JetProperty).getName())
+        assertEquals(OLD_NAME, (f.getElementAtCaret() as KtProperty).getName())
     }
 
     override fun getTestDataPath() = KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/rename/" + getTestName(true) + "/"

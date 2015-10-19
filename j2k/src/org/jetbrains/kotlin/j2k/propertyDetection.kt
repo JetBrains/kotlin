@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -370,7 +370,7 @@ private class PropertyDetector(
         }
         else if (superMethod is KotlinLightMethod) {
             val origin = superMethod.getOrigin()
-            return if (origin is JetProperty) SuperInfo.Property(origin.isVar, origin.name ?: "") else SuperInfo.Function
+            return if (origin is KtProperty) SuperInfo.Property(origin.isVar, origin.name ?: "") else SuperInfo.Function
         }
         else {
             return SuperInfo.Function

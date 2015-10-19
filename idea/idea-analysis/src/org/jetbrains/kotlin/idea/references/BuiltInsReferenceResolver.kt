@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import java.io.File
 import java.net.URL
@@ -49,7 +49,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
 
     @Volatile private var moduleDescriptor: ModuleDescriptor? = null
 
-    @Volatile public var builtInsSources: Set<JetFile>? = null
+    @Volatile public var builtInsSources: Set<KtFile>? = null
         private set
 
     @Volatile private var builtinsPackageFragment: PackageFragmentDescriptor? = null
@@ -85,18 +85,18 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         }
     }
 
-    private fun getJetBuiltInsFiles(): Set<JetFile> {
-        return getBuiltInsDirUrls().flatMapTo(hashSetOf<JetFile>()) { getBuiltInSourceFiles(it) }
+    private fun getJetBuiltInsFiles(): Set<KtFile> {
+        return getBuiltInsDirUrls().flatMapTo(hashSetOf<KtFile>()) { getBuiltInSourceFiles(it) }
     }
 
-    private fun getBuiltInSourceFiles(url: URL): Set<JetFile> {
+    private fun getBuiltInSourceFiles(url: URL): Set<KtFile> {
         val fromUrl = VfsUtilCore.convertFromUrl(url)
         val vf = VirtualFileManager.getInstance().findFileByUrl(fromUrl)
         assert(vf != null) { "Virtual file not found by URL: $url" }
 
         val psiDirectory = PsiManager.getInstance(project).findDirectory(vf!!)
         assert(psiDirectory != null) { "No PsiDirectory for $vf" }
-        return psiDirectory!!.getFiles().filterIsInstance<JetFile>().toHashSet()
+        return psiDirectory!!.getFiles().filterIsInstance<KtFile>().toHashSet()
     }
 
     private fun findCurrentDescriptorForMember(originalDescriptor: MemberDescriptor): DeclarationDescriptor? {
@@ -166,7 +166,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
             return url != null && VfsUtilCore.isUnder(url, builtInDirUrls)
         }
 
-        private fun getMemberScope(parent: DeclarationDescriptor?): JetScope? = when(parent) {
+        private fun getMemberScope(parent: DeclarationDescriptor?): KtScope? = when(parent) {
             is ClassDescriptor -> parent.getDefaultType().getMemberScope()
             is PackageFragmentDescriptor -> parent.getMemberScope()
             else -> null

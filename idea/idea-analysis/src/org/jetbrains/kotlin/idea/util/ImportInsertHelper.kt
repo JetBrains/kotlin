@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.*
 
 public abstract class ImportInsertHelper {
     /*TODO: implementation is not quite correct*/
-    public abstract fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean
+    public abstract fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean
 
     public abstract fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean
 
@@ -37,7 +37,7 @@ public abstract class ImportInsertHelper {
         ALREADY_IMPORTED
     }
 
-    public abstract fun importDescriptor(file: JetFile, descriptor: DeclarationDescriptor): ImportDescriptorResult
+    public abstract fun importDescriptor(file: KtFile, descriptor: DeclarationDescriptor): ImportDescriptorResult
 
     companion object {
         @JvmStatic

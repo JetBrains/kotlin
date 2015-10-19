@@ -29,12 +29,12 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.TopDownAnalysisContext
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.psi.JetTypeParameterListOwner
+import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.resolve.BindingContext
 
 
@@ -56,7 +56,7 @@ class VarianceChecker(private val trace: BindingTrace) {
 
     private fun checkClasses(c: TopDownAnalysisContext) {
         for (jetClassOrObject in c.getDeclaredClasses()!!.keySet()) {
-            if (jetClassOrObject is JetClass) {
+            if (jetClassOrObject is KtClass) {
                 for (specifier in jetClassOrObject.getDelegationSpecifiers()) {
                     specifier.getTypeReference()?.checkTypePosition(trace.getBindingContext(), OUT_VARIANCE, trace)
                 }
@@ -74,7 +74,7 @@ class VarianceChecker(private val trace: BindingTrace) {
     }
 
     class VarianceConflictDiagnosticData(
-            val containingType: JetType,
+            val containingType: KtType,
             val typeParameter: TypeParameterDescriptor,
             val occurrencePosition: Variance
     )
@@ -85,7 +85,7 @@ class VarianceChecker(private val trace: BindingTrace) {
             if (isIrrelevant(descriptor) || descriptor.getVisibility() != Visibilities.PRIVATE) return
 
             val psiElement = descriptor.getSource().getPsi()
-            if (psiElement !is JetCallableDeclaration) return
+            if (psiElement !is KtCallableDeclaration) return
 
             if (!checkCallableDeclaration(trace.getBindingContext(), psiElement, descriptor, DiagnosticSink.DO_NOTHING)) {
                 recordPrivateToThis(descriptor)
@@ -116,7 +116,7 @@ class VarianceChecker(private val trace: BindingTrace) {
 
         private fun checkCallableDeclaration(
                 trace: BindingContext,
-                declaration: JetCallableDeclaration,
+                declaration: KtCallableDeclaration,
                 descriptor: CallableDescriptor,
                 diagnosticSink: DiagnosticSink
         ): Boolean {
@@ -137,7 +137,7 @@ class VarianceChecker(private val trace: BindingTrace) {
             return noError
         }
 
-        private fun JetTypeParameterListOwner.checkTypeParameters(
+        private fun KtTypeParameterListOwner.checkTypeParameters(
                 trace: BindingContext,
                 typePosition: Variance,
                 diagnosticSink: DiagnosticSink
@@ -152,13 +152,13 @@ class VarianceChecker(private val trace: BindingTrace) {
             return noError
         }
 
-        private fun JetTypeReference.checkTypePosition(trace: BindingContext, position: Variance, diagnosticSink: DiagnosticSink)
+        private fun KtTypeReference.checkTypePosition(trace: BindingContext, position: Variance, diagnosticSink: DiagnosticSink)
                 = createTypeBinding(trace)?.checkTypePosition(position, diagnosticSink)
 
         private fun TypeBinding<PsiElement>.checkTypePosition(position: Variance, diagnosticSink: DiagnosticSink)
                 = checkTypePosition(jetType, position, diagnosticSink)
 
-        private fun TypeBinding<PsiElement>.checkTypePosition(containingType: JetType, position: Variance, diagnosticSink: DiagnosticSink): Boolean {
+        private fun TypeBinding<PsiElement>.checkTypePosition(containingType: KtType, position: Variance, diagnosticSink: DiagnosticSink): Boolean {
             val classifierDescriptor = jetType.getConstructor().getDeclarationDescriptor()
             if (classifierDescriptor is TypeParameterDescriptor) {
                 val declarationVariance = classifierDescriptor.getVariance()

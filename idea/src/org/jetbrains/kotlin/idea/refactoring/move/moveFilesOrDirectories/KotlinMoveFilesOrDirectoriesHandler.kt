@@ -21,8 +21,8 @@ import com.intellij.psi.*
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler
 import org.jetbrains.kotlin.idea.refactoring.move.*
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 
 public class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
     private fun adjustElements(elements: Array<out PsiElement>): Array<PsiElement>? {
@@ -30,7 +30,7 @@ public class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler
             when {
                 it is PsiFile, it is PsiDirectory -> it
                 it is PsiClass && it.getContainingClass() == null -> it.getContainingFile()
-                it is JetClassOrObject && it.getParent() is JetFile -> it.getParent()
+                it is KtClassOrObject && it.getParent() is KtFile -> it.getParent()
                 else -> return null
             }
         }.toTypedArray()

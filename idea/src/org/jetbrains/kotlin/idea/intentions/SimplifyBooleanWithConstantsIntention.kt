@@ -23,28 +23,28 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
-public class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<JetBinaryExpression>(SimplifyBooleanWithConstantsIntention())
+public class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<KtBinaryExpression>(SimplifyBooleanWithConstantsIntention())
 
-public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Simplify boolean expression") {
+public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndependentIntention<KtBinaryExpression>(javaClass(), "Simplify boolean expression") {
 
-    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        val topBinary = PsiTreeUtil.getTopmostParentOfType(element, javaClass<JetBinaryExpression>()) ?: element
+    override fun isApplicableTo(element: KtBinaryExpression): Boolean {
+        val topBinary = PsiTreeUtil.getTopmostParentOfType(element, javaClass<KtBinaryExpression>()) ?: element
         return areThereExpressionsToBeSimplified(topBinary)
     }
 
-    private fun areThereExpressionsToBeSimplified(element: JetExpression?) : Boolean {
+    private fun areThereExpressionsToBeSimplified(element: KtExpression?) : Boolean {
         if (element == null) return false
         when (element) {
-            is JetParenthesizedExpression -> return areThereExpressionsToBeSimplified(element.getExpression())
+            is KtParenthesizedExpression -> return areThereExpressionsToBeSimplified(element.getExpression())
 
-            is JetBinaryExpression -> {
+            is KtBinaryExpression -> {
                 val op = element.getOperationToken()
-                if ((op == JetTokens.ANDAND || op == JetTokens.OROR) &&
+                if ((op == KtTokens.ANDAND || op == KtTokens.OROR) &&
                        (areThereExpressionsToBeSimplified(element.getLeft()) ||
                        areThereExpressionsToBeSimplified(element.getRight()))) return true
             }
@@ -52,14 +52,14 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndep
         return element.canBeReducedToBooleanConstant(null)
     }
 
-    override fun applyTo(element: JetBinaryExpression, editor: Editor) {
-        val topBinary = PsiTreeUtil.getTopmostParentOfType(element, javaClass<JetBinaryExpression>()) ?: element
+    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+        val topBinary = PsiTreeUtil.getTopmostParentOfType(element, javaClass<KtBinaryExpression>()) ?: element
         val simplified = toSimplifiedExpression(topBinary)
-        topBinary.replace(JetPsiUtil.safeDeparenthesize(simplified))
+        topBinary.replace(KtPsiUtil.safeDeparenthesize(simplified))
     }
 
-    private fun toSimplifiedExpression(expression: JetExpression): JetExpression {
-        val psiFactory = JetPsiFactory(expression)
+    private fun toSimplifiedExpression(expression: KtExpression): KtExpression {
+        val psiFactory = KtPsiFactory(expression)
 
         when  {
             expression.canBeReducedToTrue() -> {
@@ -70,11 +70,11 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndep
                 return psiFactory.createExpression("false")
             }
 
-            expression is JetParenthesizedExpression -> {
+            expression is KtParenthesizedExpression -> {
                 val expr = expression.getExpression()
                 if (expr != null) {
                     val simplified = toSimplifiedExpression(expr)
-                    return if (simplified is JetBinaryExpression) {
+                    return if (simplified is KtBinaryExpression) {
                         // wrap in new parentheses to keep the user's original format
                         psiFactory.createExpressionByPattern("($0)", simplified)
                     }
@@ -85,11 +85,11 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndep
                 }
             }
 
-            expression is JetBinaryExpression -> {
+            expression is KtBinaryExpression -> {
                 val left = expression.getLeft()
                 val right = expression.getRight()
                 val op = expression.getOperationToken()
-                if (left != null && right != null && (op == JetTokens.ANDAND || op == JetTokens.OROR)) {
+                if (left != null && right != null && (op == KtTokens.ANDAND || op == KtTokens.OROR)) {
                     val simpleLeft = simplifyExpression(left)
                     val simpleRight = simplifyExpression(right)
                     return when {
@@ -113,23 +113,23 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndep
         return expression.copied()
     }
 
-    private fun toSimplifiedBooleanBinaryExpressionWithConstantOperand(constantOperand: Boolean, otherOperand: JetExpression, operation: IElementType): JetExpression {
+    private fun toSimplifiedBooleanBinaryExpressionWithConstantOperand(constantOperand: Boolean, otherOperand: KtExpression, operation: IElementType): KtExpression {
         return when {
-            constantOperand && operation == JetTokens.OROR -> JetPsiFactory(otherOperand).createExpression("true")
-            !constantOperand && operation == JetTokens.ANDAND -> JetPsiFactory(otherOperand).createExpression("false")
+            constantOperand && operation == KtTokens.OROR -> KtPsiFactory(otherOperand).createExpression("true")
+            !constantOperand && operation == KtTokens.ANDAND -> KtPsiFactory(otherOperand).createExpression("false")
             else -> toSimplifiedExpression(otherOperand)
         }
     }
 
-    private fun simplifyExpression(expression: JetExpression) = expression.replaced(toSimplifiedExpression(expression))
+    private fun simplifyExpression(expression: KtExpression) = expression.replaced(toSimplifiedExpression(expression))
 
-    private fun JetExpression.canBeReducedToBooleanConstant(constant: Boolean?): Boolean {
+    private fun KtExpression.canBeReducedToBooleanConstant(constant: Boolean?): Boolean {
         val bindingContext = this.analyze()
         val trace = DelegatingBindingTrace(bindingContext, "trace for constant check")
         return CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, trace, constant)
     }
 
-    private fun JetExpression.canBeReducedToTrue() = canBeReducedToBooleanConstant(true)
+    private fun KtExpression.canBeReducedToTrue() = canBeReducedToBooleanConstant(true)
 
-    private fun JetExpression.canBeReducedToFalse() = canBeReducedToBooleanConstant(false)
+    private fun KtExpression.canBeReducedToFalse() = canBeReducedToBooleanConstant(false)
 }

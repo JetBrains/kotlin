@@ -27,19 +27,18 @@ import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo;
-import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetQualifiedExpression;
-import org.jetbrains.kotlin.psi.JetReferenceExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtQualifiedExpression;
+import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.List;
 
@@ -179,15 +178,15 @@ public final class TopLevelFIF extends CompositeFIF {
             JsExpression thisOrReceiver = getThisOrReceiverOrNull(callInfo);
             assert thisOrReceiver != null;
             if (expressionReceiver != null) {
-                JetExpression expression = expressionReceiver.getExpression();
-                JetReferenceExpression referenceExpression = null;
-                if (expression instanceof JetReferenceExpression) {
-                    referenceExpression = (JetReferenceExpression) expression;
+                KtExpression expression = expressionReceiver.getExpression();
+                KtReferenceExpression referenceExpression = null;
+                if (expression instanceof KtReferenceExpression) {
+                    referenceExpression = (KtReferenceExpression) expression;
                 }
-                else if (expression instanceof JetQualifiedExpression) {
-                    JetExpression candidate = ((JetQualifiedExpression) expression).getReceiverExpression();
-                    if (candidate instanceof JetReferenceExpression) {
-                        referenceExpression = (JetReferenceExpression) candidate;
+                else if (expression instanceof KtQualifiedExpression) {
+                    KtExpression candidate = ((KtQualifiedExpression) expression).getReceiverExpression();
+                    if (candidate instanceof KtReferenceExpression) {
+                        referenceExpression = (KtReferenceExpression) candidate;
                     }
                 }
 
@@ -220,7 +219,7 @@ public final class TopLevelFIF extends CompositeFIF {
                 @NotNull List<JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
-            JetType keyType = callInfo.getResolvedCall().getTypeArguments().values().iterator().next();
+            KtType keyType = callInfo.getResolvedCall().getTypeArguments().values().iterator().next();
             Name keyTypeName = DescriptorUtilsKt.getNameIfStandardType(keyType);
             String collectionClassName = null;
             if (keyTypeName != null) {

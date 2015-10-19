@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.util.*
 
 class DeserializedTypeParameterDescriptor(
@@ -39,12 +39,12 @@ class DeserializedTypeParameterDescriptor(
 
     override fun getAnnotations(): Annotations = annotations
 
-    override fun resolveUpperBounds(): Set<JetType> {
+    override fun resolveUpperBounds(): Set<KtType> {
         val upperBounds = proto.upperBounds(typeTable)
         if (upperBounds.isEmpty()) {
             return setOf(this.builtIns.getDefaultBound())
         }
-        val result = LinkedHashSet<JetType>(upperBounds.size())
+        val result = LinkedHashSet<KtType>(upperBounds.size())
         for (upperBound in upperBounds) {
             result.add(typeDeserializer.type(upperBound, Annotations.EMPTY))
         }

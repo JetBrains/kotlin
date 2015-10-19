@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 
 public abstract class AbstractJetDiagnosticsTestWithJsStdLibAndBackendCompilation : AbstractJetDiagnosticsTestWithJsStdLib() {
     override fun analyzeModuleContents(
             moduleContext: ModuleContext,
-            jetFiles: MutableList<JetFile>,
+            jetFiles: MutableList<KtFile>,
             moduleTrace: BindingTrace
     ) {
         val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, moduleContext, getConfig())

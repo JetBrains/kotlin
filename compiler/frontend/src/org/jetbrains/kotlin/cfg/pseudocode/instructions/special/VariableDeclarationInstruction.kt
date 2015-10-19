@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetVariableDeclaration
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
@@ -26,15 +26,15 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 
 public class VariableDeclarationInstruction(
-        element: JetDeclaration,
+        element: KtDeclaration,
         lexicalScope: LexicalScope
 ) : InstructionWithNext(element, lexicalScope) {
     init {
-        assert(element is JetVariableDeclaration || element is JetParameter) { "Invalid element: ${render(element)}}" }
+        assert(element is KtVariableDeclaration || element is KtParameter) { "Invalid element: ${render(element)}}" }
     }
 
-    public val variableDeclarationElement: JetDeclaration
-        get() = element as JetDeclaration
+    public val variableDeclarationElement: KtDeclaration
+        get() = element as KtDeclaration
 
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitVariableDeclarationInstruction(this)

@@ -27,14 +27,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 
-public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' with 'assert' statement") {
+public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingOffsetIndependentIntention<KtIfExpression>(javaClass(), "Replace 'if' with 'assert' statement") {
 
-    override fun isApplicableTo(element: JetIfExpression): Boolean {
+    override fun isApplicableTo(element: KtIfExpression): Boolean {
         if (element.getElse() != null) return false
 
-        val throwExpr = element.getThen()?.unwrapBlockOrParenthesis() as? JetThrowExpression
+        val throwExpr = element.getThen()?.unwrapBlockOrParenthesis() as? KtThrowExpression
         val thrownExpr = getSelector(throwExpr?.getThrownExpression())
-        if (thrownExpr !is JetCallExpression) return false
+        if (thrownExpr !is KtCallExpression) return false
 
         if (thrownExpr.getValueArguments().size() > 1) return false
 
@@ -42,18 +42,18 @@ public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingOffsetIndepen
         return DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() == "java.lang.AssertionError.<init>"
     }
 
-    override fun applyTo(element: JetIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor) {
         val condition = element.getCondition() ?: return
 
-        val thenExpr = element.getThen()?.unwrapBlockOrParenthesis() as JetThrowExpression
-        val thrownExpr = getSelector(thenExpr.getThrownExpression()) as JetCallExpression
+        val thenExpr = element.getThen()?.unwrapBlockOrParenthesis() as KtThrowExpression
+        val thrownExpr = getSelector(thenExpr.getThrownExpression()) as KtCallExpression
 
-        val psiFactory = JetPsiFactory(element)
+        val psiFactory = KtPsiFactory(element)
         condition.replace(psiFactory.createExpressionByPattern("!$0", condition))
 
         var newCondition = element.getCondition()!!
         val simplifier = SimplifyNegatedBinaryExpressionIntention()
-        if (simplifier.isApplicableTo(newCondition as JetPrefixExpression)) {
+        if (simplifier.isApplicableTo(newCondition as KtPrefixExpression)) {
             simplifier.applyTo(newCondition, editor)
             newCondition = element.getCondition()!!
         }
@@ -68,8 +68,8 @@ public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingOffsetIndepen
         ShortenReferences.DEFAULT.process(newExpr)
     }
 
-    private fun getSelector(element: JetExpression?): JetExpression? {
-        if (element is JetDotQualifiedExpression) {
+    private fun getSelector(element: KtExpression?): KtExpression? {
+        if (element is KtDotQualifiedExpression) {
             return element.getSelectorExpression()
         }
         return element

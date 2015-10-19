@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
-import org.jetbrains.kotlin.psi.JetCallElement
+import org.jetbrains.kotlin.psi.KtCallElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 public abstract class JavaMethodKotlinUsageWithDelegate<T: PsiElement>(
@@ -32,9 +32,9 @@ public abstract class JavaMethodKotlinUsageWithDelegate<T: PsiElement>(
 }
 
 public class JavaMethodKotlinCallUsage(
-        callElement: JetCallElement,
+        callElement: KtCallElement,
         javaMethodChangeInfo: JetChangeInfo,
-        propagationCall: Boolean): JavaMethodKotlinUsageWithDelegate<JetCallElement>(callElement, javaMethodChangeInfo) {
+        propagationCall: Boolean): JavaMethodKotlinUsageWithDelegate<KtCallElement>(callElement, javaMethodChangeInfo) {
     override val delegateUsage = if (propagationCall) {
         KotlinCallerCallUsage(psiElement)
     } else {

@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetSuperExpression;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtSuperExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
@@ -181,7 +181,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public PackageContext intoPackagePart(@NotNull PackageFragmentDescriptor descriptor, Type packagePartType, @Nullable JetFile sourceFile) {
+    public PackageContext intoPackagePart(@NotNull PackageFragmentDescriptor descriptor, Type packagePartType, @Nullable KtFile sourceFile) {
         return new PackageContext(descriptor, this, packagePartType, sourceFile);
     }
 
@@ -190,7 +190,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull Type multifileClassType,
             @NotNull Type filePartType,
-            @NotNull JetFile sourceFile
+            @NotNull KtFile sourceFile
     ) {
         return new MultifileClassPartContext(descriptor, this, multifileClassType, filePartType, sourceFile);
     }
@@ -273,7 +273,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable JetSuperExpression superCallExpression) {
+    public <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable KtSuperExpression superCallExpression) {
         return getAccessor(descriptor, false, null, superCallExpression);
     }
 
@@ -282,8 +282,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public <D extends CallableMemberDescriptor> D getAccessor(
             @NotNull D possiblySubstitutedDescriptor,
             boolean isForBackingFieldInOuterClass,
-            @Nullable JetType delegateType,
-            @Nullable JetSuperExpression superCallExpression
+            @Nullable KtType delegateType,
+            @Nullable KtSuperExpression superCallExpression
     ) {
         if (accessors == null) {
             accessors = new LinkedHashMap<AccessorKey, AccessorForCallableDescriptor<?>>();
@@ -379,7 +379,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     public <D extends CallableMemberDescriptor> D accessibleDescriptor(
             @NotNull D descriptor,
-            @Nullable JetSuperExpression superCallExpression
+            @Nullable KtSuperExpression superCallExpression
     ) {
         DeclarationDescriptor enclosing = descriptor.getContainingDeclaration();
         if (!isInlineMethodContext() && (
@@ -417,7 +417,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     private <D extends CallableMemberDescriptor> D accessibleDescriptorIfNeeded(
             @NotNull D descriptor,
-            @Nullable JetSuperExpression superCallExpression
+            @Nullable KtSuperExpression superCallExpression
     ) {
         CallableMemberDescriptor unwrappedDescriptor = DescriptorUtils.unwrapFakeOverride(descriptor);
         int flag = getAccessFlags(unwrappedDescriptor);

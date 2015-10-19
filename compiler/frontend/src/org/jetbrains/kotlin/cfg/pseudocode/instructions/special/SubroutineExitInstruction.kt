@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import java.util.*
 
 public class SubroutineExitInstruction(
-        public val subroutine: JetElement,
+        public val subroutine: KtElement,
         lexicalScope: LexicalScope,
         public val isError: Boolean
 ) : InstructionImpl(lexicalScope) {

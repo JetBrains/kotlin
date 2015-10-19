@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
@@ -38,10 +38,10 @@ public class Concat : IntrinsicMethod() {
             v: InstructionAdapter,
             returnType: Type,
             element: PsiElement?,
-            arguments: List<JetExpression>,
+            arguments: List<KtExpression>,
             receiver: StackValue
     ): Type {
-        if (element is JetBinaryExpression && element.getOperationReference().getReferencedNameElementType() == JetTokens.PLUS) {
+        if (element is KtBinaryExpression && element.getOperationReference().getReferencedNameElementType() == KtTokens.PLUS) {
             // LHS + RHS
             genStringBuilderConstructor(v)
             codegen.invokeAppend(element.getLeft())

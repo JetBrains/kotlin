@@ -26,9 +26,9 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
@@ -75,9 +75,9 @@ public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTes
 
     private fun setupFixtureByCodeFragment(fragmentText: String) {
         val sourceFile = findLibrarySourceDir().findChild("customLibrary.kt")!!
-        val jetFile = PsiManager.getInstance(getProject()).findFile(sourceFile) as JetFile
-        val fooFunctionFromLibrary = jetFile.getDeclarations().first() as JetFunction
-        val codeFragment = JetPsiFactory(fooFunctionFromLibrary).createExpressionCodeFragment(
+        val jetFile = PsiManager.getInstance(getProject()).findFile(sourceFile) as KtFile
+        val fooFunctionFromLibrary = jetFile.getDeclarations().first() as KtFunction
+        val codeFragment = KtPsiFactory(fooFunctionFromLibrary).createExpressionCodeFragment(
                 fragmentText,
                 KotlinCodeFragmentFactory.getContextElement(fooFunctionFromLibrary.getBodyExpression())
         )

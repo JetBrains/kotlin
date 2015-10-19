@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 /**
  * This class describes an arbitrary object which has some value in data flow analysis.
  * In general case it's some r-value.
  */
-class DataFlowValue(val id: Any?, val type: JetType, val kind: DataFlowValue.Kind, val immanentNullability: Nullability) {
+class DataFlowValue(val id: Any?, val type: KtType, val kind: DataFlowValue.Kind, val immanentNullability: Nullability) {
 
     enum class Kind(private val str: String) {
         // Smart casts are completely safe

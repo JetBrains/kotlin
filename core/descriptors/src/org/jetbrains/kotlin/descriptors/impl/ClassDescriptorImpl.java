@@ -21,10 +21,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeConstructorImpl;
 
@@ -35,9 +35,9 @@ import java.util.Set;
 public class ClassDescriptorImpl extends ClassDescriptorBase {
     private final Modality modality;
     private final TypeConstructor typeConstructor;
-    private final JetScope staticScope = new StaticScopeForKotlinClass(this);
+    private final KtScope staticScope = new StaticScopeForKotlinClass(this);
 
-    private JetScope unsubstitutedMemberScope;
+    private KtScope unsubstitutedMemberScope;
     private Set<ConstructorDescriptor> constructors;
     private ConstructorDescriptor primaryConstructor;
 
@@ -45,7 +45,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
             @NotNull Modality modality,
-            @NotNull Collection<JetType> supertypes,
+            @NotNull Collection<KtType> supertypes,
             @NotNull SourceElement source
     ) {
         super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source);
@@ -56,7 +56,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     public final void initialize(
-            @NotNull JetScope unsubstitutedMemberScope,
+            @NotNull KtScope unsubstitutedMemberScope,
             @NotNull Set<ConstructorDescriptor> constructors,
             @Nullable ConstructorDescriptor primaryConstructor
     ) {
@@ -89,13 +89,13 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public JetScope getUnsubstitutedMemberScope() {
+    public KtScope getUnsubstitutedMemberScope() {
         return unsubstitutedMemberScope;
     }
 
     @NotNull
     @Override
-    public JetScope getStaticScope() {
+    public KtScope getStaticScope() {
         return staticScope;
     }
 

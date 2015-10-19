@@ -20,11 +20,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.psi.stubs.StubIndexKey
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 
 
-public class JetFilePartClassIndex private constructor() : StringStubIndexExtension<JetFile>() {
-    override fun getKey(): StubIndexKey<String, JetFile> = KEY
+public class JetFilePartClassIndex private constructor() : StringStubIndexExtension<KtFile>() {
+    override fun getKey(): StubIndexKey<String, KtFile> = KEY
 
     override fun get(key: String, project: Project, scope: GlobalSearchScope) =
             super.get(key, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project))

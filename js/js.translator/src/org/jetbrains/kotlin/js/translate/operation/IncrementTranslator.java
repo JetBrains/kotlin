@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CachedAccessTranslator;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetUnaryExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtUnaryExpression;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
@@ -52,7 +52,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public static JsExpression translate(@NotNull JetUnaryExpression expression,
+    public static JsExpression translate(@NotNull KtUnaryExpression expression,
                                          @NotNull TranslationContext context) {
         if (hasCorrespondingFunctionIntrinsic(context, expression) || isDynamic(context, expression)) {
             return IntrinsicIncrementTranslator.doTranslate(expression, context);
@@ -61,15 +61,15 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    protected final JetUnaryExpression expression;
+    protected final KtUnaryExpression expression;
     @NotNull
     protected final CachedAccessTranslator accessTranslator;
 
-    protected IncrementTranslator(@NotNull JetUnaryExpression expression,
+    protected IncrementTranslator(@NotNull KtUnaryExpression expression,
                                   @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
-        JetExpression baseExpression = getBaseExpression(expression);
+        KtExpression baseExpression = getBaseExpression(expression);
         this.accessTranslator = getCachedAccessTranslator(baseExpression, context());
     }
 
@@ -126,7 +126,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     @NotNull
     abstract JsExpression operationExpression(@NotNull JsExpression receiver);
 
-    private static boolean isDynamic(TranslationContext context, JetUnaryExpression expression) {
+    private static boolean isDynamic(TranslationContext context, KtUnaryExpression expression) {
         CallableDescriptor operationDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
         return DynamicCallsKt.isDynamic(operationDescriptor);
     }

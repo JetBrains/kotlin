@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.Iterator;
@@ -69,14 +69,14 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public JetType safeGetType(
+    public KtType safeGetType(
             @NotNull LexicalScope scope,
-            @NotNull JetExpression expression,
-            @NotNull JetType expectedType,
+            @NotNull KtExpression expression,
+            @NotNull KtType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
-        JetType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
+        KtType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
 
         return type != null ? type : ErrorUtils.createErrorType("Type for " + expression.getText());
     }
@@ -84,8 +84,8 @@ public class ExpressionTypingServices {
     @NotNull
     public JetTypeInfo getTypeInfo(
             @NotNull LexicalScope scope,
-            @NotNull JetExpression expression,
-            @NotNull JetType expectedType,
+            @NotNull KtExpression expression,
+            @NotNull KtType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace,
             boolean isStatement
@@ -97,15 +97,15 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public JetTypeInfo getTypeInfo(@NotNull JetExpression expression, @NotNull ResolutionContext resolutionContext) {
+    public JetTypeInfo getTypeInfo(@NotNull KtExpression expression, @NotNull ResolutionContext resolutionContext) {
         return expressionTypingFacade.getTypeInfo(expression, ExpressionTypingContext.newContext(resolutionContext));
     }
 
     @Nullable
-    public JetType getType(
+    public KtType getType(
             @NotNull LexicalScope scope,
-            @NotNull JetExpression expression,
-            @NotNull JetType expectedType,
+            @NotNull KtExpression expression,
+            @NotNull KtType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
@@ -116,10 +116,10 @@ public class ExpressionTypingServices {
 
     public void checkFunctionReturnType(
             @NotNull LexicalScope functionInnerScope,
-            @NotNull JetDeclarationWithBody function,
+            @NotNull KtDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull DataFlowInfo dataFlowInfo,
-            @Nullable JetType expectedReturnType,
+            @Nullable KtType expectedReturnType,
             BindingTrace trace
     ) {
         if (expectedReturnType == null) {
@@ -134,8 +134,8 @@ public class ExpressionTypingServices {
         ));
     }
 
-    /*package*/ void checkFunctionReturnType(JetDeclarationWithBody function, ExpressionTypingContext context) {
-        JetExpression bodyExpression = function.getBodyExpression();
+    /*package*/ void checkFunctionReturnType(KtDeclarationWithBody function, ExpressionTypingContext context) {
+        KtExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
 
         boolean blockBody = function.hasBlockBody();
@@ -148,22 +148,22 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public JetTypeInfo getBlockReturnedType(JetBlockExpression expression, ExpressionTypingContext context, boolean isStatement) {
+    public JetTypeInfo getBlockReturnedType(KtBlockExpression expression, ExpressionTypingContext context, boolean isStatement) {
         return getBlockReturnedType(expression, isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION, context);
     }
 
     @NotNull
     public JetTypeInfo getBlockReturnedType(
-            @NotNull JetBlockExpression expression,
+            @NotNull KtBlockExpression expression,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        List<JetExpression> block = StatementFilterKt.filterStatements(statementFilter, expression);
+        List<KtExpression> block = StatementFilterKt.filterStatements(statementFilter, expression);
 
         // SCRIPT: get code descriptor for script declaration
         DeclarationDescriptor containingDescriptor = context.scope.getOwnerDescriptor();
         if (containingDescriptor instanceof ScriptDescriptor) {
-            if (!(expression.getParent() instanceof JetScript)) {
+            if (!(expression.getParent() instanceof KtScript)) {
                 // top level script declarations should have ScriptDescriptor parent
                 // and lower level script declarations should be ScriptCodeDescriptor parent
                 containingDescriptor = ((ScriptDescriptor) containingDescriptor).getScriptCodeDescriptor();
@@ -192,14 +192,14 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public JetType getBodyExpressionType(
+    public KtType getBodyExpressionType(
             @NotNull BindingTrace trace,
             @NotNull LexicalScope outerScope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull JetDeclarationWithBody function,
+            @NotNull KtDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor
     ) {
-        JetExpression bodyExpression = function.getBodyExpression();
+        KtExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
         LexicalScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
 
@@ -208,7 +208,7 @@ public class ExpressionTypingServices {
         );
         JetTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 
-        JetType type = typeInfo.getType();
+        KtType type = typeInfo.getType();
         if (type != null) {
             return type;
         }
@@ -224,7 +224,7 @@ public class ExpressionTypingServices {
      */
     /*package*/ JetTypeInfo getBlockReturnedTypeWithWritableScope(
             @NotNull LexicalWritableScope scope,
-            @NotNull List<? extends JetElement> block,
+            @NotNull List<? extends KtElement> block,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context
     ) {
@@ -240,12 +240,12 @@ public class ExpressionTypingServices {
         // Jump point data flow info
         DataFlowInfo beforeJumpInfo = newContext.dataFlowInfo;
         boolean jumpOutPossible = false;
-        for (Iterator<? extends JetElement> iterator = block.iterator(); iterator.hasNext(); ) {
-            JetElement statement = iterator.next();
-            if (!(statement instanceof JetExpression)) {
+        for (Iterator<? extends KtElement> iterator = block.iterator(); iterator.hasNext(); ) {
+            KtElement statement = iterator.next();
+            if (!(statement instanceof KtExpression)) {
                 continue;
             }
-            JetExpression statementExpression = (JetExpression) statement;
+            KtExpression statementExpression = (KtExpression) statement;
             if (!iterator.hasNext()) {
                 result = getTypeOfLastExpressionInBlock(
                         statementExpression, newContext.replaceExpectedType(context.expectedType), coercionStrategyForLastExpression,
@@ -272,13 +272,13 @@ public class ExpressionTypingServices {
     }
 
     private JetTypeInfo getTypeOfLastExpressionInBlock(
-            @NotNull JetExpression statementExpression,
+            @NotNull KtExpression statementExpression,
             @NotNull ExpressionTypingContext context,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingInternals blockLevelVisitor
     ) {
         if (context.expectedType != NO_EXPECTED_TYPE) {
-            JetType expectedType;
+            KtType expectedType;
             if (context.expectedType == UNIT_EXPECTED_TYPE ||//the first check is necessary to avoid invocation 'isUnit(UNIT_EXPECTED_TYPE)'
                 (coercionStrategyForLastExpression == COERCION_TO_UNIT && KotlinBuiltIns.isUnit(context.expectedType))) {
                 expectedType = UNIT_EXPECTED_TYPE;
@@ -292,14 +292,14 @@ public class ExpressionTypingServices {
         JetTypeInfo result = blockLevelVisitor.getTypeInfo(statementExpression, context, true);
         if (coercionStrategyForLastExpression == COERCION_TO_UNIT) {
             boolean mightBeUnit = false;
-            if (statementExpression instanceof JetDeclaration) {
+            if (statementExpression instanceof KtDeclaration) {
                 mightBeUnit = true;
             }
-            if (statementExpression instanceof JetBinaryExpression) {
-                JetBinaryExpression binaryExpression = (JetBinaryExpression) statementExpression;
+            if (statementExpression instanceof KtBinaryExpression) {
+                KtBinaryExpression binaryExpression = (KtBinaryExpression) statementExpression;
                 IElementType operationType = binaryExpression.getOperationToken();
                 //noinspection SuspiciousMethodCalls
-                if (operationType == JetTokens.EQ || OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
+                if (operationType == KtTokens.EQ || OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
                     mightBeUnit = true;
                 }
             }

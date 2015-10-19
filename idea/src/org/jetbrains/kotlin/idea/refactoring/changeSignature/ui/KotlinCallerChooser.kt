@@ -37,13 +37,13 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallHierarchyNodeDescriptor
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallerMethodsTreeStructure
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import java.util.HashSet
 import java.util.LinkedHashSet
@@ -54,7 +54,7 @@ public class KotlinCallerChooser(
         title: String,
         previousTree: Tree?,
         callback: Consumer<Set<PsiElement>>
-): CallerChooserBase<PsiElement>(declaration, project, title, previousTree, "dummy." + JetFileType.EXTENSION, callback) {
+): CallerChooserBase<PsiElement>(declaration, project, title, previousTree, "dummy." + KotlinFileType.EXTENSION, callback) {
     override fun createTreeNode(method: PsiElement?, called: com.intellij.util.containers.HashSet<PsiElement>, cancelCallback: Runnable): KotlinMethodNode {
         return KotlinMethodNode(method, called, myProject, cancelCallback)
     }
@@ -80,8 +80,8 @@ public class KotlinMethodNode(
 
     override fun customizeRendererText(renderer: ColoredTreeCellRenderer) {
         val descriptor = when (myMethod) {
-            is JetFunction -> myMethod.resolveToDescriptor() as FunctionDescriptor
-            is JetClass -> (myMethod.resolveToDescriptor() as ClassDescriptor).getUnsubstitutedPrimaryConstructor() ?: return
+            is KtFunction -> myMethod.resolveToDescriptor() as FunctionDescriptor
+            is KtClass -> (myMethod.resolveToDescriptor() as ClassDescriptor).getUnsubstitutedPrimaryConstructor() ?: return
             is PsiMethod -> myMethod.getJavaMethodDescriptor() ?: return
             else -> throw AssertionError("Invalid declaration: ${myMethod.getElementTextWithContext()}")
         }
@@ -112,7 +112,7 @@ public class KotlinMethodNode(
 
         val processor = object: KotlinCallerMethodsTreeStructure.CalleeReferenceProcessor(false) {
             override fun onAccept(ref: PsiReference, element: PsiElement) {
-                if ((element is JetFunction || element is JetClass || element is PsiMethod) && element !in myCalled) {
+                if ((element is KtFunction || element is KtClass || element is PsiMethod) && element !in myCalled) {
                     callers.add(element)
                 }
             }
