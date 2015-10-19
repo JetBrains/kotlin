@@ -92,6 +92,7 @@ public fun closeAndDeleteProject(): Unit =
 public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWithException) {
     // Doesn't work in idea 141. Shouldn't be used.
     val builtInsSources = BuiltInsReferenceResolver.getInstance(project).builtInsSources!!
+    val fileManager = (PsiManager.getInstance(project) as PsiManagerEx).getFileManager()
 
     val stdLibViewProviders = HashSet<JetClassFileViewProvider>()
     val vFileToViewProviderMap = ((PsiManager.getInstance(project) as PsiManagerEx).fileManager as FileManagerImpl).vFileToViewProviderMap
@@ -103,11 +104,11 @@ public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWit
 
     runnable.run()
 
-    // Base tearDown() invalidates builtins and std-lib files. Restore them with brute force.
+    // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
+    // otherwise built-ins psi elements will become invalid in next test.
     fun unInvalidateFile(file: PsiFileImpl) {
-        val field = javaClass<PsiFileImpl>().getDeclaredField("myInvalidated")!!
-        field.setAccessible(true)
-        field.set(file, false)
+        val provider = file.getViewProvider();
+        fileManager.setViewProvider(provider.getVirtualFile(), provider);
     }
 
     builtInsSources.forEach { unInvalidateFile(it) }
