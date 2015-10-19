@@ -34,10 +34,26 @@ public class AnnotationProcessorStub : AbstractProcessor() {
 
 abstract class AnnotatedElementDescriptor(public val classFqName: String)
 
-data class AnnotatedClassDescriptor(classFqName: String) : AnnotatedElementDescriptor(classFqName)
-data class AnnotatedMethodDescriptor(classFqName: String, public val methodName: String) : AnnotatedElementDescriptor(classFqName)
-data class AnnotatedConstructorDescriptor(classFqName: String) : AnnotatedElementDescriptor(classFqName)
-data class AnnotatedFieldDescriptor(classFqName: String, public val fieldName: String) : AnnotatedElementDescriptor(classFqName)
+class AnnotatedClassDescriptor(classFqName: String) : AnnotatedElementDescriptor(classFqName) {
+    override fun equals(other: Any?) = other is AnnotatedClassDescriptor
+
+    override fun hashCode() = 0
+}
+class AnnotatedMethodDescriptor(classFqName: String, public val methodName: String) : AnnotatedElementDescriptor(classFqName) {
+    override fun equals(other: Any?) = other is AnnotatedMethodDescriptor && methodName == other.methodName
+
+    override fun hashCode() = methodName.hashCode()
+}
+class AnnotatedConstructorDescriptor(classFqName: String) : AnnotatedElementDescriptor(classFqName) {
+    override fun equals(other: Any?) = other is AnnotatedConstructorDescriptor
+
+    override fun hashCode() = 0
+}
+class AnnotatedFieldDescriptor(classFqName: String, public val fieldName: String) : AnnotatedElementDescriptor(classFqName) {
+    override fun equals(other: Any?) = other is AnnotatedFieldDescriptor && fieldName == other.fieldName
+
+    override fun hashCode() = fieldName.hashCode()
+}
 
 public abstract class AnnotationProcessorWrapper(
         private val processorFqName: String,
