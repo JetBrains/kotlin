@@ -24,12 +24,13 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -45,8 +46,9 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
 import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.Box;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -330,7 +332,7 @@ public class BodyResolver {
                     // Recording type info for callee to use later in JetObjectLiteralExpression
                     trace.record(PROCESSED, call.getCalleeExpression(), true);
                     trace.record(EXPRESSION_TYPE_INFO, call.getCalleeExpression(),
-                                 TypeInfoFactoryPackage.noTypeInfo(results.getResultingCall().getDataFlowInfoForArguments().getResultInfo()));
+                                 TypeInfoFactoryKt.noTypeInfo(results.getResultingCall().getDataFlowInfoForArguments().getResultInfo()));
                 }
                 else {
                     recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
@@ -444,13 +446,17 @@ public class BodyResolver {
             if (classDescriptor != null) {
                 if (ErrorUtils.isError(classDescriptor)) continue;
 
+                if (KotlinBuiltIns.isExactExtensionFunctionType(supertype)) {
+                    trace.report(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE.on(typeReference));
+                }
+
                 if (classDescriptor.getKind() != ClassKind.INTERFACE) {
                     if (supertypeOwner.getKind() == ClassKind.ENUM_CLASS) {
                         trace.report(CLASS_IN_SUPERTYPE_FOR_ENUM.on(typeReference));
                         addSupertype = false;
                     }
                     else if (supertypeOwner.getKind() == ClassKind.INTERFACE &&
-                             !classAppeared && !TypesPackage.isDynamic(supertype) /* avoid duplicate diagnostics */) {
+                             !classAppeared && !DynamicTypesKt.isDynamic(supertype) /* avoid duplicate diagnostics */) {
                         trace.report(INTERFACE_WITH_SUPERCLASS.on(typeReference));
                         addSupertype = false;
                     }
@@ -516,6 +522,8 @@ public class BodyResolver {
         if (!classDescriptor.getConstructors().isEmpty()) {
             JetExpression body = anonymousInitializer.getBody();
             if (body != null) {
+                PreliminaryDeclarationVisitor.Companion.createForDeclaration(
+                        (JetDeclaration) anonymousInitializer.getParent().getParent(), trace);
                 expressionTypingServices.getType(scopeForInitializers, body, NO_EXPECTED_TYPE, outerDataFlowInfo, trace);
             }
             processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
@@ -577,6 +585,7 @@ public class BodyResolver {
     ) {
         computeDeferredType(propertyDescriptor.getReturnType());
 
+        PreliminaryDeclarationVisitor.Companion.createForDeclaration(property, trace);
         JetExpression initializer = property.getInitializer();
         LexicalScope propertyScope = getScopeForProperty(c, property);
         if (parentScope == null) {
@@ -744,7 +753,7 @@ public class BodyResolver {
             JetNamedFunction declaration = entry.getKey();
 
             LexicalScope scope = c.getDeclaringScope(declaration);
-            assert scope != null : "Scope is null: " + PsiUtilPackage.getElementTextWithContext(declaration);
+            assert scope != null : "Scope is null: " + PsiUtilsKt.getElementTextWithContext(declaration);
 
             if (!c.getTopDownAnalysisMode().isLocalDeclarations() && !(bodyResolveCache instanceof BodyResolveCache.ThrowException) &&
                 expressionTypingServices.getStatementFilter() != StatementFilter.NONE) {
@@ -779,6 +788,7 @@ public class BodyResolver {
             @Nullable Function1<LexicalScope, DataFlowInfo> beforeBlockBody,
             @NotNull CallChecker callChecker
     ) {
+        PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace);
         LexicalScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace);
         List<JetParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();

@@ -23,14 +23,15 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
+import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
+import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -61,7 +62,7 @@ public class LazyJavaStaticClassScope(
     }
 
     override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> =
-            memberIndex().getAllFieldNames()
+            memberIndex().getAllFieldNames() + (if (jClass.isEnum) listOf(DescriptorUtils.ENUM_VALUES) else emptyList())
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
     override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
@@ -99,17 +100,18 @@ public class LazyJavaStaticClassScope(
                 }
 
         result.addAll(actualProperties)
+
+        if (jClass.isEnum) {
+            if (name == DescriptorUtils.ENUM_VALUES) {
+                result.add(createEnumValuesProperty(getContainingDeclaration()))
+            }
+        }
     }
 
     override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyJavaClassDescriptor
 
     private fun getStaticFunctionsFromJavaSuperClasses(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
-        val superClassDescriptor = descriptor.getSuperClassNotAny() ?: return emptySet()
-
-        val staticScope = superClassDescriptor.staticScope
-
-        if (staticScope !is LazyJavaStaticClassScope) return getStaticFunctionsFromJavaSuperClasses(name, superClassDescriptor)
-
+        val staticScope = descriptor.getParentJavaStaticClassScope() ?: return emptySet()
         return staticScope.getFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it as SimpleFunctionDescriptor }.toSet()
     }
 

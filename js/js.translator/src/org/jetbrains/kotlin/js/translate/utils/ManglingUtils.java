@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -35,8 +36,6 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.getJetTypeFqName;
-import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.hasPrimaryConstructor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public class ManglingUtils {
@@ -185,7 +184,7 @@ public class ManglingUtils {
                         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
                         Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
 
-                        if (!hasPrimaryConstructor(classDescriptor)) {
+                        if (!DescriptorUtilsKt.hasPrimaryConstructor(classDescriptor)) {
                             ConstructorDescriptorImpl fakePrimaryConstructor =
                                     ConstructorDescriptorImpl.create(classDescriptor, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
                             return CollectionsKt.plus(constructors, fakePrimaryConstructor);
@@ -231,13 +230,13 @@ public class ManglingUtils {
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
-            argTypes.append(getJetTypeFqName(receiverParameter.getType(), true)).append(".");
+            argTypes.append(DescriptorUtilsKt.getJetTypeFqName(receiverParameter.getType(), true)).append(".");
         }
 
         argTypes.append(StringUtil.join(descriptor.getValueParameters(), new Function<ValueParameterDescriptor, String>() {
             @Override
             public String fun(ValueParameterDescriptor descriptor) {
-                return getJetTypeFqName(descriptor.getType(), true);
+                return DescriptorUtilsKt.getJetTypeFqName(descriptor.getType(), true);
             }
         }, ","));
 

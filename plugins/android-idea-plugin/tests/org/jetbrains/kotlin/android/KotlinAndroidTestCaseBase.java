@@ -33,6 +33,8 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import org.jetbrains.android.sdk.AndroidSdkAdditionalData;
 import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.sdk.AndroidSdkType;
+import org.jetbrains.kotlin.idea.test.RunnableWithException;
+import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
@@ -66,6 +68,18 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
 
     public String getDefaultTestSdkPath() {
         return getTestDataPath() + "/sdk1.5";
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        TestUtilsKt.unInvalidateBuiltinsAndStdLib(getProject(), new RunnableWithException() {
+            @Override
+            public void run() throws Exception {
+                KotlinAndroidTestCaseBase.super.tearDown();
+                androidJar = null;
+                androidSdk = null;
+            }
+        });
     }
 
     public String getDefaultPlatformDir() {

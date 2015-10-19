@@ -226,20 +226,13 @@ JetFile: recoveryNestedClassAmbiguity.kt
       PsiWhiteSpace('\n    ')
       MODIFIER_LIST
         PsiElement(private)('private')
-        PsiErrorElement:Use '@' symbol before annotations
-          <empty list>
-        PsiWhiteSpace(' ')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
-          PsiWhiteSpace(' ')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
       PsiErrorElement:Expecting member declaration
-        <empty list>
+        PsiElement(IDENTIFIER)('Ann')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

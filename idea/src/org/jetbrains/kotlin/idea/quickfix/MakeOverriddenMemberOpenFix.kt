@@ -36,11 +36,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import java.util.*
 
-public class MakeOverriddenMemberOpenFix(declaration: JetDeclaration) : JetIntentionAction<JetDeclaration>(declaration) {
+public class MakeOverriddenMemberOpenFix(declaration: JetDeclaration) : KotlinQuickFixAction<JetDeclaration>(declaration) {
     private val overriddenNonOverridableMembers = ArrayList<JetCallableDeclaration>()
     private val containingDeclarationsNames = ArrayList<String>()
 
-    override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file) || file !is JetFile) {
             return false
         }

@@ -52,9 +52,8 @@ import java.util.*
 public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetProperty>(javaClass(), "Convert property to function"), LowPriorityAction {
     private inner class Converter(
             project: Project,
-            descriptor: CallableDescriptor,
-            context: BindingContext
-    ): CallableRefactoring<CallableDescriptor>(project, descriptor, context, getText()) {
+            descriptor: CallableDescriptor
+    ): CallableRefactoring<CallableDescriptor>(project, descriptor, getText()) {
         private val newName: String = JvmAbi.getterName(callableDescriptor.name.asString())
 
         private fun convertProperty(originalProperty: JetProperty, psiFactory: JetPsiFactory) {
@@ -102,7 +101,7 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
                 }
 
                 if (callable is JetProperty) {
-                    callableDescriptor.getContainingScope(bindingContext)
+                    callableDescriptor.getContainingScope()
                             ?.getFunctions(callableDescriptor.name, NoLookupLocation.FROM_IDE)
                             ?.firstOrNull { it.getValueParameters().isEmpty() }
                             ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
@@ -190,6 +189,6 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
     override fun applyTo(element: JetProperty, editor: Editor) {
         val context = element.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? CallableDescriptor ?: return
-        Converter(element.getProject(), descriptor, context).run()
+        Converter(element.getProject(), descriptor).run()
     }
 }

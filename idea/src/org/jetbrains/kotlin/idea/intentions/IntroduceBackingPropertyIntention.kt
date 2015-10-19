@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
+import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
@@ -150,7 +150,7 @@ class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<JetProperty
     }
 }
 
-class IntroduceBackingPropertyFix(prop: JetProperty): JetIntentionAction<JetProperty>(prop) {
+class IntroduceBackingPropertyFix(prop: JetProperty): KotlinQuickFixAction<JetProperty>(prop) {
     override fun getText(): String = "Introduce backing property"
     override fun getFamilyName(): String  = getText()
 

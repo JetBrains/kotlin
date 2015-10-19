@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
@@ -29,7 +31,7 @@ import org.jetbrains.kotlin.types.Variance;
 import java.util.Collections;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getDefaultConstructorVisibility;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class DescriptorFactory {
     private static class DefaultConstructorDescriptor extends ConstructorDescriptorImpl {
@@ -112,13 +114,37 @@ public class DescriptorFactory {
 
     @NotNull
     public static SimpleFunctionDescriptor createEnumValuesMethod(@NotNull ClassDescriptor enumClass) {
+        AnnotationsImpl annotations = AnnotationsImpl.createWithNoTarget(
+                AnnotationUtilKt.createDeprecatedAnnotation(getBuiltIns(enumClass), "Use 'values' property instead", "this.values")
+        );
+
         SimpleFunctionDescriptorImpl values =
-                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.Companion.getEMPTY(), DescriptorUtils.ENUM_VALUES,
+                SimpleFunctionDescriptorImpl.create(enumClass, annotations, DescriptorUtils.ENUM_VALUES,
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
         return values.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType()),
                                  Modality.FINAL, Visibilities.PUBLIC);
+    }
+
+    @NotNull
+    public static PropertyDescriptor createEnumValuesProperty(@NotNull ClassDescriptor enumClass) {
+        PropertyDescriptorImpl values =
+                PropertyDescriptorImpl.create(
+                        enumClass, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.PUBLIC, /* isVar */ false,
+                        DescriptorUtils.ENUM_VALUES, CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource(),
+                        /* lateInit = */ false, /* isConst = */ false
+                );
+
+        JetType type = getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType());
+
+        PropertyGetterDescriptorImpl getter = createDefaultGetter(values, Annotations.Companion.getEMPTY());
+
+        values.initialize(getter, null);
+        getter.initialize(type);
+        values.setType(type, Collections.<TypeParameterDescriptor>emptyList(), null, (JetType) null);
+
+        return values;
     }
 
     @NotNull

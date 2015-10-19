@@ -26,6 +26,10 @@ public abstract class SerializerExtension {
     @NotNull
     public abstract StringTable getStringTable();
 
+    public boolean shouldUseTypeTable() {
+        return false;
+    }
+
     public void serializeClass(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class.Builder proto) {
     }
 
@@ -45,5 +49,8 @@ public abstract class SerializerExtension {
     }
 
     public void serializeType(@NotNull JetType type, @NotNull ProtoBuf.Type.Builder proto) {
+    }
+
+    public void serializeTypeParameter(@NotNull TypeParameterDescriptor typeParameter, @NotNull ProtoBuf.TypeParameter.Builder proto) {
     }
 }

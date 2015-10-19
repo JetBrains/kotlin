@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -114,7 +114,7 @@ public final class AnalyzerWithCompilerReport {
                 assert unresolved != null && !unresolved.isEmpty() :
                         "Incomplete hierarchy should be reported with names of unresolved superclasses: " + fqName;
                 message.append("    class ").append(fqName)
-                        .append(", unresolved supertypes: ").append(UtilsPackage.join(unresolved, ", "))
+                        .append(", unresolved supertypes: ").append(StringsKt.join(unresolved, ", "))
                         .append("\n");
             }
             messageCollector.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);

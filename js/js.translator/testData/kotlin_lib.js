@@ -1018,6 +1018,8 @@
     };
 
     Kotlin.copyToArray = function (collection) {
+        if (typeof collection.toArray !== "undefined") return collection.toArray();
+
         var array = [];
         var it = collection.iterator();
         while (it.hasNext()) {

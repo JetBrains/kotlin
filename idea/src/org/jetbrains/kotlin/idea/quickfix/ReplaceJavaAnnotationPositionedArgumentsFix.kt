@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 
 public class ReplaceJavaAnnotationPositionedArgumentsFix(element: JetAnnotationEntry)
-: JetIntentionAction<JetAnnotationEntry>(element), CleanupFix {
+: KotlinQuickFixAction<JetAnnotationEntry>(element), CleanupFix {
     override fun getText(): String  = "Replace invalid positioned arguments for annotation"
     override fun getFamilyName(): String = getText()
 

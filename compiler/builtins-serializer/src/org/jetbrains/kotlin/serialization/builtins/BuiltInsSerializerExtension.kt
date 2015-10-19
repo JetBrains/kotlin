@@ -28,6 +28,8 @@ public class BuiltInsSerializerExtension : SerializerExtension() {
 
     override fun getStringTable(): StringTable = stringTable
 
+    override fun shouldUseTypeTable(): Boolean = true
+
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
         for (annotation in descriptor.annotations) {
             proto.addExtension(BuiltInsProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(annotation))

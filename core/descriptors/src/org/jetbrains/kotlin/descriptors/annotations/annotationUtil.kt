@@ -16,9 +16,44 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.AnnotationValue
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.types.Variance
 
 // Please synchronize this set with JetTokens.ANNOTATION_MODIFIERS_KEYWORDS_ARRAY
 public val ANNOTATION_MODIFIERS_FQ_NAMES: Set<FqName> =
         arrayOf("data", "inline", "noinline", "tailrec", "external", "annotation.annotation", "crossinline").map { FqName("kotlin.$it") }.toSet()
 
+public fun KotlinBuiltIns.createDeprecatedAnnotation(message: String, replaceWith: String): AnnotationDescriptor {
+    val deprecatedAnnotation = deprecatedAnnotation
+    val parameters = deprecatedAnnotation.unsubstitutedPrimaryConstructor!!.valueParameters
+
+    val replaceWithClass = getBuiltInClassByName(Name.identifier("ReplaceWith"))
+
+    val replaceWithParameters = replaceWithClass.unsubstitutedPrimaryConstructor!!.valueParameters
+    return AnnotationDescriptorImpl(
+            deprecatedAnnotation.defaultType,
+            mapOf(
+                    parameters["message"] to StringValue(message, this),
+                    parameters["replaceWith"] to AnnotationValue(
+                            AnnotationDescriptorImpl(
+                                    replaceWithClass.defaultType,
+                                    mapOf(
+                                            replaceWithParameters["expression"] to StringValue(replaceWith, this),
+                                            replaceWithParameters["imports"]    to ArrayValue(
+                                                    emptyList(), getArrayType(Variance.INVARIANT, stringType), this)
+                                    ),
+                                    SourceElement.NO_SOURCE
+                            )
+                    )
+            ),
+            SourceElement.NO_SOURCE)
+}
+
+private operator fun Collection<ValueParameterDescriptor>.get(parameterName: String) = single { it.name.asString() == parameterName }

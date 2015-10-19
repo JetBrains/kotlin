@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.CaptureKind;
 
@@ -89,13 +89,13 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         if (descriptor instanceof VariableDescriptor) {
             VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
 
-            if (TasksPackage.isDynamic(variableDescriptor)) {
-                JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
+            if (DynamicCallsKt.isDynamic(variableDescriptor)) {
+                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
                 return;
             }
 
             if (variableDescriptor.isVar()) {
-                JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.MUTABLE_VARIABLE);
+                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.MUTABLE_VARIABLE);
             }
 
             if (bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) == CaptureKind.NOT_INLINE) {
@@ -106,11 +106,11 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             }
 
             if (descriptor instanceof LocalVariableDescriptor) {
-                JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.LOCAL_VARIABLE);
+                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.LOCAL_VARIABLE);
             }
 
             if (descriptor instanceof ValueParameterDescriptor) {
-                JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.PARAMETER);
+                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.PARAMETER);
             }
         }
     }

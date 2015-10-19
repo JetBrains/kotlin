@@ -26,7 +26,7 @@ abstract class KA<T> : java.util.AbstractList<T>() {
 }
 
 abstract class KB : java.util.AbstractList<String>(), IC {
-    override fun containsAll(x: Collection<String>) = false
+    override fun containsAll(elements: Collection<String>) = false
 }
 
 fun foo(

@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.JavaResolutionUtils;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
+import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenWaitingSetKt;
 import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
 import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignatureUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
@@ -43,8 +43,9 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
@@ -55,7 +56,6 @@ import org.jetbrains.kotlin.types.substitutions.SubstitutionUtilsKt;
 import java.util.List;
 
 import static org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt.createPrimaryConstructorIfAbsent;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageInfo<T> {
     @NotNull
@@ -118,7 +118,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
 
         if (typeSubstitutor == null) {
             if (samCallType == null) {
-                typeSubstitutor = ChangeSignaturePackage.getCallableSubstitutor(baseFunction, this);
+                typeSubstitutor = ChangeSignatureUtilsKt.getCallableSubstitutor(baseFunction, this);
             }
             else {
                 DeclarationDescriptor currentBaseDescriptor = baseFunction.getCurrentCallableDescriptor();
@@ -172,7 +172,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
     public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull PsiElement element, @NotNull UsageInfo[] allUsages) {
         if (!(element instanceof JetNamedDeclaration)) return true;
 
-        JetPsiFactory psiFactory = JetPsiFactory(element.getProject());
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(element.getProject());
 
         if (changeInfo.isNameChanged()) {
             PsiElement identifier = ((JetCallableDeclaration) element).getNameIdentifier();
@@ -184,7 +184,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
 
         changeReturnTypeIfNeeded(changeInfo, element);
 
-        JetParameterList parameterList = PsiUtilPackage.getValueParameterList((JetNamedDeclaration) element);
+        JetParameterList parameterList = JetPsiUtilKt.getValueParameterList((JetNamedDeclaration) element);
 
         if (changeInfo.isParameterSetOrOrderChanged()) {
             processParameterListWithStructuralChanges(changeInfo, element, parameterList, psiFactory);
@@ -198,16 +198,17 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
                 paramIndex++;
             }
 
-            ShortenPackage.addToShorteningWaitSet(parameterList, Options.DEFAULT);
+            ShortenWaitingSetKt.addToShorteningWaitSet(parameterList, Options.DEFAULT);
         }
 
         if (element instanceof JetCallableDeclaration && changeInfo.isReceiverTypeChanged()) {
             //noinspection unchecked
             String receiverTypeText = changeInfo.renderReceiverType((JetCallableDefinitionUsage<PsiElement>) this);
             JetTypeReference receiverTypeRef = receiverTypeText != null ? psiFactory.createType(receiverTypeText) : null;
-            JetTypeReference newReceiverTypeRef = TypeRefHelpersPackage.setReceiverTypeReference((JetCallableDeclaration) element, receiverTypeRef);
+            JetTypeReference newReceiverTypeRef = TypeRefHelpersKt
+                    .setReceiverTypeReference((JetCallableDeclaration) element, receiverTypeRef);
             if (newReceiverTypeRef != null) {
-                ShortenPackage.addToShorteningWaitSet(newReceiverTypeRef, ShortenReferences.Options.DEFAULT);
+                ShortenWaitingSetKt.addToShorteningWaitSet(newReceiverTypeRef, ShortenReferences.Options.DEFAULT);
             }
         }
 
@@ -239,8 +240,8 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
 
             //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
             if (!(returnTypeText.equals("Unit") || returnTypeText.equals("kotlin.Unit"))) {
-                ShortenPackage.addToShorteningWaitSet(
-                        callable.setTypeReference(JetPsiFactory(callable).createType(returnTypeText)),
+                ShortenWaitingSetKt.addToShorteningWaitSet(
+                        callable.setTypeReference(JetPsiFactoryKt.JetPsiFactory(callable).createType(returnTypeText)),
                         Options.DEFAULT
                 );
             }
@@ -312,7 +313,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
         }
 
         if (newParameterList != null) {
-            ShortenPackage.addToShorteningWaitSet(newParameterList, Options.DEFAULT);
+            ShortenWaitingSetKt.addToShorteningWaitSet(newParameterList, Options.DEFAULT);
         }
     }
 
@@ -352,14 +353,14 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
         else if (element instanceof JetClass) {
             PsiModificationUtilsKt.setVisibility(createPrimaryConstructorIfAbsent((JetClass) element), newVisibilityToken);
         }
-        else throw new AssertionError("Invalid element: " + PsiUtilPackage.getElementTextWithContext(element));
+        else throw new AssertionError("Invalid element: " + PsiUtilsKt.getElementTextWithContext(element));
     }
 
     private void changeParameter(int parameterIndex, JetParameter parameter, JetParameterInfo parameterInfo) {
         PsiElement valOrVarKeyword = parameter.getValOrVarKeyword();
         JetValVar valOrVar = parameterInfo.getValOrVar();
 
-        JetPsiFactory psiFactory = JetPsiFactory(getProject());
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(getProject());
         if (valOrVarKeyword != null) {
             PsiElement newKeyword = valOrVar.createKeyword(psiFactory);
             if (newKeyword != null) {

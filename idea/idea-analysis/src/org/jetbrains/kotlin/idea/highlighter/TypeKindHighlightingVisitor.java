@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetDynamicType;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 import org.jetbrains.kotlin.psi.JetTypeParameter;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
@@ -36,7 +36,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
     @Override
     public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
-        if (JetPsiChecker.Companion.getNamesHighlightingEnabled()) {
+        if (NameHighlighter.namesHighlightingEnabled) {
             DeclarationDescriptor referenceTarget = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
             if (referenceTarget instanceof ConstructorDescriptor) {
                 referenceTarget = referenceTarget.getContainingDeclaration();
@@ -58,8 +58,8 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     private void highlightAnnotation(@NotNull JetSimpleNameExpression expression) {
-        TextRange toHighlight = PsiUtilPackage.getCalleeHighlightingRange(expression);
-        JetPsiChecker.highlightName(holder, toHighlight, JetHighlightingColors.ANNOTATION);
+        TextRange toHighlight = JetPsiUtilKt.getCalleeHighlightingRange(expression);
+        NameHighlighter.highlightName(holder, toHighlight, JetHighlightingColors.ANNOTATION);
     }
 
     @Override
@@ -87,7 +87,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     private void highlightName(@NotNull PsiElement whatToHighlight, @NotNull TextAttributesKey textAttributesKey) {
-        JetPsiChecker.highlightName(holder, whatToHighlight, textAttributesKey);
+        NameHighlighter.highlightName(holder, whatToHighlight, textAttributesKey);
     }
 
     @NotNull

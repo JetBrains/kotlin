@@ -18,7 +18,7 @@ package kotlin.jvm.internal
 
 private class ArrayIterator<T>(val array: Array<T>) : Iterator<T> {
     private var index = 0
-    override fun hasNext() = index < array.size()
+    override fun hasNext() = index < array.size
     override fun next() = array[index++]
 }
 

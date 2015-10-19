@@ -101,10 +101,9 @@ fun foo(
 // 0 signature \(TW;\)Z
 // 0 signature \(TR;\)Z
 // 6 signature \(Ljava/util/Collection<\+Ljava/lang/Object;>;\)Z
-// 3 public final bridge contains\(Ljava/lang/Object;\)Z
-// 4 INVOKEVIRTUAL A[0-9]\.contains \(Ljava/lang/String;\)Z
-// 4 INVOKEVIRTUAL A[0-9]\.contains \(Ljava/lang/Object;\)Z
-// 2 INVOKEVIRTUAL A7\.contains \(I\)Z
+// 4 public final bridge contains\(Ljava/lang/Object;\)Z
+// 3 INVOKEVIRTUAL A[0-9]\.contains \(Ljava/lang/String;\)Z
+// 7 INVOKEVIRTUAL A[0-9]\.contains \(Ljava/lang/Object;\)Z
+// 1 INVOKEVIRTUAL A7\.contains \(I\)Z
 // 1 INVOKEINTERFACE java/util/Collection.contains \(Ljava/lang/Object;\)Z
-// 1 INVOKEINTERFACE I1.contains \(Ljava/lang/Object;\)Z
-// 1 INVOKEINTERFACE I2.contains \(Ljava/lang/String;\)Z
+// 2 INVOKEINTERFACE I[1-2].contains \(Ljava/lang/Object;\)Z

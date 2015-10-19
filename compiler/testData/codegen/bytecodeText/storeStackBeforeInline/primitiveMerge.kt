@@ -12,5 +12,6 @@ fun test() {
 // 3 ILOAD
 // 2 ASTORE
 // 7 ALOAD
-// 3 MAXLOCALS = 3
+// 2 MAXLOCALS = 3
+// 1 MAXLOCALS = 4
 // 0 InlineMarker

@@ -1,0 +1,4 @@
+class A {
+    val a<selection>: String?</selection><caret> = null
+
+}

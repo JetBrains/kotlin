@@ -34,4 +34,18 @@ class JavautilCollectionsTest {
         val array = TEST_LIST.toTypedArray()
         assertEquals(array.toList(), TEST_LIST)
     }
+
+    @test fun arrayListDoesNotCreateArrayView() {
+        val array = arrayOf(1)
+        val list = arrayListOf(*array)
+        assertEquals(1, list[0])
+        array[0] = 2
+        assertEquals(1, list[0])
+
+        val arrayOfAny = arrayOf<Any>("first")
+        val listOfAny = arrayListOf(*arrayOfAny)
+        assertEquals("first", listOfAny[0])
+        arrayOfAny[0] = "last"
+        assertEquals("first", listOfAny[0])
+    }
 }

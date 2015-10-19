@@ -449,9 +449,7 @@ fun generators(): List<GenericFunction> {
         typeParam("V")
         returns("List<V>")
         inline(true)
-        deprecate("Use zip() with transform instead.")
-        deprecateReplacement("zip(other, transform)")
-        body { """return ${deprecateReplacement.default}""" }
+        deprecate(Deprecation("Use zip() with transform instead.", replaceWith = "zip(other, transform)"))
     }
 
     templates add f("zip(other: Iterable<R>, transform: (T, R) -> V)") {
@@ -496,9 +494,7 @@ fun generators(): List<GenericFunction> {
         typeParam("V")
         returns("List<V>")
         inline(true)
-        deprecate("Use zip() with transform instead.")
-        deprecateReplacement("zip(array, transform)")
-        body { """return ${deprecateReplacement.default}""" }
+        deprecate(Deprecation("Use zip() with transform instead.", replaceWith = "zip(array, transform)"))
     }
 
     templates add f("zip(array: Array<out R>, transform: (T, R) -> V)") {
@@ -542,9 +538,7 @@ fun generators(): List<GenericFunction> {
         typeParam("V")
         returns("List<V>")
         inline(true)
-        deprecate("Use zip() with transform instead.")
-        deprecateReplacement("zip(array, transform)")
-        body { """return ${deprecateReplacement.default}""" }
+        deprecate(Deprecation("Use zip() with transform instead.", replaceWith = "zip(array, transform)"))
     }
 
     templates add f("zip(array: SELF, transform: (T, T) -> V)") {
@@ -574,9 +568,7 @@ fun generators(): List<GenericFunction> {
         typeParam("R")
         typeParam("V")
         returns("Sequence<V>")
-        deprecate("Use zip() with transform instead.")
-        deprecateReplacement("zip(sequence, transform)")
-        body { """return ${deprecateReplacement.default}""" }
+        deprecate(Deprecation("Use zip() with transform instead.", replaceWith = "zip(sequence, transform)"))
     }
 
     templates add f("zip(sequence: Sequence<R>, transform: (T, R) -> V)") {

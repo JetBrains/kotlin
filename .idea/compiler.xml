@@ -5,6 +5,7 @@
     <option name="BUILD_PROCESS_HEAP_SIZE" value="2000" />
     <excludeFromCompile>
       <directory url="file://$PROJECT_DIR$/core/reflection.jvm" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/core/runtime.jvm" includeSubdirectories="true" />
     </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>

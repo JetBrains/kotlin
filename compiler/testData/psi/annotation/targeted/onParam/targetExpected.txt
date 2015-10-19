@@ -137,12 +137,19 @@ JetFile: targetExpected.kt
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
           MODIFIER_LIST
-            PsiErrorElement:Expected annotation identifier after ':'
+            ANNOTATION_ENTRY
               PsiElement(AT)('@')
-              PsiElement(IDENTIFIER)('fiield')
+              PsiErrorElement:Expected annotation target before ':'
+                PsiElement(IDENTIFIER)('fiield')
               PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+          PsiErrorElement:Parameter name expected
+            <empty list>
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
@@ -171,17 +178,8 @@ JetFile: targetExpected.kt
               PsiErrorElement:Expecting a list of annotations
                 <empty list>
               PsiElement(RBRACKET)(']')
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
-            PsiWhiteSpace(' ')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-          PsiErrorElement:Parameter name expected
-            <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE

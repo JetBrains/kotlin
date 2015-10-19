@@ -217,6 +217,18 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("syntheticAccessorForPropertiesSignatureClash.args")
+        public void testSyntheticAccessorForPropertiesSignatureClash() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("syntheticAccessorPropertyAndFunSignatureClash.args")
+        public void testSyntheticAccessorPropertyAndFunSignatureClash() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/syntheticAccessorPropertyAndFunSignatureClash.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("syntheticAccessorSignatureClash.args")
         public void testSyntheticAccessorSignatureClash() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/syntheticAccessorSignatureClash.args");

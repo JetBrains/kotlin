@@ -20,12 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 
 import java.io.File;
 import java.util.List;
-
-import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoot;
 
 public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
     protected JavaElementFinder finder;
@@ -35,7 +34,7 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
         CompilerConfiguration configuration = new CompilerConfiguration();
 
         for (File root : getKotlinSourceRoots()) {
-            addKotlinSourceRoot(configuration, root.getPath());
+            ContentRootsKt.addKotlinSourceRoot(configuration, root.getPath());
         }
 
         extraConfiguration(configuration);
@@ -52,7 +51,7 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
     protected void setUp() throws Exception {
         super.setUp();
 
-        finder = AbstractKotlinLightClassTest.createFinder(getEnvironment());
+        finder = AbstractCompilerLightClassTest.createFinder(getEnvironment());
     }
 
     @Override

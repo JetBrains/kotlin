@@ -110,6 +110,10 @@ public class ReferenceVariantsHelper(
                 return getVariantsForUserType(callTypeAndReceiver.receiver, expression, kindFilter, nameFilter)
             }
 
+            is CallTypeAndReceiver.ANNOTATION -> {
+                return getVariantsForUserType(callTypeAndReceiver.receiver, expression, kindFilter, nameFilter)
+            }
+
             is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
                 val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression.parent as JetExpression] ?: return emptyList()
                 return getVariantsForCallableReference(callTypeAndReceiver.receiver, resolutionScope, kindFilter, nameFilter)

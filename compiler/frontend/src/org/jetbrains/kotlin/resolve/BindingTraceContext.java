@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.slicedMap.*;
 
 import java.util.Collection;
@@ -139,7 +139,7 @@ public class BindingTraceContext implements BindingTrace {
     @Override
     public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
         JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
-        typeInfo = typeInfo != null ? typeInfo.replaceType(type) : TypeInfoFactoryPackage.createTypeInfo(type);
+        typeInfo = typeInfo != null ? typeInfo.replaceType(type) : TypeInfoFactoryKt.createTypeInfo(type);
         record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo);
     }
 }

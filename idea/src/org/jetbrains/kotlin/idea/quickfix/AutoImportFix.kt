@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.daemon.impl.ShowAutoImportPass
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.intention.HighPriorityAction
+import com.intellij.codeInspection.HintAction
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
@@ -51,7 +52,7 @@ import java.util.*
 /**
  * Check possibility and perform fix for unresolved references.
  */
-public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<JetSimpleNameExpression>(element), HighPriorityAction {
+public class AutoImportFix(element: JetSimpleNameExpression) : KotlinQuickFixAction<JetSimpleNameExpression>(element), HighPriorityAction, HintAction {
     private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
 
     @Volatile private var anySuggestionFound: Boolean? = null
@@ -84,7 +85,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
     override fun getFamilyName() = JetBundle.message("import.fix")
 
-    override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
             = (super.isAvailable(project, editor, file)) && (anySuggestionFound ?: !suggestions.isEmpty())
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
@@ -100,7 +101,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
     private fun createAction(project: Project, editor: Editor) = KotlinAddImportAction(project, editor, element, suggestions)
 
     companion object : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): JetIntentionAction<JetSimpleNameExpression>? {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<JetSimpleNameExpression>? {
             // There could be different psi elements (i.e. JetArrayAccessExpression), but we can fix only JetSimpleNameExpression case
             val psiElement = diagnostic.getPsiElement()
             if (psiElement is JetSimpleNameExpression) {

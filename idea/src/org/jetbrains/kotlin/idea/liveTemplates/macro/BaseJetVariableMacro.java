@@ -41,14 +41,13 @@ import org.jetbrains.kotlin.idea.util.ExtensionUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.*;
-
-import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.getDataFlowInfo;
 
 public abstract class BaseJetVariableMacro extends Macro {
     @Nullable
@@ -74,7 +73,7 @@ public abstract class BaseJetVariableMacro extends Macro {
 
         IterableTypesDetector detector = resolutionFacade.getIdeService(IterableTypesDetection.class).createDetector(scope);
 
-        DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
+        DataFlowInfo dataFlowInfo = BindingContextUtilsKt.getDataFlowInfo(bindingContext, contextExpression);
 
         List<VariableDescriptor> filteredDescriptors = new ArrayList<VariableDescriptor>();
         for (DeclarationDescriptor declarationDescriptor : getAllVariables(scope)) {

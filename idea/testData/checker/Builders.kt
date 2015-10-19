@@ -24,7 +24,7 @@ import java.util.*
   }
 
   abstract class TagWithText(name : String) : Tag(name) {
-    operator fun String.plus() {
+    operator fun String.unaryPlus() {
       children.add(TextElement(this))
     }
   }

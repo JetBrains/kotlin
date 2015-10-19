@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
@@ -40,7 +40,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     public void visitNamedFunction(@NotNull JetNamedFunction function) {
         PsiElement nameIdentifier = function.getNameIdentifier();
         if (nameIdentifier != null) {
-            JetPsiChecker.highlightName(holder, nameIdentifier, JetHighlightingColors.FUNCTION_DECLARATION);
+            NameHighlighter.highlightName(holder, nameIdentifier, JetHighlightingColors.FUNCTION_DECLARATION);
         }
 
         super.visitNamedFunction(function);
@@ -55,7 +55,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
             if (typeElement instanceof JetUserType) {
                 JetSimpleNameExpression nameExpression = ((JetUserType)typeElement).getReferenceExpression();
                 if (nameExpression != null) {
-                    JetPsiChecker.highlightName(holder, nameExpression, JetHighlightingColors.CONSTRUCTOR_CALL);
+                    NameHighlighter.highlightName(holder, nameExpression, JetHighlightingColors.CONSTRUCTOR_CALL);
                 }
             }
         }
@@ -65,30 +65,30 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     @Override
     public void visitCallExpression(@NotNull JetCallExpression expression) {
         JetExpression callee = expression.getCalleeExpression();
-        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, bindingContext);
+        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
         if (callee instanceof JetReferenceExpression && resolvedCall != null) {
             CallableDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
 
-            if (TasksPackage.isDynamic(calleeDescriptor)) {
-                JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.DYNAMIC_FUNCTION_CALL);
+            if (DynamicCallsKt.isDynamic(calleeDescriptor)) {
+                NameHighlighter.highlightName(holder, callee, JetHighlightingColors.DYNAMIC_FUNCTION_CALL);
             }
             else if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-                JetPsiChecker.highlightName(holder, callee, containedInFunctionClassOrSubclass(calleeDescriptor)
+                NameHighlighter.highlightName(holder, callee, containedInFunctionClassOrSubclass(calleeDescriptor)
                                                             ? JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL
                                                             : JetHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);
             }
             else {
                 if (calleeDescriptor instanceof ConstructorDescriptor) {
-                    JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.CONSTRUCTOR_CALL);
+                    NameHighlighter.highlightName(holder, callee, JetHighlightingColors.CONSTRUCTOR_CALL);
                 }
                 else if (calleeDescriptor instanceof FunctionDescriptor) {
                     FunctionDescriptor fun = (FunctionDescriptor) calleeDescriptor;
-                    JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.FUNCTION_CALL);
+                    NameHighlighter.highlightName(holder, callee, JetHighlightingColors.FUNCTION_CALL);
                     if (DescriptorUtils.isTopLevelDeclaration(fun)) {
-                        JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.PACKAGE_FUNCTION_CALL);
+                        NameHighlighter.highlightName(holder, callee, JetHighlightingColors.PACKAGE_FUNCTION_CALL);
                     }
                     if (fun.getExtensionReceiverParameter() != null) {
-                        JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.EXTENSION_FUNCTION_CALL);
+                        NameHighlighter.highlightName(holder, callee, JetHighlightingColors.EXTENSION_FUNCTION_CALL);
                     }
                 }
             }

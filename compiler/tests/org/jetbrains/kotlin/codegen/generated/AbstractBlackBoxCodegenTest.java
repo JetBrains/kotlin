@@ -22,9 +22,10 @@ import com.intellij.util.Processor;
 import kotlin.Charsets;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -42,8 +43,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJavaSourceRoot;
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoot;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
 
@@ -62,7 +61,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             blackBoxFileWithJavaByFullPath(filename);
         }
         catch (Exception e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -150,14 +149,14 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar()
         );
-        addJavaSourceRoot(configuration, dirFile);
+        JvmContentRootsKt.addJavaSourceRoot(configuration, dirFile);
         myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         loadFiles(ArrayUtil.toStringArray(ktFilePaths));
         classFileFactory =
                 GenerationUtils.compileManyFilesGetGenerationStateForTest(myEnvironment.getProject(), myFiles.getPsiFiles(),
                                                                           new JvmPackagePartProvider(myEnvironment)).getFactory();
         File kotlinOut = JetTestUtils.tmpDir(toString());
-        OutputUtilsPackage.writeAllTo(classFileFactory, kotlinOut);
+        OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
 
         List<String> javacOptions = new ArrayList<String>(0);
         for (JetFile jetFile : myFiles.getPsiFiles()) {
@@ -166,7 +165,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
         File javaOut = compileJava(javaFilePaths, Collections.singletonList(kotlinOut.getPath()), javacOptions);
         // Add javac output to classpath so that the created class loader can find generated Java classes
-        addJvmClasspathRoot(configuration, javaOut);
+        JvmContentRootsKt.addJvmClasspathRoot(configuration, javaOut);
 
         blackBox();
     }
@@ -189,7 +188,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         }
         catch (Throwable e) {
             System.out.println(generateToText());
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 }

@@ -1,0 +1,4 @@
+package
+
+public fun bar(/*0*/ z: kotlin.String?): kotlin.String?
+public fun foo(/*0*/ y: kotlin.String?): kotlin.Unit

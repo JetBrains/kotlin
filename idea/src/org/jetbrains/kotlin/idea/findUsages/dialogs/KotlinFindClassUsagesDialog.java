@@ -30,14 +30,14 @@ import com.intellij.psi.PsiModifier;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.AsJavaPackage;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
+import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 
 import javax.swing.*;
 
@@ -90,7 +90,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         //noinspection ConstantConditions
         javaClass.getModifierList().setModifierProperty(
                 PsiModifier.FINAL,
-                !(classOrObject instanceof JetClass && PsiUtilPackage.isInheritable((JetClass) classOrObject))
+                !(classOrObject instanceof JetClass && JetPsiUtilKt.isInheritable((JetClass) classOrObject))
         );
 
         javaClass.putUserData(ORIGINAL_CLASS, classOrObject);
@@ -146,7 +146,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
 
     @Override
     public void configureLabelComponent(@NotNull SimpleColoredComponent coloredComponent) {
-        PsiElement klass = AsJavaPackage.getUnwrapped(getPsiElement());
+        PsiElement klass = LightClassUtilsKt.getUnwrapped(getPsiElement());
         //noinspection ConstantConditions
         JetClassOrObject originalClass = klass instanceof JetClassOrObject
                                          ? (JetClassOrObject) klass

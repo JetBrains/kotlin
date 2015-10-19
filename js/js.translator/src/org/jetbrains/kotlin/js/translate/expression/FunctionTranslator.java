@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +41,6 @@ import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDe
 import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.setParameters;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.isEffectivelyPublicApi;
 
 public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
@@ -99,7 +98,7 @@ public final class FunctionTranslator extends AbstractTranslator {
         JsName functionName = context().getNameForDescriptor(descriptor);
         generateFunctionObject();
 
-        if (shouldBeInlined(descriptor) && isEffectivelyPublicApi(descriptor)) {
+        if (shouldBeInlined(descriptor) && DescriptorUtilsKt.isEffectivelyPublicApi(descriptor)) {
             InlineMetadata metadata = InlineMetadata.compose(functionObject, descriptor);
             return new JsPropertyInitializer(functionName.makeRef(), metadata.getFunctionWithMetadata());
         }
@@ -148,7 +147,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     public static void addParameters(List<JsParameter> list, FunctionDescriptor descriptor, TranslationContext context) {
         for (ValueParameterDescriptor valueParameter : descriptor.getValueParameters()) {
             JsParameter jsParameter = new JsParameter(context.getNameForDescriptor(valueParameter));
-            MetadataProperties.setHasDefaultValue(jsParameter, DescriptorUtilPackage.hasDefaultValue(valueParameter));
+            MetadataProperties.setHasDefaultValue(jsParameter, DescriptorUtilsKt.hasDefaultValue(valueParameter));
             list.add(jsParameter);
         }
     }

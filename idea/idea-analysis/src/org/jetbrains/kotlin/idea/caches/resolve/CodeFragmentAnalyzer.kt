@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportScope
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
+import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import javax.inject.Inject
 
@@ -55,6 +56,7 @@ public class CodeFragmentAnalyzer(
             resolveElementCache!!.resolveToElement(it, bodyResolveMode)
         } ?: return
 
+        PreliminaryDeclarationVisitor.createForExpression(codeFragmentExpression, trace)
         expressionTypingServices.getTypeInfo(
                 scopeForContextElement,
                 codeFragmentExpression,

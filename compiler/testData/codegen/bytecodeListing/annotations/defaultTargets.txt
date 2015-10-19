@@ -1,11 +1,11 @@
 @kotlin.jvm.internal.KotlinClass A {
-    private @AnnField @AnnParameterField @AnnTypeField field a: int
-    private @AnnField @AnnTypeField field x: int
-    private synthetic deprecated @AnnProperty @AnnFieldProperty @AnnParameterProperty method a$annotations(): void
-    public method getA(): int
-    private synthetic deprecated @AnnProperty @AnnFieldProperty method x$annotations(): void
-    public method getX(): int
+    private final @AnnField @AnnParameterField @AnnTypeField field a: int
+    private final @AnnField @AnnTypeField field x: int
     public method <init>(@AnnParameterProperty @AnnParameterField p0: int): void
+    private synthetic deprecated final @AnnProperty @AnnFieldProperty @AnnParameterProperty method a$annotations(): void
+    public final method getA(): int
+    public final method getX(): int
+    private synthetic deprecated final @AnnProperty @AnnFieldProperty method x$annotations(): void
 }
 
 @kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnField
@@ -19,3 +19,20 @@
 @kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnProperty
 
 @kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnTypeField
+
+@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass Anno
+
+@kotlin.jvm.internal.KotlinFileFacade DefaultTargetsKt {
+    @Anno field p2: int
+    public method getP(): int
+    public method getP2(): int
+    method <clinit>(): void
+}
+
+@java.lang.Deprecated @kotlin.jvm.internal.KotlinPackage _DefaultPackage {
+    public synthetic field $kotlinPackage: kotlin.reflect.KPackage
+    public synthetic field $moduleName: java.lang.String
+    method <clinit>(): void
+    public @kotlin.jvm.internal.KotlinDelegatedMethod method getP(): int
+    public @kotlin.jvm.internal.KotlinDelegatedMethod method getP2(): int
+}

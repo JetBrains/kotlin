@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
@@ -56,6 +53,8 @@ public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: 
 
     object TYPE : CallType<JetExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK))
 
+    object ANNOTATION : CallType<JetExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude)
+
     private object NonInfixExclude : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor) =
                 !(descriptor is SimpleFunctionDescriptor && descriptor.isInfix)
@@ -80,6 +79,14 @@ public sealed class CallType<TReceiver : JetElement?>(val descriptorKindFilter: 
             get() = 0
     }
 
+    private object NonAnnotationClassifierExclude : DescriptorKindExclude() {
+        override fun excludes(descriptor: DeclarationDescriptor): Boolean {
+            if (descriptor !is ClassifierDescriptor) return false
+            return descriptor !is ClassDescriptor || descriptor.getKind() != ClassKind.ANNOTATION_CLASS
+        }
+
+        override val fullyExcludedDescriptorKinds: Int get() = 0
+    }
 }
 
 public sealed class CallTypeAndReceiver<TReceiver : JetElement?, TCallType : CallType<TReceiver>>(
@@ -96,6 +103,7 @@ public sealed class CallTypeAndReceiver<TReceiver : JetElement?, TCallType : Cal
     class IMPORT_DIRECTIVE(receiver: JetExpression?) : CallTypeAndReceiver<JetExpression?, CallType.IMPORT_DIRECTIVE>(CallType.IMPORT_DIRECTIVE, receiver)
     class PACKAGE_DIRECTIVE(receiver: JetExpression?) : CallTypeAndReceiver<JetExpression?, CallType.PACKAGE_DIRECTIVE>(CallType.PACKAGE_DIRECTIVE, receiver)
     class TYPE(receiver: JetExpression?) : CallTypeAndReceiver<JetExpression?, CallType.TYPE>(CallType.TYPE, receiver)
+    class ANNOTATION(receiver: JetExpression?) : CallTypeAndReceiver<JetExpression?, CallType.ANNOTATION>(CallType.ANNOTATION, receiver)
 
     companion object {
         public fun detect(expression: JetSimpleNameExpression): CallTypeAndReceiver<*, *> {
@@ -115,6 +123,11 @@ public sealed class CallTypeAndReceiver<TReceiver : JetElement?, TCallType : Cal
             }
 
             if (parent is JetUserType) {
+                val constructorCallee = (parent.parent as? JetTypeReference)?.parent as? JetConstructorCalleeExpression
+                if (constructorCallee != null && constructorCallee.parent is JetAnnotationEntry) {
+                    return CallTypeAndReceiver.ANNOTATION(receiverExpression)
+                }
+
                 return CallTypeAndReceiver.TYPE(receiverExpression)
             }
 
@@ -188,6 +201,7 @@ public fun CallTypeAndReceiver<*, *>.receiverTypes(
         is CallTypeAndReceiver.IMPORT_DIRECTIVE,
         is CallTypeAndReceiver.PACKAGE_DIRECTIVE,
         is CallTypeAndReceiver.TYPE,
+        is CallTypeAndReceiver.ANNOTATION,
         is CallTypeAndReceiver.UNKNOWN ->
             return null
 

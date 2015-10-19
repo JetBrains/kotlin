@@ -27,4 +27,4 @@ fun bottlesOfBeer(count : Int) :  String {
 fun print(message : String) { System.out?.print(message) }
 fun println(message : String) { System.out?.println(message) }
 fun StringBuilder.plusAssign(o : Any) { append(o) }
-val <T> Array<T>.isEmpty : Boolean get() = size() == 0
+val <T> Array<T>.isEmpty : Boolean get() = size == 0

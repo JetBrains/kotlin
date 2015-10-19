@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public interface JetChangeSignatureConfiguration {
-    fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor = originalDescriptor
+    fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor = originalDescriptor
     fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = false
     fun forcePerformForSelectedFunctionOnly(): Boolean = false
 
@@ -64,20 +64,17 @@ fun JetMethodDescriptor.modify(action: (JetMutableMethodDescriptor) -> Unit): Je
 public fun runChangeSignature(project: Project,
                               callableDescriptor: CallableDescriptor,
                               configuration: JetChangeSignatureConfiguration,
-                              bindingContext: BindingContext,
                               defaultValueContext: PsiElement,
                               commandName: String? = null): Boolean {
-    return JetChangeSignature(project, callableDescriptor, configuration, bindingContext, defaultValueContext, commandName).run()
+    return JetChangeSignature(project, callableDescriptor, configuration, defaultValueContext, commandName).run()
 }
 
 public class JetChangeSignature(project: Project,
                                 callableDescriptor: CallableDescriptor,
                                 val configuration: JetChangeSignatureConfiguration,
-                                bindingContext: BindingContext,
                                 val defaultValueContext: PsiElement,
                                 commandName: String?): CallableRefactoring<CallableDescriptor>(project,
                                                                                                callableDescriptor,
-                                                                                               bindingContext,
                                                                                                commandName ?: ChangeSignatureHandler.REFACTORING_NAME) {
 
     private val LOG = Logger.getInstance(javaClass<JetChangeSignature>())
@@ -205,7 +202,7 @@ public class JetChangeSignature(project: Project,
         }
 
         val originalDescriptor = JetChangeSignatureData(baseDescriptor, functionDeclaration, descriptorsForSignatureChange)
-        return configuration.configure(originalDescriptor, bindingContext)
+        return configuration.configure(originalDescriptor)
     }
 
     private fun preferContainedInClass(descriptorsForSignatureChange: Collection<CallableDescriptor>): CallableDescriptor {
@@ -225,10 +222,9 @@ public fun createChangeInfo(
         project: Project,
         callableDescriptor: CallableDescriptor,
         configuration: JetChangeSignatureConfiguration,
-        bindingContext: BindingContext,
         defaultValueContext: PsiElement
 ): JetChangeInfo? {
-    val jetChangeSignature = JetChangeSignature(project, callableDescriptor, configuration, bindingContext, defaultValueContext, null)
+    val jetChangeSignature = JetChangeSignature(project, callableDescriptor, configuration, defaultValueContext, null)
     val declarations = if (callableDescriptor is CallableMemberDescriptor) {
         OverrideResolver.getDeepestSuperDeclarations(callableDescriptor)
     } else listOf(callableDescriptor)

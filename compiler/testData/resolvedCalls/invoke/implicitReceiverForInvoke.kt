@@ -1,8 +1,4 @@
-class Foo() {
-    fun Int.invoke() {}
-}
-
-fun bar(f: Foo, i: Int) {
+fun bar(f: Int.() -> Unit, i: Int) {
     with (i) {
         f<caret>()
     }

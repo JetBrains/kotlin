@@ -27,7 +27,7 @@ fun testSomeFunction() {
 fun assertEquals(<!UNUSED_PARAMETER!>expected<!>: Any?, <!UNUSED_PARAMETER!>actual<!>: Any?, <!UNUSED_PARAMETER!>message<!>: String = "") {
 }
 
-fun <T> arrayList(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size()))
+fun <T> arrayList(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))
 
 fun <T, C: MutableCollection<in T>> Array<T>.toCollection(result: C) : C {
     for (element in this) result.add(element)

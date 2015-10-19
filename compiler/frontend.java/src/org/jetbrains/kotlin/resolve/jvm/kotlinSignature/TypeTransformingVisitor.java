@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.TypeResolver;
-import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.*;
@@ -136,7 +136,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         List<TypeProjection> arguments = originalType.getArguments();
 
         if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
-            if (JvmPackage.getPLATFORM_TYPES()) return originalType;
+            if (JavaDescriptorResolverKt.getPLATFORM_TYPES()) return originalType;
 
             throw new AlternativeSignatureMismatchException("'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
                  DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(originalType), arguments.size(), type.getText(),
@@ -189,7 +189,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         if (type instanceof JetUserType) {
             JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
             altProjectionKind = TypeResolver.resolveProjectionKind(typeProjection.getProjectionKind());
-            if (altProjectionKind != projectionKind && projectionKind != Variance.INVARIANT && !JvmPackage.getPLATFORM_TYPES()) {
+            if (altProjectionKind != projectionKind && projectionKind != Variance.INVARIANT && !JavaDescriptorResolverKt.getPLATFORM_TYPES()) {
                 throw new AlternativeSignatureMismatchException("Projection kind mismatch, actual: %s, in alternative signature: %s",
                                                                 projectionKind, altProjectionKind);
             }

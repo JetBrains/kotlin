@@ -201,12 +201,18 @@ private fun bindPropertyReference(expression: JetCallableReferenceExpression, re
 
 private fun createReflectionTypeForCallableDescriptor(
         descriptor: CallableDescriptor,
+        lhsType: JetType?,
         reflectionTypes: ReflectionTypes,
         trace: BindingTrace?,
         reportOn: JetExpression?
 ): JetType? {
-    val extensionReceiver = descriptor.getExtensionReceiverParameter()
-    val dispatchReceiver = descriptor.getDispatchReceiverParameter()
+    val extensionReceiver = descriptor.extensionReceiverParameter
+    val dispatchReceiver = descriptor.dispatchReceiverParameter?.let { dispatchReceiver ->
+        // See CallableDescriptor#getOwnerForEffectiveDispatchReceiverParameter
+        if ((descriptor as? CallableMemberDescriptor)?.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
+            DescriptorUtils.getDispatchReceiverParameterIfNeeded(descriptor.containingDeclaration)
+        else dispatchReceiver
+    }
 
     if (extensionReceiver != null && dispatchReceiver != null && descriptor is CallableMemberDescriptor) {
         if (reportOn != null) {
@@ -215,7 +221,10 @@ private fun createReflectionTypeForCallableDescriptor(
         return null
     }
 
-    val receiverType = extensionReceiver?.getType() ?: dispatchReceiver?.getType()
+    val receiverType =
+            if (extensionReceiver != null || dispatchReceiver != null)
+                lhsType ?: extensionReceiver?.type ?: dispatchReceiver?.type
+            else null
 
     return when (descriptor) {
         is FunctionDescriptor ->
@@ -237,16 +246,18 @@ public fun getReflectionTypeForCandidateDescriptor(
         descriptor: CallableDescriptor,
         reflectionTypes: ReflectionTypes
 ): JetType? =
-        createReflectionTypeForCallableDescriptor(descriptor, reflectionTypes, null, null)
+        createReflectionTypeForCallableDescriptor(descriptor, null, reflectionTypes, null, null)
 
 public fun createReflectionTypeForResolvedCallableReference(
         reference: JetCallableReferenceExpression,
+        lhsType: JetType?,
         descriptor: CallableDescriptor,
         context: ResolutionContext<*>,
         reflectionTypes: ReflectionTypes
 ): JetType? {
-    val type = createReflectionTypeForCallableDescriptor(descriptor, reflectionTypes, context.trace, reference.getCallableReference())
-               ?: return null
+    val type = createReflectionTypeForCallableDescriptor(
+            descriptor, lhsType, reflectionTypes, context.trace, reference.getCallableReference()
+    ) ?: return null
     when (descriptor) {
         is FunctionDescriptor -> {
             bindFunctionReference(reference, type, context)
@@ -260,6 +271,7 @@ public fun createReflectionTypeForResolvedCallableReference(
 
 public fun getResolvedCallableReferenceShapeType(
         reference: JetCallableReferenceExpression,
+        lhsType: JetType?,
         overloadResolutionResults: OverloadResolutionResults<CallableDescriptor>?,
         context: ResolutionContext<*>,
         expectedTypeUnknown: Boolean,
@@ -270,9 +282,9 @@ public fun getResolvedCallableReferenceShapeType(
         when {
             overloadResolutionResults == null ->
                 null
-            overloadResolutionResults.isSingleResult() ->
+            overloadResolutionResults.isSingleResult ->
                 OverloadResolutionResultsUtil.getResultingCall(overloadResolutionResults, context.contextDependency)?.let { call ->
-                    createReflectionTypeForCallableDescriptor(call.getResultingDescriptor(), reflectionTypes, context.trace, reference)
+                    createReflectionTypeForCallableDescriptor(call.resultingDescriptor, lhsType, reflectionTypes, context.trace, reference)
                 }
             expectedTypeUnknown /* && overload resolution was ambiguous */ ->
                 functionPlaceholders.createFunctionPlaceholderType(emptyList(), false)

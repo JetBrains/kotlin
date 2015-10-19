@@ -30,10 +30,9 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunction;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
-public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
+public class AddFunctionBodyFix extends KotlinQuickFixAction<JetFunction> {
     public AddFunctionBodyFix(@NotNull JetFunction element) {
         super(element);
     }
@@ -52,27 +51,27 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) && !element.hasBody();
+        return super.isAvailable(project, editor, file) && !getElement().hasBody();
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetFunction newElement = (JetFunction) element.copy();
-        JetPsiFactory psiFactory = JetPsiFactory(file);
+        JetFunction newElement = (JetFunction) getElement().copy();
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
         if (!(newElement.getLastChild() instanceof PsiWhiteSpace)) {
             newElement.add(psiFactory.createWhiteSpace());
         }
         if (!newElement.hasBody()) {
             newElement.add(psiFactory.createEmptyBody());
         }
-        element.replace(newElement);
+        getElement().replace(newElement);
     }
     
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public JetIntentionAction createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 JetFunction function = PsiTreeUtil.getParentOfType(element, JetFunction.class, false);
                 if (function == null) return null;

@@ -20,14 +20,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypeConstructor;
-import org.jetbrains.kotlin.types.TypeProjection;
-import org.jetbrains.kotlin.types.TypesPackage;
+import org.jetbrains.kotlin.types.*;
 
 import java.util.Collection;
 
@@ -95,9 +91,9 @@ public class ForceResolveUtil {
         if (type == null) return null;
 
         forceResolveAllContents(type.getAnnotations());
-        if (TypesPackage.isFlexible(type)) {
-            forceResolveAllContents(TypesPackage.flexibility(type).getLowerBound());
-            forceResolveAllContents(TypesPackage.flexibility(type).getUpperBound());
+        if (FlexibleTypesKt.isFlexible(type)) {
+            forceResolveAllContents(FlexibleTypesKt.flexibility(type).getLowerBound());
+            forceResolveAllContents(FlexibleTypesKt.flexibility(type).getUpperBound());
         }
         else {
             forceResolveAllContents(type.getConstructor());

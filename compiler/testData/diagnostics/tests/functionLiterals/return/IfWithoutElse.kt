@@ -1,7 +1,7 @@
 val flag = true
 
 // type of a was checked by txt
-val a/*: () -> Any*/ = l@ { // commonSupertype(Int, Unit) = Any
+val a/*: () -> Any*/ = l@ {
     if (flag) return@l 4
 }
 

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -57,8 +57,6 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.resolve.scopes.receivers.ReceiversPackage.createQualifier;
-import static org.jetbrains.kotlin.resolve.scopes.receivers.ReceiversPackage.resolveAsStandaloneExpression;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class CallExpressionResolver {
@@ -129,11 +127,11 @@ public class CallExpressionResolver {
             }
         }
 
-        QualifierReceiver qualifier = createQualifier(nameExpression, receiver, context);
+        QualifierReceiver qualifier = QualifierKt.createQualifier(nameExpression, receiver, context);
         if (qualifier != null) {
             result[0] = true;
             if (!isLHSOfDot) {
-                resolveAsStandaloneExpression(qualifier, context, symbolUsageValidator);
+                QualifierKt.resolveAsStandaloneExpression(qualifier, context, symbolUsageValidator);
             }
             return null;
         }
@@ -159,7 +157,7 @@ public class CallExpressionResolver {
 
         if (result[0]) {
             temporaryForVariable.commit();
-            return TypeInfoFactoryPackage.createTypeInfo(type, context);
+            return TypeInfoFactoryKt.createTypeInfo(type, context);
         }
 
         Call call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, Collections.<ValueArgument>emptyList());
@@ -174,11 +172,11 @@ public class CallExpressionResolver {
             boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
             context.trace.report(FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters));
             type = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
-            return TypeInfoFactoryPackage.createTypeInfo(type, context);
+            return TypeInfoFactoryKt.createTypeInfo(type, context);
         }
 
         temporaryForVariable.commit();
-        return TypeInfoFactoryPackage.noTypeInfo(context);
+        return TypeInfoFactoryKt.noTypeInfo(context);
     }
 
     @NotNull
@@ -221,7 +219,7 @@ public class CallExpressionResolver {
                 context.trace.report(FUNCTION_CALL_EXPECTED.on(callExpression, callExpression, hasValueParameters));
             }
             if (functionDescriptor == null) {
-                return TypeInfoFactoryPackage.noTypeInfo(context);
+                return TypeInfoFactoryKt.noTypeInfo(context);
             }
             if (functionDescriptor instanceof ConstructorDescriptor) {
                 DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
@@ -252,7 +250,7 @@ public class CallExpressionResolver {
                     break;
                 }
             }
-            return TypeInfoFactoryPackage.createTypeInfo(type, resultFlowInfo, jumpOutPossible, jumpFlowInfo);
+            return TypeInfoFactoryKt.createTypeInfo(type, resultFlowInfo, jumpOutPossible, jumpFlowInfo);
         }
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();
@@ -266,11 +264,11 @@ public class CallExpressionResolver {
                 temporaryForVariable.commit();
                 context.trace.report(FUNCTION_EXPECTED.on(calleeExpression, calleeExpression,
                                                           type != null ? type : ErrorUtils.createErrorType("")));
-                return TypeInfoFactoryPackage.noTypeInfo(context);
+                return TypeInfoFactoryKt.noTypeInfo(context);
             }
         }
         temporaryForFunction.commit();
-        return TypeInfoFactoryPackage.noTypeInfo(context);
+        return TypeInfoFactoryKt.noTypeInfo(context);
     }
 
     private static boolean canInstantiateAnnotationClass(@NotNull JetCallExpression expression, @NotNull BindingTrace trace) {
@@ -306,7 +304,7 @@ public class CallExpressionResolver {
         else if (selectorExpression != null) {
             context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
         }
-        return TypeInfoFactoryPackage.noTypeInfo(context);
+        return TypeInfoFactoryKt.noTypeInfo(context);
     }
 
     /**
@@ -443,11 +441,11 @@ public class CallExpressionResolver {
     ) {
         if (qualifierReceiver == null) return;
         JetExpression calleeExpression =
-                JetPsiUtil.deparenthesize(CallUtilPackage.getCalleeExpressionIfAny(qualifiedExpression.getSelectorExpression()));
+                JetPsiUtil.deparenthesize(CallUtilKt.getCalleeExpressionIfAny(qualifiedExpression.getSelectorExpression()));
         DeclarationDescriptor selectorDescriptor =
                 calleeExpression instanceof JetReferenceExpression
                 ? context.trace.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) calleeExpression) : null;
-        ReceiversPackage.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, symbolUsageValidator, selectorDescriptor);
+        QualifierKt.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, symbolUsageValidator, selectorDescriptor);
     }
 
     private static void checkNestedClassAccess(

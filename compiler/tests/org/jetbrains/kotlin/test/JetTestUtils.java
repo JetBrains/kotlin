@@ -48,6 +48,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -63,6 +64,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
@@ -71,14 +73,14 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
-import org.jetbrains.kotlin.test.util.UtilPackage;
+import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.SlicedMap;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
-import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.junit.Assert;
 
 import javax.tools.*;
@@ -91,10 +93,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.*;
 import static org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys.MODULE_NAME;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.test.ConfigurationKind.ALL;
 
 public class JetTestUtils {
@@ -432,25 +432,25 @@ public class JetTestUtils {
             @NotNull List<File> javaSource
     ) {
         CompilerConfiguration configuration = new CompilerConfiguration();
-        addJavaSourceRoots(configuration, javaSource);
+        JvmContentRootsKt.addJavaSourceRoots(configuration, javaSource);
         if (jdkKind == TestJdkKind.MOCK_JDK) {
-            addJvmClasspathRoot(configuration, findMockJdkRtJar());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, findMockJdkRtJar());
         }
         else if (jdkKind == TestJdkKind.ANDROID_API) {
-            addJvmClasspathRoot(configuration, findAndroidApiJar());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, findAndroidApiJar());
         }
         else {
-            addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRoots());
+            JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRoots());
         }
 
         if (configurationKind.getWithRuntime()) {
-            addJvmClasspathRoot(configuration, ForTestCompileRuntime.runtimeJarForTests());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.runtimeJarForTests());
         }
         if (configurationKind.getWithReflection()) {
-            addJvmClasspathRoot(configuration, ForTestCompileRuntime.reflectJarForTests());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.reflectJarForTests());
         }
 
-        addJvmClasspathRoots(configuration, classpath);
+        JvmContentRootsKt.addJvmClasspathRoots(configuration, classpath);
 
         configuration.put(MODULE_NAME, "compilerConfigurationForTests");
 
@@ -492,7 +492,7 @@ public class JetTestUtils {
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
         try {
-            String actualText = UtilPackage.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
+            String actualText = JetTestUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
 
             if (!expectedFile.exists()) {
                 FileUtil.writeToFile(expectedFile, actualText);
@@ -500,7 +500,7 @@ public class JetTestUtils {
             }
             String expected = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
 
-            String expectedText = UtilPackage.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
+            String expectedText = JetTestUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
 
             if (!Comparing.equal(sanitizer.invoke(expectedText), sanitizer.invoke(actualText))) {
                 throw new FileComparisonFailure("Actual data differs from file content: " + expectedFile.getName(),
@@ -508,7 +508,7 @@ public class JetTestUtils {
             }
         }
         catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -520,7 +520,7 @@ public class JetTestUtils {
             @Nullable File javaErrorFile
     ) throws IOException {
         if (!ktFiles.isEmpty()) {
-            compileKotlinToDirAndGetAnalysisResult(ktFiles, outDir, disposable, ALL);
+            compileKotlinToDirAndGetAnalysisResult(ktFiles, outDir, disposable, ALL, false);
         }
         else {
             boolean mkdirs = outDir.mkdirs();
@@ -896,7 +896,7 @@ public class JetTestUtils {
     @NotNull
     public static JetFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
         String text = FileUtil.loadFile(ioFile, true);
-        return JetPsiFactory(project).createPhysicalFile(ioFile.getName(), text);
+        return JetPsiFactoryKt.JetPsiFactory(project).createPhysicalFile(ioFile.getName(), text);
     }
 
     @NotNull

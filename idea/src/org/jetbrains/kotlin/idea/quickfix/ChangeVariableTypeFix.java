@@ -47,9 +47,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
-public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclaration> {
+public class ChangeVariableTypeFix extends KotlinQuickFixAction<JetVariableDeclaration> {
     private final static Logger LOG = Logger.getInstance(ChangeVariableTypeFix.class);
 
     private final JetType type;
@@ -62,8 +60,8 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
     @NotNull
     @Override
     public String getText() {
-        String propertyName = element.getName();
-        FqName fqName = element.getFqName();
+        String propertyName = getElement().getName();
+        FqName fqName = getElement().getFqName();
         if (fqName != null) propertyName = fqName.asString();
 
         return JetBundle.message("change.element.type", propertyName, IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type));
@@ -82,23 +80,23 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetPsiFactory psiFactory = JetPsiFactory(file);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
 
-        PsiElement nameIdentifier = element.getNameIdentifier();
+        PsiElement nameIdentifier = getElement().getNameIdentifier();
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";
 
         JetTypeReference replacingTypeReference = psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
         ArrayList<JetTypeReference> toShorten = new ArrayList<JetTypeReference>();
-        toShorten.add(element.setTypeReference(replacingTypeReference));
+        toShorten.add(getElement().setTypeReference(replacingTypeReference));
 
-        if (element instanceof JetProperty) {
-            JetPropertyAccessor getter = ((JetProperty) element).getGetter();
+        if (getElement() instanceof JetProperty) {
+            JetPropertyAccessor getter = ((JetProperty) getElement()).getGetter();
             JetTypeReference getterReturnTypeRef = getter == null ? null : getter.getReturnTypeReference();
             if (getterReturnTypeRef != null) {
                 toShorten.add((JetTypeReference) getterReturnTypeRef.replace(replacingTypeReference));
             }
 
-            JetPropertyAccessor setter = ((JetProperty) element).getSetter();
+            JetPropertyAccessor setter = ((JetProperty) getElement()).getSetter();
             JetParameter setterParameter = setter == null ? null : setter.getParameter();
             JetTypeReference setterParameterTypeRef = setterParameter == null ? null : setterParameter.getTypeReference();
             if (setterParameterTypeRef != null) {

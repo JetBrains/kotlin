@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDec
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.PseudocodeTraverserKt;
 import org.jetbrains.kotlin.psi.JetElement;
 
 import java.util.*;
@@ -181,13 +181,13 @@ public class PseudocodeImpl implements Pseudocode {
     @Override
     public List<Instruction> getReversedInstructions() {
         LinkedHashSet<Instruction> traversedInstructions = Sets.newLinkedHashSet();
-        PseudocodeTraverserPackage.traverseFollowingInstructions(sinkInstruction, traversedInstructions, BACKWARD, null);
+        PseudocodeTraverserKt.traverseFollowingInstructions(sinkInstruction, traversedInstructions, BACKWARD, null);
         if (traversedInstructions.size() < instructions.size()) {
             List<Instruction> simplyReversedInstructions = Lists.newArrayList(instructions);
             Collections.reverse(simplyReversedInstructions);
             for (Instruction instruction : simplyReversedInstructions) {
                 if (!traversedInstructions.contains(instruction)) {
-                    PseudocodeTraverserPackage.traverseFollowingInstructions(instruction, traversedInstructions, BACKWARD, null);
+                    PseudocodeTraverserKt.traverseFollowingInstructions(instruction, traversedInstructions, BACKWARD, null);
                 }
             }
         }
@@ -243,7 +243,7 @@ public class PseudocodeImpl implements Pseudocode {
                 addValueUsage(mergedValue, instruction);
             }
         }
-        if (PseudocodePackage.calcSideEffectFree(instruction)) {
+        if (PseudocodeUtilsKt.calcSideEffectFree(instruction)) {
             sideEffectFree.add(instruction);
         }
     }
@@ -421,7 +421,7 @@ public class PseudocodeImpl implements Pseudocode {
 
     private Set<Instruction> collectReachableInstructions() {
         Set<Instruction> visited = Sets.newHashSet();
-        PseudocodeTraverserPackage.traverseFollowingInstructions(getEnterInstruction(), visited, FORWARD, null);
+        PseudocodeTraverserKt.traverseFollowingInstructions(getEnterInstruction(), visited, FORWARD, null);
         if (!visited.contains(getExitInstruction())) {
             visited.add(getExitInstruction());
         }

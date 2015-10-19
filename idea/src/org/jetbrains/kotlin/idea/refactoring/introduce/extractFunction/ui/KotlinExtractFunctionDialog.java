@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
-import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
+import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -87,7 +87,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private boolean isVisibilitySectionAvailable() {
-        return ExtractionEnginePackage.isVisibilityApplicable(originalDescriptor.getDescriptor().getExtractionData());
+        return ExtractableAnalysisUtilKt.isVisibilityApplicable(originalDescriptor.getDescriptor().getExtractionData());
     }
 
     private String getFunctionName() {
@@ -114,9 +114,9 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
         setOKActionEnabled(checkNames());
         signaturePreviewField.setText(
-                ExtractionEnginePackage.getDeclarationText(getCurrentConfiguration(),
-                                                           false,
-                                                           IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
+                ExtractorUtilKt.getDeclarationText(getCurrentConfiguration(),
+                                                   false,
+                                                   IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
         );
     }
 
@@ -142,7 +142,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         functionNamePanel.add(functionNameField, BorderLayout.CENTER);
         functionNameLabel.setLabelFor(functionNameField);
 
-        List<JetType> possibleReturnTypes = ExtractionEnginePackage.getPossibleReturnTypes(extractableCodeDescriptor.getControlFlow());
+        List<JetType> possibleReturnTypes = ExtractableCodeDescriptorKt.getPossibleReturnTypes(extractableCodeDescriptor.getControlFlow());
         if (possibleReturnTypes.size() > 1) {
             DefaultComboBoxModel returnTypeBoxModel = new DefaultComboBoxModel(possibleReturnTypes.toArray());
             returnTypeBox.setModel(returnTypeBoxModel);
@@ -216,10 +216,10 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     protected void doOKAction() {
-        MultiMap<PsiElement, String> conflicts = ExtractionEnginePackage.validate(currentDescriptor).getConflicts();
+        MultiMap<PsiElement, String> conflicts = ExtractableAnalysisUtilKt.validate(currentDescriptor).getConflicts();
         conflicts.values().removeAll(originalDescriptor.getConflicts().values());
 
-        RefactoringPackage.checkConflictsInteractively(
+        JetRefactoringUtilKt.checkConflictsInteractively(
                 project,
                 conflicts,
                 new Function0<Unit>() {

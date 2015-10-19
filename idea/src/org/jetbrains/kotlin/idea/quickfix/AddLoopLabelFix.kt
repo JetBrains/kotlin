@@ -24,13 +24,12 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import java.util.*
 
-public class AddLoopLabelFix(loop: JetLoopExpression, val jumpExpression: JetElement): JetIntentionAction<JetLoopExpression>(loop) {
+public class AddLoopLabelFix(loop: JetLoopExpression, val jumpExpression: JetElement): KotlinQuickFixAction<JetLoopExpression>(loop) {
     override fun getText() = "Add label to loop"
     override fun getFamilyName() = getText()
 
-    override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file)
     }
 

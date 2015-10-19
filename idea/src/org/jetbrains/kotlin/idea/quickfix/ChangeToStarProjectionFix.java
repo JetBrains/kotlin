@@ -24,15 +24,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetTypeElement;
-import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
-public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement> {
+public class ChangeToStarProjectionFix extends KotlinQuickFixAction<JetTypeElement> {
     public ChangeToStarProjectionFix(@NotNull JetTypeElement element) {
         super(element);
     }
@@ -40,7 +35,7 @@ public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement
     @NotNull
     @Override
     public String getText() {
-        String stars = TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", element.getTypeArgumentsAsTypes().size());
+        String stars = TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", getElement().getTypeArgumentsAsTypes().size());
         return JetBundle.message("change.to.star.projection", stars);
     }
 
@@ -52,9 +47,9 @@ public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        for (JetTypeReference typeReference : element.getTypeArgumentsAsTypes()) {
+        for (JetTypeReference typeReference : getElement().getTypeArgumentsAsTypes()) {
             if (typeReference != null) {
-                typeReference.replace(JetPsiFactory(file).createStar());
+                typeReference.replace(JetPsiFactoryKt.JetPsiFactory(file).createStar());
             }
         }
     }

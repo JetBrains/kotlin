@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunction;
 
-public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunction> {
+public class RemoveFunctionBodyFix extends KotlinQuickFixAction<JetFunction> {
 
     public RemoveFunctionBodyFix(@NotNull JetFunction element) {
         super(element);
@@ -53,12 +53,12 @@ public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunction> {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) && element.hasBody();
+        return super.isAvailable(project, editor, file) && getElement().hasBody();
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetFunction function = (JetFunction) element.copy();
+        JetFunction function = (JetFunction) getElement().copy();
         assert function instanceof ASTDelegatePsiElement;
         ASTDelegatePsiElement functionElementWithAst = (ASTDelegatePsiElement) function;
         JetExpression bodyExpression = function.getBodyExpression();
@@ -76,7 +76,7 @@ public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunction> {
             removePossiblyEquationSign(functionElementWithAst, prevPrevElement);
             functionElementWithAst.deleteChildInternal(bodyExpression.getNode());
         }
-        element.replace(function);
+        getElement().replace(function);
     }
 
     private static boolean removePossiblyEquationSign(@NotNull ASTDelegatePsiElement element, @Nullable PsiElement possiblyEq) {
@@ -91,7 +91,7 @@ public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunction> {
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetFunction> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<JetFunction> createAction(Diagnostic diagnostic) {
                 JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
                 if (function == null) return null;
                 return new RemoveFunctionBodyFix(function);

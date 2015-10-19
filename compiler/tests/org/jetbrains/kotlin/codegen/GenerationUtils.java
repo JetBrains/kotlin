@@ -49,7 +49,7 @@ public class GenerationUtils {
     ) {
         AnalysisResult analysisResult =
                 JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, new JvmPackagePartProvider(environment));
-        return compileFilesGetGenerationState(psiFile.getProject(), analysisResult, Collections.singletonList(psiFile));
+        return compileFilesGetGenerationState(psiFile.getProject(), analysisResult, Collections.singletonList(psiFile), false);
     }
 
     @NotNull
@@ -63,14 +63,15 @@ public class GenerationUtils {
     ) {
         AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 project, files, packagePartProvider);
-        return compileFilesGetGenerationState(project, analysisResult, files);
+        return compileFilesGetGenerationState(project, analysisResult, files, false);
     }
 
     @NotNull
     public static GenerationState compileFilesGetGenerationState(
             @NotNull Project project,
             @NotNull AnalysisResult analysisResult,
-            @NotNull List<JetFile> files
+            @NotNull List<JetFile> files,
+            boolean useTypeTableInSerializer
     ) {
         analysisResult.throwIfError();
         GenerationState state = new GenerationState(
@@ -78,7 +79,11 @@ public class GenerationUtils {
                 analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(),
                 files,
                 /* disableCallAssertions = */ false,
-                /* disableParamAssertions = */ false
+                /* disableParamAssertions = */ false,
+                GenerationState.GenerateClassFilter.GENERATE_ALL,
+                /* disableInline = */ false,
+                /* disableOptimization = */ false,
+                useTypeTableInSerializer
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;

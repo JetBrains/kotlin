@@ -17,8 +17,11 @@
 package org.jetbrains.kotlin.load.java.descriptors
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaStaticClassScope
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.JetType
 
@@ -46,4 +49,14 @@ fun copyValueParameters(
                 oldParameter.getSource()
         )
     }
+}
+
+fun ClassDescriptor.getParentJavaStaticClassScope(): LazyJavaStaticClassScope? {
+    val superClassDescriptor = getSuperClassNotAny() ?: return null
+
+    val staticScope = superClassDescriptor.staticScope
+
+    if (staticScope !is LazyJavaStaticClassScope) return superClassDescriptor.getParentJavaStaticClassScope()
+
+    return staticScope
 }

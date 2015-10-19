@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -44,8 +45,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.resolveTopLevelClass;
 
 public class ResolveDescriptorsFromExternalLibraries {
     public static void main(String[] args) throws Exception {
@@ -211,7 +210,7 @@ public class ResolveDescriptorsFromExternalLibraries {
                 String className = entryName.substring(0, entryName.length() - ".class".length()).replace("/", ".");
 
                 try {
-                    ClassDescriptor clazz = resolveTopLevelClass(module, new FqName(className), NoLookupLocation.FROM_TEST);
+                    ClassDescriptor clazz = DescriptorUtilsKt.resolveTopLevelClass(module, new FqName(className), NoLookupLocation.FROM_TEST);
                     if (clazz == null) {
                         throw new IllegalStateException("class not found by name " + className + " in " + libDescription);
                     }

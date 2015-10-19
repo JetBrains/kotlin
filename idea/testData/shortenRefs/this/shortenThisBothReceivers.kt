@@ -1,9 +1,5 @@
 class A {
-    fun test(b: B) {
+    fun test(b: A.() -> Unit) {
         <selection>this.b()</selection>
     }
-}
-
-class B() {
-    fun A.invoke() {}
 }

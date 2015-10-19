@@ -105,7 +105,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
             System.err.println("Could not make directories: " + destDir)
         }
 
-        files.map { it.getPackageFqName() }.toSet().forEach {
+        files.map { it.packageFqName }.toSet().forEach {
             fqName ->
             serializePackage(moduleDescriptor, fqName, destDir)
         }
@@ -117,11 +117,10 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
         // DescriptorValidator.validate(packageView)
 
-        val serializer = DescriptorSerializer.createTopLevel(BuiltInsSerializerExtension())
-
         val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
-        serializeClasses(classifierDescriptors, serializer) {
+        val extension = BuiltInsSerializerExtension()
+        serializeClasses(classifierDescriptors, extension) {
             classDescriptor, classProto ->
             val stream = ByteArrayOutputStream()
             classProto.writeTo(stream)
@@ -130,13 +129,13 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val packageStream = ByteArrayOutputStream()
         val fragments = packageView.fragments
-        val packageProto = serializer.packageProto(fragments).build() ?: error("Package fragments not serialized: $fragments")
+        val packageProto = DescriptorSerializer.createTopLevel(extension).packageProto(fragments).build()
         packageProto.writeTo(packageStream)
         write(destDir, BuiltInsSerializedResourcePaths.getPackageFilePath(fqName), packageStream,
               BuiltInsSerializedResourcePaths.fallbackPaths.getPackageFilePath(fqName))
 
         val nameStream = ByteArrayOutputStream()
-        serializer.stringTable.serializeTo(nameStream)
+        extension.stringTable.serializeTo(nameStream)
         write(destDir, BuiltInsSerializedResourcePaths.getStringTableFilePath(fqName), nameStream,
               BuiltInsSerializedResourcePaths.fallbackPaths.getStringTableFilePath(fqName))
     }
@@ -144,7 +143,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     private fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream, legacyFileName: String? = null) {
         totalSize += stream.size()
         totalFiles++
-        File(destDir, fileName).getParentFile().mkdirs()
+        File(destDir, fileName).parentFile.mkdirs()
         File(destDir, fileName).writeBytes(stream.toByteArray())
 
         legacyFileName?.let { fileName ->
@@ -154,18 +153,18 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
     private fun serializeClass(
             classDescriptor: ClassDescriptor,
-            serializer: DescriptorSerializer,
+            serializer: BuiltInsSerializerExtension,
             writeClass: (ClassDescriptor, ProtoBuf.Class) -> Unit
     ) {
-        val classProto = serializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
+        val classProto = DescriptorSerializer.createTopLevel(serializer).classProto(classDescriptor).build()
         writeClass(classDescriptor, classProto)
 
-        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getDescriptors(), serializer, writeClass)
+        serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getDescriptors(), serializer, writeClass)
     }
 
     private fun serializeClasses(
             descriptors: Collection<DeclarationDescriptor>,
-            serializer: DescriptorSerializer,
+            serializer: BuiltInsSerializerExtension,
             writeClass: (ClassDescriptor, ProtoBuf.Class) -> Unit
     ) {
         for (descriptor in descriptors) {

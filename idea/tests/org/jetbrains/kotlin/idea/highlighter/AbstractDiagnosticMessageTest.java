@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
+import org.jetbrains.kotlin.idea.highlighter.formatHtml.FormatHtmlUtilKt;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -42,8 +43,6 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static org.jetbrains.kotlin.idea.highlighter.formatHtml.FormatHtmlPackage.formatHtml;
 
 public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
     private static final String DIAGNOSTICS_NUMBER_DIRECTIVE = "DIAGNOSTICS_NUMBER";
@@ -65,7 +64,7 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
     @NotNull
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
     }
 
     @NotNull
@@ -108,7 +107,7 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
             String readableDiagnosticText;
             String extension;
             if (messageType != MessageType.TEXT && IdeErrorMessages.hasIdeSpecificMessage(diagnostic)) {
-                readableDiagnosticText = formatHtml(IdeErrorMessages.render(diagnostic));
+                readableDiagnosticText = FormatHtmlUtilKt.formatHtml(IdeErrorMessages.render(diagnostic));
                 extension = MessageType.HTML.extension;
             }
             else {

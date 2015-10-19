@@ -62,15 +62,15 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetFileType;
-import org.jetbrains.kotlin.idea.core.CorePackage;
-import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
+import org.jetbrains.kotlin.idea.core.PackageUtilsKt;
+import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable;
-import org.jetbrains.kotlin.idea.refactoring.move.MovePackage;
+import org.jetbrains.kotlin.idea.refactoring.move.MoveUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.*;
-import org.jetbrains.kotlin.idea.util.application.ApplicationPackage;
+import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
@@ -191,7 +191,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
     private static boolean arePackagesAndDirectoryMatched(List<JetFile> sourceFiles) {
         for (JetFile sourceFile : sourceFiles) {
-            if (!CorePackage.packageMatchesDirectory(sourceFile)) return false;
+            if (!PackageUtilsKt.packageMatchesDirectory(sourceFile)) return false;
         }
         return true;
     }
@@ -235,7 +235,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                         );
                         String suggestedText = previousDeclarations.isEmpty()
                                                ? ""
-                                               : MovePackage.guessNewFileName(previousDeclarations);
+                                               : MoveUtilsKt.guessNewFileName(previousDeclarations);
                         return tfFileNameInPackage.getText().equals(suggestedText);
                     }
 
@@ -254,7 +254,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private void updateSuggestedFileName() {
-        tfFileNameInPackage.setText(MovePackage.guessNewFileName(getSelectedElementsToMove()));
+        tfFileNameInPackage.setText(MoveUtilsKt.guessNewFileName(getSelectedElementsToMove()));
 
     }
 
@@ -349,7 +349,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 ? targetFile.getVirtualFile().getPath()
                 : sourceFiles.get(0).getVirtualFile().getParent().getPath() +
                   "/" +
-                  MovePackage.guessNewFileName(elementsToMove);
+                  MoveUtilsKt.guessNewFileName(elementsToMove);
         fileChooser.setText(initialTargetPath);
     }
 
@@ -538,7 +538,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     new Function1<JetFile, JetFile>() {
                         @Override
                         public JetFile invoke(@NotNull JetFile originalFile) {
-                            return RefactoringPackage.getOrCreateKotlinFile(
+                            return JetRefactoringUtilKt.getOrCreateKotlinFile(
                                     targetFileName != null ? targetFileName : originalFile.getName(),
                                     moveDestination.getTargetDirectory(originalFile)
                             );
@@ -549,7 +549,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         final File targetFile = new File(getTargetFilePath());
         if (!checkTargetFileName(targetFile.getName())) return null;
-        JetFile jetFile = (JetFile) RefactoringPackage.toPsiFile(targetFile, myProject);
+        JetFile jetFile = (JetFile) JetRefactoringUtilKt.toPsiFile(targetFile, myProject);
         if (jetFile != null) {
             if (sourceFiles.size() == 1 && sourceFiles.contains(jetFile)) {
                 setErrorText("Can't move to the original file");
@@ -560,7 +560,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         }
 
         File targetDir = targetFile.getParentFile();
-        final PsiDirectory psiDirectory = RefactoringPackage.toPsiDirectory(targetDir, myProject);
+        final PsiDirectory psiDirectory = JetRefactoringUtilKt.toPsiDirectory(targetDir, myProject);
         assert psiDirectory != null : "No directory found: " + targetDir.getPath();
 
         PsiPackage psiPackage = JavaDirectoryService.getInstance().getPackage(psiDirectory);
@@ -575,7 +575,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 new Function1<JetFile, JetFile>() {
                     @Override
                     public JetFile invoke(@NotNull JetFile originalFile) {
-                        return RefactoringPackage.getOrCreateKotlinFile(targetFile.getName(), psiDirectory);
+                        return JetRefactoringUtilKt.getOrCreateKotlinFile(targetFile.getName(), psiDirectory);
                     }
                 }
         );
@@ -592,7 +592,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             }
         }
         else {
-            PsiFile targetFile = RefactoringPackage.toPsiFile(new File(getTargetFilePath()), myProject);
+            PsiFile targetFile = JetRefactoringUtilKt.toPsiFile(new File(getTargetFilePath()), myProject);
             if (!(targetFile == null || targetFile instanceof JetFile)) {
                 return JetRefactoringBundle.message("refactoring.move.non.kotlin.file");
             }
@@ -673,7 +673,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     final String targetFileName = sourceFiles.size() > 1 ? null : tfFileNameInPackage.getText();
                     List<PsiFile> filesExistingInTargetDir = getFilesExistingInTargetDir(sourceFiles, targetFileName, targetDir);
                     if (filesExistingInTargetDir.isEmpty()) {
-                        PsiDirectory targetDirectory = ApplicationPackage.runWriteAction(
+                        PsiDirectory targetDirectory = ApplicationUtilsKt.runWriteAction(
                                 new Function0<PsiDirectory>() {
                                     @Override
                                     public PsiDirectory invoke() {
@@ -683,7 +683,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                         );
 
                         for (JetFile sourceFile : sourceFiles) {
-                            MovePackage.setUpdatePackageDirective(sourceFile, cbUpdatePackageDirective.isSelected());
+                            MoveUtilsKt.setUpdatePackageDirective(sourceFile, cbUpdatePackageDirective.isSelected());
                         }
 
                         invokeRefactoring(

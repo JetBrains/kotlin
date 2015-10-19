@@ -74,7 +74,7 @@ public class WrappedValues {
     @Nullable
     public static <V> V unescapeThrowable(@Nullable Object value) {
         if (value instanceof ThrowableWrapper) {
-            throw UtilsPackage.rethrow(((ThrowableWrapper) value).getThrowable());
+            throw ExceptionUtilsKt.rethrow(((ThrowableWrapper) value).getThrowable());
         }
 
         //noinspection unchecked

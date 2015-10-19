@@ -51,7 +51,7 @@ public class KotlinLightTypeParameter
     @NotNull
     @Override
     public JetTypeParameter getOrigin() {
-        JetTypeParameterListOwner jetOwner = (JetTypeParameterListOwner) AsJavaPackage.getUnwrapped(owner);
+        JetTypeParameterListOwner jetOwner = (JetTypeParameterListOwner) LightClassUtilsKt.getUnwrapped(owner);
         assert (jetOwner != null) : "Invalid type parameter owner: " + owner;
 
         return jetOwner.getTypeParameters().get(index);

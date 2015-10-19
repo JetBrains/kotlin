@@ -7,5 +7,5 @@ fun test(a: Boolean, b: Boolean): Int {
         <!TYPE_MISMATCH!>if (b) {
             3
         }<!>
-    }    // no error, but must be
+    }
 }

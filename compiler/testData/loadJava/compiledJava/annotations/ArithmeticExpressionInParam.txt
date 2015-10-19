@@ -6,7 +6,6 @@ public open class ArithmeticExpressionInParam {
     public final class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.Int)
         public final val value: kotlin.Int
-        public abstract fun value(): kotlin.Int
     }
 
     @test.ArithmeticExpressionInParam.Anno(value = 42) public open class Class {

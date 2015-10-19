@@ -64,6 +64,8 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
             if ((access and Opcodes.ACC_SYNTHETIC) != 0) addModifier("synthetic", list)
             if ((access and Opcodes.ACC_DEPRECATED) != 0) addModifier("deprecated", list)
+            if ((access and Opcodes.ACC_FINAL) != 0) addModifier("final", list)
+            if ((access and Opcodes.ACC_ABSTRACT) != 0) addModifier("abstract", list)
         }
 
         public val text: String
@@ -72,7 +74,7 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
                 append(className)
                 if (declarationsInsideClass.isNotEmpty()) {
                     append(" {\n")
-                    for (declaration in declarationsInsideClass) {
+                    for (declaration in declarationsInsideClass.sortedBy { it.text }) {
                         append("    ").append(declaration.annotations.joinToString("")).append(declaration.text).append("\n")
                     }
                     append("}")

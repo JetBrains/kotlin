@@ -45,7 +45,7 @@ public class Array<T> private (): Cloneable {
     /**
      * Returns the number of elements in the array.
      */
-    public fun size(): Int
+    public val size: Int
 
     /**
      * Creates an iterator for iterating over the elements of the array.

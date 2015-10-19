@@ -85,12 +85,18 @@ public class MultifileClassPartCodegen(
 
         val bindings = v.serializationBindings
 
-        val serializer = DescriptorSerializer.createTopLevel(JvmSerializerExtension(bindings, state.typeMapper))
+        val serializer = DescriptorSerializer.createTopLevel(
+                JvmSerializerExtension(bindings, state.typeMapper, state.useTypeTableInSerializer)
+        )
         val packageProto = serializer.packagePartProto(members).build()
 
         val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS_PART), true)
         AsmUtil.writeAnnotationData(av, serializer, packageProto)
         av.visit(JvmAnnotationNames.MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassType.internalName)
         av.visitEnd()
+    }
+
+    override fun generateSyntheticParts() {
+        generateSyntheticAccessors()
     }
 }

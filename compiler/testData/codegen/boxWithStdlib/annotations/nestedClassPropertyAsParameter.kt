@@ -13,7 +13,7 @@ annotation class Ann(val i: Int)
 class A {
    class B {
       companion object {
-        val i = 1
+        const val i = 1
       }
    }
 }

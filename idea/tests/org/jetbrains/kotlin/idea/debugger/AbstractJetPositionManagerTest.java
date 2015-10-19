@@ -46,7 +46,8 @@ import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.CollectionsKt;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -149,7 +150,7 @@ public abstract class AbstractJetPositionManagerTest extends JetLightCodeInsight
                     }
                 }
                 catch (NoDataException e) {
-                    throw UtilsPackage.rethrow(e);
+                    throw ExceptionUtilsKt.rethrow(e);
                 }
             }
         });
@@ -251,7 +252,7 @@ public abstract class AbstractJetPositionManagerTest extends JetLightCodeInsight
 
         @Override
         public List<ReferenceType> classesByName(String name) {
-            return UtilsPackage.emptyOrSingletonList(referencesByName.get(name));
+            return CollectionsKt.emptyOrSingletonList(referencesByName.get(name));
         }
     }
 }

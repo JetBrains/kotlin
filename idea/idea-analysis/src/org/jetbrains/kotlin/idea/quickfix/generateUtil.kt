@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.ifEmpty
 
 public fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement) {
@@ -100,10 +101,10 @@ public fun Editor.moveCaret(offset: Int, scrollType: ScrollType = ScrollType.REL
     getScrollingModel().scrollToCaret(scrollType)
 }
 
-private fun findInsertAfterAnchor(editor: Editor, body: JetClassBody): PsiElement? {
+private fun findInsertAfterAnchor(editor: Editor?, body: JetClassBody): PsiElement? {
     val afterAnchor = body.lBrace ?: return null
 
-    val offset = editor.caretModel.offset
+    val offset = editor?.caretModel?.offset ?: body.startOffset
     val offsetCursorElement = PsiTreeUtil.findFirstParent(body.containingFile.findElementAt(offset)) {
         it.parent == body
     }
@@ -143,7 +144,7 @@ private fun removeAfterOffset(offset: Int, whiteSpace: PsiWhiteSpace): PsiElemen
 }
 
 public fun <T : JetDeclaration> insertMembersAfter(
-        editor: Editor,
+        editor: Editor?,
         classOrObject: JetClassOrObject,
         members: Collection<T>,
         anchor: PsiElement? = null
@@ -161,7 +162,9 @@ public fun <T : JetDeclaration> insertMembersAfter(
 
         ShortenReferences.DEFAULT.process(insertedMembers)
 
-        moveCaretIntoGeneratedElement(editor, insertedMembers.first())
+        if (editor != null) {
+            moveCaretIntoGeneratedElement(editor, insertedMembers.first())
+        }
 
         insertedMembers
     }

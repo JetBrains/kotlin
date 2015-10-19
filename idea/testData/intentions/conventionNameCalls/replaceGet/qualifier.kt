@@ -1,6 +1,6 @@
 class C {
     companion object {
-        fun get(s: String): C = C()
+        operator fun get(s: String): C = C()
     }
 }
 

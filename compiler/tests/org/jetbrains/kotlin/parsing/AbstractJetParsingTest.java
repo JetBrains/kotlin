@@ -29,17 +29,12 @@ import com.intellij.testFramework.ParsingTestCase;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.psi.IfNotParsed;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetPsiFactory;
-import org.jetbrains.kotlin.psi.JetVisitorVoid;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public abstract class AbstractJetParsingTest extends ParsingTestCase {
     static {
@@ -120,7 +115,7 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
     }
 
     private PsiFile createFile(@NotNull String filePath, @NotNull IElementType fileType) throws Exception {
-        JetPsiFactory psiFactory = JetPsiFactory(myProject);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(myProject);
         if (fileType == JetNodeTypes.EXPRESSION_CODE_FRAGMENT) {
             return psiFactory.createExpressionCodeFragment(loadFile(filePath), null);
         }

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.fileClasses.FileClassesPackage;
+import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder;
@@ -44,10 +44,9 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -173,7 +172,7 @@ public class InlineCodegenUtil {
             return PackageClassUtils.getPackageClassId(getFqName(containerDescriptor).toSafe());
         }
         if (containerDescriptor instanceof ClassDescriptor) {
-            ClassId classId = DescriptorUtilPackage.getClassId((ClassDescriptor) containerDescriptor);
+            ClassId classId = DescriptorUtilsKt.getClassId((ClassDescriptor) containerDescriptor);
             if (isInterface(containerDescriptor)) {
                 FqName relativeClassName = classId.getRelativeClassName();
                 //TODO test nested trait fun inlining
@@ -205,7 +204,7 @@ public class InlineCodegenUtil {
             if (file == null) {
                 implementationOwnerType = CodegenContextUtil.getImplementationOwnerClassType(codegenContext);
             } else {
-                implementationOwnerType = FileClassesPackage.getFileClassType(fileClassesProvider, (JetFile) file);
+                implementationOwnerType = FileClasses.getFileClassType(fileClassesProvider, (JetFile) file);
             }
 
             if (implementationOwnerType == null) {
@@ -492,5 +491,24 @@ public class InlineCodegenUtil {
 
     public static boolean isStoreInstruction(int opcode) {
         return opcode >= Opcodes.ISTORE && opcode <= Opcodes.ASTORE;
+    }
+
+    public static int calcMarkerShift(Parameters parameters, MethodNode node) {
+        int markerShiftTemp = getIndexAfterLastMarker(node);
+        return markerShiftTemp - parameters.getRealArgsSizeOnStack() + parameters.getArgsSizeOnStack();
+    }
+
+    protected static int getIndexAfterLastMarker(MethodNode node) {
+        int markerShiftTemp = -1;
+        for (LocalVariableNode variable : node.localVariables) {
+            if (isFakeLocalVariableForInline(variable.name)) {
+                markerShiftTemp = Math.max(markerShiftTemp, variable.index + 1);
+            }
+        }
+        return markerShiftTemp;
+    }
+
+    public static boolean isFakeLocalVariableForInline(@NotNull String name) {
+        return name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) || name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT);
     }
 }

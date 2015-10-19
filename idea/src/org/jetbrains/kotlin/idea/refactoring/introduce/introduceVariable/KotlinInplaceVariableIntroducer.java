@@ -42,7 +42,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
-import org.jetbrains.kotlin.idea.references.ReferencesPackage;
+import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -396,7 +396,7 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
                 new Function1<JetSimpleNameExpression, PsiReference>() {
                     @Override
                     public PsiReference invoke(JetSimpleNameExpression expression) {
-                        return ReferencesPackage.getMainReference(expression);
+                        return ReferenceUtilKt.getMainReference(expression);
                     }
                 }
         );

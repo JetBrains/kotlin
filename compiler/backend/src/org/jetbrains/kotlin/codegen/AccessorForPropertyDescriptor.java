@@ -33,17 +33,17 @@ import java.util.Collections;
 
 public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implements AccessorForCallableDescriptor<PropertyDescriptor> {
     private final PropertyDescriptor calleeDescriptor;
-    private final int accessorIndex;
     private final JetSuperExpression superCallExpression;
+    @NotNull private final String nameSuffix;
 
     public AccessorForPropertyDescriptor(
             @NotNull PropertyDescriptor property,
             @NotNull DeclarationDescriptor containingDeclaration,
-            int index,
-            @Nullable JetSuperExpression superCallExpression
+            @Nullable JetSuperExpression superCallExpression,
+            @NotNull String nameSuffix
     ) {
         this(property, property.getType(), DescriptorUtils.getReceiverParameterType(property.getExtensionReceiverParameter()),
-             property.getDispatchReceiverParameter(), containingDeclaration, index, superCallExpression);
+             property.getDispatchReceiverParameter(), containingDeclaration, superCallExpression, nameSuffix);
     }
 
     protected AccessorForPropertyDescriptor(
@@ -52,16 +52,16 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
             @Nullable JetType receiverType,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull DeclarationDescriptor containingDeclaration,
-            int index,
-            @Nullable JetSuperExpression superCallExpression
+            @Nullable JetSuperExpression superCallExpression,
+            @NotNull String nameSuffix
     ) {
         super(containingDeclaration, null, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
-              original.isVar(), Name.identifier("access$" + getIndexedAccessorSuffix(original, index)),
+              original.isVar(), Name.identifier("access$" + nameSuffix),
               Kind.DECLARATION, SourceElement.NO_SOURCE, /* lateInit = */ false, /* isConst = */ false);
 
         this.calleeDescriptor = original;
-        this.accessorIndex = index;
         this.superCallExpression = superCallExpression;
+        this.nameSuffix = nameSuffix;
         setType(propertyType, Collections.<TypeParameterDescriptorImpl>emptyList(), dispatchReceiverParameter, receiverType);
         initialize(new Getter(this), new Setter(this));
     }
@@ -85,6 +85,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
         public JetSuperExpression getSuperCallExpression() {
             return ((AccessorForPropertyDescriptor) getCorrespondingProperty()).getSuperCallExpression();
         }
+
     }
 
     public static class Setter extends PropertySetterDescriptorImpl implements AccessorForCallableDescriptor<PropertySetterDescriptor>{
@@ -120,12 +121,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     }
 
     @NotNull
-    public String getIndexedAccessorSuffix() {
-        return getIndexedAccessorSuffix(calleeDescriptor, accessorIndex);
-    }
-
-    @NotNull
-    private static String getIndexedAccessorSuffix(@NotNull PropertyDescriptor original, int index) {
-        return original.getName() + "$" + index;
+    public String getAccessorSuffix() {
+        return nameSuffix;
     }
 }

@@ -14,11 +14,12 @@ public open class Any {
 
 public final class Array</*0*/ T> : kotlin.Cloneable {
     /*primary*/ private constructor Array</*0*/ T>()
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.Array<T>
     public final operator fun get(/*0*/ index: kotlin.Int): T
     public final operator fun iterator(): kotlin.Iterator<T>
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: T): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
@@ -32,11 +33,12 @@ public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
 
 public final class BooleanArray : kotlin.Cloneable {
     /*primary*/ public constructor BooleanArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.BooleanArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Boolean
     public final operator fun iterator(): kotlin.BooleanIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Boolean): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class BooleanIterator : kotlin.Iterator<kotlin.Boolean> {
@@ -62,7 +64,6 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun inc(): kotlin.Byte
-    public final operator fun minus(): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -75,7 +76,6 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun plus(): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -101,6 +101,8 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+    public final operator fun unaryMinus(): kotlin.Int
+    public final operator fun unaryPlus(): kotlin.Int
 
     public companion object Companion : kotlin.IntegerConstants<kotlin.Byte> {
         /*primary*/ private constructor Companion()
@@ -113,11 +115,12 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
 
 public final class ByteArray : kotlin.Cloneable {
     /*primary*/ public constructor ByteArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.ByteArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Byte
     public final operator fun iterator(): kotlin.ByteIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Byte): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class ByteIterator : kotlin.Iterator<kotlin.Byte> {
@@ -199,11 +202,12 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
 
 public final class CharArray : kotlin.Cloneable {
     /*primary*/ public constructor CharArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.CharArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public final operator fun iterator(): kotlin.CharIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Char): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class CharIterator : kotlin.Iterator<kotlin.Char> {
@@ -275,8 +279,8 @@ public interface Cloneable {
 public interface Collection</*0*/ out E> : kotlin.Iterable<E> {
     public abstract val size: kotlin.Int
         public abstract fun <get-size>(): kotlin.Int
-    public abstract operator fun contains(/*0*/ o: @kotlin.UnsafeVariance() E): kotlin.Boolean
-    public abstract fun containsAll(/*0*/ c: kotlin.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
+    public abstract operator fun contains(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Boolean
+    public abstract fun containsAll(/*0*/ elements: kotlin.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
     public abstract fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.Iterator<E>
 }
@@ -311,8 +315,10 @@ public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> 
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.DeprecationLevel): kotlin.Int
 
     // Static members
+    public final /*synthesized*/ val values: kotlin.Array<kotlin.DeprecationLevel>
+        public final fun <get-values>(): kotlin.Array<kotlin.DeprecationLevel>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.DeprecationLevel
-    public final /*synthesized*/ fun values(): kotlin.Array<kotlin.DeprecationLevel>
+    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<kotlin.DeprecationLevel>
 }
 
 public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
@@ -331,7 +337,6 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Double
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Double
     public final operator fun inc(): kotlin.Double
-    public final operator fun minus(): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Double
@@ -344,7 +349,6 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Double
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Double
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Double
-    public final operator fun plus(): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Double
@@ -370,6 +374,8 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+    public final operator fun unaryMinus(): kotlin.Double
+    public final operator fun unaryPlus(): kotlin.Double
 
     public companion object Companion : kotlin.FloatingPointConstants<kotlin.Double> {
         /*primary*/ private constructor Companion()
@@ -388,11 +394,12 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
 
 public final class DoubleArray : kotlin.Cloneable {
     /*primary*/ public constructor DoubleArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.DoubleArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Double
     public final operator fun iterator(): kotlin.DoubleIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Double): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class DoubleIterator : kotlin.Iterator<kotlin.Double> {
@@ -481,7 +488,6 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Float
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Float
     public final operator fun inc(): kotlin.Float
-    public final operator fun minus(): kotlin.Float
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Float
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -494,7 +500,6 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Float
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Float
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Float
-    public final operator fun plus(): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -520,6 +525,8 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+    public final operator fun unaryMinus(): kotlin.Float
+    public final operator fun unaryPlus(): kotlin.Float
 
     public companion object Companion : kotlin.FloatingPointConstants<kotlin.Float> {
         /*primary*/ private constructor Companion()
@@ -538,11 +545,12 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
 
 public final class FloatArray : kotlin.Cloneable {
     /*primary*/ public constructor FloatArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.FloatArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Float
     public final operator fun iterator(): kotlin.FloatIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Float): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class FloatIterator : kotlin.Iterator<kotlin.Float> {
@@ -635,7 +643,6 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun inc(): kotlin.Int
     public final fun inv(): kotlin.Int
-    public final operator fun minus(): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -649,7 +656,6 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
     public final infix fun or(/*0*/ other: kotlin.Int): kotlin.Int
-    public final operator fun plus(): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -662,8 +668,8 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.IntRange
-    public final infix fun shl(/*0*/ bits: kotlin.Int): kotlin.Int
-    public final infix fun shr(/*0*/ bits: kotlin.Int): kotlin.Int
+    public final infix fun shl(/*0*/ bitCount: kotlin.Int): kotlin.Int
+    public final infix fun shr(/*0*/ bitCount: kotlin.Int): kotlin.Int
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
@@ -677,7 +683,9 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
-    public final infix fun ushr(/*0*/ bits: kotlin.Int): kotlin.Int
+    public final operator fun unaryMinus(): kotlin.Int
+    public final operator fun unaryPlus(): kotlin.Int
+    public final infix fun ushr(/*0*/ bitCount: kotlin.Int): kotlin.Int
     public final infix fun xor(/*0*/ other: kotlin.Int): kotlin.Int
 
     public companion object Companion : kotlin.IntegerConstants<kotlin.Int> {
@@ -691,11 +699,12 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
 
 public final class IntArray : kotlin.Cloneable {
     /*primary*/ public constructor IntArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.IntArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Int
     public final operator fun iterator(): kotlin.IntIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class IntIterator : kotlin.Iterator<kotlin.Int> {
@@ -772,13 +781,13 @@ public interface Iterator</*0*/ out T> {
 public interface List</*0*/ out E> : kotlin.Collection<E> {
     public abstract override /*1*/ val size: kotlin.Int
         public abstract override /*1*/ fun <get-size>(): kotlin.Int
-    public abstract override /*1*/ fun contains(/*0*/ o: @kotlin.UnsafeVariance() E): kotlin.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
+    public abstract override /*1*/ fun contains(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
     public abstract operator fun get(/*0*/ index: kotlin.Int): E
-    public abstract fun indexOf(/*0*/ o: @kotlin.UnsafeVariance() E): kotlin.Int
+    public abstract fun indexOf(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Int
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.Iterator<E>
-    public abstract fun lastIndexOf(/*0*/ o: @kotlin.UnsafeVariance() E): kotlin.Int
+    public abstract fun lastIndexOf(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Int
     public abstract fun listIterator(): kotlin.ListIterator<E>
     public abstract fun listIterator(/*0*/ index: kotlin.Int): kotlin.ListIterator<E>
     public abstract fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.List<E>
@@ -811,7 +820,6 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Long
     public final operator fun inc(): kotlin.Long
     public final fun inv(): kotlin.Long
-    public final operator fun minus(): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -825,7 +833,6 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Long
     public final infix fun or(/*0*/ other: kotlin.Long): kotlin.Long
-    public final operator fun plus(): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -838,8 +845,8 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.LongRange
-    public final infix fun shl(/*0*/ bits: kotlin.Int): kotlin.Long
-    public final infix fun shr(/*0*/ bits: kotlin.Int): kotlin.Long
+    public final infix fun shl(/*0*/ bitCount: kotlin.Int): kotlin.Long
+    public final infix fun shr(/*0*/ bitCount: kotlin.Int): kotlin.Long
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Long
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
@@ -853,7 +860,9 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
-    public final infix fun ushr(/*0*/ bits: kotlin.Int): kotlin.Long
+    public final operator fun unaryMinus(): kotlin.Long
+    public final operator fun unaryPlus(): kotlin.Long
+    public final infix fun ushr(/*0*/ bitCount: kotlin.Int): kotlin.Long
     public final infix fun xor(/*0*/ other: kotlin.Long): kotlin.Long
 
     public companion object Companion : kotlin.IntegerConstants<kotlin.Long> {
@@ -867,11 +876,12 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
 
 public final class LongArray : kotlin.Cloneable {
     /*primary*/ public constructor LongArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.LongArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Long
     public final operator fun iterator(): kotlin.LongIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Long): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class LongIterator : kotlin.Iterator<kotlin.Long> {
@@ -954,16 +964,16 @@ public interface Map</*0*/ K, /*1*/ out V> {
 public interface MutableCollection</*0*/ E> : kotlin.Collection<E>, kotlin.MutableIterable<E> {
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
         public abstract override /*1*/ /*fake_override*/ fun <get-size>(): kotlin.Int
-    public abstract fun add(/*0*/ e: E): kotlin.Boolean
-    public abstract fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract fun add(/*0*/ element: E): kotlin.Boolean
+    public abstract fun addAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
     public abstract fun clear(): kotlin.Unit
-    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: E): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ element: E): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*2*/ fun iterator(): kotlin.MutableIterator<E>
-    public abstract fun remove(/*0*/ o: E): kotlin.Boolean
-    public abstract fun removeAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
-    public abstract fun retainAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract fun remove(/*0*/ element: E): kotlin.Boolean
+    public abstract fun removeAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
+    public abstract fun retainAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
 }
 
 public interface MutableIterable</*0*/ out T> : kotlin.Iterable<T> {
@@ -979,30 +989,30 @@ public interface MutableIterator</*0*/ out T> : kotlin.Iterator<T> {
 public interface MutableList</*0*/ E> : kotlin.List<E>, kotlin.MutableCollection<E> {
     public abstract override /*2*/ /*fake_override*/ val size: kotlin.Int
         public abstract override /*2*/ /*fake_override*/ fun <get-size>(): kotlin.Int
-    public abstract override /*1*/ fun add(/*0*/ e: E): kotlin.Boolean
+    public abstract override /*1*/ fun add(/*0*/ element: E): kotlin.Boolean
     public abstract fun add(/*0*/ index: kotlin.Int, /*1*/ element: E): kotlin.Unit
-    public abstract override /*1*/ fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
-    public abstract fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract override /*1*/ fun addAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
+    public abstract fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ fun clear(): kotlin.Unit
-    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: E): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ element: E): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): E
-    public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: E): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ element: E): kotlin.Int
     public abstract override /*2*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*2*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<E>
-    public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: E): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: E): kotlin.Int
     public abstract override /*1*/ fun listIterator(): kotlin.MutableListIterator<E>
     public abstract override /*1*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<E>
-    public abstract override /*1*/ fun remove(/*0*/ o: E): kotlin.Boolean
-    public abstract override /*1*/ fun removeAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract override /*1*/ fun remove(/*0*/ element: E): kotlin.Boolean
+    public abstract override /*1*/ fun removeAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
     public abstract fun removeAt(/*0*/ index: kotlin.Int): E
-    public abstract override /*1*/ fun retainAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract override /*1*/ fun retainAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
     public abstract operator fun set(/*0*/ index: kotlin.Int, /*1*/ element: E): E
     public abstract override /*1*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.MutableList<E>
 }
 
 public interface MutableListIterator</*0*/ T> : kotlin.ListIterator<T>, kotlin.MutableIterator<T> {
-    public abstract fun add(/*0*/ e: T): kotlin.Unit
+    public abstract fun add(/*0*/ element: T): kotlin.Unit
     public abstract override /*2*/ fun hasNext(): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun hasPrevious(): kotlin.Boolean
     public abstract override /*2*/ fun next(): T
@@ -1010,7 +1020,7 @@ public interface MutableListIterator</*0*/ T> : kotlin.ListIterator<T>, kotlin.M
     public abstract override /*1*/ /*fake_override*/ fun previous(): T
     public abstract override /*1*/ /*fake_override*/ fun previousIndex(): kotlin.Int
     public abstract override /*1*/ fun remove(): kotlin.Unit
-    public abstract fun set(/*0*/ e: T): kotlin.Unit
+    public abstract fun set(/*0*/ element: T): kotlin.Unit
 }
 
 public interface MutableMap</*0*/ K, /*1*/ V> : kotlin.Map<K, V> {
@@ -1028,7 +1038,7 @@ public interface MutableMap</*0*/ K, /*1*/ V> : kotlin.Map<K, V> {
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: K): V?
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract fun put(/*0*/ key: K, /*1*/ value: V): V?
-    public abstract fun putAll(/*0*/ m: kotlin.Map<out K, V>): kotlin.Unit
+    public abstract fun putAll(/*0*/ from: kotlin.Map<out K, V>): kotlin.Unit
     public abstract fun remove(/*0*/ key: K): V?
 
     public interface MutableEntry</*0*/ K, /*1*/ V> : kotlin.Map.Entry<K, V> {
@@ -1036,23 +1046,23 @@ public interface MutableMap</*0*/ K, /*1*/ V> : kotlin.Map<K, V> {
             public abstract override /*1*/ /*fake_override*/ fun <get-key>(): K
         public abstract override /*1*/ /*fake_override*/ val value: V
             public abstract override /*1*/ /*fake_override*/ fun <get-value>(): V
-        public abstract fun setValue(/*0*/ value: V): V
+        public abstract fun setValue(/*0*/ newValue: V): V
     }
 }
 
 public interface MutableSet</*0*/ E> : kotlin.Set<E>, kotlin.MutableCollection<E> {
     public abstract override /*2*/ /*fake_override*/ val size: kotlin.Int
         public abstract override /*2*/ /*fake_override*/ fun <get-size>(): kotlin.Int
-    public abstract override /*1*/ fun add(/*0*/ e: E): kotlin.Boolean
-    public abstract override /*1*/ fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract override /*1*/ fun add(/*0*/ element: E): kotlin.Boolean
+    public abstract override /*1*/ fun addAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ fun clear(): kotlin.Unit
-    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: E): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ element: E): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*2*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*2*/ fun iterator(): kotlin.MutableIterator<E>
-    public abstract override /*1*/ fun remove(/*0*/ o: E): kotlin.Boolean
-    public abstract override /*1*/ fun removeAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
-    public abstract override /*1*/ fun retainAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract override /*1*/ fun remove(/*0*/ element: E): kotlin.Boolean
+    public abstract override /*1*/ fun removeAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
+    public abstract override /*1*/ fun retainAll(/*0*/ elements: kotlin.Collection<E>): kotlin.Boolean
 }
 
 public final class Nothing {
@@ -1105,8 +1115,8 @@ public interface Range</*0*/ T : kotlin.Comparable<T>> {
 public interface Set</*0*/ out E> : kotlin.Collection<E> {
     public abstract override /*1*/ val size: kotlin.Int
         public abstract override /*1*/ fun <get-size>(): kotlin.Int
-    public abstract override /*1*/ fun contains(/*0*/ o: @kotlin.UnsafeVariance() E): kotlin.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
+    public abstract override /*1*/ fun contains(/*0*/ element: @kotlin.UnsafeVariance() E): kotlin.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.Collection<@kotlin.UnsafeVariance() E>): kotlin.Boolean
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.Iterator<E>
 }
@@ -1127,7 +1137,6 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun inc(): kotlin.Short
-    public final operator fun minus(): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -1140,7 +1149,6 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun plus(): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -1166,6 +1174,8 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public open override /*1*/ fun toInt(): kotlin.Int
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
+    public final operator fun unaryMinus(): kotlin.Int
+    public final operator fun unaryPlus(): kotlin.Int
 
     public companion object Companion : kotlin.IntegerConstants<kotlin.Short> {
         /*primary*/ private constructor Companion()
@@ -1178,11 +1188,12 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
 
 public final class ShortArray : kotlin.Cloneable {
     /*primary*/ public constructor ShortArray(/*0*/ size: kotlin.Int)
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.ShortArray
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Short
     public final operator fun iterator(): kotlin.ShortIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Short): kotlin.Unit
-    public final fun size(): kotlin.Int
 }
 
 public abstract class ShortIterator : kotlin.Iterator<kotlin.Short> {

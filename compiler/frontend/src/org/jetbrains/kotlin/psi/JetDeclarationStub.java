@@ -24,7 +24,7 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
-import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentPackage;
+import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub;
 
 abstract class JetDeclarationStub<T extends StubElement<?>> extends JetModifierListOwnerStub<T> implements JetDeclaration {
@@ -51,7 +51,7 @@ abstract class JetDeclarationStub<T extends StubElement<?>> extends JetModifierL
     @Nullable
     @Override
     public KDoc getDocComment() {
-        return FindDocCommentPackage.findDocComment(this);
+        return FindDocCommentKt.findDocComment(this);
     }
 
     @Override

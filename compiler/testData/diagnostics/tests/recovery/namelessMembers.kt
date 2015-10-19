@@ -12,6 +12,6 @@ class C {
     enum class<!SYNTAX!><!> {}
 }
 
-class C1<in<!SYNTAX!>><!><!SYNTAX!><!> {}
+class C1<<!SYNTAX!>in<!>> {}
 
 class C2(val<!SYNTAX!><!>) {}

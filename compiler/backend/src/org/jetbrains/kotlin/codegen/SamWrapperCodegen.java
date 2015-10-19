@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -40,7 +41,6 @@ import java.util.Collections;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
-import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class SamWrapperCodegen {
@@ -82,7 +82,7 @@ public class SamWrapperCodegen {
                 /*copyOverrides=*/ false
         );
 
-        ClassBuilder cv = state.getFactory().newVisitor(OtherOrigin(erasedInterfaceFunction), asmType, file);
+        ClassBuilder cv = state.getFactory().newVisitor(JvmDeclarationOriginKt.OtherOrigin(erasedInterfaceFunction), asmType, file);
         cv.defineClass(file,
                        V1_6,
                        ACC_FINAL,
@@ -98,7 +98,7 @@ public class SamWrapperCodegen {
         // e.g. ASM type for Function2
         Type functionAsmType = typeMapper.mapType(functionType);
 
-        cv.newField(OtherOrigin(erasedInterfaceFunction),
+        cv.newField(JvmDeclarationOriginKt.OtherOrigin(erasedInterfaceFunction),
                     ACC_SYNTHETIC | ACC_PRIVATE | ACC_FINAL,
                     FUNCTION_FIELD_NAME,
                     functionAsmType.getDescriptor(),
@@ -114,7 +114,7 @@ public class SamWrapperCodegen {
     }
 
     private void generateConstructor(Type ownerType, Type functionType, ClassBuilder cv) {
-        MethodVisitor mv = cv.newMethod(OtherOrigin(samType.getJavaClassDescriptor()),
+        MethodVisitor mv = cv.newMethod(JvmDeclarationOriginKt.OtherOrigin(samType.getJavaClassDescriptor()),
                                         NO_FLAG_PACKAGE_PRIVATE, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType), null, null);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {

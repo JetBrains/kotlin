@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -33,7 +34,6 @@ import java.io.File;
 import java.io.InputStream;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
-import static org.jetbrains.kotlin.utils.UtilsPackage.join;
 
 public class OuterClassGenTest extends CodegenTestCase {
 
@@ -193,7 +193,8 @@ public class OuterClassGenTest extends CodegenTestCase {
                 return new ClassReader(file.asByteArray());
             }
         }
-        throw new AssertionError("Couldn't find class by regexp: " + internalNameRegexp + " in:\n" + join(outputFiles.asList(), "\n"));
+        throw new AssertionError("Couldn't find class by regexp: " + internalNameRegexp + " in:\n" + StringsKt
+                .join(outputFiles.asList(), "\n"));
     }
 
     private static void checkInfo(@NotNull ClassReader kotlinReader, @NotNull ClassReader javaReader) {

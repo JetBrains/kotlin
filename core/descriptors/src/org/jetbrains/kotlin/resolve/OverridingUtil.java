@@ -286,7 +286,7 @@ public class OverridingUtil {
     ) {
         Queue<CallableMemberDescriptor> fromSuperQueue = new LinkedList<CallableMemberDescriptor>(notOverridden);
         while (!fromSuperQueue.isEmpty()) {
-            CallableMemberDescriptor notOverriddenFromSuper = VisibilityUtil.findMemberWithMaxVisibility(fromSuperQueue);
+            CallableMemberDescriptor notOverriddenFromSuper = VisibilityUtilKt.findMemberWithMaxVisibility(fromSuperQueue);
             Collection<CallableMemberDescriptor> overridables =
                     extractMembersOverridableInBothWays(notOverriddenFromSuper, fromSuperQueue, sink);
             createAndBindFakeOverride(overridables, current, sink);

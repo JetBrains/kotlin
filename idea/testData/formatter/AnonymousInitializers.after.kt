@@ -16,10 +16,10 @@ class A {
 
     }
 
-    Ann init {
+    @Ann init {
     }
 
-    Ann init {
+    @Ann init {
     }
 
 

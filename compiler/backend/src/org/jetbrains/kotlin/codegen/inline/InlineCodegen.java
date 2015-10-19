@@ -65,8 +65,6 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLASS_FOR_SCRIPT;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getConstant;
-import static org.jetbrains.kotlin.codegen.inline.InlinePackage.getClassFilePath;
-import static org.jetbrains.kotlin.codegen.inline.InlinePackage.getSourceFilePath;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
 
 public class InlineCodegen extends CallGenerator {
@@ -708,7 +706,12 @@ public class InlineCodegen extends CallGenerator {
 
                 FrameMap frameMap = finallyCodegen.getFrameMap();
                 FrameMap.Mark mark = frameMap.mark();
-                while (frameMap.getCurrentSize() < processor.getNextFreeLocalIndex()) {
+                int marker = -1;
+                Set<LocalVarNodeWrapper> intervals = processor.getLocalVarsMetaInfo().getCurrentIntervals();
+                for (LocalVarNodeWrapper interval : intervals) {
+                    marker = Math.max(interval.getNode().index + 1, marker);
+                }
+                while (frameMap.getCurrentSize() < Math.max(processor.getNextFreeLocalIndex(), offsetForFinallyLocalVar + marker)) {
                     frameMap.enterTemp(Type.INT_TYPE);
                 }
 
@@ -766,8 +769,8 @@ public class InlineCodegen extends CallGenerator {
         if (incrementalCompilationComponents == null || targetId == null) return;
 
         IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
-        String sourceFile = getClassFilePath(sourceDescriptor, incrementalCache);
-        String targetFile = getSourceFilePath(targetDescriptor);
+        String sourceFile = InlineCodegenUtilsKt.getClassFilePath(sourceDescriptor, incrementalCache);
+        String targetFile = InlineCodegenUtilsKt.getSourceFilePath(targetDescriptor);
         incrementalCache.registerInline(sourceFile, jvmSignature.toString(), targetFile);
     }
 

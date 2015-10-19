@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
 import org.jetbrains.kotlin.resolve.scopes.utils.getLocalVariable
@@ -40,6 +41,9 @@ public interface CallableDescriptorCollector<D : CallableDescriptor> {
     public fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D>
 
     public fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<D>
+
+    // todo this is hack for static members priority
+    public fun getStaticInheritanceByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D>
 
     public fun getMembersByName(receiver: JetType, name: Name, location: LookupLocation): Collection<D>
 
@@ -76,6 +80,17 @@ public fun <D : CallableDescriptor> CallableDescriptorCollectors<D>.filtered(fil
         CallableDescriptorCollectors(this.collectors.map { it.filtered(filter) })
 
 private object FunctionCollector : CallableDescriptorCollector<FunctionDescriptor> {
+    override fun getStaticInheritanceByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+        return lexicalScope.collectAllFromMeAndParent {
+            if (it is LexicalChainedScope && it.isStaticScope) {
+                it.getDeclaredFunctions(name, location).filter { it.extensionReceiverParameter == null }
+            }
+            else {
+                emptyList()
+            }
+        }
+    }
+
     override fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return lexicalScope.collectAllFromMeAndParent {
             if (it.ownerDescriptor is FunctionDescriptor) {
@@ -156,6 +171,17 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
         return listOfNotNull(lexicalScope.getLocalVariable(name))
     }
 
+    override fun getStaticInheritanceByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+        return lexicalScope.collectAllFromMeAndParent {
+            if (it is LexicalChainedScope && it.isStaticScope) {
+                it.getDeclaredVariables(name, location)
+            }
+            else {
+                emptyList()
+            }
+        }
+    }
+
     private fun getFakeDescriptorForObject(scope: JetScope, name: Name, location: LookupLocation): VariableDescriptor? {
         val classifier = scope.getClassifier(name, location)
         if (classifier !is ClassDescriptor || !classifier.hasClassObjectType) return null
@@ -202,6 +228,10 @@ private object PropertyCollector : CallableDescriptorCollector<VariableDescripto
         return filterProperties(VARIABLES_COLLECTOR.getLocalNonExtensionsByName(lexicalScope, name, location))
     }
 
+    override fun getStaticInheritanceByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+        return filterProperties(VARIABLES_COLLECTOR.getStaticInheritanceByName(lexicalScope, name, location))
+    }
+
     override fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         return filterProperties(VARIABLES_COLLECTOR.getNonExtensionsByName(scope, name, location))
     }
@@ -226,6 +256,10 @@ private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.filtered(fil
     return object : CallableDescriptorCollector<D> {
         override fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D> {
             return delegate.getLocalNonExtensionsByName(lexicalScope, name, location).filter(filter)
+        }
+
+        override fun getStaticInheritanceByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D> {
+            return delegate.getStaticInheritanceByName(lexicalScope, name, location)
         }
 
         override fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<D> {

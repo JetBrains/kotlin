@@ -37,30 +37,30 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.idea.analysis.AnalysisPackage;
+import org.jetbrains.kotlin.idea.analysis.AnalyzerUtilKt;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
+import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
-import org.jetbrains.kotlin.idea.refactoring.introduce.IntroducePackage;
+import org.jetbrains.kotlin.idea.refactoring.introduce.IntroduceUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange;
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRangeKt;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier;
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.PatternMatchingPackage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.ObservableBindingTrace;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -71,8 +71,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
@@ -142,10 +140,10 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         final JetType expressionType = bindingContext.getType(expression); //can be null or error type
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope != null) {
-            DataFlowInfo dataFlowInfo = BindingContextUtilPackage.getDataFlowInfo(bindingContext, expression);
+            DataFlowInfo dataFlowInfo = BindingContextUtilsKt.getDataFlowInfo(bindingContext, expression);
 
             ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
-            JetType typeNoExpectedType = AnalysisPackage.computeTypeInfoInContext(
+            JetType typeNoExpectedType = AnalyzerUtilKt.computeTypeInfoInContext(
                     expression, scope, expression, bindingTrace, dataFlowInfo
             ).getType();
             if (expressionType != null && typeNoExpectedType != null && !JetTypeChecker.DEFAULT.equalTypes(expressionType,
@@ -276,7 +274,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             final JetType expressionType,
             final BindingContext bindingContext
     ) {
-        final JetPsiFactory psiFactory = JetPsiFactory(expression);
+        final JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(expression);
         return new Runnable() {
             @Override
             public void run() {
@@ -299,9 +297,10 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     JetBlockExpression newCommonContainer = (JetBlockExpression) newDeclaration.getBodyExpression();
                     assert newCommonContainer != null : "New body is not found: " + newDeclaration;
 
-                    JetExpression newExpression = IntroducePackage.findExpressionByCopyableDataAndClearIt(newCommonContainer, EXPRESSION_KEY);
-                    PsiElement newCommonParent = IntroducePackage.findElementByCopyableDataAndClearIt(newCommonContainer, COMMON_PARENT_KEY);
-                    List<JetExpression> newAllReplaces = IntroducePackage.findExpressionsByCopyableDataAndClearIt(newCommonContainer, REPLACE_KEY);
+                    JetExpression newExpression = IntroduceUtilKt.findExpressionByCopyableDataAndClearIt(newCommonContainer, EXPRESSION_KEY);
+                    PsiElement newCommonParent = IntroduceUtilKt.findElementByCopyableDataAndClearIt(newCommonContainer, COMMON_PARENT_KEY);
+                    List<JetExpression> newAllReplaces = IntroduceUtilKt
+                            .findExpressionsByCopyableDataAndClearIt(newCommonContainer, REPLACE_KEY);
 
                     run(newExpression, newCommonContainer, newCommonParent, newAllReplaces);
                 }
@@ -475,10 +474,10 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
                 JetExpression replacement = psiFactory.createExpression(nameSuggestion);
                 JetExpression result;
-                if (PsiUtilPackage.isFunctionLiteralOutsideParentheses(replace)) {
+                if (JetPsiUtilKt.isFunctionLiteralOutsideParentheses(replace)) {
                     JetFunctionLiteralArgument functionLiteralArgument =
                             PsiTreeUtil.getParentOfType(replace, JetFunctionLiteralArgument.class);
-                    JetCallExpression newCallExpression = CorePackage
+                    JetCallExpression newCallExpression = PsiModificationUtilsKt
                             .moveInsideParenthesesAndReplaceWith(functionLiteralArgument, replacement, bindingContext);
                     result = CollectionsKt.last(newCallExpression.getValueArguments()).getArgumentExpression();
                 }
@@ -529,7 +528,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
     private static List<JetExpression> findOccurrences(PsiElement occurrenceContainer, @NotNull JetExpression originalExpression) {
         return CollectionsKt.map(
-                PatternMatchingPackage.toRange(originalExpression).match(occurrenceContainer, JetPsiUnifier.DEFAULT),
+                JetPsiRangeKt.toRange(originalExpression).match(occurrenceContainer, JetPsiUnifier.DEFAULT),
                 new Function1<JetPsiRange.Match, JetExpression>() {
                     @Override
                     public JetExpression invoke(JetPsiRange.Match match) {
@@ -549,7 +548,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             @NotNull BindingContext bindingContext,
             @Nullable PsiElement container
     ) {
-        return BindingContextUtilPackage.isUsedAsExpression(expression, bindingContext) || container != expression.getParent();
+        return BindingContextUtilsKt.isUsedAsExpression(expression, bindingContext) || container != expression.getParent();
     }
 
     @Nullable

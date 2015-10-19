@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
+import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
@@ -34,7 +35,6 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
-import static org.jetbrains.kotlin.types.TypesPackage.isFlexible;
 
 public final class WhenChecker {
     private WhenChecker() {
@@ -44,7 +44,7 @@ public final class WhenChecker {
         JetType expectedType = trace.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression);
         boolean isUnit = expectedType != null && KotlinBuiltIns.isUnit(expectedType);
         // Some "statements" are actually expressions returned from lambdas, their expected types are non-null
-        boolean isStatement = BindingContextUtilPackage.isUsedAsStatement(expression, trace.getBindingContext()) && expectedType == null;
+        boolean isStatement = BindingContextUtilsKt.isUsedAsStatement(expression, trace.getBindingContext()) && expectedType == null;
 
         return !isUnit && !isStatement && !isWhenExhaustive(expression, trace);
     }
@@ -173,7 +173,7 @@ public final class WhenChecker {
         }
         if (exhaustive) {
             if (// Flexible (nullable) enum types are also counted as exhaustive
-                (enumClassDescriptor != null && isFlexible(type))
+                (enumClassDescriptor != null && FlexibleTypesKt.isFlexible(type))
                 || containsNullCase(expression, trace)
                 || !isNullableTypeWithoutPossibleSmartCast(expression.getSubjectExpression(), type, trace.getBindingContext())) {
 

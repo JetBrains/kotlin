@@ -25,7 +25,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.completion.test.TestPackage;
+import org.jetbrains.kotlin.idea.completion.test.CompletionTestUtilKt;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
@@ -95,7 +95,7 @@ public class JetConfidenceTest extends LightCompletionTestCase {
     @NotNull
     @Override
     protected String getTestDataPath() {
-        return new File(TestPackage.getCOMPLETION_TEST_DATA_BASE_PATH(), "/confidence/").getPath() + File.separator;
+        return new File(CompletionTestUtilKt.getCOMPLETION_TEST_DATA_BASE_PATH(), "/confidence/").getPath() + File.separator;
     }
 
     @Override

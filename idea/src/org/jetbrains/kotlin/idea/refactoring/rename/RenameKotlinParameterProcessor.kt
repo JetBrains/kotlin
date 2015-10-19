@@ -21,6 +21,7 @@ import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
@@ -41,8 +42,7 @@ public class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
         val paramIndex = function.getValueParameters().indexOf(element)
         assert(paramIndex != -1, { "couldn't find parameter in parent ${element.getElementTextWithContext()}" })
 
-        val context = function.analyze()
-        val functionDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return
+        val functionDescriptor = function.resolveToDescriptor() as? FunctionDescriptor ?: return
         val parameterDescriptor = functionDescriptor.getValueParameters()[paramIndex]
 
         val parameterNameChangedOnOverride = parameterDescriptor.getOverriddenDescriptors().any {
@@ -50,7 +50,7 @@ public class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
         }
 
         val changeSignatureConfiguration = object : JetChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
+            override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
                 val paramInfoIndex = if (functionDescriptor.getExtensionReceiverParameter() != null) paramIndex + 1 else paramIndex
                 return originalDescriptor.modify { it.renameParameter(paramInfoIndex, newName) }
             }
@@ -60,6 +60,6 @@ public class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
             override fun forcePerformForSelectedFunctionOnly() = parameterNameChangedOnOverride
         }
 
-        runChangeSignature(element.getProject(), functionDescriptor, changeSignatureConfiguration, context, element, "Rename parameter")
+        runChangeSignature(element.getProject(), functionDescriptor, changeSignatureConfiguration, element, "Rename parameter")
     }
 }

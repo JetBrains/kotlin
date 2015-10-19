@@ -28,15 +28,16 @@ import com.intellij.psi.filters.position.LeftNeighbour
 import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
 import org.jetbrains.kotlin.lexer.JetKeywordToken
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
-import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.ModifierCheckerCore
 
 open class KeywordLookupObject
 
@@ -47,10 +48,8 @@ object KeywordCompletion {
             .filter { it !in NON_ACTUAL_KEYWORDS }
             .map { it as JetKeywordToken }
 
-    private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(
-            OUT_KEYWORD to " X",
-            FILE_KEYWORD to ":"
-    )
+    private val DEFAULT_DUMMY_POSTFIX = " X"
+    private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(FILE_KEYWORD to ":")
 
     private val KEYWORDS_TO_IGNORE_PREFIX = TokenSet.create(OVERRIDE_KEYWORD /* it's needed to complete overrides that should be work by member name too */)
 
@@ -121,37 +120,44 @@ object KeywordCompletion {
         var parent = position.getParent()
         var prevParent = position
         while (parent != null) {
-            val _parent = parent
-            when (_parent) {
+            when (parent) {
                 is JetBlockExpression -> {
                     return buildFilterWithContext("fun foo() { ", prevParent, position)
                 }
 
                 is JetWithExpressionInitializer -> {
-                    val initializer = _parent.getInitializer()
+                    val initializer = parent.getInitializer()
                     if (prevParent == initializer) {
                         return buildFilterWithContext("val v = ", initializer!!, position)
                     }
                 }
 
                 is JetParameter -> {
-                    val default = _parent.getDefaultValue()
+                    val default = parent.getDefaultValue()
                     if (prevParent == default) {
                         return buildFilterWithContext("val v = ", default!!, position)
                     }
                 }
             }
 
-            if (_parent is JetDeclaration) {
-                val scope = _parent.getParent()
+            if (parent is JetDeclaration) {
+                val scope = parent.parent
                 when (scope) {
-                    is JetClassOrObject -> return buildFilterWithReducedContext("class X { ", _parent, position)
-                    is JetFile -> return buildFilterWithReducedContext("", _parent, position)
+                    is JetClassOrObject -> {
+                        if (parent is JetPrimaryConstructor) {
+                            return buildFilterWithReducedContext("class X ", parent, position)
+                        }
+                        else {
+                            return buildFilterWithReducedContext("class X { ", parent, position)
+                        }
+                    }
+
+                    is JetFile -> return buildFilterWithReducedContext("", parent, position)
                 }
             }
 
-            prevParent = _parent
-            parent = _parent.getParent()
+            prevParent = parent
+            parent = parent.parent
         }
 
         return buildFilterWithReducedContext("", null, position)
@@ -176,19 +182,71 @@ object KeywordCompletion {
 
     private fun buildFilterByText(prefixText: String, project: Project): (JetKeywordToken) -> Boolean {
         val psiFactory = JetPsiFactory(project)
-        return { keywordTokenType ->
-            val postfix = KEYWORD_TO_DUMMY_POSTFIX[keywordTokenType] ?: ""
+        return fun (keywordTokenType): Boolean {
+            val postfix = KEYWORD_TO_DUMMY_POSTFIX[keywordTokenType] ?: DEFAULT_DUMMY_POSTFIX
             val file = psiFactory.createFile(prefixText + keywordTokenType.getValue() + postfix)
             val elementAt = file.findElementAt(prefixText.length())!!
 
             when {
-                !elementAt.getNode()!!.getElementType().matchesKeyword(keywordTokenType) -> false
+                !elementAt.getNode()!!.getElementType().matchesKeyword(keywordTokenType) -> return false
 
-                elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> false
+                elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> return false
 
-                elementAt.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment } is PsiErrorElement -> false
+                elementAt.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }?.parentsWithSelf?.any { it is PsiErrorElement } ?: false -> return false
 
-                else -> true
+                keywordTokenType !is JetModifierKeywordToken -> return true
+
+                else -> {
+                    if (elementAt.parent !is JetModifierList) return true
+                    val container = elementAt.parent.parent
+                    val possibleTargets = when (container) {
+                        is JetParameter -> {
+                            if (container.ownerFunction is JetPrimaryConstructor)
+                                listOf(VALUE_PARAMETER, MEMBER_PROPERTY)
+                            else
+                                listOf(VALUE_PARAMETER)
+                        }
+
+                        is JetTypeParameter -> listOf(TYPE_PARAMETER)
+
+                        is JetEnumEntry -> listOf(ENUM_ENTRY)
+
+                        is JetClassBody -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, INNER_CLASS, MEMBER_FUNCTION, MEMBER_PROPERTY, FUNCTION, PROPERTY)
+
+                        is JetFile -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, FUNCTION, PROPERTY)
+
+                        else -> null
+                    }
+                    val modifierTargets = ModifierCheckerCore.possibleTargetMap[keywordTokenType]
+                    if (modifierTargets != null && possibleTargets != null && possibleTargets.none { it in modifierTargets }) return false
+
+                    val ownerDeclaration = container?.getParentOfType<JetDeclaration>(strict = true)
+                    val parentTarget = when (ownerDeclaration) {
+                        null -> KotlinTarget.FILE
+
+                        is JetClass -> {
+                            when {
+                                ownerDeclaration.isInterface() -> KotlinTarget.INTERFACE
+                                ownerDeclaration.isEnum() -> KotlinTarget.ENUM_CLASS
+                                ownerDeclaration.isAnnotation() -> KotlinTarget.ANNOTATION_CLASS
+                                ownerDeclaration.isInner() -> KotlinTarget.INNER_CLASS
+                                else -> KotlinTarget.CLASS_ONLY
+                            }
+                        }
+
+                        is JetObjectDeclaration -> if (ownerDeclaration.isObjectLiteral()) KotlinTarget.OBJECT_LITERAL else KotlinTarget.OBJECT
+
+                        else -> return true
+                    }
+
+                    val modifierParents = ModifierCheckerCore.possibleParentTargetMap[keywordTokenType]
+                    if (modifierParents != null && parentTarget !in modifierParents) return false
+
+                    val deprecatedParents = ModifierCheckerCore.deprecatedParentTargetMap[keywordTokenType]
+                    if (deprecatedParents != null && parentTarget in deprecatedParents) return false
+
+                    return true
+                }
             }
         }
     }

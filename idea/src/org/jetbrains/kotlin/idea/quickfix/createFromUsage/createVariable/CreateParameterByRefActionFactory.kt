@@ -52,7 +52,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<JetSi
         return refExpr
     }
 
-    override fun createQuickFixData(
+    override fun extractFixData(
             element: JetSimpleNameExpression,
             diagnostic: Diagnostic
     ): CreateParameterData<JetSimpleNameExpression>? {

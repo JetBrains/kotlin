@@ -30,18 +30,19 @@ public open class JetClass : JetClassOrObject {
     public constructor(node: ASTNode) : super(node)
     public constructor(stub: KotlinClassStub) : super(stub, JetStubElementTypes.CLASS)
 
-    override fun getStub(): KotlinClassStub? = super.getStub() as? KotlinClassStub
-
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R {
         return visitor.visitClass(this, data)
     }
+
+    private val _stub: KotlinClassStub?
+        get() = stub as? KotlinClassStub
 
     public fun getColon(): PsiElement? = findChildByType(JetTokens.COLON)
 
     public fun getProperties(): List<JetProperty> = getBody()?.getProperties().orEmpty()
 
     public fun isInterface(): Boolean =
-        getStub()?.isInterface() ?: (findChildByType<PsiElement>(JetTokens.INTERFACE_KEYWORD) != null)
+        _stub?.isInterface() ?: (findChildByType<PsiElement>(JetTokens.INTERFACE_KEYWORD) != null)
 
     public fun isEnum(): Boolean = hasModifier(JetTokens.ENUM_KEYWORD)
     public fun isSealed(): Boolean = hasModifier(JetTokens.SEALED_KEYWORD)

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptPackageFragment;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import java.util.Collection;
 
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassId;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassId;
 
 public final class DecompiledNavigationUtils {
 
@@ -150,7 +150,7 @@ public final class DecompiledNavigationUtils {
                 || ExpressionTypingUtils.isLocal(containerDescriptor.getContainingDeclaration(), containerDescriptor)) {
                 return getContainerClassId(project, containerDescriptor.getContainingDeclaration());
             }
-            return getClassId((ClassDescriptor) containerDescriptor);
+            return DescriptorUtilsKt.getClassId((ClassDescriptor) containerDescriptor);
         }
         return null;
     }

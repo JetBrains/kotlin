@@ -42,17 +42,24 @@ public class JvmSerializerExtension extends SerializerExtension {
     private final JvmSerializationBindings bindings;
     private final StringTable stringTable;
     private final AnnotationSerializer annotationSerializer;
+    private final boolean useTypeTable;
 
-    public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull JetTypeMapper typeMapper) {
+    public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull JetTypeMapper typeMapper, boolean useTypeTable) {
         this.bindings = bindings;
         this.stringTable = new JvmStringTable(typeMapper);
         this.annotationSerializer = new AnnotationSerializer(stringTable);
+        this.useTypeTable = useTypeTable;
     }
 
     @NotNull
     @Override
     public StringTable getStringTable() {
         return stringTable;
+    }
+
+    @Override
+    public boolean shouldUseTypeTable() {
+        return useTypeTable;
     }
 
     @Override
@@ -80,6 +87,15 @@ public class JvmSerializerExtension extends SerializerExtension {
 
         if (type.getCapabilities() instanceof RawTypeCapabilities) {
             proto.setExtension(JvmProtoBuf.isRaw, true);
+        }
+    }
+
+    @Override
+    public void serializeTypeParameter(
+            @NotNull TypeParameterDescriptor typeParameter, @NotNull ProtoBuf.TypeParameter.Builder proto
+    ) {
+        for (AnnotationDescriptor annotation : typeParameter.getAnnotations()) {
+            proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotation));
         }
     }
 

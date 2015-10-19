@@ -19,9 +19,12 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 
 interface DeserializedCallableMemberDescriptor : CallableMemberDescriptor {
     val proto: MessageLite
 
     val nameResolver: NameResolver
+
+    val typeTable: TypeTable
 }

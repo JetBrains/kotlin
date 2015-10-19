@@ -21,7 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
+import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedFunction
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.JetTypeParameterList
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class MigrateTypeParameterListFix(typeParameterList: JetTypeParameterList)
-    : JetIntentionAction<JetTypeParameterList>(typeParameterList), CleanupFix {
+    : KotlinQuickFixAction<JetTypeParameterList>(typeParameterList), CleanupFix {
 
     override fun getFamilyName(): String = "Migrate type parameter list syntax"
     override fun getText(): String  = familyName

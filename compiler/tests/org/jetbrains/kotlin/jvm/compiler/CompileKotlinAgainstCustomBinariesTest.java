@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.ClassWriter;
@@ -137,7 +137,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
             return outputFile;
         }
         catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

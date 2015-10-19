@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -48,9 +49,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.JetPsiFactoryKt.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getCalleeExpressionIfAny;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
@@ -208,9 +208,6 @@ public class DelegatedPropertyResolver {
         }
 
         FunctionDescriptor resultingDescriptor = functionResults.getResultingDescriptor();
-        if (!resultingDescriptor.isOperator()) {
-            OperatorValidator.Companion.report(delegateExpression, resultingDescriptor, trace);
-        }
 
         ResolvedCall<FunctionDescriptor> resultingCall = functionResults.getResultingCall();
         PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
@@ -219,6 +216,11 @@ public class DelegatedPropertyResolver {
             JetPropertyDelegate delegate = property.getDelegate();
             if (delegate != null) {
                 PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
+
+                if (!resultingDescriptor.isOperator()) {
+                    OperatorValidator.Companion.report(byKeyword, resultingDescriptor, trace);
+                }
+
                 symbolUsageValidator.validateCall(resultingCall, resultingCall.getResultingDescriptor(), trace, byKeyword);
             }
         }
@@ -276,8 +278,19 @@ public class DelegatedPropertyResolver {
                     fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, oldFunctionName, delegateExpression);
             if (additionalResolutionResult.getSecond().isSuccess()) {
                 FunctionDescriptor resultingDescriptor = additionalResolutionResult.getSecond().getResultingDescriptor();
-                trace.report(DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION.on(
-                        delegateExpression, resultingDescriptor, delegateType, functionName.asString()));
+
+                PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
+                if (declaration instanceof JetProperty) {
+                    JetProperty property = (JetProperty) declaration;
+                    JetPropertyDelegate delegate = property.getDelegate();
+                    if (delegate != null) {
+                        PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
+
+                        trace.report(DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION.on(
+                                byKeyword, resultingDescriptor, delegateType, functionName.asString()));
+                    }
+                }
+
                 trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, additionalResolutionResult.getFirst());
                 return additionalResolutionResult.getSecond();
             }
@@ -313,7 +326,7 @@ public class DelegatedPropertyResolver {
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         TemporaryBindingTrace traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property");
-        JetExpression calleeExpression = getCalleeExpressionIfAny(delegateExpression);
+        JetExpression calleeExpression = CallUtilKt.getCalleeExpressionIfAny(delegateExpression);
         ConstraintSystemCompleter completer = createConstraintSystemCompleter(
                 jetProperty, propertyDescriptor, delegateExpression, accessorScope, trace);
         if (calleeExpression != null) {

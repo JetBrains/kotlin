@@ -24,18 +24,21 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_B
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.ArrayList
-import java.util.LinkedHashSet
+import java.util.*
 
 public class TypeBoundsImpl(
         override val typeVariable: TypeParameterDescriptor,
         override val varianceOfPosition: Variance
 ) : TypeBounds {
     override val bounds = ArrayList<Bound>()
+
+    private val typesInBoundsSet: Set<JetType> by lazy {
+        bounds.filter { it.isProper }.map { it.constrainingType }.toSet()
+    }
 
     private var resultValues: Collection<JetType>? = null
 
@@ -144,6 +147,8 @@ public class TypeBoundsImpl(
 
         values.addAll(filterBounds(bounds, TypeBounds.BoundKind.UPPER_BOUND))
 
+        if (values.size == 1 && typeVariable.hasOnlyInputTypesAnnotation() && !tryPossibleAnswer(bounds, values.first())) return listOf()
+
         return values
     }
 
@@ -151,6 +156,8 @@ public class TypeBoundsImpl(
         if (possibleAnswer == null) return false
         // a captured type might be an answer
         if (!possibleAnswer.getConstructor().isDenotable() && !possibleAnswer.isCaptured()) return false
+
+        if (typeVariable.hasOnlyInputTypesAnnotation() && !typesInBoundsSet.contains(possibleAnswer)) return false
 
         for (bound in bounds) {
             when (bound.kind) {

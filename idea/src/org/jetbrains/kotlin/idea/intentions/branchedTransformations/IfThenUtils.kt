@@ -135,5 +135,5 @@ fun JetExpression.isStableVariable(): Boolean {
     val context = this.analyze()
     val descriptor = BindingContextUtils.extractVariableDescriptorIfAny(context, this, false)
     return descriptor is VariableDescriptor &&
-           DataFlowValueFactory.isStableVariable(descriptor, DescriptorUtils.getContainingModule(descriptor))
+           DataFlowValueFactory.isStableValue(descriptor, DescriptorUtils.getContainingModule(descriptor))
 }

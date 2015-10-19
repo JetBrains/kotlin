@@ -58,14 +58,6 @@ public class IdeStubIndexService extends StubIndexService {
             sink.occurrence(JetFilePartClassIndex.INSTANCE.getKey(), partFqName.asString());
         }
 
-        // TODO drop
-        JetFile jetFile = stub.getPsi();
-        if (jetFile != null) {
-            JvmFileClassInfo fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(jetFile);
-            sink.occurrence(JetFileFacadeFqNameIndex.INSTANCE.getKey(), fileClassInfo.getFacadeClassFqName().asString());
-            sink.occurrence(JetFilePartClassIndex.INSTANCE.getKey(), fileClassInfo.getFileClassFqName().asString());
-        }
-
         List<StringRef> partNames = ((KotlinFileStubForIde) stub).getFacadePartSimpleNames();
         if (partNames != null) {
             for (StringRef partName : partNames) {
@@ -144,7 +136,7 @@ public class IdeStubIndexService extends StubIndexService {
             if (fqName != null) {
                 sink.occurrence(JetTopLevelFunctionFqnNameIndex.getInstance().getKey(), fqName.asString());
                 sink.occurrence(JetTopLevelFunctionByPackageIndex.getInstance().getKey(), fqName.parent().asString());
-                StubindexPackage.indexTopLevelExtension(stub, sink);
+                IndexUtilsKt.indexTopLevelExtension(stub, sink);
             }
         }
     }
@@ -166,7 +158,7 @@ public class IdeStubIndexService extends StubIndexService {
             if (fqName != null) {
                 sink.occurrence(JetTopLevelPropertyFqnNameIndex.getInstance().getKey(), fqName.asString());
                 sink.occurrence(JetTopLevelPropertyByPackageIndex.getInstance().getKey(), fqName.parent().asString());
-                StubindexPackage.indexTopLevelExtension(stub, sink);
+                IndexUtilsKt.indexTopLevelExtension(stub, sink);
             }
         }
     }

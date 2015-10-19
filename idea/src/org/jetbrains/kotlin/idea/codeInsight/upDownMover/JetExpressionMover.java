@@ -27,14 +27,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
+import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 import java.util.List;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetExpressionMover extends AbstractJetUpDownMover {
 
@@ -395,7 +393,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     @Nullable
     private static PsiElement getMovableElement(@NotNull PsiElement element, boolean lookRight) {
         //noinspection unchecked
-        PsiElement movableElement = PsiUtilPackage.getParentOfTypesAndPredicate(
+        PsiElement movableElement = PsiUtilsKt.getParentOfTypesAndPredicate(
                 element,
                 false,
                 MOVABLE_ELEMENT_CLASSES,
@@ -447,7 +445,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         }
 
         if (whiteSpaceTestSubject instanceof PsiWhiteSpace) {
-            if (RefactoringPackage.isMultiLine(whiteSpaceTestSubject)) {
+            if (JetRefactoringUtilKt.isMultiLine(whiteSpaceTestSubject)) {
                 int nearLine = down ? sourceRange.endLine : sourceRange.startLine - 1;
 
                 info.toMove = sourceRange;
@@ -550,7 +548,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
             PsiElement parent = element.getParent();
             assert parent != null;
 
-            parent.addAfter(JetPsiFactory(parent.getProject()).createComma(), element);
+            parent.addAfter(JetPsiFactoryKt.JetPsiFactory(parent.getProject()).createComma(), element);
         }
     }
 

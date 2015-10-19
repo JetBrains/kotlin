@@ -310,3 +310,5 @@ public fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUt
 
 public fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
         SmartPointerManager.getInstance(getProject()).createSmartPsiElementPointer(this)
+
+public fun PsiElement.before(element: PsiElement) = textRange.endOffset <= element.textRange.startOffset

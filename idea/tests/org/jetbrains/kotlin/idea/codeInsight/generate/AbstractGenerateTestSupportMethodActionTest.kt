@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight.generate
 import com.intellij.openapi.roots.ModuleRootManager
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
-abstract class AbstractGenerateTestSupportMethodActionTest : AbstractGenerateActionTest() {
+abstract class AbstractGenerateTestSupportMethodActionTest : AbstractCodeInsightActionTest() {
     private fun setUpTestSourceRoot() {
         val module = myModule
         val model = ModuleRootManager.getInstance(module).modifiableModel

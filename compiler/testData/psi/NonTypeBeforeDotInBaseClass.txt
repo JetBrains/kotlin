@@ -28,22 +28,16 @@ JetFile: NonTypeBeforeDotInBaseClass.kt
                 PsiElement(super)('super')
       PsiErrorElement:Expecting member declaration
         PsiElement(DOT)('.')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('ClassA')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
       FUN
-        MODIFIER_LIST
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('ClassA')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
         PsiErrorElement:Expecting member declaration
           <empty list>
-        PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')

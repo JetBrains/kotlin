@@ -27,14 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetPsiUtil;
-import org.jetbrains.kotlin.psi.JetWhenEntry;
-import org.jetbrains.kotlin.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.*;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
-public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> {
+public class MoveWhenElseBranchFix extends KotlinQuickFixAction<JetWhenExpression> {
     public MoveWhenElseBranchFix(@NotNull JetWhenExpression element) {
         super(element);
     }
@@ -56,14 +51,14 @@ public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression>
         if (!super.isAvailable(project, editor, file)) {
             return false;
         }
-        return JetPsiUtil.checkWhenExpressionHasSingleElse(element);
+        return JetPsiUtil.checkWhenExpressionHasSingleElse(getElement());
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetWhenEntry elseEntry = null;
         JetWhenEntry lastEntry = null;
-        for (JetWhenEntry entry : element.getEntries()) {
+        for (JetWhenEntry entry : getElement().getEntries()) {
             if (entry.isElse()) {
                 elseEntry = entry;
             }
@@ -72,9 +67,9 @@ public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression>
         assert (elseEntry != null) : "isAvailable should check whether there is only one else branch";
         int cursorOffset = editor.getCaretModel().getOffset() - elseEntry.getTextOffset();
 
-        PsiElement insertedBranch = element.addAfter(elseEntry, lastEntry);
-        element.addAfter(JetPsiFactory(file).createNewLine(), lastEntry);
-        element.deleteChildRange(elseEntry, elseEntry);
+        PsiElement insertedBranch = getElement().addAfter(elseEntry, lastEntry);
+        getElement().addAfter(JetPsiFactoryKt.JetPsiFactory(file).createNewLine(), lastEntry);
+        getElement().deleteChildRange(elseEntry, elseEntry);
         JetWhenEntry insertedWhenEntry = (JetWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
 
         editor.getCaretModel().moveToOffset(insertedWhenEntry.getTextOffset() + cursorOffset);
@@ -84,7 +79,7 @@ public class MoveWhenElseBranchFix extends JetIntentionAction<JetWhenExpression>
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public JetIntentionAction createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 JetWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, JetWhenExpression.class, false);
                 if (whenExpression == null) return null;

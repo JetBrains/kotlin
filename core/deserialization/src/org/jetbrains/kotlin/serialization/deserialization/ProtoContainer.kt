@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 public data class ProtoContainer(
         val classProto: ProtoBuf.Class?,
         val packageFqName: FqName?,
-        val nameResolver: NameResolver
+        val nameResolver: NameResolver,
+        val typeTable: TypeTable
 ) {
     init {
         assert((classProto != null) xor (packageFqName != null))

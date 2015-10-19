@@ -6,7 +6,6 @@ public open class ClassObjectArrayInParam {
     public final class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ vararg value: kotlin.reflect.KClass<*> /*kotlin.Array<out kotlin.reflect.KClass<*>>*/)
         public final val value: kotlin.Array<kotlin.reflect.KClass<*>>
-        public abstract fun value(): kotlin.Array<kotlin.reflect.KClass<*>>
     }
 
     @test.ClassObjectArrayInParam.Anno(value = {test.ClassObjectArrayInParam::class, test.ClassObjectArrayInParam.Nested::class, kotlin.String::class}) public open class Nested {

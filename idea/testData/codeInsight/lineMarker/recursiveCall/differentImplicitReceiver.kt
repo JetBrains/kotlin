@@ -1,4 +1,4 @@
-private fun Any.foo() {
+fun Any.foo() {
     with("different extension receiver") {
         foo()
     }

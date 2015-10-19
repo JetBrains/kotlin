@@ -436,6 +436,15 @@ public operator fun ShortArray.contains(element: Short): Boolean {
 }
 
 /**
+ * Returns `true` if [element] is found in the collection.
+ * Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.containsRaw(element: Any?): Boolean {
+    return contains<Any?>(element)
+}
+
+/**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
  */
 public fun <T> Array<out T>.elementAt(index: Int): T {
@@ -1515,6 +1524,15 @@ public inline fun ShortArray.indexOfLast(predicate: (Short) -> Boolean): Int {
 }
 
 /**
+ * Returns first index of [element], or -1 if the collection does not contain element.
+ * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.indexOfRaw(element: Any?): Int {
+    return indexOf<Any?>(element)
+}
+
+/**
  * Returns the last element.
  * @throws [NoSuchElementException] if the collection is empty.
  */
@@ -1826,6 +1844,15 @@ public fun ShortArray.lastIndexOf(element: Short): Int {
         }
     }
     return -1
+}
+
+/**
+ * Returns last index of [element], or -1 if the collection does not contain element.
+ * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.lastIndexOfRaw(element: Any?): Int {
+    return lastIndexOf<Any?>(element)
 }
 
 /**
@@ -5160,7 +5187,7 @@ public fun Array<out Short>.toShortArray(): ShortArray {
  * Returns an [ArrayList] of all elements.
  */
 public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
-    return this.asList().toArrayList()
+    return ArrayList(this.asCollection())
 }
 
 /**
@@ -10165,7 +10192,7 @@ public fun ShortArray.asSequence(): Sequence<Short> {
  */
 @kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.asList(): List<T> {
-    return Arrays.asList(*this)
+    return ArraysUtilJVM.asList(this)
 }
 
 /**

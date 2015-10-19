@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
@@ -40,9 +37,10 @@ class ClsStubBuilderComponents(
 ) {
     fun createContext(
             nameResolver: NameResolver,
-            packageFqName: FqName
+            packageFqName: FqName,
+            typeTable: TypeTable
     ): ClsStubBuilderContext {
-        return ClsStubBuilderContext(this, nameResolver, packageFqName, EmptyTypeParameters)
+        return ClsStubBuilderContext(this, nameResolver, packageFqName, EmptyTypeParameters, typeTable)
     }
 }
 
@@ -71,24 +69,31 @@ class ClsStubBuilderContext(
         val components: ClsStubBuilderComponents,
         val nameResolver: NameResolver,
         val containerFqName: FqName,
-        val typeParameters: TypeParameters
+        val typeParameters: TypeParameters,
+        val typeTable: TypeTable
 )
 
-internal fun ClsStubBuilderContext.child(typeParameterList: List<ProtoBuf.TypeParameter>, name: Name? = null): ClsStubBuilderContext {
+internal fun ClsStubBuilderContext.child(
+        typeParameterList: List<ProtoBuf.TypeParameter>,
+        name: Name? = null,
+        typeTable: TypeTable = this.typeTable
+): ClsStubBuilderContext {
     return ClsStubBuilderContext(
             this.components,
             this.nameResolver,
             if (name != null) this.containerFqName.child(name) else this.containerFqName,
-            this.typeParameters.child(nameResolver, typeParameterList)
+            this.typeParameters.child(nameResolver, typeParameterList),
+            typeTable
     )
 }
 
-internal fun ClsStubBuilderContext.child(nameResolver: NameResolver): ClsStubBuilderContext {
+internal fun ClsStubBuilderContext.child(nameResolver: NameResolver, typeTable: TypeTable): ClsStubBuilderContext {
     return ClsStubBuilderContext(
             this.components,
             nameResolver,
             this.containerFqName,
-            this.typeParameters
+            this.typeParameters,
+            typeTable
     )
 }
 

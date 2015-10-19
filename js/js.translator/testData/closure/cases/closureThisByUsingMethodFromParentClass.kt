@@ -3,11 +3,11 @@ package foo
 // HACKS
 
 @native
-val ROOT = "Kotlin.modules.JS_TESTS"
+const val ROOT = "Kotlin.modules.JS_TESTS"
 @native
-val PATH_TO_F_CREATOR = "foo.B.far\$f"
+const val PATH_TO_F_CREATOR = "foo.B.far\$f"
 @native
-val PATH_TO_G_CREATOR = "foo.B.gar\$f"
+const val PATH_TO_G_CREATOR = "foo.B.gar\$f"
 
 @native("$ROOT.$PATH_TO_F_CREATOR")
 val F_CREATOR: Any = noImpl

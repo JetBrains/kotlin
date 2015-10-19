@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 
 public class MigrateBackingFieldSyntaxFix(expr: JetNameReferenceExpression)
-    : JetIntentionAction<JetNameReferenceExpression>(expr), CleanupFix {
+    : KotlinQuickFixAction<JetNameReferenceExpression>(expr), CleanupFix {
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         val replacement = JetPsiFactory(project).createExpression("field")
         element.replace(replacement)
@@ -43,7 +43,7 @@ public class MigrateBackingFieldSyntaxFix(expr: JetNameReferenceExpression)
 }
 
 public class MigrateBackingFieldUsageFix(expr: JetNameReferenceExpression)
-    : JetIntentionAction<JetNameReferenceExpression>(expr) {
+    : KotlinQuickFixAction<JetNameReferenceExpression>(expr) {
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         val replacement = JetPsiFactory(project).createExpression(element.text.substring(1))
         element.replace(replacement)

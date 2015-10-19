@@ -30,8 +30,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
@@ -42,7 +40,10 @@ import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -66,16 +67,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         TYPES(
                 descriptorKindFilter = DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry,
                 classKindFilter = { it != ClassKind.ENUM_ENTRY }
-        ),
-
-        ANNOTATION_TYPES(
-                descriptorKindFilter = ANNOTATION_TYPES_FILTER,
-                classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
-        ),
-
-        ANNOTATION_TYPES_OR_PARAMETER_NAME(
-                descriptorKindFilter = ANNOTATION_TYPES_FILTER,
-                classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
         ),
 
         KEYWORDS_ONLY(descriptorKindFilter = null, classKindFilter = null),
@@ -126,18 +117,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 CompletionKind.KEYWORDS_ONLY
         }
 
-        val annotationEntry = position.getStrictParentOfType<JetAnnotationEntry>()
-        if (annotationEntry != null) {
-            val valueArgList = position.getStrictParentOfType<JetValueArgumentList>()
-            if (valueArgList == null || !annotationEntry.isAncestor(valueArgList)) {
-                val parent = annotationEntry.getParent()
-                if (parent is JetDeclarationModifierList && parent.getParent() is JetParameter) {
-                    return CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME
-                }
-                return CompletionKind.ANNOTATION_TYPES
-            }
-        }
-
         // Check that completion in the type annotation context and if there's a qualified
         // expression we are at first of it
         val typeReference = position.getStrictParentOfType<JetTypeReference>()
@@ -156,7 +135,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun shouldCompleteParameterNameAndType(): Boolean {
-        if (completionKind != CompletionKind.PARAMETER_NAME && completionKind != CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME) return false
+        if (completionKind != CompletionKind.PARAMETER_NAME) return false
 
         val parameter = position.getNonStrictParentOfType<JetParameter>()!!
         val list = parameter.parent as? JetParameterList ?: return false
@@ -170,7 +149,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     public fun shouldDisableAutoPopup(): Boolean {
-        if (completionKind == CompletionKind.PARAMETER_NAME || completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME) {
+        if (completionKind == CompletionKind.PARAMETER_NAME) {
             if (!shouldCompleteParameterNameAndType() || TemplateManager.getInstance(project).getActiveTemplate(parameters.editor) != null) {
                 return true
             }
@@ -394,18 +373,5 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         return sorter
-    }
-
-    private companion object {
-        object NonAnnotationClassifierExclude : DescriptorKindExclude() {
-            override fun excludes(descriptor: DeclarationDescriptor): Boolean {
-                if (descriptor !is ClassifierDescriptor) return false
-                return descriptor !is ClassDescriptor || descriptor.getKind() != ClassKind.ANNOTATION_CLASS
-            }
-
-            override val fullyExcludedDescriptorKinds: Int get() = 0
-        }
-
-        val ANNOTATION_TYPES_FILTER = DescriptorKindFilter(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude
     }
 }

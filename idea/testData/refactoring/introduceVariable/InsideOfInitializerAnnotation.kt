@@ -1,4 +1,4 @@
 class C {
-    deprecated(<selection>""</selection>)
+    @deprecated(<selection>""</selection>)
     init {}
 }

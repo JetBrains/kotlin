@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
+import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
 import java.util.Collections;
 import java.util.List;
@@ -142,13 +142,13 @@ public class JetProperty extends JetTypeParameterListOwnerStub<KotlinPropertyStu
                 return typeReferences.get(returnTypeRefPositionInPsi);
             }
         }
-        return TypeRefHelpersPackage.getTypeReference(this);
+        return TypeRefHelpersKt.getTypeReference(this);
     }
 
     @Override
     @Nullable
     public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
-        return TypeRefHelpersPackage.setTypeReference(this, getNameIdentifier(), typeRef);
+        return TypeRefHelpersKt.setTypeReference(this, getNameIdentifier(), typeRef);
     }
 
     @Nullable
@@ -275,7 +275,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<KotlinPropertyStu
     @NotNull
     public PsiElement getValOrVarKeyword() {
         PsiElement element = findChildByType(VAL_VAR_TOKEN_SET);
-        assert element != null : "Val or var should always exist for property";
+        assert element != null : "Val or var should always exist for property" + this.getText();
         return element;
     }
 

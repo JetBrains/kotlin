@@ -1,3 +1,3 @@
-<caret> annotation class Annotated
+@<caret> annotation class Annotated
 
 // EXIST: Target

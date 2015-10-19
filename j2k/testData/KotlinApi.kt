@@ -6,6 +6,8 @@ public open class KotlinClass(public var field: Int) {
 
     public open fun foo(mutableCollection: MutableCollection<String>, nullableCollection: Collection<Int>?): MutableList<Any> = arrayListOf()
 
+    fun get(i: Int) = 0
+
     companion object {
         public fun staticFun(p: Int): Int = p
         public var staticVar: Int = 1

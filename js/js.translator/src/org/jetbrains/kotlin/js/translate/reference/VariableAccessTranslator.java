@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 
@@ -38,7 +38,7 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
             @NotNull JetReferenceExpression referenceExpression,
             @Nullable JsExpression receiver
     ) {
-        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(referenceExpression, context.bindingContext());
+        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(referenceExpression, context.bindingContext());
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall();
         }

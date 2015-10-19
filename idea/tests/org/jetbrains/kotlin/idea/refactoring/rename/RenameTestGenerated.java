@@ -143,6 +143,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameEmptyKotlinFile/renameFile.test")
+    public void testRenameEmptyKotlinFile_RenameFile() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameEmptyKotlinFile/renameFile.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameEquals/equals.test")
     public void testRenameEquals_Equals() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameEquals/equals.test");

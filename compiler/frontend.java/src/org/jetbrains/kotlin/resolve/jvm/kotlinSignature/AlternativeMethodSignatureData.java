@@ -22,7 +22,6 @@ import com.intellij.util.containers.ComparatorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
@@ -31,16 +30,14 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.load.java.structure.JavaMember;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
-import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
-import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +46,6 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.UPPER_BOUND;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class AlternativeMethodSignatureData extends ElementAlternativeSignatureData {
@@ -83,7 +79,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         }
 
         setAnnotated(true);
-        altFunDeclaration = JetPsiFactory(project).createFunction(signature);
+        altFunDeclaration = JetPsiFactoryKt.JetPsiFactory(project).createFunction(signature);
 
         originalToAltTypeParameters = JavaResolverUtils.recreateTypeParametersAndReturnMapping(methodTypeParameters, null);
 
@@ -125,7 +121,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
             @Nullable JetType returnType
     ) {
-        if (JvmPackage.getPLATFORM_TYPES()) return;
+        if (JavaDescriptorResolverKt.getPLATFORM_TYPES()) return;
         TypeSubstitutor substitutor = JavaResolverUtils.createSubstitutorForTypeParameters(originalToAltTypeParameters);
 
         for (ValueParameterDescriptor parameter : valueParameters) {
@@ -260,7 +256,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             if (altUpperBounds.size() != originalUpperBounds.size()) {
                 if (altUpperBounds.isEmpty()
                     && originalUpperBounds.size() == 1
-                    && TypeUtilPackage.isDefaultBound(originalUpperBounds.iterator().next())) {
+                    && TypeUtilsKt.isDefaultBound(originalUpperBounds.iterator().next())) {
                     // Only default bound => no error
                 }
                 else {

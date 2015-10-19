@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.idea.codeInsight.surroundWith.KotlinSurrounderUtils;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.MoveDeclarationsOutHelper;
 import org.jetbrains.kotlin.psi.*;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder {
     @Nullable
     @Override
@@ -40,7 +38,7 @@ public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder 
             return null;
         }
 
-        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(project);
         JetCallExpression callExpression = (JetCallExpression) psiFactory.createExpression("run {\n}");
         callExpression = (JetCallExpression) container.addAfter(callExpression, statements[statements.length - 1]);
         container.addBefore(psiFactory.createWhiteSpace(), callExpression);

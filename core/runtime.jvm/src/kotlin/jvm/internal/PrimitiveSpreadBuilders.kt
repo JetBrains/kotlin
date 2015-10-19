@@ -62,7 +62,7 @@ private abstract class PrimitiveSpreadBuilder<T : Any>(private val size: Int) {
 
 public class ByteSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<ByteArray>(size) {
     private val values: ByteArray = ByteArray(size)
-    override fun ByteArray.getSize(): Int = this.size()
+    override fun ByteArray.getSize(): Int = this.size
 
     public fun add(value: Byte) {
         values[position++] = value
@@ -73,7 +73,7 @@ public class ByteSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<ByteArray>(si
 
 public class CharSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<CharArray>(size) {
     private val values: CharArray = CharArray(size)
-    override fun CharArray.getSize(): Int = this.size()
+    override fun CharArray.getSize(): Int = this.size
 
     public fun add(value: Char) {
         values[position++] = value
@@ -84,7 +84,7 @@ public class CharSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<CharArray>(si
 
 public class DoubleSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<DoubleArray>(size) {
     private val values: DoubleArray = DoubleArray(size)
-    override fun DoubleArray.getSize(): Int = this.size()
+    override fun DoubleArray.getSize(): Int = this.size
 
     public fun add(value: Double) {
         values[position++] = value
@@ -95,7 +95,7 @@ public class DoubleSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<DoubleArray
 
 public class FloatSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<FloatArray>(size) {
     private val values: FloatArray = FloatArray(size)
-    override fun FloatArray.getSize(): Int = this.size()
+    override fun FloatArray.getSize(): Int = this.size
 
     public fun add(value: Float) {
         values[position++] = value
@@ -106,7 +106,7 @@ public class FloatSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<FloatArray>(
 
 public class IntSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<IntArray>(size) {
     private val values: IntArray = IntArray(size)
-    override fun IntArray.getSize(): Int = this.size()
+    override fun IntArray.getSize(): Int = this.size
 
     public fun add(value: Int) {
         values[position++] = value
@@ -117,7 +117,7 @@ public class IntSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<IntArray>(size
 
 public class LongSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<LongArray>(size) {
     private val values: LongArray = LongArray(size)
-    override fun LongArray.getSize(): Int = this.size()
+    override fun LongArray.getSize(): Int = this.size
 
     public fun add(value: Long) {
         values[position++] = value
@@ -128,7 +128,7 @@ public class LongSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<LongArray>(si
 
 public class ShortSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<ShortArray>(size) {
     private val values: ShortArray = ShortArray(size)
-    override fun ShortArray.getSize(): Int = this.size()
+    override fun ShortArray.getSize(): Int = this.size
 
     public fun add(value: Short) {
         values[position++] = value
@@ -139,7 +139,7 @@ public class ShortSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<ShortArray>(
 
 public class BooleanSpreadBuilder(size: Int) : PrimitiveSpreadBuilder<BooleanArray>(size) {
     private val values: BooleanArray = BooleanArray(size)
-    override fun BooleanArray.getSize(): Int = this.size()
+    override fun BooleanArray.getSize(): Int = this.size
 
     public fun add(value: Boolean) {
         values[position++] = value

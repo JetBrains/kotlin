@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
-import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.types.Variance.INVARIANT;
 
 public class SingleAbstractMethodUtils {
@@ -103,7 +103,7 @@ public class SingleAbstractMethodUtils {
                 JetType type = fixProjections(substitute);
                 if (type == null) return null;
 
-                if (JvmPackage.getPLATFORM_TYPES() && TypesPackage.isNullabilityFlexible(samType)) {
+                if (JavaDescriptorResolverKt.getPLATFORM_TYPES() && FlexibleTypesKt.isNullabilityFlexible(samType)) {
                     return LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(type, TypeUtils.makeNullable(type));
                 }
 
@@ -122,7 +122,7 @@ public class SingleAbstractMethodUtils {
         for (ValueParameterDescriptor parameter : valueParameters) {
             parameterTypes.add(parameter.getType());
         }
-        return getBuiltIns(function).getFunctionType(Annotations.Companion.getEMPTY(), null, parameterTypes, returnType);
+        return DescriptorUtilsKt.getBuiltIns(function).getFunctionType(Annotations.Companion.getEMPTY(), null, parameterTypes, returnType);
     }
 
     private static boolean isSamInterface(@NotNull ClassDescriptor klass) {

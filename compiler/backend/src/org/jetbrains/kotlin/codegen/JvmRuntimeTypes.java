@@ -24,14 +24,13 @@ import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.TargetPlatformKt;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
-
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 public class JvmRuntimeTypes {
     private final ClassDescriptor lambda;
@@ -77,7 +76,7 @@ public class JvmRuntimeTypes {
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
 
         //noinspection ConstantConditions
-        JetType functionType = getBuiltIns(descriptor).getFunctionType(
+        JetType functionType = DescriptorUtilsKt.getBuiltIns(descriptor).getFunctionType(
                 Annotations.Companion.getEMPTY(),
                 receiverParameter == null ? null : receiverParameter.getType(),
                 ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
@@ -96,7 +95,7 @@ public class JvmRuntimeTypes {
                 extensionReceiver != null ? extensionReceiver.getType() : dispatchReceiver != null ? dispatchReceiver.getType() : null;
 
         //noinspection ConstantConditions
-        JetType functionType = getBuiltIns(descriptor).getFunctionType(
+        JetType functionType = DescriptorUtilsKt.getBuiltIns(descriptor).getFunctionType(
                 Annotations.Companion.getEMPTY(),
                 receiverType,
                 ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),

@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import org.jetbrains.annotations.NotNull
 
 public open class QuickFixWithDelegateFactory(
-        private val delegateFactory: () -> IntentionAction
+        private val delegateFactory: () -> IntentionAction?
 ) : IntentionAction {
     private val familyName: String
     private val text: String
@@ -32,25 +32,49 @@ public open class QuickFixWithDelegateFactory(
 
     init {
         val delegate = delegateFactory()
-        familyName = delegate.familyName
-        text = delegate.text
-        startInWriteAction = delegate.startInWriteAction()
+        familyName = delegate?.familyName ?: ""
+        text = delegate?.text ?: ""
+        startInWriteAction = delegate != null && delegate.startInWriteAction()
     }
 
     override fun getFamilyName() = familyName
 
     override fun getText() = text
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) =
-            delegateFactory().isAvailable(project, editor, file)
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        val action = delegateFactory() ?: return false
+        return action.isAvailable(project, editor, file)
+    }
 
     override fun startInWriteAction() = startInWriteAction
 
-    override fun invoke(@NotNull project: Project, editor: Editor?, file: PsiFile?) {
-        delegateFactory().invoke(project, editor, file)
+    override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
+        val action = delegateFactory() ?: return
+
+        assert(action.detectPriority() == this.detectPriority()) {
+            "Incorrect priority of QuickFixWithDelegateFactory wrapper for ${action.javaClass.name}"
+        }
+
+        action.invoke(project, editor, file)
     }
 }
 
 public class LowPriorityQuickFixWithDelegateFactory(
-        delegateFactory: () -> IntentionAction
+        delegateFactory: () -> IntentionAction?
 ): QuickFixWithDelegateFactory(delegateFactory), LowPriorityAction
+
+public class HighPriorityQuickFixWithDelegateFactory(
+        delegateFactory: () -> IntentionAction?
+): QuickFixWithDelegateFactory(delegateFactory), HighPriorityAction
+
+enum class IntentionActionPriority {
+    LOW, NORMAL, HIGH
+}
+
+fun IntentionAction.detectPriority(): IntentionActionPriority {
+    return when (this) {
+        is LowPriorityAction -> IntentionActionPriority.LOW
+        is HighPriorityAction -> IntentionActionPriority.HIGH
+        else -> IntentionActionPriority.NORMAL
+    }
+}

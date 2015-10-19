@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 
 
-public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecondaryConstructor) : JetIntentionAction<JetSecondaryConstructor>(element) {
+public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecondaryConstructor) : KotlinQuickFixAction<JetSecondaryConstructor>(element) {
     override fun getText() = JetBundle.message("insert.delegation.call", keywordToUse)
     override fun getFamilyName() = "Insert explicit delegation call"
 

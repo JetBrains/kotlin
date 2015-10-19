@@ -24,7 +24,7 @@ import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
@@ -77,7 +77,7 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
         OutputFileCollection outputFiles =
                 GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, environment);
-        OutputUtilsPackage.writeAllTo(outputFiles, tmpdir);
+        OutputUtilsKt.writeAllTo(outputFiles, tmpdir);
     }
 
     @NotNull
@@ -90,7 +90,7 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
             text = FileUtil.loadFile(file, true);
         }
         catch (IOException e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
 
         return new Pair(JetTestUtils.createFile(file.getName(), text, environment.getProject()), environment);
@@ -122,7 +122,7 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
     private static List<Integer> extractActualLineNumbersFromBytecode(@NotNull GenerationState state, boolean testFunInvoke) {
         ClassFileFactory factory = state.getFactory();
         List<Integer> actualLineNumbers = Lists.newArrayList();
-        for (OutputFile outputFile : CodegenPackage.getClassFiles(factory)) {
+        for (OutputFile outputFile : ClassFileUtilsKt.getClassFiles(factory)) {
             if (PackageClassUtils.isPackageClassFqName(new FqName(FileUtil.getNameWithoutExtension(outputFile.getRelativePath())))) {
                 // Don't test line numbers in *Package facade classes
                 continue;
@@ -134,7 +134,7 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
             }
             catch (Throwable e) {
                 System.out.println(factory.createText());
-                throw UtilsPackage.rethrow(e);
+                throw ExceptionUtilsKt.rethrow(e);
             }
         }
 

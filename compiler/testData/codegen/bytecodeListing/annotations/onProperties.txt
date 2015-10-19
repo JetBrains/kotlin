@@ -1,15 +1,15 @@
 @kotlin.jvm.internal.KotlinClass A {
     private @AnnField field p: int
-    private @AnnField field x: int
+    private final @AnnField field x: int
     private field y: int
-    private synthetic deprecated @AnnProp @AnnProp2 method p$annotations(): void
-    public @AnnGetter method getP(): int
-    public @AnnSetter method setP(@AnnParam p0: int): void
-    private synthetic deprecated @AnnProp2 method x$annotations(): void
-    public method getX(): int
-    public @AnnGetter method getY(): int
-    public @AnnSetter method setY(p0: int): void
     public method <init>(@AnnParam p0: int, @AnnParam p1: int): void
+    public final @AnnGetter method getP(): int
+    public final method getX(): int
+    public final @AnnGetter method getY(): int
+    private synthetic deprecated final @AnnProp @AnnProp2 method p$annotations(): void
+    public final @AnnSetter method setP(@AnnParam p0: int): void
+    public final @AnnSetter method setY(p0: int): void
+    private synthetic deprecated final @AnnProp2 method x$annotations(): void
 }
 
 @java.lang.annotation.Retention @kotlin.jvm.internal.KotlinClass AnnField

@@ -1,4 +1,4 @@
-fun foo(kotlin.<caret>) { }
+fun foo(@kotlin.<caret>) { }
 
 // INVOCATION_COUNT: 1
 // EXIST: Suppress

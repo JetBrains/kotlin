@@ -1,4 +1,6 @@
 // "Add 'const' modifier" "true"
+// ERROR: Only 'const val' can be used in constant expressions
+
 package constVal
 
 const val i = 1

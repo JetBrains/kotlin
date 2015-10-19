@@ -267,14 +267,18 @@ public class CandidateResolver(
     }
 
     private fun CallCandidateResolutionContext<*>.checkNonExtensionCalledWithReceiver() = checkAndReport {
-        if (isSynthesizedInvoke(candidateCall.getCandidateDescriptor())
-            && !KotlinBuiltIns.isExtensionFunctionType(candidateCall.getDispatchReceiver().getType())
+        val call = candidateCall.call
+        if (call is CallTransformer.CallForImplicitInvoke && candidateCall.extensionReceiver.exists()
+                && candidateCall.dispatchReceiver.exists()
         ) {
-            tracing.freeFunctionCalledAsExtension(trace)
-            OTHER_ERROR
-        } else {
-            SUCCESS
+            if (call.dispatchReceiver == candidateCall.dispatchReceiver
+                    && !KotlinBuiltIns.isExactExtensionFunctionType(call.dispatchReceiver.type)
+            ) {
+                tracing.nonExtensionFunctionCalledAsExtension(trace)
+                return@checkAndReport OTHER_ERROR
+            }
         }
+        SUCCESS
     }
 
     private fun getReceiverSuper(receiver: ReceiverValue): JetSuperExpression? {
@@ -500,8 +504,11 @@ public class CandidateResolver(
     private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.shouldContinue() =
             candidateResolveMode == CandidateResolveMode.FULLY || candidateCall.getStatus().possibleTransformToSuccess()
 
-    private inline fun <D : CallableDescriptor> CallCandidateResolutionContext<D>
-            .check(checker: CallCandidateResolutionContext<D>.() -> Unit): Unit = if (shouldContinue()) checker()
+    private inline fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.check(
+            checker: CallCandidateResolutionContext<D>.() -> Unit
+    ) {
+        if (shouldContinue()) checker()
+    }
 
     private inline fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.
             checkAndReport(checker: CallCandidateResolutionContext<D>.() -> ResolutionStatus) {

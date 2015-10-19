@@ -1,9 +1,5 @@
 class A {
-    fun test(b: B) {
+    fun test(b: A.() -> Unit) {
         b()
     }
-}
-
-class B() {
-    fun A.invoke() {}
 }

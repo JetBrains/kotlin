@@ -97,11 +97,10 @@ JetFile: FunctionsNotPlatform.kt
                     VALUE_PARAMETER_LIST
                       PsiElement(LPAR)('(')
                       VALUE_PARAMETER
-                        MODIFIER_LIST
-                          PsiElement(out)('out')
                         TYPE_REFERENCE
-                          PsiErrorElement:Type expected
-                            <empty list>
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('out')
                       PsiElement(RPAR)(')')
                     PsiWhiteSpace(' ')
                     PsiElement(ARROW)('->')
@@ -145,11 +144,10 @@ JetFile: FunctionsNotPlatform.kt
                     VALUE_PARAMETER_LIST
                       PsiElement(LPAR)('(')
                       VALUE_PARAMETER
-                        MODIFIER_LIST
-                          PsiElement(out)('out')
                         TYPE_REFERENCE
-                          PsiErrorElement:Type expected
-                            <empty list>
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('out')
                       PsiElement(RPAR)(')')
                     PsiWhiteSpace(' ')
                     PsiElement(ARROW)('->')

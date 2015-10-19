@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils;
 import org.jetbrains.kotlin.idea.references.JetReference;
-import org.jetbrains.kotlin.idea.references.ReferencesPackage;
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
+import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
+import org.jetbrains.kotlin.idea.search.usagesSearch.UtilsKt;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
@@ -86,7 +86,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
                     }
 
                     if (container != null) {
-                        referencesToElements.put(ReferencesPackage.getMainReference(reference), container);
+                        referencesToElements.put(ReferenceUtilKt.getMainReference(reference), container);
                     }
                 }
             });
@@ -174,7 +174,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
                 new Condition<PsiReference>() {
                     @Override
                     public boolean value(PsiReference reference) {
-                        return UsagesSearchPackage.isConstructorUsage(reference, classOrObject);
+                        return UtilsKt.isConstructorUsage(reference, classOrObject);
                     }
                 },
                 defaultQueryProcessor(descriptor, methodToDescriptorMap, false)

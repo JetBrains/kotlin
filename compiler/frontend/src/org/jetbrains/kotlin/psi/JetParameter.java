@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinParameterStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
+import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +55,7 @@ public class JetParameter extends JetNamedDeclarationStub<KotlinParameterStub> i
     @Override
     @Nullable
     public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
-        return TypeRefHelpersPackage.setTypeReference(this, getNameIdentifier(), typeRef);
+        return TypeRefHelpersKt.setTypeReference(this, getNameIdentifier(), typeRef);
     }
 
     @Nullable

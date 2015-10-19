@@ -23,11 +23,10 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.psi.JetProperty;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.HashMap;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class AlternativeFieldSignatureData extends ElementAlternativeSignatureData {
     private JetType altReturnType;
@@ -46,7 +45,7 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
         }
 
         setAnnotated(true);
-        JetProperty altPropertyDeclaration = JetPsiFactory(project).createProperty(signature);
+        JetProperty altPropertyDeclaration = JetPsiFactoryKt.JetPsiFactory(project).createProperty(signature);
 
         try {
             checkForSyntaxErrors(altPropertyDeclaration);

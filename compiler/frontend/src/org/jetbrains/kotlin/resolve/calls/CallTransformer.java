@@ -52,8 +52,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 /**
  * CallTransformer treats specially 'variable as function' call case, other cases keeps unchanged (base realization).
  *
@@ -277,7 +275,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             this.explicitExtensionReceiver = explicitExtensionReceiver;
             this.calleeExpressionAsDispatchReceiver = calleeExpressionAsDispatchReceiver;
             this.fakeInvokeExpression =
-                    (JetSimpleNameExpression) JetPsiFactory(call.getCallElement())
+                    (JetSimpleNameExpression) JetPsiFactoryKt.JetPsiFactory(call.getCallElement())
                             .createExpression(OperatorNameConventions.INVOKE.asString());
         }
 

@@ -23,10 +23,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
-import org.jetbrains.kotlin.codegen.context.CodegenContext;
-import org.jetbrains.kotlin.codegen.context.MethodContext;
-import org.jetbrains.kotlin.codegen.context.PackageContext;
-import org.jetbrains.kotlin.codegen.context.RootContext;
+import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -34,11 +31,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunction;
-import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilPackage;
+import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -81,7 +77,7 @@ public class JvmCodegenUtil {
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
-                 (context.getParentContext() instanceof PackageContext
+                 ((context.getParentContext() instanceof PackageContext || context.getParentContext() instanceof MultifileClassPartContext)
                   && isSamePackageInSameModule(context.getParentContext().getContextDescriptor(), containingDeclaration)))
                 && context.getContextKind() != OwnerKind.DEFAULT_IMPLS);
     }
@@ -144,8 +140,7 @@ public class JvmCodegenUtil {
         if (JetTypeMapper.isAccessor(property)) return false;
 
         // Inline functions can't use direct access because a field may not be visible at the call site
-        if (context.isInlineFunction() &&
-            (!Visibilities.isPrivate(property.getVisibility()) || DescriptorUtils.isTopLevelDeclaration(property))) {
+        if (context.isInlineFunction() && !Visibilities.isPrivate(property.getVisibility())) {
             return false;
         }
 
@@ -172,7 +167,7 @@ public class JvmCodegenUtil {
 
     private static boolean isDebuggerContext(@NotNull MethodContext context) {
         JetFile file = DescriptorToSourceUtils.getContainingFile(context.getContextDescriptor());
-        return file != null && CodeFragmentUtilPackage.getSuppressDiagnosticsInDebugMode(file);
+        return file != null && CodeFragmentUtilKt.getSuppressDiagnosticsInDebugMode(file);
     }
 
     @Nullable

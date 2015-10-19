@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.completion.isAfterDot
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -59,11 +60,16 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                     if (target != null && IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(target) == qualifiedName) return
                 }
 
-                val tempPrefix = if (nameRef != null)
-                    " " // insert space so that any preceding spaces inserted by formatter on reference shortening are deleted
-                else
-                    "$;val v:" // if we have no reference in the current context we have a more complicated prefix to get one
-                val tempSuffix = ".xxx" // we add "xxx" after dot because of some bugs in resolve (see KT-5145)
+                val tempPrefix = if (nameRef != null) {
+                    val isAnnotation = CallTypeAndReceiver.detect(nameRef) is CallTypeAndReceiver.ANNOTATION
+                    // we insert space so that any preceding spaces inserted by formatter on reference shortening are deleted
+                    // (but not for annotations where spaces are not allowed after @)
+                    if (isAnnotation) "" else " "
+                }
+                else {
+                    "$;val v:"  // if we have no reference in the current context we have a more complicated prefix to get one
+                }
+                val tempSuffix = ".xxx" // we add "xxx" after dot because of KT-9606
                 document.replaceString(startOffset, context.getTailOffset(), tempPrefix + qualifiedName + tempSuffix)
 
                 psiDocumentManager.commitAllDocuments()

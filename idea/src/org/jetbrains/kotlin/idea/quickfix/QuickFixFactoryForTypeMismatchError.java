@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.core.CorePackage;
+import org.jetbrains.kotlin.idea.core.UtilsKt;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.TypeUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.JetType;
@@ -104,7 +104,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             JetExpression initializer = property.getInitializer();
             if (QuickFixUtil.canEvaluateTo(initializer, expression) ||
                 (getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(property.getGetter(), expression))) {
-                LexicalScope scope = CorePackage.getResolutionScope(property, context, ResolutionUtils.getResolutionFacade(property));
+                LexicalScope scope = UtilsKt.getResolutionScope(property, context, ResolutionUtils.getResolutionFacade(property));
                 JetType typeToInsert = TypeUtils.approximateWithResolvableType(expressionType, scope, false);
                 actions.add(new ChangeVariableTypeFix(property, typeToInsert));
             }
@@ -115,17 +115,17 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
         // Mismatch in returned expression:
 
         JetCallableDeclaration function = expressionParent instanceof JetReturnExpression
-                               ? BindingContextUtilPackage.getTargetFunction((JetReturnExpression) expressionParent, context)
+                               ? BindingContextUtilsKt.getTargetFunction((JetReturnExpression) expressionParent, context)
                                : PsiTreeUtil.getParentOfType(expression, JetFunction.class, true);
         if (function instanceof JetFunction && QuickFixUtil.canFunctionOrGetterReturnExpression(function, expression)) {
-            LexicalScope scope = CorePackage.getResolutionScope(function, context, ResolutionUtils.getResolutionFacade(function));
+            LexicalScope scope = UtilsKt.getResolutionScope(function, context, ResolutionUtils.getResolutionFacade(function));
             JetType typeToInsert = TypeUtils.approximateWithResolvableType(expressionType, scope, false);
             actions.add(new ChangeFunctionReturnTypeFix((JetFunction) function, typeToInsert));
         }
 
         // Fixing overloaded operators:
         if (expression instanceof JetOperationExpression) {
-            ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context);
+            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, context);
             if (resolvedCall != null) {
                 JetFunction declaration = getFunctionDeclaration(resolvedCall);
                 if (declaration != null) {
@@ -136,7 +136,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
 
         // Change function return type when TYPE_MISMATCH is reported on call expression:
         if (expression instanceof JetCallExpression) {
-            ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context);
+            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, context);
             if (resolvedCall != null) {
                 JetFunction declaration = getFunctionDeclaration(resolvedCall);
                 if (declaration != null) {
@@ -145,13 +145,13 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             }
         }
 
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilPackage.getParentResolvedCall(expression, context, true);
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getParentResolvedCall(expression, context, true);
         if (resolvedCall != null) {
             // to fix 'type mismatch' on 'if' branches
             // todo: the same with 'when'
             JetExpression parentIf = QuickFixUtil.getParentIfForBranch(expression);
             JetExpression argumentExpression = (parentIf != null) ? parentIf : expression;
-            ValueArgument valueArgument = CallUtilPackage.getValueArgumentForExpression(resolvedCall.getCall(), argumentExpression);
+            ValueArgument valueArgument = CallUtilKt.getValueArgumentForExpression(resolvedCall.getCall(), argumentExpression);
             if (valueArgument != null) {
                 JetParameter correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument);
                 JetType valueArgumentType = diagnostic.getFactory() == Errors.NULL_FOR_NONNULL_TYPE
@@ -159,7 +159,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
                                             : context.getType(valueArgument.getArgumentExpression());
                 if (correspondingParameter != null && valueArgumentType != null) {
                     JetCallableDeclaration callable = PsiTreeUtil.getParentOfType(correspondingParameter, JetCallableDeclaration.class, true);
-                    LexicalScope scope = callable != null ? CorePackage.getResolutionScope(callable, context, ResolutionUtils
+                    LexicalScope scope = callable != null ? UtilsKt.getResolutionScope(callable, context, ResolutionUtils
                             .getResolutionFacade(callable)) : null;
                     JetType typeToInsert = TypeUtils.approximateWithResolvableType(valueArgumentType, scope, true);
                     actions.add(new ChangeParameterTypeFix(correspondingParameter, typeToInsert));

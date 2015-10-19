@@ -1,6 +1,6 @@
 package q
 
-native
+@native
 class Foo {
     // RUN:
     fun foo(s: Array<String>) = noImpl
@@ -8,7 +8,7 @@ class Foo {
 
 
 // RUN:
-native
+@native
 fun main(s: Array<String>) {
     println("Top-level")
 }

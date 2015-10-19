@@ -1,252 +1,146 @@
 JetFile: ShortAnnotations.kt
   PACKAGE_DIRECTIVE
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('buzz')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('zoo')
-    PsiWhiteSpace(' ')
-    PsiElement(package)('package')
-    PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('aa')
+    <empty list>
   IMPORT_LIST
     <empty list>
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('bar')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('buzz')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('zoo')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(package)('package')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('aa')
   PsiWhiteSpace('\n\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('bar')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('buzz')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('zoo')
+  PsiWhiteSpace(' ')
   CLASS
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('buzz')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('zoo')
-    PsiWhiteSpace(' ')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
   PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('bar')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('buzz')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('zoo')
+  PsiWhiteSpace(' ')
   OBJECT_DECLARATION
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('buzz')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('zoo')
-    PsiWhiteSpace(' ')
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
     OBJECT_DECLARATION_NAME
       PsiElement(IDENTIFIER)('B')
   PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('bar')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('buzz')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('zoo')
+  PsiWhiteSpace(' ')
   FUN
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('buzz')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('zoo')
-    PsiWhiteSpace(' ')
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('a')
@@ -258,64 +152,37 @@ JetFile: ShortAnnotations.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('bar')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('buzz')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('zoo')
+  PsiWhiteSpace(' ')
   PROPERTY
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('buzz')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('zoo')
-    PsiWhiteSpace(' ')
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('c')
@@ -332,64 +199,37 @@ JetFile: ShortAnnotations.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('0')
   PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('bar')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('buzz')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('zoo')
+  PsiWhiteSpace(' ')
   PROPERTY
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('buzz')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('zoo')
-    PsiWhiteSpace(' ')
     PsiElement(var)('var')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('v')
@@ -406,64 +246,37 @@ JetFile: ShortAnnotations.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('0')
   PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('foo')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('bar')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('buzz')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('T')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('zoo')
+  PsiWhiteSpace(' ')
   TYPEDEF
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('buzz')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('zoo')
-    PsiWhiteSpace(' ')
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('T')
@@ -483,64 +296,38 @@ JetFile: ShortAnnotations.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('bar')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('buzz')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('zoo')
+      PsiWhiteSpace(' ')
       OBJECT_DECLARATION
         MODIFIER_LIST
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('bar')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('buzz')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('zoo')
-          PsiWhiteSpace(' ')
           PsiElement(companion)('companion')
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
@@ -549,189 +336,108 @@ JetFile: ShortAnnotations.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n  ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('bar')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('buzz')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('zoo')
+      PsiWhiteSpace(' ')
       CLASS
-        MODIFIER_LIST
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('bar')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('buzz')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('zoo')
-        PsiWhiteSpace(' ')
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('A')
       PsiWhiteSpace('\n  ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('bar')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('buzz')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('zoo')
+      PsiWhiteSpace(' ')
       OBJECT_DECLARATION
-        MODIFIER_LIST
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('bar')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('buzz')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('zoo')
-        PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('B')
       PsiWhiteSpace('\n  ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('bar')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('buzz')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('zoo')
+      PsiWhiteSpace(' ')
       FUN
-        MODIFIER_LIST
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('bar')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('buzz')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('zoo')
-        PsiWhiteSpace(' ')
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('a')
@@ -743,64 +449,37 @@ JetFile: ShortAnnotations.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n  ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('bar')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('buzz')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('zoo')
+      PsiWhiteSpace(' ')
       PROPERTY
-        MODIFIER_LIST
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('bar')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('buzz')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('zoo')
-        PsiWhiteSpace(' ')
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('c')
@@ -817,64 +496,37 @@ JetFile: ShortAnnotations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('0')
       PsiWhiteSpace('\n  ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('bar')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('buzz')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('zoo')
+      PsiWhiteSpace(' ')
       PROPERTY
-        MODIFIER_LIST
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('bar')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('buzz')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('zoo')
-        PsiWhiteSpace(' ')
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('v')
@@ -891,64 +543,37 @@ JetFile: ShortAnnotations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('0')
       PsiWhiteSpace('\n  ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('bar')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('buzz')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('zoo')
+      PsiWhiteSpace(' ')
       TYPEDEF
-        MODIFIER_LIST
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('bar')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('buzz')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('zoo')
-        PsiWhiteSpace(' ')
         PsiElement(typealias)('typealias')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('T')
@@ -960,64 +585,37 @@ JetFile: ShortAnnotations.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
       PsiWhiteSpace('\n\n  ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('bar')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('buzz')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('T')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('zoo')
+      PsiWhiteSpace(' ')
       ANONYMOUS_INITIALIZER
-        MODIFIER_LIST
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('bar')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('buzz')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RPAR)(')')
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          PsiWhiteSpace(' ')
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('zoo')
-        PsiWhiteSpace(' ')
         PsiElement(init)('init')
         PsiWhiteSpace(' ')
         BLOCK
@@ -1043,18 +641,16 @@ JetFile: ShortAnnotations.kt
         PsiElement(LPAR)('(')
         PROPERTY
           MODIFIER_LIST
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('foo')
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -1066,10 +662,9 @@ JetFile: ShortAnnotations.kt
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
                 PsiElement(RPAR)(')')
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -1089,10 +684,9 @@ JetFile: ShortAnnotations.kt
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
                 PsiElement(RPAR)(')')
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -1107,6 +701,69 @@ JetFile: ShortAnnotations.kt
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        WHEN_ENTRY
+          WHEN_CONDITION_WITH_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n  ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            BINARY_EXPRESSION
+              BINARY_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(IDENTIFIER)('bar')
+                PARENTHESIZED
+                  PsiElement(LPAR)('(')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(IDENTIFIER)('buzz')
+              PsiErrorElement:Expecting an element
+                PsiElement(LT)('<')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('T')
+            CALL_EXPRESSION
+              PsiErrorElement:Expecting an element
+                PsiElement(GT)('>')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('zoo')
+          PsiWhiteSpace(' ')
+          PROPERTY
+            PsiElement(val)('val')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(LBRACE)('{')

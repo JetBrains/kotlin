@@ -1,9 +1,9 @@
 class A {
-    fun get(vararg x: Int) = x.size()
+    fun get(vararg x: Int) = x.size
 }
 
 class B {
-    fun get(vararg x: Unit) = x.size()
+    fun get(vararg x: Unit) = x.size
 }
 
 fun test1(a: A): Int {

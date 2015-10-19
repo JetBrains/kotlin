@@ -15,6 +15,16 @@ public final class Example {
     public final operator fun unaryPlus(): kotlin.Int
 }
 
+public final class Example2 {
+    public constructor Example2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun minus(): Example2
+    public final operator fun plus(): Example2
+    public final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public final class ExampleDeprecated {
     public constructor ExampleDeprecated()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

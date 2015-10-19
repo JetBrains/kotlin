@@ -35,12 +35,18 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 public class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 
     public fun check(annotated: JetAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
-        if (annotated is JetTypeParameter) return // TODO: support type parameter annotations
         val actualTargets = getActualTargetList(annotated, descriptor)
         checkEntries(annotated.annotationEntries, actualTargets, trace)
         if (annotated is JetCallableDeclaration) {
             annotated.typeReference?.let { check(it, trace) }
             annotated.receiverTypeReference?.let { check(it, trace) }
+        }
+        if (annotated is JetTypeParameterListOwner && annotated is JetCallableDeclaration) {
+            // TODO: support type parameter annotations for type parameters on classes and properties
+            annotated.typeParameters.forEach { check(it, trace) }
+        }
+        if (annotated is JetTypeReference) {
+            annotated.typeElement?.typeArgumentsAsTypes?.filterNotNull()?.forEach { check(it, trace) }
         }
         if (annotated is JetDeclarationWithBody) {
             // JetFunction or JetPropertyAccessor

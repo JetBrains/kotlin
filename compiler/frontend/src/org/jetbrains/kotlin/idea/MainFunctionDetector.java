@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.Variance;
@@ -108,7 +108,7 @@ public class MainFunctionDetector {
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
         return containingDeclaration instanceof ClassDescriptor
                && ((ClassDescriptor) containingDeclaration).getKind().isSingleton()
-               && AnnotationsPackage.hasPlatformStaticAnnotation(functionDescriptor);
+               && AnnotationUtilKt.hasPlatformStaticAnnotation(functionDescriptor);
     }
 
     @Nullable

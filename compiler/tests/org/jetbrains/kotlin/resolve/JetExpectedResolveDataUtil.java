@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
-import org.jetbrains.kotlin.tests.di.DiPackage;
+import org.jetbrains.kotlin.tests.di.InjectionKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
@@ -117,7 +117,7 @@ public class JetExpectedResolveDataUtil {
     @NotNull
     private static PsiClass findClass(String qualifiedName, Project project, KotlinCoreEnvironment environment) {
         ModuleDescriptor module = LazyResolveTestUtil.resolveProject(project, environment);
-        ClassDescriptor classDescriptor = DescriptorUtilPackage.resolveTopLevelClass(module, new FqName(qualifiedName), NoLookupLocation.FROM_TEST);
+        ClassDescriptor classDescriptor = DescriptorUtilsKt.resolveTopLevelClass(module, new FqName(qualifiedName), NoLookupLocation.FROM_TEST);
         assertNotNull("Class descriptor wasn't resolved: " + qualifiedName, classDescriptor);
         PsiClass psiClass = (PsiClass) DescriptorToSourceUtils.getSourceFromDescriptor(classDescriptor);
         assertNotNull("Class declaration wasn't found: " + classDescriptor, psiClass);
@@ -132,12 +132,12 @@ public class JetExpectedResolveDataUtil {
             JetType... parameterTypes
     ) {
         ModuleDescriptorImpl emptyModule = JetTestUtils.createEmptyModule();
-        ContainerForTests container = DiPackage.createContainerForTests(project, emptyModule);
+        ContainerForTests container = InjectionKt.createContainerForTests(project, emptyModule);
         emptyModule.setDependencies(emptyModule);
         emptyModule.initialize(PackageFragmentProvider.Empty.INSTANCE$);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                new BindingTraceContext(), UtilsPackage.memberScopeAsFileScope(classDescriptor.getDefaultType().getMemberScope()),
+                new BindingTraceContext(), ScopeUtilsKt.memberScopeAsFileScope(classDescriptor.getDefaultType().getMemberScope()),
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         OverloadResolutionResults<FunctionDescriptor> functions = container.getFakeCallResolver().resolveFakeCall(

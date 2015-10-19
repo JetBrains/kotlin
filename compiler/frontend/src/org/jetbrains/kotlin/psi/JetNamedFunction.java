@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
+import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
 import java.util.Collections;
 import java.util.List;
@@ -184,13 +184,13 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<KotlinFuncti
             }
             return typeReferences.get(returnTypeIndex);
         }
-        return TypeRefHelpersPackage.getTypeReference(this);
+        return TypeRefHelpersKt.getTypeReference(this);
     }
 
     @Override
     @Nullable
     public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
-        return TypeRefHelpersPackage.setTypeReference(this, getValueParameterList(), typeRef);
+        return TypeRefHelpersKt.setTypeReference(this, getValueParameterList(), typeRef);
     }
 
     @Nullable

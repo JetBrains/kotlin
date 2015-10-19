@@ -947,57 +947,6 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         }
     }
 
-    @TestMetadata("j2k/testData/fileOrElement/codeSimplifications")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class CodeSimplifications extends AbstractJavaToKotlinConverterForWebDemoTest {
-        public void testAllFilesPresentInCodeSimplifications() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/codeSimplifications"), Pattern.compile("^(.+)\\.java$"), true);
-        }
-
-        @TestMetadata("IfNullReturnToElvis.java")
-        public void testIfNullReturnToElvis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/IfNullReturnToElvis.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("IfToElvis.java")
-        public void testIfToElvis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/IfToElvis.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("IfToSafeCall.java")
-        public void testIfToSafeCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/IfToSafeCall.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NotIs.java")
-        public void testNotIs() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/NotIs.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("RedundantTypeCast.java")
-        public void testRedundantTypeCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/RedundantTypeCast.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("RedundantTypeCastAndInline.java")
-        public void testRedundantTypeCastAndInline() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/RedundantTypeCastAndInline.java");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SyntheticExtensionPropertyAccess.java")
-        public void testSyntheticExtensionPropertyAccess() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/SyntheticExtensionPropertyAccess.java");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("j2k/testData/fileOrElement/comments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3148,6 +3097,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("specialBuiltinMembers.java")
+        public void testSpecialBuiltinMembers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/specialBuiltinMembers.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("stringMethods.java")
         public void testStringMethods() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/stringMethods.java");
@@ -3688,6 +3643,63 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("unassignedShiftRight.java")
         public void testUnassignedShiftRight() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/unassignedShiftRight.java");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("j2k/testData/fileOrElement/postProcessing")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PostProcessing extends AbstractJavaToKotlinConverterForWebDemoTest {
+        public void testAllFilesPresentInPostProcessing() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/postProcessing"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("GetOperator.java")
+        public void testGetOperator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/GetOperator.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IfNullReturnToElvis.java")
+        public void testIfNullReturnToElvis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/IfNullReturnToElvis.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IfToElvis.java")
+        public void testIfToElvis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/IfToElvis.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("IfToSafeCall.java")
+        public void testIfToSafeCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/IfToSafeCall.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotIs.java")
+        public void testNotIs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/NotIs.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("RedundantTypeCast.java")
+        public void testRedundantTypeCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/RedundantTypeCast.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("RedundantTypeCastAndInline.java")
+        public void testRedundantTypeCastAndInline() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/RedundantTypeCastAndInline.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SyntheticExtensionPropertyAccess.java")
+        public void testSyntheticExtensionPropertyAccess() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/SyntheticExtensionPropertyAccess.java");
             doTest(fileName);
         }
     }

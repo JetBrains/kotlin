@@ -221,7 +221,7 @@ fun specialJVM(): List<GenericFunction> {
         returns("List<T>")
         body(ArraysOfObjects) {
             """
-            return Arrays.asList(*this)
+            return ArraysUtilJVM.asList(this)
             """
         }
 

@@ -71,6 +71,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
+    @TestMetadata("mainInFiles")
+    public void testMainInFiles() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/mainInFiles/");
+        doTest(fileName);
+    }
+
     @TestMetadata("moduleName")
     public void testModuleName() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/moduleName/");

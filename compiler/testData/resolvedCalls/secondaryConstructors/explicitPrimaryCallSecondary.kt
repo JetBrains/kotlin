@@ -7,4 +7,4 @@ class A(x: Double) {
     }
 }
 
-<caret>A("abc")
+val v = <caret>A("abc")

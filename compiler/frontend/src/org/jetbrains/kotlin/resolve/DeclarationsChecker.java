@@ -353,7 +353,6 @@ public class DeclarationsChecker {
             if (typeParameter != null) {
                 DescriptorResolver.checkConflictingUpperBounds(trace, typeParameter, jetTypeParameter);
             }
-            annotationChecker.check(jetTypeParameter, trace, null);
         }
     }
 
@@ -515,8 +514,7 @@ public class DeclarationsChecker {
         if (modifier == null) return;
 
         if (!propertyDescriptor.isVar()) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER_IMMUTABLE.on(modifier));
-            return;
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is allowed only on mutable properties"));
         }
 
         boolean returnTypeIsNullable = true;
@@ -529,32 +527,29 @@ public class DeclarationsChecker {
         }
 
         if (returnTypeIsNullable) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE.on(modifier));
-            return;
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on nullable properties"));
         }
 
         if (returnTypeIsPrimitive) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE.on(modifier));
-            return;
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on primitive type properties"));
         }
 
-        if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER_ABSTRACT_PROPERTY.on(modifier));
-            return;
+        boolean isAbstract = propertyDescriptor.getModality() == Modality.ABSTRACT;
+        if (isAbstract) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on abstract properties"));
         }
 
         if (property instanceof JetParameter) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER_PRIMARY_CONSTRUCTOR_PARAMETER.on(modifier));
-            return;
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on primary constructor parameters"));
         }
 
-        boolean hasBackingField =
-                Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
-
-        boolean hasDelegateOrInitializer = false;
-
+        boolean hasDelegateExpressionOrInitializer = false;
         if (property instanceof JetProperty) {
-            hasDelegateOrInitializer = ((JetProperty) property).hasDelegateExpressionOrInitializer();
+            hasDelegateExpressionOrInitializer = ((JetProperty) property).hasDelegateExpressionOrInitializer();
+            if (hasDelegateExpressionOrInitializer) {
+                trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier,
+                        "is not allowed on properties with initializer or on delegated properties"));
+            }
         }
 
         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
@@ -568,9 +563,19 @@ public class DeclarationsChecker {
             customGetterOrSetter |= setter.hasBody();
         }
 
-        if (!hasBackingField || hasDelegateOrInitializer || customGetterOrSetter
-                || propertyDescriptor.getExtensionReceiverParameter() != null) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier));
+        if (!hasDelegateExpressionOrInitializer && customGetterOrSetter) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties with a custom getter or setter"));
+        }
+
+        boolean hasBackingField =
+                Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
+
+        if (!isAbstract && !customGetterOrSetter && !hasDelegateExpressionOrInitializer && !hasBackingField) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties without backing field"));
+        }
+
+        if (propertyDescriptor.getExtensionReceiverParameter() != null) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on extension properties"));
         }
     }
 

@@ -22,7 +22,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.ClassFileFactory;
@@ -113,7 +113,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
 
         ClassFileFactory outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetCoreEnvironment);
 
-        OutputUtilsPackage.writeAllTo(outputFiles, outputDir);
+        OutputUtilsKt.writeAllTo(outputFiles, outputDir);
 
         Disposer.dispose(disposable);
         return outputFiles;

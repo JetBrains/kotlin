@@ -1,4 +1,4 @@
-Deprecated("") fun f(x: Int) = 2
+@Deprecated("") fun f(x: Int) = 2
 fun f(x: Int, y: Boolean) = 3
 
 fun d(x: Int) {

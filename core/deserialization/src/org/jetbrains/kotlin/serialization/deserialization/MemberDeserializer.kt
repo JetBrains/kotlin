@@ -42,25 +42,26 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 Flags.IS_VAR.get(flags),
                 c.nameResolver.getName(proto.getName()),
                 Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)),
+                Flags.IS_LATEINIT.get(flags),
+                Flags.IS_CONST.get(flags),
                 proto,
                 c.nameResolver,
-                Flags.IS_LATEINIT.get(flags),
-                Flags.IS_CONST.get(flags)
+                c.typeTable
         )
 
         val local = c.childContext(property, proto.getTypeParameterList())
 
         val hasGetter = Flags.HAS_GETTER.get(flags)
-        val receiverAnnotations = if (hasGetter && proto.hasReceiverType())
+        val receiverAnnotations = if (hasGetter && (proto.hasReceiverType() || proto.hasReceiverTypeId()))
             getReceiverParameterAnnotations(proto, AnnotatedCallableKind.PROPERTY_GETTER)
         else
             Annotations.EMPTY
 
         property.setType(
-                local.typeDeserializer.type(proto.getReturnType()),
+                local.typeDeserializer.type(proto.returnType(c.typeTable)),
                 local.typeDeserializer.ownTypeParameters,
                 getDispatchReceiverParameter(),
-                if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType(), receiverAnnotations) else null
+                proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) }
         )
 
         val getter = if (hasGetter) {
@@ -130,18 +131,18 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     public fun loadFunction(proto: ProtoBuf.Function): FunctionDescriptor {
-        val annotations = getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION)
-        val receiverAnnotations = if (proto.hasReceiverType())
+        val annotations = getAnnotations(proto, proto.flags, AnnotatedCallableKind.FUNCTION)
+        val receiverAnnotations = if (proto.hasReceiverType() || proto.hasReceiverTypeId())
             getReceiverParameterAnnotations(proto, AnnotatedCallableKind.FUNCTION)
         else Annotations.EMPTY
-        val function = DeserializedSimpleFunctionDescriptor.create(c.containingDeclaration, proto, c.nameResolver, annotations)
-        val local = c.childContext(function, proto.getTypeParameterList())
+        val function = DeserializedSimpleFunctionDescriptor.create(c.containingDeclaration, annotations, proto, c.nameResolver, c.typeTable)
+        val local = c.childContext(function, proto.typeParameterList)
         function.initialize(
-                if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType(), receiverAnnotations) else null,
+                proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) },
                 getDispatchReceiverParameter(),
                 local.typeDeserializer.ownTypeParameters,
                 local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
-                local.typeDeserializer.type(proto.returnType),
+                local.typeDeserializer.type(proto.returnType(c.typeTable)),
                 Deserialization.modality(Flags.MODALITY.get(proto.flags)),
                 Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
         )
@@ -158,7 +159,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         val classDescriptor = c.containingDeclaration as ClassDescriptor
         val descriptor = DeserializedConstructorDescriptor(
                 classDescriptor, null, getAnnotations(proto, proto.flags, AnnotatedCallableKind.FUNCTION),
-                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver
+                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver, c.typeTable
         )
         val local = c.childContext(descriptor, listOf())
         descriptor.initialize(
@@ -209,9 +210,9 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                     callableDescriptor, null, i,
                     containerOfCallable?.let { getParameterAnnotations(it, callable, kind, i, proto) } ?: Annotations.EMPTY,
                     c.nameResolver.getName(proto.name),
-                    c.typeDeserializer.type(proto.type),
+                    c.typeDeserializer.type(proto.type(c.typeTable)),
                     Flags.DECLARES_DEFAULT_VALUE.get(flags),
-                    if (proto.hasVarargElementType()) c.typeDeserializer.type(proto.varargElementType) else null,
+                    proto.varargElementType(c.typeTable)?.let { c.typeDeserializer.type(it) },
                     SourceElement.NO_SOURCE
             )
         }.toReadOnlyList()
@@ -230,8 +231,8 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer? = when(this) {
-        is PackageFragmentDescriptor -> ProtoContainer(null, fqName, c.nameResolver)
-        is DeserializedClassDescriptor -> ProtoContainer(classProto, null, c.nameResolver)
+        is PackageFragmentDescriptor -> ProtoContainer(null, fqName, c.nameResolver, c.typeTable)
+        is DeserializedClassDescriptor -> ProtoContainer(classProto, null, c.nameResolver, c.typeTable)
         else -> null // TODO: support annotations on lambdas and their parameters
     }
 }

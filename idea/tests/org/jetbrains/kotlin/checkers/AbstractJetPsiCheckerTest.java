@@ -20,8 +20,8 @@ import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.highlighter.NameHighlighter;
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.highlighter.JetPsiChecker;
 
 import java.io.File;
 
@@ -38,11 +38,11 @@ public abstract class AbstractJetPsiCheckerTest extends JetLightCodeInsightFixtu
             //noinspection unchecked
             myFixture.enableInspections(SpellCheckingInspection.class);
 
-            JetPsiChecker.Companion.setNamesHighlightingEnabled(false);
+            NameHighlighter.INSTANCE$.setNamesHighlightingEnabled(false);
             checkHighlighting(true, true, false);
         }
         finally {
-            JetPsiChecker.Companion.setNamesHighlightingEnabled(true);
+            NameHighlighter.INSTANCE$.setNamesHighlightingEnabled(true);
         }
     }
 

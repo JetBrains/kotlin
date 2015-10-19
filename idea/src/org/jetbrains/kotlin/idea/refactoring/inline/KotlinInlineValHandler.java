@@ -61,7 +61,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -71,8 +71,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class KotlinInlineValHandler extends InlineActionHandler {
     @Override
@@ -317,7 +315,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             }
         }
 
-        JetPsiFactory psiFactory = JetPsiFactory(containingFile);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(containingFile);
         for (JetFunctionLiteralExpression functionLiteralExpression : functionsToAddParameters) {
             JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
 
@@ -371,7 +369,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             BindingContext context = resolutionFacade.analyze(inlinedExpression, BodyResolveMode.FULL);
-            Call call = CallUtilPackage.getCallWithAssert(inlinedExpression, context);
+            Call call = CallUtilKt.getCallWithAssert(inlinedExpression, context);
 
             JetElement callElement = call.getCallElement();
             if (callElement instanceof JetCallExpression && hasIncompleteTypeInferenceDiagnostic(call, context) &&
@@ -380,7 +378,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             }
         }
 
-        JetPsiFactory psiFactory = JetPsiFactory(containingFile);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(containingFile);
         for (JetCallExpression call : callsToAddArguments) {
             call.addAfter(psiFactory.createTypeArguments("<" + typeArguments + ">"), call.getCalleeExpression());
             ShortenReferences.DEFAULT.process(call.getTypeArgumentList());
@@ -390,7 +388,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     @Nullable
     private static String getTypeArgumentsStringForCall(@NotNull JetExpression initializer) {
         BindingContext context = ResolutionUtils.analyze(initializer, BodyResolveMode.FULL);
-        ResolvedCall<?> call = CallUtilPackage.getResolvedCall(initializer, context);
+        ResolvedCall<?> call = CallUtilKt.getResolvedCall(initializer, context);
         if (call == null) return null;
 
         List<JetType> typeArguments = Lists.newArrayList();

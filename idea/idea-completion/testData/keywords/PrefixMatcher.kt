@@ -4,6 +4,5 @@ p<caret>
 
 // EXIST:  package
 // EXIST:  private
-// EXIST:  protected
 // EXIST:  public
 // NOTHING_ELSE

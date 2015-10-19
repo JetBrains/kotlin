@@ -122,7 +122,8 @@ public class LazyAnnotationDescriptor(
     private val type = c.storageManager.createLazyValue {
         c.annotationResolver.resolveAnnotationType(
                 c.scope,
-                annotationEntry
+                annotationEntry,
+                c.trace
         )
     }
 

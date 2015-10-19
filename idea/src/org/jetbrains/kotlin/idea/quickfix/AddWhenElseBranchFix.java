@@ -28,14 +28,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetPsiFactory;
-import org.jetbrains.kotlin.psi.JetWhenEntry;
-import org.jetbrains.kotlin.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.*;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
-public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> {
+public class AddWhenElseBranchFix extends KotlinQuickFixAction<JetWhenExpression> {
     private static final String ELSE_ENTRY_TEXT = "else -> {}";
 
     public AddWhenElseBranchFix(@NotNull JetWhenExpression element) {
@@ -57,19 +52,19 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) && element.getCloseBrace() != null;
+        return super.isAvailable(project, editor, file) && getElement().getCloseBrace() != null;
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        PsiElement whenCloseBrace = element.getCloseBrace();
+        PsiElement whenCloseBrace = getElement().getCloseBrace();
         assert (whenCloseBrace != null) : "isAvailable should check if close brace exist";
 
-        JetPsiFactory psiFactory = JetPsiFactory(file);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
         JetWhenEntry entry = psiFactory.createWhenEntry(ELSE_ENTRY_TEXT);
 
-        PsiElement insertedBranch = element.addBefore(entry, whenCloseBrace);
-        element.addAfter(psiFactory.createNewLine(), insertedBranch);
+        PsiElement insertedBranch = getElement().addBefore(entry, whenCloseBrace);
+        getElement().addAfter(psiFactory.createNewLine(), insertedBranch);
 
         JetWhenEntry insertedWhenEntry = (JetWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
         TextRange textRange = insertedWhenEntry.getTextRange();
@@ -82,7 +77,7 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public JetIntentionAction createAction(@NotNull Diagnostic diagnostic) {
+            public KotlinQuickFixAction createAction(@NotNull Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 JetWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, JetWhenExpression.class, false);
                 if (whenExpression == null) return null;

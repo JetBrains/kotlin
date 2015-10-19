@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getUnaryPlusOrMinusOperatorFunctionName
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getUnaryPlusOrMinusOperatorFunctionName
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCol
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.filtered
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -314,6 +315,14 @@ public class TaskPrioritizer(
             addCandidatesForExplicitReceiver(implicitReceiver, implicitReceivers, c, isExplicit = false)
         }
 
+        // static members hack
+        c.callableDescriptorCollectors.forEach {
+            c.result.addCandidates {
+                val descriptors = it.getStaticInheritanceByName(c.scope, c.name, lookupLocation)
+                convertWithImpliedThisAndNoReceiver(c.scope, descriptors, c.context.call)
+            }
+        }
+
         //nonlocals
         c.callableDescriptorCollectors.forEach {
             c.result.addCandidates {
@@ -472,7 +481,7 @@ public class TaskPrioritizer(
 
         override fun getPriority(candidate: ResolutionCandidate<D>)
                 = if (hasImplicitDynamicReceiver(candidate)) 0
-                  else (if (isVisible(candidate)) 2 else 0) + (if (isSynthesized(candidate)) 0 else 1)
+                  else (if (!isVisible(candidate) || hasLowPriority(candidate)) 0 else 2) + (if (isSynthesized(candidate)) 0 else 1)
 
         override fun getMaxPriority() = 3
 
@@ -482,6 +491,11 @@ public class TaskPrioritizer(
             if (ErrorUtils.isError(candidateDescriptor)) return true
             val receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), context.trace.getBindingContext())
             return Visibilities.isVisible(receiverValue, candidateDescriptor, context.scope.ownerDescriptor)
+        }
+
+        private fun hasLowPriority(candidate: ResolutionCandidate<D>?): Boolean {
+            if (candidate == null) return false
+            return candidate.descriptor.hasLowPriorityInOverloadResolution()
         }
 
         private fun isSynthesized(candidate: ResolutionCandidate<D>): Boolean {

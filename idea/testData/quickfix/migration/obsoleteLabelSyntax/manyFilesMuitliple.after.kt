@@ -34,7 +34,7 @@ fun run(block: () -> Unit) = block()
 
 annotation class ann
 
-notLabelAnnotation class A {
+@notLabelAnnotation class A {
     fun foo() {
         loop@
         for (i in 1..100) {

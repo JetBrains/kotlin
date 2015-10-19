@@ -74,11 +74,16 @@ class BuiltInsAnnotationAndConstantLoader(
         return proto.getExtension(BuiltInsProtoBuf.typeAnnotation).orEmpty().map { deserializer.deserializeAnnotation(it, nameResolver) }
     }
 
+    override fun loadTypeParameterAnnotations(proto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<AnnotationDescriptor> {
+        return proto.getExtension(BuiltInsProtoBuf.typeParameterAnnotation).orEmpty().map { deserializer.deserializeAnnotation(it, nameResolver) }
+    }
+
     override fun loadPropertyConstant(
             container: ProtoContainer,
             proto: ProtoBuf.Property,
             expectedType: JetType
     ): ConstantValue<*>? {
+        if (!proto.hasExtension(BuiltInsProtoBuf.compileTimeValue)) return null
         val value = proto.getExtension(BuiltInsProtoBuf.compileTimeValue)
         return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }

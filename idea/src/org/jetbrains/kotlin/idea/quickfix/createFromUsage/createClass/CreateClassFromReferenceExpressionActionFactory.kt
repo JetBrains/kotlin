@@ -111,7 +111,7 @@ public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromU
                 }
     }
 
-    override fun createQuickFixData(element: JetSimpleNameExpression, diagnostic: Diagnostic): ClassInfo? {
+    override fun extractFixData(element: JetSimpleNameExpression, diagnostic: Diagnostic): ClassInfo? {
         val file = element.containingFile as? JetFile ?: return null
 
         val name = element.getReferencedName()

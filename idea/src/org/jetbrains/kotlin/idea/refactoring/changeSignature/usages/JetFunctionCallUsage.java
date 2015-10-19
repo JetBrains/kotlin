@@ -32,19 +32,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
-import org.jetbrains.kotlin.idea.core.CorePackage;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
+import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenWaitingSetKt;
+import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignatureUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionEnginePackage;
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractorUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -56,8 +56,6 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.*;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     private static final Comparator<Pair<JetElement, JetElement>>
@@ -85,7 +83,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         super(element);
         this.callee = callee;
         this.context = ResolutionUtils.analyze(element, BodyResolveMode.FULL);
-        this.resolvedCall = CallUtilPackage.getResolvedCall(element, context);
+        this.resolvedCall = CallUtilKt.getResolvedCall(element, context);
     }
 
     @Override
@@ -152,7 +150,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             else if (JvmAbi.isSetterName(currentName)) newName = JvmAbi.setterName(newName);
         }
 
-        callee.replace(JetPsiFactory(getProject()).createSimpleName(newName));
+        callee.replace(JetPsiFactoryKt.JetPsiFactory(getProject()).createSimpleName(newName));
     }
 
     @Nullable
@@ -202,7 +200,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
         if (element instanceof JetCallExpression) {
             ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                    CallUtilPackage.getResolvedCall((JetCallExpression) element, context);
+                    CallUtilKt.getResolvedCall((JetCallExpression) element, context);
             return resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
         }
 
@@ -223,7 +221,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         JetExpression newExpression = (JetExpression) expression.copy();
 
         Map<JetSimpleNameExpression, JetSimpleNameExpression> nameCounterpartMap =
-                ExtractionEnginePackage.createNameCounterpartMap(expression, newExpression);
+                ExtractorUtilKt.createNameCounterpartMap(expression, newExpression);
 
         Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = resolvedCall.getValueArguments();
 
@@ -350,7 +348,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             JetExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
 
             String defaultValueText;
-            if (ChangeSignaturePackage.isInsideOfCallerBody(element, allUsages)) {
+            if (ChangeSignatureUtilsKt.isInsideOfCallerBody(element, allUsages)) {
                 defaultValueText = parameterInfo.getName();
             }
             else {
@@ -370,7 +368,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         }
 
         parametersBuilder.append(')');
-        JetValueArgumentList newArgumentList = JetPsiFactory(getProject()).createCallArguments(parametersBuilder.toString());
+        JetValueArgumentList newArgumentList = JetPsiFactoryKt.JetPsiFactory(getProject()).createCallArguments(parametersBuilder.toString());
 
         Map<Integer, ? extends ValueArgument> argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments);
 
@@ -438,7 +436,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         //TODO: this is not correct!
         JetValueArgument lastArgument = CollectionsKt.lastOrNull(newArgumentList.getArguments());
         boolean hasTrailingLambdaInArgumentListAfter =
-                lastArgument != null && PsiPackage.unpackFunctionLiteral(lastArgument.getArgumentExpression()) != null;
+                lastArgument != null && JetFunctionLiteralArgumentKt.unpackFunctionLiteral(lastArgument.getArgumentExpression()) != null;
 
         arguments = (JetValueArgumentList) arguments.replace(newArgumentList);
 
@@ -455,7 +453,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         );
 
         for (JetElement argument : argumentsToShorten) {
-            ShortenPackage.addToShorteningWaitSet(argument, SHORTEN_ARGUMENTS_OPTIONS);
+            ShortenWaitingSetKt.addToShorteningWaitSet(argument, SHORTEN_ARGUMENTS_OPTIONS);
         }
 
         JetElement newElement = element;
@@ -470,7 +468,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                         : defaultValueForCall != null ? defaultValueForCall
                         : psiFactory.createExpression("_");
 
-                replacingElement = PsiPackage.createExpressionByPattern(psiFactory, "$0.$1", receiver, element);
+                replacingElement = CreateByPatternKt.createExpressionByPattern(psiFactory, "$0.$1", receiver, element);
             }
             else {
                 replacingElement = psiFactory.createExpression(element.getText());
@@ -484,7 +482,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                     (JetCallExpression) (newElement instanceof JetQualifiedExpression
                                       ? ((JetQualifiedExpression) newElement).getSelectorExpression()
                                       : newElement);
-            CorePackage.moveFunctionLiteralOutsideParentheses(newCallExpression);
+            PsiModificationUtilsKt.moveFunctionLiteralOutsideParentheses(newCallExpression);
         }
     }
 
@@ -575,7 +573,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
         if (identifier != null) {
             String newName = parameterInfo.getInheritedName(callee);
-            identifier.replace(JetPsiFactory(getProject()).createIdentifier(newName));
+            identifier.replace(JetPsiFactoryKt.JetPsiFactory(getProject()).createIdentifier(newName));
         }
     }
 }

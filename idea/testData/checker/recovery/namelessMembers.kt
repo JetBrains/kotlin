@@ -10,6 +10,6 @@ class C {
     <error>enum class<error> </error>{}</error>
 }
 
-class C1<in<error>></error><error> </error>{}
+class C1<<error>in</error>> {}
 
 class C2(val<error>)</error> {}

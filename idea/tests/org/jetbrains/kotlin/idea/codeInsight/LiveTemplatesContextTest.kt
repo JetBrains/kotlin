@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-
-import java.io.File
-import org.jetbrains.kotlin.idea.liveTemplates.JetTemplateContextType
 import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.idea.liveTemplates.JetTemplateContextType
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import java.io.File
 
 public class LiveTemplatesContextTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String =
@@ -30,14 +29,23 @@ public class LiveTemplatesContextTest : JetLightCodeInsightFixtureTestCase() {
 
     public fun testInDocComment() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        assertInContexts(javaClass<JetTemplateContextType.Generic>(), javaClass<JetTemplateContextType.Comment>())
+        assertInContexts(
+                JetTemplateContextType.Generic::class.java,
+                JetTemplateContextType.Comment::class.java)
     }
 
     public fun testTopLevel() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        assertInContexts(javaClass<JetTemplateContextType.Generic>(),
-                         javaClass<JetTemplateContextType.TopLevel>(),
-                         javaClass<JetTemplateContextType.Expression>())
+        assertInContexts(
+                JetTemplateContextType.Generic::class.java,
+                JetTemplateContextType.TopLevel::class.java)
+    }
+
+    public fun testInExpression() {
+        myFixture.configureByFile(getTestName(false) + ".kt")
+        assertInContexts(
+                JetTemplateContextType.Generic::class.java,
+                JetTemplateContextType.Expression::class.java)
     }
 
     private fun assertInContexts(vararg expectedContexts: Class<out JetTemplateContextType>) {

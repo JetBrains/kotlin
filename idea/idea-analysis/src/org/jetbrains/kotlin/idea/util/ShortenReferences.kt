@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
@@ -40,11 +39,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.getFileScope
-import java.util.ArrayList
-import java.util.LinkedHashSet
+import java.util.*
 
 public class ShortenReferences(val options: (JetElement) -> Options = { Options.DEFAULT }) {
     public data class Options(
@@ -204,7 +203,10 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         private val elementsToShorten = ArrayList<T>()
         private val descriptorsToImport = LinkedHashSet<DeclarationDescriptor>()
 
-        protected val resolutionFacade: ResolutionFacade = file.getResolutionFacade()
+        private val resolutionFacade = file.getResolutionFacade()
+
+        protected fun analyze(element: JetElement)
+                = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
 
         protected fun processQualifiedElement(element: T, target: DeclarationDescriptor, canShortenNow: Boolean) {
             if (canShortenNow) {
@@ -269,15 +271,16 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             if (type.getQualifier() == null) return
             val referenceExpression = type.getReferenceExpression() ?: return
 
-            val bindingContext = resolutionFacade.analyze(referenceExpression)
+            val bindingContext = analyze(referenceExpression)
             val target = referenceExpression.targets(bindingContext).singleOrNull() ?: return
 
             val typeReference = type.getStrictParentOfType<JetTypeReference>()!!
             val scope = bindingContext[BindingContext.LEXICAL_SCOPE, typeReference] ?: return
             val name = target.getName()
-            val targetByName = if (target is ClassifierDescriptor) scope.getClassifier(name, NoLookupLocation.FROM_IDE) else {
+            val targetByName = if (target is ClassifierDescriptor)
+                scope.getClassifier(name, NoLookupLocation.FROM_IDE)
+            else
                 scope.getFileScope().getPackage(name)
-            }
             val canShortenNow = targetByName?.asString() == target.asString()
 
             processQualifiedElement(type, target, canShortenNow)
@@ -321,7 +324,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
     ) : QualifiedExpressionShorteningVisitor(file, elementFilter, failedToImportDescriptors) {
 
         override fun process(qualifiedExpression: JetDotQualifiedExpression): Boolean {
-            val bindingContext = resolutionFacade.analyze(qualifiedExpression)
+            val bindingContext = analyze(qualifiedExpression)
 
             val receiver = qualifiedExpression.getReceiverExpression()
             when (receiver) {
@@ -386,7 +389,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         private fun process(thisExpression: JetThisExpression) {
             if (!options.removeThisLabels || thisExpression.getTargetLabel() == null) return
 
-            val bindingContext = resolutionFacade.analyze(thisExpression)
+            val bindingContext = analyze(thisExpression)
 
             val targetBefore = thisExpression.getInstanceReference().targets(bindingContext).singleOrNull() ?: return
             val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, thisExpression] ?: return
@@ -422,7 +425,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         }
 
         override fun process(qualifiedExpression: JetDotQualifiedExpression): Boolean {
-            val bindingContext = resolutionFacade.analyze(qualifiedExpression)
+            val bindingContext = analyze(qualifiedExpression)
 
             val receiver = qualifiedExpression.getReceiverExpression()
 

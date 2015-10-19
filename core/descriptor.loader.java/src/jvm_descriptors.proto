@@ -30,6 +30,9 @@ message StringTableTypes {
     // Index of the predefined constant. If this field is present, the associated string is ignored
     optional int32 predefined_index = 2;
 
+    // A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+    optional string string = 6;
+
     enum Operation {
       NONE = 0;
 
@@ -114,6 +117,10 @@ extend Property {
 extend Type {
   repeated Annotation type_annotation = 100;
   optional bool is_raw = 101;
+}
+
+extend TypeParameter {
+  repeated Annotation type_parameter_annotation = 100;
 }
 
 extend ValueParameter {

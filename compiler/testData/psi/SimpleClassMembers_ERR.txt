@@ -31,17 +31,8 @@ JetFile: SimpleClassMembers_ERR.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
-          MODIFIER_LIST
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('sdfsd')
           PsiErrorElement:Expecting member declaration
-            <empty list>
+            PsiElement(IDENTIFIER)('sdfsd')
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')

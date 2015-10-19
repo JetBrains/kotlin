@@ -2,6 +2,7 @@
 package kotlin.properties
 
 import kotlin.reflect.KProperty
+import kotlin.internal.Exact
 
 /**
  * Returns the value of the property for the given object from this read-only map.

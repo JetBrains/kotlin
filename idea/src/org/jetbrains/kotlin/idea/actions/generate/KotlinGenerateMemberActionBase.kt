@@ -28,20 +28,26 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetDeclaration
 
 abstract class KotlinGenerateMemberActionBase<Info : Any> : KotlinGenerateActionBase() {
-    protected abstract fun prepareMembersInfo(klass: JetClassOrObject, project: Project): Info?
+    protected abstract fun prepareMembersInfo(klass: JetClassOrObject, project: Project, editor: Editor?): Info?
 
-    protected abstract fun generateMembers(editor: Editor, info: Info): List<JetDeclaration>
+    protected abstract fun generateMembers(project: Project, editor: Editor?, info: Info): List<JetDeclaration>
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
         if (!CodeInsightUtilBase.prepareEditorForWrite(editor)) return
         if (!FileDocumentManager.getInstance().requestWriting(editor.document, project)) return
-        val klass = getTargetClass(editor, file) ?: return
-        val membersInfo = prepareMembersInfo(klass, project) ?: return
+        val targetClass = getTargetClass(editor, file) ?: return
+        doInvoke(project, editor, targetClass)
+    }
+
+    fun doInvoke(project: Project, editor: Editor?, targetClass: JetClassOrObject) {
+        val membersInfo = prepareMembersInfo(targetClass, project, editor) ?: return
 
         project.executeWriteCommand(commandName, this) {
-            val newMembers = generateMembers(editor, membersInfo)
+            val newMembers = generateMembers(project, editor, membersInfo)
             GlobalInspectionContextBase.cleanupElements(project, null, *newMembers.toTypedArray())
-            newMembers.firstOrNull()?.let { GenerateMembersUtil.positionCaret(editor, it, false) }
+            if (editor != null) {
+                newMembers.firstOrNull()?.let { GenerateMembersUtil.positionCaret(editor, it, false) }
+            }
         }
     }
 }

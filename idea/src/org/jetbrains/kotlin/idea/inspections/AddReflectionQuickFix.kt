@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
+import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtil
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
-public class AddReflectionQuickFix(element: JetElement) : JetIntentionAction<JetElement>(element) {
+public class AddReflectionQuickFix(element: JetElement) : KotlinQuickFixAction<JetElement>(element) {
     override fun getText() = JetBundle.message("add.reflection.to.classpath")
     override fun getFamilyName() = getText()
 

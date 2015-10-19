@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
@@ -43,8 +44,10 @@ public fun <R> Function<R>.reflect(): KFunction<R>? {
     )
     val proto = ProtoBuf.Function.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
     val moduleData = javaClass.getOrCreateModule()
-    val context = DeserializationContext(moduleData.deserialization, nameResolver, moduleData.module,
-                                         parentTypeDeserializer = null, typeParameters = listOf())
+    val context = DeserializationContext(
+            moduleData.deserialization, nameResolver, moduleData.module,
+            typeTable = TypeTable(proto.typeTable), parentTypeDeserializer = null, typeParameters = listOf()
+    )
     val descriptor = MemberDeserializer(context).loadFunction(proto)
     @Suppress("UNCHECKED_CAST")
     return KFunctionImpl(EmptyContainerForLocal, descriptor) as KFunction<R>

@@ -56,20 +56,13 @@ JetFile: oldUsages.kt
           PsiWhiteSpace('\n\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('kotlin')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(DOT)('.')
       FUN
         MODIFIER_LIST
-          PsiErrorElement:Use '@' symbol before annotations
-            <empty list>
-          ANNOTATION_ENTRY
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('kotlin')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('inline')
+          PsiElement(inline)('inline')
         PsiWhiteSpace(' ')
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')

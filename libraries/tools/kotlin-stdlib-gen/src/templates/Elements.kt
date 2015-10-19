@@ -25,12 +25,28 @@ fun elements(): List<GenericFunction> {
         }
     }
 
+    templates add f("containsRaw(element: Any?)") {
+        only(Iterables, Sequences, ArraysOfObjects)
+        doc {
+            """
+            Returns `true` if [element] is found in the collection.
+            Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
+            """
+        }
+        receiverAsterisk(Iterables, Sequences) { true }
+        inline(true)
+        annotations("""@Suppress("NOTHING_TO_INLINE")""")
+        returns("Boolean")
+        body { "return contains<Any?>(element)" }
+    }
+
     templates add f("indexOf(element: T)") {
         exclude(Strings, Lists) // has native implementation
         doc { "Returns first index of [element], or -1 if the collection does not contain element." }
         returns("Int")
-        body {
+        body { f ->
             """
+            ${if (f == Iterables) "if (this is List) return this.indexOf(element)" else ""}
             var index = 0
             for (item in this) {
                 if (element == item)
@@ -71,12 +87,29 @@ fun elements(): List<GenericFunction> {
         }
     }
 
+    templates add f("indexOfRaw(element: Any?)") {
+        only(Iterables, Sequences, ArraysOfObjects, Lists)
+        doc {
+            """
+            Returns first index of [element], or -1 if the collection does not contain element.
+            Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
+            """
+        }
+        receiverAsterisk(Iterables, Sequences) { true }
+        inline(true)
+        annotations("""@Suppress("NOTHING_TO_INLINE")""")
+        returns("Int")
+        body { "return indexOf<Any?>(element)" }
+        body(Lists) { "return (this as List<Any?>).indexOf(element)" }
+    }
+
     templates add f("lastIndexOf(element: T)") {
         exclude(Strings, Lists) // has native implementation
         doc { "Returns last index of [element], or -1 if the collection does not contain element." }
         returns("Int")
-        body {
+        body { f ->
             """
+            ${if (f == Iterables) "if (this is List) return this.lastIndexOf(element)" else ""}
             var lastIndex = -1
             var index = 0
             for (item in this) {
@@ -116,6 +149,22 @@ fun elements(): List<GenericFunction> {
             return -1
            """
         }
+    }
+
+    templates add f("lastIndexOfRaw(element: Any?)") {
+        only(Iterables, Sequences, ArraysOfObjects, Lists)
+        doc {
+            """
+            Returns last index of [element], or -1 if the collection does not contain element.
+            Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
+            """
+        }
+        receiverAsterisk(Iterables, Sequences) { true }
+        inline(true)
+        annotations("""@Suppress("NOTHING_TO_INLINE")""")
+        returns("Int")
+        body { "return lastIndexOf<Any?>(element)" }
+        body(Lists) { "return (this as List<Any?>).lastIndexOf(element)" }
     }
 
     templates add f("indexOfFirst(predicate: (T) -> Boolean)") {
@@ -521,26 +570,14 @@ fun elements(): List<GenericFunction> {
         doc(Strings) { """"Returns the last character matching the given [predicate].
         @throws [NoSuchElementException] if no such character is found.""" }
         returns("T")
-        body {
-            """
-            var last: T? = null
-            var found = false
-            for (element in this) {
-                if (predicate(element)) {
-                    last = element
-                    found = true
-                }
-            }
-            if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
-            return last as T
-            """
-        }
-
-        body(Iterables) {
+        body { f ->
+            (if (f == Iterables)
             """
             if (this is List)
                 return this.last(predicate)
-
+            """
+            else "") +
+            """
             var last: T? = null
             var found = false
             for (element in this) {
@@ -570,23 +607,14 @@ fun elements(): List<GenericFunction> {
         doc { "Returns the last element matching the given [predicate], or `null` if no such element was found." }
         doc(Strings) { "Returns the last character matching the given [predicate], or `null` if no such character was found." }
         returns("T?")
-        body {
-            """
-            var last: T? = null
-            for (element in this) {
-                if (predicate(element)) {
-                    last = element
-                }
-            }
-            return last
-            """
-        }
-
-        body(Iterables) {
+        body { f ->
+            (if (f == Iterables)
             """
             if (this is List)
                 return this.lastOrNull(predicate)
-
+            """
+            else "") +
+            """
             var last: T? = null
             for (element in this) {
                 if (predicate(element)) {
@@ -596,8 +624,6 @@ fun elements(): List<GenericFunction> {
             return last
             """
         }
-
-
 
         body(ArraysOfPrimitives, ArraysOfObjects, Lists) {
             """

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.config.IncrementalCompilation;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
@@ -270,7 +271,9 @@ public class PackageCodegen {
             if (file.isScript()) return;
         }
 
-        DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(new JvmSerializerExtension(bindings, state.getTypeMapper()));
+        DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(new JvmSerializerExtension(
+                bindings, state.getTypeMapper(), state.getUseTypeTableInSerializer()
+        ));
         Collection<PackageFragmentDescriptor> packageFragments = Lists.newArrayList();
         ContainerUtil.addIfNotNull(packageFragments, packageFragment);
         ContainerUtil.addIfNotNull(packageFragments, compiledPackageFragment);
@@ -313,7 +316,7 @@ public class PackageCodegen {
             else if (declaration instanceof JetClassOrObject) {
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
                 if (state.getGenerateDeclaredClassFilter().shouldGenerateClass(classOrObject)) {
-                    generateClassOrObject(classOrObject);
+                    generateClassOrObject(classOrObject, packagePartContext);
                 }
             }
             else if (declaration instanceof JetScript) {
@@ -354,15 +357,17 @@ public class PackageCodegen {
                 DeclarationDescriptor descriptor = state.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
                 assert descriptor instanceof CallableMemberDescriptor :
                         "Expected callable member, was " + descriptor + " for " + declaration.getText();
-                generateCallableMemberTasks.put(
-                        (CallableMemberDescriptor) descriptor,
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                memberCodegen.genFunctionOrProperty(declaration);
+                if (!Visibilities.isPrivate(((CallableMemberDescriptor) descriptor).getVisibility())) {
+                    generateCallableMemberTasks.put(
+                            (CallableMemberDescriptor) descriptor,
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    memberCodegen.genFunctionOrProperty(declaration);
+                                }
                             }
-                        }
-                );
+                    );
+                }
             }
         }
     }
@@ -410,11 +415,8 @@ public class PackageCodegen {
         return fragments.get(0);
     }
 
-    public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        JetFile file = classOrObject.getContainingJetFile();
-        Type packagePartType = FileClasses.getFileClassType(state.getFileClassesProvider(), file);
-        CodegenContext context = state.getRootContext().intoPackagePart(packageFragment, packagePartType);
-        MemberCodegen.genClassOrObject(context, classOrObject, state, null);
+    public void generateClassOrObject(@NotNull JetClassOrObject classOrObject, @NotNull PackageContext packagePartContext) {
+        MemberCodegen.genClassOrObject(packagePartContext, classOrObject, state, null);
     }
 
     public void done() {
@@ -427,5 +429,9 @@ public class PackageCodegen {
 
     public Collection<JetFile> getFiles() {
         return files;
+    }
+
+    public PackageFragmentDescriptor getPackageFragment() {
+        return packageFragment;
     }
 }

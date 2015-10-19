@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeProjection;
@@ -47,9 +47,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
-public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFunctionLiteralExpression> {
+public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<JetFunctionLiteralExpression> {
     private final JetType type;
     private final JetTypeReference functionLiteralReturnTypeRef;
     private IntentionAction appropriateQuickFix = null;
@@ -85,10 +84,10 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
             return;
         }
 
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilPackage.getParentResolvedCall(
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getParentResolvedCall(
                 functionLiteralExpression, context, true);
         if (resolvedCall != null) {
-            ValueArgument valueArgument = CallUtilPackage.getValueArgumentForExpression(resolvedCall.getCall(), functionLiteralExpression);
+            ValueArgument valueArgument = CallUtilKt.getValueArgumentForExpression(resolvedCall.getCall(), functionLiteralExpression);
             JetParameter correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument);
             if (correspondingParameter != null) {
                 JetTypeReference correspondingParameterTypeRef = correspondingParameter.getTypeReference();
@@ -135,7 +134,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         if (functionLiteralReturnTypeRef != null) {
-            JetTypeReference newTypeRef = JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+            JetTypeReference newTypeRef = JetPsiFactoryKt.JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
             newTypeRef = (JetTypeReference) functionLiteralReturnTypeRef.replace(newTypeRef);
             ShortenReferences.DEFAULT.process(newTypeRef);
         }

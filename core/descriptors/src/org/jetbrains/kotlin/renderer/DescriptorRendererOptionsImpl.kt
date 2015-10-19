@@ -111,6 +111,8 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
             FqName("org.jetbrains.annotations.ReadOnly"),
             FqName("org.jetbrains.annotations.Mutable"),
             FqName("org.jetbrains.annotations.NotNull"),
-            FqName("org.jetbrains.annotations.Nullable")
+            FqName("org.jetbrains.annotations.Nullable"),
+            FqName("kotlin.internal.NoInfer"),
+            FqName("kotlin.internal.Exact")
     ))
 }

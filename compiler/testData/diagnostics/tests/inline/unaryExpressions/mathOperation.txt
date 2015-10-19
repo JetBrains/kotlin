@@ -6,7 +6,7 @@ public operator fun </*0*/ T, /*1*/ V> (T.(T) -> V).dec(): T.(T) -> V
 @kotlin.inline() public operator fun </*0*/ T, /*1*/ V> ((T) -> V).inc(): (T) -> V
 @kotlin.inline() public operator fun </*0*/ T, /*1*/ V> (T.(T) -> V).inc(): T.(T) -> V
 @kotlin.inline() public fun </*0*/ T, /*1*/ V> ((T) -> V).inlineFunWithInvoke(): kotlin.Unit
-public operator fun </*0*/ T, /*1*/ V> ((T) -> V).minus(): (T) -> V
-public operator fun </*0*/ T, /*1*/ V> (T.(T) -> V).minus(): kotlin.Unit
-@kotlin.inline() public operator fun </*0*/ T, /*1*/ V> ((T) -> V).plus(): (T) -> V
-@kotlin.inline() public operator fun </*0*/ T, /*1*/ V> (T.(T) -> V).plus(): kotlin.Unit
+public operator fun </*0*/ T, /*1*/ V> ((T) -> V).unaryMinus(): (T) -> V
+public operator fun </*0*/ T, /*1*/ V> (T.(T) -> V).unaryMinus(): kotlin.Unit
+@kotlin.inline() public operator fun </*0*/ T, /*1*/ V> ((T) -> V).unaryPlus(): (T) -> V
+@kotlin.inline() public operator fun </*0*/ T, /*1*/ V> (T.(T) -> V).unaryPlus(): kotlin.Unit

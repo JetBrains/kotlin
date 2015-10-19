@@ -27,9 +27,10 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.DelegationTranslator;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -40,7 +41,6 @@ import java.util.List;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.setDefaultValueForArguments;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
-import static org.jetbrains.kotlin.js.translate.utils.jsAstUtils.JsAstUtilsPackage.toInvocationWith;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType;
 
 public final class ClassInitializerTranslator extends AbstractTranslator {
@@ -137,7 +137,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
             if (classDeclaration instanceof JetEnumEntry) {
                 JsExpression expression = CallTranslator.translate(context(), superCall, null);
-                JsExpression fixedInvocation = toInvocationWith(expression, JsLiteral.THIS);
+                JsExpression fixedInvocation = AstUtilsKt.toInvocationWith(expression, JsLiteral.THIS);
                 initializerStatements.add(0, fixedInvocation.makeStmt());
             }
             else {
@@ -162,7 +162,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             if (specifier instanceof JetDelegatorToSuperCall) {
                 JetDelegatorToSuperCall superCall = (JetDelegatorToSuperCall) specifier;
                 //noinspection unchecked
-                return (ResolvedCall<FunctionDescriptor>) CallUtilPackage.getResolvedCallWithAssert(superCall, bindingContext());
+                return (ResolvedCall<FunctionDescriptor>) CallUtilKt.getResolvedCallWithAssert(superCall, bindingContext());
             }
         }
         return null;

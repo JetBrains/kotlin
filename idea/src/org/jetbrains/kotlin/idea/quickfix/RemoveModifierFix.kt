@@ -34,7 +34,7 @@ public class RemoveModifierFix(
         element: JetModifierListOwner,
         private val modifier: JetModifierKeywordToken,
         private val isRedundant: Boolean
-) : JetIntentionAction<JetModifierListOwner>(element) {
+) : KotlinQuickFixAction<JetModifierListOwner>(element) {
 
     private val text = run {
         val modifierText = modifier.value
@@ -69,7 +69,7 @@ public class RemoveModifierFix(
     companion object {
         public fun createRemoveModifierFromListOwnerFactory(modifier: JetModifierKeywordToken, isRedundant: Boolean = false): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): JetIntentionAction<JetModifierListOwner>? {
+                override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<JetModifierListOwner>? {
                     val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetModifierListOwner>()) ?: return null
                     return RemoveModifierFix(modifierListOwner, modifier, isRedundant)
                 }
@@ -78,7 +78,7 @@ public class RemoveModifierFix(
 
         public fun createRemoveModifierFactory(isRedundant: Boolean = false): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): JetIntentionAction<JetModifierListOwner>? {
+                override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<JetModifierListOwner>? {
                     val psiElement = diagnostic.psiElement
                     val elementType = psiElement.node.elementType as? JetModifierKeywordToken ?: return null
                     val modifierListOwner = psiElement.getStrictParentOfType<JetModifierListOwner>() ?: return null
@@ -89,7 +89,7 @@ public class RemoveModifierFix(
 
         public fun createRemoveProjectionFactory(isRedundant: Boolean): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): JetIntentionAction<JetModifierListOwner>? {
+                override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<JetModifierListOwner>? {
                     val projection = diagnostic.psiElement as JetTypeProjection
                     val elementType = projection.projectionToken?.node?.elementType as? JetModifierKeywordToken ?: return null
                     return RemoveModifierFix(projection, elementType, isRedundant)
@@ -99,7 +99,7 @@ public class RemoveModifierFix(
 
         public fun createRemoveVarianceFactory(): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): JetIntentionAction<JetModifierListOwner>? {
+                override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<JetModifierListOwner>? {
                     val psiElement = diagnostic.psiElement as JetTypeParameter
                     val modifier = when (psiElement.variance) {
                         Variance.IN_VARIANCE -> JetTokens.IN_KEYWORD

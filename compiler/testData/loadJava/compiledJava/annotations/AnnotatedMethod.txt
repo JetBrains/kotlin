@@ -7,6 +7,5 @@ public open class AnnotatedMethod {
     public final class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.Int)
         public final val value: kotlin.Int
-        public abstract fun value(): kotlin.Int
     }
 }

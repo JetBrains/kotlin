@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.idea.references.ReferencesPackage;
+import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.psi.*;
 
-public class MakeClassAnAnnotationClassFix extends JetIntentionAction<JetAnnotationEntry> {
+public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<JetAnnotationEntry> {
     private final JetAnnotationEntry annotationEntry;
     private JetClass annotationClass;
 
@@ -58,7 +58,7 @@ public class MakeClassAnAnnotationClassFix extends JetIntentionAction<JetAnnotat
             return false;
         }
 
-        PsiReference reference = ReferencesPackage.getMainReference(referenceExpression);
+        PsiReference reference = ReferenceUtilKt.getMainReference(referenceExpression);
         PsiElement target = reference.resolve();
         if (target instanceof JetClass) {
             annotationClass = (JetClass) target;

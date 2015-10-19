@@ -15,7 +15,6 @@ public open class kt3698 {
     public/*package*/ final class Foo : kotlin.Annotation {
         public/*package*/ constructor Foo(/*0*/ kotlin.Int)
         public final val value: kotlin.Int
-        public abstract fun value(): kotlin.Int
     }
 
     // Static members

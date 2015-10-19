@@ -35,6 +35,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("AnnotationInClassAddImport.kt")
+    public void testAnnotationInClassAddImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/AnnotationInClassAddImport.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AnnotationInCompanionObjectAddImport.kt")
+    public void testAnnotationInCompanionObjectAddImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/AnnotationInCompanionObjectAddImport.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassWithClassObject.kt")
     public void testClassWithClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ClassWithClassObject.kt");
@@ -92,18 +104,6 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @TestMetadata("NoTailFromSmart.kt")
     public void testNoTailFromSmart() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/NoTailFromSmart.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("PlatformStaticInClass.kt")
-    public void testPlatformStaticInClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/PlatformStaticInClass.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("PlatformStaticInCompanionObject.kt")
-    public void testPlatformStaticInCompanionObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/PlatformStaticInCompanionObject.kt");
         doTest(fileName);
     }
 

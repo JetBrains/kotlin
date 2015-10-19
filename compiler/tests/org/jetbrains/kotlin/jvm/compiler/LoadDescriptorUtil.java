@@ -23,9 +23,10 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -64,13 +64,16 @@ public final class LoadDescriptorUtil {
             @NotNull List<File> kotlinFiles,
             @NotNull File outDir,
             @NotNull Disposable disposable,
-            @NotNull ConfigurationKind configurationKind
+            @NotNull ConfigurationKind configurationKind,
+            boolean useTypeTableInSerializer
     ) {
         JetFilesAndAnalysisResult filesAndResult = JetFilesAndAnalysisResult.createJetFilesAndAnalyze(kotlinFiles, disposable, configurationKind);
         AnalysisResult result = filesAndResult.getAnalysisResult();
         List<JetFile> files = filesAndResult.getJetFiles();
-        GenerationState state = GenerationUtils.compileFilesGetGenerationState(files.get(0).getProject(), result, files);
-        OutputUtilsPackage.writeAllTo(state.getFactory(), outDir);
+        GenerationState state = GenerationUtils.compileFilesGetGenerationState(
+                files.get(0).getProject(), result, files, useTypeTableInSerializer
+        );
+        OutputUtilsKt.writeAllTo(state.getFactory(), outDir);
         return result;
     }
 

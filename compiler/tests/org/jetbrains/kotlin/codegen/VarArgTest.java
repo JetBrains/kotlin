@@ -91,7 +91,8 @@ public class VarArgTest extends CodegenTestCase {
         Method main = generateFunction("test");
         String[] args = {"mama", "papa"};
         String[] result = (String []) main.invoke(null, new Object[] {args});
-        assertTrue(args == result);
+        assertTrue(args != result);
+        assertTrue(Arrays.equals(args, result));
     }
 
     public void testArrayAsVararg2() throws InvocationTargetException, IllegalAccessException {

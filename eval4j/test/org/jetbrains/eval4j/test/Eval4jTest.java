@@ -17,14 +17,15 @@
 package org.jetbrains.eval4j.test;
 
 import junit.framework.TestSuite;
+import org.jetbrains.eval4j.jdi.test.JdiTestKt;
 
 public class Eval4jTest extends TestSuite {
 
     @SuppressWarnings({"UnnecessaryFullyQualifiedName", "StaticMethodReferencedViaSubclass"})
     public static TestSuite suite() {
         TestSuite eval4jSuite = new TestSuite("Eval4j Tests");
-        eval4jSuite.addTest(org.jetbrains.eval4j.jdi.test.TestPackage.suite());
-        eval4jSuite.addTest(org.jetbrains.eval4j.test.TestPackage.suite());
+        eval4jSuite.addTest(JdiTestKt.suite());
+        eval4jSuite.addTest(MainKt.suite());
         return eval4jSuite;
     }
 }

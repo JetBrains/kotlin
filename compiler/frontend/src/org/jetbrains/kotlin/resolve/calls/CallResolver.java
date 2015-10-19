@@ -31,8 +31,9 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.context.*;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
@@ -45,7 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.tasks.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -65,8 +66,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordDataFlowInfo;
-import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScope;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.context.CandidateResolveMode.EXIT_ON_FIRST_ERROR;
@@ -357,7 +356,7 @@ public class CallResolver {
         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
         Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
         if (constructors.isEmpty()) {
-            context.trace.report(NO_CONSTRUCTOR.on(CallUtilPackage.getValueArgumentListOrElement(context.call)));
+            context.trace.report(NO_CONSTRUCTOR.on(CallUtilKt.getValueArgumentListOrElement(context.call)));
             return checkArgumentTypesAndFail(context);
         }
         Collection<ResolutionCandidate<CallableDescriptor>> candidates =
@@ -414,7 +413,7 @@ public class CallResolver {
         }
 
         ClassDescriptor delegateClassDescriptor = isThisCall ? currentClassDescriptor :
-                                                   DescriptorUtilPackage.getSuperClassOrAny(currentClassDescriptor);
+                                                  DescriptorUtilsKt.getSuperClassOrAny(currentClassDescriptor);
         Collection<ConstructorDescriptor> constructors = delegateClassDescriptor.getConstructors();
 
         if (!isThisCall && currentClassDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
@@ -428,7 +427,7 @@ public class CallResolver {
         }
 
         if (constructors.isEmpty()) {
-            context.trace.report(NO_CONSTRUCTOR.on(CallUtilPackage.getValueArgumentListOrElement(context.call)));
+            context.trace.report(NO_CONSTRUCTOR.on(CallUtilKt.getValueArgumentListOrElement(context.call)));
             return checkArgumentTypesAndFail(context);
         }
 
@@ -489,8 +488,8 @@ public class CallResolver {
         TemporaryBindingTrace traceToResolveCall = TemporaryBindingTrace.create(context.trace, "trace to resolve call", call);
         BasicCallResolutionContext newContext = context.replaceBindingTrace(traceToResolveCall);
 
-        recordScope(newContext.trace, newContext.scope, newContext.call.getCalleeExpression());
-        recordDataFlowInfo(newContext, newContext.call.getCalleeExpression());
+        BindingContextUtilsKt.recordScope(newContext.trace, newContext.scope, newContext.call.getCalleeExpression());
+        BindingContextUtilsKt.recordDataFlowInfo(newContext, newContext.call.getCalleeExpression());
 
         OverloadResolutionResultsImpl<F> results = doResolveCall(newContext, prioritizedTasks, callTransformer, tracing);
         DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
@@ -515,7 +514,7 @@ public class CallResolver {
             @NotNull OverloadResolutionResultsImpl<D> results,
             @NotNull TracingStrategy tracing
     ) {
-        if (CallResolverUtilPackage.isInvokeCallOnVariable(context.call)) return;
+        if (CallResolverUtilKt.isInvokeCallOnVariable(context.call)) return;
         if (!results.isSingleResult()) {
             if (results.getResultCode() == INCOMPLETE_TYPE_INFERENCE) {
                 argumentTypeResolver.checkTypesWithNoCallee(context, RESOLVE_FUNCTION_ARGUMENTS);
@@ -535,7 +534,7 @@ public class CallResolver {
             @NotNull TracingStrategy tracing
     ) {
         Call call = context.call;
-        if (CallResolverUtilPackage.isInvokeCallOnVariable(call)) return;
+        if (CallResolverUtilKt.isInvokeCallOnVariable(call)) return;
 
         DelegatingBindingTrace deltasTraceToCacheResolve = new DelegatingBindingTrace(
                 BindingContext.EMPTY, "delta trace for caching resolve of", context.call);

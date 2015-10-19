@@ -22,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.psi.addRemoveModifier.AddRemoveModifierPackage;
-import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentPackage;
+import org.jetbrains.kotlin.psi.addRemoveModifier.AddRemoveModifierKt;
+import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentKt;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,18 +47,18 @@ abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclar
 
     @Override
     public void addModifier(@NotNull JetModifierKeywordToken modifier) {
-        AddRemoveModifierPackage.addModifier(this, modifier);
+        AddRemoveModifierKt.addModifier(this, modifier);
     }
 
     @Override
     public void removeModifier(@NotNull JetModifierKeywordToken modifier) {
-        AddRemoveModifierPackage.removeModifier(this, modifier);
+        AddRemoveModifierKt.removeModifier(this, modifier);
     }
 
     @NotNull
     @Override
     public JetAnnotationEntry addAnnotationEntry(@NotNull JetAnnotationEntry annotationEntry) {
-        return AddRemoveModifierPackage.addAnnotationEntry(this, annotationEntry);
+        return AddRemoveModifierKt.addAnnotationEntry(this, annotationEntry);
     }
 
     @NotNull
@@ -80,6 +80,6 @@ abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclar
     @Nullable
     @Override
     public KDoc getDocComment() {
-        return FindDocCommentPackage.findDocComment(this);
+        return FindDocCommentKt.findDocComment(this);
     }
 }

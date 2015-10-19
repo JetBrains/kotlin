@@ -38,8 +38,9 @@ package kt1185 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val values: kotlin.Array<kt1185.Color>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt1185.Color
-        public final /*synthesized*/ fun values(): kotlin.Array<kt1185.Color>
+        @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<kt1185.Color>
     }
 
     public final enum class Direction : kotlin.Enum<kt1185.Direction> {
@@ -61,7 +62,8 @@ package kt1185 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val values: kotlin.Array<kt1185.Direction>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt1185.Direction
-        public final /*synthesized*/ fun values(): kotlin.Array<kt1185.Direction>
+        @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<kt1185.Direction>
     }
 }

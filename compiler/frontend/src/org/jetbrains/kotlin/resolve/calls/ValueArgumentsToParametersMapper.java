@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
 import java.util.List;
 import java.util.Map;
@@ -233,7 +233,7 @@ public class ValueArgumentsToParametersMapper {
 
         public void process() {
             ProcessorState state = positionedOnly;
-            List<? extends ValueArgument> argumentsInParentheses = CallUtilPackage.getValueArgumentsInParentheses(call);
+            List<? extends ValueArgument> argumentsInParentheses = CallUtilKt.getValueArgumentsInParentheses(call);
             for (int i = 0; i < argumentsInParentheses.size(); i++) {
                 ValueArgument valueArgument = argumentsInParentheses.get(i);
                 if (valueArgument.isNamed()) {
@@ -294,7 +294,7 @@ public class ValueArgumentsToParametersMapper {
             List<ValueParameterDescriptor> valueParameters = candidateCall.getCandidateDescriptor().getValueParameters();
             for (ValueParameterDescriptor valueParameter : valueParameters) {
                 if (!usedParameters.contains(valueParameter)) {
-                    if (DescriptorUtilPackage.hasDefaultValue(valueParameter)) {
+                    if (DescriptorUtilsKt.hasDefaultValue(valueParameter)) {
                         candidateCall.recordValueArgument(valueParameter, DefaultValueArgument.DEFAULT);
                     }
                     else if (valueParameter.getVarargElementType() != null) {

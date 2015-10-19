@@ -2,7 +2,7 @@ package client
 
 import server.X
 
-X("")
+@X("")
 class Client {
 
 }

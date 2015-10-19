@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.getFileClassType
@@ -146,11 +147,8 @@ public class MultifileClassCodegen(
         writeKotlinMultifileFacadeAnnotationIfNeeded(partFqNames)
     }
 
-    public fun generateClassOrObject(classOrObject: JetClassOrObject) {
-        val file = classOrObject.getContainingJetFile()
-        val partType = state.fileClassesProvider.getFileClassType(file)
-        val context = state.rootContext.intoMultifileClassPart(packageFragment!!, facadeClassType, partType)
-        MemberCodegen.genClassOrObject(context, classOrObject, state, null)
+    public fun generateClassOrObject(classOrObject: JetClassOrObject, packagePartContext: FieldOwnerContext<PackageFragmentDescriptor>) {
+        MemberCodegen.genClassOrObject(packagePartContext, classOrObject, state, null)
     }
 
     private fun generatePart(
@@ -172,7 +170,7 @@ public class MultifileClassCodegen(
             }
             else if (declaration is JetClassOrObject) {
                 if (state.generateDeclaredClassFilter.shouldGenerateClass(declaration)) {
-                    generateClassOrObject(declaration)
+                    generateClassOrObject(declaration, partContext)
                 }
             }
             else if (declaration is JetScript) {
@@ -201,8 +199,9 @@ public class MultifileClassCodegen(
             if (declaration is JetNamedFunction || declaration is JetProperty) {
                 val descriptor = state.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
                 assert(descriptor is CallableMemberDescriptor) { "Expected callable member, was " + descriptor + " for " + declaration.text }
-                generateCallableMemberTasks.put(descriptor as CallableMemberDescriptor,
-                                                { memberCodegen.genFunctionOrProperty(declaration) })
+                if (!Visibilities.isPrivate((descriptor as CallableMemberDescriptor).visibility)) {
+                    generateCallableMemberTasks.put(descriptor, { memberCodegen.genFunctionOrProperty(declaration) })
+                }
             }
         }
     }

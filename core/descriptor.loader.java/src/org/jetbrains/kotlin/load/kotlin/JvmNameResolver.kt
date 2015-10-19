@@ -48,10 +48,12 @@ class JvmNameResolver(
     override fun getString(index: Int): String {
         val record = records[index]
 
-        var string =
-                if (record.hasPredefinedIndex() && record.predefinedIndex in PREDEFINED_STRINGS.indices)
-                    PREDEFINED_STRINGS[record.predefinedIndex]
-                else strings[index]
+        var string = when {
+            record.hasString() -> record.string
+            record.hasPredefinedIndex() && record.predefinedIndex in PREDEFINED_STRINGS.indices ->
+                PREDEFINED_STRINGS[record.predefinedIndex]
+            else -> strings[index]
+        }
 
         if (record.substringIndexCount >= 2) {
             val (begin, end) = record.substringIndexList

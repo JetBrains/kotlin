@@ -78,19 +78,11 @@ JetFile: forParameters.kt
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             PsiElement(in)('in')
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
-            PsiWhiteSpace(' ')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('z')
-          PsiErrorElement:Expecting a variable name
-            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('z')
         PsiErrorElement:Expecting 'in'
           <empty list>
+        PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BODY
           BLOCK
@@ -191,9 +183,8 @@ JetFile: forParameters.kt
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
           MODIFIER_LIST
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -225,9 +216,8 @@ JetFile: forParameters.kt
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
           MODIFIER_LIST
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -265,9 +255,8 @@ JetFile: forParameters.kt
         PsiElement(LPAR)('(')
         MULTI_VARIABLE_DECLARATION
           MODIFIER_LIST
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -284,60 +273,8 @@ JetFile: forParameters.kt
           PsiWhiteSpace(' ')
           MULTI_VARIABLE_DECLARATION_ENTRY
             MODIFIER_LIST
-              PsiErrorElement:Use '@' symbol before annotations
-                <empty list>
               ANNOTATION_ENTRY
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Volatile')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('y')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          BINARY_EXPRESSION
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-            OPERATION_REFERENCE
-              PsiElement(RANGE)('..')
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('100')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION
-          MODIFIER_LIST
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Volatile')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          MULTI_VARIABLE_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('x')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          MULTI_VARIABLE_DECLARATION_ENTRY
-            MODIFIER_LIST
-              PsiErrorElement:Use '@' symbol before annotations
-                <empty list>
-              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -370,9 +307,8 @@ JetFile: forParameters.kt
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
           MODIFIER_LIST
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -399,59 +335,6 @@ JetFile: forParameters.kt
           BLOCK
             PsiElement(LBRACE)('{')
             PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION
-          MODIFIER_LIST
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Volatile')
-          PsiWhiteSpace(' ')
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          MULTI_VARIABLE_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('x')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          MULTI_VARIABLE_DECLARATION_ENTRY
-            MODIFIER_LIST
-              PsiErrorElement:Use '@' symbol before annotations
-                <empty list>
-              ANNOTATION_ENTRY
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Volatile')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('y')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        LOOP_RANGE
-          BINARY_EXPRESSION
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-            OPERATION_REFERENCE
-              PsiElement(RANGE)('..')
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('100')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BODY
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       FOR
         PsiElement(for)('for')
@@ -460,10 +343,9 @@ JetFile: forParameters.kt
         VALUE_PARAMETER
           MODIFIER_LIST
             PsiElement(private)('private')
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -498,10 +380,9 @@ JetFile: forParameters.kt
         MULTI_VARIABLE_DECLARATION
           MODIFIER_LIST
             PsiElement(private)('private')
-            PsiErrorElement:Use '@' symbol before annotations
-              <empty list>
             PsiWhiteSpace(' ')
             ANNOTATION_ENTRY
+              PsiElement(AT)('@')
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -517,9 +398,8 @@ JetFile: forParameters.kt
           PsiWhiteSpace(' ')
           MULTI_VARIABLE_DECLARATION_ENTRY
             MODIFIER_LIST
-              PsiErrorElement:Use '@' symbol before annotations
-                <empty list>
               ANNOTATION_ENTRY
+                PsiElement(AT)('@')
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE

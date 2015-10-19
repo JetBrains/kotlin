@@ -73,4 +73,19 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/specialBridges")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SpecialBridges extends AbstractBytecodeListingTest {
+        public void testAllFilesPresentInSpecialBridges() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/specialBridges"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("contains.kt")
+        public void testContains() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/contains.kt");
+            doTest(fileName);
+        }
+    }
 }

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplCommandReader;
 import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader;
 import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -109,13 +109,13 @@ public class ReplFromTerminal {
                     waitRepl.wait();
                 }
                 catch (Throwable e) {
-                    throw UtilsPackage.rethrow(e);
+                    throw ExceptionUtilsKt.rethrow(e);
                 }
             }
             if (replInterpreter != null) {
                 return replInterpreter;
             }
-            throw UtilsPackage.rethrow(replInitializationFailed);
+            throw ExceptionUtilsKt.rethrow(replInitializationFailed);
         }
     }
 
@@ -176,7 +176,7 @@ public class ReplFromTerminal {
             }
         }
         catch (Exception e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 

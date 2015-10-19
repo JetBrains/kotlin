@@ -21,8 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTransformer;
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantNullCheckMethodTransformer;
-import org.jetbrains.kotlin.codegen.optimization.common.CommonPackage;
-import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer;
+import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -83,7 +82,7 @@ public class OptimizationMethodVisitor extends MethodVisitor {
                     transformer.transform("fake", methodNode);
                 }
             }
-            CommonPackage.prepareForEmitting(methodNode);
+            UtilKt.prepareForEmitting(methodNode);
         }
 
         methodNode.accept(new EndIgnoringMethodVisitorDecorator(Opcodes.ASM5, delegate));

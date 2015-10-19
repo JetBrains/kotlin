@@ -21,21 +21,22 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.PackagePartProvider;
 import org.jetbrains.kotlin.frontend.java.di.ContainerForTopDownAnalyzerForJvm;
-import org.jetbrains.kotlin.frontend.java.di.DiPackage;
+import org.jetbrains.kotlin.frontend.java.di.InjectionKt;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
-import org.jetbrains.kotlin.modules.ModulesPackage;
 import org.jetbrains.kotlin.modules.TargetId;
+import org.jetbrains.kotlin.modules.TargetIdKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -48,8 +49,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static org.jetbrains.kotlin.context.ContextPackage.ContextForNewModule;
 
 public enum TopDownAnalyzerFacadeForJVM {
 
@@ -104,13 +103,13 @@ public enum TopDownAnalyzerFacadeForJVM {
             targetIds = new ArrayList<TargetId>(modules.size());
 
             for (Module module : modules) {
-                targetIds.add(ModulesPackage.TargetId(module));
+                targetIds.add(TargetIdKt.TargetId(module));
             }
         }
 
         packagePartProvider = IncrementalPackagePartProvider.create(packagePartProvider, files, targetIds, incrementalCompilationComponents, moduleContext.getStorageManager());
 
-        ContainerForTopDownAnalyzerForJvm container = DiPackage.createContainerForTopDownAnalyzerForJvm(
+        ContainerForTopDownAnalyzerForJvm container = InjectionKt.createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
                 trace,
                 providerFactory,
@@ -154,7 +153,7 @@ public enum TopDownAnalyzerFacadeForJVM {
 
     @NotNull
     public static MutableModuleContext createContextWithSealedModule(@NotNull Project project, @NotNull String moduleName) {
-        MutableModuleContext context = ContextForNewModule(
+        MutableModuleContext context = ContextKt.ContextForNewModule(
                 project, Name.special("<" + moduleName + ">"), JvmPlatform.INSTANCE$
         );
         context.setDependencies(context.getModule(), JvmPlatform.INSTANCE$.getBuiltIns().getBuiltInsModule());

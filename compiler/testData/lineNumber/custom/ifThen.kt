@@ -2,10 +2,6 @@ fun foo() {
     if (0 < 1) {
         return
     }
-    
-    val u: Unit = if (0 < 1) {
-        return
-    }
 }
 
-// 2 3 6 7 6 9
+// 2 3 5

@@ -21,8 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.kotlin.renderer.Renderer;
 
-import static org.jetbrains.kotlin.diagnostics.rendering.RenderingPackage.renderParameter;
-
 public class DiagnosticWithParameters1Renderer<A> extends AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters1<?, A>> {
     private final Renderer<? super A> rendererForA;
 
@@ -34,6 +32,6 @@ public class DiagnosticWithParameters1Renderer<A> extends AbstractDiagnosticWith
     @NotNull
     @Override
     public Object[] renderParameters(@NotNull DiagnosticWithParameters1<?, A> diagnostic) {
-        return new Object[]{renderParameter(diagnostic.getA(), rendererForA)};
+        return new Object[]{DiagnosticRendererUtilKt.renderParameter(diagnostic.getA(), rendererForA)};
     }
 }

@@ -269,7 +269,7 @@ class C(param1: String = "", param2: Int = 0) {
     public fun testAnnotationEntry() {
         val file = myFixture.configureByText("Test.kt", """
         annotation class A
-        A class B {}
+        @A class B {}
         """) as JetFile
 
         val klass = file.getDeclarations()[1] as JetClass

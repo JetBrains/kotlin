@@ -1,7 +1,8 @@
 // This test checks that our bytecode is consistent with javac bytecode
 
-fun _assert(condition: Boolean): Unit =
+fun _assert(condition: Boolean) {
     if (!condition) throw AssertionError("Fail")
+}
 
 fun _assertFalse(condition: Boolean) = _assert(!condition)
 

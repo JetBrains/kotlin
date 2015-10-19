@@ -12,4 +12,4 @@ class A4 private @Ann(1) constructor(y: Int)
 
 class A5 @Ann private constructor() {}
 
-class A6 Ann() private constructor() {}
+class A6 @Ann() private constructor() {}

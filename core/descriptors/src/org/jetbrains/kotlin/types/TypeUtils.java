@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.utils.DFS;
-import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -95,7 +94,7 @@ public class TypeUtils {
         @NotNull
         @Override
         public TypeCapabilities getCapabilities() {
-            return TypeCapabilities.NONE.INSTANCE$;
+            return TypeCapabilities.NONE.INSTANCE;
         }
 
         @Override
@@ -257,7 +256,7 @@ public class TypeUtils {
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
             result.add(new TypeProjectionImpl(parameterDescriptor.getDefaultType()));
         }
-        return UtilsPackage.toReadOnlyList(result);
+        return org.jetbrains.kotlin.utils.CollectionsKt.toReadOnlyList(result);
     }
 
     @NotNull
@@ -311,7 +310,7 @@ public class TypeUtils {
         if (type.isMarkedNullable()) {
             return true;
         }
-        if (TypesPackage.isFlexible(type) && isNullableType(TypesPackage.flexibility(type).getUpperBound())) {
+        if (FlexibleTypesKt.isFlexible(type) && isNullableType(FlexibleTypesKt.flexibility(type).getUpperBound())) {
             return true;
         }
         if (isTypeParameter(type)) {
@@ -329,7 +328,7 @@ public class TypeUtils {
         if (type.isMarkedNullable()) {
             return true;
         }
-        if (TypesPackage.isFlexible(type) && acceptsNullable(TypesPackage.flexibility(type).getUpperBound())) {
+        if (FlexibleTypesKt.isFlexible(type) && acceptsNullable(FlexibleTypesKt.flexibility(type).getUpperBound())) {
             return true;
         }
         if (isTypeParameter(type)) {
@@ -380,7 +379,8 @@ public class TypeUtils {
             throw new IllegalArgumentException("type parameter counts do not match: " + clazz + ", " + projections);
         }
 
-        Map<TypeConstructor, TypeProjection> substitutions = UtilsPackage.newHashMapWithExpectedSize(clazzTypeParameters.size());
+        Map<TypeConstructor, TypeProjection> substitutions = org.jetbrains.kotlin.utils.CollectionsKt
+                .newHashMapWithExpectedSize(clazzTypeParameters.size());
 
         for (int i = 0; i < clazzTypeParameters.size(); ++i) {
             TypeConstructor typeConstructor = clazzTypeParameters.get(i).getTypeConstructor();
@@ -572,7 +572,8 @@ public class TypeUtils {
     }
 
     public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, JetType type) {
-        final Set<TypeConstructor> constructors = UtilsPackage.newHashSetWithExpectedSize(typeParameterDescriptors.size());
+        final Set<TypeConstructor> constructors = org.jetbrains.kotlin.utils.CollectionsKt
+                .newHashSetWithExpectedSize(typeParameterDescriptors.size());
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
             constructors.add(typeParameterDescriptor.getTypeConstructor());
         }

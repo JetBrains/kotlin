@@ -1,7 +1,7 @@
 annotation class native
 
-native fun withNativeAnnotation() {
+@native fun withNativeAnnotation() {
 
 }
 
-native class WithNativeAnnotation
+@native class WithNativeAnnotation

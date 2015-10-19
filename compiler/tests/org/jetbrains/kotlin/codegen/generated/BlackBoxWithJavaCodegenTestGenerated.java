@@ -197,6 +197,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("platformValueContains")
+        public void testPlatformValueContains() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/platformValueContains/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("removeAtInt")
         public void testRemoveAtInt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/removeAtInt/");
@@ -378,6 +384,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("annotationWithKotlinProperty")
         public void testAnnotationWithKotlinProperty() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/annotationWithKotlinProperty/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("annotationWithKotlinPropertyFromInterfaceCompanion")
+        public void testAnnotationWithKotlinPropertyFromInterfaceCompanion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/annotationWithKotlinPropertyFromInterfaceCompanion/");
             doTestWithJava(fileName);
         }
 

@@ -1,18 +1,18 @@
 @kotlin.jvm.internal.KotlinClass A {
-    public @org.jetbrains.annotations.NotNull method f(@Ann p0: java.lang.String): java.lang.String
-    public @org.jetbrains.annotations.NotNull method getP(@Ann p0: java.lang.String): java.lang.String
     public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method f(@Ann p0: java.lang.String): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getP(@Ann p0: java.lang.String): java.lang.String
 }
 
 @java.lang.annotation.Retention @kotlin.jvm.internal.KotlinClass Ann
 
 @kotlin.jvm.internal.KotlinFileFacade OnReceiverKt {
-    public @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
-    public @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
 }
 
 @java.lang.Deprecated @kotlin.jvm.internal.KotlinPackage _DefaultPackage {
-    public synthetic field $moduleName: java.lang.String
-    public @kotlin.jvm.internal.KotlinDelegatedMethod @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
-    public @kotlin.jvm.internal.KotlinDelegatedMethod @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
+    public synthetic final field $moduleName: java.lang.String
+    public final @kotlin.jvm.internal.KotlinDelegatedMethod @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
+    public final @kotlin.jvm.internal.KotlinDelegatedMethod @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
 }

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
-import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperty;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +39,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
@@ -213,7 +212,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return testExpression;
         }
 
-        boolean isKotlinExpression = BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext());
+        boolean isKotlinExpression = BindingContextUtilsKt.isUsedAsExpression(expression, context.bindingContext());
 
         JetExpression thenExpression = expression.getThen();
         JetExpression elseExpression = expression.getElse();
@@ -297,7 +296,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JetExpression baseExpression = expression.getBaseExpression();
         assert baseExpression != null;
 
-        if (BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext())) {
+        if (BindingContextUtilsKt.isUsedAsExpression(expression, context.bindingContext())) {
             return Translation.translateAsExpression(baseExpression, context).source(expression);
         }
 
@@ -425,7 +424,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             MetadataProperties.setStaticRef(name, alias);
         }
 
-        boolean isExpression = BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext());
+        boolean isExpression = BindingContextUtilsKt.isUsedAsExpression(expression, context.bindingContext());
         JsNode result = isExpression ? alias : JsAstUtils.newVar(name, alias);
 
         return result.source(expression);

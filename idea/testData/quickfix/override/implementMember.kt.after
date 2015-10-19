@@ -1,0 +1,10 @@
+// "Implement members" "true"
+interface I {
+    fun foo()
+}
+
+class A : I {
+    override fun foo() {
+        <caret><selection>throw UnsupportedOperationException()</selection>
+    }
+}

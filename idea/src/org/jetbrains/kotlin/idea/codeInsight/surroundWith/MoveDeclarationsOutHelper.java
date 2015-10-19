@@ -28,8 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.types.JetType;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class MoveDeclarationsOutHelper {
 
@@ -53,7 +51,7 @@ public class MoveDeclarationsOutHelper {
         List<JetProperty> propertiesDeclarations = new ArrayList<JetProperty>();
 
         // Dummy element to add new declarations at the beginning
-        JetPsiFactory psiFactory = JetPsiFactory(project);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(project);
         PsiElement dummyFirstStatement = container.addBefore(psiFactory.createExpression("dummyStatement"), statements[0]);
 
         try {
@@ -96,7 +94,8 @@ public class MoveDeclarationsOutHelper {
     private static JetBinaryExpression createVariableAssignment(@NotNull JetProperty property) {
         String propertyName = property.getName();
         assert propertyName != null : "Property should have a name " + property.getText();
-        JetBinaryExpression assignment = (JetBinaryExpression) JetPsiFactory(property).createExpression(propertyName + " = x");
+        JetBinaryExpression assignment = (JetBinaryExpression) JetPsiFactoryKt
+                .JetPsiFactory(property).createExpression(propertyName + " = x");
         JetExpression right = assignment.getRight();
         assert right != null : "Created binary expression should have a right part " + assignment.getText();
         JetExpression initializer = property.getInitializer();
@@ -135,7 +134,7 @@ public class MoveDeclarationsOutHelper {
             typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(propertyType);
         }
 
-        return JetPsiFactory(property).createProperty(property.getName(), typeString, property.isVar(), initializer);
+        return JetPsiFactoryKt.JetPsiFactory(property).createProperty(property.getName(), typeString, property.isVar(), initializer);
     }
 
     private static boolean needToDeclareOut(@NotNull PsiElement element, int lastStatementOffset, @NotNull SearchScope scope) {

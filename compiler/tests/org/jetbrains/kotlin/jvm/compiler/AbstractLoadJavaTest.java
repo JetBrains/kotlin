@@ -23,8 +23,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
+import org.jetbrains.kotlin.cli.jvm.config.ModuleNameKt;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -35,7 +39,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -55,9 +58,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJavaSourceRoot;
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getModuleName;
-import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoot;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.kotlin.test.JetTestUtils.*;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesAllowed;
@@ -78,7 +78,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File sourcesDir = new File(expectedFileName.replaceFirst("\\.txt$", ""));
 
         List<File> kotlinSources = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt"), sourcesDir);
-        compileKotlinToDirAndGetAnalysisResult(kotlinSources, tmpdir, myTestRootDisposable, ConfigurationKind.JDK_ONLY);
+        compileKotlinToDirAndGetAnalysisResult(kotlinSources, tmpdir, myTestRootDisposable, ConfigurationKind.JDK_ONLY, false);
 
         List<File> javaSources = FileUtil.findFilesByMask(Pattern.compile(".+\\.java"), sourcesDir);
         Pair<PackageViewDescriptor, BindingContext> binaryPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
@@ -93,18 +93,25 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     }
 
     protected void doTestCompiledKotlin(@NotNull String ktFileName) throws Exception {
-        doTestCompiledKotlin(ktFileName, ConfigurationKind.JDK_ONLY);
+        doTestCompiledKotlin(ktFileName, ConfigurationKind.JDK_ONLY, false);
+    }
+
+    protected void doTestCompiledKotlinWithTypeTable(@NotNull String ktFileName) throws Exception {
+        doTestCompiledKotlin(ktFileName, ConfigurationKind.JDK_ONLY, true);
     }
 
     protected void doTestCompiledKotlinWithStdlib(@NotNull String ktFileName) throws Exception {
-        doTestCompiledKotlin(ktFileName, ConfigurationKind.ALL);
+        doTestCompiledKotlin(ktFileName, ConfigurationKind.ALL, false);
     }
 
-    protected void doTestCompiledKotlin(@NotNull String ktFileName, @NotNull ConfigurationKind configurationKind) throws Exception {
+    private void doTestCompiledKotlin(
+            @NotNull String ktFileName, @NotNull ConfigurationKind configurationKind, boolean useTypeTableInSerializer
+    ) throws Exception {
         File ktFile = new File(ktFileName);
         File txtFile = new File(ktFileName.replaceFirst("\\.kt$", ".txt"));
-        AnalysisResult result = compileKotlinToDirAndGetAnalysisResult(Collections.singletonList(ktFile), tmpdir, getTestRootDisposable(),
-                                                                        configurationKind);
+        AnalysisResult result = compileKotlinToDirAndGetAnalysisResult(
+                Collections.singletonList(ktFile), tmpdir, getTestRootDisposable(), configurationKind, useTypeTableInSerializer
+        );
 
         PackageViewDescriptor packageFromSource = result.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
         Assert.assertEquals("test", packageFromSource.getName().asString());
@@ -140,16 +147,16 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
-        addKotlinSourceRoot(configuration, sourcesDir.getAbsolutePath());
-        addJavaSourceRoot(configuration, new File("compiler/testData/loadJava/include"));
-        addJavaSourceRoot(configuration, tmpdir);
+        ContentRootsKt.addKotlinSourceRoot(configuration, sourcesDir.getAbsolutePath());
+        JvmContentRootsKt.addJavaSourceRoot(configuration, new File("compiler/testData/loadJava/include"));
+        JvmContentRootsKt.addJavaSourceRoot(configuration, tmpdir);
         
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject(),
-                                                                                                getModuleName(environment));
+                                                                                                ModuleNameKt.getModuleName(environment));
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 moduleContext,

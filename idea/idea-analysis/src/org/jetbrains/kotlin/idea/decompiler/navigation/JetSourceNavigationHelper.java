@@ -41,11 +41,12 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
-import org.jetbrains.kotlin.context.ContextPackage;
+import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptorKt;
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider;
-import org.jetbrains.kotlin.frontend.di.DiPackage;
+import org.jetbrains.kotlin.frontend.di.InjectionKt;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex;
@@ -71,7 +72,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.descriptors.DescriptorsPackage.ModuleParameters;
 import static org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*;
 
 public class JetSourceNavigationHelper {
@@ -240,9 +240,9 @@ public class JetSourceNavigationHelper {
     ) {
 
         TargetPlatform platform = TargetPlatform.Default.INSTANCE$;
-        MutableModuleContext newModuleContext = ContextPackage.ContextForNewModule(
+        MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
                 project, Name.special("<library module>"),
-                ModuleParameters(
+                ModuleDescriptorKt.ModuleParameters(
                         JvmPlatform.defaultModuleParameters.getDefaultImports(),
                         PlatformToKotlinClassMap.EMPTY
                 ),
@@ -256,7 +256,7 @@ public class JetSourceNavigationHelper {
                 getContainingFiles(candidates)
         );
 
-        ResolveSession resolveSession = DiPackage.createLazyResolveSession(
+        ResolveSession resolveSession = InjectionKt.createLazyResolveSession(
                 newModuleContext,
                 providerFactory,
                 new BindingTraceContext(),

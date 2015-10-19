@@ -2783,6 +2783,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("notOperator.kt")
+            public void testNotOperator() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/notOperator.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("qualifier.kt")
             public void testQualifier() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/qualifier.kt");
@@ -4075,6 +4081,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("declaration.kt")
         public void testDeclaration() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/declaration.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyList.kt")
+        public void testEmptyList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/emptyList.kt");
             doTest(fileName);
         }
 
@@ -5491,6 +5503,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     public static class MoveAssignmentToInitializer extends AbstractIntentionTest {
         public void testAllFilesPresentInMoveAssignmentToInitializer() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveAssignmentToInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("cannotRemoveType.kt")
+        public void testCannotRemoveType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/cannotRemoveType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("cannotRemoveType2.kt")
+        public void testCannotRemoveType2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/cannotRemoveType2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("cannotRemoveType3.kt")
+        public void testCannotRemoveType3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveAssignmentToInitializer/cannotRemoveType3.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("comment.kt")

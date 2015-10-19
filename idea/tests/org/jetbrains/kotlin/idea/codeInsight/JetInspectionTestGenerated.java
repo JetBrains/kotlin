@@ -100,6 +100,12 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("equalsAndHashCode/inspectionData/inspections.test")
+        public void testEqualsAndHashCode_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/equalsAndHashCode/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("redundantSamConstructor/inspectionData/inspections.test")
         public void testRedundantSamConstructor_inspectionData_Inspections_test() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/redundantSamConstructor/inspectionData/inspections.test");

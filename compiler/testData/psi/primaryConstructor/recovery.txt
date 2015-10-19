@@ -50,67 +50,40 @@ JetFile: recovery.kt
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A1')
-    PsiWhiteSpace(' ')
-    PRIMARY_CONSTRUCTOR
-      MODIFIER_LIST
-        PsiErrorElement:Use '@' symbol before annotations
-          <empty list>
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
-    PsiErrorElement:Expecting 'constructor' keyword
-      <empty list>
-    PsiWhiteSpace(' ')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('Ann')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
     PsiElement(COLON)(':')
-    PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_SUPER_CALL
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Base')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('Base')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
   CLASS
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A2')
   PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('Ann')
+  PsiWhiteSpace('\n\n')
   CLASS
-    MODIFIER_LIST
-      PsiErrorElement:Use '@' symbol before annotations
-        <empty list>
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Ann')
-    PsiWhiteSpace('\n\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A3')
-    PsiWhiteSpace(' ')
-    PRIMARY_CONSTRUCTOR
-      MODIFIER_LIST
-        PsiErrorElement:Use '@' symbol before annotations
-          <empty list>
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
-    PsiErrorElement:Expecting 'constructor' keyword
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('Ann')
+  PsiWhiteSpace(' ')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
       <empty list>
-    PsiWhiteSpace(' ')
-    CLASS_BODY
+    BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       FUN

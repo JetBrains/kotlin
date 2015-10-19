@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature.SpecialSignatureInfo
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature.getSpecialSignatureInfo
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature.isBuiltinWithSpecialDescriptorInJvm
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.isBuiltinWithSpecialDescriptorInJvm
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -199,7 +199,7 @@ class CollectionStubMethodGenerator(
         OverrideResolver.generateOverridesInAClass(klass, listOf(), object : OverridingUtil.DescriptorSink {
             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                 if (fakeOverride !is FunctionDescriptor) return
-                if (fakeOverride.findOverriddenFromDirectSuperClass(mutableCollectionClass) != null) {
+                if (fakeOverride.findOverriddenFromDirectSuperClass(mutableCollectionClass)?.kind == DECLARATION) {
                     result.add(fakeOverride)
                 }
             }

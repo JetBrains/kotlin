@@ -432,7 +432,7 @@ private fun JsNode.withParentsOfNodes(nodes: Set<JsNode>): Set<JsNode> {
         private val stack = SmartList<JsNode>()
         val matched = IdentitySet<JsNode>()
 
-        override fun <R : JsNode?> doTraverse(node: R, ctx: JsContext<*>?) {
+        override fun <R : JsNode> doTraverse(node: R, ctx: JsContext<*>?) {
             stack.add(node)
             super.doTraverse(node, ctx)
 

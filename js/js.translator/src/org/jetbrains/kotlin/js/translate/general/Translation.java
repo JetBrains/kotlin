@@ -47,9 +47,8 @@ import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -97,7 +96,7 @@ public final class Translation {
         context.moveVarsFrom(innerContext);
         block.getStatements().addAll(innerContext.dynamicContext().jsBlock().getStatements());
 
-        if (BindingContextUtilPackage.isUnreachableCode(expression, context.bindingContext())) {
+        if (BindingContextUtilsKt.isUnreachableCode(expression, context.bindingContext())) {
             return context.getEmptyExpression();
         }
 
@@ -127,7 +126,7 @@ public final class Translation {
         }
 
         assert jsNode instanceof JsStatement : "Unexpected node of type: " + jsNode.getClass().toString();
-        if (BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext())) {
+        if (BindingContextUtilsKt.isUsedAsExpression(expression, context.bindingContext())) {
             TemporaryVariable result = context.declareTemporary(null);
             AssignToExpressionMutator saveResultToTemporaryMutator = new AssignToExpressionMutator(result.reference());
             block.getStatements().add(mutateLastExpression(jsNode, saveResultToTemporaryMutator));

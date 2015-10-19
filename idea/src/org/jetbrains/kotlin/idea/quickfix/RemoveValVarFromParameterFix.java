@@ -27,15 +27,15 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetParameter;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
-public class RemoveValVarFromParameterFix extends JetIntentionAction<JetParameter> {
+public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<JetParameter> {
     private final String varOrVal;
 
     public RemoveValVarFromParameterFix(@NotNull JetParameter element) {
         super(element);
         PsiElement valOrVarNode = element.getValOrVarKeyword();
-        assert valOrVarNode != null : "Val or var node not found for " + PsiUtilPackage.getElementTextWithContext(element);
+        assert valOrVarNode != null : "Val or var node not found for " + PsiUtilsKt.getElementTextWithContext(element);
         varOrVal = valOrVarNode.getText();
     }
 
@@ -53,7 +53,7 @@ public class RemoveValVarFromParameterFix extends JetIntentionAction<JetParamete
 
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        PsiElement keyword = element.getValOrVarKeyword();
+        PsiElement keyword = getElement().getValOrVarKeyword();
         if (keyword == null) return;
         keyword.delete();
     }

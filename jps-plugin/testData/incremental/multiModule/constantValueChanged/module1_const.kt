@@ -1,3 +1,3 @@
 package test
 
-public val CONST: String = "BF"
+public const val CONST: String = "BF"

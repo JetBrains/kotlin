@@ -5,23 +5,18 @@ public final class A : kotlin.Annotation {
     public final val arg: kotlin.reflect.KClass<*>
     public final val b: B
     public final val x: kotlin.Int
-    public abstract fun arg(): kotlin.reflect.KClass<*>
-    public abstract fun b(): B
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public abstract fun x(): kotlin.Int
 }
 
 public final class B : kotlin.Annotation {
     public constructor B(/*0*/ arg: kotlin.reflect.KClass<*> = ..., /*1*/ y: kotlin.Int = ...)
     public final val arg: kotlin.reflect.KClass<*>
     public final val y: kotlin.Int
-    public abstract fun arg(): kotlin.reflect.KClass<*>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public abstract fun y(): kotlin.Int
 }
 
 @A(arg = kotlin.String::class, b = B(y = 1)) public final class MyClass1 {

@@ -20,17 +20,16 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
-import org.jetbrains.kotlin.tests.di.DiPackage;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import org.jetbrains.kotlin.tests.di.InjectionKt;
 
 public class JetOverridingTest extends JetLiteFixture {
 
@@ -45,7 +44,7 @@ public class JetOverridingTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        functionDescriptorResolver = DiPackage.createContainerForTests(getProject(), root).getFunctionDescriptorResolver();
+        functionDescriptorResolver = InjectionKt.createContainerForTests(getProject(), root).getFunctionDescriptorResolver();
     }
 
     @Override
@@ -163,8 +162,8 @@ public class JetOverridingTest extends JetLiteFixture {
     }
 
     private FunctionDescriptor makeFunction(String funDecl) {
-        JetNamedFunction function = JetPsiFactory(getProject()).createFunction(funDecl);
-        LexicalScope scope = UtilsPackage.asLexicalScope(root.getBuiltIns().getBuiltInsPackageScope());
+        JetNamedFunction function = JetPsiFactoryKt.JetPsiFactory(getProject()).createFunction(funDecl);
+        LexicalScope scope = ScopeUtilsKt.asLexicalScope(root.getBuiltIns().getBuiltInsPackageScope());
         return functionDescriptorResolver.resolveFunctionDescriptor(root, scope, function,
                                                                     JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
     }

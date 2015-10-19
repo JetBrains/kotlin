@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 
 public class DeserializedConstructorDescriptor(
         containingDeclaration: ClassDescriptor,
@@ -29,7 +30,8 @@ public class DeserializedConstructorDescriptor(
         isPrimary: Boolean,
         kind: CallableMemberDescriptor.Kind,
         override val proto: ProtoBuf.Constructor,
-        override val nameResolver: NameResolver
+        override val nameResolver: NameResolver,
+        override val typeTable: TypeTable
 ) : ConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, SourceElement.NO_SOURCE),
         DeserializedCallableMemberDescriptor {
 
@@ -39,7 +41,8 @@ public class DeserializedConstructorDescriptor(
             kind: CallableMemberDescriptor.Kind
     ): DeserializedConstructorDescriptor {
         return DeserializedConstructorDescriptor(
-                newOwner as ClassDescriptor, original as ConstructorDescriptor?, getAnnotations(), isPrimary, kind, proto, nameResolver
+                newOwner as ClassDescriptor, original as ConstructorDescriptor?,
+                annotations, isPrimary, kind, proto, nameResolver, typeTable
         )
     }
 }

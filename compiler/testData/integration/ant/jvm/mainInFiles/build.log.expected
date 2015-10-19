@@ -1,0 +1,12 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+  [kotlinc] Compiling [[TestData]] => [[Temp]/hello.jar]
+     [java] A.main Ok
+     [java] B.main Ok
+
+BUILD SUCCESSFUL
+Total time: [time]
+
+Return code: 0

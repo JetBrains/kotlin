@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-class MoveTypeParameterConstraintFix(element: JetTypeParameter) : JetIntentionAction<JetTypeParameter>(element), CleanupFix {
+class MoveTypeParameterConstraintFix(element: JetTypeParameter) : KotlinQuickFixAction<JetTypeParameter>(element), CleanupFix {
     override fun getText(): String = "Move type parameter constraint to 'where' clause"
     override fun getFamilyName(): String = text
 

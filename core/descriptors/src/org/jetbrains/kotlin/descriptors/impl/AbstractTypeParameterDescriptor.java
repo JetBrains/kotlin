@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public abstract class AbstractTypeParameterDescriptor extends DeclarationDescriptorNonRootImpl implements TypeParameterDescriptor {
     private final Variance variance;

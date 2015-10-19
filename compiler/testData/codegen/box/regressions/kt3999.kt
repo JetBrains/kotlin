@@ -1,16 +1,4 @@
-class A() {
-  fun A.invoke(a: A) = "$this ${this@A} $a"
-}
-
-fun test1() {
-  val a = A()
-  val b = A()
-  val c = A()
-  a.b(c)
-  a b c
-}
-
-fun test2() {
+fun test() {
   val a: (@Extension Function2<*, *, *>).(@Extension Function2<*, *, *>)->Unit = {}
   val b: (@Extension Function2<*, *, *>).(@Extension Function2<*, *, *>)->Unit = {"$this $it"}
   val c: (@Extension Function2<*, *, *>).(@Extension Function2<*, *, *>)->Unit = {}
@@ -22,8 +10,7 @@ fun Int.foo(a: Int) = this * a
 val boo = fun Int.(a: Int): Int = this + a
 
 fun box(): String {
-    test1()
-    test2()
+    test()
     1 foo 2
     3 boo 4
     return "OK"

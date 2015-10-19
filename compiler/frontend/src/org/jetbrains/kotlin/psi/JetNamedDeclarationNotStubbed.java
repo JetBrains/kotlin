@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.lexer.JetTokens;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.JetPsiFactoryKt.JetPsiFactory;
 
 // TODO: Remove when all named declarations get stubs
 @Deprecated

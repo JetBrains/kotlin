@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.resolve.ImportPath;
 import java.util.Collection;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
 public class JetImportsFactory {
     @NotNull private final Project project;
 
@@ -45,7 +43,7 @@ public class JetImportsFactory {
             return directive;
         }
 
-        JetImportDirective createdDirective = JetPsiFactory(project).createImportDirective(importPath);
+        JetImportDirective createdDirective = JetPsiFactoryKt.JetPsiFactory(project).createImportDirective(importPath);
         importsCache.put(importPath, createdDirective);
 
         return createdDirective;

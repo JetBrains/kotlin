@@ -1,7 +1,7 @@
 package test
 
 enum class E(n: Int) {
-    O: E(0)
-    A: E(1)
-    B: E(2)
+    O(0)
+    A(1)
+    B(2)
 }

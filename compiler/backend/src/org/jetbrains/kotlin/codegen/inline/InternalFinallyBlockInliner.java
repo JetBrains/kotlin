@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.codegen.optimization.common.CommonPackage;
+import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -153,7 +153,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             // Each group that corresponds to try/*catches*/finally contains tryCatch block with default handler.
             // For each such group we should insert corresponding finally before non-local return.
             // So we split all try blocks on current instructions to groups and process them independently
-            List<TryBlockCluster<TryCatchBlockNodeInfo>> clustersFromInnermost = InlinePackage.doClustering(
+            List<TryBlockCluster<TryCatchBlockNodeInfo>> clustersFromInnermost = TryBlockClusteringKt.doClustering(
                     currentCoveringNodesFromInnermost);
             Iterator<TryBlockCluster<TryCatchBlockNodeInfo>> tryCatchBlockIterator = clustersFromInnermost.iterator();
 
@@ -304,7 +304,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
     ) {
 
         //copy tryCatchFinallies that totally in finally block
-        List<TryBlockCluster<TryCatchBlockNodePosition>> clusters = InlinePackage.doClustering(tryCatchBlockPresentInFinally);
+        List<TryBlockCluster<TryCatchBlockNodePosition>> clusters = TryBlockClusteringKt.doClustering(tryCatchBlockPresentInFinally);
         Map<LabelNode, TryBlockCluster<TryCatchBlockNodePosition>> handler2Cluster = new HashMap<LabelNode, TryBlockCluster<TryCatchBlockNodePosition>>();
 
         IntervalMetaInfo<TryCatchBlockNodeInfo> tryBlocksMetaInfo = getTryBlocksMetaInfo();
@@ -522,7 +522,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
     @Nullable
     private static AbstractInsnNode getNextMeaningful(@NotNull AbstractInsnNode node) {
         AbstractInsnNode result = node.getNext();
-        while (result != null && !CommonPackage.isMeaningful(result)) {
+        while (result != null && !UtilKt.isMeaningful(result)) {
             result = result.getNext();
         }
         return result;

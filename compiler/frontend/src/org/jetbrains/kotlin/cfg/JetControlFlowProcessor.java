@@ -42,11 +42,12 @@ import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
@@ -63,7 +64,6 @@ import java.util.*;
 import static org.jetbrains.kotlin.cfg.JetControlFlowBuilder.PredefinedOperation.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
-import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 
 public class JetControlFlowProcessor {
 
@@ -270,7 +270,7 @@ public class JetControlFlowProcessor {
 
         @NotNull
         private AccessTarget getResolvedCallAccessTarget(JetElement element) {
-            ResolvedCall<?> resolvedCall = getResolvedCall(element, trace.getBindingContext());
+            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(element, trace.getBindingContext());
             return resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE$;
         }
 
@@ -303,7 +303,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitThisExpression(@NotNull JetThisExpression expression) {
-            ResolvedCall<?> resolvedCall = getResolvedCall(expression, trace.getBindingContext());
+            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
             if (resolvedCall == null) {
                 createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL);
                 return;
@@ -325,7 +325,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
-            ResolvedCall<?> resolvedCall = getResolvedCall(expression, trace.getBindingContext());
+            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
                 generateCall(variableAsFunctionResolvedCall.getVariableCall());
@@ -360,7 +360,7 @@ public class JetControlFlowProcessor {
                 visitAssignment(left, getDeferredValue(right), expression);
             }
             else if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
-                ResolvedCall<?> resolvedCall = getResolvedCall(expression, trace.getBindingContext());
+                ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
                 if (resolvedCall != null) {
                     PseudoValue rhsValue = generateCall(resolvedCall).getOutputValue();
                     Name assignMethodName = OperatorConventions.getNameForOperationSymbol((JetToken) expression.getOperationToken());
@@ -467,7 +467,7 @@ public class JetControlFlowProcessor {
             Map<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
             AccessTarget accessTarget = AccessTarget.BlackBox.INSTANCE$;
             if (left instanceof JetSimpleNameExpression || left instanceof JetQualifiedExpression) {
-                accessTarget = getResolvedCallAccessTarget(PsiUtilPackage.getQualifiedElementSelector(left));
+                accessTarget = getResolvedCallAccessTarget(JetPsiUtilKt.getQualifiedElementSelector(left));
                 if (accessTarget instanceof AccessTarget.Call) {
                     receiverValues = getReceiverValues(((AccessTarget.Call) accessTarget).getResolvedCall());
                 }
@@ -602,7 +602,7 @@ public class JetControlFlowProcessor {
             }
 
             boolean incrementOrDecrement = isIncrementOrDecrement(operationType);
-            ResolvedCall<?> resolvedCall = getResolvedCall(expression, trace.getBindingContext());
+            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
 
             PseudoValue rhsValue;
             if (resolvedCall != null) {
@@ -1472,7 +1472,7 @@ public class JetControlFlowProcessor {
 
         private boolean generateCall(@Nullable JetElement callElement) {
             if (callElement == null) return false;
-            return checkAndGenerateCall(getResolvedCall(callElement, trace.getBindingContext()));
+            return checkAndGenerateCall(CallUtilKt.getResolvedCall(callElement, trace.getBindingContext()));
         }
 
         private boolean checkAndGenerateCall(@Nullable ResolvedCall<?> resolvedCall) {

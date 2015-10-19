@@ -34,7 +34,7 @@ fun foo() {
 fun box() : Int {
     val d = 2
     var z = 0
-        when(d) {
+    when(d) {
         5, 3 -> z++
         else -> z = -1000
     }
@@ -100,10 +100,10 @@ fun testImplicitCoercion() {
         else -> <!UNUSED_CHANGED_VALUE!>z--<!>
     }<!>
 
-    var <!UNUSED_VARIABLE!>iff<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) {
+    var <!UNUSED_VARIABLE!>iff<!> = <!INVALID_IF_AS_EXPRESSION!>if (true) {
         <!UNUSED_VALUE!>z =<!> 34
     }<!>
-    val <!UNUSED_VARIABLE!>g<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) 4<!>
+    val <!UNUSED_VARIABLE!>g<!> = <!INVALID_IF_AS_EXPRESSION!>if (true) 4<!>
     val <!UNUSED_VARIABLE!>h<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (false) 4 else {}<!>
 
     bar(if (true) {

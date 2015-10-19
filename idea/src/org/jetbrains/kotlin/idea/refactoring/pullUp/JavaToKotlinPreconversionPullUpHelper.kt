@@ -60,7 +60,7 @@ public class JavaToKotlinPreconversionPullUpHelper(
     private val fieldsToUsages = HashMap<PsiField, List<EncapsulateFieldUsageInfo>>()
     private val dummyAccessorByName = HashMap<String, PsiMethod>()
 
-    private val jvmStaticAnnotation = JetPsiFactory(data.sourceClass.project).createAnnotationEntry("kotlin.jvm.JvmStatic")
+    private val jvmStaticAnnotation = JetPsiFactory(data.sourceClass.project).createAnnotationEntry("@kotlin.jvm.JvmStatic")
 
     companion object {
         private var PsiMember.originalMember: PsiMember? by CopyableUserDataProperty(Key.create("ORIGINAL_MEMBER"))

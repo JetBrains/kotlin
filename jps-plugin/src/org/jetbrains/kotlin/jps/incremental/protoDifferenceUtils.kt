@@ -210,6 +210,9 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getPropertyList))
                 ProtoBufClassKind.ENUM_ENTRY_LIST ->
                     names.addAll(calcDifferenceForNames(oldProto.enumEntryList, newProto.enumEntryList))
+                ProtoBufClassKind.TYPE_TABLE -> {
+                    // TODO
+                }
                 ProtoBufClassKind.FLAGS,
                 ProtoBufClassKind.FQ_NAME,
                 ProtoBufClassKind.TYPE_PARAMETER_LIST,
@@ -257,6 +260,9 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getFunctionList))
                 ProtoBufPackageKind.PROPERTY_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getPropertyList))
+                ProtoBufPackageKind.TYPE_TABLE -> {
+                    // TODO
+                }
                 else ->
                     throw IllegalArgumentException("Unsupported kind: $kind")
             }

@@ -35,8 +35,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.resolve.lazy.LazyPackage.createResolveSessionForFiles;
-
 public class LazyResolveTestUtil {
     private LazyResolveTestUtil() {
     }
@@ -74,7 +72,7 @@ public class LazyResolveTestUtil {
             @NotNull KotlinCoreEnvironment environment,
             boolean addBuiltIns
     ) {
-        return createResolveSessionForFiles(environment.getProject(), files, addBuiltIns);
+        return LazyResolveTestUtilsKt.createResolveSessionForFiles(environment.getProject(), files, addBuiltIns);
     }
 
     public static ModuleDescriptor resolveLazily(List<JetFile> files, KotlinCoreEnvironment environment) {

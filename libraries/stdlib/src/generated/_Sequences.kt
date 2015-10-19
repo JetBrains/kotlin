@@ -20,6 +20,15 @@ public operator fun <T> Sequence<T>.contains(element: T): Boolean {
 }
 
 /**
+ * Returns `true` if [element] is found in the collection.
+ * Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Sequence<*>.containsRaw(element: Any?): Boolean {
+    return contains<Any?>(element)
+}
+
+/**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
  */
 public fun <T> Sequence<T>.elementAt(index: Int): T {
@@ -151,6 +160,15 @@ public inline fun <T> Sequence<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 }
 
 /**
+ * Returns first index of [element], or -1 if the collection does not contain element.
+ * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Sequence<*>.indexOfRaw(element: Any?): Int {
+    return indexOf<Any?>(element)
+}
+
+/**
  * Returns the last element.
  * @throws [NoSuchElementException] if the collection is empty.
  */
@@ -193,6 +211,15 @@ public fun <T> Sequence<T>.lastIndexOf(element: T): Int {
         index++
     }
     return lastIndex
+}
+
+/**
+ * Returns last index of [element], or -1 if the collection does not contain element.
+ * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Sequence<*>.lastIndexOfRaw(element: Any?): Int {
+    return lastIndexOf<Any?>(element)
 }
 
 /**

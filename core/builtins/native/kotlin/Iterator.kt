@@ -86,17 +86,17 @@ public interface MutableListIterator<T> : ListIterator<T>, MutableIterator<T> {
     override fun remove(): Unit
 
     /**
-     * Replaces the last element returned by [next] or [previous] with the specified element [e].
+     * Replaces the last element returned by [next] or [previous] with the specified element [element].
      */
-    public fun set(e: T): Unit
+    public fun set(element: T): Unit
 
     /**
-     * Adds the specified element [e] into the underlying collection immediately before the element that would be
+     * Adds the specified element [element] into the underlying collection immediately before the element that would be
      * returned by [next], if any, and after the element that would be returned by [previous], if any.
      * (If the collection contains no elements, the new element becomes the sole element in the collection.)
      * The new element is inserted before the implicit cursor: a subsequent call to [next] would be unaffected,
      * and a subsequent call to [previous] would return the new element. (This call increases by one the value \
      * that would be returned by a call to [nextIndex] or [previousIndex].)
      */
-    public fun add(e: T): Unit
+    public fun add(element: T): Unit
 }

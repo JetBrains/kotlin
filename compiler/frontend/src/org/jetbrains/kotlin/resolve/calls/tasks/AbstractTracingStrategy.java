@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemStatus;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
@@ -69,7 +69,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
     @Override
     public void noValueForParameter(@NotNull BindingTrace trace, @NotNull ValueParameterDescriptor valueParameter) {
-        JetElement reportOn = CallUtilPackage.getValueArgumentListOrElement(call);
+        JetElement reportOn = CallUtilKt.getValueArgumentListOrElement(call);
         trace.report(NO_VALUE_FOR_PARAMETER.on(reportOn, valueParameter));
     }
 
@@ -140,7 +140,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             @NotNull ExplicitReceiverKind explicitReceiverKind
     ) {
         if (explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER) {
-            DeclarationDescriptor importableDescriptor = DescriptorUtilPackage.getImportableDescriptor(classDescriptor);
+            DeclarationDescriptor importableDescriptor = DescriptorUtilsKt.getImportableDescriptor(classDescriptor);
             if (DescriptorUtils.getFqName(importableDescriptor).isSafe()) {
                 FqName fqName = getFqNameFromTopLevelClass(importableDescriptor);
                 String qualifiedName;
@@ -242,6 +242,10 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
         else if (status.hasTypeInferenceIncorporationError()) {
             trace.report(TYPE_INFERENCE_INCORPORATION_ERROR.on(reference));
         }
+        else if (status.hasTypeParameterWithUnsatisfiedOnlyInputTypesError()) {
+            //todo
+            trace.report(TYPE_INFERENCE_ONLY_INPUT_TYPES.on(reference, data.descriptor.getTypeParameters().get(0)));
+        }
         else {
             assert status.hasUnknownParameters();
             trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data));
@@ -249,7 +253,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void freeFunctionCalledAsExtension(@NotNull BindingTrace trace) {
-        trace.report(FREE_FUNCTION_CALLED_AS_EXTENSION.on(reference));
+    public void nonExtensionFunctionCalledAsExtension(@NotNull BindingTrace trace) {
+        trace.report(INVOKE_EXTENSION_ON_NOT_EXTENSION_FUNCTION.on(reference, reference));
     }
 }

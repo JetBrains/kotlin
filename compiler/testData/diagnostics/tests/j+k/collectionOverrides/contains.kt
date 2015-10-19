@@ -22,7 +22,7 @@ abstract class KA<T> : java.util.AbstractList<T>() {
 }
 
 abstract class KB : java.util.AbstractList<String>(), IC {
-    override fun contains(x: String) = false
+    override fun contains(element: String) = false
 }
 
 

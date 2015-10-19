@@ -50,21 +50,21 @@ fun box(): String {
     val aZ = BooleanArray(3)
 
 
-    if (barB(*aB, 23.toByte()).size() != 4) return "fail: Byte"
-    if (barB(11.toByte(), *aB, 23.toByte(), *aB).size() != 8) return "fail: Byte"
+    if (barB(*aB, 23.toByte()).size != 4) return "fail: Byte"
+    if (barB(11.toByte(), *aB, 23.toByte(), *aB).size != 8) return "fail: Byte"
 
-    if (barC(*aC, 'A').size() != 4) return "fail: Char"
-    if (barC('A', *aC, 'A', *aC).size() != 8) return "fail: Char"
+    if (barC(*aC, 'A').size != 4) return "fail: Char"
+    if (barC('A', *aC, 'A', *aC).size != 8) return "fail: Char"
 
-    if (barD(*aD, 2.3).size() != 4) return "fail: Double"
-    if (barD(*aD, *aD, 2.3).size() != 7) return "fail: Double"
+    if (barD(*aD, 2.3).size != 4) return "fail: Double"
+    if (barD(*aD, *aD, 2.3).size != 7) return "fail: Double"
 
-    if (barF(*aF, 2.3f).size() != 4) return "fail: Float"
-    if (barF(*aF, 2.3f, 1.1f).size() != 5) return "fail: Float"
+    if (barF(*aF, 2.3f).size != 4) return "fail: Float"
+    if (barF(*aF, 2.3f, 1.1f).size != 5) return "fail: Float"
 
-    if (barI(*aI, 23).size() != 4) return "fail: Int"
-    if (barI(11, 10, *aI, 23).size() != 6) return "fail: Int"
-    if (barI(100, *aI, *aI).size() != 7) return "fail: Int 3"
+    if (barI(*aI, 23).size != 4) return "fail: Int"
+    if (barI(11, 10, *aI, 23).size != 6) return "fail: Int"
+    if (barI(100, *aI, *aI).size != 7) return "fail: Int 3"
 
     if (sumInt(100, *aI) != 106) return "fail: sumInt 1"
     if (sumInt(100, *aI, 200) != 306) return "fail: sumInt 2"
@@ -80,14 +80,14 @@ fun box(): String {
     if (concatParameters(*aI, 7, 8, *bI) != "1237845") return "fail: concatParameters 6"
     if (concatParameters(*aI, 7, *bI, *aI, 9) != "1237451239") return "fail: concatParameters 7"
 
-    if (barJ(*aJ, 23L).size() != 4) return "fail: Long"
-    if (barJ(*aJ, 23L, *aJ, *aJ).size() != 10) return "fail: Long"
+    if (barJ(*aJ, 23L).size != 4) return "fail: Long"
+    if (barJ(*aJ, 23L, *aJ, *aJ).size != 10) return "fail: Long"
 
-    if (barS(*aS, 23.toShort()).size() != 4) return "fail: Short"
-    if (barS(*aS, *aS, 23.toShort(), *aS).size() != 10) return "fail: Short"
+    if (barS(*aS, 23.toShort()).size != 4) return "fail: Short"
+    if (barS(*aS, *aS, 23.toShort(), *aS).size != 10) return "fail: Short"
 
-    if (barZ(*aZ, true).size() != 4) return "fail: Boolean"
-    if (barZ(false, *aZ, true, *aZ).size() != 8) return "fail: Boolean"
+    if (barZ(*aZ, true).size != 4) return "fail: Boolean"
+    if (barZ(false, *aZ, true, *aZ).size != 8) return "fail: Boolean"
 
     return "OK"
 }

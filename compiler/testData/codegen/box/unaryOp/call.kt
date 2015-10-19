@@ -1,10 +1,10 @@
 fun box(): String {
-    val a1: Byte = 1.minus()
-    val a2: Short = 1.minus()
-    val a3: Int = 1.minus()
-    val a4: Long = 1.minus()
-    val a5: Double = 1.0.minus()
-    val a6: Float = 1f.minus()
+    val a1: Byte = 1.unaryMinus()
+    val a2: Short = 1.unaryMinus()
+    val a3: Int = 1.unaryMinus()
+    val a4: Long = 1.unaryMinus()
+    val a5: Double = 1.0.unaryMinus()
+    val a6: Float = 1f.unaryMinus()
 
     if (a1 != (-1).toByte()) return "fail 1"
     if (a2 != (-1).toShort()) return "fail -1"

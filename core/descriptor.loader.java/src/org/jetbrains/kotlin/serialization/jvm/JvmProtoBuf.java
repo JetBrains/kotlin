@@ -14,6 +14,7 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertyImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.isRaw);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeParameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classAnnotation);
   }
@@ -204,6 +205,33 @@ public final class JvmProtoBuf {
        */
       int getPredefinedIndex();
 
+      // optional string string = 6;
+      /**
+       * <code>optional string string = 6;</code>
+       *
+       * <pre>
+       * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+       * </pre>
+       */
+      boolean hasString();
+      /**
+       * <code>optional string string = 6;</code>
+       *
+       * <pre>
+       * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+       * </pre>
+       */
+      java.lang.String getString();
+      /**
+       * <code>optional string string = 6;</code>
+       *
+       * <pre>
+       * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+       * </pre>
+       */
+      com.google.protobuf.ByteString
+          getStringBytes();
+
       // optional .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record.Operation operation = 3 [default = NONE];
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record.Operation operation = 3 [default = NONE];</code>
@@ -340,15 +368,15 @@ public final class JvmProtoBuf {
                 int rawValue = input.readEnum();
                 org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation value = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.valueOf(rawValue);
                 if (value != null) {
-                  bitField0_ |= 0x00000004;
+                  bitField0_ |= 0x00000008;
                   operation_ = value;
                 }
                 break;
               }
               case 32: {
-                if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
                   substringIndex_ = new java.util.ArrayList<java.lang.Integer>();
-                  mutable_bitField0_ |= 0x00000008;
+                  mutable_bitField0_ |= 0x00000010;
                 }
                 substringIndex_.add(input.readInt32());
                 break;
@@ -356,9 +384,9 @@ public final class JvmProtoBuf {
               case 34: {
                 int length = input.readRawVarint32();
                 int limit = input.pushLimit(length);
-                if (!((mutable_bitField0_ & 0x00000008) == 0x00000008) && input.getBytesUntilLimit() > 0) {
+                if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
                   substringIndex_ = new java.util.ArrayList<java.lang.Integer>();
-                  mutable_bitField0_ |= 0x00000008;
+                  mutable_bitField0_ |= 0x00000010;
                 }
                 while (input.getBytesUntilLimit() > 0) {
                   substringIndex_.add(input.readInt32());
@@ -367,9 +395,9 @@ public final class JvmProtoBuf {
                 break;
               }
               case 40: {
-                if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+                if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
                   replaceChar_ = new java.util.ArrayList<java.lang.Integer>();
-                  mutable_bitField0_ |= 0x00000010;
+                  mutable_bitField0_ |= 0x00000020;
                 }
                 replaceChar_.add(input.readInt32());
                 break;
@@ -377,14 +405,19 @@ public final class JvmProtoBuf {
               case 42: {
                 int length = input.readRawVarint32();
                 int limit = input.pushLimit(length);
-                if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
+                if (!((mutable_bitField0_ & 0x00000020) == 0x00000020) && input.getBytesUntilLimit() > 0) {
                   replaceChar_ = new java.util.ArrayList<java.lang.Integer>();
-                  mutable_bitField0_ |= 0x00000010;
+                  mutable_bitField0_ |= 0x00000020;
                 }
                 while (input.getBytesUntilLimit() > 0) {
                   replaceChar_.add(input.readInt32());
                 }
                 input.popLimit(limit);
+                break;
+              }
+              case 50: {
+                bitField0_ |= 0x00000004;
+                string_ = input.readBytes();
                 break;
               }
             }
@@ -395,10 +428,10 @@ public final class JvmProtoBuf {
           throw new com.google.protobuf.InvalidProtocolBufferException(
               e.getMessage()).setUnfinishedMessage(this);
         } finally {
-          if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+          if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
             substringIndex_ = java.util.Collections.unmodifiableList(substringIndex_);
           }
-          if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+          if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
             replaceChar_ = java.util.Collections.unmodifiableList(replaceChar_);
           }
           makeExtensionsImmutable();
@@ -553,6 +586,61 @@ public final class JvmProtoBuf {
         return predefinedIndex_;
       }
 
+      // optional string string = 6;
+      public static final int STRING_FIELD_NUMBER = 6;
+      private java.lang.Object string_;
+      /**
+       * <code>optional string string = 6;</code>
+       *
+       * <pre>
+       * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+       * </pre>
+       */
+      public boolean hasString() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional string string = 6;</code>
+       *
+       * <pre>
+       * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+       * </pre>
+       */
+      public java.lang.String getString() {
+        java.lang.Object ref = string_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            string_ = s;
+          }
+          return s;
+        }
+      }
+      /**
+       * <code>optional string string = 6;</code>
+       *
+       * <pre>
+       * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+       * </pre>
+       */
+      public com.google.protobuf.ByteString
+          getStringBytes() {
+        java.lang.Object ref = string_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          string_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
       // optional .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record.Operation operation = 3 [default = NONE];
       public static final int OPERATION_FIELD_NUMBER = 3;
       private org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation operation_;
@@ -564,7 +652,7 @@ public final class JvmProtoBuf {
        * </pre>
        */
       public boolean hasOperation() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
+        return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record.Operation operation = 3 [default = NONE];</code>
@@ -661,6 +749,7 @@ public final class JvmProtoBuf {
       private void initFields() {
         range_ = 1;
         predefinedIndex_ = 0;
+        string_ = "";
         operation_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.NONE;
         substringIndex_ = java.util.Collections.emptyList();
         replaceChar_ = java.util.Collections.emptyList();
@@ -683,7 +772,7 @@ public final class JvmProtoBuf {
         if (((bitField0_ & 0x00000002) == 0x00000002)) {
           output.writeInt32(2, predefinedIndex_);
         }
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
           output.writeEnum(3, operation_.getNumber());
         }
         if (getSubstringIndexList().size() > 0) {
@@ -699,6 +788,9 @@ public final class JvmProtoBuf {
         }
         for (int i = 0; i < replaceChar_.size(); i++) {
           output.writeInt32NoTag(replaceChar_.get(i));
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          output.writeBytes(6, getStringBytes());
         }
       }
 
@@ -716,7 +808,7 @@ public final class JvmProtoBuf {
           size += com.google.protobuf.CodedOutputStream
             .computeInt32Size(2, predefinedIndex_);
         }
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
           size += com.google.protobuf.CodedOutputStream
             .computeEnumSize(3, operation_.getNumber());
         }
@@ -747,6 +839,10 @@ public final class JvmProtoBuf {
                 .computeInt32SizeNoTag(dataSize);
           }
           replaceCharMemoizedSerializedSize = dataSize;
+        }
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeBytesSize(6, getStringBytes());
         }
         memoizedSerializedSize = size;
         return size;
@@ -843,12 +939,14 @@ public final class JvmProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000001);
           predefinedIndex_ = 0;
           bitField0_ = (bitField0_ & ~0x00000002);
-          operation_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.NONE;
+          string_ = "";
           bitField0_ = (bitField0_ & ~0x00000004);
-          substringIndex_ = java.util.Collections.emptyList();
+          operation_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.NONE;
           bitField0_ = (bitField0_ & ~0x00000008);
-          replaceChar_ = java.util.Collections.emptyList();
+          substringIndex_ = java.util.Collections.emptyList();
           bitField0_ = (bitField0_ & ~0x00000010);
+          replaceChar_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000020);
           return this;
         }
 
@@ -883,15 +981,19 @@ public final class JvmProtoBuf {
           if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
             to_bitField0_ |= 0x00000004;
           }
+          result.string_ = string_;
+          if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+            to_bitField0_ |= 0x00000008;
+          }
           result.operation_ = operation_;
-          if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          if (((bitField0_ & 0x00000010) == 0x00000010)) {
             substringIndex_ = java.util.Collections.unmodifiableList(substringIndex_);
-            bitField0_ = (bitField0_ & ~0x00000008);
+            bitField0_ = (bitField0_ & ~0x00000010);
           }
           result.substringIndex_ = substringIndex_;
-          if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          if (((bitField0_ & 0x00000020) == 0x00000020)) {
             replaceChar_ = java.util.Collections.unmodifiableList(replaceChar_);
-            bitField0_ = (bitField0_ & ~0x00000010);
+            bitField0_ = (bitField0_ & ~0x00000020);
           }
           result.replaceChar_ = replaceChar_;
           result.bitField0_ = to_bitField0_;
@@ -906,13 +1008,18 @@ public final class JvmProtoBuf {
           if (other.hasPredefinedIndex()) {
             setPredefinedIndex(other.getPredefinedIndex());
           }
+          if (other.hasString()) {
+            bitField0_ |= 0x00000004;
+            string_ = other.string_;
+            
+          }
           if (other.hasOperation()) {
             setOperation(other.getOperation());
           }
           if (!other.substringIndex_.isEmpty()) {
             if (substringIndex_.isEmpty()) {
               substringIndex_ = other.substringIndex_;
-              bitField0_ = (bitField0_ & ~0x00000008);
+              bitField0_ = (bitField0_ & ~0x00000010);
             } else {
               ensureSubstringIndexIsMutable();
               substringIndex_.addAll(other.substringIndex_);
@@ -922,7 +1029,7 @@ public final class JvmProtoBuf {
           if (!other.replaceChar_.isEmpty()) {
             if (replaceChar_.isEmpty()) {
               replaceChar_ = other.replaceChar_;
-              bitField0_ = (bitField0_ & ~0x00000010);
+              bitField0_ = (bitField0_ & ~0x00000020);
             } else {
               ensureReplaceCharIsMutable();
               replaceChar_.addAll(other.replaceChar_);
@@ -1053,6 +1160,104 @@ public final class JvmProtoBuf {
           return this;
         }
 
+        // optional string string = 6;
+        private java.lang.Object string_ = "";
+        /**
+         * <code>optional string string = 6;</code>
+         *
+         * <pre>
+         * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+         * </pre>
+         */
+        public boolean hasString() {
+          return ((bitField0_ & 0x00000004) == 0x00000004);
+        }
+        /**
+         * <code>optional string string = 6;</code>
+         *
+         * <pre>
+         * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+         * </pre>
+         */
+        public java.lang.String getString() {
+          java.lang.Object ref = string_;
+          if (!(ref instanceof java.lang.String)) {
+            java.lang.String s = ((com.google.protobuf.ByteString) ref)
+                .toStringUtf8();
+            string_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>optional string string = 6;</code>
+         *
+         * <pre>
+         * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+         * </pre>
+         */
+        public com.google.protobuf.ByteString
+            getStringBytes() {
+          java.lang.Object ref = string_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            string_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>optional string string = 6;</code>
+         *
+         * <pre>
+         * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+         * </pre>
+         */
+        public Builder setString(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+          string_ = value;
+          
+          return this;
+        }
+        /**
+         * <code>optional string string = 6;</code>
+         *
+         * <pre>
+         * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+         * </pre>
+         */
+        public Builder clearString() {
+          bitField0_ = (bitField0_ & ~0x00000004);
+          string_ = getDefaultInstance().getString();
+          
+          return this;
+        }
+        /**
+         * <code>optional string string = 6;</code>
+         *
+         * <pre>
+         * A string which should be used. If this field is present, both the associated string and the predefined string index are ignored
+         * </pre>
+         */
+        public Builder setStringBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+          string_ = value;
+          
+          return this;
+        }
+
         // optional .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record.Operation operation = 3 [default = NONE];
         private org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation operation_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.NONE;
         /**
@@ -1063,7 +1268,7 @@ public final class JvmProtoBuf {
          * </pre>
          */
         public boolean hasOperation() {
-          return ((bitField0_ & 0x00000004) == 0x00000004);
+          return ((bitField0_ & 0x00000008) == 0x00000008);
         }
         /**
          * <code>optional .org.jetbrains.kotlin.serialization.jvm.StringTableTypes.Record.Operation operation = 3 [default = NONE];</code>
@@ -1086,7 +1291,7 @@ public final class JvmProtoBuf {
           if (value == null) {
             throw new NullPointerException();
           }
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000008;
           operation_ = value;
           
           return this;
@@ -1099,7 +1304,7 @@ public final class JvmProtoBuf {
          * </pre>
          */
         public Builder clearOperation() {
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000008);
           operation_ = org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.NONE;
           
           return this;
@@ -1108,9 +1313,9 @@ public final class JvmProtoBuf {
         // repeated int32 substring_index = 4 [packed = true];
         private java.util.List<java.lang.Integer> substringIndex_ = java.util.Collections.emptyList();
         private void ensureSubstringIndexIsMutable() {
-          if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+          if (!((bitField0_ & 0x00000010) == 0x00000010)) {
             substringIndex_ = new java.util.ArrayList<java.lang.Integer>(substringIndex_);
-            bitField0_ |= 0x00000008;
+            bitField0_ |= 0x00000010;
            }
         }
         /**
@@ -1208,7 +1413,7 @@ public final class JvmProtoBuf {
          */
         public Builder clearSubstringIndex() {
           substringIndex_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000010);
           
           return this;
         }
@@ -1216,9 +1421,9 @@ public final class JvmProtoBuf {
         // repeated int32 replace_char = 5 [packed = true];
         private java.util.List<java.lang.Integer> replaceChar_ = java.util.Collections.emptyList();
         private void ensureReplaceCharIsMutable() {
-          if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+          if (!((bitField0_ & 0x00000020) == 0x00000020)) {
             replaceChar_ = new java.util.ArrayList<java.lang.Integer>(replaceChar_);
-            bitField0_ |= 0x00000010;
+            bitField0_ |= 0x00000020;
            }
         }
         /**
@@ -1309,7 +1514,7 @@ public final class JvmProtoBuf {
          */
         public Builder clearReplaceChar() {
           replaceChar_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000020);
           
           return this;
         }
@@ -3735,6 +3940,21 @@ public final class JvmProtoBuf {
         null,
         101,
         com.google.protobuf.WireFormat.FieldType.BOOL);
+  public static final int TYPE_PARAMETER_ANNOTATION_FIELD_NUMBER = 100;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.TypeParameter { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter,
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> typeParameterAnnotation = com.google.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
+        null,
+        100,
+        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        false);
   public static final int INDEX_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>

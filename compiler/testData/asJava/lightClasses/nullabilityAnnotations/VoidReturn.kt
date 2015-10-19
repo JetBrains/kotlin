@@ -1,3 +1,3 @@
 // _DefaultPackage
 
-fun foo(s: String) {}
+fun foo(g: String) {}

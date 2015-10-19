@@ -2,12 +2,12 @@
 
 @java.lang.Deprecated class TestClass2 {}
 
-java.lang.Deprecated class TestClass3 {}
+@java.lang.Deprecated class TestClass3 {}
 
-java.lang.Deprecated class TestClass4 {}
+@java.lang.Deprecated class TestClass4 {}
 
 class TestClass5 {
-    java.lang.Deprecated class innerTestClass5() {}
+    @java.lang.Deprecated class innerTestClass5() {}
 }
 
 // ANNOTATION: java.lang.Deprecated

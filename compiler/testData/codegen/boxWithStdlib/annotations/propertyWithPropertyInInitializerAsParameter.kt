@@ -10,5 +10,5 @@ fun box(): String {
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Ann(val i: Int)
 
-val i2: Int = 1
-val i: Int = i2
+const val i2: Int = 1
+const val i: Int = i2

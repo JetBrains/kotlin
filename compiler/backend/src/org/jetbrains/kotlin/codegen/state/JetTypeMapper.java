@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.codegen.state;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import kotlin.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment;
@@ -34,10 +36,10 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature;
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialJvmSignature.SpecialSignatureInfo;
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
@@ -51,10 +53,11 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunctionLiteral;
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
@@ -80,7 +83,6 @@ import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.DEFAULT_CONSTRUCTOR_MARKER;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -172,10 +174,17 @@ public class JetTypeMapper {
 
     @NotNull
     private String internalNameForPackageMemberOwner(@NotNull CallableMemberDescriptor descriptor, boolean isImplementation) {
+        boolean isAccessor = descriptor instanceof AccessorForCallableDescriptor;
+        if (isAccessor) {
+            descriptor = ((AccessorForCallableDescriptor) descriptor).getCalleeDescriptor();
+        }
         JetFile file = DescriptorToSourceUtils.getContainingFile(descriptor);
         if (file != null) {
             Visibility visibility = descriptor.getVisibility();
-            if (isImplementation || descriptor instanceof PropertyDescriptor || Visibilities.isPrivate(visibility)) {
+            if (isImplementation ||
+                descriptor instanceof PropertyDescriptor ||
+                Visibilities.isPrivate(visibility) ||
+                isAccessor/*Cause of KT-9603*/) {
                 return FileClasses.getFileClassInternalName(fileClassesProvider, file);
             }
             else {
@@ -562,7 +571,7 @@ public class JetTypeMapper {
 
         if (declarationElement == null) {
             String message = "Error type encountered: %s (%s).";
-            if (TypesPackage.upperIfFlexible(type) instanceof DeserializedType) {
+            if (FlexibleTypesKt.upperIfFlexible(type) instanceof DeserializedType) {
                 message +=
                         " One of the possible reasons may be that this type is not directly accessible from this module. " +
                         "To workaround this error, try adding an explicit dependency on the module or library which contains this type " +
@@ -595,6 +604,11 @@ public class JetTypeMapper {
             boolean projectionsAllowed
     ) {
         if (signatureVisitor != null) {
+            if (hasNothingInArguments(jetType)) {
+                signatureVisitor.writeAsmType(asmType);
+                return;
+            }
+
             signatureVisitor.writeClassBegin(asmType);
 
             List<TypeProjection> arguments = jetType.getArguments();
@@ -620,6 +634,24 @@ public class JetTypeMapper {
             }
             signatureVisitor.writeClassEnd();
         }
+    }
+
+    private static boolean hasNothingInArguments(JetType jetType) {
+        boolean hasNothingInArguments = CollectionsKt.any(jetType.getArguments(), new Function1<TypeProjection, Boolean>() {
+            @Override
+            public Boolean invoke(TypeProjection projection) {
+                return KotlinBuiltIns.isNothingOrNullableNothing(projection.getType());
+            }
+        });
+
+        if (hasNothingInArguments) return true;
+
+        return CollectionsKt.any(jetType.getArguments(), new Function1<TypeProjection, Boolean>() {
+            @Override
+            public Boolean invoke(TypeProjection projection) {
+                return !projection.isStarProjection() && hasNothingInArguments(projection.getType());
+            }
+        });
     }
 
     private static Variance getEffectiveVariance(Variance parameterVariance, Variance projectionKind, Variance howThisTypeIsUsed) {
@@ -719,7 +751,7 @@ public class JetTypeMapper {
                 boolean isStaticInvocation = (isStaticDeclaration(functionDescriptor) &&
                                               !(functionDescriptor instanceof ImportedFromObjectCallableDescriptor)) ||
                                              isStaticAccessor(functionDescriptor) ||
-                                             AnnotationsPackage.isPlatformStaticInObjectOrClass(functionDescriptor);
+                                             AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor);
                 if (isStaticInvocation) {
                     invokeOpcode = INVOKESTATIC;
                 }
@@ -732,7 +764,7 @@ public class JetTypeMapper {
                 }
 
                 FunctionDescriptor overriddenSpecialBuiltinFunction =
-                        SpecialBuiltinMembers.<FunctionDescriptor>getBuiltinSpecialOverridden(functionDescriptor.getOriginal());
+                        SpecialBuiltinMembers.<FunctionDescriptor>getOverriddenBuiltinWithDifferentJvmDescriptor(functionDescriptor.getOriginal());
                 FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null
                                                     ? overriddenSpecialBuiltinFunction.getOriginal()
                                                     : functionDescriptor.getOriginal();
@@ -826,7 +858,7 @@ public class JetTypeMapper {
 
             boolean isAccessor = property instanceof AccessorForPropertyDescriptor;
             String propertyName = isAccessor
-                                  ? ((AccessorForPropertyDescriptor) property).getIndexedAccessorSuffix()
+                                  ? ((AccessorForPropertyDescriptor) property).getAccessorSuffix()
                                   : property.getName().asString();
 
             String accessorName = descriptor instanceof PropertyGetterDescriptor
@@ -948,7 +980,7 @@ public class JetTypeMapper {
 
 
         if (kind != OwnerKind.DEFAULT_IMPLS) {
-            SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialJvmSignature.getSpecialSignatureInfo(f);
+            SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);
 
             if (specialSignatureInfo != null) {
                 return new JvmMethodSignature(
@@ -965,7 +997,7 @@ public class JetTypeMapper {
             @NotNull  BothSignatureWriter sw
     ) {
         FunctionDescriptor overridden =
-                BuiltinMethodsWithSpecialJvmSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f);
+                BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f);
         if (overridden == null) return false;
         if (SpecialBuiltinMembers.isFromJavaOrBuiltins(f)) return false;
 
@@ -1161,8 +1193,8 @@ public class JetTypeMapper {
 
         ClassDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration.getKind() == ClassKind.ENUM_CLASS || containingDeclaration.getKind() == ClassKind.ENUM_ENTRY) {
-            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, getBuiltIns(descriptor).getStringType());
-            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, getBuiltIns(descriptor).getIntType());
+            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, DescriptorUtilsKt.getBuiltIns(descriptor).getStringType());
+            writeParameter(sw, JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL, DescriptorUtilsKt.getBuiltIns(descriptor).getIntType());
         }
 
         if (closure == null) return;

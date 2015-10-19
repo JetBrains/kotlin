@@ -7,11 +7,11 @@ annotation class Ann(
         val p5: Int
 )
 
-val prop1: Int = 1.plus(1)
-val prop2: Int = 1.minus(1)
-val prop3: Int = 1.times(1)
-val prop4: Int = 1.div(1)
-val prop5: Int = 1.mod(1)
+const val prop1: Int = 1.plus(1)
+const val prop2: Int = 1.minus(1)
+const val prop3: Int = 1.times(1)
+const val prop4: Int = 1.div(1)
+const val prop5: Int = 1.mod(1)
 
 @Ann(prop1, prop2, prop3, prop4, prop5) class MyClass
 

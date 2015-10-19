@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.fileClasses.isInsideJvmMultifileClassFile
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
@@ -73,11 +74,6 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
         val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
         diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_FIELD.on(annotationEntry, problem.errorMessage))
     }
-
-    private fun JetDeclaration.isInsideJvmMultifileClassFile() = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(
-            getContainingJetFile(),
-            JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT
-    ) != null
 
     private fun PropertyDescriptor.hasCustomAccessor()
             = !(getter?.isDefault ?: true) || !(setter?.isDefault ?: true)

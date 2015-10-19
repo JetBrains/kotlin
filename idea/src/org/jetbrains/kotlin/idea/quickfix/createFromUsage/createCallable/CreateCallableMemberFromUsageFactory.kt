@@ -18,40 +18,39 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.LowPriorityQuickFixWithDelegateFactory
-import org.jetbrains.kotlin.idea.quickfix.NullQuickFix
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public abstract class CreateCallableMemberFromUsageFactory<E : JetElement>(
         val extensionsSupported: Boolean = true
-) : CreateFromUsageFactory<E, List<CallableInfo>>() {
+) : KotlinIntentionActionFactoryWithDelegate<E, List<CallableInfo>>() {
     private fun newCallableQuickFix(
             originalElementPointer: SmartPsiElementPointer<E>,
             lowPriority: Boolean,
-            quickFixDataFactory: (SmartPsiElementPointer<E>) -> List<CallableInfo>?,
+            quickFixDataFactory: () -> List<CallableInfo>?,
             quickFixFactory: (E, List<CallableInfo>) -> CreateCallableFromUsageFixBase<E>
     ): QuickFixWithDelegateFactory {
         val delegateFactory = {
-            val data = quickFixDataFactory(originalElementPointer).orEmpty()
+            val data = quickFixDataFactory().orEmpty()
             val originalElement = originalElementPointer.element
-            if (data.isNotEmpty() && originalElement != null) quickFixFactory(originalElement, data) else NullQuickFix
+            if (data.isNotEmpty() && originalElement != null) quickFixFactory(originalElement, data) else null
         }
         return if (lowPriority) LowPriorityQuickFixWithDelegateFactory(delegateFactory) else QuickFixWithDelegateFactory(delegateFactory)
     }
 
     protected open fun createCallableInfo(element: E, diagnostic: Diagnostic): CallableInfo? = null
 
-    override fun createQuickFixData(element: E, diagnostic: Diagnostic): List<CallableInfo>
+    override fun extractFixData(element: E, diagnostic: Diagnostic): List<CallableInfo>
             = createCallableInfo(element, diagnostic).singletonOrEmptyList()
 
-    override fun createQuickFixes(
+    override fun createFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
-            quickFixDataFactory: (SmartPsiElementPointer<E>) -> List<CallableInfo>?
+            quickFixDataFactory: () -> List<CallableInfo>?
     ): List<QuickFixWithDelegateFactory> {
         val memberFix = newCallableQuickFix(originalElementPointer, false, quickFixDataFactory) { element, data ->
             CreateCallableFromUsageFix(element, data)

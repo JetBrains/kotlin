@@ -57,7 +57,7 @@ L0:
     v(val v = -1)
     r(1) -> <v1>
     mark(-1)
-    call(-1, minus|<v1>) -> <v2>
+    call(-1, unaryMinus|<v1>) -> <v2>
     w(v|<v2>)
   2 mark({ z = 8 })
     magic[IMPLICIT_RECEIVER](z) -> <v3>
@@ -107,7 +107,7 @@ L2 [after default value for parameter b]:
     v(val v = -1)
     r(1) -> <v5>
     mark(-1)
-    call(-1, minus|<v5>) -> <v6>
+    call(-1, unaryMinus|<v5>) -> <v6>
     w(v|<v6>)
   2 mark({ z = 8 })
     magic[IMPLICIT_RECEIVER](z) -> <v7>

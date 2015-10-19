@@ -58,7 +58,7 @@ public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFa
         }
     }
 
-    override fun createQuickFixData(element: JetUserType, diagnostic: Diagnostic): ClassInfo? {
+    override fun extractFixData(element: JetUserType, diagnostic: Diagnostic): ClassInfo? {
         val name = element.referenceExpression?.getReferencedName() ?: return null
         if (element.parent?.parent is JetConstructorCalleeExpression) return null
 

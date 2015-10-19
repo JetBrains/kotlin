@@ -8,7 +8,7 @@ class Foo {
         fun f() {
         }
 
-        platformStatic fun s() {
+        @platformStatic fun s() {
         }
 
         val CONST = 42

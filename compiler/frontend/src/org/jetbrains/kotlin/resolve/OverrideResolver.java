@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
-import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
+import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -423,7 +423,7 @@ public class OverrideResolver {
             @NotNull List<CallableMemberDescriptor> concreteOverridden
     ) {
         for (CallableMemberDescriptor overridden : allOverriddenDeclarations) {
-            if (!CallResolverUtilPackage.isOrOverridesSynthesized(overridden)) {
+            if (!CallResolverUtilKt.isOrOverridesSynthesized(overridden)) {
                 if (overridden.getModality() == Modality.ABSTRACT) {
                     abstractOverridden.add(overridden);
                 }
@@ -566,7 +566,7 @@ public class OverrideResolver {
 
     private void checkOverrideForMember(@NotNull final CallableMemberDescriptor declared) {
         if (declared.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            if (DataClassUtilsPackage.isComponentLike(declared.getName())) {
+            if (DataClassUtilsKt.isComponentLike(declared.getName())) {
                 checkOverrideForComponentFunction(declared);
             }
             return;

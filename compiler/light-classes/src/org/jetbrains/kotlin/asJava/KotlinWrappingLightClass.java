@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 import java.util.List;
 
@@ -124,7 +124,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                 JetDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(field);
                 if (declaration instanceof JetEnumEntry) {
                     assert field instanceof PsiEnumConstant : "Field delegate should be an enum constant (" + field.getName() + "):\n" +
-                                                              PsiUtilPackage.getElementTextWithContext(declaration);
+                                                              PsiUtilsKt.getElementTextWithContext(declaration);
                     JetEnumEntry enumEntry = (JetEnumEntry) declaration;
                     PsiEnumConstant enumConstant = (PsiEnumConstant) field;
                     FqName enumConstantFqName = new FqName(getFqName().asString() + "." + enumEntry.getName());

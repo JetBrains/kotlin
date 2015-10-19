@@ -14,8 +14,9 @@ public final enum class E : kotlin.Enum<E>, T {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val values: kotlin.Array<E>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E
-    public final /*synthesized*/ fun values(): kotlin.Array<E>
+    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<E>
 }
 
 public interface T {

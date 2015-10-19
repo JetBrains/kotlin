@@ -28,8 +28,9 @@ import org.jetbrains.kotlin.generators.builtins.ranges.GenerateRanges
 import java.io.File
 import java.io.PrintWriter
 
-fun assertExists(file: File): Unit =
-        if (!file.exists()) error("Output dir does not exist: ${file.getAbsolutePath()}")
+fun assertExists(file: File) {
+    if (!file.exists()) error("Output dir does not exist: ${file.getAbsolutePath()}")
+}
 
 val BUILT_INS_NATIVE_DIR = File("core/builtins/native/")
 val BUILT_INS_SRC_DIR = File("core/builtins/src/")

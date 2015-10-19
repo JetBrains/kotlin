@@ -19,17 +19,8 @@ JetFile: InterfaceWithEnumKeyword.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      MODIFIER_LIST
-        PsiErrorElement:Use '@' symbol before annotations
-          <empty list>
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('D')
       PsiErrorElement:Expecting member declaration
-        <empty list>
+        PsiElement(IDENTIFIER)('D')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -46,17 +37,8 @@ JetFile: InterfaceWithEnumKeyword.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      MODIFIER_LIST
-        PsiErrorElement:Use '@' symbol before annotations
-          <empty list>
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('D')
       PsiErrorElement:Expecting member declaration
-        <empty list>
+        PsiElement(IDENTIFIER)('D')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

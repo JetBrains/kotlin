@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 import org.jetbrains.kotlin.psi.JetThisExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 
 class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     PropertiesHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {
@@ -44,7 +44,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         }
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (target instanceof SyntheticFieldDescriptor) {
-            JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_VARIABLE);
+            NameHighlighter.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_VARIABLE);
             return;
         }
         if (!(target instanceof PropertyDescriptor)) {
@@ -53,7 +53,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
         highlightProperty(expression, (PropertyDescriptor) target, false);
         if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-            JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_ACCESS);
+            NameHighlighter.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_ACCESS);
         }
     }
 
@@ -88,18 +88,18 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             @NotNull PropertyDescriptor descriptor,
             boolean withBackingField
     ) {
-        if (TasksPackage.isDynamic(descriptor)) {
-            JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
+        if (DynamicCallsKt.isDynamic(descriptor)) {
+            NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
             return;
         }
 
         boolean isStatic = DescriptorUtils.isStaticDeclaration(descriptor);
-        JetPsiChecker.highlightName(
+        NameHighlighter.highlightName(
                 holder, elementToHighlight,
                 isStatic ? JetHighlightingColors.PACKAGE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
         );
         if (descriptor.getExtensionReceiverParameter() != null) {
-            JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.EXTENSION_PROPERTY);
+            NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.EXTENSION_PROPERTY);
         }
         if (withBackingField) {
             holder.createInfoAnnotation(elementToHighlight, "This property has a backing field")

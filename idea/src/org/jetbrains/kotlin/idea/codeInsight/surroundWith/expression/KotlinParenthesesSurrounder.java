@@ -25,8 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 
 public class KotlinParenthesesSurrounder extends KotlinExpressionSurrounder {
     @Override
@@ -42,7 +41,8 @@ public class KotlinParenthesesSurrounder extends KotlinExpressionSurrounder {
     @Nullable
     @Override
     public TextRange surroundExpression( @NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) JetPsiFactory(expression).createExpression("(a)");
+        JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) JetPsiFactoryKt
+                .JetPsiFactory(expression).createExpression("(a)");
         JetExpression expressionWithoutParentheses = parenthesizedExpression.getExpression();
         assert expressionWithoutParentheses != null : "JetExpression should exists for " + parenthesizedExpression.getText() + " expression";
         expressionWithoutParentheses.replace(expression);

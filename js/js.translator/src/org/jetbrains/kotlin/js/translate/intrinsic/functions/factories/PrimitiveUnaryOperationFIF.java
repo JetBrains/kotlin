@@ -165,6 +165,12 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
             return null;
         }
 
+        if (pattern("Char.unaryPlus()").apply(descriptor)) {
+            return CHAR_PLUS;
+        }
+        if (pattern("Char.unaryMinus()").apply(descriptor)) {
+            return CHAR_MINUS;
+        }
         if (pattern("Char.plus()").apply(descriptor)) {
             return CHAR_PLUS;
         }

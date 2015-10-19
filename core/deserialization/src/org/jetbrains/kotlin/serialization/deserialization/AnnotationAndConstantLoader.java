@@ -62,6 +62,12 @@ public interface AnnotationAndConstantLoader<A, C, T> {
             @NotNull NameResolver nameResolver
     );
 
+    @NotNull
+    List<A> loadTypeParameterAnnotations(
+            @NotNull ProtoBuf.TypeParameter typeParameter,
+            @NotNull NameResolver nameResolver
+    );
+
     @Nullable
     C loadPropertyConstant(
             @NotNull ProtoContainer container,

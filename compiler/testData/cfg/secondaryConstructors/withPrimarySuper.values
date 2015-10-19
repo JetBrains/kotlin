@@ -45,7 +45,7 @@ u                  <v6>: Int    NEW: r(u) -> <v6>
 w.toInt() + u      <v7>: Int    NEW: call(w.toInt() + u, plus|<v5>, <v6>) -> <v7>
 B(w.toInt() + u)   <v8>: *      NEW: call(B(w.toInt() + u), <init>|<v7>) -> <v8>
 1                  <v9>: Int    NEW: r(1) -> <v9>
--1                 <v10>: Int   NEW: call(-1, minus|<v9>) -> <v10>
+-1                 <v10>: Int   NEW: call(-1, unaryMinus|<v9>) -> <v10>
 w                  <v13>: Int   NEW: r(w|<v12>) -> <v13>
 8                  <v15>: Int   NEW: r(8) -> <v15>
 z = 8              !<v16>: *

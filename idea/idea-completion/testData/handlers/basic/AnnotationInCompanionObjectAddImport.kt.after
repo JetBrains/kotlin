@@ -1,0 +1,9 @@
+import java.lang.annotation.Inherited
+
+class A {
+    companion object {
+        @Inherited<caret>
+    }
+}
+
+// ELEMENT: Inherited

@@ -20,8 +20,8 @@ import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
+import org.jetbrains.kotlin.idea.inspections.AddModifierFixFactory
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
-import org.jetbrains.kotlin.idea.inspections.ModifierFixFactory
 import org.jetbrains.kotlin.idea.intentions.IntroduceBackingPropertyFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
 
@@ -66,7 +65,7 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(addAbstractModifierFactory)
         ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
-        MANY_IMPL_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
+        ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
 
         val removeFinalModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(FINAL_KEYWORD)
         val addAbstractToClassFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD, javaClass<JetClass>())
@@ -90,8 +89,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         NON_MEMBER_FUNCTION_NO_BODY.registerFactory(addFunctionBodyFactory)
 
         NOTHING_TO_OVERRIDE.registerFactory( RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OVERRIDE_KEYWORD),
-                                        ChangeMemberFunctionSignatureFix.createFactory(),
-                                        AddFunctionToSupertypeFix.createFactory())
+                                        ChangeMemberFunctionSignatureFix,
+                                        AddFunctionToSupertypeFix)
         VIRTUAL_MEMBER_HIDDEN.registerFactory(AddModifierFix.createFactory(OVERRIDE_KEYWORD))
 
         USELESS_CAST.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory("Remove cast"))
@@ -152,7 +151,8 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         val implementMethodsHandler = ImplementMembersHandler()
         ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
-        MANY_IMPL_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
+        ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
+        MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
 
         VAL_WITH_SETTER.registerFactory(ChangeVariableMutabilityFix.VAL_WITH_SETTER_FACTORY)
         VAL_REASSIGNMENT.registerFactory(ChangeVariableMutabilityFix.VAL_REASSIGNMENT_FACTORY)
@@ -222,10 +222,10 @@ public class QuickFixRegistrar : QuickFixContributor {
         COMPARE_TO_TYPE_MISMATCH.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForCompareToTypeMismatch())
         IMPLICIT_NOTHING_RETURN_TYPE.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForChangingReturnTypeToNothing())
 
-        TOO_MANY_ARGUMENTS.registerFactory(ChangeFunctionSignatureFix.createFactory())
-        NO_VALUE_FOR_PARAMETER.registerFactory(ChangeFunctionSignatureFix.createFactory())
-        UNUSED_PARAMETER.registerFactory(ChangeFunctionSignatureFix.createFactoryForUnusedParameter())
-        EXPECTED_PARAMETERS_NUMBER_MISMATCH.registerFactory(ChangeFunctionSignatureFix.createFactoryForParametersNumberMismatch())
+        TOO_MANY_ARGUMENTS.registerFactory(ChangeFunctionSignatureFix)
+        NO_VALUE_FOR_PARAMETER.registerFactory(ChangeFunctionSignatureFix)
+        UNUSED_PARAMETER.registerFactory(RemoveUnusedFunctionParameterFix)
+        EXPECTED_PARAMETERS_NUMBER_MISMATCH.registerFactory(ChangeFunctionLiteralSignatureFix)
 
         EXPECTED_PARAMETER_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch())
 
@@ -277,7 +277,7 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         SMARTCAST_IMPOSSIBLE.registerFactory(CastExpressionFix.createFactoryForSmartCastImpossible())
 
-        PLATFORM_CLASS_MAPPED_TO_KOTLIN.registerFactory(MapPlatformClassToKotlinFix.createFactory())
+        PLATFORM_CLASS_MAPPED_TO_KOTLIN.registerFactory(MapPlatformClassToKotlinFix)
 
         MANY_CLASSES_IN_SUPERTYPE_LIST.registerFactory(RemoveSupertypeFix.createFactory())
 
@@ -301,8 +301,6 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         EXPLICIT_DELEGATION_CALL_REQUIRED.registerFactory(InsertDelegationCallQuickfix.InsertThisDelegationCallFactory)
         EXPLICIT_DELEGATION_CALL_REQUIRED.registerFactory(InsertDelegationCallQuickfix.InsertSuperDelegationCallFactory)
-
-        DEPRECATED_ANNOTATION_METHOD_CALL.registerFactory(MigrateAnnotationMethodCallFix, MigrateAnnotationMethodCallInWholeFile)
 
         MISSING_CONSTRUCTOR_KEYWORD.registerFactory(MissingConstructorKeywordFix,
                                                MissingConstructorKeywordFix.createWholeProjectFixFactory())
@@ -329,8 +327,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         BACKING_FIELD_USAGE_FORBIDDEN.registerFactory(MigrateBackingFieldUsageFix)
         BACKING_FIELD_USAGE_FORBIDDEN.registerFactory(IntroduceBackingPropertyFix)
 
-        OPERATOR_MODIFIER_REQUIRED.registerFactory(ModifierFixFactory(JetTokens.OPERATOR_KEYWORD))
-        INFIX_MODIFIER_REQUIRED.registerFactory(ModifierFixFactory(JetTokens.INFIX_KEYWORD))
+        OPERATOR_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(JetTokens.OPERATOR_KEYWORD))
+        INFIX_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(JetTokens.INFIX_KEYWORD))
 
         UNDERSCORE_IS_DEPRECATED.registerFactory(RenameUnderscoreFix)
 

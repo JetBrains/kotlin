@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTask;
@@ -104,7 +104,7 @@ public class ResolutionResultsHandler {
             // This check is needed for the following case:
             //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
             if (task.checkArguments != CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ||
-                    !CallUtilPackage.hasUnresolvedArguments(task.call, task)) {
+                    !CallUtilKt.hasUnresolvedArguments(task.call, task)) {
                 if (allCandidatesIncomplete) {
                     task.tracing.cannotCompleteResolve(task.trace, results.getResultingCalls());
                 }

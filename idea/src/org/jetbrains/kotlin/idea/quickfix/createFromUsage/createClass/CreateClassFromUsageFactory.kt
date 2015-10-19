@@ -18,28 +18,25 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.quickfix.NullQuickFix
+import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFactory
 import org.jetbrains.kotlin.psi.JetElement
 
-abstract class CreateClassFromUsageFactory<E : JetElement> : CreateFromUsageFactory<E, ClassInfo>() {
+abstract class CreateClassFromUsageFactory<E : JetElement> : KotlinIntentionActionFactoryWithDelegate<E, ClassInfo>() {
     protected abstract fun getPossibleClassKinds(element: E, diagnostic: Diagnostic): List<ClassKind>
 
-    override fun createQuickFixes(
+    override fun createFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
-            quickFixDataFactory: (SmartPsiElementPointer<E>) -> ClassInfo?
+            quickFixDataFactory: () -> ClassInfo?
     ): List<QuickFixWithDelegateFactory> {
-        val originalElement = originalElementPointer.element ?: return emptyList()
+        val possibleClassKinds = getPossibleClassKinds(originalElementPointer.element ?: return emptyList(), diagnostic)
 
-        val classFixes = getPossibleClassKinds(originalElement, diagnostic).map { classKind ->
+        val classFixes = possibleClassKinds.map { classKind ->
             QuickFixWithDelegateFactory {
-                val currentElement = originalElementPointer.element
-                val data = quickFixDataFactory(originalElementPointer)
-                if (currentElement != null && data != null) {
-                    CreateClassFromUsageFix(originalElement, data.copy(kind = classKind))
-                } else NullQuickFix
+                val currentElement = originalElementPointer.element ?: return@QuickFixWithDelegateFactory null
+                val data = quickFixDataFactory() ?: return@QuickFixWithDelegateFactory null
+                CreateClassFromUsageFix(currentElement, data.copy(kind = classKind))
             }
         }
 

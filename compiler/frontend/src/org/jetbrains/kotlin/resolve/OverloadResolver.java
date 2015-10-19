@@ -22,6 +22,7 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
@@ -37,9 +38,11 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public class OverloadResolver {
     @NotNull private final BindingTrace trace;
+    @NotNull private final MainFunctionDetector mainFunctionDetector;
 
     public OverloadResolver(@NotNull BindingTrace trace) {
         this.trace = trace;
+        mainFunctionDetector = new MainFunctionDetector(trace.getBindingContext());
     }
 
     public void process(@NotNull BodiesResolveContext c) {
@@ -195,6 +198,8 @@ public class OverloadResolver {
             @NotNull Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations) {
         for (Pair<JetDeclaration, CallableMemberDescriptor> redeclaration : redeclarations) {
             CallableMemberDescriptor memberDescriptor = redeclaration.getSecond();
+            if (DescriptorToSourceUtils.isTopLevelMainFunction(memberDescriptor, mainFunctionDetector)) return;
+
             JetDeclaration jetDeclaration = redeclaration.getFirst();
             if (memberDescriptor instanceof PropertyDescriptor) {
                 trace.report(Errors.REDECLARATION.on(jetDeclaration, memberDescriptor.getName().asString()));

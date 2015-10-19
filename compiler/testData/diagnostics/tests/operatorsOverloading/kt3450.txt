@@ -3,8 +3,8 @@ package
 public val x: B
 public fun test(): kotlin.Unit
 public operator fun A.div(/*0*/ s: kotlin.String): A
-public operator fun kotlin.String.plus(): A
 public infix fun </*0*/ A, /*1*/ B> A.to(/*0*/ that: B): Pair<A, B>
+public operator fun kotlin.String.unaryPlus(): A
 
 public final class A {
     public constructor A()

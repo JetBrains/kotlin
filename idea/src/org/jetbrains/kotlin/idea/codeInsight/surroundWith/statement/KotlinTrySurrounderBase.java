@@ -25,12 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.KotlinSurrounderUtils;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.MoveDeclarationsOutHelper;
-import org.jetbrains.kotlin.psi.JetBlockExpression;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetParameter;
-import org.jetbrains.kotlin.psi.JetTryExpression;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import org.jetbrains.kotlin.psi.*;
 
 public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder {
 
@@ -44,7 +39,7 @@ public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder
             return null;
         }
 
-        JetTryExpression tryExpression = (JetTryExpression) JetPsiFactory(project).createExpression(getCodeTemplate());
+        JetTryExpression tryExpression = (JetTryExpression) JetPsiFactoryKt.JetPsiFactory(project).createExpression(getCodeTemplate());
         tryExpression = (JetTryExpression) container.addAfter(tryExpression, statements[statements.length - 1]);
 
         // TODO move a comment for first statement

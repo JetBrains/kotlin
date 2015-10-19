@@ -28,7 +28,7 @@ class GenerateArrayIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             val s = kind.capitalized
             out.println("private class Array${s}Iterator(private val array: ${s}Array) : ${s}Iterator() {")
             out.println("    private var index = 0")
-            out.println("    override fun hasNext() = index < array.size()")
+            out.println("    override fun hasNext() = index < array.size")
             out.println("    override fun next$s() = array[index++]")
             out.println("}")
             out.println()

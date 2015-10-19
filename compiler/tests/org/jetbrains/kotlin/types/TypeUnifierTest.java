@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 import org.jetbrains.kotlin.psi.JetTypeProjection;
 import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.resolve.TypeResolver;
@@ -35,16 +36,14 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
-import org.jetbrains.kotlin.tests.di.DiPackage;
+import org.jetbrains.kotlin.tests.di.InjectionKt;
 
 import java.util.Map;
 import java.util.Set;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class TypeUnifierTest extends JetLiteFixture {
     private Set<TypeConstructor> variables;
@@ -66,7 +65,7 @@ public class TypeUnifierTest extends JetLiteFixture {
 
         ModuleDescriptorImpl module = JetTestUtils.createEmptyModule();
         builtIns = module.getBuiltIns();
-        typeResolver = DiPackage.createContainerForTests(getProject(), module).getTypeResolver();
+        typeResolver = InjectionKt.createContainerForTests(getProject(), module).getTypeResolver();
         x = createTypeVariable("X");
         y = createTypeVariable("Y");
         variables = Sets.newHashSet(x.getTypeConstructor(), y.getTypeConstructor());
@@ -209,11 +208,12 @@ public class TypeUnifierTest extends JetLiteFixture {
         withX.addClassifierDescriptor(y);
         withX.changeLockLevel(WritableScope.LockLevel.READING);
 
-        JetTypeProjection projection = JetPsiFactory(getProject()).createTypeArguments("<" + typeStr + ">").getArguments().get(0);
+        JetTypeProjection projection = JetPsiFactoryKt
+                .JetPsiFactory(getProject()).createTypeArguments("<" + typeStr + ">").getArguments().get(0);
 
         JetTypeReference typeReference = projection.getTypeReference();
         assert typeReference != null;
-        JetType type = typeResolver.resolveType(UtilsPackage.asLexicalScope(withX), typeReference, JetTestUtils.DUMMY_TRACE, true);
+        JetType type = typeResolver.resolveType(ScopeUtilsKt.asLexicalScope(withX), typeReference, JetTestUtils.DUMMY_TRACE, true);
 
         return new TypeProjectionImpl(getProjectionKind(typeStr, projection), type);
     }

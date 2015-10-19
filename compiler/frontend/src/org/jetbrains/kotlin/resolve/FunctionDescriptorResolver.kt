@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import java.util.*
 
 class FunctionDescriptorResolver(
@@ -123,6 +124,7 @@ class FunctionDescriptorResolver(
         }
         else if (function.hasBody()) {
             DeferredType.createRecursionIntolerant(storageManager, trace) {
+                PreliminaryDeclarationVisitor.createForDeclaration(function, trace);
                 val type = expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
                 transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace)
             }
@@ -145,7 +147,7 @@ class FunctionDescriptorResolver(
                                               TraceBasedRedeclarationHandler(trace), "Function descriptor header scope")
 
         val typeParameterDescriptors = descriptorResolver.
-                resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, function.getTypeParameters(), trace)
+                resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, scope, function.getTypeParameters(), trace)
         innerScope.changeLockLevel(WritableScope.LockLevel.BOTH)
         descriptorResolver.resolveGenericBounds(function, functionDescriptor, innerScope, typeParameterDescriptors, trace)
 

@@ -609,3 +609,86 @@ JetFile: DoubleColon.kt
           PsiErrorElement:Expecting an identifier
             <empty list>
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('typeArgumentsError')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        PsiErrorElement:Type arguments are not allowed
+          PsiElement(LT)('<')
+          TYPE_PROJECTION
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
+          PsiElement(GT)('>')
+      PsiWhiteSpace('\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        PsiErrorElement:Type arguments are not allowed
+          PsiElement(LT)('<')
+          TYPE_PROJECTION
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
+          PsiElement(COMMA)(',')
+          TYPE_PROJECTION
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    PsiElement(MUL)('*')
+                  PsiElement(GT)('>')
+          PsiElement(GT)('>')
+      PsiWhiteSpace('\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('b')
+        PsiErrorElement:Type arguments are not allowed
+          PsiElement(LT)('<')
+          TYPE_PROJECTION
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
+          PsiElement(GT)('>')
+      PsiWhiteSpace('\n\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+        PsiErrorElement:Type arguments are not allowed
+          PsiElement(LT)('<')
+          TYPE_PROJECTION
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
+          PsiElement(GT)('>')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

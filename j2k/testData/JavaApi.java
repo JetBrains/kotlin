@@ -114,3 +114,9 @@ public class JavaClassDerivedFromKotlinClassWithProperties extends KotlinClassWi
     @Override
     public void setSomeVar2(String value) { }
 }
+
+public class JavaClass {
+    public int get(int p) {
+        return 0;
+    }
+}

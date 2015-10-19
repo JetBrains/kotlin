@@ -1,0 +1,22 @@
+package
+
+public fun foo(): kotlin.Unit
+
+public final enum class MyEnum : kotlin.Enum<MyEnum!> {
+    enum entry A
+
+    public constructor MyEnum()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum!): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun getOrdinal(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ val values: kotlin.Array<MyEnum>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyEnum
+    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<MyEnum>
+}

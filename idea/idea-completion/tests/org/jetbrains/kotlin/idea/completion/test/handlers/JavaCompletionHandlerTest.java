@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.idea.completion.test.handlers;
 
+import org.jetbrains.kotlin.idea.completion.test.CompletionTestUtilKt;
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase;
-import org.jetbrains.kotlin.idea.completion.test.TestPackage;
 
 import java.io.File;
 
@@ -41,6 +41,6 @@ public class JavaCompletionHandlerTest extends KotlinCompletionTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return new File(TestPackage.getCOMPLETION_TEST_DATA_BASE_PATH(), "/handlers/injava").getPath() + File.separator;
+        return new File(CompletionTestUtilKt.getCOMPLETION_TEST_DATA_BASE_PATH(), "/handlers/injava").getPath() + File.separator;
     }
 }

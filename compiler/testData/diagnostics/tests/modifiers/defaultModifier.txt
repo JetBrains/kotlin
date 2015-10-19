@@ -89,8 +89,9 @@ public final enum class Enum : kotlin.Enum<Enum> {
     }
 
     // Static members
+    public final /*synthesized*/ val values: kotlin.Array<Enum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Enum
-    public final /*synthesized*/ fun values(): kotlin.Array<Enum>
+    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<Enum>
 }
 
 public object G {

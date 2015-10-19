@@ -124,7 +124,7 @@ fun getParametersToRemove(
 fun IntroduceParameterDescriptor.performRefactoring() {
     runWriteAction {
         val config = object : JetChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
+            override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
                 return originalDescriptor.modify { methodDescriptor ->
                     if (!withDefaultValue) {
                         val parameters = callable.getValueParameters()
@@ -153,7 +153,7 @@ fun IntroduceParameterDescriptor.performRefactoring() {
         }
 
         val project = callable.getProject();
-        val changeSignature = { runChangeSignature(project, callableDescriptor, config, callable.analyze(), callable, INTRODUCE_PARAMETER) }
+        val changeSignature = { runChangeSignature(project, callableDescriptor, config, callable, INTRODUCE_PARAMETER) }
         changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
             try {
                 occurrencesToReplace.forEach { occurrenceReplacer(it) }

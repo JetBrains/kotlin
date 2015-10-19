@@ -41,6 +41,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
+    @TestMetadata("annotationsForResolve.kt")
+    public void testAnnotationsForResolve() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/annotationsForResolve.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("assignedButNeverAccessedVariable.kt")
     public void testAssignedButNeverAccessedVariable() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/assignedButNeverAccessedVariable.kt");

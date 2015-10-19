@@ -14,6 +14,7 @@ public final class JsProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.parameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.typeAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.typeParameterAnnotation);
   }
   public interface ClassesOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
@@ -1564,6 +1565,21 @@ public final class JsProtoBuf {
       java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> typeAnnotation = com.google.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
+        null,
+        130,
+        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        false);
+  public static final int TYPE_PARAMETER_ANNOTATION_FIELD_NUMBER = 130;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.TypeParameter { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter,
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> typeParameterAnnotation = com.google.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         130,

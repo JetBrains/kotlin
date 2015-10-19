@@ -34,12 +34,15 @@ import org.jetbrains.kotlin.cli.common.CompilerPlugin;
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
+import org.jetbrains.kotlin.cli.jvm.config.ModuleNameKt;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;
@@ -47,8 +50,8 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
-import org.jetbrains.kotlin.modules.ModulesPackage;
 import org.jetbrains.kotlin.modules.TargetId;
+import org.jetbrains.kotlin.modules.TargetIdKt;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.parsing.JetScriptDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
@@ -60,8 +63,6 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.ScriptNameUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
-import org.jetbrains.kotlin.serialization.PackageData;
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 
@@ -70,9 +71,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.*;
-import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoots;
 
 public class KotlinToJVMBytecodeCompiler {
 
@@ -106,7 +104,7 @@ public class KotlinToJVMBytecodeCompiler {
         }
         else {
             MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE);
-            OutputUtilsPackage.writeAll(outputFiles, outputDir == null ? new File(".") : outputDir, messageCollector);
+            OutputUtilsKt.writeAll(outputFiles, outputDir == null ? new File(".") : outputDir, messageCollector);
         }
     }
 
@@ -174,18 +172,18 @@ public class KotlinToJVMBytecodeCompiler {
         CompilerConfiguration configuration = base.copy();
 
         for (Module module : chunk) {
-            addKotlinSourceRoots(configuration, getAbsolutePaths(directory, module));
+            ContentRootsKt.addKotlinSourceRoots(configuration, getAbsolutePaths(directory, module));
         }
 
         for (Module module : chunk) {
             for (String javaSourceRoot : module.getJavaSourceRoots()) {
-                addJavaSourceRoot(configuration, new File(javaSourceRoot));
+                JvmContentRootsKt.addJavaSourceRoot(configuration, new File(javaSourceRoot));
             }
         }
 
         for (Module module : chunk) {
             for (String classpathRoot : module.getClasspathRoots()) {
-                addJvmClasspathRoot(configuration, new File(classpathRoot));
+                JvmContentRootsKt.addJvmClasspathRoot(configuration, new File(classpathRoot));
             }
         }
 
@@ -276,7 +274,7 @@ public class KotlinToJVMBytecodeCompiler {
         GeneratedClassLoader classLoader;
         try {
             List<URL> classPaths = Lists.newArrayList(paths.getRuntimePath().toURI().toURL());
-            for (File file : getJvmClasspathRoots(configuration)) {
+            for (File file : JvmContentRootsKt.getJvmClasspathRoots(configuration)) {
                 classPaths.add(file.toURI().toURL());
             }
             //noinspection UnnecessaryFullyQualifiedName
@@ -321,7 +319,8 @@ public class KotlinToJVMBytecodeCompiler {
                     public AnalysisResult invoke() {
                         BindingTrace sharedTrace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
                         ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject(),
-                                                                                                                getModuleName(environment));
+                                                                                                                ModuleNameKt
+                                                                                                                        .getModuleName(environment));
 
                         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                                 moduleContext,
@@ -374,7 +373,7 @@ public class KotlinToJVMBytecodeCompiler {
             obsoleteMultifileClasses = Collections.emptyList();
         }
         else {
-            targetId = ModulesPackage.TargetId(module);
+            targetId = TargetIdKt.TargetId(module);
             IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
 
             packagesWithObsoleteParts = new HashSet<FqName>();
@@ -399,6 +398,7 @@ public class KotlinToJVMBytecodeCompiler {
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
+                /* useTypeTableInSerializer = */ false,
                 configuration.get(JVMConfigurationKeys.PACKAGE_FACADES_AS_MULTIFILE_CLASSES, false),
                 diagnosticHolder,
                 packagesWithObsoleteParts,

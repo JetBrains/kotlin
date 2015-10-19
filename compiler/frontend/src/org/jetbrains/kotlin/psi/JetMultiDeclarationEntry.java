@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
+import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,13 +41,13 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
 
     @Override
     public JetTypeReference getTypeReference() {
-        return TypeRefHelpersPackage.getTypeReference(this);
+        return TypeRefHelpersKt.getTypeReference(this);
     }
 
     @Override
     @Nullable
     public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
-        return TypeRefHelpersPackage.setTypeReference(this, getNameIdentifier(), typeRef);
+        return TypeRefHelpersKt.setTypeReference(this, getNameIdentifier(), typeRef);
     }
 
     @Nullable

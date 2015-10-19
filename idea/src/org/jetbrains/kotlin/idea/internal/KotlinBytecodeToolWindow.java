@@ -239,6 +239,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                                         generateClassFilter,
                                         !enableInline,
                                         !enableOptimization,
+                                        /*useTypeTableInSerializer=*/false,
                                         /*packageFacadesAsMultifileClasses=*/false,
                                         sink);
             KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);

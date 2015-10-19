@@ -54,7 +54,7 @@ public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageF
         return classKind.singletonList()
     }
 
-    override fun createQuickFixData(element: JetCallExpression, diagnostic: Diagnostic): ClassInfo? {
+    override fun extractFixData(element: JetCallExpression, diagnostic: Diagnostic): ClassInfo? {
         val diagElement = diagnostic.psiElement
         if (diagElement.getNonStrictParentOfType<JetTypeReference>() != null) return null
 

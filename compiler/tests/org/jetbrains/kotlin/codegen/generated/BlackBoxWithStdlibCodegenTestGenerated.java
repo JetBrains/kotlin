@@ -130,6 +130,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("resolveWithLowPriorityAnnotation.kt")
+        public void testResolveWithLowPriorityAnnotation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/resolveWithLowPriorityAnnotation.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("varargInAnnotationParameter.kt")
         public void testVarargInAnnotationParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/varargInAnnotationParameter.kt");
@@ -1060,6 +1066,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("mutabilityMarkerInterfaces.kt")
         public void testMutabilityMarkerInterfaces() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/classes/mutabilityMarkerInterfaces.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/const")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Const extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInConst() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/const"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("interfaceCompanion.kt")
+        public void testInterfaceCompanion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/const/interfaceCompanion.kt");
             doTestWithStdlib(fileName);
         }
     }
@@ -4643,12 +4664,72 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/topLevelPrivate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TopLevelPrivate extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInTopLevelPrivate() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/topLevelPrivate"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("noPrivateNoAccessorsInMultiFileFacade.kt")
+        public void testNoPrivateNoAccessorsInMultiFileFacade() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/topLevelPrivate/noPrivateNoAccessorsInMultiFileFacade.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("noPrivateNoAccessorsInMultiFileFacade2.kt")
+        public void testNoPrivateNoAccessorsInMultiFileFacade2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/topLevelPrivate/noPrivateNoAccessorsInMultiFileFacade2.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("privateInInlineNested.kt")
+        public void testPrivateInInlineNested() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/topLevelPrivate/privateInInlineNested.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("syntheticAccessor.kt")
+        public void testSyntheticAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/topLevelPrivate/syntheticAccessor.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("syntheticAccessorInMultiFile.kt")
+        public void testSyntheticAccessorInMultiFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/topLevelPrivate/syntheticAccessorInMultiFile.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/typeMapping")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeMapping extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInTypeMapping() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/typeMapping"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("genericTypeWithNothing.kt")
+        public void testGenericTypeWithNothing() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/typeMapping/genericTypeWithNothing.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/vararg")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Vararg extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInVararg() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("spreadCopiesArray.kt")
+        public void testSpreadCopiesArray() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/vararg/spreadCopiesArray.kt");
+            doTestWithStdlib(fileName);
         }
 
         @TestMetadata("varargInFunParam.kt")

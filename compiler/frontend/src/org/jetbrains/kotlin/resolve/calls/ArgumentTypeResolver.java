@@ -28,12 +28,13 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.TypeResolver;
-import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesPackage;
+import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesResolutionUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImplKt;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -51,7 +52,7 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.Collections;
 import java.util.List;
@@ -62,7 +63,6 @@ import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumen
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.resolve.calls.inference.InferencePackage.createTypeForFunctionPlaceholder;
 import static org.jetbrains.kotlin.types.TypeUtils.DONT_CARE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -98,7 +98,7 @@ public class ArgumentTypeResolver {
             @NotNull JetType expectedType
     ) {
         if (FunctionPlaceholdersKt.isFunctionPlaceholder(actualType)) {
-            JetType functionType = createTypeForFunctionPlaceholder(actualType, expectedType);
+            JetType functionType = ConstraintSystemImplKt.createTypeForFunctionPlaceholder(actualType, expectedType);
             return JetTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
         }
         return JetTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
@@ -200,7 +200,7 @@ public class ArgumentTypeResolver {
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (expression == null) {
-            return TypeInfoFactoryPackage.noTypeInfo(context);
+            return TypeInfoFactoryKt.noTypeInfo(context);
         }
 
         JetFunction functionLiteralArgument = getFunctionLiteralArgumentIfAny(expression, context);
@@ -232,7 +232,7 @@ public class ArgumentTypeResolver {
     ) {
         if (resolveArgumentsMode == SHAPE_FUNCTION_ARGUMENTS) {
             JetType type = getShapeTypeOfCallableReference(callableReferenceExpression, context, true);
-            return TypeInfoFactoryPackage.createTypeInfo(type);
+            return TypeInfoFactoryKt.createTypeInfo(type);
         }
         return expressionTypingServices.getTypeInfo(expression, context.replaceContextDependency(INDEPENDENT));
     }
@@ -244,13 +244,13 @@ public class ArgumentTypeResolver {
             boolean expectedTypeIsUnknown
     ) {
         JetType receiverType =
-                CallableReferencesPackage.resolveCallableReferenceReceiverType(callableReferenceExpression, context, typeResolver);
+                CallableReferencesResolutionUtilsKt.resolveCallableReferenceReceiverType(callableReferenceExpression, context, typeResolver);
         OverloadResolutionResults<CallableDescriptor> overloadResolutionResults =
-                CallableReferencesPackage.resolvePossiblyAmbiguousCallableReference(
+                CallableReferencesResolutionUtilsKt.resolvePossiblyAmbiguousCallableReference(
                         callableReferenceExpression, receiverType, context, ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS,
                         callResolver);
-        return CallableReferencesPackage.getResolvedCallableReferenceShapeType(
-                callableReferenceExpression, overloadResolutionResults, context, expectedTypeIsUnknown,
+        return CallableReferencesResolutionUtilsKt.getResolvedCallableReferenceShapeType(
+                callableReferenceExpression, receiverType, overloadResolutionResults, context, expectedTypeIsUnknown,
                 reflectionTypes, builtIns, functionPlaceholders);
     }
 
@@ -263,7 +263,7 @@ public class ArgumentTypeResolver {
     ) {
         if (resolveArgumentsMode == SHAPE_FUNCTION_ARGUMENTS) {
             JetType type = getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, true);
-            return TypeInfoFactoryPackage.createTypeInfo(type, context);
+            return TypeInfoFactoryKt.createTypeInfo(type, context);
         }
         return expressionTypingServices.getTypeInfo(expression, context.replaceContextDependency(INDEPENDENT));
     }
@@ -329,7 +329,7 @@ public class ArgumentTypeResolver {
             // For an unsafe call, we should not do it,
             // otherwise not-null will propagate to successive statements
             // Sample: x?.foo(x.bar()) // Inside foo call, x is not-nullable
-            if (CallUtilPackage.isSafeCall(call)) {
+            if (CallUtilKt.isSafeCall(call)) {
                 initialDataFlowInfo = initialDataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.nullValue(builtIns));
             }
         }

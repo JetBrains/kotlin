@@ -26,4 +26,4 @@ fun box() : String {
 }
 
 fun thirdElementIsThree(a : IntArray) =
-    a.size() >= 3 && a[2] == 3
+    a.size >= 3 && a[2] == 3

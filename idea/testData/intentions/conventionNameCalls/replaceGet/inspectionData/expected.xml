@@ -28,7 +28,7 @@
 
   <problem>
     <file>extensionFunction.kt</file>
-    <line>6</line>
+    <line>7</line>
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="temp:///src/extensionFunction.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>

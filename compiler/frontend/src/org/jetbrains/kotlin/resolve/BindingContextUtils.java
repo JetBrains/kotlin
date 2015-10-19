@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -34,14 +34,13 @@ import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppressio
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.slicedMap.MutableSlicedMap;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
 
-import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.diagnostics.Errors.AMBIGUOUS_LABEL;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
@@ -161,7 +160,7 @@ public class BindingContextUtils {
         if (!context.get(BindingContext.PROCESSED, expression)) return null;
         // NB: should never return null if expression is already processed
         JetTypeInfo result = context.get(BindingContext.EXPRESSION_TYPE_INFO, expression);
-        return result != null ? result : TypeInfoFactoryPackage.noTypeInfo(DataFlowInfo.EMPTY);
+        return result != null ? result : TypeInfoFactoryKt.noTypeInfo(DataFlowInfo.EMPTY);
     }
 
     public static boolean isExpressionWithValidReference(
@@ -169,7 +168,7 @@ public class BindingContextUtils {
             @NotNull BindingContext context
     ) {
         if (expression instanceof JetCallExpression) {
-            ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context);
+            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, context);
             return resolvedCall instanceof VariableAsFunctionResolvedCall;
         }
         return expression instanceof JetReferenceExpression;

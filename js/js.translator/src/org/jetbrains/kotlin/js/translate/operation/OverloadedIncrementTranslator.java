@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.psi.JetUnaryExpression;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 public final class OverloadedIncrementTranslator extends IncrementTranslator {
@@ -35,7 +35,7 @@ public final class OverloadedIncrementTranslator extends IncrementTranslator {
             @NotNull TranslationContext context
     ) {
         super(expression, context);
-        this.resolvedCall = CallUtilPackage.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
+        this.resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
     }
 
 

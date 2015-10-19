@@ -173,6 +173,9 @@
       <action id="KotlinGenerateSecondaryConstructor"
               class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction"
               text="Secondary Constructor" />
+      <action id="KotlinGenerateEqualsAndHashCode"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction"
+              text="equals() and hashCode()" />
 
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
@@ -1070,6 +1073,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddOperatorModifierIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithInspection"
                      displayName="Add 'replaceWith' argument to 'deprecated' annotation"
                      groupName="Kotlin"
@@ -1087,8 +1095,8 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ExplicitGetInspection"
                      displayName="Explicit 'get'"
                      groupName="Kotlin"
-                     enabledByDefault="false"
-                     level="WEAK WARNING"
+                     enabledByDefault="true"
+                     level="INFO"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisInspection"
@@ -1226,7 +1234,7 @@
                      level="WARNING"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OperatorModifierInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.AddOperatorModifierInspection"
                      displayName="Missing 'operator' modifier"
                      groupName="Kotlin"
                      language="kotlin"
@@ -1262,6 +1270,12 @@
                      language="JAVA"
                      enabledByDefault="true"
                      cleanupTool="true"
+                     level="WARNING"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.EqualsOrHashCodeInspection"
+                     displayName="equals() and hashCode() not paired"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
                      level="WARNING"/>
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>

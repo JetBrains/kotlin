@@ -32,11 +32,11 @@ public class JetPsiCheckerAndHighlightingUpdater extends JetPsiChecker {
             super.annotate(element, holder);
             if (element instanceof JetFile) {
                 //noinspection StaticMethodReferencedViaSubclass
-                HighlighterPackage.updateHighlightingResult((JetFile) element, false);
+                ErrorDuringFileAnalyzeNotificationProviderKt.updateHighlightingResult((JetFile) element, false);
             }
         }
         catch (ProcessCanceledException e) {
-            HighlighterPackage.updateHighlightingResult((JetFile)element.getContainingFile(), false);
+            ErrorDuringFileAnalyzeNotificationProviderKt.updateHighlightingResult((JetFile)element.getContainingFile(), false);
             throw e;
         }
     }

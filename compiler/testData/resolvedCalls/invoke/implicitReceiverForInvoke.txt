@@ -1,8 +1,4 @@
-class Foo() {
-    fun Int.invoke() {}
-}
-
-fun bar(f: Foo, i: Int) {
+fun bar(f: Int.() -> Unit, i: Int) {
     with (i) {
         f<caret>()
     }
@@ -11,8 +7,8 @@ fun bar(f: Foo, i: Int) {
 
 Resolved call:
 
-Resulting descriptor: fun Int.invoke(): Unit defined in Foo
+Resulting descriptor: operator fun Int.invoke(): Unit defined in kotlin.Function1
 
 Explicit receiver kind = DISPATCH_RECEIVER
-Dispatch receiver = f {Foo}
+Dispatch receiver = f {[@kotlin.Extension] Function1<Int, Unit>}
 Extension receiver = IntExt{fun Int.<anonymous>(): Unit defined in bar}

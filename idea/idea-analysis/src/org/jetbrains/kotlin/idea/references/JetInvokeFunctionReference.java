@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 
@@ -49,8 +49,8 @@ public class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpres
     @Override
     @NotNull
     protected Collection<DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
-        Call call = CallUtilPackage.getCall(getElement(), context);
-        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(call, context);
+        Call call = CallUtilKt.getCall(getElement(), context);
+        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(call, context);
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             return Collections.<DeclarationDescriptor>singleton(
                     ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall().getCandidateDescriptor());
@@ -110,6 +110,6 @@ public class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpres
     @Nullable
     @Override
     public PsiElement handleElementRename(@Nullable String newElementName) {
-        return ReferencesPackage.renameImplicitConventionalCall(this, newElementName);
+        return ReferenceUtilKt.renameImplicitConventionalCall(this, newElementName);
     }
 }

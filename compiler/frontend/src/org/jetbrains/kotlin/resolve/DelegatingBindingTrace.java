@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.slicedMap.*;
 
 import java.util.Collection;
@@ -148,7 +148,7 @@ public class DelegatingBindingTrace implements BindingTrace {
     public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
         JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
         if (typeInfo == null) {
-            typeInfo = TypeInfoFactoryPackage.createTypeInfo(type);
+            typeInfo = TypeInfoFactoryKt.createTypeInfo(type);
         }
         else {
             typeInfo = typeInfo.replaceType(type);

@@ -14,11 +14,5 @@ public interface PrimitiveValueInParam {
         public final val i: kotlin.Int
         public final val l: kotlin.Long
         public final val str: kotlin.String
-        public abstract fun bool(): kotlin.Boolean
-        public abstract fun d(): kotlin.Double
-        public abstract fun f(): kotlin.Float
-        public abstract fun i(): kotlin.Int
-        public abstract fun l(): kotlin.Long
-        public abstract fun str(): kotlin.String
     }
 }

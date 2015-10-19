@@ -25,7 +25,7 @@ private object EmptyMap : Map<Any, Nothing>, Serializable {
 }
 
 /** Returns an empty read-only map of specified type. The returned map is serializable (JVM). */
-public fun emptyMap<K, V>(): Map<K, V> = EmptyMap as Map<K, V>
+public fun <K, V> emptyMap(): Map<K, V> = EmptyMap as Map<K, V>
 
 /**
  * Returns a new read-only map with the specified contents, given as a list of pairs
@@ -34,17 +34,17 @@ public fun emptyMap<K, V>(): Map<K, V> = EmptyMap as Map<K, V>
  *
  * The returned map is serializable (JVM).
  */
-public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size() > 0) linkedMapOf(*values) else emptyMap()
+public fun <K, V> mapOf(vararg values: Pair<K, V>): Map<K, V> = if (values.size() > 0) linkedMapOf(*values) else emptyMap()
 
 /** Returns an empty read-only map. The returned map is serializable (JVM). */
-public fun mapOf<K, V>(): Map<K, V> = emptyMap()
+public fun <K, V> mapOf(): Map<K, V> = emptyMap()
 
 /**
  * Returns an immutable map, mapping only the specified key to the
  * specified value.  The returned map is serializable.
  */
 @JvmVersion
-public fun mapOf<K, V>(keyValuePair: Pair<K, V>): Map<K, V> = Collections.singletonMap(keyValuePair.first, keyValuePair.second)
+public fun <K, V> mapOf(keyValuePair: Pair<K, V>): Map<K, V> = Collections.singletonMap(keyValuePair.first, keyValuePair.second)
 
 /**
  * Returns a new [HashMap] with the specified contents, given as a list of pairs
@@ -104,6 +104,30 @@ public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V> = this ?: emptyMap()
 public operator fun <K,V> Map<K,V>.contains(key : K) : Boolean = containsKey(key)
 
 /**
+ * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
+
+ * Allows to overcome type-safety restriction of `get` that requires to pass a key of type `Key`.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <K, V> Map<K, V>.getRaw(key: Any?): V? = (this as Map<Any?, V>).get(key)
+
+/**
+ * Returns `true` if the map contains the specified [key].
+ *
+ * Allows to overcome type-safety restriction of `containsKey` that requires to pass a key of type `Key`.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <K> Map<K, *>.containsKeyRaw(key: Any?): Boolean = (this as Map<Any?, *>).containsKey(key)
+
+/**
+ * Returns `true` if the map maps one or more keys to the specified [value].
+ *
+ * Allows to overcome type-safety restriction of `containsValue` that requires to pass a value of type `V`.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <K> Map<K, *>.containsValueRaw(value: Any?): Boolean = (this as Map<K, Any?>).containsValue(value)
+
+/**
  * Returns the key component of the map entry.
  *
  * This method allows to use multi-declarations when working with maps, for example:
@@ -113,9 +137,8 @@ public operator fun <K,V> Map<K,V>.contains(key : K) : Boolean = containsKey(key
  * }
  * ```
  */
-public operator fun <K, V> Map.Entry<K, V>.component1(): K {
-    return getKey()
-}
+@Suppress("NOTHING_TO_INLINE")
+public inline operator fun <K, V> Map.Entry<K, V>.component1(): K = key
 
 /**
  * Returns the value component of the map entry.
@@ -126,16 +149,13 @@ public operator fun <K, V> Map.Entry<K, V>.component1(): K {
  * }
  * ```
  */
-public operator fun <K, V> Map.Entry<K, V>.component2(): V {
-    return getValue()
-}
+@Suppress("NOTHING_TO_INLINE")
+public inline operator fun <K, V> Map.Entry<K, V>.component2(): V = value
 
 /**
  * Converts entry to [Pair] with key being first component and value being second.
  */
-public fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> {
-    return Pair(getKey(), getValue())
-}
+public fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> = Pair(key, value)
 
 /**
  * Returns the value for the given key, or the result of the [defaultValue] function if there was no entry for the given key.
@@ -173,10 +193,7 @@ public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V
  *
  * @sample test.collections.MapTest.iterateWithProperties
  */
-public operator fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> {
-    val entrySet = entrySet()
-    return entrySet.iterator()
-}
+public operator fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> = entries.iterator()
 
 /**
  * Populates the given `destination` [Map] with entries having the keys of this map and the values obtained
@@ -236,7 +253,7 @@ public fun <K, V> MutableMap<K, V>.putAll(values: Sequence<Pair<K,V>>): Unit {
  * @sample test.collections.MapTest.mapValues
  */
 public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> R): Map<K, R> {
-    return mapValuesTo(LinkedHashMap<K, R>(size()), transform)
+    return mapValuesTo(LinkedHashMap<K, R>(size), transform)
 }
 
 /**
@@ -246,7 +263,7 @@ public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> 
  * @sample test.collections.MapTest.mapKeys
  */
 public inline fun <K, V, R> Map<K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R): Map<R, V> {
-    return mapKeysTo(LinkedHashMap<R, V>(size()), transform)
+    return mapKeysTo(LinkedHashMap<R, V>(size), transform)
 }
 
 /**

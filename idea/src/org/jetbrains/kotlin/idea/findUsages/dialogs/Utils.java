@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.findUsages.dialogs;
 
 import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
+import org.jetbrains.kotlin.idea.search.usagesSearch.UtilsKt;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
@@ -32,7 +32,7 @@ class Utils {
     public static void configureLabelComponent(
             @NotNull SimpleColoredComponent coloredComponent,
             @NotNull JetNamedDeclaration declaration) {
-        coloredComponent.append(DescriptorRenderer.COMPACT.render(UsagesSearchPackage.getDescriptor(declaration)));
+        coloredComponent.append(DescriptorRenderer.COMPACT.render(UtilsKt.getDescriptor(declaration)));
     }
 
     static boolean renameCheckbox(@NotNull JPanel panel, @NotNull String srcText, @NotNull String destText) {

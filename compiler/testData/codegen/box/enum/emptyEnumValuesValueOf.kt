@@ -1,7 +1,7 @@
 enum class Empty
 
 fun box(): String {
-    if (Empty.values().size() != 0) return "Fail: ${Empty.values()}"
+    if (Empty.values().size != 0) return "Fail: ${Empty.values()}"
 
     try {
         val found = Empty.valueOf("nonExistentEntry")

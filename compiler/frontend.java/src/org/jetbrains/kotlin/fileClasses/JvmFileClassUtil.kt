@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.fileClasses
 
+import com.google.protobuf.MessageLite
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 
@@ -68,15 +70,24 @@ public object JvmFileClassUtil {
 
     @JvmStatic
     public fun getImplClassName(callable: DeserializedCallableMemberDescriptor): Name? =
-            with(callable) {
-                val proto = proto
-                when (proto) {
-                    is ProtoBuf.Constructor -> null
-                    is ProtoBuf.Function -> proto.getExtension(JvmProtoBuf.methodImplClassName)
-                    is ProtoBuf.Property -> proto.getExtension(JvmProtoBuf.propertyImplClassName)
-                    else -> error("Unknown message: $proto")
-                }?.let { nameResolver.getName(it) }
-            }
+            getImplClassName(callable.proto, callable.nameResolver)
+
+    @JvmStatic
+    public fun getImplClassName(proto: MessageLite, nameResolver: NameResolver): Name? =
+            when (proto) {
+                is ProtoBuf.Constructor ->
+                    null
+                is ProtoBuf.Function ->
+                    if (proto.hasExtension(JvmProtoBuf.methodImplClassName))
+                        proto.getExtension(JvmProtoBuf.methodImplClassName)
+                    else null
+                is ProtoBuf.Property ->
+                    if (proto.hasExtension(JvmProtoBuf.propertyImplClassName))
+                        proto.getExtension(JvmProtoBuf.propertyImplClassName)
+                    else null
+                else ->
+                    error("Unknown message: $proto")
+            }?.let { nameResolver.getName(it) }
 
     @JvmStatic
     public fun getHiddenPartFqName(file: JetFile, jvmFileClassAnnotations: ParsedJmvFileClassAnnotations): FqName =
@@ -136,3 +147,8 @@ public val JetFile.javaFileFacadeFqName: FqName
             CachedValueProvider.Result(facadeFqName, this)
         }
     }
+
+public fun JetDeclaration.isInsideJvmMultifileClassFile() = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(
+        getContainingJetFile(),
+        JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT
+) != null

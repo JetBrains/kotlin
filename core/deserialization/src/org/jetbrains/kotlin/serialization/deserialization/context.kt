@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.storage.StorageManager
 
-public class DeserializationComponents(
+class DeserializationComponents(
         val storageManager: StorageManager,
         val moduleDescriptor: ModuleDescriptor,
         val classDataFinder: ClassDataFinder,
@@ -37,19 +37,24 @@ public class DeserializationComponents(
         val typeCapabilitiesLoader: TypeCapabilitiesLoader = TypeCapabilitiesLoader.NONE,
         val additionalSupertypes: AdditionalSupertypes = AdditionalSupertypes.None
 ) {
-    public val classDeserializer: ClassDeserializer = ClassDeserializer(this)
+    val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 
-    public fun deserializeClass(classId: ClassId): ClassDescriptor? = classDeserializer.deserializeClass(classId)
+    fun deserializeClass(classId: ClassId): ClassDescriptor? = classDeserializer.deserializeClass(classId)
 
-    public fun createContext(descriptor: PackageFragmentDescriptor, nameResolver: NameResolver): DeserializationContext =
-            DeserializationContext(this, nameResolver, descriptor, parentTypeDeserializer = null, typeParameters = listOf())
+    fun createContext(
+            descriptor: PackageFragmentDescriptor,
+            nameResolver: NameResolver,
+            typeTable: TypeTable
+    ): DeserializationContext =
+            DeserializationContext(this, nameResolver, descriptor, typeTable, parentTypeDeserializer = null, typeParameters = listOf())
 }
 
 
-public class DeserializationContext(
-        public val components: DeserializationComponents,
-        public val nameResolver: NameResolver,
-        public val containingDeclaration: DeclarationDescriptor,
+class DeserializationContext(
+        val components: DeserializationComponents,
+        val nameResolver: NameResolver,
+        val containingDeclaration: DeclarationDescriptor,
+        val typeTable: TypeTable,
         parentTypeDeserializer: TypeDeserializer?,
         typeParameters: List<ProtoBuf.TypeParameter>
 ) {
@@ -63,8 +68,11 @@ public class DeserializationContext(
     fun childContext(
             descriptor: DeclarationDescriptor,
             typeParameterProtos: List<ProtoBuf.TypeParameter>,
-            nameResolver: NameResolver = this.nameResolver
+            nameResolver: NameResolver = this.nameResolver,
+            typeTable: TypeTable = this.typeTable
     ) = DeserializationContext(
-            components, nameResolver, descriptor, parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
+            components, nameResolver, descriptor, typeTable,
+            parentTypeDeserializer = this.typeDeserializer,
+            typeParameters = typeParameterProtos
     )
 }

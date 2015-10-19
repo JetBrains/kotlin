@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
+import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 public abstract class DeprecatedSymbolUsageFixBase(
         element: JetSimpleNameExpression,
         val replaceWith: ReplaceWith
-) : JetIntentionAction<JetSimpleNameExpression>(element) {
+) : KotlinQuickFixAction<JetSimpleNameExpression>(element) {
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false

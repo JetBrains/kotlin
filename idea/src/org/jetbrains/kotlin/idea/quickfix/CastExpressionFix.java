@@ -32,13 +32,11 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
+import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypesPackage;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
-public class CastExpressionFix extends JetIntentionAction<JetExpression> {
+public class CastExpressionFix extends KotlinQuickFixAction<JetExpression> {
     private final JetType type;
 
     public CastExpressionFix(@NotNull JetExpression element, @NotNull JetType type) {
@@ -51,7 +49,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     public String getText() {
         return JetBundle.message(
                 "cast.expression.to.type",
-                element.getText(),
+                getElement().getText(),
                 IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
         );
     }
@@ -65,7 +63,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         if (!super.isAvailable(project, editor, file)) return false;
-        JetType expressionType = ResolutionUtils.analyze(element).getType(element);
+        JetType expressionType = ResolutionUtils.analyze(getElement()).getType(getElement());
         return expressionType != null
                && (
                        JetTypeChecker.DEFAULT.isSubtypeOf(type, expressionType) // downcast
@@ -77,15 +75,15 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         String renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(type);
 
-        JetPsiFactory psiFactory = JetPsiFactory(file);
+        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
         JetBinaryExpressionWithTypeRHS castExpression =
-                (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression("(" + element.getText() + ") as " + renderedType);
+                (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression("(" + getElement().getText() + ") as " + renderedType);
         if (JetPsiUtil.areParenthesesUseless((JetParenthesizedExpression) castExpression.getLeft())) {
-            castExpression = (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression(element.getText() + " as " + renderedType);
+            castExpression = (JetBinaryExpressionWithTypeRHS) psiFactory.createExpression(getElement().getText() + " as " + renderedType);
         }
 
         JetParenthesizedExpression castExpressionInParentheses =
-                (JetParenthesizedExpression) element.replace(psiFactory.createExpression("(" + castExpression.getText() + ")"));
+                (JetParenthesizedExpression) getElement().replace(psiFactory.createExpression("(" + castExpression.getText() + ")"));
 
         if (JetPsiUtil.areParenthesesUseless(castExpressionInParentheses)) {
             castExpression = (JetBinaryExpressionWithTypeRHS) castExpressionInParentheses.replace(castExpression);
@@ -122,7 +120,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
                 DiagnosticWithParameters2<JetExpression, JetType, JetType> diagnosticWithParameters =
                         ErrorsJvm.JAVA_TYPE_MISMATCH.cast(diagnostic);
                 return new CastExpressionFix(
-                        diagnosticWithParameters.getPsiElement(), TypesPackage.flexibility(diagnosticWithParameters.getB()).getUpperBound()
+                        diagnosticWithParameters.getPsiElement(), FlexibleTypesKt.flexibility(diagnosticWithParameters.getB()).getUpperBound()
                 );
             }
         };

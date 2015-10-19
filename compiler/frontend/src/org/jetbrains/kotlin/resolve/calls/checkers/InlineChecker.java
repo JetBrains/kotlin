@@ -25,12 +25,13 @@ import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
@@ -43,7 +44,6 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.NON_LOCAL_RETURN_NOT_ALLOWED;
 import static org.jetbrains.kotlin.diagnostics.Errors.USAGE_IS_NOT_INLINABLE;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.isEffectivelyPublicApi;
 import static org.jetbrains.kotlin.resolve.inline.InlineUtil.allowsNonLocalReturns;
 import static org.jetbrains.kotlin.resolve.inline.InlineUtil.checkNonLocalReturnUsage;
 
@@ -55,7 +55,7 @@ class InlineChecker implements CallChecker {
     public InlineChecker(@NotNull SimpleFunctionDescriptor descriptor) {
         assert InlineUtil.isInline(descriptor) : "This extension should be created only for inline functions: " + descriptor;
         this.descriptor = descriptor;
-        this.isEffectivelyPublicApiFunction = isEffectivelyPublicApi(descriptor);
+        this.isEffectivelyPublicApiFunction = DescriptorUtilsKt.isEffectivelyPublicApi(descriptor);
 
         for (ValueParameterDescriptor param : descriptor.getValueParameters()) {
             if (isInlinableParameter(param)) {
@@ -186,7 +186,7 @@ class InlineChecker implements CallChecker {
     ) {
         if (!(expression instanceof JetSimpleNameExpression || expression instanceof JetThisExpression)) return null;
 
-        ResolvedCall<?> thisCall = CallUtilPackage.getResolvedCall(expression, context.trace.getBindingContext());
+        ResolvedCall<?> thisCall = CallUtilKt.getResolvedCall(expression, context.trace.getBindingContext());
         if (unwrapVariableAsFunction && thisCall instanceof VariableAsFunctionResolvedCall) {
             return ((VariableAsFunctionResolvedCall) thisCall).getVariableCall().getResultingDescriptor();
         }
@@ -236,7 +236,7 @@ class InlineChecker implements CallChecker {
     }
 
     private void checkVisibility(@NotNull CallableDescriptor declarationDescriptor, @NotNull JetElement expression, @NotNull BasicCallResolutionContext context){
-        boolean declarationDescriptorIsPublicApi = isEffectivelyPublicApi(declarationDescriptor) || isDefinedInInlineFunction(declarationDescriptor);
+        boolean declarationDescriptorIsPublicApi = DescriptorUtilsKt.isEffectivelyPublicApi(declarationDescriptor) || isDefinedInInlineFunction(declarationDescriptor);
         if (isEffectivelyPublicApiFunction && !declarationDescriptorIsPublicApi && declarationDescriptor.getVisibility() != Visibilities.LOCAL) {
             context.trace.report(Errors.INVISIBLE_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor));
         }

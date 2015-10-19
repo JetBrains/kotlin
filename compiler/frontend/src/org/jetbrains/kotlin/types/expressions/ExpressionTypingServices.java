@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.Iterator;
 import java.util.List;
@@ -158,7 +158,7 @@ public class ExpressionTypingServices {
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        List<JetExpression> block = ResolvePackage.filterStatements(statementFilter, expression);
+        List<JetExpression> block = StatementFilterKt.filterStatements(statementFilter, expression);
 
         // SCRIPT: get code descriptor for script declaration
         DeclarationDescriptor containingDescriptor = context.scope.getOwnerDescriptor();
@@ -185,7 +185,7 @@ public class ExpressionTypingServices {
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
         if (containingDescriptor instanceof ScriptDescriptor) {
-            context.trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, UtilsPackage.asJetScope(scope));
+            context.trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, ScopeUtilsKt.asJetScope(scope));
         }
 
         return r;
@@ -229,14 +229,14 @@ public class ExpressionTypingServices {
             @NotNull ExpressionTypingContext context
     ) {
         if (block.isEmpty()) {
-            return TypeInfoFactoryPackage.createTypeInfo(expressionTypingComponents.builtIns.getUnitType(), context);
+            return TypeInfoFactoryKt.createTypeInfo(expressionTypingComponents.builtIns.getUnitType(), context);
         }
 
         ExpressionTypingInternals blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(
                 expressionTypingComponents, annotationChecker, scope);
         ExpressionTypingContext newContext = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE);
 
-        JetTypeInfo result = TypeInfoFactoryPackage.noTypeInfo(context);
+        JetTypeInfo result = TypeInfoFactoryKt.noTypeInfo(context);
         // Jump point data flow info
         DataFlowInfo beforeJumpInfo = newContext.dataFlowInfo;
         boolean jumpOutPossible = false;

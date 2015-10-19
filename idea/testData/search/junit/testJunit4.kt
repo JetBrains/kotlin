@@ -3,11 +3,11 @@ import org.junit.Test
 class MyTestClass {
     @org.junit.Test fun test1() {}
 
-    org.junit.Test fun test2() {}
+    @org.junit.Test fun test2() {}
 
     @Test fun test3() {}
 
-    Test fun test4() {}
+    @Test fun test4() {}
 
     @Deprecated @org.junit.Test fun test5() {}
 

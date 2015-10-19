@@ -28,11 +28,10 @@ import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 /**
  * A platform-independent logic for generating data class synthetic methods.
@@ -49,7 +48,7 @@ public abstract class DataClassMethodGenerator {
         this.declaration = declaration;
         this.bindingContext = bindingContext;
         this.classDescriptor = BindingContextUtils.getNotNull(bindingContext, BindingContext.CLASS, declaration);
-        this.builtIns = getBuiltIns(classDescriptor);
+        this.builtIns = DescriptorUtilsKt.getBuiltIns(classDescriptor);
     }
 
     public void generate() {

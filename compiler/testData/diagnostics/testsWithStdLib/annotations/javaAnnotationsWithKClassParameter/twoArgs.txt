@@ -4,8 +4,6 @@ public final class A : kotlin.Annotation {
     public constructor A(/*0*/ arg1: kotlin.reflect.KClass<*>, /*1*/ arg2: kotlin.reflect.KClass<*>)
     public final val arg1: kotlin.reflect.KClass<*>
     public final val arg2: kotlin.reflect.KClass<*>
-    public abstract fun arg1(): kotlin.reflect.KClass<*>
-    public abstract fun arg2(): kotlin.reflect.KClass<*>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

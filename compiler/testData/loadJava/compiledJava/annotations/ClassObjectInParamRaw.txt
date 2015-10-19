@@ -7,8 +7,6 @@ public open class ClassObjectInParamRaw {
         public constructor Anno(/*0*/ value: kotlin.reflect.KClass<*>, /*1*/ arg: kotlin.Array<kotlin.reflect.KClass<*>>)
         public final val arg: kotlin.Array<kotlin.reflect.KClass<*>>
         public final val value: kotlin.reflect.KClass<*>
-        public abstract fun arg(): kotlin.Array<kotlin.reflect.KClass<*>>
-        public abstract fun value(): kotlin.reflect.KClass<*>
     }
 
     @test.ClassObjectInParamRaw.Anno(arg = {}, value = test.ClassObjectInParamRaw::class) public open class Nested {

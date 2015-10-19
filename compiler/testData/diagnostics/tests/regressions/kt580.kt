@@ -17,6 +17,6 @@ fun main() {
     }
 }
 
-fun <T> Array<T>.lastIndex() = size() - 1
-val <T> Array<T>.lastIndex : Int get() = size() - 1
+fun <T> Array<T>.lastIndex() = size - 1
+val <T> Array<T>.lastIndex : Int get() = size - 1
 val <T> Array<T>.indices : IntRange get() = IntRange(0, lastIndex)

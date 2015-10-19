@@ -29,11 +29,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.idea.references.ReferencesPackage;
+import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 
-public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<JetTypeReference> {
+public class AddOpenModifierToClassDeclarationFix extends KotlinQuickFixAction<JetTypeReference> {
     private JetClass classDeclaration;
 
     public AddOpenModifierToClassDeclarationFix(@NotNull JetTypeReference typeReference) {
@@ -46,12 +46,12 @@ public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<Jet
             return false;
         }
 
-        JetSimpleNameExpression referenceExpression = PsiTreeUtil.findChildOfType(element, JetSimpleNameExpression.class);
+        JetSimpleNameExpression referenceExpression = PsiTreeUtil.findChildOfType(getElement(), JetSimpleNameExpression.class);
         if (referenceExpression == null) {
             return false;
         }
 
-        PsiReference reference = ReferencesPackage.getMainReference(referenceExpression);
+        PsiReference reference = ReferenceUtilKt.getMainReference(referenceExpression);
         PsiElement target = reference.resolve();
         if (target instanceof JetSecondaryConstructor) {
             target = ((JetSecondaryConstructor) target).getContainingClassOrObject();

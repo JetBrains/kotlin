@@ -27,14 +27,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetWhenCondition;
-import org.jetbrains.kotlin.psi.JetWhenEntry;
-import org.jetbrains.kotlin.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
     @Override
@@ -50,7 +45,8 @@ public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
     @Nullable
     @Override
     public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
-        JetWhenExpression whenExpression = (JetWhenExpression) JetPsiFactory(expression).createExpression(getCodeTemplate(expression));
+        JetWhenExpression whenExpression = (JetWhenExpression) JetPsiFactoryKt
+                .JetPsiFactory(expression).createExpression(getCodeTemplate(expression));
         JetExpression subjectExpression = whenExpression.getSubjectExpression();
         assert subjectExpression != null : "JetExpression should exists for " + whenExpression.getText() + " expression";
         subjectExpression.replace(expression);

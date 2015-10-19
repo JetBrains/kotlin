@@ -214,12 +214,7 @@ public class DefaultErrorMessages {
         MAP.put(DELEGATED_PROPERTY_IN_INTERFACE, "Delegated properties are not allowed in interfaces");
         MAP.put(LOCAL_VARIABLE_WITH_DELEGATE, "Local variables are not allowed to have delegates");
 
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier is allowed only on member properties with a backing field");
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_IMMUTABLE, "''lateinit'' modifier is allowed only on mutable properties");
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_ABSTRACT_PROPERTY, "''lateinit'' modifier is not allowed on abstract properties");
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_PRIMARY_CONSTRUCTOR_PARAMETER, "''lateinit'' modifier is not allowed on primary constructor parameters");
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_NULLABLE, "''lateinit'' modifier is not allowed on nullable properties");
-        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER_PRIMITIVE, "''lateinit'' modifier is not allowed on primitive type properties");
+        MAP.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier {0}", STRING);
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
         MAP.put(PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR, "Private setter is not allowed on non-private lateinit property");
@@ -434,6 +429,7 @@ public class DefaultErrorMessages {
 
         MAP.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list");
         MAP.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Only classes and interfaces may serve as supertypes");
+        MAP.put(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, "Extension function type is not allowed as supertypes");
         MAP.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
         MAP.put(CONSTRUCTOR_IN_INTERFACE, "An interface may not have a constructor");
@@ -541,6 +537,8 @@ public class DefaultErrorMessages {
         MAP.put(SENSELESS_COMPARISON, "Condition ''{0}'' is always ''{1}''", ELEMENT_TEXT, TO_STRING);
         MAP.put(SENSELESS_NULL_IN_WHEN, "Expression under 'when' is never equal to null");
 
+        MAP.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches if used as an expression");
+
         MAP.put(OVERRIDING_FINAL_MEMBER, "''{0}'' in ''{1}'' is final and cannot be overridden", NAME, NAME);
         MAP.put(CANNOT_WEAKEN_ACCESS_PRIVILEGE, "Cannot weaken access privilege ''{0}'' for ''{1}'' in ''{2}''", TO_STRING, NAME, NAME);
         MAP.put(CANNOT_CHANGE_ACCESS_PRIVILEGE, "Cannot change access privilege ''{0}'' for ''{1}'' in ''{2}''", TO_STRING, NAME, NAME);
@@ -595,12 +593,11 @@ public class DefaultErrorMessages {
         MAP.put(NONE_APPLICABLE, "None of the following functions can be called with the arguments supplied: {0}", AMBIGUOUS_CALLS);
         MAP.put(CANNOT_COMPLETE_RESOLVE, "Cannot choose among the following candidates without completing type inference: {0}", AMBIGUOUS_CALLS);
         MAP.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: {0}", AMBIGUOUS_CALLS);
+        MAP.put(INVOKE_EXTENSION_ON_NOT_EXTENSION_FUNCTION, "Impossible call as extension because {0} is not an extension function.", ELEMENT_TEXT);
 
         MAP.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter {0}", NAME);
         MAP.put(MISSING_RECEIVER, "A receiver of type {0} is required", RENDER_TYPE);
         MAP.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property");
-
-        MAP.put(FREE_FUNCTION_CALLED_AS_EXTENSION, "The function cannot be called as an extension function");
 
         MAP.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class");
 
@@ -609,6 +606,8 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Type inference failed: {0}", TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER);
         MAP.put(TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR, "Type inference failed: {0}", TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR_RENDERER);
         MAP.put(TYPE_INFERENCE_INCORPORATION_ERROR, "Type inference failed. Please try to specify type arguments explicitly.");
+        MAP.put(TYPE_INFERENCE_ONLY_INPUT_TYPES, "Type inference failed. The value of the type parameter {0} should be mentioned in input types " +
+                                                 "(argument types, receiver type or expected type). Try to specify it explicitly.", NAME);
         MAP.put(TYPE_INFERENCE_UPPER_BOUND_VIOLATED, "{0}", TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER);
         MAP.put(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, "Type inference failed. Expected type mismatch: found: {1} required: {0}", RENDER_TYPE, RENDER_TYPE);
 

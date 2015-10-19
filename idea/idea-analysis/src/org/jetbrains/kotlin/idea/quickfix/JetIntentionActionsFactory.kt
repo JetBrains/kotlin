@@ -24,12 +24,12 @@ import java.util.Collections
 // TODO: Replace with trait when all subclasses are translated to Kotlin
 public abstract class JetIntentionActionsFactory {
     protected open fun isApplicableForCodeFragment(): Boolean = false
-    protected abstract fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>?
+    protected abstract fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>
 
     public fun createActions(diagnostic: Diagnostic): List<IntentionAction> {
         if (diagnostic.getPsiElement().getContainingFile() is JetCodeFragment && !isApplicableForCodeFragment()) {
             return emptyList()
         }
-        return doCreateActions(diagnostic) ?: emptyList()
+        return doCreateActions(diagnostic)
     }
 }

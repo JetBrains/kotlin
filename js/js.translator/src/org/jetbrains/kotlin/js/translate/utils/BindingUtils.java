@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
@@ -177,7 +177,7 @@ public final class BindingUtils {
             @NotNull ValueParameterDescriptor parameterDescriptor
     ) {
         ValueParameterDescriptor result = parameterDescriptor;
-        assert DescriptorUtilPackage.hasDefaultValue(result) : message(parameterDescriptor, "Unsupplied parameter must have default value");
+        assert DescriptorUtilsKt.hasDefaultValue(result) : message(parameterDescriptor, "Unsupplied parameter must have default value");
         // TODO: this seems incorrect, as the default value may come from _not the first_ overridden parameter
         while (!result.declaresDefaultValue()) {
             result = result.getOverriddenDescriptors().iterator().next();

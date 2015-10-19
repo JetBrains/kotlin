@@ -26,16 +26,14 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
-public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExpression> {
+public class ChangeToPropertyNameFix extends KotlinQuickFixAction<JetSimpleNameExpression> {
     public ChangeToPropertyNameFix(@NotNull JetSimpleNameExpression element) {
         super(element);
     }
 
 
     private String getBackingFieldName() {
-        return element.getText();
+        return getElement().getText();
     }
 
     private String getPropertyName() {
@@ -56,14 +54,14 @@ public class ChangeToPropertyNameFix extends JetIntentionAction<JetSimpleNameExp
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetSimpleNameExpression propertyName = (JetSimpleNameExpression) JetPsiFactory(file).createExpression(getPropertyName());
-        element.replace(propertyName);
+        JetSimpleNameExpression propertyName = (JetSimpleNameExpression) JetPsiFactoryKt.JetPsiFactory(file).createExpression(getPropertyName());
+        getElement().replace(propertyName);
     }
 
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetSimpleNameExpression> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<JetSimpleNameExpression> createAction(Diagnostic diagnostic) {
                 JetSimpleNameExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetSimpleNameExpression.class);
                 if (expression == null) {
                     PsiElement element = diagnostic.getPsiElement();

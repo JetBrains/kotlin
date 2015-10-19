@@ -57,4 +57,4 @@ import a.<!SYNTAX!>%<!>.b.<!PACKAGE_CANNOT_BE_IMPORTED!>c<!>.<!SYNTAX!><!>
 import a.b.c.D.<!SYNTAX!><!>
 import a.b.c.D.E.<!SYNTAX!><!>
 
-import <!PACKAGE_CANNOT_BE_IMPORTED!>a<!><!SYNTAX!>?.<!><!UNRESOLVED_REFERENCE!><!SYNTAX!><!>b<!SYNTAX!><!><!>
+import <!PACKAGE_CANNOT_BE_IMPORTED!>a<!><!SYNTAX!>?.<!><!SYNTAX!>b<!>

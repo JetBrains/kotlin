@@ -5,7 +5,7 @@ import kotlin.platform.platformStatic
 
 class A {
     companion object {
-        platformStatic
+        @platformStatic
         fun main(args: Array<String>) {
             // yes
         }
@@ -22,8 +22,8 @@ class B {
 
 class C {
     companion object {
-        platformStatic
-        platformName("main0")
+        @platformStatic
+        @platformName("main0")
         fun main(args: Array<String>) { // no
         }
     }
@@ -31,8 +31,8 @@ class C {
 
 class D {
     companion object {
-        platformStatic
-        platformName("main")
+        @platformStatic
+        @platformName("main")
         fun badName(args: Array<String>) { // yes
         }
     }

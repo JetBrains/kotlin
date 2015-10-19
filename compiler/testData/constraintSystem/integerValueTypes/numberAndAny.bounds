@@ -13,6 +13,7 @@ status:
 -hasErrorInConstrainingTypes: false
 -hasParameterConstraintError: false
 -hasTypeInferenceIncorporationError: false
+-hasTypeParameterWithUnsatisfiedOnlyInputTypesError: false
 -hasUnknownParameters: false
 -hasViolatedUpperBound: false
 -isSuccessful: true

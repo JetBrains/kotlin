@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.JetPropertyAccessor;
 
 import static org.jetbrains.kotlin.lexer.JetTokens.ABSTRACT_KEYWORD;
 
-public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
+public class AddModifierFix extends KotlinQuickFixAction<JetModifierListOwner> {
     @NotNull private final JetModifierKeywordToken modifier;
 
     public AddModifierFix(@NotNull JetModifierListOwner element, @NotNull JetModifierKeywordToken modifier) {
@@ -65,7 +65,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     @Override
     public String getText() {
         if (modifier == ABSTRACT_KEYWORD || modifier == JetTokens.OPEN_KEYWORD) {
-            return JetBundle.message("make.element.modifier", getElementName(element), modifier.getValue());
+            return JetBundle.message("make.element.modifier", getElementName(getElement()), modifier.getValue());
         }
         return JetBundle.message("add.modifier", modifier.getValue());
     }
@@ -78,7 +78,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        element.addModifier(modifier);
+        getElement().addModifier(modifier);
     }
 
     @Override

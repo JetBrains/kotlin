@@ -52,7 +52,7 @@ public final class HashMapEx</*0*/ K, /*1*/ V> : java.util.HashMap<K, V>, ExtMap
     invisible_fake open override /*1*/ /*fake_override*/ fun newKeyIterator(): kotlin.(Mutable)Iterator<K!>!
     invisible_fake open override /*1*/ /*fake_override*/ fun newValueIterator(): kotlin.(Mutable)Iterator<V!>!
     public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: K, /*1*/ value: V): V?
-    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ m: kotlin.Map<out K, V>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.Map<out K, V>): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun putAllForCreate(/*0*/ p0: (kotlin.MutableMap<out K!, out V!>..kotlin.Map<out K!, V!>?)): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun putForCreate(/*0*/ p0: K!, /*1*/ p1: V!): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun putForNullKey(/*0*/ p0: V!): V!

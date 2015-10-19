@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
 import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
@@ -42,18 +43,16 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
-import org.jetbrains.kotlin.resolve.scopes.utils.UtilsPackage;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
-import org.jetbrains.kotlin.tests.di.DiPackage;
+import org.jetbrains.kotlin.tests.di.InjectionKt;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 @SuppressWarnings("unchecked")
 public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
@@ -69,7 +68,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     protected void setUp() throws Exception {
         super.setUp();
 
-        container = DiPackage.createContainerForTests(getProject(), JetTestUtils.createEmptyModule());
+        container = InjectionKt.createContainerForTests(getProject(), JetTestUtils.createEmptyModule());
         scope = getContextScope();
     }
 
@@ -83,7 +82,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     private JetScope getContextScope() throws IOException {
         // todo comments
         String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"), true);
-        JetFile jetFile = JetPsiFactory(getProject()).createFile(text);
+        JetFile jetFile = JetPsiFactoryKt.JetPsiFactory(getProject()).createFile(text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
         JetScope topLevelDeclarations = module.getPackage(FqName.ROOT).getMemberScope();
         ClassifierDescriptor contextClass = topLevelDeclarations.getClassifier(Name.identifier("___Context"), NoLookupLocation.FROM_TEST);
@@ -139,10 +138,10 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     }
 
     private JetType resolveType(String typeStr) {
-        JetTypeReference jetTypeReference = JetPsiFactory(getProject()).createType(typeStr);
+        JetTypeReference jetTypeReference = JetPsiFactoryKt.JetPsiFactory(getProject()).createType(typeStr);
         AnalyzingUtils.checkForSyntacticErrors(jetTypeReference);
         BindingTrace trace = new BindingTraceContext();
-        JetType type = container.getTypeResolver().resolveType(UtilsPackage.asLexicalScope(scope), jetTypeReference, trace, true);
+        JetType type = container.getTypeResolver().resolveType(ScopeUtilsKt.asLexicalScope(scope), jetTypeReference, trace, true);
         if (!trace.getBindingContext().getDiagnostics().isEmpty()) {
             fail("Errors:\n" + StringUtil.join(
                     trace.getBindingContext().getDiagnostics(),

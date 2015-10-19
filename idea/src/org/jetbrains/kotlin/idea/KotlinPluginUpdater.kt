@@ -155,12 +155,14 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                 NotificationType.INFORMATION) { notification, event ->
             val descriptor = descriptorToInstall ?: PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin"))
             if (descriptor != null) {
+                notification.expire()
+
                 val pluginDownloader = PluginDownloader.createDownloader(descriptor, hostToInstallFrom, null)
                 ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Downloading plugins", true) {
                     override fun run(indicator: ProgressIndicator) {
                         if (pluginDownloader.prepareToInstall(indicator)) {
-                            val descriptor = pluginDownloader.getDescriptor()
-                            if (descriptor != null) {
+                            val pluginDescriptor = pluginDownloader.getDescriptor()
+                            if (pluginDescriptor != null) {
                                 pluginDownloader.install()
 
                                 ApplicationManager.getApplication().invokeLater {
@@ -169,7 +171,10 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                                 }
                             }
                         }
+                    }
 
+                    override fun onCancel() {
+                        notifyPluginUpdateAvailable(newVersion, descriptorToInstall, hostToInstallFrom)
                     }
                 })
             }

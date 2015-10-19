@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetTokens;
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.JetPsiFactoryKt.JetPsiFactory;
 
 public class JetObjectDeclarationName extends JetExpressionImpl {
     public JetObjectDeclarationName(@NotNull ASTNode node) {

@@ -13,7 +13,6 @@ public
 internal
 in
 out
-ref
  class Bar<abstract
         open
         enum
@@ -28,7 +27,7 @@ ref
         internal
         in
         out
-        ref T> {
+        T> {
     val abstract
     val open
     val enum

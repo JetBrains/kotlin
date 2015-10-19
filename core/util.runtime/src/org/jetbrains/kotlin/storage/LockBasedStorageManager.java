@@ -21,7 +21,7 @@ import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.WrappedValues;
 
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull
             @Override
             public RuntimeException handleException(@NotNull Throwable throwable) {
-                throw UtilsPackage.rethrow(throwable);
+                throw ExceptionUtilsKt.rethrow(throwable);
             }
         };
 

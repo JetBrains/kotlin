@@ -57,7 +57,7 @@ fun snapshots(): List<GenericFunction> {
         }
         body(Collections) { "return ArrayList(this)" }
         body(Strings) { "return toCollection(ArrayList<T>(length()))" }
-        body(ArraysOfObjects) { "return this.asList().toArrayList()" }
+        body(ArraysOfObjects) { "return ArrayList(this.asCollection())" }
         body(ArraysOfPrimitives) {
             """
             val list = ArrayList<T>(size())
@@ -98,9 +98,7 @@ fun snapshots(): List<GenericFunction> {
         include(Strings)
         typeParam("K")
         returns("Map<K, T>")
-        deprecate("Use toMapBy instead.")
-        deprecateReplacement("toMapBy(selector)")
-        body("return ${deprecateReplacement.default}")
+        deprecate(Deprecation("Use toMapBy instead.", replaceWith = "toMapBy(selector)"))
     }
 
     templates add f("toMapBy(selector: (T) -> K)") {

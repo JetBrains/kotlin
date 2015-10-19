@@ -29,7 +29,7 @@ public class ByteArray(size: Int) : Cloneable {
     public operator fun set(index: Int, value: Byte): Unit
 
     /** Returns the number of elements in the array. */
-    public fun size(): Int
+    public val size: Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): ByteIterator
@@ -48,7 +48,7 @@ public class CharArray(size: Int) : Cloneable {
     public operator fun set(index: Int, value: Char): Unit
 
     /** Returns the number of elements in the array. */
-    public fun size(): Int
+    public val size: Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): CharIterator
@@ -67,7 +67,7 @@ public class ShortArray(size: Int) : Cloneable {
     public operator fun set(index: Int, value: Short): Unit
 
     /** Returns the number of elements in the array. */
-    public fun size(): Int
+    public val size: Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): ShortIterator
@@ -86,7 +86,7 @@ public class IntArray(size: Int) : Cloneable {
     public operator fun set(index: Int, value: Int): Unit
 
     /** Returns the number of elements in the array. */
-    public fun size(): Int
+    public val size: Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): IntIterator
@@ -105,7 +105,7 @@ public class LongArray(size: Int) : Cloneable {
     public operator fun set(index: Int, value: Long): Unit
 
     /** Returns the number of elements in the array. */
-    public fun size(): Int
+    public val size: Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): LongIterator
@@ -124,7 +124,7 @@ public class FloatArray(size: Int) : Cloneable {
     public operator fun set(index: Int, value: Float): Unit
 
     /** Returns the number of elements in the array. */
-    public fun size(): Int
+    public val size: Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): FloatIterator
@@ -143,7 +143,7 @@ public class DoubleArray(size: Int) : Cloneable {
     public operator fun set(index: Int, value: Double): Unit
 
     /** Returns the number of elements in the array. */
-    public fun size(): Int
+    public val size: Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): DoubleIterator
@@ -162,7 +162,7 @@ public class BooleanArray(size: Int) : Cloneable {
     public operator fun set(index: Int, value: Boolean): Unit
 
     /** Returns the number of elements in the array. */
-    public fun size(): Int
+    public val size: Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): BooleanIterator

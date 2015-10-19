@@ -29,11 +29,12 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice;
 import org.jetbrains.kotlin.util.slicedMap.Slices;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -43,7 +44,6 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
-import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();
@@ -137,7 +137,7 @@ public class CodegenBinding {
             return asmTypeForAnonymousClass(bindingContext, variableDescriptor);
         }
 
-        throw new IllegalStateException("Couldn't compute ASM type for " + PsiUtilPackage.getElementTextWithContext(expression));
+        throw new IllegalStateException("Couldn't compute ASM type for " + PsiUtilsKt.getElementTextWithContext(expression));
     }
 
     @NotNull
@@ -207,14 +207,14 @@ public class CodegenBinding {
     ) {
         ScriptDescriptor descriptor = trace.getBindingContext().get(SCRIPT, script);
         if (descriptor == null) {
-            throw new IllegalStateException("Script descriptor is not found for PSI: " + PsiUtilPackage.getElementTextWithContext(script));
+            throw new IllegalStateException("Script descriptor is not found for PSI: " + PsiUtilsKt.getElementTextWithContext(script));
         }
 
         String simpleName = asmType.getInternalName().substring(asmType.getInternalName().lastIndexOf('/') + 1);
         ClassDescriptorImpl classDescriptor =
                 new ClassDescriptorImpl(descriptor, Name.special("<script-" + simpleName + ">"), Modality.FINAL,
-                                        Collections.singleton(DescriptorUtilPackage.getBuiltIns(descriptor).getAnyType()),
-                                        toSourceElement(script));
+                                        Collections.singleton(DescriptorUtilsKt.getBuiltIns(descriptor).getAnyType()),
+                                        KotlinSourceElementKt.toSourceElement(script));
         classDescriptor.initialize(JetScope.Empty.INSTANCE$, Collections.<ConstructorDescriptor>emptySet(), null);
 
         recordClosure(trace, classDescriptor, null, asmType, fileClassesManager);

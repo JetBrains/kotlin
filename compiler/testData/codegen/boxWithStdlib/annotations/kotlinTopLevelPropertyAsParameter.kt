@@ -28,12 +28,12 @@ annotation class Ann(
         val str: String
 )
 
-val i: Int = 2
-val s: Short = 2
-val f: Float = 2.0.toFloat()
-val d: Double = 2.0
-val l: Long = 2
-val b: Byte = 2
-val bool: Boolean = true
-val c: Char = 'c'
-val str: String = "str"
+const val i: Int = 2
+const val s: Short = 2
+const val f: Float = 2.0.toFloat()
+const val d: Double = 2.0
+const val l: Long = 2
+const val b: Byte = 2
+const val bool: Boolean = true
+const val c: Char = 'c'
+const val str: String = "str"

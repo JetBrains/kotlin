@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.Tmpdir;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
@@ -60,7 +60,7 @@ public class CliBaseTest {
             return Pair.create(bytes.toString("utf-8"), exitCode);
         }
         catch (Exception e) {
-            throw UtilsPackage.rethrow(e);
+            throw ExceptionUtilsKt.rethrow(e);
         }
         finally {
             System.setErr(origErr);

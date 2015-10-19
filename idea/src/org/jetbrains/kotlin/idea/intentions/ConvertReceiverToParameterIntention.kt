@@ -35,7 +35,7 @@ public class ConvertReceiverToParameterIntention : JetSelfTargetingOffsetIndepen
 
     private fun configureChangeSignature(): JetChangeSignatureConfiguration {
         return object : JetChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
+            override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
                 return originalDescriptor.modify { it.receiver = null }
             }
         }
@@ -47,6 +47,6 @@ public class ConvertReceiverToParameterIntention : JetSelfTargetingOffsetIndepen
         val function = element.getParent() as? JetNamedFunction ?: return
         val context = function.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return
-        runChangeSignature(element.getProject(), descriptor, configureChangeSignature(), context, element, getText())
+        runChangeSignature(element.project, descriptor, configureChangeSignature(), element, getText())
     }
 }

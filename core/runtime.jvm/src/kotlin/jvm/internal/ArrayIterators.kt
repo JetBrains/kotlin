@@ -20,49 +20,49 @@ package kotlin.jvm.internal
 
 private class ArrayByteIterator(private val array: ByteArray) : ByteIterator() {
     private var index = 0
-    override fun hasNext() = index < array.size()
+    override fun hasNext() = index < array.size
     override fun nextByte() = array[index++]
 }
 
 private class ArrayCharIterator(private val array: CharArray) : CharIterator() {
     private var index = 0
-    override fun hasNext() = index < array.size()
+    override fun hasNext() = index < array.size
     override fun nextChar() = array[index++]
 }
 
 private class ArrayShortIterator(private val array: ShortArray) : ShortIterator() {
     private var index = 0
-    override fun hasNext() = index < array.size()
+    override fun hasNext() = index < array.size
     override fun nextShort() = array[index++]
 }
 
 private class ArrayIntIterator(private val array: IntArray) : IntIterator() {
     private var index = 0
-    override fun hasNext() = index < array.size()
+    override fun hasNext() = index < array.size
     override fun nextInt() = array[index++]
 }
 
 private class ArrayLongIterator(private val array: LongArray) : LongIterator() {
     private var index = 0
-    override fun hasNext() = index < array.size()
+    override fun hasNext() = index < array.size
     override fun nextLong() = array[index++]
 }
 
 private class ArrayFloatIterator(private val array: FloatArray) : FloatIterator() {
     private var index = 0
-    override fun hasNext() = index < array.size()
+    override fun hasNext() = index < array.size
     override fun nextFloat() = array[index++]
 }
 
 private class ArrayDoubleIterator(private val array: DoubleArray) : DoubleIterator() {
     private var index = 0
-    override fun hasNext() = index < array.size()
+    override fun hasNext() = index < array.size
     override fun nextDouble() = array[index++]
 }
 
 private class ArrayBooleanIterator(private val array: BooleanArray) : BooleanIterator() {
     private var index = 0
-    override fun hasNext() = index < array.size()
+    override fun hasNext() = index < array.size
     override fun nextBoolean() = array[index++]
 }
 
