@@ -27,17 +27,15 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.PathStringDescriptor
 import org.jetbrains.jps.incremental.storage.StorageOwner
+import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
 import org.jetbrains.kotlin.jps.build.GeneratedJvmClass
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.incremental.storage.BasicMap
 import org.jetbrains.kotlin.jps.incremental.storage.BasicStringMap
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName.byInternalName
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
@@ -48,8 +46,6 @@ import java.io.DataOutput
 import java.io.File
 import java.security.MessageDigest
 import java.util.*
-
-val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
 internal val CACHE_DIRECTORY_NAME = "kotlin"
 
@@ -451,26 +447,21 @@ public class IncrementalCacheImpl(
         private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
             val result = HashMap<String, Long>()
 
+            val inlineFunctions = inlineFunctionsJvmNames(bytes)
+            if (inlineFunctions.isEmpty()) return emptyMap()
+
             ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
                     val dummyClassWriter = ClassWriter(Opcodes.ASM5)
+
                     return object : MethodVisitor(Opcodes.ASM5, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
-                        var hasInlineAnnotation = false
-
-                        override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                            if (desc == INLINE_ANNOTATION_DESC) {
-                                hasInlineAnnotation = true
-                            }
-                            return null
-                        }
-
                         override fun visitEnd() {
-                            if (hasInlineAnnotation) {
-                                val dummyBytes = dummyClassWriter.toByteArray()!!
-                                val hash = dummyBytes.md5()
+                            val jvmName = name + desc
+                            if (jvmName !in inlineFunctions) return
 
-                                result[name + desc] = hash
-                            }
+                            val dummyBytes = dummyClassWriter.toByteArray()!!
+                            val hash = dummyBytes.md5()
+                            result[jvmName] = hash
                         }
                     }
                 }
