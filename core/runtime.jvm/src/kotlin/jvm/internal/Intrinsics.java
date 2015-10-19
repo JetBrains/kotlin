@@ -106,28 +106,54 @@ public class Intrinsics {
         return first == null ? second == null : first.equals(second);
     }
 
-    private static void throwUndefinedForReified() {
-        throw new UnsupportedOperationException("You should not use functions with reified parameter without inline");
+    public static void throwUndefinedForReified() {
+        throwUndefinedForReified(
+                "This function has a reified type parameter and thus can only be inlined at compilation time, not called directly."
+        );
+    }
+
+    public static void throwUndefinedForReified(String message) {
+        throw new UnsupportedOperationException(message);
     }
 
     public static void reifyNewArray(String typeParameterIdentifier) {
         throwUndefinedForReified();
     }
 
+    public static void reifyNewArray(String typeParameterIdentifier, String message) {
+        throwUndefinedForReified(message);
+    }
+
     public static void reifyCheckcast(String typeParameterIdentifier) {
         throwUndefinedForReified();
+    }
+
+    public static void reifyCheckcast(String typeParameterIdentifier, String message) {
+        throwUndefinedForReified(message);
     }
 
     public static void reifyInstanceof(String typeParameterIdentifier) {
         throwUndefinedForReified();
     }
 
+    public static void reifyInstanceof(String typeParameterIdentifier, String message) {
+        throwUndefinedForReified(message);
+    }
+
     public static void reifyJavaClass(String typeParameterIdentifier) {
         throwUndefinedForReified();
     }
 
+    public static void reifyJavaClass(String typeParameterIdentifier, String message) {
+        throwUndefinedForReified(message);
+    }
+
     public static void needClassReification() {
         throwUndefinedForReified();
+    }
+
+    public static void needClassReification(String message) {
+        throwUndefinedForReified(message);
     }
 
     private static <T extends Throwable> T sanitizeStackTrace(T throwable) {
