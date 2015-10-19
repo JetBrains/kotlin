@@ -771,6 +771,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("OnlyAnnotations.kt")
+            public void testOnlyAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/OnlyAnnotations.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ParameterAnnotation1.kt")
             public void testParameterAnnotation1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/ParameterAnnotation1.kt");

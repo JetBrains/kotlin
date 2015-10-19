@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -75,10 +76,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         PARAMETER_NAME(descriptorKindFilter = null, classKindFilter = null),
 
-        SUPER_QUALIFIER(descriptorKindFilter = DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, classKindFilter = null)
+        SUPER_QUALIFIER(descriptorKindFilter = DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, classKindFilter = null),
+
+        ANNOTATION(descriptorKindFilter = CallType.ANNOTATION.descriptorKindFilter, classKindFilter = { it == ClassKind.ANNOTATION_CLASS })
     }
 
-    private val completionKind = calcCompletionKind()
+    private val completionKind = detectCompletionKind()
 
     override val descriptorKindFilter = if (isNoQualifierContext()) {
         // it's an optimization because obtaining top-level packages from scope is very slow, we obtains them in other way
@@ -104,7 +107,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     override val expectedInfos: Collection<ExpectedInfo>
         get() = smartCompletion?.expectedInfos ?: emptyList()
 
-    private fun calcCompletionKind(): CompletionKind {
+    private fun detectCompletionKind(): CompletionKind {
         if (nameExpression != null && NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
             return CompletionKind.NAMED_ARGUMENTS_ONLY
         }
@@ -115,6 +118,10 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 CompletionKind.PARAMETER_NAME
             else
                 CompletionKind.KEYWORDS_ONLY
+        }
+
+        if (callTypeAndReceiver is CallTypeAndReceiver.ANNOTATION) {
+            return CompletionKind.ANNOTATION // we need special completion kind for it to filter non-imported classes with classKindFilter
         }
 
         // Check that completion in the type annotation context and if there's a qualified
