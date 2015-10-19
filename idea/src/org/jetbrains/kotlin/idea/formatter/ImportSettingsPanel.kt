@@ -70,8 +70,8 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     }
     private val starImportPackageTable = ImportLayoutPanel.createTableForPackageEntries(starImportPackageEntryTable, dummyImportLayoutPanel)
 
-    private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector("Top-level symbols:")
-    private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector("Java statics and enum members:")
+    private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector("Top-level Symbols")
+    private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector("Java Statics and Enum Members")
 
     init {
         setLayout(BorderLayout())
@@ -79,25 +79,22 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             val constraints = GridBagConstraints().apply {
                 weightx = 1.0
                 insets = Insets(0, 10, 10, 10)
-            }
-            add(createGeneralOptionsPanel(), constraints.apply {
                 fill = GridBagConstraints.HORIZONTAL
                 gridy = 0
-            })
+            }
+
+            add(nameCountToUseStarImportSelector.createPanel(), constraints.apply { gridy++ })
+
+            add(nameCountToUseStarImportForMembersSelector.createPanel(), constraints.apply { gridy++ })
+
+            add(OptionGroup("Other").apply { add(cbImportNestedClasses) }.createPanel(), constraints.apply { gridy++ })
+
             add(PackagePanel.createPackagesPanel(starImportPackageTable, starImportPackageEntryTable), constraints.apply {
-                gridy = 1
+                gridy++
                 fill = GridBagConstraints.BOTH
                 weighty = 1.0
             })
         }), BorderLayout.CENTER)
-    }
-
-    private fun createGeneralOptionsPanel(): JPanel {
-        return OptionGroup(ApplicationBundle.message("title.general")).apply {
-            add(nameCountToUseStarImportSelector.createPanel(), nameCountToUseStarImportForMembersSelector.createPanel())
-
-            add(cbImportNestedClasses)
-        }.createPanel()
     }
 
     fun reset(settings: JetCodeStyleSettings) {
@@ -132,7 +129,7 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         return root.getChildren().isNotEmpty()
     }
 
-    private class NameCountToUseStarImportSelector(label: String) : OptionGroup() {
+    private class NameCountToUseStarImportSelector(title: String) : OptionGroup(title) {
         private val rbUseSingleImports = JRadioButton("Use single name import")
         private val rbUseStarImports = JRadioButton("Use import with '*'")
         private val rbUseStarImportsIfAtLeast = JRadioButton("Use import with '*' when at least ")
@@ -146,7 +143,6 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
                 add(rbUseStarImportsIfAtLeast)
             }
 
-            add(JLabel(label))
             add(rbUseSingleImports, true)
             add(rbUseStarImports, true)
             val jPanel: JPanel = JPanel(GridBagLayout())
