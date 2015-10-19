@@ -9319,6 +9319,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/removeAtInt.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("sizeFromKotlinOverriddenInJava.kt")
+                public void testSizeFromKotlinOverriddenInJava() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/sizeFromKotlinOverriddenInJava.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/j+k/properties")

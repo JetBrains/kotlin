@@ -151,8 +151,12 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun PropertyDescriptor.findGetterOverride(): JavaMethodDescriptor? {
-        val specialGetterName = getter?.getOverriddenBuiltinWithDifferentJvmName()?.getBuiltinSpecialPropertyGetterName()
-        if (specialGetterName != null) {
+        val overriddenBuiltinProperty = getter?.getOverriddenBuiltinWithDifferentJvmName()
+        val specialGetterName = overriddenBuiltinProperty?.getBuiltinSpecialPropertyGetterName()
+        if (specialGetterName != null
+                && !this@LazyJavaClassMemberScope.getContainingDeclaration().hasRealKotlinSuperClassWithOverrideOf(
+                overriddenBuiltinProperty!!)
+        ) {
             return findGetterByName(specialGetterName)
         }
 
