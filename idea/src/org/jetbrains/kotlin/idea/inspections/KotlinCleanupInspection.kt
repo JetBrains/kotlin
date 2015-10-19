@@ -106,7 +106,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
     }
 
     private fun Diagnostic.toCleanupFixes(): Collection<CleanupFix> {
-        return JetPsiChecker.createQuickfixes(this).filterIsInstance<CleanupFix>()
+        return JetPsiChecker.createQuickFixes(this).filterIsInstance<CleanupFix>()
     }
 
     private class Wrapper(val intention: IntentionAction, file: KtFile) : IntentionWrapper(intention, file) {

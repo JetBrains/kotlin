@@ -19,21 +19,23 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.KtCodeFragment
-import java.util.Collections
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-// TODO: Replace with trait when all subclasses are translated to Kotlin
 public abstract class JetIntentionActionsFactory {
     protected open fun isApplicableForCodeFragment(): Boolean = false
 
     protected abstract fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>
 
-    public open fun canFixSeveralSameProblems(): Boolean = false
-    protected open fun doCreateActions(@Suppress("UNUSED_PARAMETER") sameTypeDiagnostics: List<Diagnostic>): List<IntentionAction> =
-            throw NotImplementedError()
+    protected open fun doCreateActionsForAllProblems(
+            sameTypeDiagnostics: Collection<Diagnostic>): List<IntentionAction> = emptyList()
 
-    public fun createActions(diagnostic: Diagnostic) = createActions(listOf(diagnostic))
+    public fun createActions(diagnostic: Diagnostic): List<IntentionAction> =
+            createActions(diagnostic.singletonOrEmptyList(), false)
 
-    public fun createActions(sameTypeDiagnostics: List<Diagnostic>): List<IntentionAction> {
+    public fun createActionsForAllProblems(sameTypeDiagnostics: Collection<Diagnostic>): List<IntentionAction> =
+            createActions(sameTypeDiagnostics, true)
+
+    private fun createActions(sameTypeDiagnostics: Collection<Diagnostic>, createForAll: Boolean): List<IntentionAction> {
         if (sameTypeDiagnostics.isEmpty()) return emptyList()
         val first = sameTypeDiagnostics.first()
 
@@ -41,14 +43,12 @@ public abstract class JetIntentionActionsFactory {
             return emptyList()
         }
 
-        if (sameTypeDiagnostics.size > 1) {
+        if (sameTypeDiagnostics.size > 1 && createForAll) {
             assert(sameTypeDiagnostics.all { it.psiElement == first.psiElement && it.factory == first.factory }) {
                 "It's expected to be the list of diagnostics of same type and for same element"
             }
 
-            if (canFixSeveralSameProblems()) {
-                return doCreateActions(sameTypeDiagnostics)
-            }
+            return doCreateActionsForAllProblems(sameTypeDiagnostics)
         }
 
         return sameTypeDiagnostics.flatMapTo(arrayListOf()) { doCreateActions(it) }
