@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.JetIcons
+import org.jetbrains.kotlin.idea.KtIcons
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetVisitorVoid
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import javax.swing.Icon
 
-class MainFunctionGutterVisitor(val holder: AnnotationHolder, val bindingContext: BindingContext) : JetVisitorVoid() {
-    override fun visitNamedFunction(function: JetNamedFunction) {
+class MainFunctionGutterVisitor(val holder: AnnotationHolder, val bindingContext: BindingContext) : KtVisitorVoid() {
+    override fun visitNamedFunction(function: KtNamedFunction) {
         if (MainFunctionDetector(bindingContext).isMain(function)) {
             function.nameIdentifier?.let { nameIdentifier ->
                 holder.createInfoAnnotation(nameIdentifier, "Run configuration from here").gutterIconRenderer = MainGutterIconRenderer(nameIdentifier)
@@ -37,7 +37,7 @@ class MainFunctionGutterVisitor(val holder: AnnotationHolder, val bindingContext
 }
 
 class MainGutterIconRenderer(val nameIdentifier: PsiElement) : GutterIconRenderer() {
-    override fun getIcon(): Icon = JetIcons.LAUNCH
+    override fun getIcon(): Icon = KtIcons.LAUNCH
     override fun hashCode(): Int = nameIdentifier.hashCode()
     override fun equals(other: Any?): Boolean = other is MainGutterIconRenderer && other.nameIdentifier == nameIdentifier
 }

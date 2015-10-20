@@ -48,7 +48,7 @@ import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
@@ -224,7 +224,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     public void tearDown() throws Exception {
         KotlinInternalMode.Instance.setEnabled(kotlinInternalModeOriginalValue);
 
-        Set<JetFile> builtInsSources = BuiltInsReferenceResolver.Companion.getInstance(getProject()).getBuiltInsSources();
+        Set<KtFile> builtInsSources = BuiltInsReferenceResolver.Companion.getInstance(getProject()).getBuiltInsSources();
         FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
 
         Field listenersField = PsiProjectListener.class.getDeclaredField("ourListeners");
@@ -248,7 +248,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
 
         // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
         // otherwise built-ins psi elements will become invalid in next test.
-        for (JetFile source : builtInsSources) {
+        for (KtFile source : builtInsSources) {
             FileViewProvider provider = source.getViewProvider();
             fileManager.setViewProvider(provider.getVirtualFile(), provider);
         }

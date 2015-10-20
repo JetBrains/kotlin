@@ -35,8 +35,8 @@ public class DeferredSAMUsage(
         val functionDescriptor: FunctionDescriptor,
         val samCallType: KtType
 ): JavaMethodDeferredKotlinUsage<KtFunctionLiteral>(functionLiteral) {
-        override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetFunctionLiteral> {
-                return object : JavaMethodKotlinUsageWithDelegate<JetFunctionLiteral>(functionLiteral, javaMethodChangeInfo) {
+        override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<KtFunctionLiteral> {
+                return object : JavaMethodKotlinUsageWithDelegate<KtFunctionLiteral>(functionLiteral, javaMethodChangeInfo) {
                         override val delegateUsage = JetCallableDefinitionUsage(
                                 functionLiteral,
                                 functionDescriptor,
