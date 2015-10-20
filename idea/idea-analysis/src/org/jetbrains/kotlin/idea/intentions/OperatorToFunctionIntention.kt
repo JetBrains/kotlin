@@ -167,26 +167,30 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
         }
 
         private fun convertArrayAccess(element: KtArrayAccessExpression): KtExpression {
-            val parent = element.getParent()
-            val array = element.getArrayExpression()!!.getText()
-            val indices = element.getIndicesNode()
-            val indicesText = indices.getText()?.removeSurrounding("[","]") ?: throw AssertionError("Indices node of ArrayExpression shouldn't be null: JetArrayAccessExpression = ${element.getText()}")
+            var expressionToReplace: KtExpression = element
+            val transformed = KtPsiFactory(element).buildExpression {
+                appendExpression(element.arrayExpression)
 
-            val transformation : String
-            val replaced : KtElement
-            if (parent is KtBinaryExpression && parent.getOperationReference().getReferencedNameElementType() == KtTokens.EQ && element == parent.left) {
-                // part of an assignment
-                val right = parent.getRight()!!.getText()
-                transformation = "$array.set($indicesText, $right)"
-                replaced = parent
-            }
-            else {
-                transformation = "$array.get($indicesText)"
-                replaced = element
+                appendFixedText(".")
+
+                val parent = element.parent
+                if (parent is KtBinaryExpression && parent.operationReference.getReferencedNameElementType() == KtTokens.EQ && element == parent.left) {
+                    expressionToReplace = parent
+
+                    appendFixedText("set(")
+                    appendExpressions(element.indexExpressions)
+                    appendFixedText(",")
+                    appendExpression(parent.right)
+                }
+                else {
+                    appendFixedText("get(")
+                    appendExpressions(element.indexExpressions)
+                }
+
+                appendFixedText(")")
             }
 
-            val transformed = KtPsiFactory(element).createExpression(transformation)
-            return replaced.replace(transformed) as KtExpression
+            return expressionToReplace.replace(transformed) as KtExpression
         }
 
         private fun convertCall(element: KtCallExpression): KtExpression {

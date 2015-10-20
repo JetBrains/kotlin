@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectTo
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import java.util.ArrayList
+import java.util.*
 
 public class IfToWhenIntention : JetSelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' with 'when'") {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
@@ -43,10 +43,8 @@ public class IfToWhenIntention : JetSelfTargetingRangeIntention<KtIfExpression>(
                     orBranches.addOrBranches(condition)
                 }
 
-                for ((i, expr) in orBranches.withIndex()) {
-                    if (i > 0) appendFixedText(",")
-                    appendExpression(expr)
-                }
+                appendExpressions(orBranches)
+
                 appendFixedText("->")
 
                 val thenBranch = ifExpression.getThen()

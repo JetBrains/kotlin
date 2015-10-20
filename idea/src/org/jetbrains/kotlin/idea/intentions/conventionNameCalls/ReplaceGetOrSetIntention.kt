@@ -102,12 +102,7 @@ class ReplaceGetOrSetIntention : JetSelfTargetingRangeIntention<KtDotQualifiedEx
             appendFixedText("[")
 
             val arguments = if (isSet) allArguments.dropLast(1) else allArguments
-            for ((index, argument) in arguments.withIndex()) {
-                if (index > 0) {
-                    appendFixedText(",")
-                }
-                appendExpression(argument.getArgumentExpression())
-            }
+            appendExpressions(arguments.map { it.getArgumentExpression() })
 
             appendFixedText("]")
 

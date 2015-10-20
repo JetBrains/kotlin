@@ -46,10 +46,7 @@ public class EliminateWhenSubjectIntention : JetSelfTargetingIntention<KtWhenExp
                     appendFixedText("else")
                 }
                 else {
-                    for ((i, condition) in entry.getConditions().withIndex()) {
-                        if (i > 0) appendFixedText(",")
-                        appendExpression(condition.toExpression(subject))
-                    }
+                    appendExpressions(entry.conditions.map { it.toExpression(subject) })
                 }
                 appendFixedText("->")
 

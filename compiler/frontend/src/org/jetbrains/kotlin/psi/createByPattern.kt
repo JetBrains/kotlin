@@ -272,6 +272,16 @@ public class BuilderByPattern<TElement> {
         return this
     }
 
+    public fun appendExpressions(expressions: Iterable<KtExpression?>, separator: String = ","): BuilderByPattern<TElement> {
+        for ((index, expression) in expressions.withIndex()) {
+            if (index > 0) {
+                appendFixedText(separator)
+            }
+            appendExpression(expression)
+        }
+        return this
+    }
+
     public fun appendTypeReference(typeRef: KtTypeReference?): BuilderByPattern<TElement> {
         if (typeRef != null) {
             patternBuilder.append("$" + arguments.size())
