@@ -43,7 +43,7 @@ enum class PrimitiveType {
     Double;
 
     companion object {
-        val defaultPrimitives = PrimitiveType.values().toSet()
+        val defaultPrimitives = PrimitiveType.values.toSet()
         val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
         val integralPrimitives = setOf(Int, Long, Byte, Short, Char)
 
@@ -170,7 +170,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         buildPrimitives.addAll(p.toList())
     }
 
-    fun instantiate(vararg families: Family = Family.values()): List<ConcreteFunction> {
+    fun instantiate(vararg families: Family = Family.values): List<ConcreteFunction> {
         return families
                 .sortedBy { it.name }
                 .filter { buildFamilies.contains(it) }
@@ -201,7 +201,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         Primitives, Generic -> SourceFile.Misc
     }
 
-    fun build(vararg families: Family = Family.values()): String {
+    fun build(vararg families: Family = Family.values): String {
         val builder = StringBuilder()
         for (family in families.sortedBy { it.name }) {
             if (buildFamilies.contains(family))
