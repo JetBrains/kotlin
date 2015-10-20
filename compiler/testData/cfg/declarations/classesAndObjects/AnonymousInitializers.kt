@@ -3,13 +3,13 @@ class AnonymousInitializers() {
 
     val i: Int
     init {
-        $i = 12
+        i = 12
     }
 
     val j: Int
        get() = 20
 
     init {
-        $i = 13
+        i = 13
     }
 }

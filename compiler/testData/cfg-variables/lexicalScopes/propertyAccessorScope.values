@@ -3,10 +3,10 @@ fun foo() {
     class A {
         var a : Int
           get() {
-              return $a
+              return field
           }
           set(v: Int) {
-              $a = v
+              field = v
           }
     }
 }
@@ -14,22 +14,22 @@ fun foo() {
 =====================
 == get_a ==
 get() {
-              return $a
+              return field
           }
 ---------------------
-                <v0>: A     NEW: magic[IMPLICIT_RECEIVER]($a) -> <v0>
-$a              <v1>: Int   NEW: r($a, a|<v0>) -> <v1>
-return $a       !<v2>: *                                             
-{ return $a }   !<v2>: *    COPY                                     
+                   <v0>: A     NEW: magic[IMPLICIT_RECEIVER](field) -> <v0>
+field              <v1>: Int   NEW: r(field|<v0>) -> <v1>
+return field       !<v2>: *
+{ return field }   !<v2>: *    COPY
 =====================
 == set_a ==
 set(v: Int) {
-              $a = v
+              field = v
           }
 ---------------------
-             <v0>: Int   NEW: magic[FAKE_INITIALIZER](v: Int) -> <v0>
-             <v1>: A     NEW: magic[IMPLICIT_RECEIVER]($a) -> <v1>   
-v            <v2>: Int   NEW: r(v) -> <v2>                           
-$a = v       !<v3>: *                                                
-{ $a = v }   !<v3>: *    COPY                                        
+                <v0>: Int   NEW: magic[FAKE_INITIALIZER](v: Int) -> <v0>
+                <v1>: A     NEW: magic[IMPLICIT_RECEIVER](field) -> <v1>
+v               <v2>: Int   NEW: r(v) -> <v2>
+field = v       !<v3>: *
+{ field = v }   !<v3>: *    COPY
 =====================

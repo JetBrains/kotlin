@@ -12,9 +12,5 @@ get() {
 val x : Int
 get() = z
 
-val w : Int
-get() = <!INACCESSIBLE_BACKING_FIELD!>$z<!>
-
-fun foo() {
-    <!INACCESSIBLE_BACKING_FIELD!>$y<!> = 34
-}
+val w : Int = 56
+get() = field

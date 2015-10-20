@@ -84,16 +84,10 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         }
 
         val psiFactory = KtPsiFactory(expression)
-        val element = when (expression.getReferencedNameElementType()) {
-            KtTokens.FIELD_IDENTIFIER -> psiFactory.createFieldIdentifier(newElementName)
-
-            else -> {
-                Extensions.getArea(expression.getProject()).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).getExtensions()
+        val element = Extensions.getArea(expression.getProject()).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions
                         .asSequence()
                         .map { it.handleElementRename(this, psiFactory, newElementName) }
                         .firstOrNull { it != null } ?: psiFactory.createNameIdentifier(newElementName)
-            }
-        }
 
         val nameElement = expression.getReferencedNameElement()
 

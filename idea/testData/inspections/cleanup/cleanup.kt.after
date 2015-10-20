@@ -39,12 +39,6 @@ annotation class Fancy(val param: Int)
 
 @Fancy(i) class D
 
-class Foo {
-    var x: Int = 0
-        get = field
-        set(value) { field = value }
-}
-
 class CustomDelegate {
     operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = ""
     operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: String) {}

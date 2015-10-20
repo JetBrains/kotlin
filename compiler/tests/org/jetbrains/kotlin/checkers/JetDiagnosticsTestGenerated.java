@@ -1476,12 +1476,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("CyclicReferenceInitializer.kt")
-            public void testCyclicReferenceInitializer() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/CyclicReferenceInitializer.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("ExtensionProperty.kt")
             public void testExtensionProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ExtensionProperty.kt");
@@ -1557,54 +1551,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt782packageLevel.kt")
             public void testKt782packageLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/kt782packageLevel.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("qualifiedWithThis.kt")
-            public void testQualifiedWithThis() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/qualifiedWithThis.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ReadNonexistentAbstractPropertyInAnonymous.kt")
-            public void testReadNonexistentAbstractPropertyInAnonymous() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ReadNonexistentAbstractPropertyInAnonymous.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ReadNonexistentAbstractPropertyInFunction.kt")
-            public void testReadNonexistentAbstractPropertyInFunction() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ReadNonexistentAbstractPropertyInFunction.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ReadNonexistentCustomGetInAnonymous.kt")
-            public void testReadNonexistentCustomGetInAnonymous() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ReadNonexistentCustomGetInAnonymous.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ReadNonexistentCustomGetInAnotherInitializer.kt")
-            public void testReadNonexistentCustomGetInAnotherInitializer() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ReadNonexistentCustomGetInAnotherInitializer.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ReadNonexistentDeclaredInHigher.kt")
-            public void testReadNonexistentDeclaredInHigher() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ReadNonexistentDeclaredInHigher.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ReadNonexistentPropertyInAnonymous.kt")
-            public void testReadNonexistentPropertyInAnonymous() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/ReadNonexistentPropertyInAnonymous.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("WriteNonexistentDeclaredInHigher.kt")
-            public void testWriteNonexistentDeclaredInHigher() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/backingField/WriteNonexistentDeclaredInHigher.kt");
                 doTest(fileName);
             }
         }

@@ -52,9 +52,6 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         }
 
         highlightProperty(expression, (PropertyDescriptor) target, false);
-        if (expression.getReferencedNameElementType() == KtTokens.FIELD_IDENTIFIER) {
-            NameHighlighter.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_ACCESS);
-        }
     }
 
     @Override

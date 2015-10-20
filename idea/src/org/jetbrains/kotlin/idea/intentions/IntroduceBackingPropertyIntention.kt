@@ -82,8 +82,6 @@ class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<KtProperty>
             }
 
             property.setInitializer(null)
-
-            replaceBackingFieldReferences(property)
         }
 
         private fun createGetter(element: KtProperty) {
@@ -135,17 +133,6 @@ class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<KtProperty>
                     // don't go into accessors of properties in local classes because 'field' will mean something different in them
                 }
             })
-        }
-
-        // TODO: drop this when we get rid of backing field syntax
-        private fun replaceBackingFieldReferences(prop: KtProperty) {
-            val containingClass = prop.getStrictParentOfType<KtClassOrObject>()!!
-            ReferencesSearch.search(prop, LocalSearchScope(containingClass)).forEach {
-                val element = it.element as? KtNameReferenceExpression
-                if (element != null && element.getReferencedNameElementType() == KtTokens.FIELD_IDENTIFIER) {
-                    element.replace(KtPsiFactory(element).createSimpleName("_${prop.name}"))
-                }
-            }
         }
     }
 }

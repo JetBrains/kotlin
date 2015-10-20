@@ -39,12 +39,6 @@ annotation class Fancy(val param: Int)
 
 @Fancy(<caret>i) class D
 
-class Foo {
-    var x: Int = 0
-        get = $x
-        set(value) { $x = value }
-}
-
 class CustomDelegate {
     operator fun get(thisRef: Any?, prop: PropertyMetadata): String = ""
     operator fun set(thisRef: Any?, prop: PropertyMetadata, value: String) {}

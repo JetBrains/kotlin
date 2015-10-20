@@ -2,10 +2,10 @@ fun foo() {
     class A {
         var a : Int
           get() {
-              return $a
+              return field
           }
           set(v: Int) {
-              $a = v
+              field = v
           }
     }
 }

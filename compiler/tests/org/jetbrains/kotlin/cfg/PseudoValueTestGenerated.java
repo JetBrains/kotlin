@@ -482,18 +482,6 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/declarations/properties"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
-                @TestMetadata("backingFieldAccess.kt")
-                public void testBackingFieldAccess() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/properties/backingFieldAccess.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("backingFieldQualifiedWithThis.kt")
-                public void testBackingFieldQualifiedWithThis() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/properties/backingFieldQualifiedWithThis.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("DelegatedProperty.kt")
                 public void testDelegatedProperty() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/declarations/properties/DelegatedProperty.kt");

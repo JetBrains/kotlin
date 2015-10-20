@@ -4250,33 +4250,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
-        @TestMetadata("idea/testData/quickfix/migration/backingFieldSyntax")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class BackingFieldSyntax extends AbstractQuickFixTest {
-            @TestMetadata("accessor.kt")
-            public void testAccessor() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/backingFieldSyntax/accessor.kt");
-                doTest(fileName);
-            }
-
-            public void testAllFilesPresentInBackingFieldSyntax() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/backingFieldSyntax"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-
-            @TestMetadata("introduceBackingField.kt")
-            public void testIntroduceBackingField() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/backingFieldSyntax/introduceBackingField.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("usage.kt")
-            public void testUsage() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/backingFieldSyntax/usage.kt");
-                doTest(fileName);
-            }
-        }
-
         @TestMetadata("idea/testData/quickfix/migration/conflictingExtension")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -6788,45 +6761,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("funInvWithoutParentheses.kt")
             public void testFunInvWithoutParentheses() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToFunctionInvocation/funInvWithoutParentheses.kt");
-                doTest(fileName);
-            }
-        }
-
-        @TestMetadata("idea/testData/quickfix/variables/changeToPropertyName")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ChangeToPropertyName extends AbstractQuickFixTest {
-            @TestMetadata("abstractProperty.kt")
-            public void testAbstractProperty() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyName/abstractProperty.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("abstractPropertyThis.kt")
-            public void testAbstractPropertyThis() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyName/abstractPropertyThis.kt");
-                doTest(fileName);
-            }
-
-            public void testAllFilesPresentInChangeToPropertyName() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeToPropertyName"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-
-            @TestMetadata("customAccessors.kt")
-            public void testCustomAccessors() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyName/customAccessors.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("inaccessibleBackingField.kt")
-            public void testInaccessibleBackingField() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyName/inaccessibleBackingField.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("inaccessibleBackingFieldQualified.kt")
-            public void testInaccessibleBackingFieldQualified() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyName/inaccessibleBackingFieldQualified.kt");
                 doTest(fileName);
             }
         }

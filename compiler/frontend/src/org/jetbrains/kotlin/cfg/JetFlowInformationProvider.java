@@ -402,7 +402,7 @@ public class JetFlowInformationProvider {
     ) {
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
         PropertyDescriptor propertyDescriptor = SyntheticFieldDescriptorKt.getReferencedProperty(variableDescriptor);
-        if (KtPsiUtil.isBackingFieldReference(expression, variableDescriptor) && propertyDescriptor != null) {
+        if (KtPsiUtil.isBackingFieldReference(variableDescriptor) && propertyDescriptor != null) {
             KtPropertyAccessor accessor = PsiTreeUtil.getParentOfType(expression, KtPropertyAccessor.class);
             if (accessor != null) {
                 DeclarationDescriptor accessorDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, accessor);
@@ -511,11 +511,8 @@ public class JetFlowInformationProvider {
                 }
             }
             if (variable instanceof KtSimpleNameExpression) {
-                KtSimpleNameExpression simpleNameExpression = (KtSimpleNameExpression) variable;
-                if (simpleNameExpression.getReferencedNameElementType() != KtTokens.FIELD_IDENTIFIER) {
-                    trace.record(IS_UNINITIALIZED, (PropertyDescriptor) variableDescriptor);
-                    return true;
-                }
+                trace.record(IS_UNINITIALIZED, (PropertyDescriptor) variableDescriptor);
+                return true;
             }
         }
         return false;
@@ -551,9 +548,6 @@ public class JetFlowInformationProvider {
         DeclarationDescriptor containingDeclaration = variableDescriptor.getContainingDeclaration();
         if ((containingDeclaration instanceof ClassDescriptor)
                 && DescriptorUtils.isAncestor(containingDeclaration, declarationDescriptor, false)) {
-            if (element instanceof KtSimpleNameExpression) {
-                report(Errors.BACKING_FIELD_USAGE_FORBIDDEN.on((KtSimpleNameExpression) element), cxtx);
-            }
             return false;
         }
         report(Errors.INACCESSIBLE_BACKING_FIELD.on(element), cxtx);
@@ -567,9 +561,6 @@ public class JetFlowInformationProvider {
             boolean reportError
     ) {
         error[0] = false;
-        if (KtPsiUtil.isBackingFieldReference(element, null)) {
-            return true;
-        }
         if (element instanceof KtDotQualifiedExpression && isCorrectBackingFieldReference(
                 ((KtDotQualifiedExpression) element).getSelectorExpression(), ctxt, error, false)) {
             if (((KtDotQualifiedExpression) element).getReceiverExpression() instanceof KtThisExpression) {

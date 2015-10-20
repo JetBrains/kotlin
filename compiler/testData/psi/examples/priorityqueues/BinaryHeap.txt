@@ -837,7 +837,7 @@ JetFile: BinaryHeap.kt
             PsiWhiteSpace('\n      ')
             BINARY_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(FIELD_IDENTIFIER)('$value')
+                PsiElement(IDENTIFIER)('field')
               PsiWhiteSpace(' ')
               OPERATION_REFERENCE
                 PsiElement(EQ)('=')

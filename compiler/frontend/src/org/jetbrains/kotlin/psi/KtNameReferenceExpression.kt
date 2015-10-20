@@ -64,6 +64,6 @@ public class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenc
     }
 
     companion object {
-        private val NAME_REFERENCE_EXPRESSIONS = TokenSet.create(IDENTIFIER, FIELD_IDENTIFIER, THIS_KEYWORD, SUPER_KEYWORD)
+        private val NAME_REFERENCE_EXPRESSIONS = TokenSet.create(IDENTIFIER, THIS_KEYWORD, SUPER_KEYWORD)
     }
 }

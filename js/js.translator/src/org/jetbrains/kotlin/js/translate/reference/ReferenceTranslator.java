@@ -103,7 +103,7 @@ public final class ReferenceTranslator {
     public static AccessTranslator getAccessTranslator(@NotNull KtSimpleNameExpression referenceExpression,
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context) {
-        if (isBackingFieldReference(referenceExpression, getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression))) {
+        if (isBackingFieldReference(getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression))) {
             return BackingFieldAccessTranslator.newInstance(referenceExpression, context);
         }
         if (canBePropertyAccess(referenceExpression, context)) {
