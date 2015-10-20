@@ -697,7 +697,10 @@
                 url="@{base.repository.url}/intellij-core/@{idea.maven.version}/intellij-core-@{idea.maven.version}.zip"
                 usetimestamp="true"/>
 
-            <get src="@{base.repository.url}/jps-build-test/@{idea.maven.version}/jps-build-test-@{idea.maven.version}.jar"
+            <!--<get src="@{base.repository.url}/jps-build-test/@{idea.maven.version}/jps-build-test-@{idea.maven.version}.jar"-->
+                 <!--dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>-->
+            <!-- Temporary get jps test artifact built with a newer Kotlin -->
+            <get src="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea/jps-build-test/143.249.6/jps-build-test-143.249.6.jar"
                  dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>
 
             <download_and_unzip
