@@ -17,13 +17,14 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.org.objectweb.asm.FieldVisitor
-import org.jetbrains.org.objectweb.asm.MethodVisitor
+import com.intellij.util.containers.LinkedMultiMap
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
+import org.jetbrains.org.objectweb.asm.FieldVisitor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 
 public abstract class SignatureCollectingClassBuilderFactory(
         delegate: ClassBuilderFactory
@@ -47,7 +48,7 @@ public abstract class SignatureCollectingClassBuilderFactory(
 
         private var classInternalName: String? = null
 
-        private val signatures = MultiMap<RawSignature, JvmDeclarationOrigin>()
+        private val signatures = LinkedMultiMap<RawSignature, JvmDeclarationOrigin>()
 
         override fun defineClass(origin: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>) {
             classInternalName = name
