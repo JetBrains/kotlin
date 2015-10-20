@@ -209,8 +209,12 @@ private fun updateJavaReference(reference: PsiReferenceExpression, oldElement: P
         // Remove import of old package facade, if any
         val oldClassName = oldElement.getContainingClass()?.getQualifiedName()
         if (oldClassName != null) {
-            val importOfOldClass = (reference.getContainingFile() as? PsiJavaFile)?.getImportList()?.getImportStatements()?.firstOrNull {
-                it.getQualifiedName() == oldClassName
+            val importOfOldClass = (reference.containingFile as? PsiJavaFile)?.importList?.allImportStatements?.firstOrNull {
+                when (it) {
+                    is PsiImportStatement -> it.qualifiedName == oldClassName
+                    is PsiImportStaticStatement -> it.isOnDemand && it.importReference?.canonicalText == oldClassName
+                    else -> false
+                }
             }
             if (importOfOldClass != null && importOfOldClass.resolve() == null) {
                 importOfOldClass.delete()
