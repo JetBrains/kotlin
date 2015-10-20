@@ -56,7 +56,7 @@ abstract class AbstractCodeInsightActionTest : JetLightCodeInsightFixtureTestCas
 
             val mainFile = File(path)
             val mainFileName = mainFile.name
-            val fileNameBase = mainFile.nameWithoutExtension
+            val fileNameBase = mainFile.nameWithoutExtension + "."
             val rootDir = mainFile.parentFile
             rootDir
                     .list { file, name ->

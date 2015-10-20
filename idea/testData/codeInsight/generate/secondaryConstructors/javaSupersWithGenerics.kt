@@ -1,10 +1,6 @@
 // ACTION_CLASS: org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction
-class Foo : Base {
+class Foo<U> : Base<U, Int> {<caret>
     val x = 1
-
-    <caret>constructor(n: Int) : super(n)
-
-    constructor(a: Int, b: Int) : super(a, b)
 
     fun foo() {
 
