@@ -2302,6 +2302,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("Number.kt")
+        public void testNumber() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/Number.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PackageDirective.kt")
         public void testPackageDirective() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/PackageDirective.kt");
