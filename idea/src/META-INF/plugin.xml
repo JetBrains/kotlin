@@ -279,7 +279,7 @@
     <projectService serviceInterface="org.jetbrains.kotlin.console.KotlinConsoleKeeper"
                     serviceImplementation="org.jetbrains.kotlin.console.KotlinConsoleKeeper"/>
 
-    <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
     <internalFileTemplate name="Kotlin File"/>
     <internalFileTemplate name="Kotlin Class"/>
