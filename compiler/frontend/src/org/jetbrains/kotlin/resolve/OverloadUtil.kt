@@ -14,119 +14,136 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeCapabilitiesKt;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.*
+import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.oneMoreSpecificThanAnother
 
-import java.util.List;
-
-import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.INCOMPATIBLE;
-
-public class OverloadUtil {
+object OverloadUtil {
 
     /**
      * Does not check names.
      */
-    public static OverloadCompatibilityInfo isOverloadable(CallableDescriptor a, CallableDescriptor b) {
-        int abc = braceCount(a);
-        int bbc = braceCount(b);
-        
+    public @JvmStatic fun isOverloadable(a: CallableDescriptor, b: CallableDescriptor): OverloadCompatibilityInfo {
+        val abc = braceCount(a)
+        val bbc = braceCount(b)
+
         if (abc != bbc) {
-            return OverloadCompatibilityInfo.success();
+            return OverloadCompatibilityInfo.success()
         }
-        
-        OverridingUtil.OverrideCompatibilityInfo overrideCompatibilityInfo = isOverloadableBy(a, b);
-        switch (overrideCompatibilityInfo.getResult()) {
-            case OVERRIDABLE:
-            case CONFLICT:
-                return OverloadCompatibilityInfo.someError();
-            case INCOMPATIBLE:
-                return OverloadCompatibilityInfo.success();
-            default:
-                throw new IllegalStateException();
+
+        val overrideCompatibilityInfo = isOverloadableBy(a, b)
+        when (overrideCompatibilityInfo.result) {
+            OVERRIDABLE, CONFLICT -> return OverloadCompatibilityInfo.someError()
+            INCOMPATIBLE -> return OverloadCompatibilityInfo.success()
+            else -> throw IllegalStateException()
         }
     }
 
-    @NotNull
-    private static OverridingUtil.OverrideCompatibilityInfo isOverloadableBy(
-            @NotNull CallableDescriptor superDescriptor,
-            @NotNull CallableDescriptor subDescriptor
-    ) {
-        OverridingUtil.OverrideCompatibilityInfo
-                receiverAndParameterResult = OverridingUtil.checkReceiverAndParameterCount(superDescriptor, subDescriptor);
+    private fun isOverloadableBy(
+            superDescriptor: CallableDescriptor,
+            subDescriptor: CallableDescriptor): OverridingUtil.OverrideCompatibilityInfo {
+        val receiverAndParameterResult = OverridingUtil.checkReceiverAndParameterCount(superDescriptor, subDescriptor)
         if (receiverAndParameterResult != null) {
-            return receiverAndParameterResult;
+            return receiverAndParameterResult
         }
 
-        List<KotlinType> superValueParameters = OverridingUtil.compiledValueParameters(superDescriptor);
-        List<KotlinType> subValueParameters = OverridingUtil.compiledValueParameters(subDescriptor);
+        val superValueParameters = OverridingUtil.compiledValueParameters(superDescriptor)
+        val subValueParameters = OverridingUtil.compiledValueParameters(subDescriptor)
 
-        for (int i = 0; i < superValueParameters.size(); ++i) {
-            KotlinType superValueParameterType = OverridingUtil.getUpperBound(superValueParameters.get(i));
-            KotlinType subValueParameterType = OverridingUtil.getUpperBound(subValueParameters.get(i));
-            if (!KotlinTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType)
-                || TypeCapabilitiesKt.oneMoreSpecificThanAnother(subValueParameterType, superValueParameterType)) {
-                return OverridingUtil.OverrideCompatibilityInfo
-                        .valueParameterTypeMismatch(superValueParameterType, subValueParameterType, INCOMPATIBLE);
+        for (i in superValueParameters.indices) {
+            val superValueParameterType = OverridingUtil.getUpperBound(superValueParameters[i])
+            val subValueParameterType = OverridingUtil.getUpperBound(subValueParameters[i])
+            if (!KotlinTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType) || oneMoreSpecificThanAnother(subValueParameterType, superValueParameterType)) {
+                return OverridingUtil.OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameterType, subValueParameterType, INCOMPATIBLE)
             }
         }
 
-        return OverridingUtil.OverrideCompatibilityInfo.success();
+        return OverridingUtil.OverrideCompatibilityInfo.success()
     }
 
-    private static int braceCount(CallableDescriptor a) {
-        if (a instanceof PropertyDescriptor) {
-            return 0;
-        }
-        else if (a instanceof SimpleFunctionDescriptor) {
-            return 1;
-        }
-        else if (a instanceof ConstructorDescriptor) {
-            return 1;
-        }
-        else {
-            throw new IllegalStateException();
+    private fun braceCount(a: CallableDescriptor): Int =
+            when (a) {
+                is PropertyDescriptor -> 0
+                is SimpleFunctionDescriptor -> 1
+                is ConstructorDescriptor -> 1
+                else -> throw IllegalStateException()
+            }
+
+    class OverloadCompatibilityInfo(val isSuccess: Boolean, val message: String) {
+        companion object {
+
+            private val SUCCESS = OverloadCompatibilityInfo(true, "SUCCESS")
+
+            fun success() = SUCCESS
+
+            fun someError() = OverloadCompatibilityInfo(false, "XXX")
         }
     }
 
-    public static class OverloadCompatibilityInfo {
+    public @JvmStatic fun groupModulePackageMembersByFqName(
+            c: BodiesResolveContext,
+            constructorsInPackages: MultiMap<FqNameUnsafe, ConstructorDescriptor>
+    ): MultiMap<FqNameUnsafe, CallableMemberDescriptor> {
+        val packageMembersByName = MultiMap<FqNameUnsafe, CallableMemberDescriptor>()
 
-        private static final OverloadCompatibilityInfo SUCCESS = new OverloadCompatibilityInfo(true, "SUCCESS");
-        
-        public static OverloadCompatibilityInfo success() {
-            return SUCCESS;
-        }
-        
-        public static OverloadCompatibilityInfo someError() {
-            return new OverloadCompatibilityInfo(false, "XXX");
-        }
-        
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        private final boolean isSuccess;
-        private final String message;
-
-        public OverloadCompatibilityInfo(boolean success, String message) {
-            isSuccess = success;
-            this.message = message;
+        collectModulePackageMembersWithSameName(packageMembersByName, c.functions.values) {
+            scope, name ->
+            scope.getFunctions(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
         }
 
-        public boolean isSuccess() {
-            return isSuccess;
+        collectModulePackageMembersWithSameName(packageMembersByName, c.properties.values) {
+            scope, name ->
+            scope.getProperties(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS).filterIsInstance<CallableMemberDescriptor>()
         }
 
-        public String getMessage() {
-            return message;
+        // TODO handle constructor redeclarations in modules. See also https://youtrack.jetbrains.com/issue/KT-3632
+        packageMembersByName.putAllValues(constructorsInPackages)
+
+        return packageMembersByName
+    }
+
+    private inline fun collectModulePackageMembersWithSameName(
+            packageMembersByName: MultiMap<FqNameUnsafe, CallableMemberDescriptor>,
+            interestingDescriptors: Collection<CallableMemberDescriptor>,
+            getMembersByName: (KtScope, Name) -> Collection<CallableMemberDescriptor>
+    ) {
+        val observedFQNs = hashSetOf<FqNameUnsafe>()
+        for (descriptor in interestingDescriptors) {
+            if (descriptor.containingDeclaration !is PackageFragmentDescriptor) continue
+
+            val descriptorFQN = DescriptorUtils.getFqName(descriptor)
+            if (observedFQNs.contains(descriptorFQN)) continue
+            observedFQNs.add(descriptorFQN)
+
+            val packageMembersWithSameName = getModulePackageMembersWithSameName(descriptor, getMembersByName)
+            packageMembersByName.putValues(descriptorFQN, packageMembersWithSameName)
+        }
+    }
+
+    private inline fun getModulePackageMembersWithSameName(
+            packageMember: CallableMemberDescriptor,
+            getMembersByName: (KtScope, Name) -> Collection<CallableMemberDescriptor>
+    ): Collection<CallableMemberDescriptor> {
+        val containingPackage = packageMember.containingDeclaration
+        if (containingPackage !is PackageFragmentDescriptor) {
+            throw AssertionError("$packageMember is not a top-level package member")
         }
 
+        val containingModule = DescriptorUtils.getContainingModuleOrNull(packageMember) ?: return listOf(packageMember)
+
+        val containingPackageScope = containingModule.getPackage(containingPackage.fqName).memberScope
+        val possibleOverloads = getMembersByName(containingPackageScope, packageMember.name)
+
+        // NB memberScope for PackageViewDescriptor includes module dependencies
+        return possibleOverloads.filter { DescriptorUtils.getContainingModule(it) == containingModule }
     }
 
 }
