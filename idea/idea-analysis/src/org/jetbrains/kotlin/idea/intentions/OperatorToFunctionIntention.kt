@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
@@ -86,6 +87,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
             return false
         }
 
+        //TODO: don't use creation by plain text
         private fun convertPrefix(element: KtPrefixExpression): KtExpression {
             val op = element.getOperationReference().getReferencedNameElementType()
             val base = element.getBaseExpression()!!.getText()
@@ -104,6 +106,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
             return element.replace(transformed) as KtExpression
         }
 
+        //TODO: don't use creation by plain text
         private fun convertPostFix(element: KtPostfixExpression): KtExpression {
             val op = element.getOperationReference().getReferencedNameElementType()
             val base = element.getBaseExpression()!!.getText()
@@ -119,6 +122,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
             return element.replace(transformed) as KtExpression
         }
 
+        //TODO: don't use creation by plain text
         private fun convertBinary(element: KtBinaryExpression): KtExpression {
             val op = element.getOperationReference().getReferencedNameElementType()
             val left = element.getLeft()!!
@@ -173,9 +177,9 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
 
                 appendFixedText(".")
 
-                val parent = element.parent
-                if (parent is KtBinaryExpression && parent.operationReference.getReferencedNameElementType() == KtTokens.EQ && element == parent.left) {
-                    expressionToReplace = parent
+                if (isAssignmentLeftSide(element)) {
+                    val parent = element.parent
+                    expressionToReplace = parent as KtBinaryExpression
 
                     appendFixedText("set(")
                     appendExpressions(element.indexExpressions)
@@ -193,6 +197,12 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
             return expressionToReplace.replace(transformed) as KtExpression
         }
 
+        private fun isAssignmentLeftSide(element: KtArrayAccessExpression): Boolean {
+            val parent = element.parent
+            return parent is KtBinaryExpression && parent.operationReference.getReferencedNameElementType() == KtTokens.EQ && element == parent.left
+        }
+
+        //TODO: don't use creation by plain text
         private fun convertCall(element: KtCallExpression): KtExpression {
             val callee = element.getCalleeExpression()!!
             val arguments = element.getValueArgumentList()
@@ -207,6 +217,13 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
         }
 
         public fun convert(element: KtExpression): Pair<KtExpression, KtSimpleNameExpression> {
+            var elementToBeReplaced = element
+            if (element is KtArrayAccessExpression && isAssignmentLeftSide(element)) {
+                elementToBeReplaced = element.parent as KtExpression
+            }
+
+            val commentSaver = CommentSaver(elementToBeReplaced, saveLineBreaks = true)
+
             val result = when (element) {
                 is KtPrefixExpression -> convertPrefix(element)
                 is KtPostfixExpression -> convertPostFix(element)
@@ -215,6 +232,8 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
                 is KtCallExpression -> convertCall(element)
                 else -> throw IllegalArgumentException(element.toString())
             }
+
+            commentSaver.restore(result)
 
             val callName = findCallName(result)
                            ?: error("No call name found in ${result.text}")

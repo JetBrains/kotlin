@@ -5943,6 +5943,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("keepComments.kt")
+        public void testKeepComments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/keepComments.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notApplicableAssignment.kt")
         public void testNotApplicableAssignment() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/notApplicableAssignment.kt");

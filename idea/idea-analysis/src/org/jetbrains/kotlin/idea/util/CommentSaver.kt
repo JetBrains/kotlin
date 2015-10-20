@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core
+package org.jetbrains.kotlin.idea.util
 
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.*
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 import kotlin.properties.Delegates
 
 public class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: Boolean = false/*TODO?*/) {
