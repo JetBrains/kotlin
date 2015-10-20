@@ -608,12 +608,12 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val classBody = classOrObject.getOrCreateBody()
             return if (declaration is KtNamedFunction) {
                 val anchor = PsiTreeUtil.skipSiblingsBackward(
-                        classBody.getRBrace() ?: classBody.getLastChild()!!,
+                        classBody.rBrace ?: classBody.getLastChild()!!,
                         javaClass<PsiWhiteSpace>()
                 )
                 classBody.addAfter(declaration, anchor) as KtNamedDeclaration
             }
-            else classBody.addAfter(declaration, classBody.getLBrace()!!) as KtNamedDeclaration
+            else classBody.addAfter(declaration, classBody.lBrace!!) as KtNamedDeclaration
         }
 
         private fun getTypeParameterRenames(scope: KtScope): Map<TypeParameterDescriptor, String> {
