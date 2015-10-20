@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.resolve.descriptorUtil
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.KotlinType
@@ -41,3 +43,21 @@ public fun CallableDescriptor.hasLowPriorityInOverloadResolution(): Boolean = an
 private val ONLY_INPUT_TYPES_FQ_NAME = FqName("kotlin.internal.OnlyInputTypes")
 
 public fun TypeParameterDescriptor.hasOnlyInputTypesAnnotation(): Boolean = annotations.hasAnnotation(ONLY_INPUT_TYPES_FQ_NAME)
+
+public fun getExactInAnnotations(): Annotations = AnnotationsWithOnly(EXACT_ANNOTATION_FQ_NAME)
+
+private class AnnotationsWithOnly(val presentAnnotation: FqName): Annotations {
+    override fun iterator(): Iterator<AnnotationDescriptor> = listOf<AnnotationDescriptor>().iterator()
+
+    override fun isEmpty(): Boolean = false
+
+    override fun hasAnnotation(fqName: FqName): Boolean = fqName == this.presentAnnotation
+
+    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? = null
+
+    override fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor? = null
+
+    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
+
+    override fun getAllAnnotations(): List<AnnotationWithTarget> = emptyList()
+}

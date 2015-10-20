@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ T : kotlin.Any> foo(/*0*/ f: (T) -> kotlin.Unit): T?
+public fun test(): kotlin.Unit

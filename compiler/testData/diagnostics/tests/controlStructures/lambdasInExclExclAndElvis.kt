@@ -8,8 +8,8 @@ fun test() {
 
     // KT-KT-9070
     <!TYPE_MISMATCH!>{ }<!> <!USELESS_ELVIS!><!USELESS_ELVIS_ON_FUNCTION_LITERAL!>?:<!> 1<!>
-    use(<!TYPE_MISMATCH!>{ 2 }<!> <!USELESS_ELVIS_ON_FUNCTION_LITERAL!>?:<!> 1);
+    use({ 2 } <!USELESS_ELVIS_ON_FUNCTION_LITERAL!>?:<!> 1);
 
     1 <!USELESS_ELVIS!>?: <!TYPE_MISMATCH, UNUSED_FUNCTION_LITERAL!>{ }<!><!>
-    use(1 <!USELESS_ELVIS!>?: <!TYPE_MISMATCH!>{ }<!><!>)
+    use(1 <!USELESS_ELVIS!>?: { }<!>)
 }

@@ -13088,6 +13088,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("inferenceForElvis.kt")
+                public void testInferenceForElvis() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions/inferenceForElvis.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("multipleSuperClasses.kt")
                 public void testMultipleSuperClasses() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions/multipleSuperClasses.kt");
