@@ -97,6 +97,18 @@
                             <classesDirectory>${basedir}/javadoc</classesDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>empty-sources-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <skipIfEmpty>false</skipIfEmpty>
+                            <classifier>sources</classifier>
+                            <classesDirectory>${basedir}/sources</classesDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
