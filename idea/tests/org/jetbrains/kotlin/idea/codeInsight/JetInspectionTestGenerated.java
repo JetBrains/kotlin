@@ -49,9 +49,9 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("conventionNameCalls/replaceGet/inspectionData/inspections.test")
-        public void testConventionNameCalls_replaceGet_inspectionData_Inspections_test() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/inspectionData/inspections.test");
+        @TestMetadata("conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test")
+        public void testConventionNameCalls_replaceGetOrSet_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test");
             doTest(fileName);
         }
 

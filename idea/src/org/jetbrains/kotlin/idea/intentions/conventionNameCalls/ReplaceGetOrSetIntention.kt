@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
@@ -29,15 +30,19 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.buildExpression
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public class ReplaceGetInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
-        ReplaceGetIntention(), ReplaceGetInspection.additionalChecker
+public class ReplaceGetOrSetInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
+        ReplaceGetOrSetIntention(), ReplaceGetOrSetInspection.additionalChecker
 
 ) {
     companion object {
         val additionalChecker = { expression: KtDotQualifiedExpression ->
-            (expression.toResolvedCall()!!.resultingDescriptor as FunctionDescriptor).isExplicitOperator()
+            (expression.toResolvedCall(BodyResolveMode.PARTIAL)!!.resultingDescriptor as FunctionDescriptor).isExplicitOperator()
         }
     }
 }
@@ -49,23 +54,35 @@ private fun FunctionDescriptor.isExplicitOperator(): Boolean {
         overriddenDescriptors.any { it.isExplicitOperator() }
 }
 
-public class ReplaceGetIntention : JetSelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace 'get' call with index operator"), HighPriorityAction {
+class ReplaceGetOrSetIntention : JetSelfTargetingRangeIntention<KtDotQualifiedExpression>(
+        KtDotQualifiedExpression::class.java,
+        "Replace 'get' or 'set' call with indexing operator"
+), HighPriorityAction {
+
+    private val operatorNames = setOf(OperatorNameConventions.GET, OperatorNameConventions.SET)
+
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
-        val resolvedCall = element.toResolvedCall() ?: return null
+        val callExpression = element.callExpression ?: return null
+        val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
+        val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return null
         if (!resolvedCall.isReallySuccess()) return null
+
         val target = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return null
-        if (target.name.asString() != "get" || !target.isOperator) return null
+        if (!target.isOperator || target.name !in operatorNames) return null
 
-        val call = element.callExpression ?: return null
-        if (call.getTypeArgumentList() != null) return null
+        if (callExpression.getTypeArgumentList() != null) return null
 
-        val arguments = call.getValueArguments()
+        val arguments = callExpression.getValueArguments()
         if (arguments.isEmpty()) return null
         if (arguments.any { it.isNamed() }) return null
 
         if (!element.isReceiverExpressionWithValue()) return null
 
-        return call.getCalleeExpression()!!.getTextRange()
+        if (target.name == OperatorNameConventions.SET && element.isUsedAsExpression(bindingContext)) return null
+
+        text = "Replace '${target.name.asString()}' call with indexing operator"
+
+        return callExpression.getCalleeExpression()!!.getTextRange()
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
@@ -73,13 +90,19 @@ public class ReplaceGetIntention : JetSelfTargetingRangeIntention<KtDotQualified
     }
 
     fun applyTo(element: KtDotQualifiedExpression) {
+        val isSet = element.toResolvedCall(BodyResolveMode.PARTIAL)!!.resultingDescriptor.name == OperatorNameConventions.SET
+        val allArguments = element.callExpression!!.valueArguments
+        if (isSet) {
+            assert(allArguments.size > 0)
+        }
+
         val expression = KtPsiFactory(element).buildExpression {
             appendExpression(element.getReceiverExpression())
 
             appendFixedText("[")
 
-            val call = element.callExpression!!
-            for ((index, argument) in call.getValueArguments().withIndex()) {
+            val arguments = if (isSet) allArguments.dropLast(1) else allArguments
+            for ((index, argument) in arguments.withIndex()) {
                 if (index > 0) {
                     appendFixedText(",")
                 }
@@ -87,7 +110,13 @@ public class ReplaceGetIntention : JetSelfTargetingRangeIntention<KtDotQualified
             }
 
             appendFixedText("]")
+
+            if (isSet) {
+                appendFixedText("=")
+                appendExpression(allArguments.last().getArgumentExpression())
+            }
         }
+
         element.replace(expression)
     }
 }

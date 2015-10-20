@@ -1,3 +1,5 @@
+// INTENTION_TEXT: Replace 'get' call with indexing operator
+
 fun test() {
     class Test{
         operator fun get(i: Int) : Int = 0

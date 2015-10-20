@@ -25,13 +25,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace 'contains' call with 'in' operator"), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         if (element.calleeName != OperatorNameConventions.CONTAINS.asString()) return null
 
-        val resolvedCall = element.toResolvedCall() ?: return null
+        val resolvedCall = element.toResolvedCall(BodyResolveMode.PARTIAL) ?: return null
         if (!resolvedCall.isReallySuccess()) return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
         if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return null

@@ -26,13 +26,14 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace call with binary operator"), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         val operation = operation(element.calleeName) ?: return null
 
-        val resolvedCall = element.toResolvedCall() ?: return null
+        val resolvedCall = element.toResolvedCall(BodyResolveMode.PARTIAL) ?: return null
         if (!resolvedCall.isReallySuccess()) return null
         if (resolvedCall.getCall().getTypeArgumentList() != null) return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null

@@ -653,7 +653,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1096,8 +1096,8 @@
                      level="INFO"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetInspection"
-                     displayName="Explicit 'get'"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetInspection"
+                     displayName="Explicit 'get' or 'set' call"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"

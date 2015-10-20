@@ -2772,119 +2772,137 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             }
         }
 
-        @TestMetadata("idea/testData/intentions/conventionNameCalls/replaceGet")
+        @TestMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ReplaceGet extends AbstractIntentionTest {
+        public static class ReplaceGetOrSet extends AbstractIntentionTest {
             @TestMetadata("acceptableVararg.kt")
             public void testAcceptableVararg() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/acceptableVararg.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/acceptableVararg.kt");
                 doTest(fileName);
             }
 
-            public void testAllFilesPresentInReplaceGet() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/conventionNameCalls/replaceGet"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            public void testAllFilesPresentInReplaceGetOrSet() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/conventionNameCalls/replaceGetOrSet"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("argumentAndFunction.kt")
             public void testArgumentAndFunction() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/argumentAndFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/argumentAndFunction.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("duplicateArguments.kt")
             public void testDuplicateArguments() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/duplicateArguments.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/duplicateArguments.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("extensionFunction.kt")
             public void testExtensionFunction() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/extensionFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/extensionFunction.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("functionalArgument.kt")
             public void testFunctionalArgument() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/functionalArgument.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/functionalArgument.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("invalidArgument.kt")
             public void testInvalidArgument() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/invalidArgument.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/invalidArgument.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("missingDefaultArgument.kt")
             public void testMissingDefaultArgument() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/missingDefaultArgument.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/missingDefaultArgument.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("multiArgument.kt")
             public void testMultiArgument() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/multiArgument.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/multiArgument.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("noArgument.kt")
             public void testNoArgument() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/noArgument.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/noArgument.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("notOperator.kt")
             public void testNotOperator() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/notOperator.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/notOperator.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("qualifier.kt")
             public void testQualifier() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/qualifier.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/qualifier.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("sanityCheck.kt")
             public void testSanityCheck() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/sanityCheck.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/sanityCheck.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/set.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("set2.kt")
+            public void testSet2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/set2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("setValueUsed.kt")
+            public void testSetValueUsed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/setValueUsed.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("singleArgument.kt")
             public void testSingleArgument() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/singleArgument.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/singleArgument.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("staticMethod.kt")
             public void testStaticMethod() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/staticMethod.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/staticMethod.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("super.kt")
             public void testSuper() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/super.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/super.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("topLevelFun.kt")
             public void testTopLevelFun() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/topLevelFun.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/topLevelFun.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("unacceptableVararg.kt")
             public void testUnacceptableVararg() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/unacceptableVararg.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/unacceptableVararg.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("unnamedAndNamed.kt")
             public void testUnnamedAndNamed() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/unnamedAndNamed.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/unnamedAndNamed.kt");
                 doTest(fileName);
             }
 
