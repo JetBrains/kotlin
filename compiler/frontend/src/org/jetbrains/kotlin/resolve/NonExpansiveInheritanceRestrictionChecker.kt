@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
@@ -116,7 +116,7 @@ public object NonExpansiveInheritanceRestrictionChecker {
                         // upper bounds of a skolem type variable Q in a skolemization of a projected generic type in ST, add an
                         // expanding edge from T to V, where V is the type parameter corresponding to Q.
                         val originalTypeParameter = constituentTypeConstructor.parameters[i]
-                        val bounds = hashSetOf<KtType>()
+                        val bounds = hashSetOf<KotlinType>()
 
                         val substitutor = constituentType.substitution.buildSubstitutor()
                         val adaptedUpperBounds = originalTypeParameter.upperBounds.map { substitutor.substitute(it, Variance.INVARIANT) }.filterNotNull()

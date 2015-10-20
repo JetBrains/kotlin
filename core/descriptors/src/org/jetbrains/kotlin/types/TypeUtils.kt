@@ -141,7 +141,7 @@ public fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(
 public fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
         TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)
 
-fun Collection<KtType>.closure(f: (KtType) -> Collection<KtType>): Collection<KtType> {
+fun Collection<KotlinType>.closure(f: (KotlinType) -> Collection<KotlinType>): Collection<KotlinType> {
     if (size == 0) return this
 
     val result = HashSet(this)
@@ -149,7 +149,7 @@ fun Collection<KtType>.closure(f: (KtType) -> Collection<KtType>): Collection<Kt
     var oldSize = 0
     while (result.size > oldSize) {
         oldSize = result.size
-        val toAdd = hashSetOf<KtType>()
+        val toAdd = hashSetOf<KotlinType>()
         elementsToCheck.forEach { toAdd.addAll(f(it)) }
         result.addAll(toAdd)
         elementsToCheck = toAdd
@@ -158,16 +158,16 @@ fun Collection<KtType>.closure(f: (KtType) -> Collection<KtType>): Collection<Kt
     return result
 }
 
-fun boundClosure(types: Collection<KtType>): Collection<KtType> =
+fun boundClosure(types: Collection<KotlinType>): Collection<KotlinType> =
         types.closure { type -> TypeUtils.getTypeParameterDescriptorOrNull(type)?.upperBounds ?: emptySet() }
 
-fun constituentTypes(types: Collection<KtType>): Collection<KtType> {
-    val result = hashSetOf<KtType>()
+fun constituentTypes(types: Collection<KotlinType>): Collection<KotlinType> {
+    val result = hashSetOf<KotlinType>()
     constituentTypes(result, types)
     return result
 }
 
-private fun constituentTypes(result: MutableSet<KtType>, types: Collection<KtType>) {
+private fun constituentTypes(result: MutableSet<KotlinType>, types: Collection<KotlinType>) {
     result.addAll(types)
     for (type in types) {
         if (type.isFlexible()) {
