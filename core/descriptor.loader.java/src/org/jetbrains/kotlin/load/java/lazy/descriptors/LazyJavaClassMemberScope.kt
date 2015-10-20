@@ -299,6 +299,11 @@ public class LazyJavaClassMemberScope(
                 else
                     null
 
+        assert(setterMethod?.let { it.modality == getterMethod.modality } ?: true) {
+            "Different accessors modalities when creating overrides for $overriddenProperty in ${getContainingDeclaration()}" +
+            "for getter is ${getterMethod.modality}, but for setter is ${setterMethod?.modality}"
+        }
+
         val propertyDescriptor = JavaPropertyDescriptor(
                 getContainingDeclaration(), Annotations.EMPTY, getterMethod.modality, getterMethod.visibility,
                 /* isVar = */ setterMethod != null, overriddenProperty.name, getterMethod.source,
