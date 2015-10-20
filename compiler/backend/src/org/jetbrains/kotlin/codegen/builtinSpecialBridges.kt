@@ -61,7 +61,8 @@ object BuiltinSpecialBridgesUtil {
         // e.g. `size()I`
         val overriddenBuiltinSignature = signatureByDescriptor(overriddenBuiltin)
 
-        val needGenerateSpecialBridge = needGenerateSpecialBridge(function, reachableDeclarations, overriddenBuiltin)
+        val needGenerateSpecialBridge = needGenerateSpecialBridge(
+                function, reachableDeclarations, overriddenBuiltin, signatureByDescriptor, overriddenBuiltinSignature)
                                             && methodItself != overriddenBuiltinSignature
 
         val specialBridge = if (needGenerateSpecialBridge)
@@ -107,15 +108,21 @@ private fun findSuperImplementationForStubDelegation(function: FunctionDescripto
 private fun findAllReachableDeclarations(functionDescriptor: FunctionDescriptor): MutableSet<FunctionDescriptor> =
         findAllReachableDeclarations(DescriptorBasedFunctionHandle(functionDescriptor)).map { it.descriptor }.toMutableSet()
 
-private fun needGenerateSpecialBridge(
+private fun <Signature> needGenerateSpecialBridge(
         functionDescriptor: FunctionDescriptor,
         reachableDeclarations: Collection<FunctionDescriptor>,
-        specialCallableDescriptor: CallableMemberDescriptor
+        specialCallableDescriptor: CallableMemberDescriptor,
+        signatureByDescriptor: (FunctionDescriptor) -> Signature,
+        overriddenBuiltinSignature: Signature
 ): Boolean {
     val classDescriptor = functionDescriptor.containingDeclaration as ClassDescriptor
     return !classDescriptor.hasRealKotlinSuperClassWithOverrideOf(specialCallableDescriptor)
             && specialCallableDescriptor.modality != Modality.FINAL
-            && reachableDeclarations.none { it.containingDeclaration is JavaClassDescriptor && it.modality == Modality.FINAL }
+            && reachableDeclarations.none {
+                it.containingDeclaration is JavaClassDescriptor
+                        && it.modality == Modality.FINAL
+                        && signatureByDescriptor(it) == overriddenBuiltinSignature
+            }
 }
 
 public fun isValueArgumentForCallToMethodWithTypeCheckBarrier(

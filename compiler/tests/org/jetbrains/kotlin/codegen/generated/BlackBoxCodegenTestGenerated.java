@@ -922,6 +922,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("irrelevantRemoveAtOverride.kt")
+        public void testIrrelevantRemoveAtOverride() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/irrelevantRemoveAtOverride.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("maps.kt")
         public void testMaps() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/maps.kt");
