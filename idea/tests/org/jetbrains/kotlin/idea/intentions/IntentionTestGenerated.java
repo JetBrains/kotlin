@@ -5919,6 +5919,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inRightSideOfAssignment.kt")
+        public void testInRightSideOfAssignment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/inRightSideOfAssignment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notApplicableAssignment.kt")
         public void testNotApplicableAssignment() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/notApplicableAssignment.kt");

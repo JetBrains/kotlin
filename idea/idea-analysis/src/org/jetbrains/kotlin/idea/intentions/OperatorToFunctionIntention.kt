@@ -168,7 +168,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
 
             val transformation : String
             val replaced : KtElement
-            if (parent is KtBinaryExpression && parent.getOperationReference().getReferencedNameElementType() == KtTokens.EQ) {
+            if (parent is KtBinaryExpression && parent.getOperationReference().getReferencedNameElementType() == KtTokens.EQ && element == parent.left) {
                 // part of an assignment
                 val right = parent.getRight()!!.getText()
                 transformation = "$array.set($indicesText, $right)"
