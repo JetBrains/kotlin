@@ -24,6 +24,7 @@ import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.JvmSteppingCommandProvider
 import com.intellij.psi.PsiElement
 import com.intellij.xdebugger.impl.XSourcePositionImpl
+import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Location
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -291,10 +292,23 @@ fun getStepOutPosition(
 ): XSourcePositionImpl? {
     val computedReferenceType = location.declaringType() ?: return null
 
+    fun isLocationSuitable(nextLocation: Location): Boolean {
+        if (nextLocation.method() != location.method() || nextLocation.lineNumber() !in range) {
+            return false
+        }
+
+        return try {
+            nextLocation.sourceName("Kotlin") == file.name
+        }
+        catch(e: AbsentInformationException) {
+            return true
+        }
+    }
+
     val locations = computedReferenceType.allLineLocations()
             .dropWhile { it != location }
             .drop(1)
-            .filter { it.method() == location.method() && it.lineNumber() in range }
+            .filter { isLocationSuitable(it) }
             .dropWhile { it.lineNumber() == location.lineNumber() }
 
     for (locationAtLine in locations) {
