@@ -123,11 +123,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         WRONG_MODIFIER_CONTAINING_DECLARATION.registerFactory(removeModifierFactory)
         REPEATED_MODIFIER.registerFactory(removeModifierFactory)
 
-        val changeToPropertyNameFactory = ChangeToPropertyNameFix.createFactory()
-        NO_BACKING_FIELD_ABSTRACT_PROPERTY.registerFactory(changeToPropertyNameFactory)
-        NO_BACKING_FIELD_CUSTOM_ACCESSORS.registerFactory(changeToPropertyNameFactory)
-        INACCESSIBLE_BACKING_FIELD.registerFactory(changeToPropertyNameFactory)
-
         UNRESOLVED_REFERENCE.registerFactory(AutoImportFix)
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(AutoImportFix)
 

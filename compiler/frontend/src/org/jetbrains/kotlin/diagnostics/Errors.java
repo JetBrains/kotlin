@@ -669,13 +669,6 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, KtKeywordToken> VAL_OR_VAR_ON_CATCH_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, KtKeywordToken> VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER = DiagnosticFactory1.create(ERROR);
 
-    // Backing fields
-
-    DiagnosticFactory0<KtElement> NO_BACKING_FIELD_ABSTRACT_PROPERTY = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtElement> NO_BACKING_FIELD_CUSTOM_ACCESSORS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtElement> INACCESSIBLE_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtElement> NOT_PROPERTY_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
-
     // When expressions
 
     DiagnosticFactory0<KtWhenCondition> EXPECTED_CONDITION = DiagnosticFactory0.create(ERROR);
