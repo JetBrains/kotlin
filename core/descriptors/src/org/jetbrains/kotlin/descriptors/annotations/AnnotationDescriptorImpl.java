@@ -21,18 +21,18 @@ import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collections;
 import java.util.Map;
 
 public class AnnotationDescriptorImpl implements AnnotationDescriptor {
-    private final KtType annotationType;
+    private final KotlinType annotationType;
     private final Map<ValueParameterDescriptor, ConstantValue<?>> valueArguments;
     private final SourceElement source;
 
     public AnnotationDescriptorImpl(
-            @NotNull KtType annotationType,
+            @NotNull KotlinType annotationType,
             @NotNull Map<ValueParameterDescriptor, ConstantValue<?>> valueArguments,
             @NotNull SourceElement source
     ) {
@@ -43,7 +43,7 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
 
     @Override
     @NotNull
-    public KtType getType() {
+    public KotlinType getType() {
         return annotationType;
     }
 

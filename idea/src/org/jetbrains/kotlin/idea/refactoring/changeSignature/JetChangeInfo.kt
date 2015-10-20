@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.ArrayList
 import java.util.HashMap
@@ -53,7 +53,7 @@ import java.util.LinkedHashSet
 public open class JetChangeInfo(
         val methodDescriptor: JetMethodDescriptor,
         private var name: String = methodDescriptor.getName(),
-        val newReturnType: KtType? = methodDescriptor.baseDescriptor.getReturnType(),
+        val newReturnType: KotlinType? = methodDescriptor.baseDescriptor.getReturnType(),
         var newReturnTypeText: String = methodDescriptor.renderOriginalReturnType(),
         var newVisibility: Visibility = methodDescriptor.getVisibility(),
         parameterInfos: List<JetParameterInfo> = methodDescriptor.getParameters(),

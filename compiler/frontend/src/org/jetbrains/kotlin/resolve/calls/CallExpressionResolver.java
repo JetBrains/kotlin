@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
@@ -103,7 +103,7 @@ public class CallExpressionResolver {
     }
 
     @Nullable
-    private KtType getVariableType(
+    private KotlinType getVariableType(
             @NotNull KtSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context, @NotNull boolean[] result
     ) {
@@ -149,7 +149,7 @@ public class CallExpressionResolver {
 
         TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
                 context, "trace to resolve as variable", nameExpression);
-        KtType type =
+        KotlinType type =
                 getVariableType(nameExpression, receiver, callOperationNode, context.replaceTraceAndCache(temporaryForVariable), result);
         // TODO: for a safe call, it's necessary to set receiver != null here, as inside ArgumentTypeResolver.analyzeArgumentsAndRecordTypes
         // Unfortunately it provokes problems with x?.y!!.foo() with the following x!!.bar():
@@ -236,7 +236,7 @@ public class CallExpressionResolver {
                 }
             }
 
-            KtType type = functionDescriptor.getReturnType();
+            KotlinType type = functionDescriptor.getReturnType();
             // Extracting jump out possible and jump point flow info from arguments, if any
             List<? extends ValueArgument> arguments = callExpression.getValueArguments();
             DataFlowInfo resultFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
@@ -257,8 +257,8 @@ public class CallExpressionResolver {
         if (calleeExpression instanceof KtSimpleNameExpression && callExpression.getTypeArgumentList() == null) {
             TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
                     context, "trace to resolve as variable with 'invoke' call", callExpression);
-            KtType type = getVariableType((KtSimpleNameExpression) calleeExpression, receiver, callOperationNode,
-                                          context.replaceTraceAndCache(temporaryForVariable), result);
+            KotlinType type = getVariableType((KtSimpleNameExpression) calleeExpression, receiver, callOperationNode,
+                                              context.replaceTraceAndCache(temporaryForVariable), result);
             Qualifier qualifier = temporaryForVariable.trace.get(BindingContext.QUALIFIER, calleeExpression);
             if (result[0] && (qualifier == null || qualifier.getPackageView() == null)) {
                 temporaryForVariable.commit();
@@ -350,7 +350,7 @@ public class CallExpressionResolver {
                 replaceInsideCallChain(true); // Enter call chain
         // Visit receiver (x in x.y or x?.z) here. Recursion is possible.
         JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(receiverExpression, contextForReceiver);
-        KtType receiverType = receiverTypeInfo.getType();
+        KotlinType receiverType = receiverTypeInfo.getType();
         QualifierReceiver qualifierReceiver = (QualifierReceiver) context.trace.get(BindingContext.QUALIFIER, receiverExpression);
 
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
@@ -363,7 +363,7 @@ public class CallExpressionResolver {
         // Visit selector (y in x.y) here. Recursion is also possible.
         JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
                 receiver, expression.getOperationTokenNode(), selectorExpression, context);
-        KtType selectorReturnType = selectorReturnTypeInfo.getType();
+        KotlinType selectorReturnType = selectorReturnTypeInfo.getType();
 
         resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, expression, context);
         checkNestedClassAccess(expression, context);

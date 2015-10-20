@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.doNothing
 import java.util.*
 
@@ -41,7 +41,7 @@ public class FakeCallResolver(
             receiver: ReceiverValue,
             name: Name,
             callElement: KtExpression?,
-            vararg argumentTypes: KtType
+            vararg argumentTypes: KotlinType
     ): OverloadResolutionResults<FunctionDescriptor> {
         val traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name)
         val fakeArguments = ArrayList<KtExpression>()

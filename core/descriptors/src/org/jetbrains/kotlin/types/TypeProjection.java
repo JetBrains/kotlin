@@ -23,7 +23,7 @@ public interface TypeProjection {
     Variance getProjectionKind();
 
     @NotNull
-    KtType getType();
+    KotlinType getType();
 
     boolean isStarProjection();
 }

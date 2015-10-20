@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -224,7 +224,7 @@ public final class TranslationUtils {
 
         if (operationDescriptor == null || !(operationDescriptor instanceof FunctionDescriptor)) return true;
 
-        KtType returnType = operationDescriptor.getReturnType();
+        KotlinType returnType = operationDescriptor.getReturnType();
         if (returnType != null && (KotlinBuiltIns.isChar(returnType) || KotlinBuiltIns.isLong(returnType))) return false;
 
         if (context.intrinsics().getFunctionIntrinsic((FunctionDescriptor) operationDescriptor).exists()) return true;

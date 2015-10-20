@@ -27,14 +27,14 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class ChangeParameterTypeFix extends KotlinQuickFixAction<KtParameter> {
-    private final KtType type;
+    private final KotlinType type;
     private final String containingDeclarationName;
     private final boolean isPrimaryConstructorParameter;
 
-    public ChangeParameterTypeFix(@NotNull KtParameter element, @NotNull KtType type) {
+    public ChangeParameterTypeFix(@NotNull KtParameter element, @NotNull KotlinType type) {
         super(element);
         this.type = type;
         KtNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, KtNamedDeclaration.class);

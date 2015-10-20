@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Set;
 
@@ -57,14 +57,14 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
     @NotNull
     @Override
-    protected Set<KtType> resolveUpperBounds() {
-        Set<KtType> upperBounds = Sets.newLinkedHashSet();
+    protected Set<KotlinType> resolveUpperBounds() {
+        Set<KotlinType> upperBounds = Sets.newLinkedHashSet();
 
         KtTypeParameter jetTypeParameter = this.jetTypeParameter;
 
         KtTypeReference extendsBound = jetTypeParameter.getExtendsBound();
         if (extendsBound != null) {
-            KtType boundType = c.getDescriptorResolver().resolveTypeParameterExtendsBound(
+            KotlinType boundType = c.getDescriptorResolver().resolveTypeParameterExtendsBound(
                     this, extendsBound, getContainingDeclaration().getScopeForClassHeaderResolution(), c.getTrace());
             upperBounds.add(boundType);
         }
@@ -78,7 +78,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         return upperBounds;
     }
 
-    private void resolveUpperBoundsFromWhereClause(Set<KtType> upperBounds) {
+    private void resolveUpperBoundsFromWhereClause(Set<KotlinType> upperBounds) {
         KtClassOrObject classOrObject = KtStubbedPsiUtil.getPsiOrStubParent(jetTypeParameter, KtClassOrObject.class, true);
         if (classOrObject instanceof KtClass) {
             KtClass ktClass = (KtClass) classOrObject;
@@ -90,7 +90,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
                         KtTypeReference boundTypeReference = jetTypeConstraint.getBoundTypeReference();
                         if (boundTypeReference != null) {
-                            KtType boundType = resolveBoundType(boundTypeReference);
+                            KotlinType boundType = resolveBoundType(boundTypeReference);
                             upperBounds.add(boundType);
                         }
                     }
@@ -100,7 +100,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
     }
 
-    private KtType resolveBoundType(@NotNull KtTypeReference boundTypeReference) {
+    private KotlinType resolveBoundType(@NotNull KtTypeReference boundTypeReference) {
         return c.getTypeResolver()
                     .resolveType(getContainingDeclaration().getScopeForClassHeaderResolution(), boundTypeReference,
                                  c.getTrace(), false);

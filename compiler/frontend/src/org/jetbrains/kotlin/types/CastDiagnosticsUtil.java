@@ -39,8 +39,8 @@ public class CastDiagnosticsUtil {
     // As this method produces a warning, it must be _complete_ (not sound), i.e. every time it says "cast impossible",
     // it must be really impossible
     public static boolean isCastPossible(
-            @NotNull KtType lhsType,
-            @NotNull KtType rhsType,
+            @NotNull KotlinType lhsType,
+            @NotNull KotlinType rhsType,
             @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
     ) {
         if (KotlinBuiltIns.isNullableNothing(lhsType) && !TypeUtils.isNullableType(rhsType)) return false;
@@ -62,12 +62,12 @@ public class CastDiagnosticsUtil {
      * Due to limitations in PlatformToKotlinClassMap, we only consider mapping of platform classes to Kotlin classed
      * (i.e. java.lang.String -> kotlin.String) and ignore mappings that go the other way.
      */
-    private static boolean isRelated(@NotNull KtType a, @NotNull KtType b, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-        List<KtType> aTypes = mapToPlatformIndependentTypes(TypeUtils.makeNotNullable(a), platformToKotlinClassMap);
-        List<KtType> bTypes = mapToPlatformIndependentTypes(TypeUtils.makeNotNullable(b), platformToKotlinClassMap);
+    private static boolean isRelated(@NotNull KotlinType a, @NotNull KotlinType b, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
+        List<KotlinType> aTypes = mapToPlatformIndependentTypes(TypeUtils.makeNotNullable(a), platformToKotlinClassMap);
+        List<KotlinType> bTypes = mapToPlatformIndependentTypes(TypeUtils.makeNotNullable(b), platformToKotlinClassMap);
 
-        for (KtType aType : aTypes) {
-            for (KtType bType : bTypes) {
+        for (KotlinType aType : aTypes) {
+            for (KotlinType bType : bTypes) {
                 if (KotlinTypeChecker.DEFAULT.isSubtypeOf(aType, bType)) return true;
                 if (KotlinTypeChecker.DEFAULT.isSubtypeOf(bType, aType)) return true;
             }
@@ -76,8 +76,8 @@ public class CastDiagnosticsUtil {
         return false;
     }
 
-    private static List<KtType> mapToPlatformIndependentTypes(
-            @NotNull KtType type,
+    private static List<KotlinType> mapToPlatformIndependentTypes(
+            @NotNull KotlinType type,
             @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
     ) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
@@ -87,21 +87,21 @@ public class CastDiagnosticsUtil {
         Collection<ClassDescriptor> kotlinClasses = platformToKotlinClassMap.mapPlatformClass(originalClass);
         if (kotlinClasses.isEmpty()) return Collections.singletonList(type);
 
-        List<KtType> result = Lists.newArrayListWithCapacity(2);
+        List<KotlinType> result = Lists.newArrayListWithCapacity(2);
         result.add(type);
         for (ClassDescriptor classDescriptor : kotlinClasses) {
-            KtType kotlinType = TypeUtils.substituteProjectionsForParameters(classDescriptor, type.getArguments());
+            KotlinType kotlinType = TypeUtils.substituteProjectionsForParameters(classDescriptor, type.getArguments());
             result.add(kotlinType);
         }
 
         return result;
     }
 
-    private static boolean isFinal(@NotNull KtType type) {
+    private static boolean isFinal(@NotNull KotlinType type) {
         return !TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type);
     }
 
-    private static boolean isTrait(@NotNull KtType type) {
+    private static boolean isTrait(@NotNull KotlinType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.INTERFACE;
     }
@@ -110,7 +110,7 @@ public class CastDiagnosticsUtil {
      * Check if cast from supertype to subtype is erased.
      * It is an error in "is" statement and warning in "as".
      */
-    public static boolean isCastErased(@NotNull KtType supertype, @NotNull KtType subtype, @NotNull KotlinTypeChecker typeChecker) {
+    public static boolean isCastErased(@NotNull KotlinType supertype, @NotNull KotlinType subtype, @NotNull KotlinTypeChecker typeChecker) {
         // cast between T and T? is always OK
         if (supertype.isMarkedNullable() || subtype.isMarkedNullable()) {
             return isCastErased(TypeUtils.makeNotNullable(supertype), TypeUtils.makeNotNullable(subtype), typeChecker);
@@ -126,7 +126,7 @@ public class CastDiagnosticsUtil {
         // NOTE: this does not account for 'as Array<List<T>>'
         if (allParametersReified(subtype)) return false;
 
-        KtType staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype.getConstructor()).getResultingType();
+        KotlinType staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype.getConstructor()).getResultingType();
 
         // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
         // In this case, we can't guarantee anything, so the cast is considered to be erased
@@ -153,18 +153,18 @@ public class CastDiagnosticsUtil {
      *  subtype = List<...>
      *  result = List<*>, some arguments were not inferred, replaced with '*'
      */
-    public static TypeReconstructionResult findStaticallyKnownSubtype(@NotNull KtType supertype, @NotNull TypeConstructor subtypeConstructor) {
+    public static TypeReconstructionResult findStaticallyKnownSubtype(@NotNull KotlinType supertype, @NotNull TypeConstructor subtypeConstructor) {
         assert !supertype.isMarkedNullable() : "This method only makes sense for non-nullable types";
 
         // Assume we are casting an expression of type Collection<Foo> to List<Bar>
         // First, let's make List<T>, where T is a type variable
         ClassifierDescriptor descriptor = subtypeConstructor.getDeclarationDescriptor();
         assert descriptor != null : "Can't create default type for " + subtypeConstructor;
-        KtType subtypeWithVariables = descriptor.getDefaultType();
+        KotlinType subtypeWithVariables = descriptor.getDefaultType();
 
         // Now, let's find a supertype of List<T> that is a Collection of something,
         // in this case it will be Collection<T>
-        KtType supertypeWithVariables = TypeCheckingProcedure.findCorrespondingSupertype(subtypeWithVariables, supertype);
+        KotlinType supertypeWithVariables = TypeCheckingProcedure.findCorrespondingSupertype(subtypeWithVariables, supertype);
 
         final List<TypeParameterDescriptor> variables = subtypeWithVariables.getConstructor().getParameters();
 
@@ -204,12 +204,12 @@ public class CastDiagnosticsUtil {
 
         // At this point we have values for all type parameters of List
         // Let's make a type by substituting them: List<T> -> List<Foo>
-        KtType substituted = TypeSubstitutor.create(substitution).substitute(subtypeWithVariables, Variance.INVARIANT);
+        KotlinType substituted = TypeSubstitutor.create(substitution).substitute(subtypeWithVariables, Variance.INVARIANT);
 
         return new TypeReconstructionResult(substituted, allArgumentsInferred);
     }
 
-    private static boolean allParametersReified(KtType subtype) {
+    private static boolean allParametersReified(KotlinType subtype) {
         for (TypeParameterDescriptor parameterDescriptor : subtype.getConstructor().getParameters()) {
             if (!parameterDescriptor.isReified()) return false;
         }

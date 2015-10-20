@@ -35,7 +35,7 @@ public class CapturedTypeConstructor(
 
     override fun getParameters(): List<TypeParameterDescriptor> = listOf()
 
-    override fun getSupertypes(): Collection<KtType> {
+    override fun getSupertypes(): Collection<KotlinType> {
         val superType = if (typeProjection.getProjectionKind() == Variance.OUT_VARIANCE)
             typeProjection.getType()
         else
@@ -63,10 +63,10 @@ public class CapturedType(
     private val delegateType = run {
         val scope = ErrorUtils.createErrorScope(
                 "No member resolution should be done on captured type, it used only during constraint system resolution", true)
-        KtTypeImpl.create(Annotations.EMPTY, CapturedTypeConstructor(typeProjection), false, listOf(), scope)
+        KotlinTypeImpl.create(Annotations.EMPTY, CapturedTypeConstructor(typeProjection), false, listOf(), scope)
     }
 
-    override fun getDelegate(): KtType = delegateType
+    override fun getDelegate(): KotlinType = delegateType
 
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
@@ -74,20 +74,20 @@ public class CapturedType(
         else super<DelegatingType>.getCapability(capabilityClass)
     }
 
-    override val subTypeRepresentative: KtType
+    override val subTypeRepresentative: KotlinType
         get() = representative(OUT_VARIANCE, builtIns.nullableAnyType)
 
-    override val superTypeRepresentative: KtType
+    override val superTypeRepresentative: KotlinType
         get() = representative(IN_VARIANCE, builtIns.nothingType)
 
-    private fun representative(variance: Variance, default: KtType) =
+    private fun representative(variance: Variance, default: KotlinType) =
         if (typeProjection.getProjectionKind() == variance) typeProjection.getType() else default
 
-    override fun sameTypeConstructor(type: KtType) = delegateType.getConstructor() === type.getConstructor()
+    override fun sameTypeConstructor(type: KotlinType) = delegateType.getConstructor() === type.getConstructor()
 
     override fun toString() = "Captured($typeProjection)"
 }
 
-public fun createCapturedType(typeProjection: TypeProjection): KtType = CapturedType(typeProjection)
+public fun createCapturedType(typeProjection: TypeProjection): KotlinType = CapturedType(typeProjection)
 
-public fun KtType.isCaptured(): Boolean = getConstructor() is CapturedTypeConstructor
+public fun KotlinType.isCaptured(): Boolean = getConstructor() is CapturedTypeConstructor

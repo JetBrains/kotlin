@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +35,7 @@ public class CommandLineScriptUtils {
 
     public static List<AnalyzerScriptParameter> scriptParameters() {
         KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
-        KtType arrayOfStrings = builtIns.getArrayType(INVARIANT, builtIns.getStringType());
+        KotlinType arrayOfStrings = builtIns.getArrayType(INVARIANT, builtIns.getStringType());
         AnalyzerScriptParameter argsParameter = new AnalyzerScriptParameter(ARGS_NAME, arrayOfStrings);
         return Collections.singletonList(argsParameter);
     }

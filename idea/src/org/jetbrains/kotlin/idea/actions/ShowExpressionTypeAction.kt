@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 @Deprecated("Remove once we no longer support IDEA 14.1")
 public class ShowExpressionTypeAction : AnAction() {
@@ -80,9 +80,9 @@ public class ShowExpressionTypeAction : AnAction() {
     }
 
     companion object {
-        fun renderTypeHint(type: KtType) = "<html>" + DescriptorRenderer.HTML.renderType(type) + "</html>"
+        fun renderTypeHint(type: KotlinType) = "<html>" + DescriptorRenderer.HTML.renderType(type) + "</html>"
 
-        fun typeByExpression(expression: KtExpression): KtType? {
+        fun typeByExpression(expression: KtExpression): KotlinType? {
             val bindingContext = expression.analyze()
 
             if (expression is KtCallableDeclaration) {

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 public abstract class JavaMethodDeferredKotlinUsage<T : PsiElement>(element: T) : UsageInfo(element) {
     abstract fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<T>
@@ -32,7 +32,7 @@ public abstract class JavaMethodDeferredKotlinUsage<T : PsiElement>(element: T) 
 public class DeferredJavaMethodOverrideOrSAMUsage(
         val function: KtFunction,
         val functionDescriptor: FunctionDescriptor,
-        val samCallType: KtType?
+        val samCallType: KotlinType?
 ) : JavaMethodDeferredKotlinUsage<KtFunction>(function) {
     override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<KtFunction> {
         return object : JavaMethodKotlinUsageWithDelegate<KtFunction>(function, javaMethodChangeInfo) {

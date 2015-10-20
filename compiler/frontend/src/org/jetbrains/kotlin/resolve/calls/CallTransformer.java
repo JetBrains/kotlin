@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyForInvoke;
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
@@ -225,7 +225,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             }
 
             assert descriptor instanceof VariableDescriptor;
-            KtType returnType = descriptor.getReturnType();
+            KotlinType returnType = descriptor.getReturnType();
             if (returnType == null) {
                 return Collections.emptyList();
             }

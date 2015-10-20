@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
-public abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKtType(), LazyType {
+public abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlinType(), LazyType {
 
     private val typeConstructor = storageManager.createLazyValue { computeTypeConstructor() }
     override fun getConstructor(): TypeConstructor = typeConstructor()
@@ -63,6 +63,6 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
         if (!arguments.isComputed()) {
             return "" + getConstructor() + "<arguments are not computed>"
         }
-        return super<AbstractKtType>.toString()
+        return super<AbstractKotlinType>.toString()
     }
 }

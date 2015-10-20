@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.LinkedList;
@@ -55,10 +55,10 @@ import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction> {
-    private final KtType type;
+    private final KotlinType type;
     private final ChangeFunctionLiteralReturnTypeFix changeFunctionLiteralReturnTypeFix;
 
-    public ChangeFunctionReturnTypeFix(@NotNull KtFunction element, @NotNull KtType type) {
+    public ChangeFunctionReturnTypeFix(@NotNull KtFunction element, @NotNull KotlinType type) {
         super(element);
         this.type = type;
         if (element instanceof KtFunctionLiteral) {
@@ -145,7 +145,7 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
                 if (resolvedCall == null) return null;
                 KtFunction componentFunction = (KtFunction) DescriptorToSourceUtils
                         .descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
-                KtType expectedType = context.get(BindingContext.TYPE, entry.getTypeReference());
+                KotlinType expectedType = context.get(BindingContext.TYPE, entry.getTypeReference());
                 if (componentFunction != null && expectedType != null) {
                     return new ChangeFunctionReturnTypeFix(componentFunction, expectedType);
                 }
@@ -207,17 +207,17 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
                 if (function != null) {
                     FunctionDescriptor descriptor = (FunctionDescriptor) ResolutionUtils.resolveToDescriptor(function);
 
-                    KtType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor);
+                    KotlinType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor);
                     if (matchingReturnType != null) {
                         actions.add(new ChangeFunctionReturnTypeFix(function, matchingReturnType));
                     }
 
-                    KtType functionType = descriptor.getReturnType();
+                    KotlinType functionType = descriptor.getReturnType();
                     if (functionType == null) return actions;
 
                     List<FunctionDescriptor> overriddenMismatchingFunctions = new LinkedList<FunctionDescriptor>();
                     for (FunctionDescriptor overriddenFunction: descriptor.getOverriddenDescriptors()) {
-                        KtType overriddenFunctionType = overriddenFunction.getReturnType();
+                        KotlinType overriddenFunctionType = overriddenFunction.getReturnType();
                         if (overriddenFunctionType == null) continue;
                         if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(functionType, overriddenFunctionType)) {
                             overriddenMismatchingFunctions.add(overriddenFunction);

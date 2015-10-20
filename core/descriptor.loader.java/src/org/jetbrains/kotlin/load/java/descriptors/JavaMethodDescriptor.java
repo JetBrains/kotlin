@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.util.OperatorChecks;
 
@@ -77,11 +77,11 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     @NotNull
     @Override
     public SimpleFunctionDescriptorImpl initialize(
-            @Nullable KtType receiverParameterType,
+            @Nullable KotlinType receiverParameterType,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-            @Nullable KtType unsubstitutedReturnType,
+            @Nullable KotlinType unsubstitutedReturnType,
             @Nullable Modality modality,
             @NotNull Visibility visibility
     ) {
@@ -130,9 +130,9 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     @Override
     @NotNull
     public JavaMethodDescriptor enhance(
-            @Nullable KtType enhancedReceiverType,
-            @NotNull List<KtType> enhancedValueParametersTypes,
-            @NotNull KtType enhancedReturnType
+            @Nullable KotlinType enhancedReceiverType,
+            @NotNull List<KotlinType> enhancedValueParametersTypes,
+            @NotNull KotlinType enhancedReturnType
     ) {
         List<ValueParameterDescriptor> enhancedValueParameters =
                 UtilKt.copyValueParameters(enhancedValueParametersTypes, getValueParameters(), this);

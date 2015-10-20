@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.psi.KtTypeReference;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class ChangeTypeFix extends KotlinQuickFixAction<KtTypeReference> {
-    private final KtType type;
+    private final KotlinType type;
     private final String renderedType;
 
-    public ChangeTypeFix(@NotNull KtTypeReference element, KtType type) {
+    public ChangeTypeFix(@NotNull KtTypeReference element, KotlinType type) {
         super(element);
         this.type = type;
         renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(type);
@@ -70,7 +70,7 @@ public class ChangeTypeFix extends KotlinQuickFixAction<KtTypeReference> {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters1<KtParameter, KtType> diagnosticWithParameters = Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.cast(diagnostic);
+                DiagnosticWithParameters1<KtParameter, KotlinType> diagnosticWithParameters = Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.cast(diagnostic);
                 KtTypeReference typeReference = diagnosticWithParameters.getPsiElement().getTypeReference();
                 assert typeReference != null : "EXPECTED_PARAMETER_TYPE_MISMATCH reported on parameter without explicitly declared type";
                 return new ChangeTypeFix(typeReference, diagnosticWithParameters.getA());

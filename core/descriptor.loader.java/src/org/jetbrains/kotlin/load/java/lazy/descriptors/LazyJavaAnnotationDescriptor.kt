@@ -65,7 +65,7 @@ class LazyJavaAnnotationDescriptor(
 
     private val factory = ConstantValueFactory(c.module.builtIns)
 
-    override fun getType(): KtType = type()
+    override fun getType(): KotlinType = type()
 
     private val allValueArguments = c.storageManager.createLazyValue {
         computeValueArguments()

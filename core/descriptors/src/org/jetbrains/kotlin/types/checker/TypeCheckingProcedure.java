@@ -32,23 +32,23 @@ public class TypeCheckingProcedure {
     // This method returns the supertype of the first parameter that has the same constructor
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
-    public static KtType findCorrespondingSupertype(@NotNull KtType subtype, @NotNull KtType supertype) {
+    public static KotlinType findCorrespondingSupertype(@NotNull KotlinType subtype, @NotNull KotlinType supertype) {
         return findCorrespondingSupertype(subtype, supertype, new TypeCheckerProcedureCallbacksImpl());
     }
 
     // This method returns the supertype of the first parameter that has the same constructor
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
-    public static KtType findCorrespondingSupertype(@NotNull KtType subtype, @NotNull KtType supertype, @NotNull TypeCheckingProcedureCallbacks typeCheckingProcedureCallbacks) {
+    public static KotlinType findCorrespondingSupertype(@NotNull KotlinType subtype, @NotNull KotlinType supertype, @NotNull TypeCheckingProcedureCallbacks typeCheckingProcedureCallbacks) {
         return UtilsKt.findCorrespondingSupertype(subtype, supertype, typeCheckingProcedureCallbacks);
     }
 
-    public static KtType getOutType(TypeParameterDescriptor parameter, TypeProjection argument) {
+    public static KotlinType getOutType(TypeParameterDescriptor parameter, TypeProjection argument) {
         boolean isOutProjected = argument.getProjectionKind() == IN_VARIANCE || parameter.getVariance() == IN_VARIANCE;
         return isOutProjected ? parameter.getUpperBoundsAsType() : argument.getType();
     }
 
-    public static KtType getInType(@NotNull TypeParameterDescriptor parameter, @NotNull TypeProjection argument) {
+    public static KotlinType getInType(@NotNull TypeParameterDescriptor parameter, @NotNull TypeProjection argument) {
         boolean isOutProjected = argument.getProjectionKind() == OUT_VARIANCE || parameter.getVariance() == OUT_VARIANCE;
         return isOutProjected ? DescriptorUtilsKt.getBuiltIns(parameter).getNothingType() : argument.getType();
     }
@@ -59,7 +59,7 @@ public class TypeCheckingProcedure {
         this.constraints = constraints;
     }
 
-    public boolean equalTypes(@NotNull KtType type1, @NotNull KtType type2) {
+    public boolean equalTypes(@NotNull KotlinType type1, @NotNull KotlinType type2) {
         if (type1 == type2) return true;
         if (FlexibleTypesKt.isFlexible(type1)) {
             if (FlexibleTypesKt.isFlexible(type2)) {
@@ -116,7 +116,7 @@ public class TypeCheckingProcedure {
         return true;
     }
 
-    protected boolean heterogeneousEquivalence(KtType inflexibleType, KtType flexibleType) {
+    protected boolean heterogeneousEquivalence(KotlinType inflexibleType, KotlinType flexibleType) {
         // This is to account for the case when we have Collection<X> vs (Mutable)Collection<X>! or K(java.util.Collection<? extends X>)
         assert !FlexibleTypesKt.isFlexible(inflexibleType) : "Only inflexible types are allowed here: " + inflexibleType;
         return isSubtypeOf(FlexibleTypesKt.flexibility(flexibleType).getLowerBound(), inflexibleType)
@@ -178,12 +178,12 @@ public class TypeCheckingProcedure {
         return EnrichedProjectionKind.fromVariance(b);
     }
 
-    public boolean isSubtypeOf(@NotNull KtType subtype, @NotNull KtType supertype) {
+    public boolean isSubtypeOf(@NotNull KotlinType subtype, @NotNull KotlinType supertype) {
         if (TypeCapabilitiesKt.sameTypeConstructors(subtype, supertype)) {
             return !subtype.isMarkedNullable() || supertype.isMarkedNullable();
         }
-        KtType subtypeRepresentative = TypeCapabilitiesKt.getSubtypeRepresentative(subtype);
-        KtType supertypeRepresentative = TypeCapabilitiesKt.getSupertypeRepresentative(supertype);
+        KotlinType subtypeRepresentative = TypeCapabilitiesKt.getSubtypeRepresentative(subtype);
+        KotlinType supertypeRepresentative = TypeCapabilitiesKt.getSupertypeRepresentative(supertype);
         if (subtypeRepresentative != subtype || supertypeRepresentative != supertype) {
             // recursive invocation for possible chain of representatives
             return isSubtypeOf(subtypeRepresentative, supertypeRepresentative);
@@ -191,7 +191,7 @@ public class TypeCheckingProcedure {
         return isSubtypeOfForRepresentatives(subtype, supertype);
     }
 
-    private boolean isSubtypeOfForRepresentatives(KtType subtype, KtType supertype) {
+    private boolean isSubtypeOfForRepresentatives(KotlinType subtype, KotlinType supertype) {
         if (subtype.isError() || supertype.isError()) {
             return true;
         }
@@ -204,7 +204,7 @@ public class TypeCheckingProcedure {
             return true;
         }
 
-        @Nullable KtType closestSupertype = findCorrespondingSupertype(subtype, supertype, constraints);
+        @Nullable KotlinType closestSupertype = findCorrespondingSupertype(subtype, supertype, constraints);
         if (closestSupertype == null) {
             return constraints.noCorrespondingSupertype(subtype, supertype); // if this returns true, there still isn't any supertype to continue with
         }
@@ -216,7 +216,7 @@ public class TypeCheckingProcedure {
         return checkSubtypeForTheSameConstructor(closestSupertype, supertype);
     }
 
-    private boolean checkSubtypeForTheSameConstructor(@NotNull KtType subtype, @NotNull KtType supertype) {
+    private boolean checkSubtypeForTheSameConstructor(@NotNull KotlinType subtype, @NotNull KotlinType supertype) {
         TypeConstructor constructor = subtype.getConstructor();
         assert constraints.assertEqualTypeConstructors(constructor, supertype.getConstructor()) : constructor + " is not " + supertype.getConstructor();
 
@@ -231,12 +231,12 @@ public class TypeCheckingProcedure {
             TypeProjection superArgument = superArguments.get(i);
             if (superArgument.isStarProjection()) continue;
 
-            KtType superIn = getInType(parameter, superArgument);
-            KtType superOut = getOutType(parameter, superArgument);
+            KotlinType superIn = getInType(parameter, superArgument);
+            KotlinType superOut = getOutType(parameter, superArgument);
 
             TypeProjection subArgument = subArguments.get(i);
-            KtType subIn = getInType(parameter, subArgument);
-            KtType subOut = getOutType(parameter, subArgument);
+            KotlinType subIn = getInType(parameter, subArgument);
+            KotlinType subOut = getOutType(parameter, subArgument);
 
             if (capture(subArgument, superArgument, parameter)) continue;
 

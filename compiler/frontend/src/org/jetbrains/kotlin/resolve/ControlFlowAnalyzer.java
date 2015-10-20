@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Map;
 
@@ -52,7 +52,7 @@ public class ControlFlowAnalyzer {
         for (Map.Entry<KtNamedFunction, SimpleFunctionDescriptor> entry : c.getFunctions().entrySet()) {
             KtNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
-            KtType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
+            KotlinType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
             checkFunction(c, function, expectedReturnType);
@@ -87,12 +87,12 @@ public class ControlFlowAnalyzer {
                                                             ? propertyDescriptor.getGetter()
                                                             : propertyDescriptor.getSetter();
             assert accessorDescriptor != null : "no property accessor descriptor " + accessor.getText();
-            KtType returnType = accessorDescriptor.getReturnType();
+            KotlinType returnType = accessorDescriptor.getReturnType();
             checkFunction(c, accessor, returnType);
         }
     }
 
-    private void checkFunction(@NotNull BodiesResolveContext c, @NotNull KtDeclarationWithBody function, @Nullable KtType expectedReturnType) {
+    private void checkFunction(@NotNull BodiesResolveContext c, @NotNull KtDeclarationWithBody function, @Nullable KotlinType expectedReturnType) {
         if (!function.hasBody()) return;
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
         if (c.getTopDownAnalysisMode().isLocalDeclarations()) {

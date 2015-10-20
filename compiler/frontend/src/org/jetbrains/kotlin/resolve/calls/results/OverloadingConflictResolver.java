@@ -164,8 +164,8 @@ public class OverloadingConflictResolver {
                 ValueParameterDescriptor fParam = fParams.get(i);
                 ValueParameterDescriptor gParam = gParams.get(i);
 
-                KtType fParamType = fParam.getType();
-                KtType gParamType = gParam.getType();
+                KotlinType fParamType = fParam.getType();
+                KotlinType gParamType = gParam.getType();
 
                 if (!typeMoreSpecific(fParamType, gParamType)) {
                     return false;
@@ -180,8 +180,8 @@ public class OverloadingConflictResolver {
                 ValueParameterDescriptor fParam = fParams.get(i);
                 ValueParameterDescriptor gParam = gParams.get(i);
 
-                KtType fParamType = fParam.getType();
-                KtType gParamType = gParam.getType();
+                KotlinType fParamType = fParam.getType();
+                KotlinType gParamType = gParam.getType();
 
                 if (!typeMoreSpecific(fParamType, gParamType)) {
                     return false;
@@ -195,7 +195,7 @@ public class OverloadingConflictResolver {
             // here we check that typeOf(a) < elementTypeOf(vf) and elementTypeOf(vg) < elementTypeOf(vf)
             if (fSize < gSize) {
                 ValueParameterDescriptor fParam = fParams.get(fSize - 1);
-                KtType fParamType = fParam.getVarargElementType();
+                KotlinType fParamType = fParam.getVarargElementType();
                 assert fParamType != null : "fIsVararg guarantees this";
                 for (int i = fSize - 1; i < gSize; i++) {
                     ValueParameterDescriptor gParam = gParams.get(i);
@@ -206,7 +206,7 @@ public class OverloadingConflictResolver {
             }
             else {
                 ValueParameterDescriptor gParam = gParams.get(gSize - 1);
-                KtType gParamType = gParam.getVarargElementType();
+                KotlinType gParamType = gParam.getVarargElementType();
                 assert gParamType != null : "gIsVararg guarantees this";
                 for (int i = gSize - 1; i < fSize; i++) {
                     ValueParameterDescriptor fParam = fParams.get(i);
@@ -221,8 +221,8 @@ public class OverloadingConflictResolver {
     }
 
     @NotNull
-    private static KtType getVarargElementTypeOrType(@NotNull ValueParameterDescriptor parameterDescriptor) {
-        KtType varargElementType = parameterDescriptor.getVarargElementType();
+    private static KotlinType getVarargElementTypeOrType(@NotNull ValueParameterDescriptor parameterDescriptor) {
+        KotlinType varargElementType = parameterDescriptor.getVarargElementType();
         if (varargElementType != null) {
             return varargElementType;
         }
@@ -238,7 +238,7 @@ public class OverloadingConflictResolver {
         return !f.getOriginal().getTypeParameters().isEmpty();
     }
 
-    private boolean typeMoreSpecific(@NotNull KtType specific, @NotNull KtType general) {
+    private boolean typeMoreSpecific(@NotNull KotlinType specific, @NotNull KotlinType general) {
         boolean isSubtype = KotlinTypeChecker.DEFAULT.isSubtypeOf(specific, general) ||
                             numericTypeMoreSpecific(specific, general);
 
@@ -253,13 +253,13 @@ public class OverloadingConflictResolver {
         return true;
     }
 
-    private boolean numericTypeMoreSpecific(@NotNull KtType specific, @NotNull KtType general) {
-        KtType _double = builtIns.getDoubleType();
-        KtType _float = builtIns.getFloatType();
-        KtType _long = builtIns.getLongType();
-        KtType _int = builtIns.getIntType();
-        KtType _byte = builtIns.getByteType();
-        KtType _short = builtIns.getShortType();
+    private boolean numericTypeMoreSpecific(@NotNull KotlinType specific, @NotNull KotlinType general) {
+        KotlinType _double = builtIns.getDoubleType();
+        KotlinType _float = builtIns.getFloatType();
+        KotlinType _long = builtIns.getLongType();
+        KotlinType _int = builtIns.getIntType();
+        KotlinType _byte = builtIns.getByteType();
+        KotlinType _short = builtIns.getShortType();
 
         if (TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float)) return true;
         if (TypeUtils.equalTypes(specific, _int)) {

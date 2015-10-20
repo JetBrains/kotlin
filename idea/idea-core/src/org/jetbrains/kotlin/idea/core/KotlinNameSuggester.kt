@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -50,7 +50,7 @@ public object KotlinNameSuggester {
         return result
     }
 
-    public fun suggestNamesByType(type: KtType, validator: (String) -> Boolean, defaultName: String? = null): List<String> {
+    public fun suggestNamesByType(type: KotlinType, validator: (String) -> Boolean, defaultName: String? = null): List<String> {
         val result = ArrayList<String>()
 
         result.addNamesByType(type, validator)
@@ -74,7 +74,7 @@ public object KotlinNameSuggester {
         return result
     }
 
-    public fun suggestIterationVariableNames(collection: KtExpression, elementType: KtType, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
+    public fun suggestIterationVariableNames(collection: KtExpression, elementType: KotlinType, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
         val result = LinkedHashSet<String>()
 
         suggestNamesByExpressionOnly(collection, { true })
@@ -133,7 +133,7 @@ public object KotlinNameSuggester {
         }
     }
 
-    private fun MutableCollection<String>.addNamesByType(type: KtType, validator: (String) -> Boolean) {
+    private fun MutableCollection<String>.addNamesByType(type: KotlinType, validator: (String) -> Boolean) {
         var type = TypeUtils.makeNotNullable(type) // wipe out '?'
         val builtIns = type.builtIns
         val typeChecker = KotlinTypeChecker.DEFAULT

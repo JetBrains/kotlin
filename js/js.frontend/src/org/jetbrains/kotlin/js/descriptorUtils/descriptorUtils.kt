@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
-public val KtType.nameIfStandardType: Name?
+public val KotlinType.nameIfStandardType: Name?
     get() {
         val descriptor = getConstructor().getDeclarationDescriptor()
 
@@ -35,7 +35,7 @@ public val KtType.nameIfStandardType: Name?
         return null
     }
 
-public fun KtType.getJetTypeFqName(printTypeArguments: Boolean): String {
+public fun KotlinType.getJetTypeFqName(printTypeArguments: Boolean): String {
     val declaration = requireNotNull(getConstructor().getDeclarationDescriptor())
     if (declaration is TypeParameterDescriptor) {
         return StringUtil.join(declaration.getUpperBounds(), { type -> type.getJetTypeFqName(printTypeArguments) }, "&")

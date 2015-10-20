@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
@@ -59,27 +59,27 @@ public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<KtCallab
     }
 
     companion object {
-        public fun getTypeForDeclaration(declaration: KtCallableDeclaration): KtType {
+        public fun getTypeForDeclaration(declaration: KtCallableDeclaration): KotlinType {
             val descriptor = declaration.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
             val type = (descriptor as? CallableDescriptor)?.getReturnType()
             return type ?: ErrorUtils.createErrorType("null type")
         }
 
-        public fun createTypeExpressionForTemplate(exprType: KtType): Expression {
+        public fun createTypeExpressionForTemplate(exprType: KotlinType): Expression {
             val descriptor = exprType.getConstructor().getDeclarationDescriptor()
             val isAnonymous = descriptor != null && DescriptorUtils.isAnonymousObject(descriptor)
 
             val allSupertypes = TypeUtils.getAllSupertypes(exprType)
-            val types = if (isAnonymous) ArrayList<KtType>() else arrayListOf(exprType)
+            val types = if (isAnonymous) ArrayList<KotlinType>() else arrayListOf(exprType)
             types.addAll(allSupertypes)
 
-            return object : ChooseValueExpression<KtType>(types, types.first()) {
-                override fun getLookupString(element: KtType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
-                override fun getResult(element: KtType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
+            return object : ChooseValueExpression<KotlinType>(types, types.first()) {
+                override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
+                override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
             }
         }
 
-        public fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KtType) {
+        public fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KotlinType) {
             if (editor != null) {
                 addTypeAnnotationWithTemplate(editor, declaration, exprType)
             }
@@ -99,7 +99,7 @@ public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<KtCallab
             }
         }
 
-        private fun addTypeAnnotationWithTemplate(editor: Editor, declaration: KtCallableDeclaration, exprType: KtType) {
+        private fun addTypeAnnotationWithTemplate(editor: Editor, declaration: KtCallableDeclaration, exprType: KotlinType) {
             assert(!exprType.isError()) { "Unexpected error type, should have been checked before: " + declaration.getElementTextWithContext() + ", type = " + exprType }
 
             val project = declaration.getProject()

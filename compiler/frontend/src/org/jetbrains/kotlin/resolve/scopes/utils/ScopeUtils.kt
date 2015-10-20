@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.lazy.LazyFileScope
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 
@@ -155,16 +155,16 @@ private class LexicalToJetScopeAdapter(lexicalScope: LexicalScope): KtScope {
         it.getDeclaredFunctions(name, location)
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation)
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
             = lexicalScope.getFileScope().getSyntheticExtensionProperties(receiverTypes, name, location)
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation)
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
             = lexicalScope.getFileScope().getSyntheticExtensionFunctions(receiverTypes, name, location)
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>)
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
         = lexicalScope.getFileScope().getSyntheticExtensionProperties(receiverTypes)
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>)
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
         = lexicalScope.getFileScope().getSyntheticExtensionFunctions(receiverTypes)
 
     override fun getContainingDeclaration() = lexicalScope.ownerDescriptor
@@ -200,16 +200,16 @@ private class LexicalToJetScopeAdapter(lexicalScope: LexicalScope): KtScope {
 private class MemberScopeToFileScopeAdapter(val memberScope: KtScope) : FileScope {
     override fun getPackage(name: Name): PackageViewDescriptor? = memberScope.getPackage(name)
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation)
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
             = memberScope.getSyntheticExtensionProperties(receiverTypes, name, location)
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation)
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
             = memberScope.getSyntheticExtensionFunctions(receiverTypes, name, location)
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>)
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
             = memberScope.getSyntheticExtensionProperties(receiverTypes)
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>)
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
             = memberScope.getSyntheticExtensionFunctions(receiverTypes)
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)

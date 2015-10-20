@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
@@ -77,7 +77,7 @@ public fun getExpectedTypePredicate(
     val pseudocode = value.createdAt?.owner ?: return AllTypes
     val typePredicates = LinkedHashSet<TypePredicate?>()
 
-    fun addSubtypesOf(jetType: KtType?) = typePredicates.add(jetType?.getSubtypesPredicate())
+    fun addSubtypesOf(jetType: KotlinType?) = typePredicates.add(jetType?.getSubtypesPredicate())
 
     fun addByExplicitReceiver(resolvedCall: ResolvedCall<*>?) {
         val receiverValue = (resolvedCall ?: return).getExplicitReceiverValue()

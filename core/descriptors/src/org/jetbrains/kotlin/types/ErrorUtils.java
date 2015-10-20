@@ -145,7 +145,7 @@ public class ErrorUtils {
             }
         }
         for (TypeParameterDescriptor parameter : function.getTypeParameters()) {
-            for (KtType upperBound : parameter.getUpperBounds()) {
+            for (KotlinType upperBound : parameter.getUpperBounds()) {
                 if (containsErrorType(upperBound)) {
                     return true;
                 }
@@ -185,7 +185,7 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
-                @NotNull Collection<? extends KtType> receiverTypes, @NotNull Name name,
+                @NotNull Collection<? extends KotlinType> receiverTypes, @NotNull Name name,
                 @NotNull LookupLocation location
         ) {
             return ERROR_PROPERTY_GROUP;
@@ -194,7 +194,7 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
-                @NotNull Collection<? extends KtType> receiverTypes, @NotNull Name name,
+                @NotNull Collection<? extends KotlinType> receiverTypes, @NotNull Name name,
                 @NotNull LookupLocation location
         ) {
             return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
@@ -202,14 +202,14 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull Collection<? extends KtType> receiverTypes) {
+        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull Collection<? extends KotlinType> receiverTypes) {
             return ERROR_PROPERTY_GROUP;
         }
 
         @NotNull
         @Override
         public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
-                @NotNull Collection<? extends KtType> receiverTypes
+                @NotNull Collection<? extends KotlinType> receiverTypes
         ) {
             return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
         }
@@ -319,7 +319,7 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
-                @NotNull Collection<? extends KtType> receiverTypes, @NotNull Name name,
+                @NotNull Collection<? extends KotlinType> receiverTypes, @NotNull Name name,
                 @NotNull LookupLocation location
         ) {
             throw new IllegalStateException();
@@ -328,7 +328,7 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
-                @NotNull Collection<? extends KtType> receiverTypes, @NotNull Name name,
+                @NotNull Collection<? extends KotlinType> receiverTypes, @NotNull Name name,
                 @NotNull LookupLocation location
         ) {
             throw new IllegalStateException();
@@ -336,14 +336,14 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull Collection<? extends KtType> receiverTypes) {
+        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull Collection<? extends KotlinType> receiverTypes) {
             throw new IllegalStateException();
         }
 
         @NotNull
         @Override
         public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
-                @NotNull Collection<? extends KtType> receiverTypes
+                @NotNull Collection<? extends KotlinType> receiverTypes
         ) {
             throw new IllegalStateException();
         }
@@ -402,7 +402,7 @@ public class ErrorUtils {
     private static class ErrorClassDescriptor extends ClassDescriptorImpl {
         public ErrorClassDescriptor(@Nullable String name) {
             super(getErrorModule(), Name.special(name == null ? "<ERROR CLASS>" : "<ERROR CLASS: " + name + ">"),
-                  Modality.OPEN, Collections.<KtType>emptyList(), SourceElement.NO_SOURCE);
+                  Modality.OPEN, Collections.<KotlinType>emptyList(), SourceElement.NO_SOURCE);
 
             ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
             errorConstructor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
@@ -460,7 +460,7 @@ public class ErrorUtils {
         return new ErrorScope(debugMessage);
     }
 
-    private static final KtType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
+    private static final KotlinType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
     private static final PropertyDescriptor ERROR_PROPERTY = createErrorProperty();
 
     private static final Set<VariableDescriptor> ERROR_VARIABLE_GROUP = Collections.<VariableDescriptor>singleton(ERROR_PROPERTY);
@@ -483,7 +483,7 @@ public class ErrorUtils {
         descriptor.setType(ERROR_PROPERTY_TYPE,
                            Collections.<TypeParameterDescriptor>emptyList(),
                            null,
-                           (KtType) null
+                           (KotlinType) null
         );
 
         return descriptor;
@@ -505,22 +505,22 @@ public class ErrorUtils {
     }
 
     @NotNull
-    public static KtType createErrorType(@NotNull String debugMessage) {
+    public static KotlinType createErrorType(@NotNull String debugMessage) {
         return createErrorTypeWithArguments(debugMessage, Collections.<TypeProjection>emptyList());
     }
 
     @NotNull
-    public static KtType createErrorTypeWithCustomDebugName(@NotNull String debugName) {
+    public static KotlinType createErrorTypeWithCustomDebugName(@NotNull String debugName) {
         return createErrorTypeWithCustomConstructor(debugName, createErrorTypeConstructorWithCustomDebugName(debugName));
     }
 
     @NotNull
-    public static KtType createErrorTypeWithCustomConstructor(@NotNull String debugName, @NotNull TypeConstructor typeConstructor) {
+    public static KotlinType createErrorTypeWithCustomConstructor(@NotNull String debugName, @NotNull TypeConstructor typeConstructor) {
         return new ErrorTypeImpl(typeConstructor, createErrorScope(debugName));
     }
 
     @NotNull
-    public static KtType createErrorTypeWithArguments(@NotNull String debugMessage, @NotNull List<TypeProjection> arguments) {
+    public static KotlinType createErrorTypeWithArguments(@NotNull String debugMessage, @NotNull List<TypeProjection> arguments) {
         return new ErrorTypeImpl(createErrorTypeConstructor(debugMessage), createErrorScope(debugMessage), arguments);
     }
 
@@ -547,7 +547,7 @@ public class ErrorUtils {
 
             @NotNull
             @Override
-            public Collection<KtType> getSupertypes() {
+            public Collection<KotlinType> getSupertypes() {
                 return emptyList();
             }
 
@@ -586,7 +586,7 @@ public class ErrorUtils {
         };
     }
 
-    public static boolean containsErrorType(@Nullable KtType type) {
+    public static boolean containsErrorType(@Nullable KotlinType type) {
         if (type == null) return false;
         if (type.isError()) return true;
         for (TypeProjection projection : type.getArguments()) {
@@ -615,7 +615,7 @@ public class ErrorUtils {
         );
     }
 
-    private static class ErrorTypeImpl implements KtType {
+    private static class ErrorTypeImpl implements KotlinType {
         private final TypeConstructor constructor;
         private final KtScope memberScope;
         private final List<TypeProjection> arguments;
@@ -697,21 +697,21 @@ public class ErrorUtils {
         return ERROR_MODULE;
     }
 
-    public static boolean isUninferredParameter(@Nullable KtType type) {
+    public static boolean isUninferredParameter(@Nullable KotlinType type) {
         return type != null && type.getConstructor() instanceof UninferredParameterTypeConstructor;
     }
 
-    public static boolean containsUninferredParameter(@Nullable KtType type) {
-        return TypeUtils.containsSpecialType(type, new Function1<KtType, Boolean>() {
+    public static boolean containsUninferredParameter(@Nullable KotlinType type) {
+        return TypeUtils.containsSpecialType(type, new Function1<KotlinType, Boolean>() {
             @Override
-            public Boolean invoke(KtType argumentType) {
+            public Boolean invoke(KotlinType argumentType) {
                 return isUninferredParameter(argumentType);
             }
         });
     }
 
     @NotNull
-    public static KtType createUninferredParameterType(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
+    public static KotlinType createUninferredParameterType(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
         return createErrorTypeWithCustomConstructor("Scope for error type for not inferred parameter: " + typeParameterDescriptor.getName(),
                                                     new UninferredParameterTypeConstructor(typeParameterDescriptor));
     }
@@ -738,7 +738,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<KtType> getSupertypes() {
+        public Collection<KotlinType> getSupertypes() {
             return errorTypeConstructor.getSupertypes();
         }
 

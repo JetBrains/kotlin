@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnit;
 
@@ -44,7 +44,7 @@ public abstract class KotlinExpressionSurrounder implements Surrounder {
         if (expression instanceof KtCallExpression && expression.getParent() instanceof KtQualifiedExpression) {
             return false;
         }
-        KtType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
+        KotlinType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         if (type == null || isUnit(type)) {
             return false;
         }

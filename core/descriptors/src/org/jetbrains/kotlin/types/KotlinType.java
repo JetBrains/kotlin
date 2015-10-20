@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import java.util.List;
 
 /**
- * @see KotlinTypeChecker#isSubtypeOf(KtType, KtType)
+ * @see KotlinTypeChecker#isSubtypeOf(KotlinType, KotlinType)
  */
-public interface KtType extends Annotated {
+public interface KotlinType extends Annotated {
     @NotNull
     TypeConstructor getConstructor();
 

@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.scopes.FilteringScope
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -102,7 +102,7 @@ class QualifierReceiver (
         return ChainedScope(descriptor, "Static scope for " + name + " as package or class or object", *scopes.toTypedArray())
     }
 
-    override fun getType(): KtType = throw IllegalStateException("No type corresponds to QualifierReceiver '$this'")
+    override fun getType(): KotlinType = throw IllegalStateException("No type corresponds to QualifierReceiver '$this'")
 
     override fun exists() = true
 
@@ -136,7 +136,7 @@ fun createQualifier(
 fun QualifierReceiver.resolveAsStandaloneExpression(
         context: ExpressionTypingContext,
         symbolUsageValidator: SymbolUsageValidator
-): KtType? {
+): KotlinType? {
     resolveAndRecordReferenceTarget(context, symbolUsageValidator, selector = null)
     if (classifier is TypeParameterDescriptor) {
         context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(referenceExpression, classifier))

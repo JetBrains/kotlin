@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 public class ReconstructTypeInCastOrIsIntention : JetSelfTargetingOffsetIndependentIntention<KtTypeReference>(javaClass(), "Replace by reconstructed type"), LowPriorityAction {
     override fun isApplicableTo(element: KtTypeReference): Boolean {
@@ -57,7 +57,7 @@ public class ReconstructTypeInCastOrIsIntention : JetSelfTargetingOffsetIndepend
         ShortenReferences.DEFAULT.process(element.replaced(newType))
     }
 
-    private fun getReconstructedType(typeRef: KtTypeReference): KtType? {
+    private fun getReconstructedType(typeRef: KtTypeReference): KotlinType? {
         return typeRef.analyze().get(BindingContext.TYPE, typeRef)
     }
 }

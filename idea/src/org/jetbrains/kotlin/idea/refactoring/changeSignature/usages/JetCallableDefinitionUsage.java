@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.substitutions.SubstitutionUtilsKt;
 
@@ -69,7 +69,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
     private final boolean hasExpectedType;
 
     @Nullable
-    private final KtType samCallType;
+    private final KotlinType samCallType;
 
     @Nullable
     private TypeSubstitutor typeSubstitutor;
@@ -78,7 +78,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
             @NotNull T function,
             @NotNull CallableDescriptor originalCallableDescriptor,
             @Nullable JetCallableDefinitionUsage<PsiElement> baseFunction,
-            @Nullable KtType samCallType
+            @Nullable KotlinType samCallType
     ) {
         super(function);
         this.originalCallableDescriptor = originalCallableDescriptor;

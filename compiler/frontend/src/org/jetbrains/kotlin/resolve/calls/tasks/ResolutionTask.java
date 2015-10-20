@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
 
@@ -48,7 +48,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull Call call,
-            @NotNull KtType expectedType,
+            @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
             @NotNull CheckArgumentTypesMode checkArguments,
@@ -101,7 +101,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull KtType expectedType,
+            @NotNull KotlinType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,

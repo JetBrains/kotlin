@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
@@ -121,7 +121,7 @@ public class TestlibTest extends UsefulTestCase {
                                                                                               BindingContext.DECLARATION_TO_DESCRIPTOR,
                                                                                               declaration);
 
-                for (KtType superType : getAllSupertypes(descriptor.getDefaultType())) {
+                for (KotlinType superType : getAllSupertypes(descriptor.getDefaultType())) {
                     if (!"junit/framework/Test".equals(typeMapper.mapType(superType).getInternalName())) continue;
 
                     String name = typeMapper.mapClass(descriptor).getInternalName();

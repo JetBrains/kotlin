@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {
@@ -51,7 +51,7 @@ public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
     }
 }
 
-public fun KtType.canBeReferencedViaImport(): Boolean {
+public fun KotlinType.canBeReferencedViaImport(): Boolean {
     val descriptor = getConstructor().getDeclarationDescriptor()
     return descriptor != null && descriptor.canBeReferencedViaImport()
 }

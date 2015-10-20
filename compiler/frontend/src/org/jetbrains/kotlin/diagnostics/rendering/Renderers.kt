@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -93,7 +93,7 @@ public object Renderers {
 
     public val RENDER_CLASS_OR_OBJECT_NAME: Renderer<ClassDescriptor> = Renderer { it.renderKindWithName() }
 
-    public val RENDER_TYPE: Renderer<KtType> = Renderer { DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it) }
+    public val RENDER_TYPE: Renderer<KotlinType> = Renderer { DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it) }
 
     public val RENDER_POSITION_VARIANCE: Renderer<Variance> = Renderer {
         variance: Variance ->
@@ -179,7 +179,7 @@ public object Renderers {
             val receiverType = DescriptorUtils.getReceiverParameterType(substitutedDescriptor.getExtensionReceiverParameter())
 
             val errorPositions = Sets.newHashSet<ConstraintPosition>()
-            val parameterTypes = Lists.newArrayList<KtType>()
+            val parameterTypes = Lists.newArrayList<KotlinType>()
             for (valueParameterDescriptor in substitutedDescriptor.getValueParameters()) {
                 parameterTypes.add(valueParameterDescriptor.getType())
                 if (valueParameterDescriptor.getIndex() >= inferenceErrorData.valueArgumentsTypes.size()) continue
@@ -279,7 +279,7 @@ public object Renderers {
                 .table(newTable()
                                .descriptor(inferenceErrorData.descriptor))
 
-        var violatedUpperBound: KtType? = null
+        var violatedUpperBound: KotlinType? = null
         for (upperBound in typeParameterDescriptor.getUpperBounds()) {
             val upperBoundWithSubstitutedInferredTypes = systemWithoutWeakConstraints.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT)
             if (upperBoundWithSubstitutedInferredTypes != null
@@ -356,9 +356,9 @@ public object Renderers {
         }.toString()
     }
 
-    private fun renderTypes(types: Collection<KtType>) = StringUtil.join(types, { RENDER_TYPE.render(it) }, ", ")
+    private fun renderTypes(types: Collection<KotlinType>) = StringUtil.join(types, { RENDER_TYPE.render(it) }, ", ")
 
-    public val RENDER_COLLECTION_OF_TYPES: Renderer<Collection<KtType>> = Renderer { renderTypes(it) }
+    public val RENDER_COLLECTION_OF_TYPES: Renderer<Collection<KotlinType>> = Renderer { renderTypes(it) }
 
     private fun renderConstraintSystem(constraintSystem: ConstraintSystem, renderTypeBounds: Renderer<TypeBounds>): String {
         val typeVariables = constraintSystem.getTypeVariables()

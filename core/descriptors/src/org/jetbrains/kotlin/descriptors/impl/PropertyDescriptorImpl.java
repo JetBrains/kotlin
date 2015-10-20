@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.types.DescriptorSubstitutor;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.utils.SmartSet;
@@ -89,17 +89,17 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     }
 
     public void setType(
-            @NotNull KtType outType,
+            @NotNull KotlinType outType,
             @ReadOnly @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
-            @Nullable KtType receiverType
+            @Nullable KotlinType receiverType
     ) {
         ReceiverParameterDescriptor extensionReceiverParameter = DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverType);
         setType(outType, typeParameters, dispatchReceiverParameter, extensionReceiverParameter);
     }
 
     public void setType(
-            @NotNull KtType outType,
+            @NotNull KotlinType outType,
             @ReadOnly @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @Nullable ReceiverParameterDescriptor extensionReceiverParameter
@@ -145,7 +145,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
     @NotNull
     @Override
-    public KtType getReturnType() {
+    public KotlinType getReturnType() {
         return getType();
     }
 
@@ -227,8 +227,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
                 originalTypeParameters, originalSubstitutor.getSubstitution(), substitutedDescriptor, substitutedTypeParameters
         );
 
-        KtType originalOutType = getType();
-        KtType outType = substitutor.substitute(originalOutType, Variance.OUT_VARIANCE);
+        KotlinType originalOutType = getType();
+        KotlinType outType = substitutor.substitute(originalOutType, Variance.OUT_VARIANCE);
         if (outType == null) {
             return null; // TODO : tell the user that the property was projected out
         }
@@ -244,7 +244,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             substitutedDispatchReceiver = null;
         }
 
-        KtType substitutedReceiverType;
+        KotlinType substitutedReceiverType;
         if (extensionReceiverParameter != null) {
             substitutedReceiverType = substitutor.substitute(extensionReceiverParameter.getType(), Variance.IN_VARIANCE);
             if (substitutedReceiverType == null) return null;
@@ -260,7 +260,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
                 getter.hasBody(), getter.isDefault(), getter.isExternal(), kind, original == null ? null : original.getGetter(), SourceElement.NO_SOURCE
         );
         if (newGetter != null) {
-            KtType returnType = getter.getReturnType();
+            KotlinType returnType = getter.getReturnType();
             newGetter.initialize(returnType != null ? substitutor.substitute(returnType, Variance.OUT_VARIANCE) : null);
         }
         PropertySetterDescriptorImpl newSetter = setter == null ? null : new PropertySetterDescriptorImpl(

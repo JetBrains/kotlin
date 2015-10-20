@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 public class IterateExpressionIntention : JetSelfTargetingIntention<KtExpression>(javaClass(), "Iterate over collection"), HighPriorityAction {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
@@ -44,7 +44,7 @@ public class IterateExpressionIntention : JetSelfTargetingIntention<KtExpression
         return true
     }
 
-    private data class Data(val collectionType: KtType, val elementType: KtType)
+    private data class Data(val collectionType: KotlinType, val elementType: KotlinType)
 
     private fun data(expression: KtExpression): Data? {
         val resolutionFacade = expression.getResolutionFacade()

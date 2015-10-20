@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.Map;
@@ -35,10 +35,10 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
     public <F extends CallableDescriptor> void check(
             @NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context
     ) {
-        Map<TypeParameterDescriptor, KtType> typeArguments = resolvedCall.getTypeArguments();
-        for (Map.Entry<TypeParameterDescriptor, KtType> entry : typeArguments.entrySet()) {
+        Map<TypeParameterDescriptor, KotlinType> typeArguments = resolvedCall.getTypeArguments();
+        for (Map.Entry<TypeParameterDescriptor, KotlinType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor parameter = entry.getKey();
-            KtType argument = entry.getValue();
+            KotlinType argument = entry.getValue();
             ClassifierDescriptor argumentDeclarationDescription = argument.getConstructor().getDeclarationDescriptor();
 
             if (parameter.isReified()) {

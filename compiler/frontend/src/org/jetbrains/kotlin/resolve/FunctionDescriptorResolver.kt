@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -84,7 +84,7 @@ class FunctionDescriptorResolver(
             function: KtNamedFunction,
             trace: BindingTrace,
             dataFlowInfo: DataFlowInfo,
-            expectedFunctionType: KtType
+            expectedFunctionType: KotlinType
     ): SimpleFunctionDescriptor = resolveFunctionDescriptor(
             ::FunctionExpressionDescriptor, containingDescriptor, scope, function, trace, dataFlowInfo, expectedFunctionType)
 
@@ -95,7 +95,7 @@ class FunctionDescriptorResolver(
             function: KtNamedFunction,
             trace: BindingTrace,
             dataFlowInfo: DataFlowInfo,
-            expectedFunctionType: KtType
+            expectedFunctionType: KotlinType
     ): SimpleFunctionDescriptor {
         val functionDescriptor = functionConstructor(
                 containingDescriptor,
@@ -143,7 +143,7 @@ class FunctionDescriptorResolver(
             function: KtFunction,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             trace: BindingTrace,
-            expectedFunctionType: KtType
+            expectedFunctionType: KotlinType
     ) {
         val innerScope = LexicalWritableScope(scope, functionDescriptor, true, null,
                                               TraceBasedRedeclarationHandler(trace), "Function descriptor header scope")
@@ -194,7 +194,7 @@ class FunctionDescriptorResolver(
             functionDescriptor: SimpleFunctionDescriptorImpl,
             innerScope: LexicalWritableScope,
             trace: BindingTrace,
-            expectedFunctionType: KtType
+            expectedFunctionType: KotlinType
     ): List<ValueParameterDescriptor> {
         val expectedValueParameters = expectedFunctionType.getValueParameters(functionDescriptor)
         if (expectedValueParameters != null) {
@@ -225,11 +225,11 @@ class FunctionDescriptorResolver(
         )
     }
 
-    private fun KtType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(this)
-    private fun KtType.getReceiverType(): KtType? =
+    private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(this)
+    private fun KotlinType.getReceiverType(): KotlinType? =
             if (functionTypeExpected()) KotlinBuiltIns.getReceiverType(this) else null
 
-    private fun KtType.getValueParameters(owner: FunctionDescriptor): List<ValueParameterDescriptor>? =
+    private fun KotlinType.getValueParameters(owner: FunctionDescriptor): List<ValueParameterDescriptor>? =
             if (functionTypeExpected()) KotlinBuiltIns.getValueParameters(owner, this) else null
 
     public fun resolvePrimaryConstructorDescriptor(
@@ -322,7 +322,7 @@ class FunctionDescriptorResolver(
             val typeReference = valueParameter.getTypeReference()
             val expectedType = expectedValueParameters?.let { if (i < it.size()) it[i].getType() else null }
 
-            val type: KtType
+            val type: KotlinType
             if (typeReference != null) {
                 type = typeResolver.resolveType(parameterScope, typeReference, trace, true)
                 if (expectedType != null && !TypeUtils.noExpectedType(expectedType)) {

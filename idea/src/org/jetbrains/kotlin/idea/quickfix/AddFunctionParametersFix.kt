@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
@@ -41,7 +41,7 @@ public class AddFunctionParametersFix(
         private val callElement: KtCallElement,
         functionDescriptor: FunctionDescriptor,
         private val hasTypeMismatches: Boolean) : ChangeFunctionSignatureFix(callElement, functionDescriptor) {
-    private val typesToShorten = ArrayList<KtType>()
+    private val typesToShorten = ArrayList<KotlinType>()
 
     override fun getText(): String {
         val parameters = functionDescriptor.valueParameters

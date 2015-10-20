@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -432,7 +432,7 @@ public class AsmUtil {
             allFields.add(Pair.create(CAPTURED_THIS_FIELD, typeMapper.mapType(captureThis)));
         }
 
-        KtType captureReceiverType = closure.getCaptureReceiverType();
+        KotlinType captureReceiverType = closure.getCaptureReceiverType();
         if (captureReceiverType != null) {
             allFields.add(Pair.create(CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiverType)));
         }
@@ -638,7 +638,7 @@ public class AsmUtil {
             @NotNull CallableDescriptor parameter,
             @NotNull String name
     ) {
-        KtType type = parameter.getReturnType();
+        KotlinType type = parameter.getReturnType();
         if (type == null || isNullableType(type)) return;
         
         int index = frameMap.getIndex(parameter);
@@ -672,7 +672,7 @@ public class AsmUtil {
 
         if (!isDeclaredInJava(descriptor)) return false;
 
-        KtType type = descriptor.getReturnType();
+        KotlinType type = descriptor.getReturnType();
         if (type == null || isNullableType(FlexibleTypesKt.lowerIfFlexible(type))) return false;
 
         Type asmType = state.getTypeMapper().mapReturnType(descriptor);

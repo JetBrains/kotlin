@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
@@ -171,7 +171,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<JetTyp
                         // Some recursive definitions (object expressions) must put their types in the cache manually:
                         //noinspection ConstantConditions
                         if (context.trace.get(BindingContext.PROCESSED, expression)) {
-                            KtType type = context.trace.getBindingContext().getType(expression);
+                            KotlinType type = context.trace.getBindingContext().getType(expression);
                             return result.replaceType(type);
                         }
 

@@ -66,7 +66,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -91,7 +91,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private static final String ENUM_VALUES_FIELD_NAME = "$VALUES";
     private Type superClassAsmType;
     @Nullable // null means java/lang/Object
-    private KtType superClassType;
+    private KotlinType superClassType;
     private final Type classAsmType;
     private final boolean isLocal;
 
@@ -316,7 +316,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
         Set<String> kotlinMarkerInterfaces = new LinkedHashSet<String>();
 
-        for (KtType supertype : descriptor.getTypeConstructor().getSupertypes()) {
+        for (KotlinType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             if (isJvmInterface(supertype.getConstructor().getDeclarationDescriptor())) {
                 sw.writeInterface();
                 Type jvmInterfaceType = typeMapper.mapSupertype(supertype, sw);
@@ -352,7 +352,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
 
-        for (KtType supertype : descriptor.getTypeConstructor().getSupertypes()) {
+        for (KotlinType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             ClassifierDescriptor superClass = supertype.getConstructor().getDeclarationDescriptor();
             if (superClass != null && !isJvmInterface(superClass)) {
                 superClassAsmType = typeMapper.mapClass(superClass);
@@ -421,11 +421,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 continue;
             }
 
-            KtType returnType = function.getReturnType();
+            KotlinType returnType = function.getReturnType();
             assert returnType != null : function.toString();
-            KtType paramType = function.getValueParameters().get(0).getType();
+            KotlinType paramType = function.getValueParameters().get(0).getType();
             if (KotlinBuiltIns.isArray(returnType) && KotlinBuiltIns.isArray(paramType)) {
-                KtType elementType = function.getTypeParameters().get(0).getDefaultType();
+                KotlinType elementType = function.getTypeParameters().get(0).getDefaultType();
                 if (KotlinTypeChecker.DEFAULT.equalTypes(elementType, DescriptorUtilsKt.getBuiltIns(descriptor).getArrayElementType(returnType))
                     && KotlinTypeChecker.DEFAULT.equalTypes(elementType, DescriptorUtilsKt
                         .getBuiltIns(descriptor).getArrayElementType(paramType))) {
@@ -738,7 +738,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         iv.getfield(classAsmType.getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
                     }
 
-                    KtType captureReceiver = closure.getCaptureReceiverType();
+                    KotlinType captureReceiver = closure.getCaptureReceiverType();
                     if (captureReceiver != null) {
                         iv.load(0, classAsmType);
                         Type type = typeMapper.mapType(captureReceiver);
@@ -1150,7 +1150,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     result.addField((KtDelegatorByExpressionSpecifier) specifier, propertyDescriptor);
                 }
                 else {
-                    KtType expressionType = expression != null ? bindingContext.getType(expression) : null;
+                    KotlinType expressionType = expression != null ? bindingContext.getType(expression) : null;
                     Type asmType =
                             expressionType != null ? typeMapper.mapType(expressionType) : typeMapper.mapType(getSuperClass(specifier));
                     result.addField((KtDelegatorByExpressionSpecifier) specifier, asmType, "$delegate_" + n);
@@ -1610,7 +1610,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 DelegationFieldsInfo.Field field = delegationFieldsInfo.getInfo((KtDelegatorByExpressionSpecifier) specifier);
                 generateDelegateField(field);
                 KtExpression delegateExpression = ((KtDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
-                KtType delegateExpressionType = delegateExpression != null ? bindingContext.getType(delegateExpression) : null;
+                KotlinType delegateExpressionType = delegateExpression != null ? bindingContext.getType(delegateExpression) : null;
                 generateDelegates(getSuperClass(specifier), delegateExpressionType, field);
             }
         }
@@ -1623,7 +1623,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                    fieldInfo.name, fieldInfo.type.getDescriptor(), /*TODO*/null, null);
     }
 
-    protected void generateDelegates(ClassDescriptor toTrait, KtType delegateExpressionType, DelegationFieldsInfo.Field field) {
+    protected void generateDelegates(ClassDescriptor toTrait, KotlinType delegateExpressionType, DelegationFieldsInfo.Field field) {
         for (Map.Entry<CallableMemberDescriptor, CallableDescriptor> entry : CodegenUtilKt.getDelegates(descriptor, toTrait, delegateExpressionType).entrySet()) {
             CallableMemberDescriptor callableMemberDescriptor = entry.getKey();
             CallableDescriptor delegateTo = entry.getValue();

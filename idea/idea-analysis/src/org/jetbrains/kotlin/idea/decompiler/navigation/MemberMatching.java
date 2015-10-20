@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 import java.util.Set;
@@ -173,7 +173,7 @@ public class MemberMatching {
             }
             String declarationTypeText = typeReference.getText();
 
-            KtType typeToRender = varargInDeclaration ? descriptorParameter.getVarargElementType() : descriptorParameter.getType();
+            KotlinType typeToRender = varargInDeclaration ? descriptorParameter.getVarargElementType() : descriptorParameter.getType();
             assert typeToRender != null;
             String descriptorParameterText = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(typeToRender);
             if (!declarationTypeText.equals(descriptorParameterText)) {
@@ -221,9 +221,9 @@ public class MemberMatching {
             }
 
             Set<String> descriptorUpperBounds = Sets.newHashSet(ContainerUtil.map(
-                    descriptor.getUpperBounds(), new Function<KtType, String>() {
+                    descriptor.getUpperBounds(), new Function<KotlinType, String>() {
                 @Override
-                public String fun(KtType type) {
+                public String fun(KotlinType type) {
                     return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
                 }
             }));

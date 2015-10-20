@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
 import java.util.List;
@@ -48,7 +48,7 @@ public class JetTestFunctionDetector {
         Annotations annotations = functionDescriptor.getAnnotations();
         for (AnnotationDescriptor annotation : annotations) {
             // TODO ideally we should find the fully qualified name here...
-            KtType type = annotation.getType();
+            KotlinType type = annotation.getType();
             String name = type.toString();
             if (name.equals("Test")) {
                 return true;

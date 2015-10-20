@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.Variance;
 
@@ -110,12 +110,12 @@ public class ControlStructureTypingUtils {
                 function, Annotations.Companion.getEMPTY(), false, Variance.INVARIANT,
                 Name.identifier("<TYPE-PARAMETER-FOR-" + constructionName + "-RESOLVE>"), 0);
 
-        KtType type = typeParameter.getDefaultType();
-        KtType nullableType = TypeUtils.makeNullable(type);
+        KotlinType type = typeParameter.getDefaultType();
+        KotlinType nullableType = TypeUtils.makeNullable(type);
 
         List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(argumentNames.size());
         for (int i = 0; i < argumentNames.size(); i++) {
-            KtType argumentType = isArgumentNullable.get(i) ? nullableType : type;
+            KotlinType argumentType = isArgumentNullable.get(i) ? nullableType : type;
             ValueParameterDescriptorImpl valueParameter = new ValueParameterDescriptorImpl(
                     function, null, i, Annotations.Companion.getEMPTY(), Name.identifier(argumentNames.get(i)),
                     argumentType,
@@ -266,9 +266,9 @@ public class ControlStructureTypingUtils {
     ) {
         class CheckTypeContext {
             public BindingTrace trace;
-            public KtType expectedType;
+            public KotlinType expectedType;
 
-            CheckTypeContext(@NotNull BindingTrace trace, @NotNull KtType expectedType) {
+            CheckTypeContext(@NotNull BindingTrace trace, @NotNull KotlinType expectedType) {
                 this.trace = trace;
                 this.expectedType = expectedType;
             }
@@ -511,14 +511,14 @@ public class ControlStructureTypingUtils {
 
         @Override
         public void unsafeCall(
-                @NotNull BindingTrace trace, @NotNull KtType type, boolean isCallForImplicitInvoke
+                @NotNull BindingTrace trace, @NotNull KotlinType type, boolean isCallForImplicitInvoke
         ) {
             logError();
         }
 
         @Override
         public void unnecessarySafeCall(
-                @NotNull BindingTrace trace, @NotNull KtType type
+                @NotNull BindingTrace trace, @NotNull KotlinType type
         ) {
             logError();
         }

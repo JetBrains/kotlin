@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.CaptureKind;
 
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
@@ -69,7 +69,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
     @Override
     public void visitExpression(@NotNull KtExpression expression) {
-        KtType smartCast = bindingContext.get(SMARTCAST, expression);
+        KotlinType smartCast = bindingContext.get(SMARTCAST, expression);
         if (smartCast != null) {
             holder.createInfoAnnotation(expression, "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast)).setTextAttributes(
                 JetHighlightingColors.SMART_CAST_VALUE);

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
@@ -56,7 +56,7 @@ public class KotlinIntroduceParameterDialog private constructor(
         val descriptor: IntroduceParameterDescriptor,
         val lambdaExtractionDescriptor: ExtractableCodeDescriptor?,
         nameSuggestions: Array<String>,
-        val typeSuggestions: List<KtType>,
+        val typeSuggestions: List<KotlinType>,
         val helper: KotlinIntroduceParameterHelper
 ): RefactoringDialog(project, true) {
     constructor(
@@ -64,7 +64,7 @@ public class KotlinIntroduceParameterDialog private constructor(
             editor: Editor,
             descriptor: IntroduceParameterDescriptor,
             nameSuggestions: Array<String>,
-            typeSuggestions: List<KtType>,
+            typeSuggestions: List<KotlinType>,
             helper: KotlinIntroduceParameterHelper
     ): this(project, editor, descriptor, null, nameSuggestions, typeSuggestions, helper)
 

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.diagnostics.PositioningStrategies.*;
 import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
@@ -74,8 +74,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtElement> NO_REFLECTION_IN_CLASS_PATH = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory2<KtElement, KtType, KtType> JAVA_CLASS_ON_COMPANION = DiagnosticFactory2.create(WARNING);
-    DiagnosticFactory2<KtExpression, KtType, KtType> JAVA_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtElement, KotlinType, KotlinType> JAVA_CLASS_ON_COMPANION = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<KtExpression, KotlinType, KotlinType> JAVA_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory2<PsiElement, String, String> DUPLICATE_CLASS_NAMES = DiagnosticFactory2.create(ERROR);
 

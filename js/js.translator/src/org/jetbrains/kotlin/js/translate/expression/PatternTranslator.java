@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtIsExpression;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeByReference;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
@@ -63,7 +63,7 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
     public JsExpression translateIsCheck(@NotNull JsExpression subject, @NotNull KtTypeReference typeReference) {
-        KtType type = BindingUtils.getTypeByReference(bindingContext(), typeReference);
+        KotlinType type = BindingUtils.getTypeByReference(bindingContext(), typeReference);
         JsExpression checkFunReference = getIsTypeCheckCallable(type);
         JsInvocation isCheck = new JsInvocation(checkFunReference, subject);
 
@@ -75,7 +75,7 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsExpression getIsTypeCheckCallable(@NotNull KtType type) {
+    public JsExpression getIsTypeCheckCallable(@NotNull KotlinType type) {
         JsExpression builtinCheck = getIsTypeCheckCallableForBuiltin(type);
         if (builtinCheck != null) return builtinCheck;
 
@@ -94,7 +94,7 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull KtType type) {
+    private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull KotlinType type) {
         Name typeName = DescriptorUtilsKt.getNameIfStandardType(type);
 
         if (NamePredicate.STRING.apply(typeName)) {
@@ -147,7 +147,7 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsNameRef getClassNameReference(@NotNull KtType type) {
+    private JsNameRef getClassNameReference(@NotNull KotlinType type) {
         ClassDescriptor referencedClass = DescriptorUtils.getClassDescriptorForType(type);
         return context().getQualifiedReference(referencedClass);
     }

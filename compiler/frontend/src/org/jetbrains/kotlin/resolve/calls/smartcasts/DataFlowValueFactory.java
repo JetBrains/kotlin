@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
@@ -59,7 +59,7 @@ public class DataFlowValueFactory {
     @NotNull
     public static DataFlowValue createDataFlowValue(
             @NotNull KtExpression expression,
-            @NotNull KtType type,
+            @NotNull KotlinType type,
             @NotNull ResolutionContext resolutionContext
     ) {
         return createDataFlowValue(expression, type, resolutionContext.trace.getBindingContext(),
@@ -69,7 +69,7 @@ public class DataFlowValueFactory {
     @NotNull
     public static DataFlowValue createDataFlowValue(
             @NotNull KtExpression expression,
-            @NotNull KtType type,
+            @NotNull KotlinType type,
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule
     ) {
@@ -105,7 +105,7 @@ public class DataFlowValueFactory {
 
     @NotNull
     public static DataFlowValue createDataFlowValue(@NotNull ThisReceiver receiver) {
-        KtType type = receiver.getType();
+        KotlinType type = receiver.getType();
         return new DataFlowValue(receiver, type, STABLE_VALUE, getImmanentNullability(type));
     }
 
@@ -126,7 +126,7 @@ public class DataFlowValueFactory {
     ) {
         if (receiverValue instanceof TransientReceiver || receiverValue instanceof ScriptReceiver) {
             // SCRIPT: smartcasts data flow
-            KtType type = receiverValue.getType();
+            KotlinType type = receiverValue.getType();
             return new DataFlowValue(receiverValue, type, STABLE_VALUE, getImmanentNullability(type));
         }
         else if (receiverValue instanceof ClassReceiver || receiverValue instanceof ExtensionReceiver) {
@@ -153,7 +153,7 @@ public class DataFlowValueFactory {
             @NotNull BindingContext bindingContext,
             @Nullable ModuleDescriptor usageContainingModule
     ) {
-        KtType type = variableDescriptor.getType();
+        KotlinType type = variableDescriptor.getType();
         return new DataFlowValue(variableDescriptor, type,
                                  variableKind(variableDescriptor, usageContainingModule,
                                               bindingContext, property),
@@ -161,7 +161,7 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
-    private static Nullability getImmanentNullability(@NotNull KtType type) {
+    private static Nullability getImmanentNullability(@NotNull KotlinType type) {
         return TypeUtils.isNullableType(type) ? Nullability.UNKNOWN : Nullability.NOT_NULL;
     }
 

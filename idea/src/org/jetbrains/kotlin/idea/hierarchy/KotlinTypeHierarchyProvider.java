@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
 
@@ -72,7 +72,7 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
                 FunctionDescriptor functionDescriptor = ResolutionUtils.analyze(function)
                         .get(BindingContext.FUNCTION, target);
                 if (functionDescriptor != null) {
-                    KtType type = functionDescriptor.getReturnType();
+                    KotlinType type = functionDescriptor.getReturnType();
                     if (type != null) {
                         String returnTypeText = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
                         if (returnTypeText.equals(functionName)) {

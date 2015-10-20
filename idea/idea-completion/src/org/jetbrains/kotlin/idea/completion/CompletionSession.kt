@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -313,7 +313,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                 )
     }
 
-    private fun createLookupElementFactory(callType: CallType<*>?, receiverTypes: Collection<KtType>?): LookupElementFactory {
+    private fun createLookupElementFactory(callType: CallType<*>?, receiverTypes: Collection<KotlinType>?): LookupElementFactory {
         val contextVariablesProvider = {
             nameExpression?.let {
                 referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, CallTypeAndReceiver.DEFAULT)
@@ -327,7 +327,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                                     insertHandlerProvider, contextVariablesProvider)
     }
 
-    private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<KtType>?> {
+    private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<KotlinType>?> {
         if (nameExpression == null) {
             return CallTypeAndReceiver.UNKNOWN to null
         }

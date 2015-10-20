@@ -48,15 +48,15 @@ public class PossiblyBareType {
     }
 
     @NotNull
-    public static PossiblyBareType type(@NotNull KtType actualType) {
+    public static PossiblyBareType type(@NotNull KotlinType actualType) {
         return new PossiblyBareType(actualType, null, false);
     }
 
-    private final KtType actualType;
+    private final KotlinType actualType;
     private final TypeConstructor bareTypeConstructor;
     private final boolean nullable;
 
-    private PossiblyBareType(@Nullable KtType actualType, @Nullable TypeConstructor bareTypeConstructor, boolean nullable) {
+    private PossiblyBareType(@Nullable KotlinType actualType, @Nullable TypeConstructor bareTypeConstructor, boolean nullable) {
         this.actualType = actualType;
         this.bareTypeConstructor = bareTypeConstructor;
         this.nullable = nullable;
@@ -67,7 +67,7 @@ public class PossiblyBareType {
     }
 
     @NotNull
-    public KtType getActualType() {
+    public KotlinType getActualType() {
         //noinspection ConstantConditions
         return actualType;
     }
@@ -95,18 +95,18 @@ public class PossiblyBareType {
     }
 
     @NotNull
-    public TypeReconstructionResult reconstruct(@NotNull KtType subjectType) {
+    public TypeReconstructionResult reconstruct(@NotNull KotlinType subjectType) {
         if (!isBare()) return new TypeReconstructionResult(getActualType(), true);
 
         TypeReconstructionResult reconstructionResult = CastDiagnosticsUtil.findStaticallyKnownSubtype(
                 TypeUtils.makeNotNullable(subjectType),
                 getBareTypeConstructor()
         );
-        KtType type = reconstructionResult.getResultingType();
+        KotlinType type = reconstructionResult.getResultingType();
         // No need to make an absent type nullable
         if (type == null) return reconstructionResult;
 
-        KtType resultingType = TypeUtils.makeNullableAsSpecified(type, isBareTypeNullable());
+        KotlinType resultingType = TypeUtils.makeNullableAsSpecified(type, isBareTypeNullable());
         return new TypeReconstructionResult(resultingType, reconstructionResult.isAllArgumentsInferred());
     }
 

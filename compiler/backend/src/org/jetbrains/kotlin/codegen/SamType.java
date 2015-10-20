@@ -21,22 +21,22 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class SamType {
-    public static SamType create(@NotNull KtType originalType) {
+    public static SamType create(@NotNull KotlinType originalType) {
         if (!SingleAbstractMethodUtils.isSamType(originalType)) return null;
         return new SamType(originalType);
     }
 
-    private final KtType type;
+    private final KotlinType type;
 
-    private SamType(@NotNull KtType type) {
+    private SamType(@NotNull KotlinType type) {
         this.type = type;
     }
 
     @NotNull
-    public KtType getType() {
+    public KotlinType getType() {
         return type;
     }
 
@@ -48,7 +48,7 @@ public class SamType {
     }
 
     @NotNull
-    public KtType getKotlinFunctionType() {
+    public KotlinType getKotlinFunctionType() {
         //noinspection ConstantConditions
         return getJavaClassDescriptor().getFunctionTypeForSamInterface();
     }

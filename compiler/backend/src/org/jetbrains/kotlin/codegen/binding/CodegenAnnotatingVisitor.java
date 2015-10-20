@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
@@ -90,7 +90,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private ClassDescriptor recordClassForCallable(
             @NotNull KtElement element,
             @NotNull CallableDescriptor callableDescriptor,
-            @NotNull Collection<KtType> supertypes,
+            @NotNull Collection<KotlinType> supertypes,
             @NotNull String name
     ) {
         String simpleName = name.substring(name.lastIndexOf('/') + 1);
@@ -275,7 +275,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (functionDescriptor == null) return;
 
         String name = inventAnonymousClassName();
-        Collection<KtType> supertypes = runtimeTypes.getSupertypesForClosure(functionDescriptor);
+        Collection<KotlinType> supertypes = runtimeTypes.getSupertypesForClosure(functionDescriptor);
         ClassDescriptor classDescriptor = recordClassForCallable(functionLiteral, functionDescriptor, supertypes, name);
         recordClosure(classDescriptor, name);
 
@@ -293,7 +293,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         CallableDescriptor target = referencedFunction.getResultingDescriptor();
 
         CallableDescriptor callableDescriptor;
-        Collection<KtType> supertypes;
+        Collection<KotlinType> supertypes;
 
         if (target instanceof FunctionDescriptor) {
             callableDescriptor = bindingContext.get(FUNCTION, expression);
@@ -345,7 +345,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (delegate != null && descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             String name = inventAnonymousClassName();
-            KtType supertype = runtimeTypes.getSupertypeForPropertyReference(propertyDescriptor);
+            KotlinType supertype = runtimeTypes.getSupertypeForPropertyReference(propertyDescriptor);
             ClassDescriptor classDescriptor = recordClassForCallable(delegate, propertyDescriptor, Collections.singleton(supertype), name);
             recordClosure(classDescriptor, name);
         }
@@ -368,7 +368,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         }
         else {
             String name = inventAnonymousClassName();
-            Collection<KtType> supertypes = runtimeTypes.getSupertypesForClosure(functionDescriptor);
+            Collection<KotlinType> supertypes = runtimeTypes.getSupertypesForClosure(functionDescriptor);
             ClassDescriptor classDescriptor = recordClassForCallable(function, functionDescriptor, supertypes, name);
             recordClosure(classDescriptor, name);
 
@@ -530,7 +530,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         int fieldNumber = mappings.size();
 
         assert expression.getSubjectExpression() != null : "subject expression should be not null in a valid when by enums";
-        KtType type = bindingContext.getType(expression.getSubjectExpression());
+        KotlinType type = bindingContext.getType(expression.getSubjectExpression());
         assert type != null : "should not be null in a valid when by enums";
         ClassDescriptor classDescriptor = (ClassDescriptor) type.getConstructor().getDeclarationDescriptor();
         assert classDescriptor != null : "because it's enum";

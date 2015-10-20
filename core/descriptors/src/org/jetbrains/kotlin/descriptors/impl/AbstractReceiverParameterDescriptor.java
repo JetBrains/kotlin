@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
 
@@ -41,7 +41,7 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
     @Override
     public ReceiverParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         if (substitutor.isEmpty()) return this;
-        KtType substitutedType = substitutor.substitute(getType(), Variance.INVARIANT);
+        KotlinType substitutedType = substitutor.substitute(getType(), Variance.INVARIANT);
         if (substitutedType == null) return null;
 
         return new ReceiverParameterDescriptorImpl(getContainingDeclaration(), new TransientReceiver(substitutedType));
@@ -72,13 +72,13 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
 
     @Nullable
     @Override
-    public KtType getReturnType() {
+    public KotlinType getReturnType() {
         return getType();
     }
 
     @NotNull
     @Override
-    public KtType getType() {
+    public KotlinType getType() {
         return getValue().getType();
     }
 

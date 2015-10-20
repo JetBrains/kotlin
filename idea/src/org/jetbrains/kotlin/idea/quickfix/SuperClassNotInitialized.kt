@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.IndexedParametersSubstitution
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -75,7 +75,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
                         .map { it.substitute(substitutor) as ConstructorDescriptor }
 
                 if (substitutedConstructors.isNotEmpty()) {
-                    val parameterTypes: List<List<KtType>> = substitutedConstructors.map {
+                    val parameterTypes: List<List<KotlinType>> = substitutedConstructors.map {
                         it.getValueParameters().map { it.getType() }
                     }
 

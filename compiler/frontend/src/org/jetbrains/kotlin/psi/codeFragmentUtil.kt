@@ -20,7 +20,7 @@ import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeReference
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 public val SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE: Key<Boolean> = Key.create<Boolean>("SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE")
 
@@ -36,10 +36,10 @@ public var KtFile.suppressDiagnosticsInDebugMode: Boolean
 
 public val DEBUG_TYPE_REFERENCE_STRING: String = "DebugTypeKotlinRulezzzz"
 
-public val DEBUG_TYPE_INFO: Key<KtType> = Key.create<KtType>("DEBUG_TYPE_INFO")
-public var KtTypeReference.debugTypeInfo: KtType?
+public val DEBUG_TYPE_INFO: Key<KotlinType> = Key.create<KotlinType>("DEBUG_TYPE_INFO")
+public var KtTypeReference.debugTypeInfo: KotlinType?
     get() = getUserData(DEBUG_TYPE_INFO)
-    set(type: KtType?) {
+    set(type: KotlinType?) {
         if (type != null && this.getText() == DEBUG_TYPE_REFERENCE_STRING) {
             putUserData(DEBUG_TYPE_INFO, type)
         }

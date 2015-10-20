@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMember;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,8 +34,8 @@ public interface ExternalSignatureResolver {
         public PropagatedMethodSignature resolvePropagatedSignature(
                 @NotNull JavaMethod method,
                 @NotNull ClassDescriptor owner,
-                @NotNull KtType returnType,
-                @Nullable KtType receiverType,
+                @NotNull KotlinType returnType,
+                @Nullable KotlinType receiverType,
                 @NotNull List<ValueParameterDescriptor> valueParameters,
                 @NotNull List<TypeParameterDescriptor> typeParameters
         ) {
@@ -50,8 +50,8 @@ public interface ExternalSignatureResolver {
         public AlternativeMethodSignature resolveAlternativeMethodSignature(
                 @NotNull JavaMember methodOrConstructor,
                 boolean hasSuperMethods,
-                @Nullable KtType returnType,
-                @Nullable KtType receiverType,
+                @Nullable KotlinType returnType,
+                @Nullable KotlinType receiverType,
                 @NotNull List<ValueParameterDescriptor> valueParameters,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
                 boolean hasStableParameterNames
@@ -64,7 +64,7 @@ public interface ExternalSignatureResolver {
         @NotNull
         @Override
         public AlternativeFieldSignature resolveAlternativeFieldSignature(
-                @NotNull JavaField field, @NotNull KtType returnType, boolean isVar
+                @NotNull JavaField field, @NotNull KotlinType returnType, boolean isVar
         ) {
             return new AlternativeFieldSignature(returnType, null);
         }
@@ -89,15 +89,15 @@ public interface ExternalSignatureResolver {
     }
 
     class AlternativeMethodSignature extends MemberSignature {
-        private final KtType returnType;
-        private final KtType receiverType;
+        private final KotlinType returnType;
+        private final KotlinType receiverType;
         private final List<ValueParameterDescriptor> valueParameters;
         private final List<TypeParameterDescriptor> typeParameters;
         private final boolean hasStableParameterNames;
 
         public AlternativeMethodSignature(
-                @Nullable KtType returnType,
-                @Nullable KtType receiverType,
+                @Nullable KotlinType returnType,
+                @Nullable KotlinType receiverType,
                 @NotNull List<ValueParameterDescriptor> valueParameters,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
                 @NotNull List<String> signatureErrors,
@@ -112,12 +112,12 @@ public interface ExternalSignatureResolver {
         }
 
         @Nullable
-        public KtType getReturnType() {
+        public KotlinType getReturnType() {
             return returnType;
         }
 
         @Nullable
-        public KtType getReceiverType() {
+        public KotlinType getReceiverType() {
             return receiverType;
         }
 
@@ -137,15 +137,15 @@ public interface ExternalSignatureResolver {
     }
 
     class AlternativeFieldSignature extends MemberSignature {
-        private final KtType returnType;
+        private final KotlinType returnType;
 
-        public AlternativeFieldSignature(@NotNull KtType returnType, @Nullable String signatureError) {
+        public AlternativeFieldSignature(@NotNull KotlinType returnType, @Nullable String signatureError) {
             super(signatureError == null ? Collections.<String>emptyList() : Collections.singletonList(signatureError));
             this.returnType = returnType;
         }
 
         @NotNull
-        public KtType getReturnType() {
+        public KotlinType getReturnType() {
             return returnType;
         }
     }
@@ -154,8 +154,8 @@ public interface ExternalSignatureResolver {
         private final List<FunctionDescriptor> superMethods;
 
         public PropagatedMethodSignature(
-                @Nullable KtType returnType,
-                @Nullable KtType receiverType,
+                @Nullable KotlinType returnType,
+                @Nullable KotlinType receiverType,
                 @NotNull List<ValueParameterDescriptor> valueParameters,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
                 @NotNull List<String> signatureErrors,
@@ -176,8 +176,8 @@ public interface ExternalSignatureResolver {
     PropagatedMethodSignature resolvePropagatedSignature(
             @NotNull JavaMethod method,
             @NotNull ClassDescriptor owner,
-            @NotNull KtType returnType,
-            @Nullable KtType receiverType,
+            @NotNull KotlinType returnType,
+            @Nullable KotlinType receiverType,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<TypeParameterDescriptor> typeParameters
     );
@@ -186,8 +186,8 @@ public interface ExternalSignatureResolver {
     AlternativeMethodSignature resolveAlternativeMethodSignature(
             @NotNull JavaMember methodOrConstructor,
             boolean hasSuperMethods,
-            @Nullable KtType returnType,
-            @Nullable KtType receiverType,
+            @Nullable KotlinType returnType,
+            @Nullable KotlinType receiverType,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<TypeParameterDescriptor> typeParameters,
             boolean hasStableParameterNames
@@ -196,7 +196,7 @@ public interface ExternalSignatureResolver {
     @NotNull
     AlternativeFieldSignature resolveAlternativeFieldSignature(
             @NotNull JavaField field,
-            @NotNull KtType returnType,
+            @NotNull KotlinType returnType,
             boolean isVar
     );
 

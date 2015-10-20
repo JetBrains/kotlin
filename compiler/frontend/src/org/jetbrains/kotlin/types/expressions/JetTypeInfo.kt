@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * Stores simultaneously type of current expression together with data flow info
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.KtType
  * Both break and continue are counted as possible jump outside of a loop, but return is not.
  */
 /*package*/ open class JetTypeInfo(
-        val type: KtType?,
+        val type: KotlinType?,
         val dataFlowInfo: DataFlowInfo,
         val jumpOutPossible: Boolean = false,
         val jumpFlowInfo: DataFlowInfo = dataFlowInfo
@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.KtType
     fun clearType() = replaceType(null)
 
     // NB: do not compare type with this.type because this comparison is complex and unstabld
-    fun replaceType(type: KtType?) = JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
+    fun replaceType(type: KotlinType?) = JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
 
     fun replaceJumpOutPossible(jumpOutPossible: Boolean) =
             if (jumpOutPossible == this.jumpOutPossible) this else JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)

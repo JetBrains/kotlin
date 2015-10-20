@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.Iterator;
@@ -69,14 +69,14 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public KtType safeGetType(
+    public KotlinType safeGetType(
             @NotNull LexicalScope scope,
             @NotNull KtExpression expression,
-            @NotNull KtType expectedType,
+            @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
-        KtType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
+        KotlinType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
 
         return type != null ? type : ErrorUtils.createErrorType("Type for " + expression.getText());
     }
@@ -85,7 +85,7 @@ public class ExpressionTypingServices {
     public JetTypeInfo getTypeInfo(
             @NotNull LexicalScope scope,
             @NotNull KtExpression expression,
-            @NotNull KtType expectedType,
+            @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace,
             boolean isStatement
@@ -102,10 +102,10 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    public KtType getType(
+    public KotlinType getType(
             @NotNull LexicalScope scope,
             @NotNull KtExpression expression,
-            @NotNull KtType expectedType,
+            @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
@@ -119,7 +119,7 @@ public class ExpressionTypingServices {
             @NotNull KtDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull DataFlowInfo dataFlowInfo,
-            @Nullable KtType expectedReturnType,
+            @Nullable KotlinType expectedReturnType,
             BindingTrace trace
     ) {
         if (expectedReturnType == null) {
@@ -192,7 +192,7 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public KtType getBodyExpressionType(
+    public KotlinType getBodyExpressionType(
             @NotNull BindingTrace trace,
             @NotNull LexicalScope outerScope,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -208,7 +208,7 @@ public class ExpressionTypingServices {
         );
         JetTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 
-        KtType type = typeInfo.getType();
+        KotlinType type = typeInfo.getType();
         if (type != null) {
             return type;
         }
@@ -278,7 +278,7 @@ public class ExpressionTypingServices {
             @NotNull ExpressionTypingInternals blockLevelVisitor
     ) {
         if (context.expectedType != NO_EXPECTED_TYPE) {
-            KtType expectedType;
+            KotlinType expectedType;
             if (context.expectedType == UNIT_EXPECTED_TYPE ||//the first check is necessary to avoid invocation 'isUnit(UNIT_EXPECTED_TYPE)'
                 (coercionStrategyForLastExpression == COERCION_TO_UNIT && KotlinBuiltIns.isUnit(context.expectedType))) {
                 expectedType = UNIT_EXPECTED_TYPE;

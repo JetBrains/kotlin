@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
@@ -31,13 +31,13 @@ public interface TypeParameterDescriptor extends ClassifierDescriptor {
     Variance getVariance();
 
     @NotNull
-    Set<KtType> getUpperBounds();
+    Set<KotlinType> getUpperBounds();
 
     @NotNull
-    KtType getUpperBoundsAsType();
+    KotlinType getUpperBoundsAsType();
 
     @NotNull
-    Set<KtType> getLowerBounds();
+    Set<KotlinType> getLowerBounds();
 
     @NotNull
     @Override

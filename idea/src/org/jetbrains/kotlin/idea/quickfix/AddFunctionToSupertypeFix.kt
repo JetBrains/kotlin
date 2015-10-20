@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
@@ -158,8 +158,8 @@ class AddFunctionToSupertypeFix private constructor(
         }
 
         private fun getSuperClasses(classDescriptor: ClassDescriptor): List<ClassDescriptor> {
-            val supertypes = classDescriptor.defaultType.supertypes().sortedWith(object : Comparator<KtType> {
-                override fun compare(o1: KtType, o2: KtType): Int {
+            val supertypes = classDescriptor.defaultType.supertypes().sortedWith(object : Comparator<KotlinType> {
+                override fun compare(o1: KotlinType, o2: KotlinType): Int {
                     return when {
                         o1 == o2 -> 0
                         KotlinTypeChecker.DEFAULT.isSubtypeOf(o1, o2) -> -1

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty> {
     private final boolean removeInitializer;
@@ -85,13 +85,13 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty>
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        KtType type = QuickFixUtil.getDeclarationReturnType(getElement());
+        KotlinType type = QuickFixUtil.getDeclarationReturnType(getElement());
         return super.isAvailable(project, editor, file) && type != null && !type.isError();
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
-        KtType type = QuickFixUtil.getDeclarationReturnType(getElement());
+        KotlinType type = QuickFixUtil.getDeclarationReturnType(getElement());
         KtProperty newElement = (KtProperty) getElement().copy();
         KtPropertyAccessor getter = newElement.getGetter();
         if (removeGetter && getter != null) {
@@ -102,7 +102,7 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty>
             newElement.deleteChildInternal(setter.getNode());
         }
         KtExpression initializer = newElement.getInitializer();
-        KtType typeToAdd = null;
+        KotlinType typeToAdd = null;
         if (removeInitializer && initializer != null) {
             PsiElement nameIdentifier = newElement.getNameIdentifier();
             assert nameIdentifier != null;

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import javax.swing.*
 import javax.swing.event.PopupMenuEvent
 
@@ -46,7 +46,7 @@ public class KotlinInplacePropertyIntroducer(
         project: Project,
         title: String,
         doNotChangeVar: Boolean,
-        exprType: KtType?,
+        exprType: KotlinType?,
         extractionResult: ExtractionResult,
         private val availableTargets: List<ExtractionTarget>
 ): KotlinInplaceVariableIntroducer<KtProperty>(

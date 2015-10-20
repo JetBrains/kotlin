@@ -36,9 +36,9 @@ public class DeferredType extends DelegatingType implements LazyType {
         }
     };
 
-    private static final Function1<Boolean,KtType> RECURSION_PREVENTER = new Function1<Boolean, KtType>() {
+    private static final Function1<Boolean,KotlinType> RECURSION_PREVENTER = new Function1<Boolean, KotlinType>() {
         @Override
-        public KtType invoke(Boolean firstTime) {
+        public KotlinType invoke(Boolean firstTime) {
             if (firstTime) throw new ReenteringLazyValueComputationException();
             return ErrorUtils.createErrorType("Recursive dependency");
         }
@@ -48,7 +48,7 @@ public class DeferredType extends DelegatingType implements LazyType {
     public static DeferredType create(
             @NotNull StorageManager storageManager,
             @NotNull BindingTrace trace,
-            @NotNull Function0<KtType> compute
+            @NotNull Function0<KotlinType> compute
     ) {
         DeferredType deferredType = new DeferredType(storageManager.createLazyValue(compute));
         trace.record(DEFERRED_TYPE, new Box<DeferredType>(deferredType));
@@ -59,7 +59,7 @@ public class DeferredType extends DelegatingType implements LazyType {
     public static DeferredType createRecursionIntolerant(
             @NotNull StorageManager storageManager,
             @NotNull BindingTrace trace,
-            @NotNull Function0<KtType> compute
+            @NotNull Function0<KotlinType> compute
     ) {
         //noinspection unchecked
         DeferredType deferredType = new DeferredType(storageManager.createLazyValueWithPostCompute(
@@ -71,9 +71,9 @@ public class DeferredType extends DelegatingType implements LazyType {
         return deferredType;
     }
 
-    private final NotNullLazyValue<KtType> lazyValue;
+    private final NotNullLazyValue<KotlinType> lazyValue;
 
-    private DeferredType(@NotNull NotNullLazyValue<KtType> lazyValue) {
+    private DeferredType(@NotNull NotNullLazyValue<KotlinType> lazyValue) {
         this.lazyValue = lazyValue;
     }
 
@@ -82,7 +82,7 @@ public class DeferredType extends DelegatingType implements LazyType {
     }
 
     @Override
-    public KtType getDelegate() {
+    public KotlinType getDelegate() {
         return lazyValue.invoke();
     }
 

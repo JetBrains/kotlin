@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
@@ -282,7 +282,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public <D extends CallableMemberDescriptor> D getAccessor(
             @NotNull D possiblySubstitutedDescriptor,
             boolean isForBackingFieldInOuterClass,
-            @Nullable KtType delegateType,
+            @Nullable KotlinType delegateType,
             @Nullable KtSuperExpression superCallExpression
     ) {
         if (accessors == null) {

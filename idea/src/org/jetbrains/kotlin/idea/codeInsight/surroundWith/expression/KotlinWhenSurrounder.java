@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
     @Override
@@ -65,7 +65,7 @@ public class KotlinWhenSurrounder extends KotlinExpressionSurrounder {
     }
 
     private String getCodeTemplate(KtExpression expression) {
-        KtType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
+        KotlinType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         if (type != null) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.ENUM_CLASS) {

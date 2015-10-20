@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
@@ -158,7 +158,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void unsafeCall(@NotNull BindingTrace trace, @NotNull KtType type, boolean isCallForImplicitInvoke) {
+    public void unsafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type, boolean isCallForImplicitInvoke) {
         ASTNode callOperationNode = call.getCallOperationNode();
         if (callOperationNode != null && !isCallForImplicitInvoke) {
             trace.report(UNSAFE_CALL.on(callOperationNode.getPsi(), type));
@@ -186,7 +186,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull KtType type) {
+    public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type) {
         ASTNode callOperationNode = call.getCallOperationNode();
         assert callOperationNode != null;
         ReceiverValue explicitReceiver = call.getExplicitReceiver();
@@ -215,12 +215,12 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             return;
         }
         if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) {
-            KtType declaredReturnType = data.descriptor.getReturnType();
+            KotlinType declaredReturnType = data.descriptor.getReturnType();
             if (declaredReturnType == null) return;
 
             ConstraintSystem systemWithoutExpectedTypeConstraint =
                     ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(EXPECTED_TYPE_POSITION);
-            KtType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
+            KotlinType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
                     declaredReturnType, Variance.OUT_VARIANCE);
             assert substitutedReturnType != null; //todo
 

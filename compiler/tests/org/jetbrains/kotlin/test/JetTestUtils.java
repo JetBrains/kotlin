@@ -74,7 +74,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.SlicedMap;
@@ -148,7 +148,7 @@ public class JetTestUtils {
 
                 @Nullable
                 @Override
-                public KtType getType(@NotNull KtExpression expression) {
+                public KotlinType getType(@NotNull KtExpression expression) {
                     return DUMMY_TRACE.getType(expression);
                 }
 
@@ -183,13 +183,13 @@ public class JetTestUtils {
 
         @Nullable
         @Override
-        public KtType getType(@NotNull KtExpression expression) {
+        public KotlinType getType(@NotNull KtExpression expression) {
             JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
             return typeInfo != null ? typeInfo.getType() : null;
         }
 
         @Override
-        public void recordType(@NotNull KtExpression expression, @Nullable KtType type) {
+        public void recordType(@NotNull KtExpression expression, @Nullable KotlinType type) {
         }
 
         @Override
@@ -231,7 +231,7 @@ public class JetTestUtils {
 
                 @Nullable
                 @Override
-                public KtType getType(@NotNull KtExpression expression) {
+                public KotlinType getType(@NotNull KtExpression expression) {
                     return DUMMY_EXCEPTION_ON_ERROR_TRACE.getType(expression);
                 }
 
@@ -264,12 +264,12 @@ public class JetTestUtils {
 
         @Nullable
         @Override
-        public KtType getType(@NotNull KtExpression expression) {
+        public KotlinType getType(@NotNull KtExpression expression) {
             return null;
         }
 
         @Override
-        public void recordType(@NotNull KtExpression expression, @Nullable KtType type) {
+        public void recordType(@NotNull KtExpression expression, @Nullable KotlinType type) {
         }
 
         @Override

@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
-class GenerateLambdaInfo(val lambdaType: KtType, val explicitParameters: Boolean)
+class GenerateLambdaInfo(val lambdaType: KotlinType, val explicitParameters: Boolean)
 
 sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
 

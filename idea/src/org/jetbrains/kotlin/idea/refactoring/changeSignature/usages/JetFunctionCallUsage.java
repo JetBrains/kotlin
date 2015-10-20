@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
@@ -175,7 +175,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<KtCallElement> {
                 ((ReceiverParameterDescriptor) originalDescriptor).getValue() instanceof ExtensionReceiver;
         if (currentIsExtension != originalIsExtension) return null;
 
-        KtType originalType = originalDescriptor instanceof ReceiverParameterDescriptor
+        KotlinType originalType = originalDescriptor instanceof ReceiverParameterDescriptor
                                ? ((ReceiverParameterDescriptor) originalDescriptor).getType()
                                : originalDescriptor instanceof ClassDescriptor
                                  ? ((ClassDescriptor) originalDescriptor).getDefaultType()

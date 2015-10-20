@@ -102,12 +102,12 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     }
 
     private void doTest(@Nullable String expectedTypeStr, String initialTypeStr, Pair<String, String>... substitutionStrs) {
-        KtType initialType = resolveType(initialTypeStr);
+        KotlinType initialType = resolveType(initialTypeStr);
 
         Map<TypeConstructor, TypeProjection> map = stringsToSubstitutionMap(substitutionStrs);
         TypeSubstitutor substitutor = TypeSubstitutor.create(map);
 
-        KtType result = substitutor.substitute(initialType, Variance.INVARIANT);
+        KotlinType result = substitutor.substitute(initialType, Variance.INVARIANT);
 
         if (expectedTypeStr == null) {
             assertNull(result);
@@ -129,7 +129,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
             assertTrue(typeParameterName + " is not a type parameter: " + classifier, classifier instanceof TypeParameterDescriptor);
 
             String typeStr = "C<" + replacementProjectionString + ">";
-            KtType typeWithArgument = resolveType(typeStr);
+            KotlinType typeWithArgument = resolveType(typeStr);
             assert !typeWithArgument.getArguments().isEmpty() : "No arguments: " + typeWithArgument + " from " + typeStr;
 
             map.put(classifier.getTypeConstructor(), typeWithArgument.getArguments().get(0));
@@ -137,11 +137,11 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         return map;
     }
 
-    private KtType resolveType(String typeStr) {
+    private KotlinType resolveType(String typeStr) {
         KtTypeReference jetTypeReference = KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr);
         AnalyzingUtils.checkForSyntacticErrors(jetTypeReference);
         BindingTrace trace = new BindingTraceContext();
-        KtType type = container.getTypeResolver().resolveType(ScopeUtilsKt.asLexicalScope(scope), jetTypeReference, trace, true);
+        KotlinType type = container.getTypeResolver().resolveType(ScopeUtilsKt.asLexicalScope(scope), jetTypeReference, trace, true);
         if (!trace.getBindingContext().getDiagnostics().isEmpty()) {
             fail("Errors:\n" + StringUtil.join(
                     trace.getBindingContext().getDiagnostics(),

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtSuperExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collections;
 
@@ -48,8 +48,8 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
 
     protected AccessorForPropertyDescriptor(
             @NotNull PropertyDescriptor original,
-            @NotNull KtType propertyType,
-            @Nullable KtType receiverType,
+            @NotNull KotlinType propertyType,
+            @Nullable KotlinType receiverType,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull DeclarationDescriptor containingDeclaration,
             @Nullable KtSuperExpression superCallExpression,

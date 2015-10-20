@@ -68,9 +68,9 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         if (typeConstructor == null) {
             TypeSubstitutor substitutor = getSubstitutor();
 
-            Collection<KtType> originalSupertypes = originalTypeConstructor.getSupertypes();
-            Collection<KtType> supertypes = new ArrayList<KtType>(originalSupertypes.size());
-            for (KtType supertype : originalSupertypes) {
+            Collection<KotlinType> originalSupertypes = originalTypeConstructor.getSupertypes();
+            Collection<KotlinType> supertypes = new ArrayList<KotlinType>(originalSupertypes.size());
+            for (KotlinType supertype : originalSupertypes) {
                 supertypes.add(substitutor.substitute(supertype, Variance.INVARIANT));
             }
 
@@ -125,9 +125,9 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public KtType getDefaultType() {
+    public KotlinType getDefaultType() {
         List<TypeProjection> typeProjections = TypeUtils.getDefaultTypeProjections(getTypeConstructor().getParameters());
-        return KtTypeImpl.create(
+        return KotlinTypeImpl.create(
                 getAnnotations(),
                 this,
                 false,

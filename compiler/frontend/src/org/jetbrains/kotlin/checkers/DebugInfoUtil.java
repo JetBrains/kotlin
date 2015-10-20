@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
@@ -196,7 +196,7 @@ public class DebugInfoUtil {
                     // if 'foo' in 'foo[i]' is unresolved it means 'foo[i]' is unresolved (otherwise 'foo[i]' is marked as 'missing unresolved')
                     markedWithError = true;
                 }
-                KtType expressionType = bindingContext.getType(expression);
+                KotlinType expressionType = bindingContext.getType(expression);
                 DiagnosticFactory<?> factory = markedWithErrorElements.get(expression);
                 if (declarationDescriptor != null &&
                     (ErrorUtils.isError(declarationDescriptor) || ErrorUtils.containsErrorType(expressionType))) {

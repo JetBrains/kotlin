@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
 public class FilteringScope(private val workerScope: KtScope, private val predicate: (DeclarationDescriptor) -> Boolean) : KtScope {
@@ -39,16 +39,16 @@ public class FilteringScope(private val workerScope: KtScope, private val predic
 
     override fun getProperties(name: Name, location: LookupLocation) = workerScope.getProperties(name, location).filter(predicate)
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
             = workerScope.getSyntheticExtensionProperties(receiverTypes, name, location).filter(predicate)
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
             = workerScope.getSyntheticExtensionFunctions(receiverTypes, name, location).filter(predicate)
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>): Collection<PropertyDescriptor>
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
             = workerScope.getSyntheticExtensionProperties(receiverTypes).filter(predicate)
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>): Collection<FunctionDescriptor>
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
             = workerScope.getSyntheticExtensionFunctions(receiverTypes).filter(predicate)
 
     override fun getLocalVariable(name: Name) = filterDescriptor(workerScope.getLocalVariable(name))

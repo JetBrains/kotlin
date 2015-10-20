@@ -31,15 +31,15 @@ import java.util.List;
 
 public abstract class AbstractClassDescriptor implements ClassDescriptor {
     private final Name name;
-    protected final NotNullLazyValue<KtType> defaultType;
+    protected final NotNullLazyValue<KotlinType> defaultType;
     private final NotNullLazyValue<KtScope> unsubstitutedInnerClassesScope;
     private final NotNullLazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
 
     public AbstractClassDescriptor(@NotNull StorageManager storageManager, @NotNull Name name) {
         this.name = name;
-        this.defaultType = storageManager.createLazyValue(new Function0<KtType>() {
+        this.defaultType = storageManager.createLazyValue(new Function0<KotlinType>() {
             @Override
-            public KtType invoke() {
+            public KotlinType invoke() {
                 return TypeUtils.makeUnsubstitutedType(AbstractClassDescriptor.this, getUnsubstitutedMemberScope());
             }
         });
@@ -113,7 +113,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public KtType getDefaultType() {
+    public KotlinType getDefaultType() {
         return defaultType.invoke();
     }
 

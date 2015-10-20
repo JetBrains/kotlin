@@ -262,10 +262,10 @@ public class BodyResolver {
                 : FunctionDescriptorUtil.getFunctionInnerScope(scopeForSupertypeResolution, primaryConstructor, trace);
         final ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
 
-        final Map<KtTypeReference, KtType> supertypes = Maps.newLinkedHashMap();
+        final Map<KtTypeReference, KotlinType> supertypes = Maps.newLinkedHashMap();
         final ResolvedCall<?>[] primaryConstructorDelegationCall = new ResolvedCall[1];
         KtVisitorVoid visitor = new KtVisitorVoid() {
-            private void recordSupertype(KtTypeReference typeReference, KtType supertype) {
+            private void recordSupertype(KtTypeReference typeReference, KotlinType supertype) {
                 if (supertype == null) return;
                 supertypes.put(typeReference, supertype);
             }
@@ -275,7 +275,7 @@ public class BodyResolver {
                 if (descriptor.getKind() == ClassKind.INTERFACE) {
                     trace.report(DELEGATION_IN_INTERFACE.on(specifier));
                 }
-                KtType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
+                KotlinType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                 recordSupertype(specifier.getTypeReference(), supertype);
                 if (supertype != null) {
                     DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
@@ -289,7 +289,7 @@ public class BodyResolver {
                 KtExpression delegateExpression = specifier.getDelegateExpression();
                 if (delegateExpression != null) {
                     LexicalScope scope = scopeForConstructor == null ? scopeForMemberResolution : scopeForConstructor;
-                    KtType expectedType = supertype != null ? supertype : NO_EXPECTED_TYPE;
+                    KotlinType expectedType = supertype != null ? supertype : NO_EXPECTED_TYPE;
                     typeInferrer.getType(scope, delegateExpression, expectedType, outerDataFlowInfo, trace);
                 }
                 if (primaryConstructor == null) {
@@ -317,7 +317,7 @@ public class BodyResolver {
                         trace, scopeForConstructor,
                         CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, outerDataFlowInfo, false);
                 if (results.isSuccess()) {
-                    KtType supertype = results.getResultingDescriptor().getReturnType();
+                    KotlinType supertype = results.getResultingDescriptor().getReturnType();
                     recordSupertype(typeReference, supertype);
                     ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                     if (classDescriptor != null) {
@@ -342,7 +342,7 @@ public class BodyResolver {
             @Override
             public void visitDelegationToSuperClassSpecifier(@NotNull KtDelegatorToSuperClass specifier) {
                 KtTypeReference typeReference = specifier.getTypeReference();
-                KtType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
+                KotlinType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
                 recordSupertype(typeReference, supertype);
                 if (supertype == null) return;
                 ClassDescriptor superClass = TypeUtils.getClassDescriptor(supertype);
@@ -419,15 +419,15 @@ public class BodyResolver {
 
     private void checkSupertypeList(
             @NotNull ClassDescriptor supertypeOwner,
-            @NotNull Map<KtTypeReference, KtType> supertypes,
+            @NotNull Map<KtTypeReference, KotlinType> supertypes,
             @NotNull KtClassOrObject jetClass
     ) {
         Set<TypeConstructor> allowedFinalSupertypes = getAllowedFinalSupertypes(supertypeOwner, jetClass);
         Set<TypeConstructor> typeConstructors = Sets.newHashSet();
         boolean classAppeared = false;
-        for (Map.Entry<KtTypeReference, KtType> entry : supertypes.entrySet()) {
+        for (Map.Entry<KtTypeReference, KotlinType> entry : supertypes.entrySet()) {
             KtTypeReference typeReference = entry.getKey();
-            KtType supertype = entry.getValue();
+            KotlinType supertype = entry.getValue();
 
             KtTypeElement typeElement = typeReference.getTypeElement();
             if (typeElement instanceof KtFunctionType) {
@@ -709,7 +709,7 @@ public class BodyResolver {
         LexicalScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(
                 propertyDescriptor, parentScopeForAccessor, trace);
 
-        KtType delegateType = delegatedPropertyResolver.resolveDelegateExpression(
+        KotlinType delegateType = delegatedPropertyResolver.resolveDelegateExpression(
                 delegateExpression, jetProperty, propertyDescriptor, propertyDeclarationInnerScope, accessorScope, trace,
                 outerDataFlowInfo);
 
@@ -734,7 +734,7 @@ public class BodyResolver {
     ) {
         LexicalScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
                 propertyDescriptor, scope, propertyDescriptor.getTypeParameters(), null, trace);
-        KtType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
+        KotlinType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         if (propertyDescriptor.getCompileTimeInitializer() == null) {
             expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer,
                                              outerDataFlowInfo, trace);
@@ -850,7 +850,7 @@ public class BodyResolver {
         valueParameterResolver.resolveValueParameters(valueParameters, valueParameterDescriptors, scope, outerDataFlowInfo, trace);
     }
 
-    private static void computeDeferredType(KtType type) {
+    private static void computeDeferredType(KotlinType type) {
         // handle type inference loop: function or property body contains a reference to itself
         // fun f() = { f() }
         // val x = x

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: DescriptorKindFilter) {
@@ -185,7 +185,7 @@ public fun CallTypeAndReceiver<*, *>.receiverTypes(
         position: KtExpression,
         moduleDescriptor: ModuleDescriptor,
         predictableSmartCastsOnly: Boolean
-): Collection<KtType>? {
+): Collection<KotlinType>? {
     val receiverExpression: KtExpression?
     when (this) {
         is CallTypeAndReceiver.CALLABLE_REFERENCE -> {

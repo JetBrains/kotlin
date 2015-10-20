@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.utils.DFS;
@@ -98,16 +98,16 @@ public class OverridingUtil {
             return receiverAndParameterResult;
         }
 
-        List<KtType> superValueParameters = compiledValueParameters(superDescriptor);
-        List<KtType> subValueParameters = compiledValueParameters(subDescriptor);
+        List<KotlinType> superValueParameters = compiledValueParameters(superDescriptor);
+        List<KotlinType> subValueParameters = compiledValueParameters(subDescriptor);
 
         List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
         List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
 
         if (superTypeParameters.size() != subTypeParameters.size()) {
             for (int i = 0; i < superValueParameters.size(); ++i) {
-                KtType superValueParameterType = getUpperBound(superValueParameters.get(i));
-                KtType subValueParameterType = getUpperBound(subValueParameters.get(i));
+                KotlinType superValueParameterType = getUpperBound(superValueParameters.get(i));
+                KotlinType subValueParameterType = getUpperBound(subValueParameters.get(i));
                 // TODO: compare erasure
                 if (!KotlinTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType)) {
                     return OverrideCompatibilityInfo.typeParameterNumberMismatch();
@@ -147,8 +147,8 @@ public class OverridingUtil {
         }
 
         for (int i = 0, unsubstitutedValueParametersSize = superValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
-            KtType superValueParameter = superValueParameters.get(i);
-            KtType subValueParameter = subValueParameters.get(i);
+            KotlinType superValueParameter = superValueParameters.get(i);
+            KotlinType subValueParameter = subValueParameters.get(i);
 
             if (!areTypesEquivalent(superValueParameter, subValueParameter, localEqualityAxioms)) {
                 return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameter, subValueParameter, INCOMPATIBLE);
@@ -156,8 +156,8 @@ public class OverridingUtil {
         }
 
         if (checkReturnType) {
-            KtType superReturnType = superDescriptor.getReturnType();
-            KtType subReturnType = subDescriptor.getReturnType();
+            KotlinType superReturnType = superDescriptor.getReturnType();
+            KotlinType subReturnType = subDescriptor.getReturnType();
 
             if (superReturnType != null && subReturnType != null) {
                 boolean bothErrors = subReturnType.isError() && superReturnType.isError();
@@ -194,8 +194,8 @@ public class OverridingUtil {
     }
 
     private static boolean areTypesEquivalent(
-            @NotNull KtType typeInSuper,
-            @NotNull KtType typeInSub,
+            @NotNull KotlinType typeInSuper,
+            @NotNull KotlinType typeInSub,
             @NotNull KotlinTypeChecker.TypeConstructorEquality axioms
     ) {
         boolean bothErrors = typeInSuper.isError() && typeInSub.isError();
@@ -205,9 +205,9 @@ public class OverridingUtil {
         return true;
     }
 
-    static List<KtType> compiledValueParameters(CallableDescriptor callableDescriptor) {
+    static List<KotlinType> compiledValueParameters(CallableDescriptor callableDescriptor) {
         ReceiverParameterDescriptor receiverParameter = callableDescriptor.getExtensionReceiverParameter();
-        ArrayList<KtType> parameters = new ArrayList<KtType>();
+        ArrayList<KotlinType> parameters = new ArrayList<KotlinType>();
         if (receiverParameter != null) {
             parameters.add(receiverParameter.getType());
         }
@@ -217,7 +217,7 @@ public class OverridingUtil {
         return parameters;
     }
 
-    static KtType getUpperBound(KtType type) {
+    static KotlinType getUpperBound(KotlinType type) {
         if (type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
             return type;
         }
@@ -297,9 +297,9 @@ public class OverridingUtil {
         if (a instanceof SimpleFunctionDescriptor) {
             assert b instanceof SimpleFunctionDescriptor : "b is " + b.getClass();
 
-            KtType aReturnType = a.getReturnType();
+            KotlinType aReturnType = a.getReturnType();
             assert aReturnType != null;
-            KtType bReturnType = b.getReturnType();
+            KotlinType bReturnType = b.getReturnType();
             assert bReturnType != null;
 
             return KotlinTypeChecker.DEFAULT.isSubtypeOf(aReturnType, bReturnType);
@@ -569,7 +569,7 @@ public class OverridingUtil {
         }
 
         @NotNull
-        public static OverrideCompatibilityInfo valueParameterTypeMismatch(KtType superValueParameter, KtType subValueParameter, Result result) {
+        public static OverrideCompatibilityInfo valueParameterTypeMismatch(KotlinType superValueParameter, KotlinType subValueParameter, Result result) {
             return new OverrideCompatibilityInfo(result, "valueParameterTypeMismatch"); // TODO
         }
 
@@ -579,7 +579,7 @@ public class OverridingUtil {
         }
 
         @NotNull
-        public static OverrideCompatibilityInfo returnTypeMismatch(KtType substitutedSuperReturnType, KtType unsubstitutedSubReturnType) {
+        public static OverrideCompatibilityInfo returnTypeMismatch(KotlinType substitutedSuperReturnType, KotlinType unsubstitutedSubReturnType) {
             return new OverrideCompatibilityInfo(Result.CONFLICT, "returnTypeMismatch: " + unsubstitutedSubReturnType + " >< " + substitutedSuperReturnType); // TODO
         }
 

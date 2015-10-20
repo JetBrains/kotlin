@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertyImplClassName
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, T : Any>(
@@ -170,7 +170,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         return typeParameter.getExtension(JvmProtoBuf.typeParameterAnnotation).map { loadTypeAnnotation(it, nameResolver) }
     }
 
-    override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Property, expectedType: KtType): C? {
+    override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Property, expectedType: KotlinType): C? {
         val nameResolver = container.nameResolver
         val signature = getCallableSignature(proto, nameResolver, container.typeTable, AnnotatedCallableKind.PROPERTY) ?: return null
 

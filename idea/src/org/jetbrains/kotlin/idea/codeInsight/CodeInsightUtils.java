@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -223,7 +223,7 @@ public class CodeInsightUtils {
     }
 
     @Nullable
-    public static String defaultInitializer(KtType type) {
+    public static String defaultInitializer(KotlinType type) {
         if (type.isMarkedNullable()) {
             return "null";
         }
