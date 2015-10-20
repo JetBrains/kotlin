@@ -224,8 +224,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     public void tearDown() throws Exception {
         KotlinInternalMode.Instance.setEnabled(kotlinInternalModeOriginalValue);
 
-        Set<KtFile> builtInsSources = BuiltInsReferenceResolver.Companion.getInstance(getProject()).getBuiltInsSources();
-        FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
+        super.tearDown();
 
         Field listenersField = PsiProjectListener.class.getDeclaredField("ourListeners");
         listenersField.setAccessible(true);
@@ -242,15 +241,6 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
 
         if (RenderSecurityManager.RESTRICT_READS) {
             RenderSecurityManager.sEnabled = true;
-        }
-
-        super.tearDown();
-
-        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
-        // otherwise built-ins psi elements will become invalid in next test.
-        for (KtFile source : builtInsSources) {
-            FileViewProvider provider = source.getViewProvider();
-            fileManager.setViewProvider(provider.getVirtualFile(), provider);
         }
     }
 
