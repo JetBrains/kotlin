@@ -6,6 +6,4 @@ Compiling files:
 src/prop2.kt
 End of files
 COMPILATION FAILED
-Platform declaration clash: The following declarations have the same JVM signature (getProperty()I):
-    fun <get-property>(): kotlin.Int
-    fun <get-property>(): kotlin.Int
+Redeclaration: property
