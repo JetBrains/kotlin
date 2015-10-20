@@ -1096,7 +1096,7 @@
                      level="INFO"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ExplicitGetInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetInspection"
                      displayName="Explicit 'get'"
                      groupName="Kotlin"
                      enabledByDefault="true"

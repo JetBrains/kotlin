@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
-import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ExplicitGetInspection
+import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetInspection
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetIntention
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
@@ -60,7 +60,7 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(IfThenToElvisIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(IfNullToElvisIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(ReplaceGetIntention(), additionalChecker = ExplicitGetInspection.additionalChecker) { applyTo(it) }
+        registerIntentionBasedProcessing(ReplaceGetIntention(), additionalChecker = ReplaceGetInspection.additionalChecker) { applyTo(it) }
         registerIntentionBasedProcessing(AddOperatorModifierIntention()) { applyTo(it) }
 
         registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->

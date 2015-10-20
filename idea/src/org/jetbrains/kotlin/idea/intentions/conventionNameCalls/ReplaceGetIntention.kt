@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 
-public class ExplicitGetInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
-        ReplaceGetIntention(), ExplicitGetInspection.additionalChecker
+public class ReplaceGetInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
+        ReplaceGetIntention(), ReplaceGetInspection.additionalChecker
 
 ) {
     companion object {
