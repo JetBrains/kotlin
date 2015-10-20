@@ -7,7 +7,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class UnrepeatableAnnotation : kotlin.Annotation {
+public final annotation class UnrepeatableAnnotation : kotlin.Annotation {
     public constructor UnrepeatableAnnotation()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
