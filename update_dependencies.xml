@@ -279,6 +279,7 @@
                 build.locator.request="${kotlin.bootstrap.locator}"
                 artifact.path="kotlin-plugin-{build.number}.zip"
                 dest="dependencies/download/bootstrap-compiler.zip"
+                build.number.pattern="[0-9a-z-+\.]+"
                 usetimestamp="true"/>
 
             <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
