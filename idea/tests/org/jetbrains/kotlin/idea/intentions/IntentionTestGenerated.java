@@ -5901,6 +5901,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("compoundAssignment.kt")
+        public void testCompoundAssignment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/compoundAssignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("compoundAssignment2.kt")
+        public void testCompoundAssignment2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/compoundAssignment2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionCallMultipleArgument.kt")
         public void testFunctionCallMultipleArgument() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/functionCallMultipleArgument.kt");
@@ -5946,6 +5958,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("notApplicableNewClassObject.kt")
         public void testNotApplicableNewClassObject() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/notApplicableNewClassObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("pluPlus.kt")
+        public void testPluPlus() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/pluPlus.kt");
             doTest(fileName);
         }
 

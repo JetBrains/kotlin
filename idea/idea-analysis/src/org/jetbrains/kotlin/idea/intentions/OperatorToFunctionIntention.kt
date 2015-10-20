@@ -20,6 +20,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.references.ReferenceAccess
+import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
@@ -61,6 +63,10 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
         private fun isApplicableArrayAccess(element: KtArrayAccessExpression, caretOffset: Int): Boolean {
             val lbracket = element.getLeftBracket() ?: return false
             val rbracket = element.getRightBracket() ?: return false
+
+            val access = element.readWriteAccess(useResolveForReadWrite = true)
+            if (access == ReferenceAccess.READ_WRITE) return false // currently not supported
+
             return lbracket.getTextRange().containsOffset(caretOffset) || rbracket.getTextRange().containsOffset(caretOffset)
         }
 
