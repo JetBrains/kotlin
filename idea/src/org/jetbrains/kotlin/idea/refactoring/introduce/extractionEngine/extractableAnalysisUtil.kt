@@ -865,7 +865,10 @@ fun ExtractionData.getDefaultVisibility(): String {
     if (!isVisibilityApplicable()) return ""
 
     val parent = targetSibling.getStrictParentOfType<KtDeclaration>()
-    if (parent is KtClass && parent.isInterface()) return ""
+    if (parent is KtClass) {
+        if (parent.isInterface()) return ""
+        if (parent.isEnum() && commonParent.getNonStrictParentOfType<KtEnumEntry>()?.getStrictParentOfType<KtClass>() == parent) return ""
+    }
 
     return "private"
 }

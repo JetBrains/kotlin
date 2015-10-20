@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.*
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 import java.util.*
 
 class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDeclarationContainer {
@@ -57,4 +58,22 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      */
     val danglingAnnotations: List<KtAnnotationEntry>
         get() = getStubOrPsiChildrenAsList(MODIFIER_LIST).flatMap { it.annotationEntries }
+
+    private fun addEnumEntriesTerminator() {
+        val klass = parent as? KtClass ?: return
+        if (!klass.isEnum()) return
+
+        val lastEntry = klass.declarations.lastIsInstanceOrNull<KtEnumEntry>()
+        if (KtPsiUtil.skipTrailingWhitespacesAndComments(lastEntry ?: firstChild)?.node?.elementType == KtTokens.SEMICOLON) return
+        super.addAfter(KtPsiFactory(this).createSemicolon(), lastEntry)
+    }
+
+    override fun addAfter(element: PsiElement, anchor: PsiElement?): PsiElement? {
+        return super.addAfter(element, anchor)
+                .apply {
+                    if (element !is KtEnumEntry) {
+                        addEnumEntriesTerminator()
+                    }
+                }
+    }
 }
