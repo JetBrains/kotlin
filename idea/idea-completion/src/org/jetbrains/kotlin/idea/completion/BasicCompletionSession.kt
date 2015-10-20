@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -62,6 +64,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         NAMED_ARGUMENTS_ONLY(descriptorKindFilter = null),
 
         PARAMETER_NAME(descriptorKindFilter = null),
+
+        TOP_LEVEL_CLASS_NAME(descriptorKindFilter = null),
 
         SUPER_QUALIFIER(descriptorKindFilter = DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
     }
@@ -94,11 +98,16 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private fun detectCompletionKind(): CompletionKind {
         if (nameExpression == null) {
-            val parameter = position.getParent() as? KtParameter
-            return if (parameter != null && position == parameter.getNameIdentifier())
-                CompletionKind.PARAMETER_NAME
-            else
-                CompletionKind.KEYWORDS_ONLY
+            return when  {
+                (position.parent as? KtParameter)?.nameIdentifier == position ->
+                    CompletionKind.PARAMETER_NAME
+
+                (position.parent as? KtClassOrObject)?.nameIdentifier == position && position.parent.parent is KtFile ->
+                    CompletionKind.TOP_LEVEL_CLASS_NAME
+
+                else ->
+                    CompletionKind.KEYWORDS_ONLY
+            }
         }
 
         if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
@@ -152,6 +161,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         if (completionKind == CompletionKind.SUPER_QUALIFIER) {
             completeSuperQualifier()
+            return
+        }
+
+        if (completionKind == CompletionKind.TOP_LEVEL_CLASS_NAME) {
+            completeTopLevelClassName()
             return
         }
 
@@ -342,6 +356,16 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         superClasses
                 .map { lookupElementFactory.createLookupElement(it, useReceiverTypes = false, qualifyNestedClasses = true, includeClassTypeArguments = false) }
                 .forEach { collector.addElement(it) }
+    }
+
+    private fun completeTopLevelClassName() {
+        val name = parameters.originalFile.virtualFile.nameWithoutExtension
+        if (!(Name.isValidIdentifier(name) && Name.identifier(name).render() == name && name[0].isUpperCase())) return
+        if ((parameters.originalFile as KtFile).declarations.any { it is KtClassOrObject && it.name == name }) return
+
+        val lookupElement = LookupElementBuilder.create(name)
+        lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
+        collector.addElement(lookupElement)
     }
 
     override fun createSorter(): CompletionSorter {
