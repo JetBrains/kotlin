@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.load.java.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 
 public interface JavaCallableMemberDescriptor extends CallableMemberDescriptor {
     @NotNull
     JavaCallableMemberDescriptor enhance(
-            @Nullable KtType enhancedReceiverType,
-            @NotNull List<KtType> enhancedValueParametersTypes,
-            @NotNull KtType enhancedReturnType
+            @Nullable KotlinType enhancedReceiverType,
+            @NotNull List<KotlinType> enhancedValueParametersTypes,
+            @NotNull KotlinType enhancedReturnType
     );
 }

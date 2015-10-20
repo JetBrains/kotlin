@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
@@ -267,8 +267,8 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             return new JsBinaryOperation(operator, left, right);
         }
 
-        KtType leftType = context().bindingContext().getType(leftKtExpression);
-        KtType rightType = context().bindingContext().getType(rightKtExpression);
+        KotlinType leftType = context().bindingContext().getType(leftKtExpression);
+        KotlinType rightType = context().bindingContext().getType(rightKtExpression);
 
         if (leftType != null && TypeUtils.isNullableType(leftType) || rightType != null && TypeUtils.isNullableType(rightType)) {
             return mayBeWrapWithNegation(TopLevelFIF.KOTLIN_EQUALS.apply(left, Collections.singletonList(right), context()));

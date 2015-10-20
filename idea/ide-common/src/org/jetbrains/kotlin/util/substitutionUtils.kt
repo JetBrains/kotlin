@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import java.util.LinkedHashMap
 
-public fun getTypeSubstitution(baseType: KtType, derivedType: KtType): LinkedHashMap<TypeConstructor, TypeProjection>? {
+public fun getTypeSubstitution(baseType: KotlinType, derivedType: KotlinType): LinkedHashMap<TypeConstructor, TypeProjection>? {
     val substitutedType = TypeCheckingProcedure.findCorrespondingSupertype(derivedType, baseType) ?: return null
 
     val substitution = LinkedHashMap<TypeConstructor, TypeProjection>(substitutedType.getArguments().size())
@@ -55,6 +55,6 @@ public fun getCallableSubstitutor(
     return getCallableSubstitution(baseCallable, derivedCallable)?.let { TypeSubstitutor.create(it) }
 }
 
-public fun getTypeSubstitutor(baseType: KtType, derivedType: KtType): TypeSubstitutor? {
+public fun getTypeSubstitutor(baseType: KotlinType, derivedType: KotlinType): TypeSubstitutor? {
     return getTypeSubstitution(baseType, derivedType)?.let { TypeSubstitutor.create(it) }
 }

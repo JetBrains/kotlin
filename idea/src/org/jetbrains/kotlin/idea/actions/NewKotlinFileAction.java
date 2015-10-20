@@ -32,7 +32,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.KtIcons;
+import org.jetbrains.kotlin.idea.KotlinIcons;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
 
 import java.util.Map;
@@ -57,10 +57,10 @@ public class NewKotlinFileAction extends CreateFileFromTemplateAction implements
         builder
                 .setTitle("New Kotlin File/Class")
                 .addKind("File", KotlinFileType.INSTANCE.getIcon(), "Kotlin File")
-                .addKind("Class", KtIcons.CLASS, "Kotlin Class")
-                .addKind("Interface", KtIcons.TRAIT, "Kotlin Interface")
-                .addKind("Enum class", KtIcons.ENUM, "Kotlin Enum")
-                .addKind("Object", KtIcons.OBJECT, "Kotlin Object");
+                .addKind("Class", KotlinIcons.CLASS, "Kotlin Class")
+                .addKind("Interface", KotlinIcons.TRAIT, "Kotlin Interface")
+                .addKind("Enum class", KotlinIcons.ENUM, "Kotlin Enum")
+                .addKind("Object", KotlinIcons.OBJECT, "Kotlin Object");
     }
 
     @Override

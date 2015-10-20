@@ -45,7 +45,7 @@ import java.util.*
 
 public class ConstraintSystemImpl : ConstraintSystem {
 
-    data class Constraint(val kind: ConstraintKind, val subtype: KtType, val superType: KtType, val position: ConstraintPosition)
+    data class Constraint(val kind: ConstraintKind, val subtype: KotlinType, val superType: KotlinType, val position: ConstraintPosition)
 
     public enum class ConstraintKind {
         SUB_TYPE,
@@ -60,7 +60,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         get() = if (externalTypeParameters.isEmpty()) allTypeParameterBounds
             else allTypeParameterBounds.filter { !externalTypeParameters.contains(it.key) }
 
-    private val cachedTypeForVariable = HashMap<TypeParameterDescriptor, KtType>()
+    private val cachedTypeForVariable = HashMap<TypeParameterDescriptor, KotlinType>()
 
     private val usedInBounds = HashMap<TypeParameterDescriptor, MutableList<TypeBounds.Bound>>()
 
@@ -165,16 +165,16 @@ public class ConstraintSystemImpl : ConstraintSystem {
         }
     }
 
-    val TypeParameterDescriptor.correspondingType: KtType
+    val TypeParameterDescriptor.correspondingType: KotlinType
         get() = cachedTypeForVariable.getOrPut(this) {
-            KtTypeImpl.create(Annotations.EMPTY, this.getTypeConstructor(), false, listOf(), KtScope.Empty)
+            KotlinTypeImpl.create(Annotations.EMPTY, this.getTypeConstructor(), false, listOf(), KtScope.Empty)
         }
 
-    fun KtType.isProper() = !TypeUtils.containsSpecialType(this) {
+    fun KotlinType.isProper() = !TypeUtils.containsSpecialType(this) {
         type -> type.getConstructor().getDeclarationDescriptor() in getAllTypeVariables()
     }
 
-    fun KtType.getNestedTypeVariables(original: Boolean = true): List<TypeParameterDescriptor> {
+    fun KotlinType.getNestedTypeVariables(original: Boolean = true): List<TypeParameterDescriptor> {
         return getNestedArguments().map { typeProjection ->
             typeProjection.getType().getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         }.filterNotNull().filter { if (original) it in originalToVariables.keySet() else it in getAllTypeVariables() }
@@ -206,22 +206,22 @@ public class ConstraintSystemImpl : ConstraintSystem {
         return newSystem
     }
 
-    override fun addSupertypeConstraint(constrainingType: KtType?, subjectType: KtType, constraintPosition: ConstraintPosition) {
+    override fun addSupertypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition) {
         if (constrainingType != null && TypeUtils.noExpectedType(constrainingType)) return
 
         val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
         addConstraint(SUB_TYPE, newSubjectType, constrainingType, ConstraintContext(constraintPosition, initial = true))
     }
 
-    override fun addSubtypeConstraint(constrainingType: KtType?, subjectType: KtType, constraintPosition: ConstraintPosition) {
+    override fun addSubtypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition) {
         val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
         addConstraint(SUB_TYPE, constrainingType, newSubjectType, ConstraintContext(constraintPosition, initial = true))
     }
 
     fun addConstraint(
             constraintKind: ConstraintKind,
-            subType: KtType?,
-            superType: KtType?,
+            subType: KotlinType?,
+            superType: KotlinType?,
             constraintContext: ConstraintContext
     ) {
         val constraintPosition = constraintContext.position
@@ -231,7 +231,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         val typeCheckingProcedure = TypeCheckingProcedure(object : TypeCheckingProcedureCallbacks {
             private var depth = 0
 
-            override fun assertEqualTypes(a: KtType, b: KtType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
+            override fun assertEqualTypes(a: KotlinType, b: KotlinType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
                 depth++
                 doAddConstraint(EQUAL, a, b, newConstraintContext, typeCheckingProcedure)
                 depth--
@@ -243,14 +243,14 @@ public class ConstraintSystemImpl : ConstraintSystem {
                 return a == b
             }
 
-            override fun assertSubtype(subtype: KtType, supertype: KtType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
+            override fun assertSubtype(subtype: KotlinType, supertype: KotlinType, typeCheckingProcedure: TypeCheckingProcedure): Boolean {
                 depth++
                 doAddConstraint(SUB_TYPE, subtype, supertype, newConstraintContext, typeCheckingProcedure)
                 depth--
                 return true
             }
 
-            override fun capture(typeVariable: KtType, typeProjection: TypeProjection): Boolean {
+            override fun capture(typeVariable: KotlinType, typeProjection: TypeProjection): Boolean {
                 if (isMyTypeVariable(typeProjection.getType())) return false
                 val myTypeVariable = getMyTypeVariable(typeVariable)
 
@@ -264,7 +264,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
                 return false
             }
 
-            override fun noCorrespondingSupertype(subtype: KtType, supertype: KtType): Boolean {
+            override fun noCorrespondingSupertype(subtype: KotlinType, supertype: KotlinType): Boolean {
                 errors.add(newTypeInferenceOrParameterConstraintError(constraintPosition))
                 return true
             }
@@ -272,7 +272,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         doAddConstraint(constraintKind, subType, superType, constraintContext, typeCheckingProcedure)
     }
 
-    private fun isErrorOrSpecialType(type: KtType?, constraintPosition: ConstraintPosition): Boolean {
+    private fun isErrorOrSpecialType(type: KotlinType?, constraintPosition: ConstraintPosition): Boolean {
         if (TypeUtils.isDontCarePlaceholder(type) || ErrorUtils.isUninferredParameter(type)) {
             return true
         }
@@ -286,8 +286,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     private fun doAddConstraint(
             constraintKind: ConstraintKind,
-            subType: KtType?,
-            superType: KtType?,
+            subType: KotlinType?,
+            superType: KotlinType?,
             constraintContext: ConstraintContext,
             typeCheckingProcedure: TypeCheckingProcedure
     ) {
@@ -317,7 +317,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             subType
         }
 
-        fun simplifyConstraint(subType: KtType, superType: KtType) {
+        fun simplifyConstraint(subType: KotlinType, superType: KotlinType) {
             if (isMyTypeVariable(subType)) {
                 generateTypeParameterBound(subType, superType, constraintKind.toBound(), constraintContext)
                 return
@@ -348,7 +348,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     fun addBound(
             typeVariable: TypeParameterDescriptor,
-            constrainingType: KtType,
+            constrainingType: KotlinType,
             kind: TypeBounds.BoundKind,
             constraintContext: ConstraintContext
     ) {
@@ -370,8 +370,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
     }
 
     private fun generateTypeParameterBound(
-            parameterType: KtType,
-            constrainingType: KtType,
+            parameterType: KotlinType,
+            constrainingType: KotlinType,
             boundKind: TypeBounds.BoundKind,
             constraintContext: ConstraintContext
     ) {
@@ -414,7 +414,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
     }
 
     private fun generateTypeParameterCaptureConstraint(
-            parameterType: KtType,
+            parameterType: KotlinType,
             constrainingTypeProjection: TypeProjection,
             constraintContext: ConstraintContext
     ) {
@@ -452,9 +452,9 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     fun isMyTypeVariable(typeVariable: TypeParameterDescriptor) = allTypeParameterBounds.contains(typeVariable)
 
-    fun isMyTypeVariable(type: KtType): Boolean = getMyTypeVariable(type) != null
+    fun isMyTypeVariable(type: KotlinType): Boolean = getMyTypeVariable(type) != null
 
-    fun getMyTypeVariable(type: KtType): TypeParameterDescriptor? {
+    fun getMyTypeVariable(type: KotlinType): TypeParameterDescriptor? {
         val typeParameterDescriptor = type.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         return if (typeParameterDescriptor != null && isMyTypeVariable(typeParameterDescriptor)) typeParameterDescriptor else null
     }
@@ -471,12 +471,12 @@ public class ConstraintSystemImpl : ConstraintSystem {
     private fun getSubstitutor(substituteOriginal: Boolean, getDefaultValue: (TypeParameterDescriptor) -> TypeProjection) =
             replaceUninferredBy(getDefaultValue, substituteOriginal).setApproximateCapturedTypes()
 
-    private fun storeInitialConstraint(constraintKind: ConstraintKind, subType: KtType, superType: KtType, position: ConstraintPosition) {
+    private fun storeInitialConstraint(constraintKind: ConstraintKind, subType: KotlinType, superType: KotlinType, position: ConstraintPosition) {
         initialConstraints.add(Constraint(constraintKind, subType, superType, position))
     }
 
     private fun satisfyInitialConstraints(): Boolean {
-        fun KtType.substitute(): KtType? {
+        fun KotlinType.substitute(): KotlinType? {
             val substitutor = getSubstitutor(substituteOriginal = false) { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
             return substitutor.substitute(this, Variance.INVARIANT) ?: return null
         }
@@ -518,9 +518,9 @@ public class ConstraintSystemImpl : ConstraintSystem {
 }
 
 fun createTypeForFunctionPlaceholder(
-        functionPlaceholder: KtType,
-        expectedType: KtType
-): KtType {
+        functionPlaceholder: KotlinType,
+        expectedType: KotlinType
+): KotlinType {
     if (!functionPlaceholder.isFunctionPlaceholder) return functionPlaceholder
 
     val functionPlaceholderTypeConstructor = functionPlaceholder.getConstructor() as FunctionPlaceholderTypeConstructor
@@ -531,7 +531,7 @@ fun createTypeForFunctionPlaceholder(
         // the first parameter is receiver (if present), the last one is return type,
         // the remaining are function arguments
         val functionArgumentsSize = if (isExtension) typeParamSize - 2 else typeParamSize - 1
-        val result = arrayListOf<KtType>()
+        val result = arrayListOf<KotlinType>()
         (1..functionArgumentsSize).forEach { result.add(DONT_CARE) }
         result
     }
@@ -575,7 +575,7 @@ public fun createTypeSubstitutor(conversion: (TypeParameterDescriptor) -> TypePa
             if (descriptor !is TypeParameterDescriptor) return null
             val typeParameterDescriptor = conversion(descriptor) ?: return null
 
-            val type = KtTypeImpl.create(Annotations.EMPTY, typeParameterDescriptor.getTypeConstructor(), false, listOf(), KtScope.Empty)
+            val type = KotlinTypeImpl.create(Annotations.EMPTY, typeParameterDescriptor.getTypeConstructor(), false, listOf(), KtScope.Empty)
             return TypeProjectionImpl(type)
         }
     })

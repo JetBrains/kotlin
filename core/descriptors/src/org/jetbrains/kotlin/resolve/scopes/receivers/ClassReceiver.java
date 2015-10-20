@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class ClassReceiver implements ThisReceiver {
 
@@ -35,7 +35,7 @@ public class ClassReceiver implements ThisReceiver {
 
     @NotNull
     @Override
-    public KtType getType() {
+    public KotlinType getType() {
         return classDescriptor.getDefaultType();
     }
 

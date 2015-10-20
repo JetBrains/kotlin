@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -413,7 +413,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         if (initializerValue == null) return state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES;
 
         //TODO: OPTIMIZATION: don't initialize static final fields
-        KtType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
+        KotlinType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
         Type type = typeMapper.mapType(jetType);
         return !skipDefaultValue(propertyDescriptor, initializerValue.getValue(), type);
     }
@@ -432,10 +432,10 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     }
 
     @NotNull
-    private KtType getPropertyOrDelegateType(@NotNull KtProperty property, @NotNull PropertyDescriptor descriptor) {
+    private KotlinType getPropertyOrDelegateType(@NotNull KtProperty property, @NotNull PropertyDescriptor descriptor) {
         KtExpression delegateExpression = property.getDelegateExpression();
         if (delegateExpression != null) {
-            KtType delegateType = bindingContext.getType(delegateExpression);
+            KotlinType delegateType = bindingContext.getType(delegateExpression);
             assert delegateType != null : "Type of delegate expression should be recorded";
             return delegateType;
         }

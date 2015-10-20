@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.*;
 
@@ -476,7 +476,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
                 @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
         ) {
-            KtType returnType = resolvedCall.getResultingDescriptor().getReturnType();
+            KotlinType returnType = resolvedCall.getResultingDescriptor().getReturnType();
             CallInstruction instruction = new CallInstruction(
                     valueElement,
                     getCurrentScope(),

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.lang.annotation.Annotation;
@@ -184,7 +184,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         return mutableToReadOnly.containsKey(mutable);
     }
 
-    public boolean isMutable(@NotNull KtType type) {
+    public boolean isMutable(@NotNull KotlinType type) {
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
         return classDescriptor != null && isMutable(classDescriptor);
     }
@@ -193,7 +193,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         return readOnlyToMutable.containsKey(readOnly);
     }
 
-    public boolean isReadOnly(@NotNull KtType type) {
+    public boolean isReadOnly(@NotNull KotlinType type) {
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
         return classDescriptor != null && isReadOnly(classDescriptor);
     }

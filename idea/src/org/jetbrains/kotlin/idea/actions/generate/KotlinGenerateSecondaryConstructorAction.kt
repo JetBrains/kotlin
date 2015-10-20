@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -140,7 +140,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
             propertiesToInitialize: List<PropertyDescriptor>,
             superConstructor: ConstructorDescriptor?
     ): KtSecondaryConstructor? {
-        fun equalTypes(types1: Collection<KtType>, types2: Collection<KtType>): Boolean {
+        fun equalTypes(types1: Collection<KotlinType>, types2: Collection<KotlinType>): Boolean {
             return types1.size == types2.size && (types1.zip(types2)).all { KotlinTypeChecker.DEFAULT.equalTypes(it.first, it.second) }
         }
 

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 import java.util.ArrayList
 import java.util.Collections
@@ -336,7 +336,7 @@ public class CallArgumentTranslator private constructor(
 
 }
 
-private fun Map<TypeParameterDescriptor, KtType>.addReifiedTypeArgsTo(
+private fun Map<TypeParameterDescriptor, KotlinType>.addReifiedTypeArgsTo(
         info: CallArgumentTranslator.ArgumentsInfo,
         context: TranslationContext
 ): CallArgumentTranslator.ArgumentsInfo {

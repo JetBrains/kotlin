@@ -114,7 +114,7 @@ public class CandidateResolver(
         if (!jetTypeArguments.isEmpty()) {
             // Explicit type arguments passed
 
-            val typeArguments = ArrayList<KtType>()
+            val typeArguments = ArrayList<KotlinType>()
             for (projection in jetTypeArguments) {
                 val type = projection.typeReference?.let { trace.bindingContext.get(BindingContext.TYPE, it) }
                         ?: ErrorUtils.createErrorType("Star projection in a call")
@@ -312,7 +312,7 @@ public class CandidateResolver(
             candidateCall: MutableResolvedCall<D>,
             resolveFunctionArgumentBodies: ResolveArgumentsMode): ValueArgumentsCheckingResult {
         var resultStatus = SUCCESS
-        val argumentTypes = Lists.newArrayList<KtType>()
+        val argumentTypes = Lists.newArrayList<KotlinType>()
         val infoForArguments = candidateCall.getDataFlowInfoForArguments()
         for (entry in candidateCall.getValueArguments().entrySet()) {
             val parameterDescriptor = entry.getKey()
@@ -331,7 +331,7 @@ public class CandidateResolver(
                 infoForArguments.updateInfo(argument, typeInfoForCall.dataFlowInfo)
 
                 var matchStatus = ArgumentMatchStatus.SUCCESS
-                var resultingType: KtType? = type
+                var resultingType: KotlinType? = type
                 if (type == null || (type.isError() && !type.isFunctionPlaceholder)) {
                     matchStatus = ArgumentMatchStatus.ARGUMENT_HAS_NO_TYPE
                 }
@@ -359,9 +359,9 @@ public class CandidateResolver(
 
     private fun smartCastValueArgumentTypeIfPossible(
             expression: KtExpression,
-            expectedType: KtType,
-            actualType: KtType,
-            context: ResolutionContext<*>): KtType? {
+            expectedType: KotlinType,
+            actualType: KotlinType,
+            context: ResolutionContext<*>): KotlinType? {
         val receiverToCast = ExpressionReceiver(KtPsiUtil.safeDeparenthesize(expression), actualType)
         val variants = smartCastManager.getSmartCastVariantsExcludingReceiver(context, receiverToCast)
         for (possibleType in variants) {
@@ -482,11 +482,11 @@ public class CandidateResolver(
         return SUCCESS
     }
 
-    public inner class ValueArgumentsCheckingResult(public val status: ResolutionStatus, public val argumentTypes: List<KtType>)
+    public inner class ValueArgumentsCheckingResult(public val status: ResolutionStatus, public val argumentTypes: List<KotlinType>)
 
     private fun checkGenericBoundsInAFunctionCall(
             jetTypeArguments: List<KtTypeProjection>,
-            typeArguments: List<KtType>,
+            typeArguments: List<KotlinType>,
             functionDescriptor: CallableDescriptor,
             substitutor: TypeSubstitutor,
             trace: BindingTrace) {

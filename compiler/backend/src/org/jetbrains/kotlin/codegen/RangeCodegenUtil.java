@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 
@@ -53,11 +53,11 @@ public class RangeCodegenUtil {
 
     private RangeCodegenUtil() {}
 
-    public static boolean isRange(KtType rangeType) {
+    public static boolean isRange(KotlinType rangeType) {
         return !rangeType.isMarkedNullable() && getPrimitiveRangeElementType(rangeType) != null;
     }
 
-    public static boolean isProgression(KtType rangeType) {
+    public static boolean isProgression(KotlinType rangeType) {
         return !rangeType.isMarkedNullable() && getPrimitiveProgressionElementType(rangeType) != null;
     }
 
@@ -92,18 +92,18 @@ public class RangeCodegenUtil {
     }
 
     @Nullable
-    private static PrimitiveType getPrimitiveRangeElementType(KtType rangeType) {
+    private static PrimitiveType getPrimitiveRangeElementType(KotlinType rangeType) {
         return getPrimitiveRangeOrProgressionElementType(rangeType, RANGE_TO_ELEMENT_TYPE);
     }
 
     @Nullable
-    private static PrimitiveType getPrimitiveProgressionElementType(KtType rangeType) {
+    private static PrimitiveType getPrimitiveProgressionElementType(KotlinType rangeType) {
         return getPrimitiveRangeOrProgressionElementType(rangeType, PROGRESSION_TO_ELEMENT_TYPE);
     }
 
     @Nullable
     private static PrimitiveType getPrimitiveRangeOrProgressionElementType(
-            @NotNull KtType rangeOrProgression,
+            @NotNull KotlinType rangeOrProgression,
             @NotNull ImmutableMap<FqName, PrimitiveType> map
     ) {
         ClassifierDescriptor declarationDescriptor = rangeOrProgression.getConstructor().getDeclarationDescriptor();

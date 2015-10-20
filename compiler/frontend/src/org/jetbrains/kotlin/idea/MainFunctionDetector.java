@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.Variance;
 
@@ -89,13 +89,13 @@ public class MainFunctionDetector {
         if (parameters.size() != 1) return false;
 
         ValueParameterDescriptor parameter = parameters.get(0);
-        KtType parameterType = parameter.getType();
+        KotlinType parameterType = parameter.getType();
         if (!KotlinBuiltIns.isArray(parameterType)) return false;
 
         List<TypeProjection> typeArguments = parameterType.getArguments();
         if (typeArguments.size() != 1) return false;
 
-        KtType typeArgument = typeArguments.get(0).getType();
+        KotlinType typeArgument = typeArguments.get(0).getType();
         if (!KotlinBuiltIns.isString(typeArgument)) {
             return false;
         }

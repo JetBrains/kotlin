@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 class ChangeFunctionLiteralSignatureFix private constructor(
         functionLiteral: KtFunctionLiteral,
         functionDescriptor: FunctionDescriptor,
-        private val parameterTypes: List<KtType>
+        private val parameterTypes: List<KotlinType>
 ) : ChangeFunctionSignatureFix(functionLiteral, functionDescriptor) {
 
     override fun getText() = "Change the signature of function literal"
@@ -62,7 +62,7 @@ class ChangeFunctionLiteralSignatureFix private constructor(
     }
 
     companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtFunctionLiteral, Data>() {
-        data class Data(val functionLiteral: KtFunctionLiteral, val descriptor: FunctionDescriptor, val parameterTypes: List<KtType>)
+        data class Data(val functionLiteral: KtFunctionLiteral, val descriptor: FunctionDescriptor, val parameterTypes: List<KotlinType>)
 
         override fun getElementOfInterest(diagnostic: Diagnostic): KtFunctionLiteral? {
             val diagnosticWithParameters = Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH.cast(diagnostic)

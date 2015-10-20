@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.containsError
@@ -97,15 +97,15 @@ class ExpectedInfo(
     constructor(fuzzyType: FuzzyType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT, additionalData: ExpectedInfo.AdditionalData? = null)
         : this(ByExpectedTypeFilter(fuzzyType), expectedName, tail, itemOptions, additionalData)
 
-    constructor(type: KtType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT, additionalData: ExpectedInfo.AdditionalData? = null)
+    constructor(type: KotlinType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT, additionalData: ExpectedInfo.AdditionalData? = null)
         : this(FuzzyType(type, emptyList()), expectedName, tail, itemOptions, additionalData)
 
     fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? = filter.matchingSubstitutor(descriptorType)
 
-    fun matchingSubstitutor(descriptorType: KtType): TypeSubstitutor? = matchingSubstitutor(FuzzyType(descriptorType, emptyList()))
+    fun matchingSubstitutor(descriptorType: KotlinType): TypeSubstitutor? = matchingSubstitutor(FuzzyType(descriptorType, emptyList()))
 
     companion object {
-        fun createForArgument(type: KtType, expectedName: String?, tail: Tail?, argumentData: ArgumentPositionData, itemOptions: ItemOptions = ItemOptions.DEFAULT): ExpectedInfo {
+        fun createForArgument(type: KotlinType, expectedName: String?, tail: Tail?, argumentData: ArgumentPositionData, itemOptions: ItemOptions = ItemOptions.DEFAULT): ExpectedInfo {
             return ExpectedInfo(FuzzyType(type, argumentData.function.typeParameters), expectedName, tail, itemOptions, argumentData)
         }
 
@@ -113,7 +113,7 @@ class ExpectedInfo(
             return ExpectedInfo(ByTypeFilter.None, null, null/*TODO?*/, ItemOptions.DEFAULT, argumentData)
         }
 
-        fun createForReturnValue(type: KtType?, callable: CallableDescriptor): ExpectedInfo {
+        fun createForReturnValue(type: KotlinType?, callable: CallableDescriptor): ExpectedInfo {
             val filter = if (type != null) ByExpectedTypeFilter(FuzzyType(type, emptyList())) else ByTypeFilter.All
             return ExpectedInfo(filter, callable.name.asString(), null, additionalData = ReturnValueAdditionalData(callable))
         }
@@ -223,7 +223,7 @@ class ExpectedInfos(
         return results
     }
 
-    private fun calculateForArgument(call: Call, callExpectedType: KtType, argument: ValueArgument): Collection<ExpectedInfo> {
+    private fun calculateForArgument(call: Call, callExpectedType: KotlinType, argument: ValueArgument): Collection<ExpectedInfo> {
         val argumentIndex = call.getValueArguments().indexOf(argument)
         assert(argumentIndex >= 0) {
             "Could not find argument '$argument(${argument.asElement().text})' among arguments of call: $call"

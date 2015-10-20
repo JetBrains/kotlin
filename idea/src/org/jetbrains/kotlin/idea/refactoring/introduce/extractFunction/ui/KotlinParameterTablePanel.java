@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.Parameter;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -51,7 +51,7 @@ public class KotlinParameterTablePanel extends JPanel {
         private final Parameter originalParameter;
         private final boolean receiver;
         private String name;
-        private KtType type;
+        private KotlinType type;
         private boolean enabled = true;
 
         public ParameterInfo(Parameter originalParameter, boolean receiver) {
@@ -85,11 +85,11 @@ public class KotlinParameterTablePanel extends JPanel {
             this.name = name;
         }
 
-        public KtType getType() {
+        public KotlinType getType() {
             return type;
         }
 
-        public void setType(KtType type) {
+        public void setType(KotlinType type) {
             this.type = type;
         }
 
@@ -156,7 +156,7 @@ public class KotlinParameterTablePanel extends JPanel {
             public Component getTableCellRendererComponent(
                     @NotNull JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column
             ) {
-                myLabel.setText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((KtType) value));
+                myLabel.setText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((KotlinType) value));
                 myLabel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
                 myLabel.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
                 if (isSelected) {
@@ -189,7 +189,7 @@ public class KotlinParameterTablePanel extends JPanel {
                 myEditorComponent.setToString(new Function<Object, String>() {
                     @Override
                     public String fun(Object o) {
-                        return IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((KtType) o);
+                        return IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((KotlinType) o);
                     }
                 });
 
@@ -352,7 +352,7 @@ public class KotlinParameterTablePanel extends JPanel {
                     break;
                 }
                 case PARAMETER_TYPE_COLUMN: {
-                    info.setType((KtType) aValue);
+                    info.setType((KotlinType) aValue);
                     updateSignature();
                     break;
                 }

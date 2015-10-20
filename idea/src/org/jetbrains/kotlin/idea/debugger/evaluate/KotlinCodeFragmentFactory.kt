@@ -61,7 +61,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
@@ -106,9 +106,9 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             else {
                 val semaphore = Semaphore()
                 semaphore.down()
-                val nameRef = AtomicReference<KtType>()
+                val nameRef = AtomicReference<KotlinType>()
                 val worker = object : KotlinRuntimeTypeEvaluator(null, expression, debuggerContext, ProgressManager.getInstance().progressIndicator) {
-                    override fun typeCalculationFinished(type: KtType?) {
+                    override fun typeCalculationFinished(type: KotlinType?) {
                         nameRef.set(type)
                         semaphore.up()
                     }

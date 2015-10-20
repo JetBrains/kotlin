@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
@@ -114,7 +114,7 @@ public class KotlinIndicesHelper(
         return findSuitableExtensions(declarations, receiverTypes, callTypeAndReceiver.callType)
     }
 
-    private fun MutableCollection<String>.addTypeNames(type: KtType) {
+    private fun MutableCollection<String>.addTypeNames(type: KotlinType) {
         val constructor = type.getConstructor()
         addIfNotNull(constructor.getDeclarationDescriptor()?.getName()?.asString())
         constructor.getSupertypes().forEach { addTypeNames(it) }
@@ -125,7 +125,7 @@ public class KotlinIndicesHelper(
      */
     private fun findSuitableExtensions(
             declarations: Sequence<KtCallableDeclaration>,
-            receiverTypes: Collection<KtType>,
+            receiverTypes: Collection<KotlinType>,
             callType: CallType<*>
     ): Collection<CallableDescriptor> {
         val result = LinkedHashSet<CallableDescriptor>()

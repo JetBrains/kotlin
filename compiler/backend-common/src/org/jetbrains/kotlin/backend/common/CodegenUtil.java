@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
@@ -141,7 +141,7 @@ public class CodegenUtil {
 
     @NotNull
     public static ClassDescriptor getSuperClassByDelegationSpecifier(@NotNull KtDelegationSpecifier specifier, @NotNull BindingContext bindingContext) {
-        KtType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
+        KotlinType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
         assert superType != null : "superType should not be null: " + specifier.getText();
 
         ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
@@ -164,13 +164,13 @@ public class CodegenUtil {
         return true;
     }
 
-    private static boolean rawTypeMatches(KtType type, ClassifierDescriptor classifier) {
+    private static boolean rawTypeMatches(KotlinType type, ClassifierDescriptor classifier) {
         return type.getConstructor().equals(classifier.getTypeConstructor());
     }
 
     public static boolean isEnumValueOfMethod(@NotNull FunctionDescriptor functionDescriptor) {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
-        KtType nullableString = TypeUtils.makeNullable(DescriptorUtilsKt.getBuiltIns(functionDescriptor).getStringType());
+        KotlinType nullableString = TypeUtils.makeNullable(DescriptorUtilsKt.getBuiltIns(functionDescriptor).getStringType());
         return DescriptorUtils.ENUM_VALUE_OF.equals(functionDescriptor.getName())
                && methodTypeParameters.size() == 1
                && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);

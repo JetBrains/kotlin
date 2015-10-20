@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -64,7 +64,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
 
     public static ValueParameterDescriptorImpl createSetterParameter(
             @NotNull PropertySetterDescriptor setterDescriptor,
-            @NotNull KtType type
+            @NotNull KotlinType type
     ) {
         return new ValueParameterDescriptorImpl(
                 setterDescriptor, null, 0, Annotations.Companion.getEMPTY(), Name.special("<set-?>"), type,
@@ -93,7 +93,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
 
     @NotNull
     @Override
-    public KtType getReturnType() {
+    public KotlinType getReturnType() {
         return getBuiltIns(this).getUnitType();
     }
 

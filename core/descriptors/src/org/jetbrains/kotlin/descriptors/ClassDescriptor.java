@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeSubstitution;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
@@ -57,7 +57,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
      */
     @NotNull
     @Override
-    KtType getDefaultType();
+    KotlinType getDefaultType();
 
     @NotNull
     @Override

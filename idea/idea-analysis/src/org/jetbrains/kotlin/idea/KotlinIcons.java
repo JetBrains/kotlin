@@ -21,7 +21,7 @@ import com.intellij.util.PlatformIcons;
 
 import javax.swing.*;
 
-public interface KtIcons {
+public interface KotlinIcons {
     Icon SMALL_LOGO = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin.png");
     Icon KOTLIN_LOGO_24 = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin24.png");
 

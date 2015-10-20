@@ -25,7 +25,7 @@ import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.KtIcons
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.Name
@@ -109,7 +109,7 @@ public class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAct
                 return PopupStep.FINAL_CHOICE
             }
 
-            override fun getIconFor(name: Name) = KtIcons.PARAMETER
+            override fun getIconFor(name: Name) = KotlinIcons.PARAMETER
 
             override fun getTextFor(name: Name) = createArgumentWithName(name).text
         }

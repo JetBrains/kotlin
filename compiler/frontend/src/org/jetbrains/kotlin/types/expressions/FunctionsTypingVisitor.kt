@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.CommonSupertypes
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
@@ -114,7 +114,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         }
     }
 
-    private fun createFunctionType(functionDescriptor: SimpleFunctionDescriptor): KtType? {
+    private fun createFunctionType(functionDescriptor: SimpleFunctionDescriptor): KotlinType? {
         val receiverType = functionDescriptor.getExtensionReceiverParameter()?.getType()
 
         val returnType = functionDescriptor.getReturnType()
@@ -177,7 +177,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             context: ExpressionTypingContext,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             functionTypeExpected: Boolean
-    ): KtType {
+    ): KotlinType {
         val expectedReturnType = if (functionTypeExpected) KotlinBuiltIns.getReturnTypeFromFunctionType(context.expectedType) else null
         val returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType);
 
@@ -193,8 +193,8 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             expression: KtFunctionLiteralExpression,
             context: ExpressionTypingContext,
             functionDescriptor: SimpleFunctionDescriptorImpl,
-            expectedReturnType: KtType?
-    ): KtType? {
+            expectedReturnType: KotlinType?
+    ): KotlinType? {
         val functionLiteral = expression.getFunctionLiteral()
 
         val expectedType = expectedReturnType ?: NO_EXPECTED_TYPE
@@ -212,9 +212,9 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
     private fun computeReturnTypeBasedOnReturnExpressions(
             functionLiteral: KtFunctionLiteral,
             context: ExpressionTypingContext,
-            typeOfBodyExpression: KtType?
-    ): KtType? {
-        val returnedExpressionTypes = Lists.newArrayList<KtType>()
+            typeOfBodyExpression: KotlinType?
+    ): KotlinType? {
+        val returnedExpressionTypes = Lists.newArrayList<KotlinType>()
 
         var hasEmptyReturn = false
         val returnExpressions = collectReturns(functionLiteral, context.trace)

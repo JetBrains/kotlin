@@ -62,12 +62,12 @@ public class TypeResolver(
         }
     }
 
-    public fun resolveType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KtType {
+    public fun resolveType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KotlinType {
         // bare types are not allowed
         return resolveType(TypeResolutionContext(scope, trace, checkBounds, false), typeReference)
     }
 
-    private fun resolveType(c: TypeResolutionContext, typeReference: KtTypeReference): KtType {
+    private fun resolveType(c: TypeResolutionContext, typeReference: KtTypeReference): KotlinType {
         assert(!c.allowBareTypes) { "Use resolvePossiblyBareType() when bare types are allowed" }
         return resolvePossiblyBareType(c, typeReference).getActualType()
     }
@@ -136,7 +136,7 @@ public class TypeResolver(
      *
      *  todo: find another way after release
      */
-    private fun forceResolveTypeContents(type: KtType) {
+    private fun forceResolveTypeContents(type: KotlinType) {
         type.annotations // force read type annotations
         if (type.isFlexible()) {
             forceResolveTypeContents(type.flexibility().lowerBound)
@@ -180,7 +180,7 @@ public class TypeResolver(
                         result = if (scopeForTypeParameter is ErrorUtils.ErrorScope)
                                     type(ErrorUtils.createErrorType("?"))
                                  else
-                                    type(KtTypeImpl.create(
+                                    type(KotlinTypeImpl.create(
                                             annotations,
                                             classifierDescriptor.getTypeConstructor(),
                                             TypeUtils.hasNullableLowerBound(classifierDescriptor),
@@ -234,7 +234,7 @@ public class TypeResolver(
                                     )
                                     return
                                 }
-                                val resultingType = KtTypeImpl.create(annotations, classifierDescriptor, false, arguments)
+                                val resultingType = KotlinTypeImpl.create(annotations, classifierDescriptor, false, arguments)
                                 result = type(resultingType)
                                 if (c.checkBounds) {
                                     val substitutor = TypeSubstitutor.create(resultingType)

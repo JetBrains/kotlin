@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
@@ -71,7 +71,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
     }
 
     private fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: TargetList, trace: BindingTrace) {
-        val entryTypesWithAnnotations = hashMapOf<KtType, MutableList<AnnotationUseSiteTarget?>>()
+        val entryTypesWithAnnotations = hashMapOf<KotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
         for (entry in entries) {
             checkAnnotationEntry(entry, actualTargets, trace)

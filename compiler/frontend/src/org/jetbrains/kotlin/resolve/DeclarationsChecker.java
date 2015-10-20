@@ -168,7 +168,7 @@ public class DeclarationsChecker {
 
     private void checkBoundsForTypeInClassHeader(@Nullable KtTypeReference typeReference) {
         if (typeReference != null) {
-            KtType type = trace.getBindingContext().get(TYPE, typeReference);
+            KotlinType type = trace.getBindingContext().get(TYPE, typeReference);
             if (type != null) {
                 DescriptorResolver.checkBounds(typeReference, type, trace);
             }
@@ -177,7 +177,7 @@ public class DeclarationsChecker {
 
     private void checkFinalUpperBounds(@Nullable KtTypeReference typeReference) {
         if (typeReference != null) {
-            KtType type = trace.getBindingContext().get(TYPE, typeReference);
+            KotlinType type = trace.getBindingContext().get(TYPE, typeReference);
             if (type != null) {
                 DescriptorResolver.checkUpperBoundType(typeReference, type, trace);
             }
@@ -213,7 +213,7 @@ public class DeclarationsChecker {
                 TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
 
                 // Immediate arguments of supertypes cannot be projected
-                Set<KtType> conflictingTypes = Sets.newLinkedHashSet();
+                Set<KotlinType> conflictingTypes = Sets.newLinkedHashSet();
                 for (TypeProjection projection : projections) {
                     conflictingTypes.add(projection.getType());
                 }
@@ -254,7 +254,7 @@ public class DeclarationsChecker {
         int i = 0;
         for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
             if (i >= typeParameterList.size()) return;
-            for (KtType upperBound : typeParameterDescriptor.getUpperBounds()) {
+            for (KotlinType upperBound : typeParameterDescriptor.getUpperBounds()) {
                 EffectiveVisibility upperBoundVisibility = EffectiveVisibility.Companion.forType(upperBound);
                 if (!upperBoundVisibility.sameOrMorePermissive(classVisibility)) {
                     KtTypeParameter typeParameter = typeParameterList.get(i);
@@ -271,7 +271,7 @@ public class DeclarationsChecker {
         boolean isInterface = classDescriptor.getKind() == ClassKind.INTERFACE;
         List<KtDelegationSpecifier> delegationList = klass.getDelegationSpecifiers();
         int i = -1;
-        for (KtType superType : classDescriptor.getTypeConstructor().getSupertypes()) {
+        for (KotlinType superType : classDescriptor.getTypeConstructor().getSupertypes()) {
             i++;
             if (i >= delegationList.size()) return;
             ClassDescriptor superDescriptor = TypeUtils.getClassDescriptor(superType);
@@ -294,10 +294,10 @@ public class DeclarationsChecker {
         }
     }
 
-    private static void removeDuplicateTypes(Set<KtType> conflictingTypes) {
-        for (Iterator<KtType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
-            KtType type = iterator.next();
-            for (KtType otherType : conflictingTypes) {
+    private static void removeDuplicateTypes(Set<KotlinType> conflictingTypes) {
+        for (Iterator<KotlinType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
+            KotlinType type = iterator.next();
+            for (KotlinType otherType : conflictingTypes) {
                 boolean subtypeOf = KotlinTypeChecker.DEFAULT.equalTypes(type, otherType);
                 if (type != otherType && subtypeOf) {
                     iterator.remove();
@@ -524,9 +524,9 @@ public class DeclarationsChecker {
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter == null) return false;
 
-        return TypeUtils.containsSpecialType(receiverParameter.getType(), new Function1<KtType, Boolean>() {
+        return TypeUtils.containsSpecialType(receiverParameter.getType(), new Function1<KotlinType, Boolean>() {
             @Override
-            public Boolean invoke(KtType type) {
+            public Boolean invoke(KotlinType type) {
                 return parameter.equals(type.getConstructor().getDeclarationDescriptor());
             }
         });
@@ -545,7 +545,7 @@ public class DeclarationsChecker {
         boolean returnTypeIsNullable = true;
         boolean returnTypeIsPrimitive = true;
 
-        KtType returnType = propertyDescriptor.getReturnType();
+        KotlinType returnType = propertyDescriptor.getReturnType();
         if (returnType != null) {
             returnTypeIsNullable = TypeUtils.isNullableType(returnType);
             returnTypeIsPrimitive = KotlinBuiltIns.isPrimitiveType(returnType);

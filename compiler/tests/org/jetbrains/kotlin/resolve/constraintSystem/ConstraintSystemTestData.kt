@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.types.KtType
-import org.jetbrains.kotlin.types.KtTypeImpl
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeImpl
 import java.util.regex.Pattern
 
 public class ConstraintSystemTestData(
@@ -60,11 +60,11 @@ public class ConstraintSystemTestData(
                throw AssertionError("Unsupported type parameter name: $name. You may add it to constraintSystem/declarations.kt")
     }
 
-    fun getType(name: String): KtType {
+    fun getType(name: String): KotlinType {
         val matcher = INTEGER_VALUE_TYPE_PATTERN.matcher(name)
         if (matcher.find()) {
             val number = matcher.group(1)!!
-            return KtTypeImpl.create(
+            return KotlinTypeImpl.create(
                     Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), functionFoo.builtIns), false, listOf(),
                     KtScope.Empty
             )

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.ResolvedCallUtilKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -72,12 +72,12 @@ public class PseudocodeUtil {
 
             @Nullable
             @Override
-            public KtType getType(@NotNull KtExpression expression) {
+            public KotlinType getType(@NotNull KtExpression expression) {
                 return bindingContext.getType(expression);
             }
 
             @Override
-            public void recordType(@NotNull KtExpression expression, @Nullable KtType type) {
+            public void recordType(@NotNull KtExpression expression, @Nullable KotlinType type) {
             }
 
             @Override

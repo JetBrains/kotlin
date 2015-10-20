@@ -102,7 +102,7 @@ class LazyJavaClassDescriptor(
         }
     }
 
-    override fun getFunctionTypeForSamInterface(): KtType? = functionTypeForSamInterface()
+    override fun getFunctionTypeForSamInterface(): KotlinType? = functionTypeForSamInterface()
 
     override fun isCompanionObject() = false
 
@@ -120,12 +120,12 @@ class LazyJavaClassDescriptor(
 
         override fun getParameters(): List<TypeParameterDescriptor> = parameters()
 
-        private val supertypes = c.storageManager.createLazyValue<Collection<KtType>> {
+        private val supertypes = c.storageManager.createLazyValue<Collection<KotlinType>> {
             val javaTypes = jClass.getSupertypes()
-            val result = ArrayList<KtType>(javaTypes.size())
+            val result = ArrayList<KotlinType>(javaTypes.size())
             val incomplete = ArrayList<JavaType>(0)
 
-            val purelyImplementedSupertype: KtType? = getPurelyImplementedSupertype()
+            val purelyImplementedSupertype: KotlinType? = getPurelyImplementedSupertype()
 
             for (javaType in javaTypes) {
                 val jetType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
@@ -154,7 +154,7 @@ class LazyJavaClassDescriptor(
             if (result.isNotEmpty()) result.toReadOnlyList() else listOf(c.module.builtIns.getAnyType())
         }
 
-        private fun getPurelyImplementedSupertype(): KtType? {
+        private fun getPurelyImplementedSupertype(): KotlinType? {
             val purelyImplementedFqName = getPurelyImplementsFqNameFromAnnotation()
                                           ?: FakePureImplementationsProvider.getPurelyImplementedInterface(fqName)
                                           ?: return null
@@ -169,7 +169,7 @@ class LazyJavaClassDescriptor(
                 parameter -> TypeProjectionImpl(Variance.INVARIANT, parameter.getDefaultType())
             }
 
-            return KtTypeImpl.create(
+            return KotlinTypeImpl.create(
                     Annotations.EMPTY, classDescriptor,
                     /* nullable =*/ false, parametersAsTypeProjections
             )
@@ -186,7 +186,7 @@ class LazyJavaClassDescriptor(
             return FqName(fqNameString)
         }
 
-        override fun getSupertypes(): Collection<KtType> = supertypes()
+        override fun getSupertypes(): Collection<KotlinType> = supertypes()
 
         override fun getAnnotations() = Annotations.EMPTY
 

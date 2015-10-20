@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -147,13 +147,13 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public KtType resolveAnnotationType(@NotNull LexicalScope scope, @NotNull KtAnnotationEntry entryElement, @NotNull BindingTrace trace) {
+    public KotlinType resolveAnnotationType(@NotNull LexicalScope scope, @NotNull KtAnnotationEntry entryElement, @NotNull BindingTrace trace) {
         KtTypeReference typeReference = entryElement.getTypeReference();
         if (typeReference == null) {
             return ErrorUtils.createErrorType("No type reference: " + entryElement.getText());
         }
 
-        KtType type = typeResolver.resolveType(scope, typeReference, trace, true);
+        KotlinType type = typeResolver.resolveType(scope, typeReference, trace, true);
         if (!(type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
             return ErrorUtils.createErrorType("Not an annotation: " + type);
         }

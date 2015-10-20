@@ -24,12 +24,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 public class CompositeBindingContext private constructor(
         private val delegates: List<BindingContext>
 ) : BindingContext {
-    override fun getType(expression: KtExpression): KtType? {
+    override fun getType(expression: KtExpression): KotlinType? {
         return delegates.asSequence().map { it.getType(expression) }.firstOrNull { it != null }
     }
 

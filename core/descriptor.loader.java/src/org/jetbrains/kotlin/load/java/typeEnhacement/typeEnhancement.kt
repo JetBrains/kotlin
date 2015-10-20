@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 // Example: for `A<B, C<D, E>>`, indices go as follows: `0 - A<...>, 1 - B, 2 - C<D, E>, 3 - D, 4 - E`,
 // which corresponds to the left-to-right breadth-first walk of the tree representation of the type.
 // For flexible types, both bounds are indexed in the same way: `(A<B>..C<D>)` gives `0 - (A<B>..C<D>), 1 - B and D`.
-fun KtType.enhance(qualifiers: (Int) -> JavaTypeQualifiers) = this.enhancePossiblyFlexible(qualifiers, 0).type
+fun KotlinType.enhance(qualifiers: (Int) -> JavaTypeQualifiers) = this.enhancePossiblyFlexible(qualifiers, 0).type
 
 
 private enum class TypeComponentPosition {
@@ -46,9 +46,9 @@ private enum class TypeComponentPosition {
     INFLEXIBLE
 }
 
-private data class Result(val type: KtType, val subtreeSize: Int)
+private data class Result(val type: KotlinType, val subtreeSize: Int)
 
-private fun KtType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int): Result {
+private fun KotlinType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int): Result {
     if (this.isError()) return Result(this, 1)
     return if (this.isFlexible()) {
         with(this.flexibility()) {
@@ -67,7 +67,7 @@ private fun KtType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQualifie
     else this.enhanceInflexible(qualifiers, index, TypeComponentPosition.INFLEXIBLE)
 }
 
-private fun KtType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int, position: TypeComponentPosition): Result {
+private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int, position: TypeComponentPosition): Result {
     val shouldEnhance = position.shouldEnhance()
     if (!shouldEnhance && getArguments().isEmpty()) return Result(this, 1)
 
@@ -104,7 +104,7 @@ private fun KtType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, in
         typeConstructor.parameters, enhancedArguments
     )
 
-    val enhancedType = KtTypeImpl.create(
+    val enhancedType = KotlinTypeImpl.create(
             newAnnotations,
             typeConstructor,
             enhancedNullability,
@@ -153,7 +153,7 @@ private fun ClassifierDescriptor.enhanceMutability(qualifiers: JavaTypeQualifier
     return this.noChange()
 }
 
-private fun KtType.getEnhancedNullability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): EnhancementResult<Boolean> {
+private fun KotlinType.getEnhancedNullability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): EnhancementResult<Boolean> {
     if (!position.shouldEnhance()) return this.isMarkedNullable().noChange()
 
     return when (qualifiers.nullability) {

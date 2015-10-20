@@ -43,9 +43,9 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     private final int index;
 
     private final NotNullLazyValue<TypeConstructor> typeConstructor;
-    private final NotNullLazyValue<KtType> defaultType;
-    private final NotNullLazyValue<Set<KtType>> upperBounds;
-    private final NotNullLazyValue<KtType> upperBoundsAsType;
+    private final NotNullLazyValue<KotlinType> defaultType;
+    private final NotNullLazyValue<Set<KotlinType>> upperBounds;
+    private final NotNullLazyValue<KotlinType> upperBoundsAsType;
 
     protected AbstractTypeParameterDescriptor(
             @NotNull final StorageManager storageManager,
@@ -68,11 +68,11 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                 return createTypeConstructor();
             }
         });
-        this.defaultType = storageManager.createLazyValue(new Function0<KtType>() {
+        this.defaultType = storageManager.createLazyValue(new Function0<KotlinType>() {
             @Override
-            public KtType invoke() {
-                return KtTypeImpl.create(Annotations.Companion.getEMPTY(), getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
-                                         new LazyScopeAdapter(storageManager.createLazyValue(
+            public KotlinType invoke() {
+                return KotlinTypeImpl.create(Annotations.Companion.getEMPTY(), getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
+                                             new LazyScopeAdapter(storageManager.createLazyValue(
                                                new Function0<KtScope>() {
                                                    @Override
                                                    public KtScope invoke() {
@@ -82,15 +82,15 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                                        )));
             }
         });
-        this.upperBounds = storageManager.createRecursionTolerantLazyValue(new Function0<Set<KtType>>() {
+        this.upperBounds = storageManager.createRecursionTolerantLazyValue(new Function0<Set<KotlinType>>() {
             @Override
-            public Set<KtType> invoke() {
+            public Set<KotlinType> invoke() {
                 return resolveUpperBounds();
             }
         }, Collections.singleton(ErrorUtils.createErrorType("Recursion while calculating upper bounds")));
-        this.upperBoundsAsType = storageManager.createLazyValue(new Function0<KtType>() {
+        this.upperBoundsAsType = storageManager.createLazyValue(new Function0<KotlinType>() {
             @Override
-            public KtType invoke() {
+            public KotlinType invoke() {
                 return computeUpperBoundsAsType();
             }
         });
@@ -98,7 +98,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @NotNull
     @ReadOnly
-    protected abstract Set<KtType> resolveUpperBounds();
+    protected abstract Set<KotlinType> resolveUpperBounds();
 
     @NotNull
     protected abstract TypeConstructor createTypeConstructor();
@@ -121,21 +121,21 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @NotNull
     @Override
-    public Set<KtType> getUpperBounds() {
+    public Set<KotlinType> getUpperBounds() {
         return upperBounds.invoke();
     }
 
     @NotNull
     @Override
-    public KtType getUpperBoundsAsType() {
+    public KotlinType getUpperBoundsAsType() {
         return upperBoundsAsType.invoke();
     }
 
     @NotNull
-    private KtType computeUpperBoundsAsType() {
-        Set<KtType> upperBounds = getUpperBounds();
+    private KotlinType computeUpperBoundsAsType() {
+        Set<KotlinType> upperBounds = getUpperBounds();
         assert !upperBounds.isEmpty() : "Upper bound list is empty in " + getName();
-        KtType upperBoundsAsType = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, upperBounds);
+        KotlinType upperBoundsAsType = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, upperBounds);
         return upperBoundsAsType != null ? upperBoundsAsType : getBuiltIns(this).getNothingType();
     }
 
@@ -147,13 +147,13 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @NotNull
     @Override
-    public KtType getDefaultType() {
+    public KotlinType getDefaultType() {
         return defaultType.invoke();
     }
 
     @NotNull
     @Override
-    public Set<KtType> getLowerBounds() {
+    public Set<KotlinType> getLowerBounds() {
         return Collections.singleton(getBuiltIns(this).getNothingType());
     }
 

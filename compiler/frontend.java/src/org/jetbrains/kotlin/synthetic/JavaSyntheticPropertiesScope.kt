@@ -129,7 +129,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : KtScopeImpl
         return null
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         //TODO: use location parameter!
 
         var result: SmartList<PropertyDescriptor>? = null
@@ -161,7 +161,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : KtScopeImpl
         return result
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
         val result = ArrayList<PropertyDescriptor>()
         val processedTypes = HashSet<TypeConstructor>()
         receiverTypes.forEach { result.collectSyntheticProperties(it.constructor, processedTypes) }
@@ -252,7 +252,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : KtScopeImpl
             private set
 
         companion object {
-            fun create(ownerClass: ClassDescriptor, getMethod: FunctionDescriptor, setMethod: FunctionDescriptor?, name: Name, type: KtType): MyPropertyDescriptor {
+            fun create(ownerClass: ClassDescriptor, getMethod: FunctionDescriptor, setMethod: FunctionDescriptor?, name: Name, type: KotlinType): MyPropertyDescriptor {
                 val visibility = syntheticExtensionVisibility(getMethod)
                 val descriptor = MyPropertyDescriptor(DescriptorUtils.getContainingModule(ownerClass),
                                                       null,

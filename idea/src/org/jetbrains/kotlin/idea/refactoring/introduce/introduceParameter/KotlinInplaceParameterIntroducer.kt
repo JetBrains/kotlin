@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.awt.Color
@@ -47,7 +47,7 @@ import javax.swing.JCheckBox
 
 public class KotlinInplaceParameterIntroducer(
         val originalDescriptor: IntroduceParameterDescriptor,
-        val parameterType: KtType,
+        val parameterType: KotlinType,
         val suggestedNames: Array<out String>,
         project: Project,
         editor: Editor

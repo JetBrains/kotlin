@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
-import org.jetbrains.kotlin.types.KtType;
-import org.jetbrains.kotlin.types.KtTypeImpl;
+import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeImpl;
 import org.jetbrains.kotlin.types.TypeProjectionImpl;
 import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -41,7 +41,7 @@ class PropagationHeuristics {
     // Checks for case when method returning Super[] is overridden with method returning Sub[]
     static void checkArrayInReturnType(
             @NotNull SignaturesPropagationData data,
-            @NotNull KtType type,
+            @NotNull KotlinType type,
             @NotNull List<SignaturesPropagationData.TypeAndVariance> typesFromSuper
     ) {
         List<SignaturesPropagationData.TypeAndVariance> arrayTypesFromSuper = ContainerUtil
@@ -55,14 +55,14 @@ class PropagationHeuristics {
             assert type.getArguments().size() == 1;
             if (type.getArguments().get(0).getProjectionKind() == Variance.INVARIANT) {
                 for (SignaturesPropagationData.TypeAndVariance typeAndVariance : arrayTypesFromSuper) {
-                    KtType arrayTypeFromSuper = typeAndVariance.type;
+                    KotlinType arrayTypeFromSuper = typeAndVariance.type;
                     assert arrayTypeFromSuper.getArguments().size() == 1;
-                    KtType elementTypeInSuper = arrayTypeFromSuper.getArguments().get(0).getType();
-                    KtType elementType = type.getArguments().get(0).getType();
+                    KotlinType elementTypeInSuper = arrayTypeFromSuper.getArguments().get(0).getType();
+                    KotlinType elementType = type.getArguments().get(0).getType();
 
                     if (KotlinTypeChecker.DEFAULT.isSubtypeOf(elementType, elementTypeInSuper)
                         && !KotlinTypeChecker.DEFAULT.equalTypes(elementType, elementTypeInSuper)) {
-                        KtTypeImpl betterTypeInSuper = KtTypeImpl.create(
+                        KotlinTypeImpl betterTypeInSuper = KotlinTypeImpl.create(
                                 arrayTypeFromSuper.getAnnotations(),
                                 arrayTypeFromSuper.getConstructor(),
                                 arrayTypeFromSuper.isMarkedNullable(),

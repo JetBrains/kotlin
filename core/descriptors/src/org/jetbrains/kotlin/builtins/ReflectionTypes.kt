@@ -57,22 +57,22 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     public val kMutableProperty0: ClassDescriptor by ClassLookup
     public val kMutableProperty1: ClassDescriptor by ClassLookup
 
-    public fun getKClassType(annotations: Annotations, type: KtType): KtType {
+    public fun getKClassType(annotations: Annotations, type: KotlinType): KotlinType {
         val descriptor = kClass
         if (ErrorUtils.isError(descriptor)) {
             return descriptor.defaultType
         }
 
         val arguments = listOf(TypeProjectionImpl(Variance.INVARIANT, type))
-        return KtTypeImpl.create(annotations, descriptor, false, arguments)
+        return KotlinTypeImpl.create(annotations, descriptor, false, arguments)
     }
 
     public fun getKFunctionType(
             annotations: Annotations,
-            receiverType: KtType?,
-            parameterTypes: List<KtType>,
-            returnType: KtType
-    ): KtType {
+            receiverType: KotlinType?,
+            parameterTypes: List<KotlinType>,
+            returnType: KotlinType
+    ): KotlinType {
         val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
 
         val classDescriptor = getKFunction(arguments.size() - 1 /* return type */)
@@ -81,10 +81,10 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             return classDescriptor.defaultType
         }
 
-        return KtTypeImpl.create(annotations, classDescriptor, false, arguments)
+        return KotlinTypeImpl.create(annotations, classDescriptor, false, arguments)
     }
 
-    public fun getKPropertyType(annotations: Annotations, receiverType: KtType?, returnType: KtType, mutable: Boolean): KtType {
+    public fun getKPropertyType(annotations: Annotations, receiverType: KotlinType?, returnType: KotlinType, mutable: Boolean): KotlinType {
         val classDescriptor =
                 when {
                     receiverType != null -> when {
@@ -106,7 +106,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             arguments.add(TypeProjectionImpl(receiverType))
         }
         arguments.add(TypeProjectionImpl(returnType))
-        return KtTypeImpl.create(annotations, classDescriptor, false, arguments)
+        return KotlinTypeImpl.create(annotations, classDescriptor, false, arguments)
     }
 
     companion object {
@@ -115,21 +115,21 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             return containingPackage != null && containingPackage.fqName == KOTLIN_REFLECT_FQ_NAME
         }
 
-        public fun isCallableType(type: KtType): Boolean =
+        public fun isCallableType(type: KotlinType): Boolean =
                 KotlinBuiltIns.isFunctionOrExtensionFunctionType(type) || isKCallableType(type)
 
-        private fun isKCallableType(type: KtType): Boolean =
+        private fun isKCallableType(type: KotlinType): Boolean =
                 isExactKCallableType(type) ||
                 type.constructor.supertypes.any { isKCallableType(it) }
 
-        private fun isExactKCallableType(type: KtType): Boolean {
+        private fun isExactKCallableType(type: KotlinType): Boolean {
             val descriptor = type.constructor.declarationDescriptor
             return descriptor is ClassDescriptor && DescriptorUtils.getFqName(descriptor) == KotlinBuiltIns.FQ_NAMES.kCallable
         }
 
-        public fun createKPropertyStarType(module: ModuleDescriptor): KtType? {
+        public fun createKPropertyStarType(module: ModuleDescriptor): KotlinType? {
             val kPropertyClass = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.kProperty) ?: return null
-            return KtTypeImpl.create(
+            return KotlinTypeImpl.create(
                     Annotations.EMPTY, kPropertyClass, false,
                     listOf(StarProjectionImpl(kPropertyClass.typeConstructor.parameters.single()))
             )

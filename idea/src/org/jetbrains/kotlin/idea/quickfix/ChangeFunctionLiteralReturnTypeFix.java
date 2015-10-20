@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -49,35 +49,35 @@ import java.util.List;
 import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
 
 public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtFunctionLiteralExpression> {
-    private final KtType type;
+    private final KotlinType type;
     private final KtTypeReference functionLiteralReturnTypeRef;
     private IntentionAction appropriateQuickFix = null;
 
-    public ChangeFunctionLiteralReturnTypeFix(@NotNull KtFunctionLiteralExpression functionLiteralExpression, @NotNull KtType type) {
+    public ChangeFunctionLiteralReturnTypeFix(@NotNull KtFunctionLiteralExpression functionLiteralExpression, @NotNull KotlinType type) {
         super(functionLiteralExpression);
         this.type = type;
         functionLiteralReturnTypeRef = functionLiteralExpression.getFunctionLiteral().getTypeReference();
 
         AnalysisResult analysisResult = ResolutionUtils.analyzeFullyAndGetResult(functionLiteralExpression.getContainingJetFile());
         BindingContext context = analysisResult.getBindingContext();
-        KtType functionLiteralType = context.getType(functionLiteralExpression);
+        KotlinType functionLiteralType = context.getType(functionLiteralExpression);
         assert functionLiteralType != null : "Type of function literal not available in binding context";
 
         KotlinBuiltIns builtIns = analysisResult.getModuleDescriptor().getBuiltIns();
         ClassDescriptor functionClass = builtIns.getFunction(functionLiteralType.getArguments().size() - 1);
-        List<KtType> functionClassTypeParameters = new LinkedList<KtType>();
+        List<KotlinType> functionClassTypeParameters = new LinkedList<KotlinType>();
         for (TypeProjection typeProjection: functionLiteralType.getArguments()) {
             functionClassTypeParameters.add(typeProjection.getType());
         }
         // Replacing return type:
         functionClassTypeParameters.remove(functionClassTypeParameters.size() - 1);
         functionClassTypeParameters.add(type);
-        KtType eventualFunctionLiteralType = TypeUtils.substituteParameters(functionClass, functionClassTypeParameters);
+        KotlinType eventualFunctionLiteralType = TypeUtils.substituteParameters(functionClass, functionClassTypeParameters);
 
         KtProperty correspondingProperty = PsiTreeUtil.getParentOfType(functionLiteralExpression, KtProperty.class);
         if (correspondingProperty != null && QuickFixUtil.canEvaluateTo(correspondingProperty.getInitializer(), functionLiteralExpression)) {
             KtTypeReference correspondingPropertyTypeRef = correspondingProperty.getTypeReference();
-            KtType propertyType = context.get(BindingContext.TYPE, correspondingPropertyTypeRef);
+            KotlinType propertyType = context.get(BindingContext.TYPE, correspondingPropertyTypeRef);
             if (propertyType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, propertyType)) {
                 appropriateQuickFix = new ChangeVariableTypeFix(correspondingProperty, eventualFunctionLiteralType);
             }
@@ -91,7 +91,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtF
             KtParameter correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument);
             if (correspondingParameter != null) {
                 KtTypeReference correspondingParameterTypeRef = correspondingParameter.getTypeReference();
-                KtType parameterType = context.get(BindingContext.TYPE, correspondingParameterTypeRef);
+                KotlinType parameterType = context.get(BindingContext.TYPE, correspondingParameterTypeRef);
                 if (parameterType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parameterType)) {
                     appropriateQuickFix = new ChangeParameterTypeFix(correspondingParameter, eventualFunctionLiteralType);
                 }
@@ -103,7 +103,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtF
         KtFunction parentFunction = PsiTreeUtil.getParentOfType(functionLiteralExpression, KtFunction.class, true);
         if (parentFunction != null && QuickFixUtil.canFunctionOrGetterReturnExpression(parentFunction, functionLiteralExpression)) {
             KtTypeReference parentFunctionReturnTypeRef = parentFunction.getTypeReference();
-            KtType parentFunctionReturnType = context.get(BindingContext.TYPE, parentFunctionReturnTypeRef);
+            KotlinType parentFunctionReturnType = context.get(BindingContext.TYPE, parentFunctionReturnTypeRef);
             if (parentFunctionReturnType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(eventualFunctionLiteralType, parentFunctionReturnType)) {
                 appropriateQuickFix = new ChangeFunctionReturnTypeFix(parentFunction, eventualFunctionLiteralType);
             }

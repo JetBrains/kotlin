@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.EXACT_B
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
 public interface TypeBounds {
@@ -32,10 +32,10 @@ public interface TypeBounds {
 
     public val bounds: Collection<Bound>
 
-    public val value: KtType?
+    public val value: KotlinType?
         get() = if (values.size() == 1) values.first() else null
 
-    public val values: Collection<KtType>
+    public val values: Collection<KotlinType>
 
     public enum class BoundKind {
         LOWER_BOUND,
@@ -45,7 +45,7 @@ public interface TypeBounds {
 
     public class Bound(
             public val typeVariable: TypeParameterDescriptor,
-            public val constrainingType: KtType,
+            public val constrainingType: KotlinType,
             public val kind: BoundKind,
             public val position: ConstraintPosition,
             public val isProper: Boolean,

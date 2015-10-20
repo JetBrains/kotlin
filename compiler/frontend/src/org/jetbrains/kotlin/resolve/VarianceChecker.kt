@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.TopDownAnalysisContext
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.types.Variance.*
@@ -74,7 +74,7 @@ class VarianceChecker(private val trace: BindingTrace) {
     }
 
     class VarianceConflictDiagnosticData(
-            val containingType: KtType,
+            val containingType: KotlinType,
             val typeParameter: TypeParameterDescriptor,
             val occurrencePosition: Variance
     )
@@ -158,7 +158,7 @@ class VarianceChecker(private val trace: BindingTrace) {
         private fun TypeBinding<PsiElement>.checkTypePosition(position: Variance, diagnosticSink: DiagnosticSink)
                 = checkTypePosition(jetType, position, diagnosticSink)
 
-        private fun TypeBinding<PsiElement>.checkTypePosition(containingType: KtType, position: Variance, diagnosticSink: DiagnosticSink): Boolean {
+        private fun TypeBinding<PsiElement>.checkTypePosition(containingType: KotlinType, position: Variance, diagnosticSink: DiagnosticSink): Boolean {
             val classifierDescriptor = jetType.getConstructor().getDeclarationDescriptor()
             if (classifierDescriptor is TypeParameterDescriptor) {
                 val declarationVariance = classifierDescriptor.getVariance()

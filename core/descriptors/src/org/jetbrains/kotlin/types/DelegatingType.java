@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.List;
 
-public abstract class DelegatingType implements KtType {
-    protected abstract KtType getDelegate();
+public abstract class DelegatingType implements KotlinType {
+    protected abstract KotlinType getDelegate();
 
     @NotNull
     @Override
@@ -87,9 +87,9 @@ public abstract class DelegatingType implements KtType {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof KtType)) return false;
+        if (!(obj instanceof KotlinType)) return false;
 
-        KtType type = (KtType) obj;
+        KotlinType type = (KotlinType) obj;
         return KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(this, type);
     }
 

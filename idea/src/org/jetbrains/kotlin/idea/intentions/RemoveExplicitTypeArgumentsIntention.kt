@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
@@ -79,7 +79,7 @@ public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndepe
             val args = originalCall.getTypeArguments()
             val newArgs = resolutionResults.getResultingCall().getTypeArguments()
 
-            fun equalTypes(type1: KtType, type2: KtType): Boolean {
+            fun equalTypes(type1: KotlinType, type2: KotlinType): Boolean {
                 return if (approximateFlexible) {
                     KotlinTypeChecker.DEFAULT.equalTypes(type1, type2)
                 }

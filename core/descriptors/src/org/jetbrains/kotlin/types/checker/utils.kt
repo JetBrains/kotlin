@@ -16,19 +16,19 @@
 
 package org.jetbrains.kotlin.types.checker
 
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
 import java.util.*
 
-private class SubtypePathNode(val type: KtType, val previous: SubtypePathNode?)
+private class SubtypePathNode(val type: KotlinType, val previous: SubtypePathNode?)
 
 public fun findCorrespondingSupertype(
-        subtype: KtType, supertype: KtType,
+        subtype: KotlinType, supertype: KotlinType,
         typeCheckingProcedureCallbacks: TypeCheckingProcedureCallbacks
-): KtType? {
+): KotlinType? {
     val queue = ArrayDeque<SubtypePathNode>()
     queue.add(SubtypePathNode(subtype, null))
 

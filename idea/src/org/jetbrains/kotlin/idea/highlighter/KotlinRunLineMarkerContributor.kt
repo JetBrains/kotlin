@@ -20,7 +20,7 @@ import com.intellij.execution.lineMarker.ExecutorAction
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.KtIcons
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -38,7 +38,7 @@ public class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
         }
 
         if (detector.isMain(function)) {
-            return RunLineMarkerContributor.Info(KtIcons.LAUNCH, null, ExecutorAction.getActions(0))
+            return RunLineMarkerContributor.Info(KotlinIcons.LAUNCH, null, ExecutorAction.getActions(0))
         }
 
         return null

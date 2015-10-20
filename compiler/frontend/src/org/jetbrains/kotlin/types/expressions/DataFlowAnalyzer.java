@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.*;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -102,9 +102,9 @@ public class DataFlowAnalyzer {
                     KtExpression right = expression.getRight();
                     if (right == null) return;
 
-                    KtType lhsType = context.trace.getBindingContext().getType(left);
+                    KotlinType lhsType = context.trace.getBindingContext().getType(left);
                     if (lhsType == null) return;
-                    KtType rhsType = context.trace.getBindingContext().getType(right);
+                    KotlinType rhsType = context.trace.getBindingContext().getType(right);
                     if (rhsType == null) return;
 
                     DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, lhsType, context);
@@ -155,7 +155,7 @@ public class DataFlowAnalyzer {
     }
 
     @Nullable
-    public KtType checkType(@Nullable KtType expressionType, @NotNull KtExpression expression, @NotNull ResolutionContext context) {
+    public KotlinType checkType(@Nullable KotlinType expressionType, @NotNull KtExpression expression, @NotNull ResolutionContext context) {
         return checkType(expressionType, expression, context, null);
     }
 
@@ -165,8 +165,8 @@ public class DataFlowAnalyzer {
     }
 
     @NotNull
-    private KtType checkTypeInternal(
-            @NotNull KtType expressionType,
+    private KotlinType checkTypeInternal(
+            @NotNull KotlinType expressionType,
             @NotNull KtExpression expression,
             @NotNull ResolutionContext c,
             @NotNull Ref<Boolean> hasError
@@ -189,7 +189,7 @@ public class DataFlowAnalyzer {
             return expressionType;
         }
 
-        KtType possibleType = checkPossibleCast(expressionType, expression, c);
+        KotlinType possibleType = checkPossibleCast(expressionType, expression, c);
         if (possibleType != null) return possibleType;
 
         c.trace.report(TYPE_MISMATCH.on(expression, c.expectedType, expressionType));
@@ -198,8 +198,8 @@ public class DataFlowAnalyzer {
     }
 
     @Nullable
-    public KtType checkType(
-            @Nullable KtType expressionType,
+    public KotlinType checkType(
+            @Nullable KotlinType expressionType,
             @NotNull KtExpression expressionToCheck,
             @NotNull ResolutionContext c,
             @Nullable Ref<Boolean> hasError
@@ -216,7 +216,7 @@ public class DataFlowAnalyzer {
 
         if (expressionType == null) return null;
 
-        KtType result = checkTypeInternal(expressionType, expression, c, hasError);
+        KotlinType result = checkTypeInternal(expressionType, expression, c, hasError);
         if (Boolean.FALSE.equals(hasError.get())) {
             for (AdditionalTypeChecker checker : additionalTypeCheckers) {
                 checker.checkType(expression, expressionType, result, c);
@@ -227,8 +227,8 @@ public class DataFlowAnalyzer {
     }
 
     @Nullable
-    public KtType checkPossibleCast(
-            @NotNull KtType expressionType,
+    public KotlinType checkPossibleCast(
+            @NotNull KotlinType expressionType,
             @NotNull KtExpression expression,
             @NotNull ResolutionContext c
     ) {
@@ -238,15 +238,15 @@ public class DataFlowAnalyzer {
         return result != null ? result.getResultType() : null;
     }
 
-    public void recordExpectedType(@NotNull BindingTrace trace, @NotNull KtExpression expression, @NotNull KtType expectedType) {
+    public void recordExpectedType(@NotNull BindingTrace trace, @NotNull KtExpression expression, @NotNull KotlinType expectedType) {
         if (expectedType != NO_EXPECTED_TYPE) {
-            KtType normalizeExpectedType = expectedType == UNIT_EXPECTED_TYPE ? builtIns.getUnitType() : expectedType;
+            KotlinType normalizeExpectedType = expectedType == UNIT_EXPECTED_TYPE ? builtIns.getUnitType() : expectedType;
             trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, normalizeExpectedType);
         }
     }
 
     @Nullable
-    public KtType checkStatementType(@NotNull KtExpression expression, @NotNull ResolutionContext context) {
+    public KotlinType checkStatementType(@NotNull KtExpression expression, @NotNull ResolutionContext context) {
         if (!noExpectedType(context.expectedType) && !KotlinBuiltIns.isUnit(context.expectedType) && !context.expectedType.isError()) {
             context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
@@ -255,7 +255,7 @@ public class DataFlowAnalyzer {
     }
 
     @Nullable
-    public KtType checkImplicitCast(@Nullable KtType expressionType, @NotNull KtExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
+    public KotlinType checkImplicitCast(@Nullable KotlinType expressionType, @NotNull KtExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
         boolean isIfExpression = expression instanceof KtIfExpression;
         if (expressionType != null && (context.expectedType == NO_EXPECTED_TYPE || isIfExpression)
                 && context.contextDependency == INDEPENDENT && !isStatement
@@ -289,14 +289,14 @@ public class DataFlowAnalyzer {
     }
 
     @NotNull
-    public Collection<KtType> getAllPossibleTypes(
+    public Collection<KotlinType> getAllPossibleTypes(
             @NotNull KtExpression expression,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull KtType type,
+            @NotNull KotlinType type,
             @NotNull ResolutionContext c
     ) {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, c);
-        Collection<KtType> possibleTypes = Sets.newHashSet(type);
+        Collection<KotlinType> possibleTypes = Sets.newHashSet(type);
         if (dataFlowValue.isPredictable()) {
             possibleTypes.addAll(dataFlowInfo.getPossibleTypes(dataFlowValue));
         }
@@ -305,7 +305,7 @@ public class DataFlowAnalyzer {
 
     @NotNull
     public JetTypeInfo createCheckedTypeInfo(
-            @Nullable KtType type,
+            @Nullable KotlinType type,
             @NotNull ResolutionContext<?> context,
             @NotNull KtExpression expression
     ) {
@@ -318,7 +318,7 @@ public class DataFlowAnalyzer {
             @NotNull KtExpression expression,
             @NotNull ExpressionTypingContext context
     ) {
-        KtType expressionType;
+        KotlinType expressionType;
         if (value instanceof IntegerValueTypeConstant) {
             IntegerValueTypeConstant integerValueTypeConstant = (IntegerValueTypeConstant) value;
             if (context.contextDependency == INDEPENDENT) {

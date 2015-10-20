@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import java.lang.reflect.Modifier
 import kotlin.properties.Delegates
 import kotlin.properties.ObservableProperty
@@ -92,7 +92,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var includePropertyConstant by property(false)
     override var withoutTypeParameters by property(false)
     override var withoutSuperTypes by property(false)
-    override var typeNormalizer by property<(KtType) -> KtType>({ it })
+    override var typeNormalizer by property<(KotlinType) -> KotlinType>({ it })
     override var renderDefaultValues by property(true)
     override var flexibleTypesForCode by property(false)
     override var secondaryConstructorsAsPrimary by property(true)

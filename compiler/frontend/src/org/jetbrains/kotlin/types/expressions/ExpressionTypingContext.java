@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCacheImpl;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingContext> {
 
@@ -35,7 +35,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull KtType expectedType
+            @NotNull KotlinType expectedType
     ) {
         return newContext(trace, scope, dataFlowInfo, expectedType, CallChecker.DoNothing.INSTANCE$);
     }
@@ -45,7 +45,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull KtType expectedType,
+            @NotNull KotlinType expectedType,
             @NotNull CallChecker callChecker
     ) {
         return newContext(trace, scope, dataFlowInfo, expectedType,
@@ -70,7 +70,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull KtType expectedType,
+            @NotNull KotlinType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
@@ -86,7 +86,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull KtType expectedType,
+            @NotNull KotlinType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallChecker callChecker,
@@ -105,7 +105,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull KtType expectedType,
+            @NotNull KotlinType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,

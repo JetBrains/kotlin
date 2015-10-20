@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.List;
@@ -77,7 +77,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     private static JsNode translateConstantExpression(@NotNull KtConstantExpression expression, @NotNull TranslationContext context) {
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext());
         assert compileTimeValue != null : message(expression, "Expression is not compile time value: " + expression.getText() + " ");
-        KtType expectedType = context.bindingContext().getType(expression);
+        KotlinType expectedType = context.bindingContext().getType(expression);
         ConstantValue<?> constant = compileTimeValue.toConstantValue(expectedType != null ? expectedType : TypeUtils.NO_EXPECTED_TYPE);
         if (constant instanceof NullValue) {
             return JsLiteral.NULL;
@@ -362,8 +362,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         KtTypeReference right = expression.getRight();
         assert right != null;
 
-        KtType rightType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.TYPE, right);
-        KtType leftType = BindingContextUtils.getTypeNotNull(context.bindingContext(), expression.getLeft());
+        KotlinType rightType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.TYPE, right);
+        KotlinType leftType = BindingContextUtils.getTypeNotNull(context.bindingContext(), expression.getLeft());
         if (TypeUtils.isNullableType(rightType) || !TypeUtils.isNullableType(leftType)) {
             return jsExpression.source(expression);
         }

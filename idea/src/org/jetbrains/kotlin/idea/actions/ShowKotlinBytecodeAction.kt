@@ -23,7 +23,7 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.content.ContentFactory
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.KtIcons
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.internal.KotlinBytecodeToolWindow
 
 public class ShowKotlinBytecodeAction(): AnAction() {
@@ -36,7 +36,7 @@ public class ShowKotlinBytecodeAction(): AnAction() {
         var toolWindow = toolWindowManager.getToolWindow(TOOLWINDOW_ID)
         if (toolWindow == null) {
             toolWindow = toolWindowManager.registerToolWindow("Kotlin Bytecode", true, ToolWindowAnchor.RIGHT)
-            toolWindow.setIcon(KtIcons.SMALL_LOGO_13)
+            toolWindow.setIcon(KotlinIcons.SMALL_LOGO_13)
 
             val contentManager = toolWindow.getContentManager()
             val contentFactory = ContentFactory.SERVICE.getInstance()

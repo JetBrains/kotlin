@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 /**
  * This represents the receiver of hasNext and next() in for-loops
  * Cannot be an expression receiver because there is no expression for the iterator() call
  */
 public class TransientReceiver extends AbstractReceiverValue {
-    public TransientReceiver(@NotNull KtType type) {
+    public TransientReceiver(@NotNull KotlinType type) {
         super(type);
     }
 

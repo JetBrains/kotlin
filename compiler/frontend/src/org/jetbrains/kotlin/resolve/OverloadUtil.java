@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeCapabilitiesKt;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
@@ -65,12 +65,12 @@ public class OverloadUtil {
             return receiverAndParameterResult;
         }
 
-        List<KtType> superValueParameters = OverridingUtil.compiledValueParameters(superDescriptor);
-        List<KtType> subValueParameters = OverridingUtil.compiledValueParameters(subDescriptor);
+        List<KotlinType> superValueParameters = OverridingUtil.compiledValueParameters(superDescriptor);
+        List<KotlinType> subValueParameters = OverridingUtil.compiledValueParameters(subDescriptor);
 
         for (int i = 0; i < superValueParameters.size(); ++i) {
-            KtType superValueParameterType = OverridingUtil.getUpperBound(superValueParameters.get(i));
-            KtType subValueParameterType = OverridingUtil.getUpperBound(subValueParameters.get(i));
+            KotlinType superValueParameterType = OverridingUtil.getUpperBound(superValueParameters.get(i));
+            KotlinType subValueParameterType = OverridingUtil.getUpperBound(subValueParameters.get(i));
             if (!KotlinTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType)
                 || TypeCapabilitiesKt.oneMoreSpecificThanAnother(subValueParameterType, superValueParameterType)) {
                 return OverridingUtil.OverrideCompatibilityInfo

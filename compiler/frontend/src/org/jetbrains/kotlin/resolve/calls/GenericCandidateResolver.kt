@@ -94,7 +94,7 @@ class GenericCandidateResolver(
         val receiverArgument = candidateCall.getExtensionReceiver()
         val receiverParameter = candidate.getExtensionReceiverParameter()
         if (receiverArgument.exists() && receiverParameter != null) {
-            var receiverType: KtType? = if (context.candidateCall.isSafeCall())
+            var receiverType: KotlinType? = if (context.candidateCall.isSafeCall())
                 TypeUtils.makeNotNullable(receiverArgument.getType())
             else
                 receiverArgument.getType()
@@ -144,7 +144,7 @@ class GenericCandidateResolver(
             constraintPosition: ConstraintPosition,
             constraintSystem: ConstraintSystem,
             context: CallCandidateResolutionContext<*>,
-            effectiveExpectedType: KtType
+            effectiveExpectedType: KotlinType
     ): Boolean {
         val resolutionResults = getResolutionResultsCachedData(argumentExpression, context)?.resolutionResults
         if (resolutionResults == null || !resolutionResults.isSingleResult()) return false
@@ -175,10 +175,10 @@ class GenericCandidateResolver(
     }
 
     private fun updateResultTypeForSmartCasts(
-            type: KtType?,
+            type: KotlinType?,
             argumentExpression: KtExpression?,
             context: ResolutionContext<*>
-    ): KtType? {
+    ): KotlinType? {
         val deparenthesizedArgument = KtPsiUtil.getLastElementDeparenthesized(argumentExpression, context.statementFilter)
         if (deparenthesizedArgument == null || type == null) return type
 
@@ -287,8 +287,8 @@ class GenericCandidateResolver(
             callableReference: KtCallableReferenceExpression,
             constraintSystem: ConstraintSystem,
             context: CallCandidateResolutionContext<D>,
-            effectiveExpectedType: KtType
-    ): KtType? {
+            effectiveExpectedType: KotlinType
+    ): KotlinType? {
         val substitutedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
         if (substitutedType != null && !TypeUtils.isDontCarePlaceholder(substitutedType))
             return substitutedType
@@ -303,9 +303,9 @@ class GenericCandidateResolver(
     private fun <D : CallableDescriptor> getResolvedTypeForCallableReference(
             callableReference: KtCallableReferenceExpression,
             context: CallCandidateResolutionContext<D>,
-            expectedType: KtType,
+            expectedType: KotlinType,
             valueArgument: ValueArgument
-    ): KtType? {
+    ): KotlinType? {
         val dataFlowInfoForArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(valueArgument)
         val expectedTypeWithoutReturnType = if (!hasUnknownReturnType(expectedType)) replaceReturnTypeByUnknown(expectedType) else expectedType
         val newContext = context

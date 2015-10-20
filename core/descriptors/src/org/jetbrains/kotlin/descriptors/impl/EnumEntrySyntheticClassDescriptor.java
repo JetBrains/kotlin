@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeConstructorImpl;
 import org.jetbrains.kotlin.utils.Printer;
@@ -63,7 +63,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames,
             @NotNull SourceElement source
     ) {
-        KtType enumType = enumClass.getDefaultType();
+        KotlinType enumType = enumClass.getDefaultType();
 
         return new EnumEntrySyntheticClassDescriptor(storageManager, enumClass, enumType, name, enumMemberNames, source);
     }
@@ -71,7 +71,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private EnumEntrySyntheticClassDescriptor(
             @NotNull StorageManager storageManager,
             @NotNull ClassDescriptor containingClass,
-            @NotNull KtType supertype,
+            @NotNull KotlinType supertype,
             @NotNull Name name,
             @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames,
             @NotNull SourceElement source
@@ -225,7 +225,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         private KtScope getSupertypeScope() {
-            Collection<KtType> supertype = getTypeConstructor().getSupertypes();
+            Collection<KotlinType> supertype = getTypeConstructor().getSupertypes();
             assert supertype.size() == 1 : "Enum entry and its companion object both should have exactly one supertype: " + supertype;
             return supertype.iterator().next().getMemberScope();
         }

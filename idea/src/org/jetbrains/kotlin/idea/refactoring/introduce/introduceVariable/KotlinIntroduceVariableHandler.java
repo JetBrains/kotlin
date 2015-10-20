@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.ArrayList;
@@ -137,13 +137,13 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
         AnalysisResult analysisResult = ResolutionUtils.analyzeAndGetResult(expression);
         final BindingContext bindingContext = analysisResult.getBindingContext();
-        final KtType expressionType = bindingContext.getType(expression); //can be null or error type
+        final KotlinType expressionType = bindingContext.getType(expression); //can be null or error type
         KtScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope != null) {
             DataFlowInfo dataFlowInfo = BindingContextUtilsKt.getDataFlowInfo(bindingContext, expression);
 
             ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
-            KtType typeNoExpectedType = AnalyzerUtilKt.computeTypeInfoInContext(
+            KotlinType typeNoExpectedType = AnalyzerUtilKt.computeTypeInfoInContext(
                     expression, scope, expression, bindingTrace, dataFlowInfo
             ).getType();
             if (expressionType != null && typeNoExpectedType != null && !KotlinTypeChecker.DEFAULT.equalTypes(expressionType,
@@ -271,7 +271,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             final ArrayList<KtExpression> references,
             final Ref<KtExpression> reference,
             final boolean noTypeInference,
-            final KtType expressionType,
+            final KotlinType expressionType,
             final BindingContext bindingContext
     ) {
         final KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(expression);

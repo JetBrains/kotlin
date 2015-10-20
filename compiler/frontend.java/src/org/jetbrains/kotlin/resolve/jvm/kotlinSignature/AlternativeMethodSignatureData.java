@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.Variance;
@@ -52,17 +52,17 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
     private final KtNamedFunction altFunDeclaration;
 
     private List<ValueParameterDescriptor> altValueParameters;
-    private KtType altReturnType;
+    private KotlinType altReturnType;
     private List<TypeParameterDescriptor> altTypeParameters;
 
     private Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters;
 
     public AlternativeMethodSignatureData(
             @NotNull JavaMember methodOrConstructor,
-            @Nullable KtType receiverType,
+            @Nullable KotlinType receiverType,
             @NotNull Project project,
             @NotNull List<ValueParameterDescriptor> valueParameters,
-            @Nullable KtType originalReturnType,
+            @Nullable KotlinType originalReturnType,
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
             boolean hasSuperMethods
     ) {
@@ -119,7 +119,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
     private void checkParameterAndReturnTypesForOverridingMethods(
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
-            @Nullable KtType returnType
+            @Nullable KotlinType returnType
     ) {
         if (JavaDescriptorResolverKt.getPLATFORM_TYPES()) return;
         TypeSubstitutor substitutor = JavaResolverUtils.createSubstitutorForTypeParameters(originalToAltTypeParameters);
@@ -128,7 +128,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             int index = parameter.getIndex();
             ValueParameterDescriptor altParameter = altValueParameters.get(index);
 
-            KtType substituted = substitutor.substitute(parameter.getType(), Variance.INVARIANT);
+            KotlinType substituted = substitutor.substitute(parameter.getType(), Variance.INVARIANT);
             assert substituted != null;
 
             if (!TypeUtils.equalTypes(substituted, altParameter.getType())) {
@@ -143,7 +143,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         for (TypeParameterDescriptor parameter : methodTypeParameters) {
             int index = parameter.getIndex();
 
-            KtType substituted = substitutor.substitute(parameter.getUpperBoundsAsType(), Variance.INVARIANT);
+            KotlinType substituted = substitutor.substitute(parameter.getUpperBoundsAsType(), Variance.INVARIANT);
             assert substituted != null;
 
             if (!TypeUtils.equalTypes(substituted, altTypeParameters.get(index).getUpperBoundsAsType())) {
@@ -154,7 +154,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         }
 
         if (returnType != null) {
-            KtType substitutedReturnType = substitutor.substitute(returnType, Variance.INVARIANT);
+            KotlinType substitutedReturnType = substitutor.substitute(returnType, Variance.INVARIANT);
             assert substitutedReturnType != null;
 
             if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(altReturnType, substitutedReturnType)) {
@@ -171,7 +171,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
     }
 
     @Nullable
-    public KtType getReturnType() {
+    public KotlinType getReturnType() {
         checkForErrors();
         return altReturnType;
     }
@@ -197,10 +197,10 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             KtTypeElement alternativeTypeElement = annotationValueParameter.getTypeReference().getTypeElement();
             assert alternativeTypeElement != null;
 
-            KtType alternativeType;
-            KtType alternativeVarargElementType;
+            KotlinType alternativeType;
+            KotlinType alternativeVarargElementType;
 
-            KtType originalParamVarargElementType = originalParameterDescriptor.getVarargElementType();
+            KotlinType originalParamVarargElementType = originalParameterDescriptor.getVarargElementType();
             if (originalParamVarargElementType == null) {
                 if (annotationValueParameter.isVarArg()) {
                     throw new AlternativeSignatureMismatchException("Parameter in method signature is not vararg, but in alternative signature it is vararg");
@@ -253,7 +253,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             TypeParameterDescriptorImpl altParamDescriptor = originalToAltTypeParameters.get(originalTypeParamDescriptor);
             KtTypeParameter altTypeParameter = altFunDeclaration.getTypeParameters().get(i);
 
-            Set<KtType> originalUpperBounds = originalTypeParamDescriptor.getUpperBounds();
+            Set<KotlinType> originalUpperBounds = originalTypeParamDescriptor.getUpperBounds();
             List<KtTypeReference> altUpperBounds = getUpperBounds(altFunDeclaration, altTypeParameter);
             if (altUpperBounds.size() != originalUpperBounds.size()) {
                 if (altUpperBounds.isEmpty()
@@ -274,7 +274,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             }
             else {
                 int upperBoundIndex = 0;
-                for (KtType upperBound : originalUpperBounds) {
+                for (KotlinType upperBound : originalUpperBounds) {
 
                     KtTypeElement altTypeElement = altUpperBounds.get(upperBoundIndex).getTypeElement();
                     assert altTypeElement != null;

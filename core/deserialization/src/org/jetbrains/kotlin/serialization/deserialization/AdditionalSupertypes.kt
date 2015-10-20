@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 interface AdditionalSupertypes {
-    fun forClass(classDescriptor: DeserializedClassDescriptor): Collection<KtType>
+    fun forClass(classDescriptor: DeserializedClassDescriptor): Collection<KotlinType>
 
     object None : AdditionalSupertypes {
-        override fun forClass(classDescriptor: DeserializedClassDescriptor): Collection<KtType> = emptyList()
+        override fun forClass(classDescriptor: DeserializedClassDescriptor): Collection<KotlinType> = emptyList()
     }
 }

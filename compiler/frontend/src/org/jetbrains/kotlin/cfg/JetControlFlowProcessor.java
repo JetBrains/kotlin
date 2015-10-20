@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.*;
@@ -109,7 +109,7 @@ public class JetControlFlowProcessor {
         CallableDescriptor subroutineDescriptor = (CallableDescriptor) trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine);
         if (subroutineDescriptor == null) return;
 
-        KtType returnType = subroutineDescriptor.getReturnType();
+        KotlinType returnType = subroutineDescriptor.getReturnType();
         if (returnType != null && KotlinBuiltIns.isUnit(returnType) && subroutineDescriptor instanceof AnonymousFunctionDescriptor) return;
 
         PseudoValue returnValue = builder.getBoundValue(bodyExpression);
@@ -199,7 +199,7 @@ public class JetControlFlowProcessor {
                 return;
             }
 
-            KtType type = trace.getBindingContext().getType(expression);
+            KotlinType type = trace.getBindingContext().getType(expression);
             if (type != null && KotlinBuiltIns.isNothing(type)) {
                 builder.jumpToError(expression);
             }

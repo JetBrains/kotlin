@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
-fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: KtType) {
+fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: KotlinType) {
     val explicitParameterTypes = needExplicitParameterTypes(context, placeholderRange, lambdaType)
 
     // we start template later to not interfere with insertion of tail type
@@ -64,14 +64,14 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
     }
 }
 
-fun lambdaPresentation(lambdaType: KtType?): String {
+fun lambdaPresentation(lambdaType: KotlinType?): String {
     if (lambdaType == null) return "{...}"
     val parameterTypes = functionParameterTypes(lambdaType)
     val parametersPresentation = parameterTypes.map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }.joinToString(", ")
     return "{ $parametersPresentation -> ... }"
 }
 
-private fun needExplicitParameterTypes(context: InsertionContext, placeholderRange: TextRange, lambdaType: KtType): Boolean {
+private fun needExplicitParameterTypes(context: InsertionContext, placeholderRange: TextRange, lambdaType: KotlinType): Boolean {
     PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
     val file = context.getFile() as KtFile
     val expression = PsiTreeUtil.findElementOfClassAtRange(file, placeholderRange.getStartOffset(), placeholderRange.getEndOffset(), javaClass<KtExpression>())
@@ -92,7 +92,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     return functionTypes.filter { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size() == lambdaParameterCount }.size() > 1
 }
 
-private fun buildTemplate(lambdaType: KtType, explicitParameterTypes: Boolean, project: Project): Template {
+private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolean, project: Project): Template {
     val parameterTypes = functionParameterTypes(lambdaType)
 
     val manager = TemplateManager.getInstance(project)
@@ -128,5 +128,5 @@ private class ParameterNameExpression(val nameSuggestions: Array<String>) : Expr
             = Array<LookupElement>(nameSuggestions.size(), { LookupElementBuilder.create(nameSuggestions[it]) })
 }
 
-fun functionParameterTypes(functionType: KtType): List<KtType>
+fun functionParameterTypes(functionType: KotlinType): List<KotlinType>
         = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(functionType).map { it.getType() }

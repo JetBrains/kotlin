@@ -35,7 +35,7 @@ public enum class TypeNullability {
     FLEXIBLE
 }
 
-public fun KtType.nullability(): TypeNullability {
+public fun KotlinType.nullability(): TypeNullability {
     return when {
         isNullabilityFlexible() -> TypeNullability.FLEXIBLE
         TypeUtils.isNullableType(this) -> TypeNullability.NULLABLE
@@ -43,22 +43,22 @@ public fun KtType.nullability(): TypeNullability {
     }
 }
 
-val KtType.builtIns: KotlinBuiltIns
+val KotlinType.builtIns: KotlinBuiltIns
     get() = constructor.builtIns
 
-fun KtType.makeNullable() = TypeUtils.makeNullable(this)
-fun KtType.makeNotNullable() = TypeUtils.makeNotNullable(this)
+fun KotlinType.makeNullable() = TypeUtils.makeNullable(this)
+fun KotlinType.makeNotNullable() = TypeUtils.makeNotNullable(this)
 
-fun KtType.immediateSupertypes(): Collection<KtType> = TypeUtils.getImmediateSupertypes(this)
-fun KtType.supertypes(): Collection<KtType> = TypeUtils.getAllSupertypes(this)
+fun KotlinType.immediateSupertypes(): Collection<KotlinType> = TypeUtils.getImmediateSupertypes(this)
+fun KotlinType.supertypes(): Collection<KotlinType> = TypeUtils.getAllSupertypes(this)
 
-fun KtType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
-fun KtType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
-fun KtType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
-fun KtType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
-fun KtType.isBooleanOrNullableBoolean(): Boolean = KotlinBuiltIns.isBooleanOrNullableBoolean(this)
+fun KotlinType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
+fun KotlinType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
+fun KotlinType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
+fun KotlinType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
+fun KotlinType.isBooleanOrNullableBoolean(): Boolean = KotlinBuiltIns.isBooleanOrNullableBoolean(this)
 
-private fun KtType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
+private fun KotlinType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()
     if (declarationDescriptor is TypeParameterDescriptor) return listOf(declarationDescriptor)
 
@@ -85,24 +85,24 @@ fun DeclarationDescriptor.getCapturedTypeParameters(): Collection<TypeParameterD
     return result
 }
 
-public fun KtType.getContainedAndCapturedTypeParameterConstructors(): Collection<TypeConstructor> {
+public fun KotlinType.getContainedAndCapturedTypeParameterConstructors(): Collection<TypeConstructor> {
     // todo type arguments (instead of type parameters) of the type of outer class must be considered; KT-6325
     val capturedTypeParameters = getConstructor().getDeclarationDescriptor()?.getCapturedTypeParameters() ?: emptyList()
     val typeParameters = getContainedTypeParameters() + capturedTypeParameters
     return typeParameters.map { it.getTypeConstructor() }.toReadOnlyList()
 }
 
-public fun KtType.isSubtypeOf(superType: KtType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
+public fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
 
-public fun KtType.cannotBeReified(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic()
+public fun KotlinType.cannotBeReified(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic()
 
-fun TypeProjection.substitute(doSubstitute: (KtType) -> KtType): TypeProjection {
+fun TypeProjection.substitute(doSubstitute: (KotlinType) -> KotlinType): TypeProjection {
     return if (isStarProjection())
         this
     else TypeProjectionImpl(getProjectionKind(), doSubstitute(getType()))
 }
 
-fun KtType.replaceAnnotations(newAnnotations: Annotations): KtType {
+fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
     if (newAnnotations.isEmpty()) return this
     return object : DelegatingType() {
         override fun getDelegate() = this@replaceAnnotations
@@ -111,13 +111,13 @@ fun KtType.replaceAnnotations(newAnnotations: Annotations): KtType {
     }
 }
 
-public fun KotlinTypeChecker.equalTypesOrNulls(type1: KtType?, type2: KtType?): Boolean {
+public fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: KotlinType?): Boolean {
     if (type1 === type2) return true
     if (type1 == null || type2 == null) return false
     return equalTypes(type1, type2)
 }
 
-fun KtType.getNestedArguments(): List<TypeProjection> {
+fun KotlinType.getNestedArguments(): List<TypeProjection> {
     val result = ArrayList<TypeProjection>()
 
     val stack = ArrayDeque<TypeProjection>()
@@ -134,11 +134,11 @@ fun KtType.getNestedArguments(): List<TypeProjection> {
     return result
 }
 
-fun KtType.containsError() = ErrorUtils.containsErrorType(this)
+fun KotlinType.containsError() = ErrorUtils.containsErrorType(this)
 
-public fun List<KtType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }
+public fun List<KotlinType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }
 
-public fun KtType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
+public fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
 
-public fun createProjection(type: KtType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
+public fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
         TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)

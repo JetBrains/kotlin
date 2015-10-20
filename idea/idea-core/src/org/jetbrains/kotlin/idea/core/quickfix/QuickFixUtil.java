@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.DeferredType;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 public class QuickFixUtil {
@@ -58,12 +58,12 @@ public class QuickFixUtil {
     }
 
     @Nullable
-    public static KtType getDeclarationReturnType(KtNamedDeclaration declaration) {
+    public static KotlinType getDeclarationReturnType(KtNamedDeclaration declaration) {
         PsiFile file = declaration.getContainingFile();
         if (!(file instanceof KtFile)) return null;
         DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(declaration);
         if (!(descriptor instanceof CallableDescriptor)) return null;
-        KtType type = ((CallableDescriptor) descriptor).getReturnType();
+        KotlinType type = ((CallableDescriptor) descriptor).getReturnType();
         if (type instanceof DeferredType) {
             type = ((DeferredType) type).getDelegate();
         }
@@ -71,10 +71,10 @@ public class QuickFixUtil {
     }
 
     @Nullable
-    public static KtType findLowerBoundOfOverriddenCallablesReturnTypes(@NotNull CallableDescriptor descriptor) {
-        KtType matchingReturnType = null;
+    public static KotlinType findLowerBoundOfOverriddenCallablesReturnTypes(@NotNull CallableDescriptor descriptor) {
+        KotlinType matchingReturnType = null;
         for (CallableDescriptor overriddenDescriptor : ((CallableDescriptor) descriptor).getOverriddenDescriptors()) {
-            KtType overriddenReturnType = overriddenDescriptor.getReturnType();
+            KotlinType overriddenReturnType = overriddenDescriptor.getReturnType();
             if (overriddenReturnType == null) {
                 return null;
             }
@@ -155,7 +155,7 @@ public class QuickFixUtil {
         }
     }
 
-    public static String renderTypeWithFqNameOnClash(KtType type, String nameToCheckAgainst) {
+    public static String renderTypeWithFqNameOnClash(KotlinType type, String nameToCheckAgainst) {
         FqName typeFqName = DescriptorUtils.getFqNameSafe(DescriptorUtils.getClassDescriptorForType(type));
         FqName fqNameToCheckAgainst = new FqName(nameToCheckAgainst);
         DescriptorRenderer renderer = typeFqName.shortName().equals(fqNameToCheckAgainst.shortName())

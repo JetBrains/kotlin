@@ -63,8 +63,8 @@ public class TypeUnifier {
             Predicate<TypeConstructor> isVariable,
             UnificationResultImpl result
     ) {
-        KtType known = knownProjection.getType();
-        KtType withVariables = projectWithVariables.getType();
+        KotlinType known = knownProjection.getType();
+        KotlinType withVariables = projectWithVariables.getType();
 
         // in Foo ~ in X  =>  Foo ~ X
         Variance knownProjectionKind = knownProjection.getProjectionKind();

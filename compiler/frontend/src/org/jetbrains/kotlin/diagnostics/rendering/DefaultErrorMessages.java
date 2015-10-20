@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.MultiRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.MappedExtensionProvider;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
@@ -566,10 +566,10 @@ public class DefaultErrorMessages {
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
                                    "The function '" + OperatorNameConventions.INVOKE.asString() + "()' is not found",
-                ELEMENT_TEXT, new Renderer<KtType>() {
+                ELEMENT_TEXT, new Renderer<KotlinType>() {
                     @NotNull
                     @Override
-                    public String render(@NotNull KtType type) {
+                    public String render(@NotNull KotlinType type) {
                         if (type.isError()) return "";
                         return " of type '" + RENDER_TYPE.render(type) + "'";
                     }

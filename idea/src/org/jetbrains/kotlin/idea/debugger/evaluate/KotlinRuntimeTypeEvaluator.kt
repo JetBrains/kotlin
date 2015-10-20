@@ -36,7 +36,7 @@ import com.sun.jdi.Value
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 
 public abstract class KotlinRuntimeTypeEvaluator(
@@ -44,10 +44,10 @@ public abstract class KotlinRuntimeTypeEvaluator(
         expression: KtExpression,
         context: DebuggerContextImpl,
         indicator: ProgressIndicator
-) : EditorEvaluationCommand<KtType>(editor, expression, context, indicator) {
+) : EditorEvaluationCommand<KotlinType>(editor, expression, context, indicator) {
 
     override fun threadAction() {
-        var type: KtType? = null
+        var type: KotlinType? = null
         try {
             type = evaluate()
         }
@@ -60,9 +60,9 @@ public abstract class KotlinRuntimeTypeEvaluator(
         }
     }
 
-    protected abstract fun typeCalculationFinished(type: KtType?)
+    protected abstract fun typeCalculationFinished(type: KotlinType?)
 
-    override fun evaluate(evaluationContext: EvaluationContextImpl): KtType? {
+    override fun evaluate(evaluationContext: EvaluationContextImpl): KotlinType? {
         val project = evaluationContext.getProject()
 
         val evaluator = DebuggerInvocationUtil.commitAndRunReadAction<ExpressionEvaluator>(project, EvaluatingComputable {
@@ -80,7 +80,7 @@ public abstract class KotlinRuntimeTypeEvaluator(
     }
 
     companion object {
-        private fun getCastableRuntimeType(project: Project, value: Value): KtType? {
+        private fun getCastableRuntimeType(project: Project, value: Value): KotlinType? {
             val myValue = value.asValue()
             var psiClass = myValue.asmType.getClassDescriptor(project)
             if (psiClass != null) {

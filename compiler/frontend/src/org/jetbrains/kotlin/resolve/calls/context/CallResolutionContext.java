@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public abstract class CallResolutionContext<Context extends CallResolutionContext<Context>> extends ResolutionContext<Context> {
     @NotNull
@@ -40,7 +40,7 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull Call call,
-            @NotNull KtType expectedType,
+            @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
             @NotNull CheckArgumentTypesMode checkArguments,

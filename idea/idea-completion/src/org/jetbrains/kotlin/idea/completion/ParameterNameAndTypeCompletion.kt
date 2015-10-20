@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class ParameterNameAndTypeCompletion(
@@ -152,7 +152,7 @@ class ParameterNameAndTypeCompletion(
         }
     }
 
-    private fun KtType.isVisible(visibilityFilter: (DeclarationDescriptor) -> Boolean): Boolean {
+    private fun KotlinType.isVisible(visibilityFilter: (DeclarationDescriptor) -> Boolean): Boolean {
         if (isError()) return false
         val classifier = getConstructor().getDeclarationDescriptor() ?: return false
         return visibilityFilter(classifier) && getArguments().all { it.isStarProjection || it.getType().isVisible(visibilityFilter) }
@@ -175,7 +175,7 @@ class ParameterNameAndTypeCompletion(
                 = lookupElementFactory.createLookupElementForJavaClass(psiClass, qualifyNestedClasses = true)
     }
 
-    private class ArbitraryType(private val type: KtType) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)) {
+    private class ArbitraryType(private val type: KotlinType) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)) {
         override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
                 = lookupElementFactory.createLookupElementForType(type)
     }

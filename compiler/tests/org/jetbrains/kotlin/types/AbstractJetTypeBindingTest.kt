@@ -65,7 +65,7 @@ abstract class AbstractJetTypeBindingTest : JetLiteFixture() {
     }
 
     private class MyPrinter(out: StringBuilder) : Printer(out) {
-        private fun KtType.render() = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
+        private fun KotlinType.render() = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
         private fun TypeParameterDescriptor?.render() = if (this == null) "null" else DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(this)
 
         fun print(argument: TypeArgumentBinding<*>?): MyPrinter {

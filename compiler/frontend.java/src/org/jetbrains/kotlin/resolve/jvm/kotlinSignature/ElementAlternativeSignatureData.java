@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtTypeElement;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 import java.util.Map;
@@ -86,8 +86,8 @@ public abstract class ElementAlternativeSignatureData {
         }
     }
 
-    protected static KtType computeReturnType(
-            @NotNull KtType originalType,
+    protected static KotlinType computeReturnType(
+            @NotNull KotlinType originalType,
             @Nullable KtTypeReference altReturnTypeReference,
             @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters) {
         if (altReturnTypeReference == null) {

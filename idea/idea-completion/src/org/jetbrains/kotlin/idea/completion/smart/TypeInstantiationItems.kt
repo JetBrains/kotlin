@@ -266,7 +266,7 @@ class TypeInstantiationItems(
         return InstantiationLookupElement(lookupElement).addTail(tail)
     }
 
-    private fun KtType.areTypeParametersUsedInside(freeParameters: Collection<TypeParameterDescriptor>): Boolean {
+    private fun KotlinType.areTypeParametersUsedInside(freeParameters: Collection<TypeParameterDescriptor>): Boolean {
         return FuzzyType(this, freeParameters).freeParameters.isNotEmpty()
     }
 
@@ -296,7 +296,7 @@ class TypeInstantiationItems(
             private val tail: Tail?) : InheritanceItemsSearcher {
 
         private val baseHasTypeArgs = classDescriptor.typeConstructor.parameters.isNotEmpty()
-        private val expectedType = KtTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArgs)
+        private val expectedType = KotlinTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArgs)
         private val expectedFuzzyType = FuzzyType(expectedType, freeParameters)
 
         override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {

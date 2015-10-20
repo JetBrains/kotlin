@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 
@@ -60,7 +60,7 @@ public class CompileTimeConstantUtils {
         for (KtParameter parameter : parameters) {
             VariableDescriptor parameterDescriptor = trace.getBindingContext().get(VALUE_PARAMETER, parameter);
             if (parameterDescriptor == null) continue;
-            KtType parameterType = parameterDescriptor.getType();
+            KotlinType parameterType = parameterDescriptor.getType();
             KtTypeReference typeReference = parameter.getTypeReference();
             if (typeReference != null) {
                 if (parameterType.isMarkedNullable()) {
@@ -73,7 +73,7 @@ public class CompileTimeConstantUtils {
         }
     }
 
-    private static boolean isAcceptableTypeForAnnotationParameter(@NotNull KtType parameterType) {
+    private static boolean isAcceptableTypeForAnnotationParameter(@NotNull KotlinType parameterType) {
         ClassDescriptor typeDescriptor = TypeUtils.getClassDescriptor(parameterType);
         if (typeDescriptor == null) {
             return false;
@@ -91,7 +91,7 @@ public class CompileTimeConstantUtils {
         if (KotlinBuiltIns.isArray(parameterType)) {
             List<TypeProjection> arguments = parameterType.getArguments();
             if (arguments.size() == 1) {
-                KtType arrayType = arguments.get(0).getType();
+                KotlinType arrayType = arguments.get(0).getType();
                 if (arrayType.isMarkedNullable()) {
                     return false;
                 }

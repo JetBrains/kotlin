@@ -4,7 +4,7 @@ import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.psi.PsiElement
 import com.intellij.util.Range
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.KtIcons
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -19,8 +19,8 @@ public class KotlinMethodSmartStepTarget(
 ): SmartStepTarget(label, highlightElement, false, lines) {
     override fun getIcon(): Icon? {
         return when {
-            resolvedElement is KtNamedFunction && resolvedElement.getReceiverTypeReference() != null -> KtIcons.EXTENSION_FUNCTION
-            else -> KtIcons.FUNCTION
+            resolvedElement is KtNamedFunction && resolvedElement.getReceiverTypeReference() != null -> KotlinIcons.EXTENSION_FUNCTION
+            else -> KotlinIcons.FUNCTION
         }
     }
 

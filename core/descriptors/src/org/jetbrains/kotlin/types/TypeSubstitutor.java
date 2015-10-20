@@ -63,7 +63,7 @@ public class TypeSubstitutor {
     }
 
     @NotNull
-    public static TypeSubstitutor create(@NotNull KtType context) {
+    public static TypeSubstitutor create(@NotNull KotlinType context) {
         return create(new IndexedParametersSubstitution(context.getConstructor(), context.getArguments()));
     }
 
@@ -85,7 +85,7 @@ public class TypeSubstitutor {
     }
 
     @NotNull
-    public KtType safeSubstitute(@NotNull KtType type, @NotNull Variance howThisTypeIsUsed) {
+    public KotlinType safeSubstitute(@NotNull KotlinType type, @NotNull Variance howThisTypeIsUsed) {
         if (isEmpty()) {
             return type;
         }
@@ -98,7 +98,7 @@ public class TypeSubstitutor {
     }
 
     @Nullable
-    public KtType substitute(@NotNull KtType type, @NotNull Variance howThisTypeIsUsed) {
+    public KotlinType substitute(@NotNull KotlinType type, @NotNull Variance howThisTypeIsUsed) {
         TypeProjection projection = substitute(new TypeProjectionImpl(howThisTypeIsUsed, type));
         return projection == null ? null : projection.getType();
     }
@@ -132,7 +132,7 @@ public class TypeSubstitutor {
         if (originalProjection.isStarProjection()) return originalProjection;
 
         // The type is within the substitution range, i.e. T or T?
-        KtType type = originalProjection.getType();
+        KotlinType type = originalProjection.getType();
         TypeProjection replacement = substitution.get(type);
         Variance originalProjectionKind = originalProjection.getProjectionKind();
         if (replacement == null && FlexibleTypesKt.isFlexible(type) && !TypeCapabilitiesKt.isCustomTypeVariable(type)) {
@@ -147,7 +147,7 @@ public class TypeSubstitutor {
                    originalProjectionKind == Variance.INVARIANT || originalProjectionKind == substitutedProjectionKind :
                     "Unexpected substituted projection kind: " + substitutedProjectionKind + "; original: " + originalProjectionKind;
 
-            KtType substitutedFlexibleType = DelegatingFlexibleType.create(
+            KotlinType substitutedFlexibleType = DelegatingFlexibleType.create(
                     substitutedLower.getType(), substitutedUpper.getType(), flexibility.getExtraCapabilities());
             return new TypeProjectionImpl(substitutedProjectionKind, substitutedFlexibleType);
         }
@@ -171,7 +171,7 @@ public class TypeSubstitutor {
                         return new TypeProjectionImpl(Variance.OUT_VARIANCE, type.getConstructor().getBuiltIns().getNullableAnyType());
                 }
             }
-            KtType substitutedType;
+            KotlinType substitutedType;
             CustomTypeVariable typeVariable = TypeCapabilitiesKt.getCustomTypeVariable(type);
             if (replacement.isStarProjection()) {
                 return replacement;
@@ -217,7 +217,7 @@ public class TypeSubstitutor {
             TypeProjection originalProjection,
             int recursionDepth
     ) throws SubstitutionException {
-        final KtType type = originalProjection.getType();
+        final KotlinType type = originalProjection.getType();
         Variance projectionKind = originalProjection.getProjectionKind();
         if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
             // substitution can't change type parameter
@@ -236,17 +236,17 @@ public class TypeSubstitutor {
 
             @Nullable
             @Override
-            public TypeProjection get(@NotNull KtType key) {
+            public TypeProjection get(@NotNull KotlinType key) {
                 return containedOrCapturedTypeParameters.contains(key.getConstructor()) ? substitution.get(key) : null;
             }
         };
-        KtType substitutedType = KtTypeImpl.create(type.getAnnotations(),   // Old annotations. This is questionable
-                                                   type.getConstructor(),             // The same constructor
-                                                   type.isMarkedNullable(),           // Same nullability
-                                                   substitutedArguments,
-                                                   substitutionFilteringTypeParameters,
-                                                   new SubstitutingScope(type.getMemberScope(), create(substitutionFilteringTypeParameters)),
-                                                   type.getCapabilities());
+        KotlinType substitutedType = KotlinTypeImpl.create(type.getAnnotations(),   // Old annotations. This is questionable
+                                                           type.getConstructor(),             // The same constructor
+                                                           type.isMarkedNullable(),           // Same nullability
+                                                           substitutedArguments,
+                                                           substitutionFilteringTypeParameters,
+                                                           new SubstitutingScope(type.getMemberScope(), create(substitutionFilteringTypeParameters)),
+                                                           type.getCapabilities());
         return new TypeProjectionImpl(projectionKind, substitutedType);
     }
 

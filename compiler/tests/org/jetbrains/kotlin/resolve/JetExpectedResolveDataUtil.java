@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 
@@ -129,7 +129,7 @@ public class JetExpectedResolveDataUtil {
             ClassDescriptor classDescriptor,
             String name,
             Project project,
-            KtType... parameterTypes
+            KotlinType... parameterTypes
     ) {
         ModuleDescriptorImpl emptyModule = JetTestUtils.createEmptyModule();
         ContainerForTests container = InjectionKt.createContainerForTests(project, emptyModule);

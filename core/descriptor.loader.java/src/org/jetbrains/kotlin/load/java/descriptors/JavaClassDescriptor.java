@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.load.java.descriptors;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public interface JavaClassDescriptor extends ClassDescriptor {
     @Nullable
-    KtType getFunctionTypeForSamInterface();
+    KotlinType getFunctionTypeForSamInterface();
 }

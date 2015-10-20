@@ -40,19 +40,19 @@ public enum class ResolveArgumentsMode {
 }
 
 
-public fun hasUnknownFunctionParameter(type: KtType): Boolean {
+public fun hasUnknownFunctionParameter(type: KotlinType): Boolean {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     return getParameterArgumentsOfCallableType(type).any {
         TypeUtils.containsSpecialType(it.getType(), DONT_CARE) || ErrorUtils.containsUninferredParameter(it.getType())
     }
 }
 
-public fun hasUnknownReturnType(type: KtType): Boolean {
+public fun hasUnknownReturnType(type: KotlinType): Boolean {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     return ErrorUtils.containsErrorType(getReturnTypeForCallable(type))
 }
 
-public fun replaceReturnTypeByUnknown(type: KtType): KtType {
+public fun replaceReturnTypeByUnknown(type: KotlinType): KotlinType {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     val newArguments = Lists.newArrayList<TypeProjection>()
     newArguments.addAll(getParameterArgumentsOfCallableType(type))
@@ -60,13 +60,13 @@ public fun replaceReturnTypeByUnknown(type: KtType): KtType {
     return replaceTypeArguments(type, newArguments)
 }
 
-private fun replaceTypeArguments(type: KtType, newArguments: List<TypeProjection>) =
-        KtTypeImpl.create(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope())
+private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjection>) =
+        KotlinTypeImpl.create(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope())
 
-private fun getParameterArgumentsOfCallableType(type: KtType) =
+private fun getParameterArgumentsOfCallableType(type: KotlinType) =
         type.getArguments().dropLast(1)
 
-private fun getReturnTypeForCallable(type: KtType) =
+private fun getReturnTypeForCallable(type: KotlinType) =
         type.getArguments().last().getType()
 
 private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constraintSystem: ConstraintSystem): Boolean {
@@ -86,7 +86,7 @@ public fun CallableDescriptor.hasInferredReturnType(constraintSystem: Constraint
     return true
 }
 
-public fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescriptor, descriptor: CallableDescriptor): KtType {
+public fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescriptor, descriptor: CallableDescriptor): KotlinType {
     var receiverType = receiverParameterDescriptor.getType()
     for (typeParameter in descriptor.getTypeParameters()) {
         if (typeParameter.getTypeConstructor() == receiverType.getConstructor()) {
@@ -97,7 +97,7 @@ public fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterD
     for (typeProjection in receiverType.getArguments()) {
         fakeTypeArguments.add(TypeProjectionImpl(typeProjection.getProjectionKind(), DONT_CARE))
     }
-    return KtTypeImpl.create(receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isMarkedNullable(), fakeTypeArguments,
+    return KotlinTypeImpl.create(receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isMarkedNullable(), fakeTypeArguments,
                        ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true))
 }
 
@@ -146,7 +146,7 @@ public fun getSuperCallExpression(call: Call): KtSuperExpression? {
     return (call.getExplicitReceiver() as? ExpressionReceiver)?.getExpression() as? KtSuperExpression
 }
 
-public fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument): KtType {
+public fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument): KotlinType {
     if (argument.getSpreadElement() != null) {
         if (parameterDescriptor.getVarargElementType() == null) {
             // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper

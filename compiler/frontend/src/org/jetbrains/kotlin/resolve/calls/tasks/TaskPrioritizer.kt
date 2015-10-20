@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.resolve.validation.InfixValidator
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isDynamic
@@ -144,7 +144,7 @@ public class TaskPrioritizer(
             val value: ReceiverValue,
             private val context: ResolutionContext<*>
     ) {
-        val types: Collection<KtType> by lazy { smartCastManager.getSmartCastVariants(value, context) }
+        val types: Collection<KotlinType> by lazy { smartCastManager.getSmartCastVariants(value, context) }
     }
 
     private fun <D : CallableDescriptor, F : D> addCandidatesForExplicitReceiver(

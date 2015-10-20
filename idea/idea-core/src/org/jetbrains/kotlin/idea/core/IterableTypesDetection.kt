@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker
@@ -48,24 +48,24 @@ public class IterableTypesDetection(
     private inner class Detector(private val scope: KtScope): IterableTypesDetector {
         private val cache = HashMap<FuzzyType, FuzzyType?>()
 
-        private val typesWithExtensionIterator: Collection<KtType> = scope.getFunctions(iteratorName, NoLookupLocation.FROM_IDE)
+        private val typesWithExtensionIterator: Collection<KotlinType> = scope.getFunctions(iteratorName, NoLookupLocation.FROM_IDE)
                 .map { it.getExtensionReceiverParameter() }
                 .filterNotNull()
                 .map { it.getType() }
 
-        override fun isIterable(type: FuzzyType, loopVarType: KtType?): Boolean {
+        override fun isIterable(type: FuzzyType, loopVarType: KotlinType?): Boolean {
             val elementType = elementType(type) ?: return false
             return loopVarType == null || elementType.checkIsSubtypeOf(loopVarType) != null
         }
 
-        override fun isIterable(type: KtType, loopVarType: KtType?): Boolean
+        override fun isIterable(type: KotlinType, loopVarType: KotlinType?): Boolean
                 = isIterable(FuzzyType(type, emptyList()), loopVarType)
 
         private fun elementType(type: FuzzyType): FuzzyType? {
             return cache.getOrPut(type, { elementTypeNoCache(type) })
         }
 
-        override fun elementType(type: KtType): FuzzyType?
+        override fun elementType(type: KotlinType): FuzzyType?
                 = elementType(FuzzyType(type, emptyList()))
 
         private fun elementTypeNoCache(type: FuzzyType): FuzzyType? {
@@ -87,9 +87,9 @@ public class IterableTypesDetection(
 }
 
 public interface IterableTypesDetector {
-    public fun isIterable(type: KtType, loopVarType: KtType? = null): Boolean
+    public fun isIterable(type: KotlinType, loopVarType: KotlinType? = null): Boolean
 
-    public fun isIterable(type: FuzzyType, loopVarType: KtType? = null): Boolean
+    public fun isIterable(type: FuzzyType, loopVarType: KotlinType? = null): Boolean
 
-    public fun elementType(type: KtType): FuzzyType?
+    public fun elementType(type: KotlinType): FuzzyType?
 }

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +106,7 @@ public class MoveDeclarationsOutHelper {
 
     @NotNull
     private static KtProperty createVariableDeclaration(@NotNull KtProperty property, boolean generateDefaultInitializers) {
-        KtType propertyType = getPropertyType(property);
+        KotlinType propertyType = getPropertyType(property);
         String defaultInitializer = null;
         if (generateDefaultInitializers && property.isVar()) {
             defaultInitializer = CodeInsightUtils.defaultInitializer(propertyType);
@@ -115,7 +115,7 @@ public class MoveDeclarationsOutHelper {
     }
 
     @NotNull
-    private static KtType getPropertyType(@NotNull KtProperty property) {
+    private static KotlinType getPropertyType(@NotNull KtProperty property) {
         BindingContext bindingContext = ResolutionUtils.analyze(property, BodyResolveMode.PARTIAL);
 
         VariableDescriptor propertyDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
@@ -124,7 +124,7 @@ public class MoveDeclarationsOutHelper {
     }
 
     @NotNull
-    private static KtProperty createProperty(@NotNull KtProperty property, @NotNull KtType propertyType, @Nullable String initializer) {
+    private static KtProperty createProperty(@NotNull KtProperty property, @NotNull KotlinType propertyType, @Nullable String initializer) {
         KtTypeReference typeRef = property.getTypeReference();
         String typeString = null;
         if (typeRef != null) {

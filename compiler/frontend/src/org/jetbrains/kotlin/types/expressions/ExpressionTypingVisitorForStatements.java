@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -81,8 +81,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     @Nullable
-    private KtType checkAssignmentType(
-            @Nullable KtType assignmentType,
+    private KotlinType checkAssignmentType(
+            @Nullable KotlinType assignmentType,
             @NotNull KtBinaryExpression expression,
             @NotNull ExpressionTypingContext context
     ) {
@@ -132,10 +132,10 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         KtExpression initializer = property.getInitializer();
         JetTypeInfo typeInfo;
         if (initializer != null) {
-            KtType outType = propertyDescriptor.getType();
+            KotlinType outType = propertyDescriptor.getType();
             typeInfo = facade.getTypeInfo(initializer, context.replaceExpectedType(outType));
             DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
-            KtType type = typeInfo.getType();
+            KotlinType type = typeInfo.getType();
             // At this moment we do not take initializer value into account if type is given for a property
             // We can comment first part of this condition to take them into account, like here: var s: String? = "xyz"
             // In this case s will be not-nullable until it is changed
@@ -239,7 +239,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         IElementType operationType = operationSign.getReferencedNameElementType();
         KtExpression leftOperand = expression.getLeft();
         JetTypeInfo leftInfo = ExpressionTypingUtils.getTypeInfoOrNullType(leftOperand, context, facade);
-        KtType leftType = leftInfo.getType();
+        KotlinType leftType = leftInfo.getType();
 
         KtExpression right = expression.getRight();
         KtExpression left = leftOperand == null ? null : deparenthesize(leftOperand);
@@ -266,11 +266,11 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                         context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope),
                         receiver, expression, name
                 );
-        KtType assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors,
-                                                                                        context.contextDependency);
+        KotlinType assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors,
+                                                                                            context.contextDependency);
 
         OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors;
-        KtType binaryOperationType;
+        KotlinType binaryOperationType;
         TemporaryTraceAndCache temporaryForBinaryOperation = TemporaryTraceAndCache.create(
                 context, "trace to check binary operation like '+' for", expression);
         TemporaryBindingTrace ignoreReportsTrace = TemporaryBindingTrace.create(context.trace, "Trace for checking assignability");
@@ -289,7 +289,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             binaryOperationType = null;
         }
 
-        KtType type = assignmentOperationType != null ? assignmentOperationType : binaryOperationType;
+        KotlinType type = assignmentOperationType != null ? assignmentOperationType : binaryOperationType;
         JetTypeInfo rightInfo = leftInfo;
         if (assignmentOperationDescriptors.isSuccess() && binaryOperationDescriptors.isSuccess()) {
             // Both 'plus()' and 'plusAssign()' available => ambiguity
@@ -347,13 +347,13 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             return typeInfo.replaceType(checkAssignmentType(typeInfo.getType(), expression, contextWithExpectedType));
         }
         JetTypeInfo leftInfo = ExpressionTypingUtils.getTypeInfoOrNullType(left, context, facade);
-        KtType leftType = leftInfo.getType();
+        KotlinType leftType = leftInfo.getType();
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
         JetTypeInfo resultInfo;
         if (right != null) {
             resultInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo).replaceExpectedType(leftType));
             dataFlowInfo = resultInfo.getDataFlowInfo();
-            KtType rightType = resultInfo.getType();
+            KotlinType rightType = resultInfo.getType();
             if (left != null && leftType != null && rightType != null) {
                 DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, leftType, context);
                 DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context);

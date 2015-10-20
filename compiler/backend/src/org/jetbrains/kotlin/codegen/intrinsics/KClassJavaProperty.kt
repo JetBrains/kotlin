@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -57,7 +57,7 @@ public class KClassJavaProperty : IntrinsicPropertyGetter() {
         }
     }
 
-    private fun isReifiedTypeParameter(type: KtType): Boolean {
+    private fun isReifiedTypeParameter(type: KotlinType): Boolean {
         val typeDescriptor = type.constructor.declarationDescriptor
         return typeDescriptor is TypeParameterDescriptor && typeDescriptor.isReified
     }

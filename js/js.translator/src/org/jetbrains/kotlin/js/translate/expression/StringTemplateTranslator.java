@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collections;
 
@@ -88,7 +88,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
                 return;
             }
 
-            KtType type = context().bindingContext().getType(entryExpression);
+            KotlinType type = context().bindingContext().getType(entryExpression);
             if (type == null || type.isMarkedNullable()) {
                 append(TopLevelFIF.TO_STRING.apply((JsExpression) null, Collections.singletonList(translatedExpression), context()));
             }
@@ -100,7 +100,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
             }
         }
 
-        private boolean mustCallToString(@NotNull KtType type) {
+        private boolean mustCallToString(@NotNull KotlinType type) {
             Name typeName = DescriptorUtilsKt.getNameIfStandardType(type);
             if (typeName != null) {
                 //TODO: this is a hacky optimization, should use some generic approach

@@ -498,10 +498,10 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void assertSupertypes(String typeStr, String... supertypeStrs) {
-        Set<KtType> allSupertypes = TypeUtils.getAllSupertypes(makeType(scopeWithImports, typeStr));
-        Set<KtType> expected = Sets.newHashSet();
+        Set<KotlinType> allSupertypes = TypeUtils.getAllSupertypes(makeType(scopeWithImports, typeStr));
+        Set<KotlinType> expected = Sets.newHashSet();
         for (String supertypeStr : supertypeStrs) {
-            KtType supertype = makeType(scopeWithImports, supertypeStr);
+            KotlinType supertype = makeType(scopeWithImports, supertypeStr);
             expected.add(supertype);
         }
         assertEquals(expected, allSupertypes);
@@ -516,27 +516,27 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     private void assertIntersection(String expected, String... types) {
-        Set<KtType> typesToIntersect = new LinkedHashSet<KtType>();
+        Set<KotlinType> typesToIntersect = new LinkedHashSet<KotlinType>();
         for (String type : types) {
             typesToIntersect.add(makeType(type));
         }
-        KtType result = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, typesToIntersect);
+        KotlinType result = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, typesToIntersect);
 //        assertNotNull("Intersection is null for " + typesToIntersect, result);
         assertEquals(makeType(expected), result);
     }
 
     private void assertCommonSupertype(String expected, String... types) {
-        Collection<KtType> subtypes = new ArrayList<KtType>();
+        Collection<KotlinType> subtypes = new ArrayList<KotlinType>();
         for (String type : types) {
             subtypes.add(makeType(type));
         }
-        KtType result = CommonSupertypes.commonSupertype(subtypes);
+        KotlinType result = CommonSupertypes.commonSupertype(subtypes);
         assertTrue(result + " != " + expected, result.equals(makeType(expected)));
     }
 
     private void assertSubtypingRelation(String subtype, String supertype, boolean expected) {
-        KtType typeNode1 = makeType(subtype);
-        KtType typeNode2 = makeType(supertype);
+        KotlinType typeNode1 = makeType(subtype);
+        KotlinType typeNode2 = makeType(supertype);
         boolean result = KotlinTypeChecker.DEFAULT.isSubtypeOf(
                 typeNode1,
                 typeNode2);
@@ -544,22 +544,22 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertTrue(typeNode1 + " is " + modifier + "a subtype of " + typeNode2, result == expected);
     }
 
-    private void assertType(String expression, KtType expectedType) {
+    private void assertType(String expression, KotlinType expectedType) {
         Project project = getProject();
         KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
-        KtType type = expressionTypingServices.getType(ScopeUtilsKt.asLexicalScope(scopeWithImports), ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
+        KotlinType type = expressionTypingServices.getType(ScopeUtilsKt.asLexicalScope(scopeWithImports), ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
-        KtType type = expressionTypingServices.safeGetType(ScopeUtilsKt.asLexicalScope(scopeWithImports), ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
+        KotlinType type = expressionTypingServices.safeGetType(ScopeUtilsKt.asLexicalScope(scopeWithImports), ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, JetTestUtils.DUMMY_TRACE);
         assertTrue("Error type expected but " + type + " returned", type.isError());
     }
 
     private void assertType(String contextType, final String expression, String expectedType) {
-        final KtType thisType = makeType(contextType);
+        final KotlinType thisType = makeType(contextType);
         KtScope scope = new AbstractScopeAdapter() {
             @NotNull
             @Override
@@ -586,9 +586,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private void assertType(KtScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
-        KtType type = expressionTypingServices.getType(
+        KotlinType type = expressionTypingServices.getType(
                 ScopeUtilsKt.asLexicalScope(addImports(scope)), ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, new BindingTraceContext());
-        KtType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
+        KotlinType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }
 
@@ -630,11 +630,11 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         return new ChainedScope(scope.getContainingDeclaration(), "JetTypeCheckerTest.addImports scope with imports", scopeChain.toArray(new KtScope[scopeChain.size()]));
     }
 
-    private KtType makeType(String typeStr) {
+    private KotlinType makeType(String typeStr) {
         return makeType(scopeWithImports, typeStr);
     }
 
-    private KtType makeType(KtScope scope, String typeStr) {
+    private KotlinType makeType(KtScope scope, String typeStr) {
         return typeResolver.resolveType(ScopeUtilsKt.asLexicalScope(scope), KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr), JetTestUtils.DUMMY_TRACE, true);
     }
 }

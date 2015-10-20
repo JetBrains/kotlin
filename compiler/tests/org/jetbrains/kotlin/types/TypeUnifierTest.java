@@ -213,7 +213,7 @@ public class TypeUnifierTest extends JetLiteFixture {
 
         KtTypeReference typeReference = projection.getTypeReference();
         assert typeReference != null;
-        KtType type = typeResolver.resolveType(ScopeUtilsKt.asLexicalScope(withX), typeReference, JetTestUtils.DUMMY_TRACE, true);
+        KotlinType type = typeResolver.resolveType(ScopeUtilsKt.asLexicalScope(withX), typeReference, JetTestUtils.DUMMY_TRACE, true);
 
         return new TypeProjectionImpl(getProjectionKind(typeStr, projection), type);
     }

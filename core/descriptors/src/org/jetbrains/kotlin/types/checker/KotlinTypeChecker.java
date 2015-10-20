@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.types.checker;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 
 public class KotlinTypeChecker {
@@ -30,14 +30,14 @@ public class KotlinTypeChecker {
 
     public static final KotlinTypeChecker ERROR_TYPES_ARE_EQUAL_TO_ANYTHING = new KotlinTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl() {
         @Override
-        public boolean assertEqualTypes(@NotNull KtType a, @NotNull KtType b, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
+        public boolean assertEqualTypes(@NotNull KotlinType a, @NotNull KotlinType b, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
             return a.isError() || b.isError() || super.assertEqualTypes(a, b, typeCheckingProcedure);
         }
     }));
 
     public static final KotlinTypeChecker FLEXIBLE_UNEQUAL_TO_INFLEXIBLE = new KotlinTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl()) {
         @Override
-        protected boolean heterogeneousEquivalence(KtType inflexibleType, KtType flexibleType) {
+        protected boolean heterogeneousEquivalence(KotlinType inflexibleType, KotlinType flexibleType) {
             return false;
         }
     });
@@ -58,11 +58,11 @@ public class KotlinTypeChecker {
         this.procedure = procedure;
     }
 
-    public boolean isSubtypeOf(@NotNull KtType subtype, @NotNull KtType supertype) {
+    public boolean isSubtypeOf(@NotNull KotlinType subtype, @NotNull KotlinType supertype) {
         return procedure.isSubtypeOf(subtype, supertype);
     }
 
-    public boolean equalTypes(@NotNull KtType a, @NotNull KtType b) {
+    public boolean equalTypes(@NotNull KotlinType a, @NotNull KotlinType b) {
         return procedure.equalTypes(a, b);
     }
 }

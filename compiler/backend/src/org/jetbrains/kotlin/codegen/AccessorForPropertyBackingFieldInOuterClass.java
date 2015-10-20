@@ -20,13 +20,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class AccessorForPropertyBackingFieldInOuterClass extends AccessorForPropertyDescriptor {
     public AccessorForPropertyBackingFieldInOuterClass(
             @NotNull PropertyDescriptor property,
             @NotNull DeclarationDescriptor containingDeclaration,
-            @Nullable KtType delegationType,
+            @Nullable KotlinType delegationType,
             @NotNull String nameSuffix
     ) {
         super(property, delegationType != null ? delegationType : property.getType(), null, null, containingDeclaration, null, nameSuffix);

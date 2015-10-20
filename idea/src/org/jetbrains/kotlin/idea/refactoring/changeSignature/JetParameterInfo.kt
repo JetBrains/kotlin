@@ -34,20 +34,20 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 public class JetParameterInfo(
         val callableDescriptor: CallableDescriptor,
         val originalIndex: Int = -1,
         private var name: String,
-        type: KtType? = null,
+        type: KotlinType? = null,
         var defaultValueForParameter: KtExpression? = null,
         var defaultValueForCall: KtExpression? = null,
         var valOrVar: JetValVar = JetValVar.None,
         val modifierList: KtModifierList? = null
 ): ParameterInfo {
-    val originalType: KtType? = type
+    val originalType: KotlinType? = type
     var currentTypeText: String = getOldTypeText()
 
     public val defaultValueParameterReferences: Map<PsiReference, DeclarationDescriptor>

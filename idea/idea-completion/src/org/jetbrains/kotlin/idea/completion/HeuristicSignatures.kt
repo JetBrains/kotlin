@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.types.IndexedParametersSubstitution
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SubstitutionUtils
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
@@ -41,13 +41,13 @@ public class HeuristicSignatures(
         private val project: Project,
         private val typeResolver: TypeResolver
 ) {
-    public fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor): KtType? {
+    public fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor): KotlinType? {
         val parameterIndex = function.getValueParameters().indexOf(parameter)
         assert(parameterIndex >= 0)
         return correctedParameterType(function, parameterIndex)
     }
 
-    private fun correctedParameterType(function: FunctionDescriptor, parameterIndex: Int): KtType? {
+    private fun correctedParameterType(function: FunctionDescriptor, parameterIndex: Int): KotlinType? {
         val ownerType = function.getDispatchReceiverParameter()?.getType() ?: return null
 
         val superFunctions = function.getOverriddenDescriptors()
@@ -74,7 +74,7 @@ public class HeuristicSignatures(
         }
     }
 
-    private fun typeFromText(text: String, typeParameters: Collection<TypeParameterDescriptor>): KtType {
+    private fun typeFromText(text: String, typeParameters: Collection<TypeParameterDescriptor>): KotlinType {
         val typeRef = KtPsiFactory(project).createType(text)
         val rootPackagesScope = SubpackagesScope(moduleDescriptor, FqName.ROOT).memberScopeAsFileScope()
         val scope = LexicalScopeImpl(rootPackagesScope, moduleDescriptor, false, null, "Root packages + type parameters") {

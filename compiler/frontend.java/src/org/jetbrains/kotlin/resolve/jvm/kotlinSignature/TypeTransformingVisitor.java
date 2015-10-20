@@ -42,16 +42,16 @@ import java.util.*;
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.TYPE_ARGUMENT;
 import static org.jetbrains.kotlin.types.Variance.INVARIANT;
 
-public class TypeTransformingVisitor extends KtVisitor<KtType, Void> {
+public class TypeTransformingVisitor extends KtVisitor<KotlinType, Void> {
     private static boolean strictMode = false;
 
-    private final KtType originalType;
+    private final KotlinType originalType;
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters;
 
     private final TypeUsage typeUsage;
 
     private TypeTransformingVisitor(
-            KtType originalType,
+            KotlinType originalType,
             Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters,
             TypeUsage typeUsage
     ) {
@@ -61,19 +61,19 @@ public class TypeTransformingVisitor extends KtVisitor<KtType, Void> {
     }
 
     @NotNull
-    public static KtType computeType(
+    public static KotlinType computeType(
             @NotNull KtTypeElement alternativeTypeElement,
-            @NotNull KtType originalType,
+            @NotNull KotlinType originalType,
             @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters,
             @NotNull TypeUsage typeUsage
     ) {
-        KtType computedType = alternativeTypeElement.accept(new TypeTransformingVisitor(originalType, originalToAltTypeParameters, typeUsage), null);
+        KotlinType computedType = alternativeTypeElement.accept(new TypeTransformingVisitor(originalType, originalToAltTypeParameters, typeUsage), null);
         assert (computedType != null);
         return computedType;
     }
 
     @Override
-    public KtType visitNullableType(@NotNull KtNullableType nullableType, Void aVoid) {
+    public KotlinType visitNullableType(@NotNull KtNullableType nullableType, Void aVoid) {
         if (!TypeUtils.isNullableType(originalType) && typeUsage != TYPE_ARGUMENT) {
             throw new AlternativeSignatureMismatchException("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
                  DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(originalType), nullableType.getText());
@@ -84,7 +84,7 @@ public class TypeTransformingVisitor extends KtVisitor<KtType, Void> {
     }
 
     @Override
-    public KtType visitFunctionType(@NotNull KtFunctionType type, Void data) {
+    public KotlinType visitFunctionType(@NotNull KtFunctionType type, Void data) {
         KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
         return visitCommonType(type.getReceiverTypeReference() == null
                 ? builtIns.getFunction(type.getParameters().size())
@@ -92,7 +92,7 @@ public class TypeTransformingVisitor extends KtVisitor<KtType, Void> {
     }
 
     @Override
-    public KtType visitUserType(@NotNull KtUserType type, Void data) {
+    public KotlinType visitUserType(@NotNull KtUserType type, Void data) {
         KtUserType qualifier = type.getQualifier();
 
         //noinspection ConstantConditions
@@ -102,12 +102,12 @@ public class TypeTransformingVisitor extends KtVisitor<KtType, Void> {
         return visitCommonType(longName, type);
     }
 
-    private KtType visitCommonType(@NotNull ClassDescriptor classDescriptor, @NotNull KtTypeElement type) {
+    private KotlinType visitCommonType(@NotNull ClassDescriptor classDescriptor, @NotNull KtTypeElement type) {
         return visitCommonType(DescriptorUtils.getFqNameSafe(classDescriptor).asString(), type);
     }
 
     @NotNull
-    private KtType visitCommonType(@NotNull String qualifiedName, @NotNull KtTypeElement type) {
+    private KotlinType visitCommonType(@NotNull String qualifiedName, @NotNull KtTypeElement type) {
         if (originalType.isError()) {
             return originalType;
         }
@@ -159,7 +159,7 @@ public class TypeTransformingVisitor extends KtVisitor<KtType, Void> {
             throw new AssertionError("Unexpected class of type constructor classifier "
                                      + (typeConstructorClassifier == null ? "null" : typeConstructorClassifier.getClass().getName()));
         }
-        return KtTypeImpl.create(originalType.getAnnotations(), typeConstructor, false, altArguments, memberScope);
+        return KotlinTypeImpl.create(originalType.getAnnotations(), typeConstructor, false, altArguments, memberScope);
     }
 
     @NotNull
@@ -183,7 +183,7 @@ public class TypeTransformingVisitor extends KtVisitor<KtType, Void> {
         assert argumentAlternativeTypeElement != null;
 
         TypeParameterDescriptor parameter = typeConstructor.getParameters().get(i);
-        KtType alternativeArgumentType = computeType(argumentAlternativeTypeElement, originalArgument.getType(), originalToAltTypeParameters, TYPE_ARGUMENT);
+        KotlinType alternativeArgumentType = computeType(argumentAlternativeTypeElement, originalArgument.getType(), originalToAltTypeParameters, TYPE_ARGUMENT);
         Variance projectionKind = originalArgument.getProjectionKind();
         Variance altProjectionKind;
         if (type instanceof KtUserType) {
@@ -234,7 +234,7 @@ public class TypeTransformingVisitor extends KtVisitor<KtType, Void> {
     }
 
     @Override
-    public KtType visitSelfType(@NotNull KtSelfType type, Void data) {
+    public KotlinType visitSelfType(@NotNull KtSelfType type, Void data) {
         throw new UnsupportedOperationException("Self-types are not supported yet");
     }
 

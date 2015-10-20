@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class JetTypeDeclarationProvider implements TypeDeclarationProvider {
     @Override
@@ -35,7 +35,7 @@ public class JetTypeDeclarationProvider implements TypeDeclarationProvider {
             BindingContext bindingContext = ResolutionUtils.analyze((KtElement)symbol);
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol);
             if (descriptor instanceof CallableDescriptor) {
-                KtType type = ((CallableDescriptor) descriptor).getReturnType();
+                KotlinType type = ((CallableDescriptor) descriptor).getReturnType();
                 if (type != null) {
                     ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
                     if (classifierDescriptor != null) {

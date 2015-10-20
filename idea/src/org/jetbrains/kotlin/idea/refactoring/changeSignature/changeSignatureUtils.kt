@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCaller
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.substitutions.getCallableSubstitutor
@@ -73,7 +73,7 @@ fun getCallableSubstitutor(
     return getCallableSubstitutor(currentBaseFunction, currentDerivedFunction)
 }
 
-fun KtType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, defaultText: String, inArgumentPosition: Boolean): String {
+fun KotlinType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, defaultText: String, inArgumentPosition: Boolean): String {
     val newType = substitutor?.substitute(this, Variance.INVARIANT) ?: return defaultText
     val renderer = if (inArgumentPosition) IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS else IdeDescriptorRenderers.SOURCE_CODE
     return renderer.renderType(newType)

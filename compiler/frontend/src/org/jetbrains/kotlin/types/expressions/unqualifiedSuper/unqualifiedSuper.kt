@@ -29,16 +29,16 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtSuperExpression
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 
 public fun resolveUnqualifiedSuperFromExpressionContext(
         superExpression: KtSuperExpression,
-        supertypes: Collection<KtType>,
-        anyType: KtType
-): Collection<KtType> {
+        supertypes: Collection<KotlinType>,
+        anyType: KotlinType
+): Collection<KotlinType> {
     val parentElement = superExpression.parent
 
     if (parentElement is KtDotQualifiedExpression) {
@@ -74,7 +74,7 @@ private val ARITY_OF_METHODS_OF_ANY = hashMapOf("hashCode" to 0, "equals" to 1, 
 private fun isCallingMethodOfAny(callExpression: KtCallExpression, calleeName: Name): Boolean =
         ARITY_OF_METHODS_OF_ANY.getOrElse(calleeName.asString(), { -1 }) == callExpression.valueArguments.size()
 
-public fun isPossiblyAmbiguousUnqualifiedSuper(superExpression: KtSuperExpression, supertypes: Collection<KtType>): Boolean =
+public fun isPossiblyAmbiguousUnqualifiedSuper(superExpression: KtSuperExpression, supertypes: Collection<KotlinType>): Boolean =
         supertypes.size() > 1 ||
         (supertypes.size() == 1 && supertypes.single().isInterface() && isCallingMethodOfAnyWithSuper(superExpression))
 
@@ -94,10 +94,10 @@ private fun isCallingMethodOfAnyWithSuper(superExpression: KtSuperExpression): B
     return false
 }
 
-private fun KtType.isInterface(): Boolean =
+private fun KotlinType.isInterface(): Boolean =
         TypeUtils.getClassDescriptor(this)?.kind == ClassKind.INTERFACE
 
-private fun resolveSupertypesForMethodOfAny(supertypes: Collection<KtType>, calleeName: Name, location: LookupLocation, anyType: KtType): Collection<KtType> {
+private fun resolveSupertypesForMethodOfAny(supertypes: Collection<KotlinType>, calleeName: Name, location: LookupLocation, anyType: KotlinType): Collection<KotlinType> {
     val typesWithConcreteOverride = resolveSupertypesByMembers(supertypes, false) { getFunctionMembers(it, calleeName, location) }
     return if (typesWithConcreteOverride.isNotEmpty())
         typesWithConcreteOverride
@@ -105,19 +105,19 @@ private fun resolveSupertypesForMethodOfAny(supertypes: Collection<KtType>, call
         anyType.singletonList()
 }
 
-private fun resolveSupertypesByCalleeName(supertypes: Collection<KtType>, calleeName: Name, location: LookupLocation): Collection<KtType> =
+private fun resolveSupertypesByCalleeName(supertypes: Collection<KotlinType>, calleeName: Name, location: LookupLocation): Collection<KotlinType> =
         resolveSupertypesByMembers(supertypes, true) { getFunctionMembers(it, calleeName, location) + getPropertyMembers(it, calleeName, location) }
 
-private fun resolveSupertypesByPropertyName(supertypes: Collection<KtType>, propertyName: Name, location: LookupLocation): Collection<KtType> =
+private fun resolveSupertypesByPropertyName(supertypes: Collection<KotlinType>, propertyName: Name, location: LookupLocation): Collection<KotlinType> =
         resolveSupertypesByMembers(supertypes, true) { getPropertyMembers(it, propertyName, location) }
 
 private inline fun resolveSupertypesByMembers(
-        supertypes: Collection<KtType>,
+        supertypes: Collection<KotlinType>,
         allowArbitraryMembers: Boolean,
-        getMembers: (KtType) -> Collection<MemberDescriptor>
-): Collection<KtType> {
-    val typesWithConcreteMembers = SmartList<KtType>()
-    val typesWithArbitraryMembers = SmartList<KtType>()
+        getMembers: (KotlinType) -> Collection<MemberDescriptor>
+): Collection<KotlinType> {
+    val typesWithConcreteMembers = SmartList<KotlinType>()
+    val typesWithArbitraryMembers = SmartList<KotlinType>()
 
     for (supertype in supertypes) {
         val members = getMembers(supertype)
@@ -131,16 +131,16 @@ private inline fun resolveSupertypesByMembers(
 
     return if (typesWithConcreteMembers.isNotEmpty()) typesWithConcreteMembers
         else if (allowArbitraryMembers) typesWithArbitraryMembers
-        else emptyList<KtType>()
+        else emptyList<KotlinType>()
 }
 
-private fun getFunctionMembers(type: KtType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
+private fun getFunctionMembers(type: KotlinType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
         type.memberScope.getFunctions(name, location)
 
-private fun getPropertyMembers(type: KtType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
+private fun getPropertyMembers(type: KotlinType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
         type.memberScope.getProperties(name, location).filterIsInstanceTo(SmartList<MemberDescriptor>())
 
-private fun isConcreteMember(supertype: KtType, memberDescriptor: MemberDescriptor): Boolean {
+private fun isConcreteMember(supertype: KotlinType, memberDescriptor: MemberDescriptor): Boolean {
     // "Concrete member" is a function or a property that is not abstract,
     // and is not an implicit fake override for a method of Any on an interface.
 

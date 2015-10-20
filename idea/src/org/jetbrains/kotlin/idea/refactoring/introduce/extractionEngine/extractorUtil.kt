@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.ArrayList
@@ -84,7 +84,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
                 }
         )
 
-        fun KtType.typeAsString(): String {
+        fun KotlinType.typeAsString(): String {
             return if (descriptor.extractionData.options.allowSpecialClassNames && isSpecial()) DEBUG_TYPE_REFERENCE_STRING else descriptorRenderer.renderType(this)
         }
 
@@ -127,7 +127,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
     }
 }
 
-fun KtType.isSpecial(): Boolean {
+fun KotlinType.isSpecial(): Boolean {
     val classDescriptor = this.constructor.declarationDescriptor as? ClassDescriptor ?: return false
     return classDescriptor.name.isSpecial || DescriptorUtils.isLocal(classDescriptor)
 }

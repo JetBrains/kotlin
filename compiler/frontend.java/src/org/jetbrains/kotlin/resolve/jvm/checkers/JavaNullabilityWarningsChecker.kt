@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 
 public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
-    private fun KtType.mayBeNull(): ErrorsJvm.NullabilityInformationSource? {
+    private fun KotlinType.mayBeNull(): ErrorsJvm.NullabilityInformationSource? {
         if (!isError() && !isFlexible() && TypeUtils.isNullableType(this)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
 
         if (isFlexible() && TypeUtils.isNullableType(flexibility().lowerBound)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
@@ -52,7 +52,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         return null
     }
 
-    private fun KtType.mustNotBeNull(): ErrorsJvm.NullabilityInformationSource? {
+    private fun KotlinType.mustNotBeNull(): ErrorsJvm.NullabilityInformationSource? {
         if (!isError() && !isFlexible() && !TypeUtils.isNullableType(this)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
 
         if (isFlexible() && !TypeUtils.isNullableType(flexibility().upperBound)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
@@ -62,8 +62,8 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
     }
 
     private fun doCheckType(
-            expressionType: KtType,
-            expectedType: KtType,
+            expressionType: KotlinType,
+            expectedType: KotlinType,
             dataFlowValue: DataFlowValue,
             dataFlowInfo: DataFlowInfo,
             reportWarning: (expectedMustNotBeNull: ErrorsJvm.NullabilityInformationSource, actualMayBeNull: ErrorsJvm.NullabilityInformationSource) -> Unit
@@ -85,7 +85,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         }
     }
 
-    override fun checkType(expression: KtExpression, expressionType: KtType, expressionTypeWithSmartCast: KtType, c: ResolutionContext<*>) {
+    override fun checkType(expression: KtExpression, expressionType: KotlinType, expressionTypeWithSmartCast: KotlinType, c: ResolutionContext<*>) {
         doCheckType(
                 expressionType,
                 c.expectedType,

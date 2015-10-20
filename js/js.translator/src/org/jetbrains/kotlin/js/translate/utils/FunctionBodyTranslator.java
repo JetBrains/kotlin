@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.js.translate.utils.mutator.Mutator;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +100,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     }
 
     private boolean mustAddReturnToGeneratedFunctionBody() {
-        KtType functionReturnType = descriptor.getReturnType();
+        KotlinType functionReturnType = descriptor.getReturnType();
         assert functionReturnType != null : "Function return typed type must be resolved.";
         return (!declaration.hasBlockBody()) && (!KotlinBuiltIns.isUnit(functionReturnType));
     }

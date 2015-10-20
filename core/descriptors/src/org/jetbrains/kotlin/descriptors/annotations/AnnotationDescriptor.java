@@ -21,13 +21,13 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Map;
 
 public interface AnnotationDescriptor {
     @NotNull
-    KtType getType();
+    KotlinType getType();
 
     @NotNull
     @ReadOnly

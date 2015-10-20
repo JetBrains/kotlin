@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 public class AutomaticVariableRenamer(
@@ -108,7 +108,7 @@ public class AutomaticVariableRenamer(
     }
 }
 
-private fun KtType.isCollectionLikeOf(classPsiElement: PsiNamedElement): Boolean {
+private fun KotlinType.isCollectionLikeOf(classPsiElement: PsiNamedElement): Boolean {
     val klass = this.getConstructor().getDeclarationDescriptor() as? ClassDescriptor ?: return false
     if (KotlinBuiltIns.isArray(this) || DescriptorUtils.isSubclass(klass, klass.builtIns.getCollection())) {
         val typeArgument = this.getArguments().singleOrNull()?.getType() ?: return false

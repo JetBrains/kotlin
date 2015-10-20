@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.test.JetTestUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.Variance;
 
 import java.io.IOException;
@@ -131,7 +131,7 @@ public class CodegenTestFiles {
                 String valueString = scriptParametersMatcher.group(3);
                 Object value;
 
-                KtType jetType;
+                KotlinType jetType;
                 KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
                 if (type.equals("kotlin.String")) {
                     value = valueString;

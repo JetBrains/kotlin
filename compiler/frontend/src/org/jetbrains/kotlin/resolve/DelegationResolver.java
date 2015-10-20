@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtDelegationSpecifier;
 import org.jetbrains.kotlin.psi.KtDelegatorByExpressionSpecifier;
 import org.jetbrains.kotlin.psi.KtTypeReference;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
             if (typeReference == null) {
                 continue;
             }
-            KtType delegatedTraitType = typeResolver.resolve(typeReference);
+            KotlinType delegatedTraitType = typeResolver.resolve(typeReference);
             if (delegatedTraitType == null || delegatedTraitType.isError()) {
                 continue;
             }
@@ -101,7 +101,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     @NotNull
     private Collection<T> generateDelegatesForTrait(
             @NotNull Collection<T> existingDelegates,
-            @NotNull KtType delegatedTraitType
+            @NotNull KotlinType delegatedTraitType
     ) {
         Collection<T> result = new HashSet<T>();
         Collection<T> candidates = generateDelegationCandidates(delegatedTraitType);
@@ -120,7 +120,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     }
 
     @NotNull
-    private Collection<T> generateDelegationCandidates(@NotNull KtType delegatedTraitType) {
+    private Collection<T> generateDelegationCandidates(@NotNull KotlinType delegatedTraitType) {
         Collection<T> descriptorsToDelegate = overridableMembersNotFromSuperClassOfTrait(delegatedTraitType);
         Collection<T> result = new ArrayList<T>(descriptorsToDelegate.size());
         for (T memberDescriptor : descriptorsToDelegate) {
@@ -156,7 +156,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     }
 
     @NotNull
-    private Collection<T> overridableMembersNotFromSuperClassOfTrait(@NotNull KtType trait) {
+    private Collection<T> overridableMembersNotFromSuperClassOfTrait(@NotNull KotlinType trait) {
         final Collection<T> membersToSkip = getMembersFromClassSupertypeOfTrait(trait);
         return Collections2.filter(
                 memberExtractor.getMembersByType(trait),
@@ -182,9 +182,9 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     }
 
     @NotNull
-    private Collection<T> getMembersFromClassSupertypeOfTrait(@NotNull KtType traitType) {
-        KtType classSupertype = null;
-        for (KtType supertype : TypeUtils.getAllSupertypes(traitType)) {
+    private Collection<T> getMembersFromClassSupertypeOfTrait(@NotNull KotlinType traitType) {
+        KotlinType classSupertype = null;
+        for (KotlinType supertype : TypeUtils.getAllSupertypes(traitType)) {
             if (isNotTrait(supertype.getConstructor().getDeclarationDescriptor())) {
                 classSupertype = supertype;
                 break;
@@ -203,11 +203,11 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
 
     public interface MemberExtractor<T extends CallableMemberDescriptor> {
         @NotNull
-        Collection<T> getMembersByType(@NotNull KtType type);
+        Collection<T> getMembersByType(@NotNull KotlinType type);
     }
 
     public interface TypeResolver {
         @Nullable
-        KtType resolve(@NotNull KtTypeReference reference);
+        KotlinType resolve(@NotNull KtTypeReference reference);
     }
 }

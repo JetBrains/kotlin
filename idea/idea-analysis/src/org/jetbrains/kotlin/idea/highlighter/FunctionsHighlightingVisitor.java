@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
@@ -103,13 +103,13 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
             return false;
         }
 
-        KtType defaultType = ((ClassDescriptor) parent).getDefaultType();
+        KotlinType defaultType = ((ClassDescriptor) parent).getDefaultType();
 
         if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(defaultType)) {
             return true;
         }
 
-        for (KtType supertype : TypeUtils.getAllSupertypes(defaultType)) {
+        for (KotlinType supertype : TypeUtils.getAllSupertypes(defaultType)) {
             if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(supertype)) {
                 return true;
             }

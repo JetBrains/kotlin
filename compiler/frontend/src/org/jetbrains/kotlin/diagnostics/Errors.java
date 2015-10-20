@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -91,7 +91,7 @@ public interface Errors {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     DiagnosticFactory0<KtTypeProjection> PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = DiagnosticFactory0.create(ERROR, VARIANCE_IN_PROJECTION);
-    DiagnosticFactory2<KtTypeReference, KtType, KtType> UPPER_BOUND_VIOLATED = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> UPPER_BOUND_VIOLATED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<KtNullableType> REDUNDANT_NULLABLE = DiagnosticFactory0.create(WARNING, NULLABLE_TYPE);
     DiagnosticFactory1<KtElement, Integer> WRONG_NUMBER_OF_TYPE_ARGUMENTS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<KtTypeReference, Integer, String> NO_TYPE_ARGUMENTS_ON_RHS = DiagnosticFactory2.create(ERROR);
@@ -148,7 +148,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> CONST_VAL_WITH_GETTER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> CONST_VAL_WITH_DELEGATE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<PsiElement, KtType> TYPE_CANT_BE_USED_FOR_CONST_VAL = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> TYPE_CANT_BE_USED_FOR_CONST_VAL = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> CONST_VAL_WITHOUT_INITIALIZER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> CONST_VAL_WITH_NON_CONST_INITIALIZER = DiagnosticFactory0.create(ERROR);
 
@@ -180,9 +180,9 @@ public interface Errors {
 
     DiagnosticFactory0<KtTypeReference> MANY_CLASSES_IN_SUPERTYPE_LIST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> SUPERTYPE_APPEARS_TWICE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory3<KtDelegationSpecifierList, TypeParameterDescriptor, ClassDescriptor, Collection<KtType>>
+    DiagnosticFactory3<KtDelegationSpecifierList, TypeParameterDescriptor, ClassDescriptor, Collection<KotlinType>>
             INCONSISTENT_TYPE_PARAMETER_VALUES = DiagnosticFactory3.create(ERROR);
-    DiagnosticFactory3<KtTypeParameter, TypeParameterDescriptor, ClassDescriptor, Collection<KtType>>
+    DiagnosticFactory3<KtTypeParameter, TypeParameterDescriptor, ClassDescriptor, Collection<KotlinType>>
             INCONSISTENT_TYPE_PARAMETER_BOUNDS = DiagnosticFactory3.create(ERROR);
 
 
@@ -253,7 +253,7 @@ public interface Errors {
 
     // Type parameter declarations
 
-    DiagnosticFactory1<KtTypeReference, KtType> FINAL_UPPER_BOUND = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<KtTypeReference, KotlinType> FINAL_UPPER_BOUND = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<KtTypeReference> DYNAMIC_UPPER_BOUND = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<KtNamedDeclaration, TypeParameterDescriptor> CONFLICTING_UPPER_BOUNDS =
@@ -322,7 +322,7 @@ public interface Errors {
             DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
 
 
-    DiagnosticFactory1<KtNamedDeclaration, Collection<KtType>> AMBIGUOUS_ANONYMOUS_TYPE_INFERRED =
+    DiagnosticFactory1<KtNamedDeclaration, Collection<KotlinType>> AMBIGUOUS_ANONYMOUS_TYPE_INFERRED =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
 
     // Property-specific
@@ -334,7 +334,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory2<KtTypeReference, KtType, KtType> WRONG_GETTER_RETURN_TYPE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> WRONG_GETTER_RETURN_TYPE = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory0<KtModifierListOwner>
             ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = DiagnosticFactory0.create(ERROR, ABSTRACT_MODIFIER);
@@ -370,7 +370,7 @@ public interface Errors {
 
     DiagnosticFactory0<KtExpression> SETTER_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory2<KtTypeReference, KtType, KtType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticFactory2.create(ERROR);
 
     // Function-specific
 
@@ -452,7 +452,7 @@ public interface Errors {
 
     DiagnosticFactory1<KtElement, ValueParameterDescriptor> NO_VALUE_FOR_PARAMETER = DiagnosticFactory1.create(ERROR, VALUE_ARGUMENTS);
 
-    DiagnosticFactory1<KtExpression, KtType> MISSING_RECEIVER = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtExpression, KotlinType> MISSING_RECEIVER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<KtExpression> NO_RECEIVER_ALLOWED = DiagnosticFactory0.create(ERROR);
 
     // Call resolution
@@ -461,7 +461,7 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> SAFE_CALL_IN_QUALIFIER = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory2<KtExpression, KtExpression, KtType> FUNCTION_EXPECTED = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtExpression, KtExpression, KotlinType> FUNCTION_EXPECTED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtExpression, KtExpression, Boolean> FUNCTION_CALL_EXPECTED = DiagnosticFactory2.create(ERROR, CALL_EXPRESSION);
 
     DiagnosticFactory0<PsiElement> NON_TAIL_RECURSIVE_CALL = DiagnosticFactory0.create(WARNING, CALL_EXPRESSION);
@@ -478,7 +478,7 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, KtExpression> INVOKE_EXTENSION_ON_NOT_EXTENSION_FUNCTION = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<PsiElement, TypeParameterDescriptor> TYPE_PARAMETER_AS_REIFIED = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<PsiElement, KtType> REIFIED_TYPE_FORBIDDEN_SUBSTITUTION = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> REIFIED_TYPE_FORBIDDEN_SUBSTITUTION = DiagnosticFactory1.create(ERROR);
 
     // Type inference
 
@@ -491,7 +491,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> TYPE_INFERENCE_INCORPORATION_ERROR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, TypeParameterDescriptor> TYPE_INFERENCE_ONLY_INPUT_TYPES = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<KtElement, KtType, KtType> TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtElement, KotlinType, KotlinType> TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
 
     // Reflection
 
@@ -506,9 +506,9 @@ public interface Errors {
     // Multi-declarations
 
     DiagnosticFactory0<KtMultiDeclaration> INITIALIZER_REQUIRED_FOR_MULTIDECLARATION = DiagnosticFactory0.create(ERROR, DEFAULT);
-    DiagnosticFactory2<KtExpression, Name, KtType> COMPONENT_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR, DEFAULT);
+    DiagnosticFactory2<KtExpression, Name, KotlinType> COMPONENT_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR, DEFAULT);
     DiagnosticFactory2<KtExpression, Name, Collection<? extends ResolvedCall<?>>> COMPONENT_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR, DEFAULT);
-    DiagnosticFactory3<KtExpression, Name, KtType, KtType> COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR, DEFAULT);
+    DiagnosticFactory3<KtExpression, Name, KotlinType, KotlinType> COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR, DEFAULT);
 
     // Super calls
 
@@ -535,30 +535,30 @@ public interface Errors {
             ASSIGN_OPERATOR_AMBIGUITY = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<KtSimpleNameExpression> EQUALS_MISSING = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory3<KtBinaryExpression, KtSimpleNameExpression, KtType, KtType> EQUALITY_NOT_APPLICABLE =
+    DiagnosticFactory3<KtBinaryExpression, KtSimpleNameExpression, KotlinType, KotlinType> EQUALITY_NOT_APPLICABLE =
             DiagnosticFactory3.create(ERROR);
 
 
-    DiagnosticFactory1<KtExpression, KtType> HAS_NEXT_MISSING = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<KtExpression, KtType> HAS_NEXT_FUNCTION_AMBIGUITY = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<KtExpression, KtType> HAS_NEXT_FUNCTION_NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<KtExpression, KtType> HAS_NEXT_FUNCTION_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtExpression, KotlinType> HAS_NEXT_MISSING = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtExpression, KotlinType> HAS_NEXT_FUNCTION_AMBIGUITY = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtExpression, KotlinType> HAS_NEXT_FUNCTION_NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtExpression, KotlinType> HAS_NEXT_FUNCTION_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory1<KtExpression, KtType> NEXT_AMBIGUITY = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<KtExpression, KtType> NEXT_MISSING = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<KtExpression, KtType> NEXT_NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtExpression, KotlinType> NEXT_AMBIGUITY = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtExpression, KotlinType> NEXT_MISSING = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtExpression, KotlinType> NEXT_NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<KtExpression> ITERATOR_MISSING = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> ITERATOR_AMBIGUITY = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory2<KtExpression, String, KtType> DELEGATE_SPECIAL_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory3<PsiElement, FunctionDescriptor, KtType, String> DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION = DiagnosticFactory3.create(WARNING);
+    DiagnosticFactory2<KtExpression, String, KotlinType> DELEGATE_SPECIAL_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory3<PsiElement, FunctionDescriptor, KotlinType, String> DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION = DiagnosticFactory3.create(WARNING);
     DiagnosticFactory2<KtExpression, String, Collection<? extends ResolvedCall<?>>> DELEGATE_SPECIAL_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtExpression, String, Collection<? extends ResolvedCall<?>>> DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory3<KtExpression, String, KtType, KtType> DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<KtExpression, String, KotlinType, KotlinType> DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory2<KtExpression, String, Collection<? extends ResolvedCall<?>>> DELEGATE_PD_METHOD_NONE_APPLICABLE = DiagnosticFactory2.create(WARNING);
 
-    DiagnosticFactory1<KtSimpleNameExpression, KtType> COMPARE_TO_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtSimpleNameExpression, KotlinType> COMPARE_TO_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<PsiElement> UNDERSCORE_IS_RESERVED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> INVALID_CHARACTERS = DiagnosticFactory1.create(ERROR);
@@ -616,14 +616,14 @@ public interface Errors {
 
     // Nullability
 
-    DiagnosticFactory1<PsiElement, KtType> UNSAFE_CALL = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> UNSAFE_CALL = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory3<KtExpression, String, String, String> UNSAFE_INFIX_CALL = DiagnosticFactory3.create(ERROR);
-    DiagnosticFactory1<PsiElement, KtType> UNNECESSARY_SAFE_CALL = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, KotlinType> UNNECESSARY_SAFE_CALL = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<PsiElement> UNEXPECTED_SAFE_CALL = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<PsiElement, KtType> UNNECESSARY_NOT_NULL_ASSERTION = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, KotlinType> UNNECESSARY_NOT_NULL_ASSERTION = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<PsiElement> NOT_NULL_ASSERTION_ON_FUNCTION_LITERAL = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory1<KtBinaryExpression, KtType> USELESS_ELVIS = DiagnosticFactory1.create(WARNING, PositioningStrategies.USELESS_ELVIS);
+    DiagnosticFactory1<KtBinaryExpression, KotlinType> USELESS_ELVIS = DiagnosticFactory1.create(WARNING, PositioningStrategies.USELESS_ELVIS);
     DiagnosticFactory0<PsiElement> USELESS_ELVIS_ON_FUNCTION_LITERAL = DiagnosticFactory0.create(WARNING);
 
     // Compile-time values
@@ -633,27 +633,27 @@ public interface Errors {
     DiagnosticFactory0<KtConstantExpression> WRONG_LONG_SUFFIX = DiagnosticFactory0.create(ERROR, LONG_LITERAL_SUFFIX);
     DiagnosticFactory0<KtConstantExpression> INT_LITERAL_OUT_OF_RANGE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtConstantExpression> FLOAT_LITERAL_OUT_OF_RANGE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory2<KtConstantExpression, String, KtType> CONSTANT_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtConstantExpression, String, KotlinType> CONSTANT_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<KtConstantExpression> INCORRECT_CHARACTER_LITERAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtConstantExpression> EMPTY_CHARACTER_LITERAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtConstantExpression, KtConstantExpression> TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtElement, KtElement> ILLEGAL_ESCAPE = DiagnosticFactory1.create(ERROR, CUT_CHAR_QUOTES);
-    DiagnosticFactory1<KtConstantExpression, KtType> NULL_FOR_NONNULL_TYPE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtConstantExpression, KotlinType> NULL_FOR_NONNULL_TYPE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<KtEscapeStringTemplateEntry> ILLEGAL_ESCAPE_SEQUENCE = DiagnosticFactory0.create(ERROR);
 
     // Casts and is-checks
 
-    DiagnosticFactory1<KtElement, KtType> CANNOT_CHECK_FOR_ERASED = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<KtBinaryExpressionWithTypeRHS, KtType, KtType> UNCHECKED_CAST = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory1<KtElement, KotlinType> CANNOT_CHECK_FOR_ERASED = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<KtBinaryExpressionWithTypeRHS, KotlinType, KotlinType> UNCHECKED_CAST = DiagnosticFactory2.create(WARNING);
 
     DiagnosticFactory0<KtBinaryExpressionWithTypeRHS> USELESS_CAST = DiagnosticFactory0.create(WARNING, AS_TYPE);
     DiagnosticFactory0<KtSimpleNameExpression> CAST_NEVER_SUCCEEDS = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtTypeReference> DYNAMIC_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> IS_ENUM_ENTRY = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory1<KtExpression, KtType> IMPLICIT_CAST_TO_UNIT_OR_ANY = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<KtExpression, KotlinType> IMPLICIT_CAST_TO_UNIT_OR_ANY = DiagnosticFactory1.create(WARNING);
 
-    DiagnosticFactory2<KtExpression, KtType, String> SMARTCAST_IMPOSSIBLE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtExpression, KotlinType, String> SMARTCAST_IMPOSSIBLE = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory0<KtNullableType> USELESS_NULLABLE_CHECK = DiagnosticFactory0.create(WARNING, NULLABLE_TYPE);
 
@@ -686,20 +686,20 @@ public interface Errors {
 
     // Type mismatch
 
-    DiagnosticFactory2<KtExpression, KtType, KtType> TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory1<KtExpression, KtType> RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<KtExpression, KtType> EXPECTED_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<KtBinaryExpression, KtType> ASSIGNMENT_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<KtTypeReference, KtType, KtType> TYPE_MISMATCH_IN_FOR_LOOP = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory1<KtElement, KtType> TYPE_MISMATCH_IN_CONDITION = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory3<KtExpression, String, KtType, KtType> RESULT_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory2<KtExpression, KotlinType, KotlinType> TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory1<KtExpression, KotlinType> RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtExpression, KotlinType> EXPECTED_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtBinaryExpression, KotlinType> ASSIGNMENT_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> TYPE_MISMATCH_IN_FOR_LOOP = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory1<KtElement, KotlinType> TYPE_MISMATCH_IN_CONDITION = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory3<KtExpression, String, KotlinType, KotlinType> RESULT_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory0<KtWhenConditionInRange> TYPE_MISMATCH_IN_RANGE = DiagnosticFactory0.create(ERROR, WHEN_CONDITION_IN_RANGE);
 
-    DiagnosticFactory1<KtParameter, KtType> EXPECTED_PARAMETER_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<KtFunction, Integer, List<KtType>> EXPECTED_PARAMETERS_NUMBER_MISMATCH =
+    DiagnosticFactory1<KtParameter, KotlinType> EXPECTED_PARAMETER_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<KtFunction, Integer, List<KotlinType>> EXPECTED_PARAMETERS_NUMBER_MISMATCH =
             DiagnosticFactory2.create(ERROR, FUNCTION_PARAMETERS);
 
-    DiagnosticFactory2<KtElement, KtType, KtType> INCOMPATIBLE_TYPES = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtElement, KotlinType, KotlinType> INCOMPATIBLE_TYPES = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory0<PsiElement> IMPLICIT_NOTHING_RETURN_TYPE = DiagnosticFactory0.create(WARNING);
 

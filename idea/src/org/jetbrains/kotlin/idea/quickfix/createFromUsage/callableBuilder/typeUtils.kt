@@ -40,11 +40,11 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
-internal fun KtType.contains(inner: KtType): Boolean {
+internal fun KotlinType.contains(inner: KotlinType): Boolean {
     return KotlinTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
 }
 
-private fun KtType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
+private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
     val substitution = typeParameterNameMap
             .mapValues {
                 val name = Name.identifier(it.value)
@@ -63,7 +63,7 @@ private fun KtType.render(typeParameterNameMap: Map<TypeParameterDescriptor, Str
                     override fun getDeclarationDescriptor() = wrappingTypeParameter
                 }
 
-                val wrappingType = object : KtType by typeParameter.defaultType {
+                val wrappingType = object : KotlinType by typeParameter.defaultType {
                     override fun getConstructor() = wrappingTypeConstructor
                 }
 
@@ -76,8 +76,8 @@ private fun KtType.render(typeParameterNameMap: Map<TypeParameterDescriptor, Str
     return renderer.renderType(typeToRender)
 }
 
-internal fun KtType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
-internal fun KtType.renderLong(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, true)
+internal fun KotlinType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
+internal fun KotlinType.renderLong(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, true)
 
 internal fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: KtScope): List<TypeParameterDescriptor> {
     return typeParameters.filter { typeParameter ->
@@ -86,13 +86,13 @@ internal fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypePara
     }
 }
 
-fun KtType.containsStarProjections(): Boolean = arguments.any { it.isStarProjection || it.type.containsStarProjections() }
+fun KotlinType.containsStarProjections(): Boolean = arguments.any { it.isStarProjection || it.type.containsStarProjections() }
 
-fun KtType.getTypeParameters(): Set<TypeParameterDescriptor> {
-    val visitedTypes = HashSet<KtType>()
+fun KotlinType.getTypeParameters(): Set<TypeParameterDescriptor> {
+    val visitedTypes = HashSet<KotlinType>()
     val typeParameters = LinkedHashSet<TypeParameterDescriptor>()
 
-    fun traverseTypes(type: KtType) {
+    fun traverseTypes(type: KotlinType) {
         if (!visitedTypes.add(type)) return
 
         val arguments = type.arguments
@@ -116,7 +116,7 @@ fun KtExpression.guessTypes(
         module: ModuleDescriptor,
         pseudocode: Pseudocode? = null,
         coerceUnusedToUnit: Boolean = true
-): Array<KtType> {
+): Array<KotlinType> {
     if (coerceUnusedToUnit
         && this !is KtDeclaration
         && isUsedAsStatement(context)
@@ -204,7 +204,7 @@ fun KtExpression.guessTypes(
     }
 }
 
-private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KtType> {
+private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinType> {
     val expectedTypes = SearchUtils.findAllReferences(this, getUseScope())!!.asSequence().map { ref ->
         if (ref is KtSimpleNameReference) {
             context[BindingContext.EXPECTED_EXPRESSION_TYPE, ref.expression]
@@ -212,7 +212,7 @@ private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KtType>
         else {
             null
         }
-    }.filterNotNullTo(HashSet<KtType>())
+    }.filterNotNullTo(HashSet<KotlinType>())
 
     if (expectedTypes.isEmpty() || expectedTypes.any { expectedType -> ErrorUtils.containsErrorType(expectedType) }) {
         return arrayOf()
@@ -228,11 +228,11 @@ private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KtType>
 }
 
 /**
- * Encapsulates a single type substitution of a <code>KtType</code> by another <code>KtType</code>.
+ * Encapsulates a single type substitution of a <code>KotlinType</code> by another <code>KotlinType</code>.
  */
-internal class JetTypeSubstitution(public val forType: KtType, public val byType: KtType)
+internal class JetTypeSubstitution(public val forType: KotlinType, public val byType: KotlinType)
 
-internal fun KtType.substitute(substitution: JetTypeSubstitution, variance: Variance): KtType {
+internal fun KotlinType.substitute(substitution: JetTypeSubstitution, variance: Variance): KotlinType {
     val nullable = isMarkedNullable()
     val currentType = makeNotNullable()
 
@@ -248,7 +248,7 @@ internal fun KtType.substitute(substitution: JetTypeSubstitution, variance: Vari
             val (projection, typeParameter) = pair
             TypeProjectionImpl(Variance.INVARIANT, projection.getType().substitute(substitution, typeParameter.getVariance()))
         }
-        return KtTypeImpl.create(getAnnotations(), getConstructor(), isMarkedNullable(), newArguments, getMemberScope())
+        return KotlinTypeImpl.create(getAnnotations(), getConstructor(), isMarkedNullable(), newArguments, getMemberScope())
     }
 }
 
@@ -268,7 +268,7 @@ fun KtCallExpression.getParameterInfos(): List<ParameterInfo> {
     }
 }
 
-private fun TypePredicate.getRepresentativeTypes(): Set<KtType> {
+private fun TypePredicate.getRepresentativeTypes(): Set<KotlinType> {
     return when (this) {
         is SingleType -> Collections.singleton(targetType)
         is AllSubtypes -> Collections.singleton(upperBound)
@@ -276,7 +276,7 @@ private fun TypePredicate.getRepresentativeTypes(): Set<KtType> {
             if (typeSets.isEmpty()) AllTypes.getRepresentativeTypes()
             else typeSets.map { it.getRepresentativeTypes() }.reduce { a, b -> a intersect b }
         }
-        is ForSomeType -> typeSets.flatMapTo(LinkedHashSet<KtType>()) { it.getRepresentativeTypes() }
+        is ForSomeType -> typeSets.flatMapTo(LinkedHashSet<KotlinType>()) { it.getRepresentativeTypes() }
         is AllTypes -> emptySet()
         else -> throw AssertionError("Invalid type predicate: ${this}")
     }

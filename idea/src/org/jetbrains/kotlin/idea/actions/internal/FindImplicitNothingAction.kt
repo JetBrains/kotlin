@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import com.intellij.usages.UsageViewManager
@@ -125,7 +125,7 @@ public class FindImplicitNothingAction : AnAction() {
         }
     }
 
-    private fun KtType.isNothingOrNothingFunctionType(): Boolean {
+    private fun KotlinType.isNothingOrNothingFunctionType(): Boolean {
         return when {
             KotlinBuiltIns.isNothing(this) -> true
 

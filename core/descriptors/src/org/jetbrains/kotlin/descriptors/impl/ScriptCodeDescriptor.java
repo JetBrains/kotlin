@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +35,7 @@ public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
     public void initialize(
             @NotNull ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull List<ValueParameterDescriptor> valueParameters,
-            @NotNull KtType returnType) {
+            @NotNull KotlinType returnType) {
         super.initialize(null, dispatchReceiverParameter, Collections.<TypeParameterDescriptor>emptyList(), valueParameters, returnType,
                          Modality.FINAL, Visibilities.INTERNAL);
     }

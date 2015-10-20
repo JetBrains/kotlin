@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -374,7 +374,7 @@ class SmartCompletion(
         if (elementType != KtTokens.AS_KEYWORD && elementType != KtTokens.AS_SAFE) return null
         val expectedInfos = calcExpectedInfos(binaryExpression)
 
-        val expectedInfosGrouped: Map<KtType?, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType?.type?.makeNotNullable() }
+        val expectedInfosGrouped: Map<KotlinType?, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType?.type?.makeNotNullable() }
 
         val items = ArrayList<LookupElement>()
         for ((type, infos) in expectedInfosGrouped) {

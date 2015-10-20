@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
 import java.util.List;
@@ -103,10 +103,10 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
     private static List<PsiElement> findSuperDeclarations(DeclarationDescriptor descriptor) {
         Collection<? extends DeclarationDescriptor> superDescriptors;
         if (descriptor instanceof ClassDescriptor) {
-            Collection<KtType> supertypes = ((ClassDescriptor) descriptor).getTypeConstructor().getSupertypes();
-            List<ClassDescriptor> superclasses = ContainerUtil.mapNotNull(supertypes, new Function<KtType, ClassDescriptor>() {
+            Collection<KotlinType> supertypes = ((ClassDescriptor) descriptor).getTypeConstructor().getSupertypes();
+            List<ClassDescriptor> superclasses = ContainerUtil.mapNotNull(supertypes, new Function<KotlinType, ClassDescriptor>() {
                 @Override
-                public ClassDescriptor fun(KtType type) {
+                public ClassDescriptor fun(KotlinType type) {
                     ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
                     if (descriptor instanceof ClassDescriptor) {
                         return (ClassDescriptor) descriptor;

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 public abstract class LazyJavaStaticScope(
         c: LazyJavaResolverContext,
@@ -40,7 +40,7 @@ public abstract class LazyJavaStaticScope(
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
 
     override fun resolveMethodSignature(
-            method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KtType,
+            method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
             valueParameters: LazyJavaScope.ResolvedValueParameters
     ): LazyJavaScope.MethodSignatureData {
         val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeMethodSignature(

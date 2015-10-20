@@ -34,7 +34,7 @@ public class TypeBoundsImpl(
 ) : TypeBounds {
     override val bounds = ArrayList<Bound>()
 
-    private var resultValues: Collection<KtType>? = null
+    private var resultValues: Collection<KotlinType>? = null
 
     var isFixed: Boolean = false
         private set
@@ -51,12 +51,12 @@ public class TypeBoundsImpl(
         bounds.add(bound)
     }
 
-    private fun filterBounds(bounds: Collection<Bound>, kind: BoundKind): Set<KtType> {
+    private fun filterBounds(bounds: Collection<Bound>, kind: BoundKind): Set<KotlinType> {
         return filterBounds(bounds, kind, null)
     }
 
-    private fun filterBounds(bounds: Collection<Bound>, kind: BoundKind, errorValues: MutableCollection<KtType>?): Set<KtType> {
-        val result = LinkedHashSet<KtType>()
+    private fun filterBounds(bounds: Collection<Bound>, kind: BoundKind, errorValues: MutableCollection<KotlinType>?): Set<KotlinType> {
+        val result = LinkedHashSet<KotlinType>()
         for (bound in bounds) {
             if (bound.kind == kind) {
                 if (!ErrorUtils.containsErrorType(bound.constrainingType)) {
@@ -76,7 +76,7 @@ public class TypeBoundsImpl(
         return result
     }
 
-    override val values: Collection<KtType>
+    override val values: Collection<KotlinType>
         get() {
             if (resultValues == null) {
                 resultValues = computeValues()
@@ -84,8 +84,8 @@ public class TypeBoundsImpl(
             return resultValues!!
         }
 
-    private fun computeValues(): Collection<KtType> {
-        val values = LinkedHashSet<KtType>()
+    private fun computeValues(): Collection<KotlinType> {
+        val values = LinkedHashSet<KotlinType>()
         val bounds = bounds.filter { it.isProper }
 
         if (bounds.isEmpty()) {
@@ -146,7 +146,7 @@ public class TypeBoundsImpl(
         return values
     }
 
-    private fun tryPossibleAnswer(bounds: Collection<Bound>, possibleAnswer: KtType?): Boolean {
+    private fun tryPossibleAnswer(bounds: Collection<Bound>, possibleAnswer: KotlinType?): Boolean {
         if (possibleAnswer == null) return false
         // a captured type might be an answer
         if (!possibleAnswer.getConstructor().isDenotable() && !possibleAnswer.isCaptured()) return false

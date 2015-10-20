@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import java.awt.BorderLayout
 
 public class KotlinVariableInplaceIntroducer(
@@ -47,7 +47,7 @@ public class KotlinVariableInplaceIntroducer(
         suggestedNames: Collection<String>,
         val isVar: Boolean,
         val doNotChangeVar: Boolean,
-        val expressionType: KtType?,
+        val expressionType: KotlinType?,
         val noTypeInference: Boolean,
         project: Project,
         editor: Editor

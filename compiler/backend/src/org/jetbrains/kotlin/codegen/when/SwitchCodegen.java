@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtWhenExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -131,7 +131,7 @@ abstract public class SwitchCodegen {
 
     protected void generateNullCheckIfNeeded() {
         assert expression.getSubjectExpression() != null : "subject expression can't be null";
-        KtType subjectJetType = bindingContext.getType(expression.getSubjectExpression());
+        KotlinType subjectJetType = bindingContext.getType(expression.getSubjectExpression());
 
         assert subjectJetType != null : "subject type can't be null (i.e. void)";
 

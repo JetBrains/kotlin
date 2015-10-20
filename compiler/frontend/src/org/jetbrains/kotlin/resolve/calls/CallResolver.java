@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -264,7 +264,7 @@ public class CallResolver {
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull Call call,
-            @NotNull KtType expectedType,
+            @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             boolean isAnnotationContext
     ) {
@@ -311,16 +311,16 @@ public class CallResolver {
         }
 
         // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
-        KtType expectedType = NO_EXPECTED_TYPE;
+        KotlinType expectedType = NO_EXPECTED_TYPE;
         if (calleeExpression instanceof KtFunctionLiteralExpression) {
             int parameterNumber = ((KtFunctionLiteralExpression) calleeExpression).getValueParameters().size();
-            List<KtType> parameterTypes = new ArrayList<KtType>(parameterNumber);
+            List<KotlinType> parameterTypes = new ArrayList<KotlinType>(parameterNumber);
             for (int i = 0; i < parameterNumber; i++) {
                 parameterTypes.add(NO_EXPECTED_TYPE);
             }
             expectedType = builtIns.getFunctionType(Annotations.Companion.getEMPTY(), null, parameterTypes, context.expectedType);
         }
-        KtType calleeType = expressionTypingServices.safeGetType(
+        KotlinType calleeType = expressionTypingServices.safeGetType(
                 context.scope, calleeExpression, expectedType, context.dataFlowInfo, context.trace);
         ExpressionReceiver expressionReceiver = new ExpressionReceiver(calleeExpression, calleeType);
 
@@ -343,7 +343,7 @@ public class CallResolver {
         if (functionReference == null || typeReference == null) {
             return checkArgumentTypesAndFail(context); // No type there
         }
-        KtType constructedType = typeResolver.resolveType(context.scope, typeReference, context.trace, true);
+        KotlinType constructedType = typeResolver.resolveType(context.scope, typeReference, context.trace, true);
         if (constructedType.isError()) {
             return checkArgumentTypesAndFail(context);
         }
@@ -436,9 +436,9 @@ public class CallResolver {
                                                     ((ClassDescriptor) delegateClassDescriptor.getContainingDeclaration()).
                                                             getThisAsReceiverParameter().getValue();
 
-        KtType expectedType = isThisCall ?
-                              calleeConstructor.getContainingDeclaration().getDefaultType() :
-                              DescriptorUtils.getSuperClassType(currentClassDescriptor);
+        KotlinType expectedType = isThisCall ?
+                                  calleeConstructor.getContainingDeclaration().getDefaultType() :
+                                  DescriptorUtils.getSuperClassType(currentClassDescriptor);
 
         TypeSubstitutor knownTypeParametersSubstitutor = TypeSubstitutor.create(expectedType);
         for (CallableDescriptor descriptor : constructors) {
@@ -565,7 +565,7 @@ public class CallResolver {
                 context.trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
                 ModifierCheckerCore.INSTANCE.check(projection, context.trace, null);
             }
-            KtType type = argumentTypeResolver.resolveTypeRefWithDefault(
+            KotlinType type = argumentTypeResolver.resolveTypeRefWithDefault(
                     projection.getTypeReference(), context.scope, context.trace,
                     null);
             if (type != null) {

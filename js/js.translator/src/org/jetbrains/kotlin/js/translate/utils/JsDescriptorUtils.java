@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
@@ -80,11 +80,11 @@ public final class JsDescriptorUtils {
     }
 
     @NotNull
-    public static List<KtType> getSupertypesWithoutFakes(ClassDescriptor descriptor) {
-        Collection<KtType> supertypes = descriptor.getTypeConstructor().getSupertypes();
-        return ContainerUtil.filter(supertypes, new Condition<KtType>() {
+    public static List<KotlinType> getSupertypesWithoutFakes(ClassDescriptor descriptor) {
+        Collection<KotlinType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+        return ContainerUtil.filter(supertypes, new Condition<KotlinType>() {
             @Override
-            public boolean value(KtType type) {
+            public boolean value(KotlinType type) {
                 ClassDescriptor classDescriptor = getClassDescriptorForType(type);
 
                 return !FAKE_CLASSES.contains(getFqNameSafe(classDescriptor).asString()) &&
@@ -161,7 +161,7 @@ public final class JsDescriptorUtils {
 
     @Nullable
     public static Name getNameIfStandardType(@NotNull KtExpression expression, @NotNull TranslationContext context) {
-        KtType type = context.bindingContext().getType(expression);
+        KotlinType type = context.bindingContext().getType(expression);
         return type != null ? DescriptorUtilsKt.getNameIfStandardType(type) : null;
     }
 

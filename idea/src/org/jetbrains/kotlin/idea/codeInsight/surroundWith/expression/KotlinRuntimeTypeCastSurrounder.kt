@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
@@ -75,7 +75,7 @@ public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
             indicator: ProgressIndicator
     ): KotlinRuntimeTypeEvaluator(myEditor, expression, context, indicator) {
 
-        override fun typeCalculationFinished(type: KtType?) {
+        override fun typeCalculationFinished(type: KotlinType?) {
             if (type == null) return
 
             hold()

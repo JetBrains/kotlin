@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
@@ -131,7 +131,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
     }
 }
 
-fun KtType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, context: BindingContext): Boolean {
+fun KotlinType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, context: BindingContext): Boolean {
     val typeParametersToAdd = LinkedHashSet(getTypeParameters())
     typeParametersToAdd.removeAll(functionDescriptor.typeParameters)
     if (typeParametersToAdd.isEmpty()) return false

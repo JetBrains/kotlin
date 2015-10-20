@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -275,7 +275,7 @@ public class PropertyCodegen {
             KtNamedDeclaration element,
             PropertyDescriptor propertyDescriptor,
             boolean isDelegate,
-            KtType jetType,
+            KotlinType jetType,
             Object defaultValue,
             Annotations annotations
     ) {
@@ -362,7 +362,7 @@ public class PropertyCodegen {
 
     private void generatePropertyDelegateAccess(KtProperty p, PropertyDescriptor propertyDescriptor, Annotations annotations) {
         KtExpression delegateExpression = p.getDelegateExpression();
-        KtType delegateType = delegateExpression != null ? bindingContext.getType(p.getDelegateExpression()) : null;
+        KotlinType delegateType = delegateExpression != null ? bindingContext.getType(p.getDelegateExpression()) : null;
         if (delegateType == null) {
             // If delegate expression is unresolved reference
             delegateType = ErrorUtils.createErrorType("Delegate type");

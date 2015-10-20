@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class ChangeAccessorTypeFix extends KotlinQuickFixAction<KtPropertyAccessor> {
-    private KtType type;
+    private KotlinType type;
 
     public ChangeAccessorTypeFix(@NotNull KtPropertyAccessor element) {
         super(element);
@@ -41,7 +41,7 @@ public class ChangeAccessorTypeFix extends KotlinQuickFixAction<KtPropertyAccess
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         KtProperty property = PsiTreeUtil.getParentOfType(getElement(), KtProperty.class);
         if (property == null) return false;
-        KtType type = QuickFixUtil.getDeclarationReturnType(property);
+        KotlinType type = QuickFixUtil.getDeclarationReturnType(property);
         if (super.isAvailable(project, editor, file) && type != null && !type.isError()) {
             this.type = type;
             return true;
