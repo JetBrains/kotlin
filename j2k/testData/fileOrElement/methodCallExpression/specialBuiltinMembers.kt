@@ -16,7 +16,7 @@ internal class A {
         val h = map.entries.size
     }
 
-    fun bar(list: MutableList<String>) {
+    fun bar(list: MutableList<String>, map: HashMap<String, Int>) {
         val c = "a"[0]
         val b = 10.toByte()
         val i = 10.1.toInt()
@@ -24,7 +24,18 @@ internal class A {
         val l = 10.1.toLong()
         val s = 10.1.toShort()
 
-        val removed = list.removeAt(10)
-        val isRemoved = list.remove("a")
+        try {
+            val removed = list.removeAt(10)
+            val isRemoved = list.remove("a")
+        } catch (e: Exception) {
+            System.err.println(e.message)
+            throw RuntimeException(e.cause)
+        }
+
+        for (entry in map.entries) {
+            val key = entry.key
+            val value = entry.value
+            entry.setValue(value + 1)
+        }
     }
 }

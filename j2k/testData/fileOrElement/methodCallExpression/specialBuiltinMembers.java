@@ -16,7 +16,7 @@ class A {
         int h = map.entrySet().size();
     }
 
-    void bar(List<String> list) {
+    void bar(List<String> list, HashMap<String, Integer> map) {
         char c = "a".charAt(0);
         byte b = new Integer(10).byteValue();
         int i = new Double(10.1).intValue();
@@ -24,7 +24,19 @@ class A {
         long l = new Double(10.1).longValue();
         short s = new Double(10.1).shortValue();
 
-        String removed = list.remove(10);
-        Boolean isRemoved = list.remove("a");
+        try {
+            String removed = list.remove(10);
+            Boolean isRemoved = list.remove("a");
+        }
+        catch(Exception e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException(e.getCause());
+        }
+
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+            entry.setValue(value + 1);
+        }
     }
 }
