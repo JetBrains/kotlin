@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameBase
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -55,7 +55,7 @@ public abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
 
     public abstract fun renderName(name: Name): String
 
-    public abstract fun renderFqName(fqName: FqNameBase): String
+    public abstract fun renderFqName(fqName: FqNameUnsafe): String
 
     public interface ValueParametersHandler {
         public fun appendBeforeValueParameters(parameterCount: Int, builder: StringBuilder)

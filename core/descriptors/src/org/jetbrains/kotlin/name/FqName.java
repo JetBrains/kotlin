@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.StringsKt;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class FqName extends FqNameBase {
+public final class FqName {
 
     @NotNull
     public static FqName fromSegments(@NotNull List<String> names) {
@@ -55,7 +55,6 @@ public final class FqName extends FqNameBase {
         return qualifiedName.indexOf('<') < 0;
     }
 
-    @Override
     @NotNull
     public String asString() {
         return fqName.asString();
@@ -95,7 +94,6 @@ public final class FqName extends FqNameBase {
         return fqName.shortName();
     }
 
-    @Override
     @NotNull
     public Name shortNameOrSpecial() {
         return fqName.shortNameOrSpecial();
@@ -115,18 +113,9 @@ public final class FqName extends FqNameBase {
         return path;
     }
 
-    @Override
     @NotNull
     public List<Name> pathSegments() {
         return fqName.pathSegments();
-    }
-
-    public boolean firstSegmentIs(@NotNull Name segment) {
-        return fqName.firstSegmentIs(segment);
-    }
-
-    public boolean lastSegmentIs(@NotNull Name segment) {
-        return fqName.lastSegmentIs(segment);
     }
 
     public boolean isAncestorOf(@NotNull FqName other) {
@@ -139,7 +128,6 @@ public final class FqName extends FqNameBase {
     public static FqName topLevel(@NotNull Name shortName) {
         return new FqName(FqNameUnsafe.topLevel(shortName));
     }
-
 
     @Override
     public String toString() {

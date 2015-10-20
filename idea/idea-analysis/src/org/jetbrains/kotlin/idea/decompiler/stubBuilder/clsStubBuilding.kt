@@ -106,7 +106,7 @@ private fun setupFileStub(fileStub: KotlinFileStubImpl, packageFqName: FqName) {
 
 fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtPackageDirective>, packageFqName: FqName) {
     val segments = packageFqName.pathSegments().toArrayList()
-    val iterator = segments.listIterator(segments.size())
+    val iterator = segments.listIterator(segments.size)
 
     fun recCreateStubForPackageName(current: StubElement<out PsiElement>) {
         when (iterator.previousIndex()) {
@@ -130,10 +130,10 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
 fun createStubForTypeName(typeClassId: ClassId, parent: StubElement<out PsiElement>): KotlinUserTypeStub {
     val fqName =
             if (typeClassId.isLocal()) KotlinBuiltIns.FQ_NAMES.any
-            else typeClassId.asSingleFqName()
+            else typeClassId.asSingleFqName().toUnsafe()
     val segments = fqName.pathSegments().toArrayList()
     assert(segments.isNotEmpty())
-    val iterator = segments.listIterator(segments.size())
+    val iterator = segments.listIterator(segments.size)
 
     fun recCreateStubForType(current: StubElement<out PsiElement>): KotlinUserTypeStub {
         val lastSegment = iterator.previous()
@@ -276,7 +276,7 @@ fun createTargetedAnnotationStubs(
                 hasValueArguments = false
         )
         if (target != null) {
-            KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name())!!)
+            KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
         }
         val constructorCallee = KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)

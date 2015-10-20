@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.FqNameBase
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
 public fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String {
@@ -31,7 +31,7 @@ public fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String 
 
 private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (descriptor) {
     is ClassDescriptor -> qualifiedNameForSourceCode(descriptor)
-    is PackageFragmentDescriptor -> descriptor.fqName.render()
+    is PackageFragmentDescriptor -> descriptor.fqName.toUnsafe().render()
     else -> null
 }
 
@@ -47,18 +47,18 @@ private fun Name.shouldBeEscaped(): Boolean {
     return string in KeywordStringsGenerated.KEYWORDS || string.any { !Character.isLetterOrDigit(it) && it != '_' }
 }
 
-public fun FqNameBase.render(): String {
+public fun FqNameUnsafe.render(): String {
     return renderFqName(pathSegments())
 }
 
 public fun renderFqName(pathSegments: List<Name>): String {
-    return StringBuilder {
+    return buildString {
         for (element in pathSegments) {
-            if (length() > 0) {
+            if (length > 0) {
                 append(".")
             }
             append(element.render())
         }
-    }.toString()
+    }
 }
 

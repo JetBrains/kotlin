@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.highlighter.renderersUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.renderer.RenderingFormat
@@ -112,7 +111,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
         append(" <i>defined in</i> ")
         val containingDeclaration = resultingDescriptor.getContainingDeclaration()
         val fqName = DescriptorUtils.getFqName(containingDeclaration)
-        append(if (FqName.ROOT.equalsTo(fqName)) "root package" else fqName.asString())
+        append(if (fqName.isRoot) "root package" else fqName.asString())
     }
     return stringBuilder.toString()
 }

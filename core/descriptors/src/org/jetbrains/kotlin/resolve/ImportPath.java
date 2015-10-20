@@ -51,7 +51,7 @@ public final class ImportPath {
     }
 
     public String getPathStr() {
-        return RenderingUtilsKt.render(fqName) + (isAllUnder ? ".*" : "");
+        return RenderingUtilsKt.render(fqName.toUnsafe()) + (isAllUnder ? ".*" : "");
     }
 
     @Override

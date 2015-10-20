@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.name;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.List;
 /**
  * Like {@link FqName} but allows '<' and '>' characters in name.
  */
-public final class FqNameUnsafe extends FqNameBase {
+public final class FqNameUnsafe {
 
     public static final Name ROOT_NAME = Name.special("<root>");
 
@@ -70,9 +69,6 @@ public final class FqNameUnsafe extends FqNameBase {
         }
     }
 
-
-
-    @Override
     @NotNull
     public String asString() {
         return fqName;
@@ -140,7 +136,6 @@ public final class FqNameUnsafe extends FqNameBase {
         return shortName;
     }
 
-    @Override
     @NotNull
     public Name shortNameOrSpecial() {
         if (isRoot()) {
@@ -168,7 +163,6 @@ public final class FqNameUnsafe extends FqNameBase {
         return path;
     }
 
-    @Override
     @NotNull
     public List<Name> pathSegments() {
         final List<Name> path = new ArrayList<Name>();
@@ -180,7 +174,6 @@ public final class FqNameUnsafe extends FqNameBase {
         });
         return path;
     }
-
 
     void walk(@NotNull WalkCallback callback) {
         if (isRoot()) {
@@ -226,32 +219,14 @@ public final class FqNameUnsafe extends FqNameBase {
         }
     }
 
-    public boolean firstSegmentIs(@NotNull Name segment) {
-        if (isRoot()) {
-            return false;
-        }
-        List<Name> pathSegments = pathSegments();
-        return pathSegments.get(0).equals(segment);
+    public boolean startsWith(@NotNull Name segment) {
+        return !isRoot() && pathSegments().get(0).equals(segment);
     }
-
-    public boolean lastSegmentIs(@NotNull Name segment) {
-        if (isRoot()) {
-            return false;
-        }
-        return shortName().equals(segment);
-    }
-
-    @NotNull
-    public static FqNameUnsafe fromSegments(@NotNull List<?> names) {
-        return new FqNameUnsafe(StringsKt.join(names, "."));
-    }
-
 
     @NotNull
     public static FqNameUnsafe topLevel(@NotNull Name shortName) {
         return new FqNameUnsafe(shortName.asString(), FqName.ROOT.toUnsafe(), shortName);
     }
-
 
     @Override
     @NotNull

@@ -72,7 +72,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
-import org.jetbrains.kotlin.name.FqNameBase
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -692,7 +692,7 @@ public fun invokeOnceOnCommandFinish(action: () -> Unit) {
 
 public fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier(this)) this else "`$this`"
 
-public fun FqNameBase.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString()) }
+public fun FqNameUnsafe.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString()) }
 
 public fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor {
     val constructor = getPrimaryConstructor()

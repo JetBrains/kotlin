@@ -211,10 +211,10 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             }
 
             // now check that there are no conflicts and all classes are really imported
-            val fileWithImportsText = StringBuilder {
-                append("package ").append(file.packageFqName.render()).append("\n")
-                importsToGenerate.filter { it.isAllUnder() }.map { "import " + it.pathStr }.joinTo(this, "\n")
-            }.toString()
+            val fileWithImportsText = buildString {
+                append("package ").append(file.packageFqName.toUnsafe().render()).append("\n")
+                importsToGenerate.filter { it.isAllUnder }.map { "import " + it.pathStr }.joinTo(this, "\n")
+            }
             val fileWithImports = KtPsiFactory(file).createAnalyzableFile("Dummy.kt", fileWithImportsText, file)
             val scope = fileWithImports.getResolutionFacade().getFileResolutionScope(fileWithImports)
 
