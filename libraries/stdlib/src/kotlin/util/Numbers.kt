@@ -34,3 +34,21 @@ public fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
  */
 public fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
 
+
+@Deprecated("Use toInt() instead.", ReplaceWith("toInt()"))
+public fun Number.intValue(): Int = toInt()
+
+@Deprecated("Use toLong() instead.", ReplaceWith("toLong()"))
+public fun Number.longValue(): Long = toLong()
+
+@Deprecated("Use toShort() instead.", ReplaceWith("toShort()"))
+public fun Number.shortValue(): Short = toShort()
+
+@Deprecated("Use toByte() instead.", ReplaceWith("toByte()"))
+public fun Number.byteValue(): Byte = toByte()
+
+@Deprecated("Use toDouble() instead.", ReplaceWith("toDouble()"))
+public fun Number.doubleValue(): Double = toDouble()
+
+@Deprecated("Use toFloat() instead.", ReplaceWith("toFloat()"))
+public fun Number.floatValue(): Float = toFloat()
