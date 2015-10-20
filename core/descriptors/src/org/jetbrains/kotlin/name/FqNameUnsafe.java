@@ -77,10 +77,7 @@ public final class FqNameUnsafe {
     }
 
     public boolean isSafe() {
-        if (safe != null) {
-            return true;
-        }
-        return FqName.isValidAfterUnsafeCheck(asString());
+        return safe != null || asString().indexOf('<') < 0;
     }
 
     @NotNull

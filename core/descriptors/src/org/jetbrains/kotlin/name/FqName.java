@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.name;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.utils.StringsKt;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class FqName {
@@ -48,11 +47,6 @@ public final class FqName {
     private FqName(@NotNull FqNameUnsafe fqName, FqName parent) {
         this.fqName = fqName;
         this.parent = parent;
-    }
-
-    /*package*/ static boolean isValidAfterUnsafeCheck(@NotNull String qualifiedName) {
-        // TODO: There's a valid name with escape char ``
-        return qualifiedName.indexOf('<') < 0;
     }
 
     @NotNull
@@ -102,12 +96,6 @@ public final class FqName {
     @NotNull
     public List<Name> pathSegments() {
         return fqName.pathSegments();
-    }
-
-    public boolean isAncestorOf(@NotNull FqName other) {
-        String thisString = this.asString();
-        String otherString = other.asString();
-        return otherString.equals(thisString) || otherString.startsWith(thisString + ".");
     }
 
     @NotNull

@@ -241,44 +241,48 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     @Nullable
     @Override
     public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
-        FqName fqNameBeingRenamed = null;
+        FqName fqNameBeingRenamed;
         if (element instanceof KtDeclarationContainer) {
             fqNameBeingRenamed = KotlinRunConfigurationProducer.Companion.getStartClassFqName((KtDeclarationContainer) element);
         }
         else if (element instanceof PsiPackage) {
             fqNameBeingRenamed = new FqName(((PsiPackage) element).getQualifiedName());
         }
-        FqName ourClassName = new FqName(MAIN_CLASS_NAME);
-        if (fqNameBeingRenamed != null && fqNameBeingRenamed.isAncestorOf(ourClassName)) {
-            if (element instanceof KtDeclarationContainer) {
-                return new RefactoringElementAdapter() {
-                    @Override
-                    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
-                        updateMainClassName(newElement);
-                    }
-
-                    @Override
-                    protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
-                        updateMainClassName(newElement);
-                    }
-                };
-            }
-            else {
-                final String nameSuffix = MAIN_CLASS_NAME.substring(fqNameBeingRenamed.toString().length());
-                return new RefactoringElementAdapter() {
-                    @Override
-                    protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
-                        updateMainClassNameWithSuffix(newElement, nameSuffix);
-                    }
-
-                    @Override
-                    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
-                        updateMainClassNameWithSuffix(newElement, nameSuffix);
-                    }
-                };
-            }
+        else {
+            fqNameBeingRenamed = null;
         }
-        return null;
+
+        if (fqNameBeingRenamed == null ||
+            !MAIN_CLASS_NAME.equals(fqNameBeingRenamed.asString()) && !MAIN_CLASS_NAME.startsWith(fqNameBeingRenamed.asString() + ".")) {
+            return null;
+        }
+
+        if (element instanceof KtDeclarationContainer) {
+            return new RefactoringElementAdapter() {
+                @Override
+                public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+                    updateMainClassName(newElement);
+                }
+
+                @Override
+                protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
+                    updateMainClassName(newElement);
+                }
+            };
+        }
+
+        final String nameSuffix = MAIN_CLASS_NAME.substring(fqNameBeingRenamed.toString().length());
+        return new RefactoringElementAdapter() {
+            @Override
+            protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
+                updateMainClassNameWithSuffix(newElement, nameSuffix);
+            }
+
+            @Override
+            public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+                updateMainClassNameWithSuffix(newElement, nameSuffix);
+            }
+        };
     }
 
     private void updateMainClassName(PsiElement element) {
