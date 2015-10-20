@@ -100,20 +100,6 @@ public final class FqName {
     }
 
     @NotNull
-    public List<FqName> path() {
-        final List<FqName> path = new ArrayList<FqName>();
-        path.add(ROOT);
-        fqName.walk(new FqNameUnsafe.WalkCallback() {
-            @Override
-            public void segment(@NotNull Name shortName, @NotNull FqNameUnsafe fqName) {
-                // TODO: do not validate
-                path.add(new FqName(fqName));
-            }
-        });
-        return path;
-    }
-
-    @NotNull
     public List<Name> pathSegments() {
         return fqName.pathSegments();
     }
