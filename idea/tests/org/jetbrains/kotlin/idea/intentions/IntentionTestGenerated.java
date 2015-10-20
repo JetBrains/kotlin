@@ -5859,6 +5859,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/assignment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("binaryEqualsEqualsNullableOperands.kt")
         public void testBinaryEqualsEqualsNullableOperands() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/operatorToFunction/binaryEqualsEqualsNullableOperands.kt");
